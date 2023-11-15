@@ -18,11 +18,11 @@ data class ReportingSettings(
     val httpReportSettings: HttpReportSettings? = null,
     val buildScanReportSettings: BuildScanSettings? = null,
     val singleOutputFile: File? = null,
-    val experimentalTryK2ConsoleOutput: Boolean = false,
+    val experimentalTryNextConsoleOutput: Boolean = false,
     val includeCompilerArguments: Boolean = false,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 1
+        const val serialVersionUID: Long = 2L
     }
 }
 

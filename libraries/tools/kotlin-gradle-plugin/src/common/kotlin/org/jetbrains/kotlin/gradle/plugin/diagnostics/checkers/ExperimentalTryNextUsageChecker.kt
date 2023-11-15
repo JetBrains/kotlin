@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 
-internal object ExperimentalK2UsageChecker : KotlinGradleProjectChecker {
+internal object ExperimentalTryNextUsageChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
-        if (project.kotlinPropertiesProvider.kotlinExperimentalTryK2.get()) {
-            collector.reportOncePerGradleBuild(project, KotlinToolingDiagnostics.ExperimentalK2Warning())
+        if (project.kotlinPropertiesProvider.kotlinExperimentalTryNext.get()) {
+            collector.reportOncePerGradleBuild(project, KotlinToolingDiagnostics.ExperimentalTryNextWarning())
         }
     }
 }

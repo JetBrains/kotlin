@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByKotlinSourceSetConventionAt
@@ -346,10 +345,10 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object ExperimentalK2Warning : ToolingDiagnosticFactory(WARNING) {
+    object ExperimentalTryNextWarning : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke() = build(
             """
-            ATTENTION: 'kotlin.experimental.tryK2' is an experimental option enabled in the project for trying out the new Kotlin K2 compiler only.
+            ATTENTION: 'kotlin.experimental.tryNext' is an experimental option enabled in the project for trying out the next Kotlin compiler language version only.
             Please refrain from using it in production code and provide feedback to the Kotlin team for any issues encountered via https://kotl.in/issue
             """.trimIndent()
         )

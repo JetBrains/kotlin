@@ -11,18 +11,20 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 
-internal fun <T : KotlinCommonCompilerOptions> T.configureExperimentalTryK2(
+internal fun <T : KotlinCommonCompilerOptions> T.configureExperimentalTryNext(
     project: Project,
     kotlinProperties: PropertiesProvider = project.kotlinPropertiesProvider
-): T = configureExperimentalTryK2(kotlinProperties)
+): T = configureExperimentalTryNext(kotlinProperties)
 
-internal fun <T : KotlinCommonCompilerOptions> T.configureExperimentalTryK2(
+internal val KotlinVersion.Companion.nextKotlinLanguageVersion get() = KotlinVersion.values().first { it > KotlinVersion.DEFAULT }
+
+internal fun <T : KotlinCommonCompilerOptions> T.configureExperimentalTryNext(
     kotlinProperties: PropertiesProvider
 ): T = apply {
     languageVersion.convention(
-        kotlinProperties.kotlinExperimentalTryK2.map { enabled ->
+        kotlinProperties.kotlinExperimentalTryNext.map { enabled ->
             @Suppress("TYPE_MISMATCH")
-            if (enabled) KotlinVersion.KOTLIN_2_0 else null
+            if (enabled) KotlinVersion.nextKotlinLanguageVersion else null
         }
     )
 }

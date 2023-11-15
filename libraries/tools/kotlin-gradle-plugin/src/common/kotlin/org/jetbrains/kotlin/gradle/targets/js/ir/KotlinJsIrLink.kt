@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
+import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -36,7 +36,7 @@ abstract class KotlinJsIrLink @Inject constructor(
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor,
 ) : Kotlin2JsCompile(
-    objectFactory.newInstance(KotlinJsCompilerOptionsDefault::class.java).configureExperimentalTryK2(project),
+    objectFactory.newInstance(KotlinJsCompilerOptionsDefault::class.java).configureExperimentalTryNext(project),
     objectFactory,
     workerExecutor
 ), UsesBuildFusService {

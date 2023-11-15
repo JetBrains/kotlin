@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.baseModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
+import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 
 internal object KotlinMultiplatformCommonCompilerOptionsFactory : KotlinCompilationImplFactory.KotlinCompilerOptionsFactory {
@@ -19,7 +19,7 @@ internal object KotlinMultiplatformCommonCompilerOptionsFactory : KotlinCompilat
         val compilerOptions = object : HasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> {
             override val options: KotlinMultiplatformCommonCompilerOptions = target.project.objects
                 .newInstance(KotlinMultiplatformCommonCompilerOptionsDefault::class.java)
-                .configureExperimentalTryK2(target.project)
+                .configureExperimentalTryNext(target.project)
         }
 
         val kotlinOptions = object : KotlinCommonOptions {
@@ -58,7 +58,7 @@ internal object KotlinJsCompilerOptionsFactory : KotlinCompilationImplFactory.Ko
         val compilerOptions = object : HasCompilerOptions<KotlinJsCompilerOptions> {
             override val options: KotlinJsCompilerOptions = target.project.objects
                 .newInstance(KotlinJsCompilerOptionsDefault::class.java)
-                .configureExperimentalTryK2(target.project)
+                .configureExperimentalTryNext(target.project)
         }
 
         val kotlinOptions = object : KotlinJsOptions {
@@ -75,7 +75,7 @@ internal object KotlinJvmCompilerOptionsFactory : KotlinCompilationImplFactory.K
         val compilerOptions = object : HasCompilerOptions<KotlinJvmCompilerOptions> {
             override val options: KotlinJvmCompilerOptions = target.project.objects
                 .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-                .configureExperimentalTryK2(target.project)
+                .configureExperimentalTryNext(target.project)
         }
 
         val kotlinOptions = object : KotlinJvmOptions {

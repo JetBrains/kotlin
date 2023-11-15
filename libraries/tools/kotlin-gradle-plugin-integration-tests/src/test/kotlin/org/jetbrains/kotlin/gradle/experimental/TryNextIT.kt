@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.experimental
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
@@ -15,8 +16,8 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
-@DisplayName("'kotlin.experimental.tryK2' option")
-class TryK2IT : KGPBaseTest() {
+@DisplayName("'kotlin.experimental.tryNext' option")
+class TryNextIT : KGPBaseTest() {
 
     @DisplayName("Produces single warning message in multi-project when enabled")
     @JvmGradlePluginTests
@@ -27,16 +28,16 @@ class TryK2IT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
         ) {
-            enableTryK2()
+            enableTryNext()
 
             build("--dry-run") {
-                output.assertHasDiagnostic(KotlinToolingDiagnostics.ExperimentalK2Warning)
+                output.assertHasDiagnostic(KotlinToolingDiagnostics.ExperimentalTryNextWarning)
                 assertOutputContains("No Kotlin compilation tasks have been run")
             }
         }
     }
 
-    @DisplayName("JVM: language version default is changed to 2.0")
+    @DisplayName("JVM: language version default is changed to next")
     @JvmGradlePluginTests
     @GradleTest
     fun languageVersionChanged(gradleVersion: GradleVersion) {
@@ -45,12 +46,12 @@ class TryK2IT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            enableTryK2()
+            enableTryNext()
 
             build("compileKotlin") {
                 assertTasksExecuted(":compileKotlin")
 
-                assertCompilerArgument(":compileKotlin", "-language-version 2.0")
+                assertCompilerArgument(":compileKotlin", "-language-version $nextKotlinLanguageVersion")
             }
         }
     }
@@ -66,7 +67,7 @@ class TryK2IT : KGPBaseTest() {
         ) {
             build("build") {
                 assertOutputDoesNotContain(
-                    "##### 'kotlin.experimental.tryK2' results #####"
+                    "##### 'kotlin.experimental.tryNext' results #####"
                 )
             }
         }
@@ -81,15 +82,15 @@ class TryK2IT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
         ) {
-            enableTryK2()
+            enableTryNext()
 
             build("build") {
                 assertOutputContains(
                     """
-                    |##### 'kotlin.experimental.tryK2' results #####
-                    |:app:compileKotlin: 2.0 language version
-                    |:lib:compileKotlin: 2.0 language version
-                    |##### 100% (2/2) tasks have been compiled with Kotlin 2.0 #####
+                    |##### 'kotlin.experimental.tryNext' results #####
+                    |:app:compileKotlin: $nextKotlinLanguageVersion language version
+                    |:lib:compileKotlin: $nextKotlinLanguageVersion language version
+                    |##### 100% (2/2) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }
@@ -105,21 +106,22 @@ class TryK2IT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
         ) {
-            enableTryK2()
+            enableTryNext()
 
             build("build") {
                 assertOutputContains(
                     """
-                    |##### 'kotlin.experimental.tryK2' results #####
-                    |:compileCommonMainKotlinMetadata: 2.0 language version
-                    |:compileKotlinLinuxX64: 2.0 language version${
+                    |##### 'kotlin.experimental.tryNext' results #####
+                    |:compileCommonMainKotlinMetadata: $nextKotlinLanguageVersion language version
+                    |:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version${
                         if (HostManager.hostIsMac)
-                            "\n|:compileKotlinMacosArm64: 2.0 language version\n|:compileKotlinMacosX64: 2.0 language version"
+                            "\n|:compileKotlinMacosArm64: $nextKotlinLanguageVersion language version\n" +
+                                    "|:compileKotlinMacosX64: $nextKotlinLanguageVersion language version"
                         else ""
                     }
-                    |:compileKotlinMingwX64: 2.0 language version
-                    |:compileNativeMainKotlinMetadata: 2.0 language version
-                    |##### 100% ${if (HostManager.hostIsMac) "(6/6)" else "(4/4)"} tasks have been compiled with Kotlin 2.0 #####
+                    |:compileKotlinMingwX64: $nextKotlinLanguageVersion language version
+                    |:compileNativeMainKotlinMetadata: $nextKotlinLanguageVersion language version
+                    |##### 100% ${if (HostManager.hostIsMac) "(6/6)" else "(4/4)"} tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }
@@ -135,7 +137,7 @@ class TryK2IT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
         ) {
-            enableTryK2()
+            enableTryNext()
 
             subProject("app").kotlinSourcesDir().resolve("foo/AA.kt").appendText(
                 """
@@ -147,17 +149,17 @@ class TryK2IT : KGPBaseTest() {
             buildAndFail("build") {
                 assertOutputContains(
                     """
-                    |##### 'kotlin.experimental.tryK2' results #####
-                    |:app:compileKotlin: 2.0 language version
-                    |:lib:compileKotlin: 2.0 language version
-                    |##### 100% (2/2) tasks have been compiled with Kotlin 2.0 #####
+                    |##### 'kotlin.experimental.tryNext' results #####
+                    |:app:compileKotlin: $nextKotlinLanguageVersion language version
+                    |:lib:compileKotlin: $nextKotlinLanguageVersion language version
+                    |##### 100% (2/2) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }
         }
     }
 
-    @DisplayName("MPP: language version default is changed to 2.0")
+    @DisplayName("MPP: language version default is changed to next")
     @MppGradlePluginTests
     @GradleTest
     fun languageVersionChangedMpp(gradleVersion: GradleVersion) {
@@ -166,30 +168,30 @@ class TryK2IT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            enableTryK2()
+            enableTryNext()
 
             build(":compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
 
-                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-language-version 2.0")
+                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-language-version $nextKotlinLanguageVersion")
             }
 
             build(":compileKotlinJvm") {
                 assertTasksExecuted(":compileKotlinJvm")
 
-                assertCompilerArgument(":compileKotlinJvm", "-language-version 2.0")
+                assertCompilerArgument(":compileKotlinJvm", "-language-version $nextKotlinLanguageVersion")
             }
 
             build(":compileKotlinJs") {
                 assertTasksExecuted(":compileKotlinJs")
 
-                assertCompilerArgument(":compileKotlinJs", "-language-version 2.0")
+                assertCompilerArgument(":compileKotlinJs", "-language-version $nextKotlinLanguageVersion")
             }
 
             build(":compileKotlinWasmJs") {
                 assertTasksExecuted(":compileKotlinWasmJs")
 
-                assertCompilerArgument(":compileKotlinWasmJs", "-language-version 2.0")
+                assertCompilerArgument(":compileKotlinWasmJs", "-language-version $nextKotlinLanguageVersion")
             }
 
             build(":compileKotlinLinuxX64") {
@@ -197,14 +199,14 @@ class TryK2IT : KGPBaseTest() {
 
                 val compileTaskOutput = getOutputForTask(":compileKotlinLinuxX64")
                 val compilerArgs = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, compileTaskOutput)
-                assert(compilerArgs.languageVersion == "2.0") {
-                    ":compileKotlinLinuxX64 'languageVersion' is not '2.0': ${compilerArgs.languageVersion}"
+                assert(compilerArgs.languageVersion == nextKotlinLanguageVersion) {
+                    ":compileKotlinLinuxX64 'languageVersion' is not '$nextKotlinLanguageVersion': ${compilerArgs.languageVersion}"
                 }
             }
         }
     }
 
-    @DisplayName("MPP: language version default is changed to 2.0 for metadata compilations")
+    @DisplayName("MPP: language version default is changed to next for metadata compilations")
     @MppGradlePluginTests
     @GradleTest
     fun languageVersionChangedMppMetadata(gradleVersion: GradleVersion) {
@@ -213,7 +215,7 @@ class TryK2IT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            enableTryK2()
+            enableTryNext()
 
             build(":p1:compileAppleAndLinuxMainKotlinMetadata") {
                 assertTasksExecuted(
@@ -222,12 +224,12 @@ class TryK2IT : KGPBaseTest() {
                     ":p1:compileAppleAndLinuxMainKotlinMetadata",
                 )
 
-                assertCompilerArgument(":p1:compileCommonMainKotlinMetadata", "-language-version 2.0")
-                assertCompilerArgument(":p1:compileConcurrentMainKotlinMetadata", "-language-version 2.0")
+                assertCompilerArgument(":p1:compileCommonMainKotlinMetadata", "-language-version $nextKotlinLanguageVersion")
+                assertCompilerArgument(":p1:compileConcurrentMainKotlinMetadata", "-language-version $nextKotlinLanguageVersion")
                 val taskOutput = getOutputForTask(":p1:compileAppleAndLinuxMainKotlinMetadata")
                 val appleAndLinuxMetadataArgs = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
-                assert(appleAndLinuxMetadataArgs.languageVersion == "2.0") {
-                    ":compileAppleAndLinuxMainKotlinMetadata 'languageVersion' is not '2.0': ${appleAndLinuxMetadataArgs.languageVersion}"
+                assert(appleAndLinuxMetadataArgs.languageVersion == nextKotlinLanguageVersion) {
+                    ":compileAppleAndLinuxMainKotlinMetadata 'languageVersion' is not '$nextKotlinLanguageVersion': ${appleAndLinuxMetadataArgs.languageVersion}"
                 }
             }
         }
@@ -242,7 +244,7 @@ class TryK2IT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            enableTryK2()
+            enableTryNext()
 
             buildGradle.appendText(
                 """
@@ -259,7 +261,7 @@ class TryK2IT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("JS: language version default is changed to 2.0")
+    @DisplayName("JS: language version default is changed to next")
     @JsGradlePluginTests
     @GradleTest
     fun jsLanguageVersionK2(gradleVersion: GradleVersion) {
@@ -268,17 +270,17 @@ class TryK2IT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            enableTryK2()
+            enableTryNext()
 
             build(":compileKotlinJs") {
                 assertTasksExecuted(":compileKotlinJs")
 
-                assertCompilerArgument(":compileKotlinJs", "-language-version 2.0")
+                assertCompilerArgument(":compileKotlinJs", "-language-version $nextKotlinLanguageVersion")
             }
         }
     }
 
-    @DisplayName("JS: tryK2 report is produced")
+    @DisplayName("JS: tryNext report is produced")
     @JsGradlePluginTests
     @GradleTest
     fun jsTryReport(gradleVersion: GradleVersion) {
@@ -286,17 +288,17 @@ class TryK2IT : KGPBaseTest() {
             "kotlin-js-nodejs-project",
             gradleVersion,
         ) {
-            enableTryK2()
+            enableTryNext()
 
             build("build") {
                 assertOutputContains(
                     """
-                    |##### 'kotlin.experimental.tryK2' results #####
-                    |:compileKotlinJs: 2.0 language version
-                    |:compileProductionExecutableKotlinJs: 2.0 language version
-                    |:compileTestDevelopmentExecutableKotlinJs: 2.0 language version
-                    |:compileTestKotlinJs: 2.0 language version
-                    |##### 100% (4/4) tasks have been compiled with Kotlin 2.0 #####
+                    |##### 'kotlin.experimental.tryNext' results #####
+                    |:compileKotlinJs: $nextKotlinLanguageVersion language version
+                    |:compileProductionExecutableKotlinJs: $nextKotlinLanguageVersion language version
+                    |:compileTestDevelopmentExecutableKotlinJs: $nextKotlinLanguageVersion language version
+                    |:compileTestKotlinJs: $nextKotlinLanguageVersion language version
+                    |##### 100% (4/4) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }
@@ -308,31 +310,31 @@ class TryK2IT : KGPBaseTest() {
     @GradleTest
     fun smokeTestForNativeTasks(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            enableTryK2()
+            enableTryNext()
             build("build") {
                 if (HostManager.hostIsMac) {
                     assertOutputContains(
                         """
-                            |##### 'kotlin.experimental.tryK2' results #####
-                            |:lib:compileCommonMainKotlinMetadata: 2.0 language version
-                            |:lib:compileKotlinIosArm64: 2.0 language version
-                            |:lib:compileKotlinIosSimulatorArm64: 2.0 language version
-                            |:lib:compileKotlinIosX64: 2.0 language version
-                            |:lib:compileKotlinLinuxX64: 2.0 language version
-                            |:lib:compileTestKotlinIosSimulatorArm64: 2.0 language version
-                            |:lib:compileTestKotlinIosX64: 2.0 language version
-                            |:lib:compileTestKotlinLinuxX64: 2.0 language version
-                            |##### 100% (8/8) tasks have been compiled with Kotlin 2.0 #####
+                            |##### 'kotlin.experimental.tryNext' results #####
+                            |:lib:compileCommonMainKotlinMetadata: $nextKotlinLanguageVersion language version
+                            |:lib:compileKotlinIosArm64: $nextKotlinLanguageVersion language version
+                            |:lib:compileKotlinIosSimulatorArm64: $nextKotlinLanguageVersion language version
+                            |:lib:compileKotlinIosX64: $nextKotlinLanguageVersion language version
+                            |:lib:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version
+                            |:lib:compileTestKotlinIosSimulatorArm64: $nextKotlinLanguageVersion language version
+                            |:lib:compileTestKotlinIosX64: $nextKotlinLanguageVersion language version
+                            |:lib:compileTestKotlinLinuxX64: $nextKotlinLanguageVersion language version
+                            |##### 100% (8/8) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                         """.trimMargin().normalizeLineEndings()
                     )
                 } else {
                     assertOutputContains(
                         """
-                            |##### 'kotlin.experimental.tryK2' results #####
-                            |:lib:compileCommonMainKotlinMetadata: 2.0 language version
-                            |:lib:compileKotlinLinuxX64: 2.0 language version
-                            |:lib:compileTestKotlinLinuxX64: 2.0 language version
-                            |##### 100% (3/3) tasks have been compiled with Kotlin 2.0 #####
+                            |##### 'kotlin.experimental.tryNext' results #####
+                            |:lib:compileCommonMainKotlinMetadata: $nextKotlinLanguageVersion language version
+                            |:lib:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version
+                            |:lib:compileTestKotlinLinuxX64: $nextKotlinLanguageVersion language version
+                            |##### 100% (3/3) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                         """.trimMargin().normalizeLineEndings()
                     )
                 }
@@ -340,10 +342,12 @@ class TryK2IT : KGPBaseTest() {
         }
     }
 
-    private fun TestProject.enableTryK2() = gradleProperties.appendText(
+    private fun TestProject.enableTryNext() = gradleProperties.appendText(
         """
         |
-        |kotlin.experimental.tryK2=true
+        |kotlin.experimental.tryNext=true
         """.trimMargin()
     )
+
+    private val nextKotlinLanguageVersion = KotlinVersion.values().first { it > KotlinVersion.DEFAULT }.version
 }

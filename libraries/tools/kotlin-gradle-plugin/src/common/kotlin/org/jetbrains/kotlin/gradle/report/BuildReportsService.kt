@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
+import org.jetbrains.kotlin.gradle.utils.nextKotlinLanguageVersion
 import java.io.File
 import java.net.InetAddress
 import java.text.SimpleDateFormat
@@ -79,8 +80,8 @@ class BuildReportsService {
             MetricsWriter(singleOutputFile.absoluteFile).process(buildData, log)
         }
 
-        if (reportingSettings.experimentalTryK2ConsoleOutput) {
-            reportTryK2ToConsole(buildData)
+        if (reportingSettings.experimentalTryNextConsoleOutput) {
+            reportTryNextToConsole(buildData)
         }
 
         //It's expected that bad internet connection can cause a significant delay for big project
@@ -261,7 +262,7 @@ class BuildReportsService {
         customValues++
     }
 
-    private fun reportTryK2ToConsole(
+    private fun reportTryNextToConsole(
         data: BuildExecutionData
     ) {
         val tasksData = data.buildOperationRecord
@@ -270,21 +271,22 @@ class BuildReportsService {
                 // Filtering by only KGP tasks and by those that actually do compilation
                 it.isFromKotlinPlugin && it.kotlinLanguageVersion != null
             }
-        log.warn("##### 'kotlin.experimental.tryK2' results #####")
+        log.warn("##### 'kotlin.experimental.tryNext' results #####")
         if (tasksData.isEmpty()) {
             log.warn("No Kotlin compilation tasks have been run")
             log.warn("#####")
         } else {
-            val tasksCountWithKotlin2 = tasksData.count {
-                it.kotlinLanguageVersion != null && it.kotlinLanguageVersion >= KotlinVersion.KOTLIN_2_0
+            val tasksCountWithKotlinNext = tasksData.count {
+                it.kotlinLanguageVersion != null && it.kotlinLanguageVersion >= KotlinVersion.nextKotlinLanguageVersion
             }
-            val taskWithK2Percent = (tasksCountWithKotlin2 * 100) / tasksData.count()
+            val taskWithNextPercent = (tasksCountWithKotlinNext * 100) / tasksData.count()
             val statsData = tasksData.map { it.path to it.kotlinLanguageVersion?.version }
             statsData.sortedBy { it.first }.forEach { record ->
                 log.warn("${record.first}: ${record.second} language version")
             }
             log.warn(
-                "##### $taskWithK2Percent% ($tasksCountWithKotlin2/${tasksData.count()}) tasks have been compiled with Kotlin 2.0 #####"
+                "##### $taskWithNextPercent% ($tasksCountWithKotlinNext/${tasksData.count()}) tasks have been compiled with " +
+                        "Kotlin ${KotlinVersion.nextKotlinLanguageVersion.version} #####"
             )
         }
     }

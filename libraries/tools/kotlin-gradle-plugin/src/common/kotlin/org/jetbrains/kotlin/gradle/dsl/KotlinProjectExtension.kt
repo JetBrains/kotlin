@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -29,9 +28,8 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.CompletableFuture
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
+import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
@@ -204,7 +202,7 @@ abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTar
 
     val compilerOptions: KotlinJvmCompilerOptions = project.objects
         .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-        .configureExperimentalTryK2(project)
+        .configureExperimentalTryNext(project)
 
     fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)
@@ -337,7 +335,7 @@ abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTar
 
     val compilerOptions: KotlinJvmCompilerOptions = project.objects
         .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-        .configureExperimentalTryK2(project)
+        .configureExperimentalTryNext(project)
 
     fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)

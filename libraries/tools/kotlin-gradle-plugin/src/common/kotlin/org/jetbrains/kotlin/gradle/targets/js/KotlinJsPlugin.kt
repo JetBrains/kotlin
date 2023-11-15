@@ -85,7 +85,7 @@ open class KotlinJsPlugin: Plugin<Project> {
         kotlinExtension.sourceSets.maybeCreate(TEST_COMPILATION_NAME)
 
         kotlinExtension.registerTargetObserver { target ->
-            target?.internal?.compilerOptions?.configureExperimentalTryK2(project)
+            target?.internal?.compilerOptions?.configureExperimentalTryNext(project)
         }
     }
 }

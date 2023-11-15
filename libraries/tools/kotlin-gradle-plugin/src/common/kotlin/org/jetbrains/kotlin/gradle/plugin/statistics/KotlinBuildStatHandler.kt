@@ -65,7 +65,7 @@ class KotlinBuildStatHandler {
                         BuildReportType.FILE -> configurationTimeMetrics.put(BooleanMetrics.FILE_BUILD_REPORT, true)
                         BuildReportType.HTTP -> configurationTimeMetrics.put(BooleanMetrics.HTTP_BUILD_REPORT, true)
                         BuildReportType.SINGLE_FILE -> configurationTimeMetrics.put(BooleanMetrics.SINGLE_FILE_BUILD_REPORT, true)
-                        BuildReportType.TRY_K2_CONSOLE -> {}//ignore
+                        BuildReportType.TRY_NEXT_CONSOLE -> {}//ignore
                     }
                 }
                 val gradle = project.gradle

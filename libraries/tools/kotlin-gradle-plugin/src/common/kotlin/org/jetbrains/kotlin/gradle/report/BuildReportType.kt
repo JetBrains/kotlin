@@ -12,10 +12,10 @@ enum class BuildReportType : Serializable {
     HTTP,
     BUILD_SCAN,
     SINGLE_FILE,
-    TRY_K2_CONSOLE,
+    TRY_NEXT_CONSOLE,
     ;
 
     companion object {
-        const val serialVersionUID: Long = 1L
+        const val serialVersionUID: Long = 2L
     }
 }

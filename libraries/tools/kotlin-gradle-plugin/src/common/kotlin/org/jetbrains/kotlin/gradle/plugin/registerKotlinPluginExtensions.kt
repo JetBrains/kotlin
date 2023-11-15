@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.AndroidPluginWithoutAndroidTargetChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.AndroidSourceSetLayoutV1SourceSetsNotFoundChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.CommonMainOrTestWithDependsOnChecker
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.DeprecatedKotlinN
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.DisabledCinteropCommonizationInHmppProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.DisabledNativeTargetsChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.DuplicateSourceSetChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.ExperimentalK2UsageChecker
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.ExperimentalTryNextUsageChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.IncorrectNativeDependenciesChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.InternalGradlePropertiesUsageChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.JsEnvironmentChecker
@@ -158,7 +157,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, DisabledNativeTargetsChecker)
         register(project, JsEnvironmentChecker)
         register(project, PreHmppDependenciesUsageChecker)
-        register(project, ExperimentalK2UsageChecker)
+        register(project, ExperimentalTryNextUsageChecker)
         register(project, KotlinSourceSetTreeDependsOnMismatchChecker)
         register(project, PlatformSourceSetConventionsChecker)
         register(project, AndroidMainSourceSetConventionsChecker)
