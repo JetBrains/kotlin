@@ -580,7 +580,7 @@ public:
 
         ThreadQueue(ObjectFactory& owner, Allocator allocator) noexcept : producer_(owner.storage_, std::move(allocator)) {}
 
-        ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept {
+        NO_TSAN ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept {
             RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
             auto descriptor = HeapObject::make_descriptor(typeInfo);
             auto& heapObject = *descriptor.construct(producer_.Insert(descriptor.size()).Data());
