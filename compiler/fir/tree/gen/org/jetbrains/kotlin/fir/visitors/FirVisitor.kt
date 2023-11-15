@@ -377,6 +377,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: D): R =
         visitElement(varargArgumentsExpression, data)
 
+    open fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression, data: D): R =
+        visitElement(samConversionExpression, data)
+
     open fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): R =
         visitElement(resolvedQualifier, data)
 

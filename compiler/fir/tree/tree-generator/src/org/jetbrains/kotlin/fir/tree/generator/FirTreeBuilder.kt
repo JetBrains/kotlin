@@ -149,6 +149,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val spreadArgumentExpression by element(Expression, wrappedArgumentExpression)
     val namedArgumentExpression by element(Expression, wrappedArgumentExpression)
     val varargArgumentsExpression by element(Expression, expression)
+    val samConversionExpression by element(Expression, expression)
 
     val resolvedQualifier by element(Expression, expression)
     val errorResolvedQualifier by element(Expression, resolvedQualifier, diagnosticHolder)

@@ -185,6 +185,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: D): R =
         visitExpression(varargArgumentsExpression, data)
 
+    override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression, data: D): R =
+        visitExpression(samConversionExpression, data)
+
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): R =
         visitExpression(resolvedQualifier, data)
 

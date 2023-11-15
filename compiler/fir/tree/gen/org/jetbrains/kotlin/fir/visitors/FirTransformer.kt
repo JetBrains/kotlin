@@ -971,6 +971,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformVarargArgumentsExpression(varargArgumentsExpression, data)
     }
 
+    open fun transformSamConversionExpression(samConversionExpression: FirSamConversionExpression, data: D): FirStatement {
+        return transformElement(samConversionExpression, data)
+    }
+
+    final override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression, data: D): FirStatement {
+        return transformSamConversionExpression(samConversionExpression, data)
+    }
+
     open fun transformResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): FirStatement {
         return transformElement(resolvedQualifier, data)
     }

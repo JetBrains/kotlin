@@ -750,6 +750,12 @@ class FirRenderer(
             print(")")
         }
 
+        override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression) {
+            print("SAM(")
+            samConversionExpression.expression.accept(this)
+            print(")")
+        }
+
         override fun visitCall(call: FirCall) {
             callArgumentsRenderer?.renderArguments(call.arguments)
         }

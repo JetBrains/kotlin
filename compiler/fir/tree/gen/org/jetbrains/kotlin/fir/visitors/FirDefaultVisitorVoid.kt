@@ -130,6 +130,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression) = visitExpression(varargArgumentsExpression)
 
+    override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression) = visitExpression(samConversionExpression)
+
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) = visitExpression(resolvedQualifier)
 
     override fun visitResolvedReifiedParameterReference(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference) = visitExpression(resolvedReifiedParameterReference)
