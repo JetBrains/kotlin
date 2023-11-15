@@ -88,11 +88,11 @@ private fun FirAnnotation.findUseSiteTargets(): Set<AnnotationUseSiteTarget> = b
 
     if (this@findUseSiteTargets is FirAnnotationCall) {
         for (arg in argumentList.arguments) {
-            arg.unwrapAndFlattenArgument().forEach(::addIfMatching)
+            arg.unwrapAndFlattenArgument(flattenArrays = true).forEach(::addIfMatching)
         }
     } else {
         argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]
-            ?.unwrapAndFlattenArgument()
+            ?.unwrapAndFlattenArgument(flattenArrays = true)
             ?.forEach(::addIfMatching)
     }
 }

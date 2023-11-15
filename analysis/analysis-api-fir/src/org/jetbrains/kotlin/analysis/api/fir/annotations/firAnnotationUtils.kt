@@ -144,7 +144,7 @@ private fun <T> FirAnnotation.findFromRawArguments(expectedEnumClass: ClassId, t
 
     if (this@findFromRawArguments is FirAnnotationCall) {
         for (arg in argumentList.arguments) {
-            arg.unwrapAndFlattenArgument().forEach(::addIfMatching)
+            arg.unwrapAndFlattenArgument(flattenArrays = true).forEach(::addIfMatching)
         }
     }
 }

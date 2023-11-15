@@ -58,7 +58,7 @@ fun FirRegularClass.getAllowedAnnotationTargets(session: FirSession): Set<Kotlin
 fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
     lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
     val targetAnnotation = getTargetAnnotation(session) ?: return defaultAnnotationTargets
-    val arguments = targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unwrapAndFlattenArgument().orEmpty()
+    val arguments = targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unwrapAndFlattenArgument(flattenArrays = true).orEmpty()
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
         val targetExpression = argument as? FirQualifiedAccessExpression
@@ -83,7 +83,7 @@ fun FirClassLikeSymbol<*>.getTargetAnnotation(session: FirSession): FirAnnotatio
 }
 
 fun FirExpression.extractClassesFromArgument(session: FirSession): List<FirRegularClassSymbol> {
-    return unwrapAndFlattenArgument().mapNotNull {
+    return unwrapAndFlattenArgument(flattenArrays = true).mapNotNull {
         it.extractClassFromArgument(session)
     }
 }
