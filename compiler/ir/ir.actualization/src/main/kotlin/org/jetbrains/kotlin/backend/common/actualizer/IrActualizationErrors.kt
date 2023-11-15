@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.*
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
@@ -36,7 +38,7 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
             IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
             "Expected {0} has no actual declaration in module {1}",
             CommonRenderers.STRING,
-            Renderers.MODULE_WITH_PLATFORM,
+            IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
         )
         map.put(
             IrActualizationErrors.EXPECT_ACTUAL_MISMATCH,
@@ -85,4 +87,12 @@ internal object IrActualizationDiagnosticRenderers {
             }
             "Annotation `$expectAnnotationFqName` $reason"
         }
+
+    @JvmField
+    val MODULE_WITH_PLATFORM = Renderer<ModuleDescriptor> { module ->
+        val platform = module.platform
+        val moduleName = module.getCapability(ModuleInfo.Capability)?.displayedName ?: module.name.asString()
+        val platformNameIfAny = if (platform == null || platform.isCommon()) "" else " for " + platform.single().platformName
+        moduleName + platformNameIfAny
+    }
 }

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -164,7 +165,7 @@ internal fun IrDiagnosticReporter.reportActualAnnotationConflictingDefaultArgume
 internal fun IrElement.containsOptionalExpectation(): Boolean {
     return this is IrClass &&
             this.kind == ClassKind.ANNOTATION_CLASS &&
-            this.hasAnnotation(OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME)
+            this.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation)
 }
 
 @Suppress("UNCHECKED_CAST")

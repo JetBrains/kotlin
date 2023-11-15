@@ -8,7 +8,8 @@ dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":core:compiler.common"))
     implementation(project(":compiler:resolution.common"))
-    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend.common"))
+    implementation(project(":compiler:frontend.common-psi"))
     compileOnly(intellijCore())
 }
 
