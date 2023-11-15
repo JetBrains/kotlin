@@ -406,6 +406,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("safe_call.kt")
+        public void testSafe_call() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/safe_call.kt");
+        }
+
+        @Test
         @TestMetadata("scope_functions.kt")
         public void testScope_functions() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/scope_functions.kt");
