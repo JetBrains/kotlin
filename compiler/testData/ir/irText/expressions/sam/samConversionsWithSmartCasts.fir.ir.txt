@@ -99,7 +99,8 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
       CALL 'public open fun run1 (r: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
         $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J' type=<root>.J origin=null
         r: TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-          GET_VAR 'a: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.test7' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
+          TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
+            GET_VAR 'a: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.test7' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
   FUN name:test8 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY

@@ -363,3 +363,8 @@ context(Fir2IrComponents)
 internal fun ConeKotlinType.approximateForIrOrNull(): ConeKotlinType? {
     return session.typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.FrontendToBackendTypesApproximation)
 }
+
+context(Fir2IrComponents)
+internal fun ConeKotlinType.approximateForIrOrSelf(): ConeKotlinType {
+    return approximateForIrOrNull() ?: this
+}

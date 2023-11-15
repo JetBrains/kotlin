@@ -96,3 +96,14 @@ fun test8(a: Function0<Unit>) {
 fun test9() {
   run1(r = ::test9 /*-> KRunnable */)
 }
+
+fun test10(a: Any) {
+  when {
+    when {
+      a is Unrelated -> a is Function0<Unit>
+      else -> false
+    } -> { // BLOCK
+      run1(r = a /*as Function0<Unit> */ /*-> KRunnable */)
+    }
+  }
+}

@@ -79,3 +79,11 @@ fun test8(a: () -> Unit) {
 fun test9() {
     run1(::test9)
 }
+
+// KT-63345
+fun test10(a: Any) {
+    @Suppress("CANNOT_CHECK_FOR_ERASED")
+    if (a is Unrelated && a is (() -> Unit)) {
+        run1(a)
+    }
+}

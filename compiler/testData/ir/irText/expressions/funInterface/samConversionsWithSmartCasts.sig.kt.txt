@@ -51,6 +51,12 @@ fun <T> test0(a: T): Unit where T : KRunnable, T : Function0<Unit>
 fun test1(a: Function0<Unit>): Unit
 
 // CHECK:
+//   Mangled name: #test10(kotlin.Any){}
+//   Public signature: /test10|8673682583765656768[0]
+//   Public signature debug description: test10(kotlin.Any){}
+fun test10(a: Any): Unit
+
+// CHECK:
 //   Mangled name: #test2(KRunnable){}
 //   Public signature: /test2|-6262171320756539088[0]
 //   Public signature debug description: test2(KRunnable){}
