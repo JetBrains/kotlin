@@ -135,6 +135,10 @@ open class FirJvmSerializerExtension(
                 )
             )
         }
+
+        for (annotation in klass.nonSourceAnnotations(session)) {
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation))
+        }
     }
 
     override fun serializeScript(
@@ -225,6 +229,10 @@ open class FirJvmSerializerExtension(
                 proto.setExtension(JvmProtoBuf.constructorSignature, signature)
             }
         }
+
+        for (annotation in constructor.nonSourceAnnotations(session)) {
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation))
+        }
     }
 
     override fun serializeFunction(
@@ -243,6 +251,10 @@ open class FirJvmSerializerExtension(
 
         if (function.needsInlineParameterNullCheckRequirement()) {
             versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
+        }
+
+        for (annotation in function.nonSourceAnnotations(session)) {
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation))
         }
     }
 
@@ -298,6 +310,18 @@ open class FirJvmSerializerExtension(
         if (getter?.needsInlineParameterNullCheckRequirement() == true || setter?.needsInlineParameterNullCheckRequirement() == true) {
             versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
         }
+
+        for (annotation in getter?.nonSourceAnnotations(session).orEmpty()) {
+            proto.addGetterAnnotation(annotationSerializer.serializeAnnotation(annotation))
+        }
+
+        for (annotation in setter?.nonSourceAnnotations(session).orEmpty()) {
+            proto.addSetterAnnotation(annotationSerializer.serializeAnnotation(annotation))
+        }
+
+        for (annotation in property.nonSourceAnnotations(session)) {
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation))
+        }
     }
 
     private fun FirProperty.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
@@ -327,6 +351,12 @@ open class FirJvmSerializerExtension(
         }
 
         return super.getClassSupertypes(klass)
+    }
+
+    override fun serializeValueParameter(parameter: FirValueParameter, proto: ProtoBuf.ValueParameter.Builder) {
+        for (annotation in parameter.nonSourceAnnotations(session)) {
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation))
+        }
     }
 
     override fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {

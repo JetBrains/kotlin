@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
@@ -28,7 +30,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.filterOutSourceAnnotations
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultNoCompatibilityAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultWithCompatibilityAnnotation
@@ -39,6 +43,7 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer.Companion.writeVe
 import org.jetbrains.kotlin.serialization.SerializerExtension
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.org.objectweb.asm.Type
 
 class JvmSerializerExtension(
@@ -89,6 +94,10 @@ class JvmSerializerExtension(
                 )
             )
         }
+
+        for (annotation in descriptor.nonSourceResolvedAnnotations) {
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation)!!)
+        }
     }
 
     // Interfaces which have @JvmDefault members somewhere in the hierarchy need the compiler 1.2.40+
@@ -130,6 +139,12 @@ class JvmSerializerExtension(
         }
     }
 
+    override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
+        for (annotation in descriptor.nonSourceResolvedAnnotations) {
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation)!!)
+        }
+    }
+
     override fun serializeFlexibleType(
         flexibleType: FlexibleType,
         lowerProto: ProtoBuf.Type.Builder,
@@ -168,6 +183,10 @@ class JvmSerializerExtension(
                 proto.setExtension(JvmProtoBuf.constructorSignature, signature)
             }
         }
+
+        for (annotation in descriptor.nonSourceResolvedAnnotations) {
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation)!!)
+        }
     }
 
     override fun serializeFunction(
@@ -200,6 +219,10 @@ class JvmSerializerExtension(
             !DescriptorUtils.hasJvmNameAnnotation(descriptor) && !useOldManglingScheme
         ) {
             versionRequirementTable?.writeNewFunctionNameManglingRequirement(proto::addVersionRequirement)
+        }
+
+        for (annotation in descriptor.nonSourceResolvedAnnotations) {
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation)!!)
         }
     }
 
@@ -271,6 +294,18 @@ class JvmSerializerExtension(
             }
             versionRequirementTable?.writeFunctionNameManglingForReturnTypeRequirement(proto::addVersionRequirement)
         }
+
+        for (annotation in getter?.nonSourceResolvedAnnotations.orEmpty()) {
+            proto.addGetterAnnotation(annotationSerializer.serializeAnnotation(annotation)!!)
+        }
+
+        for (annotation in setter?.nonSourceResolvedAnnotations.orEmpty()) {
+            proto.addSetterAnnotation(annotationSerializer.serializeAnnotation(annotation)!!)
+        }
+
+        for (annotation in descriptor.nonSourceResolvedAnnotations) {
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation)!!)
+        }
     }
 
     private fun PropertyDescriptor.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
@@ -294,6 +329,15 @@ class JvmSerializerExtension(
 
     private fun <K : Any, V> getBinding(slice: SerializationMappingSlice<K, V>, key: K): V? =
         bindings.get(slice, key) ?: globalBindings.get(slice, key)
+
+    private val Annotated.nonSourceResolvedAnnotations: List<AnnotationDescriptor>
+        get() = annotations.filterOutSourceAnnotations().let { result ->
+            if (classBuilderMode.generateBodies) result
+            else {
+                // In kapt mode, filter out unresolved annotations to prevent an exception from AnnotationSerializer.
+                result.filterNot { it.annotationClass == null || ErrorUtils.isError(it.annotationClass!!) }
+            }
+        }
 }
 
 class JvmSignatureSerializerImpl(stringTable: StringTable) : JvmSignatureSerializer<FunctionDescriptor, PropertyDescriptor>(stringTable) {

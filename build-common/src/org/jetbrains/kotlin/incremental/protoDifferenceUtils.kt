@@ -250,8 +250,7 @@ class DifferenceCalculatorForClass(
                 }
                 ProtoBufClassKind.FLAGS,
                 ProtoBufClassKind.FQ_NAME,
-                ProtoBufClassKind.TYPE_PARAMETER_LIST,
-                ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST -> {
+                ProtoBufClassKind.TYPE_PARAMETER_LIST -> {
                     isClassAffected = true
                     areSubclassesAffected = true
                 }
@@ -307,15 +306,8 @@ class DifferenceCalculatorForClass(
                     isClassAffected = true
                     areSubclassesAffected = true
                 }
-                ProtoBufClassKind.BUILT_INS_EXT_CLASS_ANNOTATION_LIST -> {
-                    isClassAffected = true
-                }
                 ProtoBufClassKind.JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME -> {
                     // Not affected, this extension is not used in the compiler
-                }
-                ProtoBufClassKind.KLIB_EXT_CLASS_ANNOTATION_LIST -> {
-                    isClassAffected = true
-                    areSubclassesAffected = true
                 }
                 ProtoBufClassKind.JVM_EXT_JVM_CLASS_FLAGS -> {
                     isClassAffected = true
@@ -337,6 +329,13 @@ class DifferenceCalculatorForClass(
                 ProtoBufClassKind.COMPILER_PLUGIN_DATA_LIST -> {
                     // plugins may modify the whole hierarchy depending on metadata written by them,
                     // so we should be conservative if this metadata has changed
+                    isClassAffected = true
+                    areSubclassesAffected = true
+                }
+                ProtoBufClassKind.ANNOTATION_LIST,
+                ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST,
+                ProtoBufClassKind.KLIB_EXT_CLASS_ANNOTATION_LIST,
+                ProtoBufClassKind.BUILT_INS_EXT_CLASS_ANNOTATION_LIST -> {
                     isClassAffected = true
                     areSubclassesAffected = true
                 }
