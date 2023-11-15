@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.containers.hash.EqualityPolicy
 import com.intellij.util.io.DataExternalizer
-import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.inline.InlineFunction
@@ -31,10 +29,21 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.*
 
+class DefaultEqualityPolicy<T> : EqualityPolicy<T> {
+    override fun getHashCode(value: T): Int = value.hashCode()
+    override fun isEqual(value1: T, value2: T): Boolean = (value1 == value2)
+}
+
+fun <T> DataExternalizer<T>.toDescriptor(): KeyDescriptor<T> =
+    object : KeyDescriptor<T>,
+        DataExternalizer<T> by this,
+        EqualityPolicy<T> by DefaultEqualityPolicy<T>() {
+    }
+
 class LookupSymbolKeyDescriptor(
     /** If `true`, original values are saved; if `false`, only hashes are saved. */
     private val storeFullFqNames: Boolean = false
-) : KeyDescriptor<LookupSymbolKey> {
+) : KeyDescriptor<LookupSymbolKey>, EqualityPolicy<LookupSymbolKey> by DefaultEqualityPolicy() {
 
     override fun read(input: DataInput): LookupSymbolKey {
         // Note: The value of the storeFullFqNames variable below may or may not be the same as LookupSymbolKeyDescriptor.storeFullFqNames.
@@ -67,10 +76,6 @@ class LookupSymbolKeyDescriptor(
             output.writeInt(value.scopeHash)
         }
     }
-
-    override fun getHashCode(value: LookupSymbolKey): Int = value.hashCode()
-
-    override fun isEqual(val1: LookupSymbolKey, val2: LookupSymbolKey): Boolean = val1 == val2
 }
 
 object FqNameExternalizer : DataExternalizer<FqName> {
@@ -220,21 +225,6 @@ object StringExternalizer : DataExternalizer<String> {
     override fun read(input: DataInput): String = IOUtil.readString(input)
 }
 
-object PathStringDescriptor : EnumeratorStringDescriptor() {
-    override fun getHashCode(path: String): Int {
-        return if (StringUtil.isEmpty(path)) 0 else FileUtil.toCanonicalPath(path).hashCode()
-    }
-
-    override fun isEqual(val1: String, val2: String?): Boolean {
-        if (val1 == val2) return true
-        if (val2 == null) return false
-
-        val path1 = FileUtil.toCanonicalPath(val1)
-        val path2 = FileUtil.toCanonicalPath(val2)
-        return path1 == path2
-    }
-}
-
 /** [DataExternalizer] that delegates to another [DataExternalizer] depending on the type of the object to externalize. */
 class DelegateDataExternalizer<T>(
     val types: List<Class<out T>>,
@@ -328,7 +318,7 @@ private class CollectionExternalizerForPersistentHashMap<T>(
  * (see [CollectionExternalizerForPersistentHashMap]).
  *
  * Currently, we can't change the name or implementation of this class because it is still used by the `compiler-reference-index` module in
- * the Kotlin IDEA plugin and that code relies on this name and implementation being unchanged (see KT-62288).
+ * the Kotlin IDEA plugin and that code relies on this name and implementation being unchanged (see KTIJ-27258).
  *
  * Once we remove that dependency, we can remove this class.
  */
@@ -345,7 +335,7 @@ object IntCollectionExternalizer :
 /** [DataExternalizer] for a [Collection]. */
 open class CollectionExternalizerV2<T, C : Collection<T>>(
     private val elementExternalizer: DataExternalizer<T>,
-    private val newCollection: (size: Int) -> MutableCollection<T>,
+    private val newCollection: (size: Int) -> MutableCollection<T> = { size -> ArrayList(size) },
 ) : DataExternalizer<C> {
 
     override fun save(output: DataOutput, collection: C) {
@@ -368,8 +358,6 @@ open class CollectionExternalizerV2<T, C : Collection<T>>(
         return collection as C
     }
 }
-
-object StringCollectionExternalizer : CollectionExternalizerV2<String, Collection<String>>(StringExternalizer, { size -> ArrayList(size) })
 
 class ListExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
     CollectionExternalizerV2<T, List<T>>(elementExternalizer, { size -> ArrayList(size) })

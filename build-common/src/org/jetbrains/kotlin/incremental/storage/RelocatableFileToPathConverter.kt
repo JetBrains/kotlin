@@ -17,6 +17,8 @@ import java.io.File
 class RelocatableFileToPathConverter(private val baseDir: File) : FileToPathConverter {
 
     override fun toPath(file: File): String {
+        check(file.isAbsolute) { "Expected absolute path but found relative path: ${file.path}" }
+
         // Note: If the given file is located outside `baseDir`, the relative path will start with "../". It's not "clean", but it can work.
         // TODO: Re-design the code such that `baseDir` always contains the given file (also add a precondition check here).
         return file.relativeTo(baseDir).invariantSeparatorsPath

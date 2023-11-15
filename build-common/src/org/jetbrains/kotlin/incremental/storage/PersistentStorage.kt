@@ -50,16 +50,15 @@ interface PersistentStorage<KEY, VALUE> : Closeable {
     override fun close()
 }
 
-/** [PersistentStorage] where a map entry's value is a [Collection]. */
-interface AppendablePersistentStorage<KEY, E, VALUE : Collection<E>> : PersistentStorage<KEY, VALUE> {
+/** [PersistentStorage] where a map entry's value is a [Collection] of elements of type [E]. */
+interface AppendablePersistentStorage<KEY, E> : PersistentStorage<KEY, Collection<E>> {
 
     /** Adds the given [elements] to the collection corresponding to the given [key]. */
-    fun append(key: KEY, elements: VALUE)
+    fun append(key: KEY, elements: Collection<E>)
 
     /** Adds the given [element] to the collection corresponding to the given [key]. */
     fun append(key: KEY, element: E) {
-        @Suppress("UNCHECKED_CAST")
-        append(key, listOf(element) as VALUE)
+        append(key, listOf(element))
     }
 }
 
@@ -111,14 +110,14 @@ abstract class PersistentStorageWrapper<KEY, VALUE>(
     }
 }
 
-/** [PersistentStorageWrapper] where a map entry's value is a [Collection]. */
+/** [PersistentStorageWrapper] where a map entry's value is a [Collection] of elements of type [E]. */
 @ThreadSafe
-abstract class AppendablePersistentStorageWrapper<KEY, E, VALUE : Collection<E>>(
-    private val appendableStorage: AppendablePersistentStorage<KEY, E, VALUE>,
-) : PersistentStorageWrapper<KEY, VALUE>(appendableStorage), AppendablePersistentStorage<KEY, E, VALUE> {
+abstract class AppendablePersistentStorageWrapper<KEY, E>(
+    private val appendableStorage: AppendablePersistentStorage<KEY, E>,
+) : PersistentStorageWrapper<KEY, Collection<E>>(appendableStorage), AppendablePersistentStorage<KEY, E> {
 
     @Synchronized
-    override fun append(key: KEY, elements: VALUE) {
+    override fun append(key: KEY, elements: Collection<E>) {
         appendableStorage.append(key, elements)
     }
 }

@@ -59,14 +59,14 @@ open class InMemoryStorage<KEY, VALUE>(
     }
 
     @Synchronized
-    override fun get(key: KEY): VALUE? = addedEntries[key] ?: modifiedEntries[key] ?: when (key) {
-        in appendedEntries -> {
-            @Suppress("UNCHECKED_CAST")
-            ((storage[key]!! as Collection<*>) + (appendedEntries[key]!! as Collection<*>)) as VALUE
-        }
-        in removedKeys -> null
-        else -> storage[key]
-    }
+    override fun get(key: KEY): VALUE? =
+        addedEntries[key]
+            ?: modifiedEntries[key]
+            // appendedEntries is handled by AppendableInMemoryStorage#get
+            ?: when (key) {
+                in removedKeys -> null
+                else -> storage[key]
+            }
 
     @Synchronized
     override fun set(key: KEY, value: VALUE) = when (key) {
@@ -110,7 +110,7 @@ open class InMemoryStorage<KEY, VALUE>(
         modifiedEntries.forEach {
             storage[it.key] = it.value
         }
-        check(appendedEntries.isEmpty()) { "appendedEntries is not empty" }
+        // appendedEntries is handled by AppendableInMemoryStorage#applyChanges
         removedKeys.forEach {
             storage.remove(it)
         }
@@ -139,18 +139,23 @@ open class InMemoryStorage<KEY, VALUE>(
 
 }
 
-/** [InMemoryStorage] where a map entry's value is a [Collection]. */
+/** [InMemoryStorage] where a map entry's value is a [Collection] of elements of type [E]. */
 @ThreadSafe
-class AppendableInMemoryStorage<KEY, E, VALUE : Collection<E>>(
-    private val storage: AppendablePersistentStorage<KEY, E, VALUE>,
-) : InMemoryStorage<KEY, VALUE>(storage), AppendablePersistentStorage<KEY, E, VALUE> {
+class AppendableInMemoryStorage<KEY, E>(
+    private val storage: AppendablePersistentStorage<KEY, E>,
+) : InMemoryStorage<KEY, Collection<E>>(storage), AppendablePersistentStorage<KEY, E> {
 
-    @Suppress("UNCHECKED_CAST")
     @Synchronized
-    override fun append(key: KEY, elements: VALUE) = when (key) {
-        in addedEntries -> addedEntries[key] = (addedEntries[key]!! + elements) as VALUE
-        in modifiedEntries -> modifiedEntries[key] = (modifiedEntries[key]!! + elements) as VALUE
-        in appendedEntries -> appendedEntries[key] = (appendedEntries[key]!! + elements) as VALUE
+    override fun get(key: KEY): Collection<E>? = when (key) {
+        in appendedEntries -> storage[key]!! + appendedEntries[key]!!
+        else -> super.get(key)
+    }
+
+    @Synchronized
+    override fun append(key: KEY, elements: Collection<E>) = when (key) {
+        in addedEntries -> addedEntries[key] = addedEntries[key]!! + elements
+        in modifiedEntries -> modifiedEntries[key] = modifiedEntries[key]!! + elements
+        in appendedEntries -> appendedEntries[key] = appendedEntries[key]!! + elements
         in removedKeys -> {
             removedKeys.remove(key)
             // Note: We update `modifiedEntries` (not `appendedEntries`), because if the entry is removed and then appended, it is

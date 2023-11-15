@@ -218,7 +218,6 @@ class CodeConformanceTest : TestCase() {
                         "These files are affected:\n%s",
                 allowedFiles = listOf(
                     "analysis/light-classes-base/src/org/jetbrains/kotlin/asJava/classes/KotlinClassInnerStuffCache.kt",
-                    "build-common/src/org/jetbrains/kotlin/incremental/IncrementalJvmCache.kt",
                     "compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/compiler/CliVirtualFileFinder.kt",
                     "compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/compiler/KotlinCliJavaFileManagerImpl.kt",
                     "compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/index/JvmDependenciesIndexImpl.kt",

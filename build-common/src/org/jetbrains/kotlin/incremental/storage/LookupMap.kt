@@ -22,26 +22,15 @@ import java.io.File
 class LookupMap(
     storage: File,
     icContext: IncrementalCompilationContext,
-) :
-    AppendableAbstractBasicMap<LookupSymbolKey, Int, Collection<Int>>(
-        storage,
-        LookupSymbolKeyDescriptor(icContext.storeFullFqNamesInLookupCache),
-        IntExternalizer,
-        icContext,
-    ) {
+) : AppendableSetBasicMap<LookupSymbolKey, Int>(
+    storage,
+    LookupSymbolKeyDescriptor(icContext.storeFullFqNamesInLookupCache),
+    IntExternalizer,
+    icContext,
+) {
 
-    override fun dumpKey(key: LookupSymbolKey): String = key.toString()
-
-    override fun dumpValue(value: Collection<Int>): String = value.toString()
-
+    @Synchronized
     fun add(name: String, scope: String, fileId: Int) {
-        storage.append(LookupSymbolKey(name, scope), fileId)
+        append(LookupSymbolKey(name, scope), fileId)
     }
-
-    override fun get(key: LookupSymbolKey): Collection<Int>? = storage[key]?.toSet()
-
-    operator fun set(key: LookupSymbolKey, fileIds: Set<Int>) {
-        storage[key] = fileIds
-    }
-
 }
