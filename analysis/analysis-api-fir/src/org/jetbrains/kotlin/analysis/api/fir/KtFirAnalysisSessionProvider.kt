@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
+import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.project.structure.isStable
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentHashMap
@@ -42,6 +44,12 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
     }
 
     override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KtAnalysisSession {
+        if (useSiteKtModule is KtDanglingFileModule && !useSiteKtModule.isStable) {
+            val firResolveSession = useSiteKtModule.getFirResolveSession(project)
+            val validityToken = tokenFactory.create(project)
+            return KtFirAnalysisSession.createAnalysisSessionByFirResolveSession(firResolveSession, validityToken)
+        }
+
         val identifier = tokenFactory.identifier
         identifier.flushPendingChanges(project)
 

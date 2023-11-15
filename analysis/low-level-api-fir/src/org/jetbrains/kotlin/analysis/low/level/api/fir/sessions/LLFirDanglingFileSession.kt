@@ -14,4 +14,5 @@ internal class LLFirDanglingFileSession @PrivateSessionConstructor constructor(
     ktModule: KtDanglingFileModule,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,
+    val modificationStamp: Long
 ) : LLFirResolvableModuleSession(ktModule, builtinTypes)

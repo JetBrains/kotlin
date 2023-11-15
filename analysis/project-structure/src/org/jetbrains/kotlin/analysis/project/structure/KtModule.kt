@@ -241,6 +241,13 @@ public interface KtDanglingFileModule : KtModule {
 }
 
 /**
+ * True if the dangling file module supports partial invalidation on PSI modifications.
+ * Sessions for such modules can be cached for longer time.
+ */
+public val KtDanglingFileModule.isStable: Boolean
+    get() = file.isPhysical && file.viewProvider.isEventSystemEnabled
+
+/**
  * A set of sources which live outside the project content root. E.g, testdata files or source files of some other project.
  */
 public interface KtNotUnderContentRootModule : KtModule {

@@ -50,6 +50,8 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -466,14 +468,16 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         contextSession: LLFirSession,
         additionalSessionConfiguration: context(DanglingFileSessionCreationContext) LLFirDanglingFileSession.() -> Unit,
     ): LLFirSession {
+        val danglingFile = module.file
         val platform = module.platform
+
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         val languageVersionSettings = wrapLanguageVersionSettings(contextSession.languageVersionSettings)
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
-        val session = LLFirDanglingFileSession(module, components, builtinsSession.builtinTypes)
+        val session = LLFirDanglingFileSession(module, components, builtinsSession.builtinTypes, danglingFile.modificationStamp)
         components.session = session
 
         val moduleData = createModuleData(session)
@@ -490,7 +494,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 this,
                 components,
                 canContainKotlinPackage = true,
-                declarationProviderFactory = { scope -> scope.createScopedDeclarationProviderForFile(module.file) }
+                declarationProviderFactory = { scope -> scope.createScopedDeclarationProviderForFile(danglingFile) }
             )
 
             register(FirProvider::class, firProvider)
@@ -575,8 +579,19 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
         fun getOrCreateSessionForDependency(dependency: KtModule): LLFirSession? = when (dependency) {
             is KtBuiltinsModule -> null // Built-ins are already added
+
             is KtBinaryModule -> llFirSessionCache.getSession(dependency, preferBinary = true)
-            is KtSourceModule, is KtDanglingFileModule -> llFirSessionCache.getSession(dependency)
+
+            is KtSourceModule -> llFirSessionCache.getSession(dependency)
+
+            is KtDanglingFileModule -> {
+                requireWithAttachment(dependency.isStable, message = { "Unstable dangling modules cannot be used as a dependency" }) {
+                    withKtModuleEntry("module", module)
+                    withKtModuleEntry("dependency", dependency)
+                    withPsiEntry("dependencyFile", dependency.file)
+                }
+                llFirSessionCache.getSession(dependency)
+            }
 
             is KtScriptModule,
             is KtScriptDependencyModule,
