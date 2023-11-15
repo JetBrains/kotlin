@@ -177,6 +177,23 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         return
     }
 
+    if (userScriptSandboxingEnabled != null && userScriptSandboxingEnabled == "YES") {
+        locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->
+            task.group = BasePlugin.BUILD_GROUP
+            task.description = "Embed and sign ${framework.namePrefix} framework as requested by Xcode's environment variables"
+            task.doFirst {
+                throw IllegalStateException(
+                    "You have sandboxing for user scripts enabled. " +
+                            "\nTo make the $frameworkTaskName task pass, disable this feature. " +
+                            "\nIn your Xcode project, navigate to \"Build Setting\", " +
+                            "and under \"Build Options\" set \"User script sandboxing\" (ENABLE_USER_SCRIPT_SANDBOXING) to \"NO\". " +
+                            "\nFor more information, see documentation: https://jb.gg/ltd9e6"
+                )
+            }
+        }
+        return
+    }
+
     val embedAndSignTask = locateOrRegisterTask<FrameworkCopy>(frameworkTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Embed and sign ${framework.namePrefix} framework as requested by Xcode's environment variables"
@@ -210,16 +227,6 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
                 task.execOperations.exec {
                     it.commandLine("codesign", "--force", "--sign", envSign, "--", binary)
                 }
-            }
-        }
-        if (userScriptSandboxingEnabled != null && userScriptSandboxingEnabled == "YES") {
-            task.doFirst {
-                throw IllegalStateException(
-                    "Sandboxing for user scripts is currently enabled. " +
-                            "\nTo successfully construct $frameworkTaskName, it's necessary to disable this feature. " +
-                            "\nNavigate to \"Build Setting\", locate \"User script sandboxing\" (ENABLE_USER_SCRIPT_SANDBOXING) and set it to \"NO\". " +
-                            "\nMore info in documentation https://jb.gg/ltd9e6"
-                )
             }
         }
     }
