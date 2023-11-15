@@ -25,8 +25,8 @@ interface FirExpectActualMatchingContext : ExpectActualMatchingContext<FirBasedS
 
 interface FirExpectActualMatchingContextFactory : FirSessionComponent {
     fun create(
-        session: FirSession,
-        scopeSession: ScopeSession,
+        actualSession: FirSession,
+        actualScopeSession: ScopeSession,
         allowedWritingMemberExpectForActualMapping: Boolean = false,
     ): FirExpectActualMatchingContext
 }

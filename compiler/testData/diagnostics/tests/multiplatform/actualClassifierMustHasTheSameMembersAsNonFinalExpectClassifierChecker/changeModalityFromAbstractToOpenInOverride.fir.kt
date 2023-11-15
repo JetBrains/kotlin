@@ -12,6 +12,6 @@ interface Base {
 // Mismatched scope must be reported here. But it's false negative checker in K1.
 // For some reason, K1 says that modality of `exect_Foo.foo` is `abstract`.
 // https://youtrack.jetbrains.com/issue/KT-59739
-actual open class Foo : Base {
+actual open class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> : Base {
     override fun foo() {}
 }

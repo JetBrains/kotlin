@@ -14,7 +14,7 @@ expect open class Foo3 {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual open class Foo1 : Base() {
+actual open class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo1<!> : Base() {
     override fun foo(paramNameChanged: Int) {}
 }
 

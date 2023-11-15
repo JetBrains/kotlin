@@ -89,8 +89,6 @@ object AbstractExpectActualMatcher {
         val actualMembersByName = actualClassSymbol.collectAllMembers(isActualDeclaration = true).groupBy { it.name }
 
         outer@ for (expectMember in expectClassSymbol.collectAllMembers(isActualDeclaration = false)) {
-            if (expectMember is CallableSymbolMarker && expectMember.shouldSkipMatching(expectClassSymbol)) continue
-
             val actualMembers = getPossibleActualsByExpectName(expectMember, actualMembersByName)
 
             matchSingleExpectAgainstPotentialActuals(
