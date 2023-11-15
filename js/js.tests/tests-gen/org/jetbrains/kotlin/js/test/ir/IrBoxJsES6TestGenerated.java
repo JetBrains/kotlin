@@ -951,6 +951,21 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+<<<<<<< HEAD
+=======
+        @TestMetadata("suspendInvokeWithSuspendKlassRef.kt")
+        public void testSuspendInvokeWithSuspendKlassRef() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendInvokeWithSuspendKlassRef.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendLambdaWithValueClass.kt")
+        public void testSuspendLambdaWithValueClass() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendLambdaWithValueClass.kt");
+        }
+
+        @Test
+>>>>>>> 4a678d8b4e1 ([K/JS] Process JS-specific returnable blocks before the state maching building)
         @TestMetadata("suspendMethodWithSuperCall.kt")
         public void testSuspendMethodWithSuperCall() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/suspendMethodWithSuperCall.kt");

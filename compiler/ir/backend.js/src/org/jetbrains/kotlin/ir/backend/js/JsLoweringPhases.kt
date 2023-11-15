@@ -526,7 +526,8 @@ private val innerClassConstructorCallsLoweringPhase = makeBodyLoweringPhase(
 private val suspendFunctionsLoweringPhase = makeBodyLoweringPhase(
     ::JsSuspendFunctionsLowering,
     name = "SuspendFunctionsLowering",
-    description = "Transform suspend functions into CoroutineImpl instance and build state machine"
+    description = "Transform suspend functions into CoroutineImpl instance and build state machine",
+    prerequisite = setOf(returnableBlockLoweringPhase)
 )
 
 private val addContinuationToNonLocalSuspendFunctionsLoweringPhase = makeDeclarationTransformerPhase(
@@ -921,6 +922,7 @@ val loweringList = listOf<Lowering>(
     enumUsageLoweringPhase,
     externalEnumUsageLoweringPhase,
     enumEntryRemovalLoweringPhase,
+    returnableBlockLoweringPhase,
     suspendFunctionsLoweringPhase,
     propertyReferenceLoweringPhase,
     interopCallableReferenceLoweringPhase,
@@ -928,7 +930,6 @@ val loweringList = listOf<Lowering>(
     addContinuationToNonLocalSuspendFunctionsLoweringPhase,
     addContinuationToLocalSuspendFunctionsLoweringPhase,
     addContinuationToFunctionCallsLoweringPhase,
-    returnableBlockLoweringPhase,
     rangeContainsLoweringPhase,
     forLoopsLoweringPhase,
     primitiveCompanionLoweringPhase,
