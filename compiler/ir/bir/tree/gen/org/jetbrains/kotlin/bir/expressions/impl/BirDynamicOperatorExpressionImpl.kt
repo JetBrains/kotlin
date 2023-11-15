@@ -97,7 +97,7 @@ class BirDynamicOperatorExpressionImpl(
             }
         }
 
-    override val arguments: BirChildElementList<BirExpression> =
+    override val arguments: BirImplChildElementList<BirExpression> =
             BirImplChildElementList(this, 1, false)
     init {
         initChild(_receiver)

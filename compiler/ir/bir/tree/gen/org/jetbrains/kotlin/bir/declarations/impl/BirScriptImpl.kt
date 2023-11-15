@@ -78,7 +78,7 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val annotations: BirChildElementList<BirConstructorCall> =
+    override val annotations: BirImplChildElementList<BirConstructorCall> =
             BirImplChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
@@ -109,7 +109,7 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val statements: BirChildElementList<BirStatement> =
+    override val statements: BirImplChildElementList<BirStatement> =
             BirImplChildElementList(this, 2, false)
 
     private var _thisReceiver: BirValueParameter? = thisReceiver
@@ -141,10 +141,10 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val explicitCallParameters: BirChildElementList<BirVariable> =
+    override val explicitCallParameters: BirImplChildElementList<BirVariable> =
             BirImplChildElementList(this, 3, false)
 
-    override val implicitReceiversParameters: BirChildElementList<BirValueParameter> =
+    override val implicitReceiversParameters: BirImplChildElementList<BirValueParameter> =
             BirImplChildElementList(this, 4, false)
 
     private var _providedProperties: List<BirPropertySymbol> = providedProperties
@@ -161,7 +161,7 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val providedPropertiesParameters: BirChildElementList<BirValueParameter> =
+    override val providedPropertiesParameters: BirImplChildElementList<BirValueParameter> =
             BirImplChildElementList(this, 5, false)
 
     private var _resultProperty: BirPropertySymbol? = resultProperty
