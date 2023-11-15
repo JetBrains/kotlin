@@ -55,7 +55,7 @@ abstract class AbstractFirIdenticalChecker(testServices: TestServices) : AfterAn
                 isAdditional = false,
                 RegisteredDirectives.Empty,
             )
-        )
+        ).replace("\r", "")
         val processedLlContent = testServices.sourceFileProvider.getContentOfSourceFile(
             TestFile(
                 customFile.path,
@@ -65,7 +65,7 @@ abstract class AbstractFirIdenticalChecker(testServices: TestServices) : AfterAn
                 isAdditional = false,
                 RegisteredDirectives.Empty,
             )
-        )
+        ).replace("\r", "")
 
         testServices.assertions.assertEquals(processedBaseContent, processedLlContent, message)
     }
