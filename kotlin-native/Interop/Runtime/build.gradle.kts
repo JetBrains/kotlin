@@ -52,7 +52,19 @@ dependencies {
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
-sourceSets.main.get().java.srcDir("src/jvm/kotlin")
+val prepareSharedSourcesForJvm by tasks.registering(Sync::class) {
+    from("src/main/kotlin")
+    into("$buildDir/src/main/kotlin")
+}
+val prepareKotlinIdeaImport by tasks.registering {
+    dependsOn(prepareSharedSourcesForJvm)
+}
+
+sourceSets.main.configure {
+    kotlin.setSrcDirs(emptyList<String>())
+    kotlin.srcDir("src/jvm/kotlin")
+    kotlin.srcDir(prepareSharedSourcesForJvm)
+}
 
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
