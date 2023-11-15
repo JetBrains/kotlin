@@ -73,7 +73,7 @@ fun throwsSpreadArrayOfUnresolved() {}
 
 typealias UEAlias = <!UNRESOLVED_REFERENCE!>UE<!>
 
-@Throws(UEAlias::class)
+@Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>UEAlias::class<!>)
 fun throwsTypealiasToUnresolved() {}
 
 interface Base0 {
@@ -313,7 +313,7 @@ suspend fun suspendThrowsSpreadLiteralWithUnresolved() {}
 @Throws(*<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>arrayOf(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)<!>)
 suspend fun suspendThrowsSpreadArrayOfUnresolved() {}
 
-@Throws(UEAlias::class)
+@Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>UEAlias::class<!>)
 suspend fun suspendThrowsTypealiasToUnresolved() {}
 
 @Throws(<!ARGUMENT_TYPE_MISMATCH!>Orphan::class<!>)
