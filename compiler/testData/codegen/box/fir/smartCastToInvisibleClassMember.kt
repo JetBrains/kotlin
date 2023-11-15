@@ -1,7 +1,6 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE, WASM
-// FIR status: see KT-63164
 // ISSUE: KT-63164
 // DUMP_IR
+// FIR_IDENTICAL
 
 // MODULE: m1
 // FILE: info.kt

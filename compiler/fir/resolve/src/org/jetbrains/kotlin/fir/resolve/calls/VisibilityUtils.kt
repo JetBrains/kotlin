@@ -71,7 +71,12 @@ fun FirVisibilityChecker.isVisible(
 
         if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType, skipCheckForContainingClassVisibility)) return false
 
-        candidate.dispatchReceiver = dispatchReceiverWithoutSmartCastType
+        // Note: in case of a smart cast, we already checked the visibility of the smart cast target before,
+        // so now it's visibility is not important, only callable visibility itself should be taken into account
+        // Otherwise we avoid correct smart casts in corner cases like KT-63164
+        if (!isVisible(declaration, callInfo, candidate.dispatchReceiver, skipCheckForContainingClassVisibility = true)) {
+            candidate.dispatchReceiver = dispatchReceiverWithoutSmartCastType
+        }
     }
 
     val backingField = declaration.getBackingFieldIfApplicable()
