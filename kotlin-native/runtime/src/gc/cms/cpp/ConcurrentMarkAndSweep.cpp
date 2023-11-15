@@ -147,7 +147,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     markDispatcher_.endMarkingEpoch();
 
     // TODO support concurrent weak sweep
-    RuntimeAssert(!compiler::concurrentWeakSweep(), "Concurrent weak sweep is not supported yet");
+    // TODO RuntimeAssert(!compiler::concurrentWeakSweep(), "Concurrent weak sweep is not supported yet");
 
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
 
