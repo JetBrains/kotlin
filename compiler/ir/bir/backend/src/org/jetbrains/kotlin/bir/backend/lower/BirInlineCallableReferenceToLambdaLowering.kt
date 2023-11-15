@@ -34,7 +34,7 @@ class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
 
     override fun invoke(module: BirModuleFragment) {
         getAllElementsWithIndex(inlineFunctions).forEach { function ->
-            val accesses by lazy { (function as BirElementBase).getBackReferences(functionAccesses) }
+            val accesses by lazy { function.getBackReferences(functionAccesses) }
             for (parameter in function.valueParameters) {
                 if (parameter.isInlineParameter()) {
                     accesses.forEach { access ->

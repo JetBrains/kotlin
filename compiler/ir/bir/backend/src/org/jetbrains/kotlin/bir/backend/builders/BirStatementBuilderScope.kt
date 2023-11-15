@@ -131,11 +131,10 @@ class BirStatementBuilderScope() {
 
     fun birReturn(
         value: BirExpression,
-        type: BirType = value.type,
         returnTarget: BirReturnTargetSymbol = this.returnTarget ?: error("return target not specified"),
         block: BirReturn.() -> Unit = {},
     ): BirReturn =
-        BirReturnImpl(sourceSpan, type, value, returnTarget).apply(block)
+        BirReturnImpl(sourceSpan, birBuiltIns.nothingType, value, returnTarget).apply(block)
 
 
     fun birCall(
@@ -288,41 +287,44 @@ class BirStatementBuilderScope() {
         BirVarargImpl(sourceSpan, birBuiltIns.arrayClass.typeWith(elementType), elementType).apply(block)
 
 
-    fun inventNameForTemporary(prefix: String = "tmp", nameHint: String? = null): String {
+    fun inventIndexedNameForTemporary(prefix: String = "tmp", nameHint: String? = null): String {
         val index = nextTemporaryIndex()
         return if (nameHint != null) "$prefix${index}_$nameHint" else "$prefix$index"
     }
 
-    private fun getNameForTemporary(nameHint: String?): String =
-        inventNameForTemporary("tmp", nameHint)
+    private fun getNameForTemporary(nameHint: String?, addIndexToName: Boolean): String =
+        if (addIndexToName) inventIndexedNameForTemporary("tmp", nameHint)
+        else nameHint ?: "tmp"
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun birTemporaryVariable(
         type: BirType,
         isMutable: Boolean = false,
         nameHint: String? = null,
+        addIndexToName: Boolean = true,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
         sourceSpan: SourceSpan = this.sourceSpan,
         block: BirVariable.() -> Unit = {},
     ): BirVariable {
-        val name = Name.identifier(getNameForTemporary(nameHint))
+        val name = Name.identifier(getNameForTemporary(nameHint, addIndexToName))
         return BirVariableImpl(
             sourceSpan, null, null, origin, name,
-            type, isMutable, isConst = false, isLateinit = false, isVar = true, initializer = null
-        )
+            type, isVar = isMutable, isAssignable = true, isConst = false, isLateinit = false, initializer = null
+        ).apply(block)
     }
 
     fun birTemporaryVariable(
-        expression: BirExpression,
-        type: BirType = expression.type,
+        initializer: BirExpression,
+        type: BirType = initializer.type,
         isMutable: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
         nameHint: String? = null,
-        sourceSpan: SourceSpan = expression.sourceSpan,
+        addIndexToName: Boolean = true,
+        sourceSpan: SourceSpan = initializer.sourceSpan,
         block: BirVariable.() -> Unit = {},
     ): BirVariable {
-        return birTemporaryVariable(type, isMutable, nameHint, origin, sourceSpan) {
-            initializer = expression
+        return birTemporaryVariable(type, isMutable, nameHint, addIndexToName, origin, sourceSpan) {
+            this.initializer = initializer
             block()
         }
     }
@@ -350,9 +352,9 @@ class BirStatementBuilderScope() {
         block: BirCall.() -> Unit = {},
     ): BirCall =
         BirCallImpl(
-            sourceSpan, birBuiltIns.booleanType, birBuiltIns.booleanNotSymbol, null,
+            sourceSpan, birBuiltIns.booleanType, birBuiltIns.booleanNotSymbol,
             birEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ),
-            origin, emptyList(), 0, null
+            null, origin, emptyList(), 0, null
         ).apply(block)
 
 

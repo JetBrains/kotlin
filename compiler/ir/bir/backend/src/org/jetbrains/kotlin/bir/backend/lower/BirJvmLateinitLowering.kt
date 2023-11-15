@@ -78,7 +78,8 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
                         getter.dispatchReceiverParameter?.let { birGet(it) },
                         backingField,
                         backingField.type.makeNullable()
-                    )
+                    ),
+                    addIndexToName = false,
                 )
                 +birWhen(birBuiltIns.nothingType) {
                     branches += birBranch(
@@ -94,7 +95,7 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
     context(BirStatementBuilderScope)
     private fun throwUninitializedPropertyAccessException(name: String) = birBlock {
         +birCall(builtInSymbols.throwUninitializedPropertyAccessException.owner) {
-            valueArguments += birConst(name)
+            valueArguments[0] = birConst(name)
         }
     }
 
