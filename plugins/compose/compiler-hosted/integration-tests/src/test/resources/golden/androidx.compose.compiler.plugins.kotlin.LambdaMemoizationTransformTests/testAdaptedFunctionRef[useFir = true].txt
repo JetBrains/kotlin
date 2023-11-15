@@ -61,7 +61,7 @@ fun rememberFooInline(%composer: Composer?, %changed: Int): Int {
 }
 @Composable
 fun rememberFoo(%composer: Composer?, %changed: Int): Int {
-  sourceInformationMarkerStart(%composer, <>, "C(rememberFoo)<test>,<foo(sc...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFoo)<scroll...>,<foo(sc...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -100,7 +100,7 @@ fun rememberFooExactInline(%composer: Composer?, %changed: Int): Int {
 }
 @Composable
 fun rememberFooExact(%composer: Composer?, %changed: Int): Int {
-  sourceInformationMarkerStart(%composer, <>, "C(rememberFooExact)<testEx...>,<foo(sc...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFooExact)<scroll...>,<foo(sc...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

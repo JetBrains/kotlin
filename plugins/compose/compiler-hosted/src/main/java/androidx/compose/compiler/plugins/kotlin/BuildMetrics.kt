@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -231,6 +232,7 @@ class ModuleMetricsImpl(
             knownUnstable() -> "unstable"
             else -> "runtime"
         }
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         fun print(out: Appendable, src: IrSourcePrinterVisitor) = with(out) {
             append("${stability.simpleHumanReadable()} ")
             append("class ")

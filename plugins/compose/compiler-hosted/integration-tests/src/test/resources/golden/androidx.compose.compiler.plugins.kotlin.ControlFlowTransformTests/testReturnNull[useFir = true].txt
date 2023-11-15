@@ -135,7 +135,11 @@ fun Test4(b: Boolean, %composer: Composer?, %changed: Int): String? {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0 = if (b) "true" else null
+  val tmp0 = if (b) {
+    "true"
+  } else {
+    null
+  }
   if (isTraceInProgress()) {
     traceEventEnd()
   }

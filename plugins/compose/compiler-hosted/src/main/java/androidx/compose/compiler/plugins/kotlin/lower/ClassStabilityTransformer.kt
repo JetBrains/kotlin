@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.constructors
@@ -84,6 +86,7 @@ class ClassStabilityTransformer(
         irFile.transformChildrenVoid(this)
     }
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun visitClass(declaration: IrClass): IrStatement {
         val result = super.visitClass(declaration)
         val cls = result as? IrClass ?: return result
@@ -178,7 +181,10 @@ class ClassStabilityTransformer(
         }
 
         if (useK2) {
-            context.annotationsRegistrar.addMetadataVisibleAnnotationsToElement(cls, annotation)
+            context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(
+                cls,
+                annotation,
+            )
         } else {
             cls.annotations += annotation
         }
@@ -187,6 +193,7 @@ class ClassStabilityTransformer(
         return result
     }
 
+    @OptIn(IrImplementationDetail::class, UnsafeDuringIrConstructionAPI::class)
     private fun IrClass.addStabilityMarkerField(stabilityExpression: IrExpression) {
         val stabilityField = makeStabilityField().apply {
             parent = this@addStabilityMarkerField
