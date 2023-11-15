@@ -183,10 +183,14 @@ class BirBuiltIns(
     }
 
     fun findClass(name: Name, packageFqName: FqName): BirClass? =
-        irBuiltIns.findClass(name, packageFqName)?.let { remapSymbolOwner(it) }
+        irBuiltIns.findClass(name, packageFqName)
+            ?.takeIf { it.isBound }
+            ?.let { remapSymbolOwner(it) }
 
     fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): BirClass? =
-        irBuiltIns.findClass(name, *packageNameSegments)?.let { remapSymbolOwner(it) }
+        irBuiltIns.findClass(name, *packageNameSegments)
+            ?.takeIf { it.isBound }
+            ?.let { remapSymbolOwner(it) }
 
     fun findClass(fqName: FqName): BirClass? =
         findClass(fqName.shortName(), fqName.parent())

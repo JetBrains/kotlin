@@ -22,13 +22,14 @@ import org.jetbrains.kotlin.bir.expressions.impl.BirTypeOperatorCallImpl
 import org.jetbrains.kotlin.bir.util.defaultType
 import org.jetbrains.kotlin.bir.util.hasAnnotation
 import org.jetbrains.kotlin.bir.util.isTrivial
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames.annotation
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 
 context(JvmBirBackendContext)
 class BirJvmStaticInObjectLowering : BirLoweringPhase() {
-    private val JvmStaticAnnotation by lz { birBuiltIns.findClass(JVM_STATIC_ANNOTATION_FQ_NAME)!! }
+    private val JvmStaticAnnotation by lz { birBuiltIns.findClass(JVM_STATIC_ANNOTATION_FQ_NAME) }
 
     private val functionsWithStaticAnnotationKey = registerIndexKey<BirSimpleFunction>(false) {
         it.isJvmStaticDeclaration()
@@ -60,10 +61,11 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
         }
     }
 
-    private fun BirDeclaration.isJvmStaticDeclaration(): Boolean =
-        hasAnnotation(JvmStaticAnnotation) ||
-                (this as? BirSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(JvmStaticAnnotation) == true ||
-                (this as? BirProperty)?.getter?.hasAnnotation(JvmStaticAnnotation) == true
+    private fun BirDeclaration.isJvmStaticDeclaration(): Boolean = JvmStaticAnnotation?.let { annotation ->
+        hasAnnotation(annotation) ||
+                (this as? BirSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(annotation) == true ||
+                (this as? BirProperty)?.getter?.hasAnnotation(annotation) == true
+    } == true
 
     private fun BirMemberAccessExpression<*>.replaceWithStatic(replaceCallee: BirSimpleFunction?): BirExpression {
         val receiver = dispatchReceiver ?: return this
