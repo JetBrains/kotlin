@@ -148,7 +148,8 @@ internal fun insertAliasToEntryPoint(context: PhaseContext, module: LLVMModuleRe
     val entryPointName = config.entryPointName
     val entryPoint = LLVMGetNamedFunction(module, entryPointName)
             ?: error("Module doesn't contain `$entryPointName`")
-    LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
+    val programAddressSpace = LLVMGetProgramAddressSpace(module)
+    LLVMAddAlias2(module, getGlobalFunctionType(entryPoint), programAddressSpace, entryPoint, "main")
 }
 
 internal fun linkBitcodeDependencies(generationState: NativeGenerationState,

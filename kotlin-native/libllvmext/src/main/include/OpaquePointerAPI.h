@@ -27,6 +27,8 @@ LLVMValueRef LLVMAddAlias2(LLVMModuleRef M, LLVMTypeRef ValueTy,
                            unsigned AddrSpace, LLVMValueRef Aliasee,
                            const char *Name);
 
+unsigned LLVMGetProgramAddressSpace(LLVMModuleRef moduleRef);
+
 # ifdef __cplusplus
 }
 # endif
