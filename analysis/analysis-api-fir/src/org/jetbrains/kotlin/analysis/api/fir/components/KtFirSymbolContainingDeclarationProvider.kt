@@ -113,6 +113,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
             KtFakeSourceElementKind.ImplicitConstructor -> return source.psi as KtDeclaration
             KtFakeSourceElementKind.PropertyFromParameter -> return source.psi?.parentOfType<KtPrimaryConstructor>()!!
             KtFakeSourceElementKind.EnumInitializer -> return source.psi as KtEnumEntry
+            KtFakeSourceElementKind.EnumGeneratedDeclaration -> return source.psi as KtDeclaration
             KtFakeSourceElementKind.ScriptParameter -> return source.psi as KtScript
             KtRealSourceElementKind -> source.psi!!
             else ->
