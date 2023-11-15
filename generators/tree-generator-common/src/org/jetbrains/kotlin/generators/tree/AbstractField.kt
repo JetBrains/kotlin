@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-abstract class AbstractField<Field : AbstractField<Field>> {
+abstract class AbstractField<out Field : AbstractField<Field>> {
 
     abstract val name: String
 

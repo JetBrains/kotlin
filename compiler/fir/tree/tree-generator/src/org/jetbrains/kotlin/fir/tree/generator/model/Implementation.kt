@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
 
-class Implementation(val element: Element, val name: String?) : FieldContainer<FieldWithDefault>, ImplementationKindOwner {
+class Implementation(val element: Element, val name: String?) : FieldContainer<Field>, ImplementationKindOwner {
     override val allParents: List<ImplementationKindOwner> get() = listOf(element)
     val isDefault = name == null
     override val typeName = name ?: (element.typeName + "Impl")
