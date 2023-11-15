@@ -260,6 +260,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
+        builder(enumEntry) {
+            withCopy()
+        }
+
         builder(typeOperatorCall) {
             parents += callBuilder
             default("argumentList") {

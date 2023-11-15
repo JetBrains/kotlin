@@ -109,10 +109,14 @@ class FirSignatureEnhancement(
                     )
 
                 val newReturnTypeRef = enhanceReturnType(firElement, emptyList(), firElement.computeDefaultQualifiers(), predefinedInfo)
-                return firElement.symbol.apply {
-                    this.fir.replaceReturnTypeRef(newReturnTypeRef)
-                    session.lookupTracker?.recordTypeResolveAsLookup(newReturnTypeRef, this.fir.source, null)
-                }
+
+                return buildEnumEntryCopy(firElement) {
+                    symbol = FirEnumEntrySymbol(firElement.symbol.callableId)
+                    returnTypeRef = newReturnTypeRef
+                    origin = FirDeclarationOrigin.Enhancement
+                }.apply {
+                    session.lookupTracker?.recordTypeResolveAsLookup(newReturnTypeRef, this.source, null)
+                }.symbol
             }
             is FirField -> {
                 if (firElement.returnTypeRef !is FirJavaTypeRef) return original
