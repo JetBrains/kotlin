@@ -4252,6 +4252,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("samVsLambda.kt")
+            public void testSamVsLambda() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/samVsLambda.kt");
+            }
+
+            @Test
             @TestMetadata("samWithEquals.kt")
             public void testSamWithEquals() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/samConversions/samWithEquals.kt");
