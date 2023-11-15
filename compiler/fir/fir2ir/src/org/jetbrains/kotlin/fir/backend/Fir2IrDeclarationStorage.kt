@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
@@ -894,8 +897,7 @@ class Fir2IrDeclarationStorage(
                 classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
                 val irParentClass = firDeclaration.containingClassLookupTag()?.let { classifierStorage.findIrClass(it) }!!
 
-                val firProviderForSymbol = firVariableSymbol.moduleData.session.firProvider
-                val containingFile = firProviderForSymbol.getFirCallableContainerFile(firVariableSymbol)
+                val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
 
                 classifierStorage.getOrCreateIrEnumEntry(
                     firDeclaration,
@@ -1330,10 +1332,23 @@ class Fir2IrDeclarationStorage(
             }
         }
 
-        val firProviderForSymbol = firBasedSymbol.moduleData.session.firProvider
+        /**
+         * In `allowNonCachedDeclarations` mode there is a situation possible when we get source declaration
+         *   from session which is different from one which we convert right now. So we need to take an original firProvider
+         *   for this declaration to correctly find containig file and properly generate NonCachedSourceFileFacadeClass if needed
+         */
+        val firProvider = if (configuration.allowNonCachedDeclarations) {
+            when {
+                firBasedSymbol.moduleData == session.moduleData -> components.firProvider
+                else -> firBasedSymbol.moduleData.session.firProvider
+            }
+        } else {
+            components.firProvider
+        }
+
         val containerFile = when (firBasedSymbol) {
-            is FirCallableSymbol -> firProviderForSymbol.getFirCallableContainerFile(firBasedSymbol)
-            is FirClassLikeSymbol -> firProviderForSymbol.getFirClassifierContainerFileIfAny(firBasedSymbol)
+            is FirCallableSymbol -> firProvider.getFirCallableContainerFile(firBasedSymbol)
+            is FirClassLikeSymbol -> firProvider.getFirClassifierContainerFileIfAny(firBasedSymbol)
             else -> error("Unknown symbol: $firBasedSymbol")
         }
 

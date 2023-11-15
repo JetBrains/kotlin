@@ -90,7 +90,7 @@ class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrCompone
             //  we need to use the original session of the declaration
             val containingSession = moduleData.session
             val topmostParent = topmostParent(containingSession)
-            return containingSession.firProvider.getContainingFile(topmostParent.symbol)
+            return components.firProvider.getContainingFile(topmostParent.symbol)
         }
 
         private fun FirDeclaration.topmostParent(session: FirSession): FirDeclaration {

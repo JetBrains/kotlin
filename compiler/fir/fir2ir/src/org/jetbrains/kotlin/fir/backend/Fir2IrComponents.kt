@@ -19,6 +19,13 @@ interface Fir2IrComponents {
     val session: FirSession
     val scopeSession: ScopeSession
 
+    /**
+     * It's important to use this fir provider in fir2ir instead of provider from session,
+     *   because this provider will also contain synthetic fir files for declarations generated
+     *   by frontend plugins
+     */
+    val firProvider: FirProviderWithGeneratedFiles
+
     val converter: Fir2IrConverter
 
     val symbolTable: SymbolTable

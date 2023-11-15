@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.overrides.FakeOverrideRebuilder
 import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
@@ -721,7 +720,9 @@ class Fir2IrConverter(
 
             val allFirFiles = buildList {
                 addAll(firFiles)
-                addAll(session.createFilesWithGeneratedDeclarations())
+                val generatedFiles = session.createFilesWithGeneratedDeclarations()
+                addAll(generatedFiles)
+                generatedFiles.forEach { components.firProvider.recordFile(it) }
             }
 
             components.converter.runSourcesConversion(

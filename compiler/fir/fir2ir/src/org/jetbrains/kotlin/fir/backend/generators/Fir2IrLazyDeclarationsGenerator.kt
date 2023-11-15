@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.lazy.*
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -72,7 +71,7 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         irParent: IrDeclarationParent,
         symbol: IrClassSymbol
     ): Fir2IrLazyClass = firClass.convertWithOffsets { startOffset, endOffset ->
-        val firClassOrigin = firClass.irOrigin(session.firProvider)
+        val firClassOrigin = firClass.irOrigin()
         Fir2IrLazyClass(components, startOffset, endOffset, firClassOrigin, firClass, symbol, irParent)
     }
 

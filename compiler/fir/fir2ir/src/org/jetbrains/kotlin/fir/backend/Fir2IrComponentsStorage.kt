@@ -32,6 +32,7 @@ class Fir2IrComponentsStorage(
     specialSymbolProvider: Fir2IrSpecialSymbolProvider,
     initializedIrBuiltIns: IrBuiltInsOverFir?
 ) : Fir2IrComponents {
+    override val firProvider: FirProviderWithGeneratedFiles = FirProviderWithGeneratedFiles(session)
     override val signatureComposer: FirBasedSignatureComposer = commonMemberStorage.firSignatureComposer
     override val symbolTable: SymbolTable = commonMemberStorage.symbolTable
 

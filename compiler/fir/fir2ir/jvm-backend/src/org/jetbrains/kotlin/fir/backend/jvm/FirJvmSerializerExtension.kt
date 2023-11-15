@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.serialization.*
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
@@ -292,10 +293,9 @@ class FirJvmSerializerExtension(
             return false
         }
 
-        val grandParent =
-            containerSymbol.classId.outerClassId?.let {
-                session.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
-            }
+        val grandParent = containerSymbol.classId.outerClassId?.let {
+            session.symbolProvider.getRegularClassSymbolByClassId(it)?.fir
+        }
         return grandParent != null &&
                 (grandParent.classKind == ClassKind.INTERFACE || grandParent.classKind == ClassKind.ANNOTATION_CLASS)
     }
