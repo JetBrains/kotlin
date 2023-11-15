@@ -35,6 +35,7 @@ private val messageParameterRegex = """\{\d.*?}""".toRegex()
 fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKtDiagnosticFactory, property: KProperty<*>) = buildList {
     if (!containsKey(factory)) {
         add("No default diagnostic renderer is provided for ${property.name}")
+        return@buildList
     }
 
     val renderer = get(factory)!!
