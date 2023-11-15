@@ -54,9 +54,6 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
         description = "Compilation Database dependencies"
         isCanBeConsumed = false
         isCanBeResolved = false
-        attributes {
-            attribute(CppUsage.USAGE_ATTRIBUTE, project.objects.named(CppUsage.COMPILATION_DATABASE))
-        }
     }
 
     /**
