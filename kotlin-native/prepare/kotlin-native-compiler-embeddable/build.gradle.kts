@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.kotlinNativeDist
 
@@ -5,38 +6,37 @@ plugins {
     kotlin("jvm")
 }
 
-val testCompilationClasspath by configurations.creating
-val testCompilerClasspath by configurations.creating {
-    isCanBeConsumed = false
-    extendsFrom(configurations["runtimeElements"])
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-    }
-}
+description = "Embeddable JAR of Kotlin/Native compiler"
+group = "org.jetbrains.kotlin"
 
 repositories {
     mavenCentral()
 }
 
-val kotlinNativeEmbedded by configurations.creating
-val testPlugin by configurations.creating
-val testPluginRuntime by configurations.creating
+val kotlinNativeEmbedded by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
 
-fun DependencyHandlerScope.testPluginRuntime(any: Any) {
-    val notation = any as? String ?: return add(testPluginRuntime.name, any) {}
-    val (group, artifact, version) = notation.split(":")
-    val platformName = HostManager.host.name
-    val gradlePlatformName = platformName.replace("_", "")
-    return add(testPluginRuntime.name, "$group:$artifact-$gradlePlatformName:$version") {
-        isTransitive = false
-        attributes {
-            attribute(Attribute.of("artifactType", String::class.java), "org.jetbrains.kotlin.klib")
-            attribute(Attribute.of("org.gradle.status", String::class.java), "release")
-            attribute(Attribute.of("org.jetbrains.kotlin.native.target", String::class.java), platformName)
-            attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "native")
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-api"))
-        }
+val kotlinNativeSources by configurations.creating {
+    isVisible = false
+    isCanBeConsumed = false
+    isCanBeResolved = true
+
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+        attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
+    }
+}
+
+val kotlinNativeJavadoc by configurations.creating {
+    isVisible = false
+    isCanBeConsumed = false
+    isCanBeResolved = true
+
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+        attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.JAVADOC))
     }
 }
 
@@ -51,16 +51,16 @@ dependencies {
     kotlinNativeEmbedded(project(":kotlin-native:klib"))
     kotlinNativeEmbedded(project(":kotlin-native:endorsedLibraries:kotlinx.cli", "jvmRuntimeElements"))
     kotlinNativeEmbedded(project(":kotlin-compiler")) { isTransitive = false }
+
+    kotlinNativeSources(project(":kotlin-native:backend.native"))
+    kotlinNativeJavadoc(project(":kotlin-native:backend.native"))
+
     testImplementation(libs.junit4)
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
 }
 
 val compiler = embeddableCompiler("kotlin-native-compiler-embeddable") {
     from(kotlinNativeEmbedded)
-    /**
-     * this jar distributed through kotlin-native distribution, but not with maven.
-     */
-    archiveVersion.set("")
     mergeServiceFiles()
 }
 
@@ -69,9 +69,30 @@ val runtimeJar = runtimeJar(compiler) {
     mergeServiceFiles()
 }
 
+val archiveZipper = serviceOf<ArchiveOperations>()::zipTree
 
-kotlin.sourceSets["test"].kotlin.srcDir("tests/kotlin")
+val sourcesJar = sourcesJar {
+    dependsOn(kotlinNativeSources)
+    from { kotlinNativeSources.map { archiveZipper(it) } }
+}
 
+val javadocJar = javadocJar {
+    dependsOn(kotlinNativeJavadoc)
+    from { kotlinNativeJavadoc.map { archiveZipper(it) } }
+}
+
+publish {
+    setArtifacts(listOf(runtimeJar, sourcesJar, javadocJar))
+}
+
+sourceSets {
+    "main" {}
+    "test" {
+        kotlin {
+            srcDir("tests/kotlin")
+        }
+    }
+}
 
 projectTest {
     /**

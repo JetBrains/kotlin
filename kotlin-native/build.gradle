@@ -149,6 +149,11 @@ configurations {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CppUsage.LLVM_BITCODE))
         }
     }
+
+    embeddableJar {
+        canBeConsumed = false
+        canBeResolved = true
+    }
 }
 
 apply plugin: CompilationDatabasePlugin
@@ -170,6 +175,7 @@ dependencies {
     compilationDatabase project(":kotlin-native:common")
     compilationDatabase project(":kotlin-native:runtime")
     runtimeBitcode project(":kotlin-native:runtime")
+    embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
 }
 
 apply plugin: GitClangFormatPlugin
@@ -246,7 +252,7 @@ tasks.register("distCompiler", Copy) {
         enabled = false
     } else {
         dependsOn ':kotlin-native:shadowJar'
-        dependsOn ":kotlin-native-compiler-embeddable:kotlin-native-compiler-embeddable"
+        dependsOn configurations.embeddableJar
     }
 
     destinationDir distDir
@@ -259,7 +265,10 @@ tasks.register("distCompiler", Copy) {
         into('konan/lib')
     }
 
-    from(project(":kotlin-native-compiler-embeddable").file("build/libs")) {
+    from(configurations.embeddableJar) {
+        rename {
+            "kotlin-native-compiler-embeddable.jar"
+        }
         into("konan/lib")
     }
 

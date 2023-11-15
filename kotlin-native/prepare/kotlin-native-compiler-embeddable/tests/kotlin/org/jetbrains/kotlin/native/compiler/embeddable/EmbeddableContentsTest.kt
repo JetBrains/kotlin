@@ -70,6 +70,15 @@ class EmbeddableContentsTest {
         }
     }
 
+    @Test
+    fun `test jars have no jna`() {
+        konanHomeJars.filterNot {
+            it.name.startsWith("trove")
+        }.forEach {
+            it.checkJarDoesntContain("com/sun/jna")
+        }
+    }
+
     private fun File.checkJarContains(string: String) {
         JarFile(this).use { jar ->
             assert(jar.entries()
@@ -77,6 +86,17 @@ class EmbeddableContentsTest {
                     .any { it.name.contains(string) }
             ) {
                 "Jar file ${jar.name} doesn't contain element: $string"
+            }
+        }
+    }
+
+    private fun File.checkJarDoesntContain(string: String) {
+        JarFile(this).use { jar ->
+            assert(jar.entries()
+                    .asSequence()
+                    .none { it.name.contains(string) }
+            ) {
+                "Jar file ${jar.name} contains element: $string"
             }
         }
     }

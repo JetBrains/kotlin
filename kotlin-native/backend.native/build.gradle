@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.tools.NativePluginKt
 
 buildscript {
     apply from: "../../kotlin-native/gradle/kotlinGradlePlugin.gradle"
-    apply plugin: 'project-report'
 }
 
 apply plugin: 'java'
@@ -238,23 +237,9 @@ tasks.register("debugCompiler", JavaExec) {
     args = findProperty("konan.debug.args").toString().tokenize() ?: []
 }
 
-publishing {
-    repositories {
-        maven { url = "$buildDir/repo" }
-    }
-
-    publications {
-        maven(MavenPublication) {
-            groupId = 'org.jetbrains.kotlin'
-            artifactId = 'backend.native'
-            version = kotlinVersion
-
-            from components.java
-        }
-    }
-}
-
 RepoArtifacts.sourcesJar(project) {
     it.from(sourceSets["cli_bc"].allSource)
     it.from(sourceSets["compiler"].allSource)
 }
+
+RepoArtifacts.javadocJar(project)
