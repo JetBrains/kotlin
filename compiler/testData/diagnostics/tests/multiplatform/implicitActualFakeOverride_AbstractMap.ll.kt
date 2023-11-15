@@ -12,4 +12,4 @@ public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
 
 import java.util.AbstractMap
 
-public actual abstract class AbstractMutableMap<K, V>() : MutableMap<K, V>, AbstractMap<K, V>()
+public actual abstract class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>AbstractMutableMap<!><K, V>() : MutableMap<K, V>, AbstractMap<K, V>()

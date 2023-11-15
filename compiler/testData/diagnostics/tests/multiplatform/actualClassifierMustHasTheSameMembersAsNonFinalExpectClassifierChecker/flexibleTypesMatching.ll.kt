@@ -14,7 +14,7 @@ expect open class Foo : Base {
 
 actual typealias Base = BaseJava
 
-actual open class Foo : Base() {
+actual open class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> : Base() {
     // K1 doesn't report a diagnostic here because when it compares scopes it sees flexible type
     // K2 will likely report a diagnostic here
     // I don't think we can fix this 'K1 green -> K2 red'. It must be a rare case anyway.
