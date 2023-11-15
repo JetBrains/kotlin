@@ -9,14 +9,12 @@ import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
@@ -1177,22 +1175,75 @@ class Fir2IrDeclarationStorage(
         for ((identifier, symbol) in irForFirSessionDependantDeclarationMap) {
             if (symbol.isBound) continue
             val (originalSymbol, dispatchReceiverLookupTag, _) = identifier
-            val irParent = findIrParent(originalSymbol.fir, dispatchReceiverLookupTag)
-            when (originalSymbol) {
-                is FirPropertySymbol -> createAndCacheIrProperty(
-                    originalSymbol.fir,
-                    irParent,
-                    fakeOverrideOwnerLookupTag = dispatchReceiverLookupTag
-                )
+            generateDeclaration(originalSymbol, dispatchReceiverLookupTag)
+        }
+    }
 
-                is FirNamedFunctionSymbol -> createAndCacheIrFunction(
-                    originalSymbol.fir,
-                    irParent,
-                    fakeOverrideOwnerLookupTag = dispatchReceiverLookupTag
-                )
+    /**
+     * This function iterates over all non f/o callable symbols created in declaration storage and binds all unbound symbols
+     *
+     * Usually all symbols are bound after fir2ir conversion is over, but it's not true for `allowNonCachedDeclarations`, when
+     *   we convert to IR only part of sources from code fragments.
+     *
+     * ```
+     * // Original code
+     * fun foo(x: Int) {} // (1)
+     *
+     * fun bar() {
+     *     1.let { // (2)
+     *         <context of code fragment>
+     *     }
+     * }
+     *
+     * // Code fragment
+     * foo(this@let)
+     *
+     * Here in the body of the code fragment we reference function (1) and lambda (2), which leads to creation of their symbols,
+     *   but not to generation of their IR. And since the original code won't be processed by fir2ir, we need to manually create
+     *   IR for all symbols from it, to avoid publication of unbound symbols after fir2ri conversion is over
+     *
+     * Note that in the code fragment we may capture even local functions and lambdas, which are stored not in global caches,
+     *   but in `localStorage`, which is getting cleared after leaving from corresponding scope. So to generate IR for them we need
+     *   to call this function not only after fir2ir conversion, but also after leaving each local scope (see `leaveScope` function)
+     */
+    @LeakedDeclarationCaches
+    internal fun fillUnboundSymbols() {
+        fillUnboundSymbols(functionCache)
+        fillUnboundSymbols(propertyCache)
+    }
 
-                else -> error("Unexpected declaration: $originalSymbol")
-            }
+    @LeakedDeclarationCaches
+    private fun fillUnboundSymbols(cache: Map<out FirCallableDeclaration, IrSymbol>) {
+        for ((firDeclaration, irSymbol) in cache) {
+            if (irSymbol.isBound) continue
+            generateDeclaration(firDeclaration.symbol, dispatchReceiverLookupTag = null)
+        }
+    }
+
+    private fun generateDeclaration(
+        originalSymbol: FirBasedSymbol<*>,
+        dispatchReceiverLookupTag: ConeClassLikeLookupTag?,
+    ) {
+        val irParent = findIrParent(
+            originalSymbol.packageFqName(),
+            dispatchReceiverLookupTag ?: originalSymbol.getContainingClassSymbol(session)?.toLookupTag(),
+            originalSymbol,
+            originalSymbol.origin
+        )
+        when (originalSymbol) {
+            is FirPropertySymbol -> createAndCacheIrProperty(
+                originalSymbol.fir,
+                irParent,
+                fakeOverrideOwnerLookupTag = dispatchReceiverLookupTag
+            )
+
+            is FirNamedFunctionSymbol -> createAndCacheIrFunction(
+                originalSymbol.fir,
+                irParent,
+                fakeOverrideOwnerLookupTag = dispatchReceiverLookupTag
+            )
+
+            else -> error("Unexpected declaration: $originalSymbol")
         }
     }
 
@@ -1240,6 +1291,11 @@ class Fir2IrDeclarationStorage(
             symbol is IrEnumEntrySymbol ||
             symbol is IrScriptSymbol
         ) {
+            if (configuration.allowNonCachedDeclarations) {
+                // See KDoc to `fillUnboundSymbols` function
+                @OptIn(LeakedDeclarationCaches::class)
+                fillUnboundSymbols(localStorage.lastCache.localFunctions)
+            }
             localStorage.leaveCallable()
         }
         symbolTable.leaveScope(symbol)

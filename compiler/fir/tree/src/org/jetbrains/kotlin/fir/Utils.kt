@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -273,3 +277,12 @@ val FirExpression.isStatementLikeExpression: Boolean
 
 private val FirExpression.isIndexedAssignment: Boolean
     get() = this is FirBlock && statements.lastOrNull()?.source?.kind == KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion
+
+fun FirBasedSymbol<*>.packageFqName(): FqName {
+    return when (this) {
+        is FirClassLikeSymbol<*> -> classId.packageFqName
+        is FirPropertyAccessorSymbol -> propertySymbol.packageFqName()
+        is FirCallableSymbol<*> -> callableId.packageName
+        else -> error("No package fq name for $this")
+    }
+}

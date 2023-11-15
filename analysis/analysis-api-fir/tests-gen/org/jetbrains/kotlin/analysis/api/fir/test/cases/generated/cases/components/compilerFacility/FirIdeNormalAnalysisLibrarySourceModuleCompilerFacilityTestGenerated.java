@@ -209,6 +209,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
             }
 
             @Test
+            @TestMetadata("localDelegatedProperty.kt")
+            public void testLocalDelegatedProperty() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localDelegatedProperty.kt");
+            }
+
+            @Test
             @TestMetadata("localFunction.kt")
             public void testLocalFunction() throws Exception {
                 runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunction.kt");
@@ -260,6 +266,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
             @TestMetadata("localMutated.kt")
             public void testLocalMutated() throws Exception {
                 runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localMutated.kt");
+            }
+
+            @Test
+            @TestMetadata("localVariable.kt")
+            public void testLocalVariable() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localVariable.kt");
             }
 
             @Test

@@ -17,6 +17,9 @@ class Fir2IrScopeCache {
 
     private val localFunctionCache = mutableMapOf<FirFunction, IrSimpleFunctionSymbol>()
 
+    val localFunctions: Map<FirFunction, IrSimpleFunctionSymbol>
+        get() = localFunctionCache
+
     private val delegatedPropertyCache = mutableMapOf<FirProperty, IrLocalDelegatedPropertySymbol>()
 
     fun getParameter(parameter: FirValueParameter): IrValueParameterSymbol? {

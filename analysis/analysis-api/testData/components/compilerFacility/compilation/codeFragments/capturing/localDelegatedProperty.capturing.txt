@@ -1,0 +1,3 @@
+LocalDelegate[name: x; isMutated: true; displayText: x$delegate]
+    lvar x: R|kotlin/String|
+    R|kotlin/String|

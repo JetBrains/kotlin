@@ -122,6 +122,12 @@ class Fir2IrConverter(
             declarationStorage.generateUnboundFakeOverrides()
         }
 
+        if (configuration.allowNonCachedDeclarations) {
+            // See the comment to fillUnboundSymbols function itself
+            @OptIn(LeakedDeclarationCaches::class)
+            declarationStorage.fillUnboundSymbols()
+        }
+
         evaluateConstants(irModuleFragment, components)
     }
 

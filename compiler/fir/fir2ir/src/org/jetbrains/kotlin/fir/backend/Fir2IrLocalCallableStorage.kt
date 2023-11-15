@@ -19,6 +19,10 @@ class Fir2IrLocalCallableStorage {
         cacheStack += Fir2IrScopeCache()
     }
 
+    @LeakedDeclarationCaches
+    val lastCache: Fir2IrScopeCache
+        get() = cacheStack.last()
+
     fun leaveCallable() {
         cacheStack.last().clear()
         cacheStack.removeAt(cacheStack.size - 1)
