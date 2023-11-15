@@ -33,7 +33,7 @@ class BirBlockBodyImpl(
             }
         }
 
-    override val statements: BirChildElementList<BirStatement> =
+    override val statements: BirImplChildElementList<BirStatement> =
             BirImplChildElementList(this, 1, false)
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {

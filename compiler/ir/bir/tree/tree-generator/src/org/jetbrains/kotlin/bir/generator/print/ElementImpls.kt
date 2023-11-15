@@ -48,7 +48,10 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 
             fieldImpls.forEach { fieldImpl ->
                 val field = fieldImpl.field
-                val poetType = field.typeRef.toPoet().copy(nullable = field.nullable)
+                val poetType = if (field is ListField && field.isChild)
+                    childElementListImpl.tryParameterizedBy(field.elementType.toPoet())
+                else
+                    field.typeRef.toPoet().copy(nullable = field.nullable)
 
                 if (field.passViaConstructorParameter) {
                     ctor.addParameter(field.name, poetType)
@@ -69,7 +72,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
                         initializer(
-                            "%M(this, %L, %L)",
+                            "%T(this, %L, %L)",
                             childElementListImpl,
                             childrenLists.indexOf(fieldImpl) + 1,
                             (field.elementType as TypeRefWithNullability).nullable
@@ -210,6 +213,6 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 }
 
 private val descriptorApiAnnotation = ClassName("org.jetbrains.kotlin.ir", "ObsoleteDescriptorBasedAPI")
-private val childElementListImpl = MemberName(Packages.tree, "BirImplChildElementList")
+private val childElementListImpl = ClassName(Packages.tree, "BirImplChildElementList")
 val elementVisitorLite = ClassName(Packages.tree, "BirElementVisitorLite")
 val elementAcceptLite = MemberName(Packages.tree, "acceptLite", true)
