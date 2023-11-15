@@ -59,6 +59,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("addTestForFalsePositiveDuplicateLabelInWhen.kt")
+        public void testAddTestForFalsePositiveDuplicateLabelInWhen() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/addTestForFalsePositiveDuplicateLabelInWhen.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInTests() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
