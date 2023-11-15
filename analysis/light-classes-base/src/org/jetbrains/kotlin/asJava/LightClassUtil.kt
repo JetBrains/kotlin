@@ -71,7 +71,10 @@ object LightClassUtil {
 
     private fun isMangled(wrapperName: @NlsSafe String, prefix: String): Boolean {
         //see KT-54803 for other mangling strategies
-        return wrapperName.startsWith("$prefix$")
+        // A memory optimization for `wrapperName.startsWith("$prefix$")`, see KT-63486
+        return wrapperName.length > prefix.length
+                && wrapperName[prefix.length] == '$'
+                && wrapperName.startsWith(prefix)
     }
 
     fun getLightFieldForCompanionObject(companionObject: KtClassOrObject): PsiField? {
