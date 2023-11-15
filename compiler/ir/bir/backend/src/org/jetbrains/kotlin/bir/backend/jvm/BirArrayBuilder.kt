@@ -75,7 +75,7 @@ class BirArrayBuilder(val arrayType: BirType) {
             unwrappedArrayType.classOrNull!!.owner.constructors.single { it.owner.valueParameters.size == 1 }
 
         return birCallFunctionOrConstructor(arrayConstructor, unwrappedArrayType) {
-            if (typeArguments.isNotEmpty())
+            if (arrayConstructor.owner.typeParameters.isNotEmpty())
                 typeArguments = listOf(elementType)
             valueArguments[0] = size
         }

@@ -399,7 +399,11 @@ val BirDeclaration.isTopLevel: Boolean
     }
 
 fun BirValueParameter.isInlineParameter(type: BirType = this.type) =
-    !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
+    index >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunction()) &&
+            // Parameters with default values are always nullable, so check the expression too.
+            // Note that the frontend has a diagnostic for nullable inline parameters, so actually
+            // making this return `false` requires using `@Suppress`.
+            (!type.isNullable() || defaultValue?.expression?.type?.isNullable() == false)
 
 val BirConstructorCall.classTypeArgumentsCount: Int
     get() = typeArguments.size - constructorTypeArgumentsCount
