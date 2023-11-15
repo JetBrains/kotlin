@@ -873,6 +873,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
         }
 
         @Test
+        @TestMetadata("boxingUnboxingInsideTheSuspendFunction.kt")
+        public void testBoxingUnboxingInsideTheSuspendFunction() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/boxingUnboxingInsideTheSuspendFunction.kt");
+        }
+
+        @Test
         @TestMetadata("debugStatement.kt")
         public void testDebugStatement() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/debugStatement.kt");
@@ -951,21 +957,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
         }
 
         @Test
-<<<<<<< HEAD
-=======
-        @TestMetadata("suspendInvokeWithSuspendKlassRef.kt")
-        public void testSuspendInvokeWithSuspendKlassRef() throws Exception {
-            runTest("js/js.translator/testData/box/coroutines/suspendInvokeWithSuspendKlassRef.kt");
-        }
-
-        @Test
         @TestMetadata("suspendLambdaWithValueClass.kt")
         public void testSuspendLambdaWithValueClass() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/suspendLambdaWithValueClass.kt");
         }
 
         @Test
->>>>>>> 4a678d8b4e1 ([K/JS] Process JS-specific returnable blocks before the state maching building)
         @TestMetadata("suspendMethodWithSuperCall.kt")
         public void testSuspendMethodWithSuperCall() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/suspendMethodWithSuperCall.kt");
