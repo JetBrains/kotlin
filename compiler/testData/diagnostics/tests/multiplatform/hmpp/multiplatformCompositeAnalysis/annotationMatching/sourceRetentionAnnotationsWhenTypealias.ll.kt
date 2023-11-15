@@ -1,5 +1,6 @@
 // LL_FIR_DIVERGENCE
-// Bug KT-62886
+// ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT reported because in LL we have access to the stdlib sources,
+// thus can check SOURCE-retention annotations.
 // LL_FIR_DIVERGENCE
 // FIR_IDENTICAL
 // WITH_STDLIB
