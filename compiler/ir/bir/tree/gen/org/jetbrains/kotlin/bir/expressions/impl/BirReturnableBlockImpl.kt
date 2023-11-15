@@ -75,7 +75,7 @@ class BirReturnableBlockImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val statements: BirChildElementList<BirStatement> =
+    override val statements: BirImplChildElementList<BirStatement> =
             BirImplChildElementList(this, 1, false)
 
     private var _origin: IrStatementOrigin? = origin

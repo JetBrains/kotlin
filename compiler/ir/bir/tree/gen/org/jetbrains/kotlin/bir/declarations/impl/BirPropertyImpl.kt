@@ -81,7 +81,7 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val annotations: BirChildElementList<BirConstructorCall> =
+    override val annotations: BirImplChildElementList<BirConstructorCall> =
             BirImplChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
