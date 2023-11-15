@@ -31,7 +31,7 @@ import kotlin.system.exitProcess
 import kotlin.time.DurationUnit
 import kotlin.time.measureTimedValue
 
-private val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhase, List<String>>>(
+val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhase, List<String>>>(
     ::BirJvmNameLowering to listOf(),
     ::BirJvmStaticInObjectLowering to listOf("JvmStaticInObject"),
     ::BirRepeatedAnnotationLowering to listOf("RepeatedAnnotation"),
@@ -45,12 +45,12 @@ private val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhas
     ::BirJvmInventNamesForLocalClassesLowering to listOf("InventNamesForLocalClasses"),
     ::BirInlineCallableReferenceToLambdaLowering to listOf("InlineCallableReferenceToLambdaPhase"),
     ::BirDirectInvokeLowering to listOf("DirectInvokes"),
-    ::BirAnnotationLowering to listOf("Annotation"),
+    //::BirAnnotationLowering to listOf("Annotation"),
 )
 
 private val excludedPhases = setOf<String>(
     //"Bir2Ir",
-    "Terminate",
+    //"Terminate",
 
     // This phase removes annotation constructors, but they are still being used,
     // which causes an exception in BIR. It works in IR because removed constructors
@@ -88,7 +88,7 @@ fun lowerWithBir(
         birPhases as List<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>
     )
 
-    val allExcludedPhases = excludedPhases + allBirPhases.flatMap { it.second }
+    val allExcludedPhases = excludedPhases// + allBirPhases.flatMap { it.second }
 
     val compoundPhase = newPhases.reduce { result, phase -> result then phase }
     val phaseConfig = PhaseConfigBuilder(compoundPhase).apply {
@@ -145,6 +145,7 @@ private fun reconstructPhases(
                     }
 
                     topPhase.runAfter(phaseConfig, phaserState, context, input, input)
+                    dumpOriginalIrPhase(context, input, topPhase)
                     return input
                 }
             }
@@ -189,6 +190,8 @@ class CustomPerFileAggregateLoweringPhase(
 
                 phaserState.alreadyDone.add(filePhase)
                 phaserState.phaseCount++
+
+                dumpOriginalIrPhase(context, input, filePhase)
             } else {
                 for (irFile in input.files) {
                     filePhase.outputIfNotEnabled(phaseConfig, filePhaserState, context, irFile)
@@ -274,7 +277,7 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
     }
 }
 
-private class BirCompilationBundle(
+class BirCompilationBundle(
     val birModule: BirModuleFragment,
     val backendContext: JvmBirBackendContext,
     val irModuleFragment: IrModuleFragment,
@@ -315,9 +318,12 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
         //exitProcess(0)
 
         for (phase in input.backendContext.loweringPhases) {
-            invokePhaseMeasuringTime(profile, "!BIR - ${phase.javaClass.simpleName}") {
+            val phaseName = phase.javaClass.simpleName
+            invokePhaseMeasuringTime(profile, "!BIR - $phaseName") {
                 phase(input.birModule)
             }
+
+            dumpBirPhase(context, input, phase)
         }
 
         return input
