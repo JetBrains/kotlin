@@ -13,7 +13,6 @@ import org.jetbrains.dokka.model.Invariance
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
-import utils.OnlyDescriptors
 
 class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
     private val configuration = dokkaConfiguration {
@@ -164,7 +163,6 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyDescriptors("Fix module.contentScope in new Standalone API") // TODO fix module.contentScope [getKtModuleForKtElement]
     @Test
     fun `no jvm source set`() {
         val configurationWithNoJVM = dokkaConfiguration {
