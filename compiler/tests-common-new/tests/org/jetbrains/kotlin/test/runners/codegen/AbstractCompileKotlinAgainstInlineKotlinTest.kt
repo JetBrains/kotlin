@@ -90,7 +90,7 @@ open class AbstractIrCompileKotlinAgainstInlineKotlinTest :
 
 private fun TestConfigurationBuilder.configureForSerialization() {
     defaultDirectives {
-        SERIALIZE_IR.with(JvmSerializeIrMode.INLINE)
+        SERIALIZE_IR.with(JvmSerializeIrMode.ALL)
         +LINK_VIA_SIGNATURES
     }
 

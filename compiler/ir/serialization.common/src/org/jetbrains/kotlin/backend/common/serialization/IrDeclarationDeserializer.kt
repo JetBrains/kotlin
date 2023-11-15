@@ -267,7 +267,7 @@ class IrDeclarationDeserializer(
             )
             // avoid duplicate annotations for local variables
             result.annotations = deserializeAnnotations(proto.annotationList)
-            if (setParent) {
+            if (setParent && ((uid as? IdSignature.CommonSignature)?.nameSegments?.size?.let { it > 1 } != false)) {
                 result.parent = currentParent
             }
             return result

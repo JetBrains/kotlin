@@ -93,24 +93,7 @@ fun deserializeFromByteArray(
         internationService = internationService
     )
     for (declarationProto in irProto.declarationList) {
-        val declaration = deserializer.deserializeDeclaration(declarationProto, setParent = false)
-        val parent = try {
-            declaration.parent
-        } catch (_: UninitializedPropertyAccessException) {
-            // HERE IS AN EXPLANATION:
-            // If declaration.parent has a parent by itself, then such a parent is its inner class parent
-            // If it does not, then it is a function in toplevelParent not knowing about it...
-            //
-            // We have no other way to check whether parent was set or not.
-            declaration.parent = toplevelParent
-            declaration.parent
-        }
-
-        if (parent is IrDeclarationContainer) {
-            if (declaration !in parent.declarations) {
-                parent.declarations += declaration
-            }
-        }
+        deserializer.deserializeDeclaration(declarationProto, setParent = true)
     }
 
     symbolTable.signaturer.withFileSignature(dummyFileSignature) {
