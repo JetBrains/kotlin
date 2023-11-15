@@ -18,6 +18,10 @@ namespace kotlin::gc {
 class GC::ObjectData {
     static constexpr intptr_t kNoQueueMark = 1;
 public:
+    ObjectData() {
+        next_.store(nullptr);
+    }
+
     bool tryMark() noexcept { return trySetNext(reinterpret_cast<ObjectData*>(kNoQueueMark)); }
 
     void markUncontended() noexcept {
@@ -49,7 +53,7 @@ private:
         return next_.compare_exchange_strong(expected, next, std::memory_order_relaxed);
     }
 
-    std::atomic<ObjectData*> next_ = nullptr;
+    std::atomic<ObjectData*> next_;
 };
 static_assert(std::is_trivially_destructible_v<GC::ObjectData>);
 

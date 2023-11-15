@@ -37,7 +37,7 @@ CustomAllocator::~CustomAllocator() {
     heap_.AddToFinalizerQueue(std::move(finalizerQueue_));
 }
 
-ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
+__attribute__((no_sanitize("thread"))) ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
     auto descriptor = HeapObject::make_descriptor(typeInfo);
     auto& heapObject = *descriptor.construct(Allocate(descriptor.size()));

@@ -191,6 +191,18 @@ struct type_layout::descriptor<ArrayBody> {
     };
 };
 
+// FIXME Remove. Workaround for tsan.
+template <>
+struct type_layout::descriptor<ObjHeader> {
+    struct type {
+        using value_type = ObjHeader;
+
+        static inline uint64_t size() noexcept { return sizeof(ObjHeader); }
+        static size_t alignment() noexcept { return alignof(ObjHeader); }
+
+        static value_type* construct(uint8_t* ptr) noexcept { return reinterpret_cast<ObjHeader*>(ptr); }
+    };
+};
 
 } // namespace kotlin
 
