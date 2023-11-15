@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Action
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -35,13 +33,5 @@ open class KotlinCommonCompilation @Inject internal constructor(compilation: Kot
         get() = target.project.isKotlinGranularMetadataEnabled && !forceCompilationToKotlinMetadata
 
     internal var forceCompilationToKotlinMetadata: Boolean = false
-
-    internal fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
-        compilerOptions.configure(configure)
-    }
-
-    internal fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
-        configure.execute(compilerOptions.options)
-    }
 }
 

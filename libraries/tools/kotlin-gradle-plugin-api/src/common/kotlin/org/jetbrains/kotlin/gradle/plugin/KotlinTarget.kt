@@ -64,6 +64,21 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val preset: KotlinTargetPreset<out KotlinTarget>?
 
     override fun getName(): String = targetName
+
+    @Deprecated(
+        "Kotlin target level compiler options DSL is not available in this release!",
+        level = DeprecationLevel.ERROR
+    )
+    fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
+        throw UnsupportedOperationException("Kotlin target level compiler options DSL is not available in this release!")
+    }
+    @Deprecated(
+        "Kotlin target level compiler options DSL is not available in this release!",
+        level = DeprecationLevel.ERROR
+    )
+    fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
+        throw UnsupportedOperationException("Kotlin target level compiler options DSL is not available in this release!")
+    }
 }
 
 interface KotlinTargetWithTests<E : KotlinExecution.ExecutionSource, T : KotlinTargetTestRun<E>> : KotlinTarget {
