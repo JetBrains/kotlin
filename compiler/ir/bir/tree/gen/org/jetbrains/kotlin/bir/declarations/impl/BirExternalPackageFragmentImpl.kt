@@ -46,7 +46,7 @@ class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val declarations: BirChildElementList<BirDeclaration> =
+    override val declarations: BirImplChildElementList<BirDeclaration> =
             BirImplChildElementList(this, 1, false)
 
     private var _signature: IdSignature? = signature

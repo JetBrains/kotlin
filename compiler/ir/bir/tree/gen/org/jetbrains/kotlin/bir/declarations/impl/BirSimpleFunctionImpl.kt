@@ -88,7 +88,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val annotations: BirChildElementList<BirConstructorCall> =
+    override val annotations: BirImplChildElementList<BirConstructorCall> =
             BirImplChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
@@ -147,7 +147,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val typeParameters: BirChildElementList<BirTypeParameter> =
+    override val typeParameters: BirImplChildElementList<BirTypeParameter> =
             BirImplChildElementList(this, 2, false)
 
     private var _isInline: Boolean = isInline
@@ -222,7 +222,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val valueParameters: BirChildElementList<BirValueParameter> =
+    override val valueParameters: BirImplChildElementList<BirValueParameter> =
             BirImplChildElementList(this, 3, false)
 
     private var _contextReceiverParametersCount: Int = contextReceiverParametersCount

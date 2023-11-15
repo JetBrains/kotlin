@@ -83,8 +83,8 @@ class BirTryImpl(
             }
         }
 
-    override val catches: BirChildElementList<BirCatch> = BirImplChildElementList(this, 1,
-            false)
+    override val catches: BirImplChildElementList<BirCatch> = BirImplChildElementList(this,
+            1, false)
 
     private var _finallyExpression: BirExpression? = finallyExpression
 

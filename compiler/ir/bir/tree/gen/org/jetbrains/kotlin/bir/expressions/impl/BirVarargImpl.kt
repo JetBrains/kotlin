@@ -79,7 +79,7 @@ class BirVarargImpl(
             }
         }
 
-    override val elements: BirChildElementList<BirVarargElement> =
+    override val elements: BirImplChildElementList<BirVarargElement> =
             BirImplChildElementList(this, 1, false)
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {

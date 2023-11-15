@@ -81,7 +81,7 @@ class BirConstantObjectImpl(
             }
         }
 
-    override val valueArguments: BirChildElementList<BirConstantValue> =
+    override val valueArguments: BirImplChildElementList<BirConstantValue> =
             BirImplChildElementList(this, 1, false)
 
     private var _typeArguments: List<BirType> = typeArguments

@@ -131,7 +131,7 @@ class BirDelegatingConstructorCallImpl(
             }
         }
 
-    override val valueArguments: BirChildElementList<BirExpression?> =
+    override val valueArguments: BirImplChildElementList<BirExpression?> =
             BirImplChildElementList(this, 1, true)
 
     private var _typeArguments: List<BirType?> = typeArguments
