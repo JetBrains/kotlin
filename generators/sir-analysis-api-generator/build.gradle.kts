@@ -10,6 +10,7 @@ sourceSets {
 
 dependencies {
     testApi(projectTests(":native:swift:sir-analysis-api"))
+    testApi(projectTests(":native:swift:sir-compiler-bridge"))
     testImplementation(projectTests(":generators:test-generator"))
 
     testRuntimeOnly(projectTests(":analysis:analysis-test-framework"))

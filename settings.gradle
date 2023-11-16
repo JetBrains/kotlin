@@ -399,6 +399,7 @@ include ":plugins:compose-compiler-plugin:compiler",
 include ":native:swift:sir",
         ":native:swift:sir-passes",
         ":native:swift:sir-analysis-api",
+        ":native:swift:sir-compiler-bridge",
         ":generators:sir-analysis-api-generator"
 
 void intellij(String imlPath) {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests.native.swift.sir.analysis.api
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.sir.analysisapi.AbstractKotlinSirContextTest
+import org.jetbrains.kotlin.sir.bridge.AbstractKotlinSirBridgeTest
 
 
 fun main() {
@@ -20,6 +21,16 @@ fun main() {
                 suiteTestClassName = "SirAnalysisGeneratedTests"
             ) {
                 model("", pattern = "^([^_](.+)).kt$", recursive = false)
+            }
+        }
+        testGroup(
+            "native/swift/sir-compiler-bridge/tests-gen/",
+            "native/swift/sir-compiler-bridge/testData"
+        ) {
+            testClass<AbstractKotlinSirBridgeTest>(
+                suiteTestClassName = "SirCompilerBridgeTestGenerated"
+            ) {
+                model("", extension = null, recursive = false)
             }
         }
     }
