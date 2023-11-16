@@ -1,7 +1,7 @@
 // FILE: one.kt
 
 package com.awesome.namespace
-fun foo() = println("")
+fun foo() = ""
 
 fun bar() = ""
 
@@ -9,4 +9,4 @@ fun bar() = ""
 
 package com.awesome.other.namespace
 
-fun foo() = ""
+fun foo(arg1: Int) = ""

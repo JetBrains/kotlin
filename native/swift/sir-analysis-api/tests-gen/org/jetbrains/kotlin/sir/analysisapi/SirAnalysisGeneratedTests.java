@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/swift/sir-analysis-api/testData")
 @TestDataPath("$PROJECT_ROOT")
-public class SirAnalysisGeneratedTests extends AbstractKotlinSirContextTest {
+public class SirAnalysisGeneratedTests extends AbstractSirFromCompiledKotlinTest {
     @Test
     public void testAllFilesPresentInTestData() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/sir-analysis-api/testData"), Pattern.compile("^([^_](.+)).kt$"), null, false);

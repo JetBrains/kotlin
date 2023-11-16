@@ -1,1 +1,1 @@
-fun foo() = println("")
+fun foo() = ""

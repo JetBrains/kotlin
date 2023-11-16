@@ -15,6 +15,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
 
+    testImplementation(project(":analysis:decompiled:native"))
     testRuntimeOnly(projectTests(":analysis:low-level-api-fir"))
     testRuntimeOnly(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-api-fir"))
