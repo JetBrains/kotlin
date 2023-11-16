@@ -35,11 +35,9 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildLambdaArgumentExpressio
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.extensions.FirFunctionCallRefinementExtension
-import org.jetbrains.kotlin.fir.extensions.originalCall
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fqName
@@ -168,7 +166,7 @@ class NewCandidateInterceptor(
     }
 
     @OptIn(SymbolInternals::class)
-    override fun transform(call: FirFunctionCall): FirFunctionCall {
+    override fun transform(call: FirFunctionCall, symbol: FirBasedSymbol<*>): FirFunctionCall {
         val (token, dataFrameSchema) =
             analyzeRefinedCallShape(call, InterpretationErrorReporter.DEFAULT) ?: return call
 
@@ -282,7 +280,7 @@ class NewCandidateInterceptor(
                 return if (element is FirResolvedNamedReference) {
                     buildResolvedNamedReference {
                         this.name = element.name
-                        resolvedSymbol = call.calleeReference.toResolvedFunctionSymbol()!!.fir.originalCall as FirNamedFunctionSymbol
+                        resolvedSymbol = symbol as FirNamedFunctionSymbol
                     } as E
                 } else {
                     element
@@ -319,7 +317,7 @@ class NewCandidateInterceptor(
                             type = receiverType
                         }
                         this.name = itName
-                        symbol = parameterSymbol
+                        this.symbol = parameterSymbol
                         containingFunctionSymbol = fSymbol
                         isCrossinline = false
                         isNoinline = false
@@ -348,7 +346,7 @@ class NewCandidateInterceptor(
                             this.target = target
                         }
                     }
-                    symbol = fSymbol
+                    this.symbol = fSymbol
                     isLambda = true
                     hasExplicitParameterList = false
                     typeRef = buildResolvedTypeRef {
@@ -368,6 +366,7 @@ class NewCandidateInterceptor(
         }
 
         val newCall1 = buildFunctionCall {
+            source = call.source
             this.coneTypeOrNull = ConeClassLikeTypeImpl(
                 ConeClassLikeLookupTagImpl(call.coneTypeOrNull?.classId!!),
                 arrayOf(
@@ -397,6 +396,7 @@ class NewCandidateInterceptor(
             extensionReceiver = callExtensionReceiver
             argumentList = buildResolvedArgumentList(linkedMapOf(argument to parameter.fir))
             calleeReference = buildResolvedNamedReference {
+                source = call.calleeReference.source
                 this.name = Name.identifier("let")
                 resolvedSymbol = resolvedLet
             }

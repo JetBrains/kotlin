@@ -154,7 +154,7 @@ class CandidateInterceptor(
         .replace("\"", "\\\"")
 
     @OptIn(SymbolInternals::class)
-    override fun transform(call: FirFunctionCall): FirFunctionCall = with (context) {
+    override fun transform(call: FirFunctionCall, symbol: FirBasedSymbol<*>): FirFunctionCall = with (context) {
         val (token, dataFrameSchema) =
             analyzeRefinedCallShape(call, InterpretationErrorReporter.DEFAULT) ?: return call
 
