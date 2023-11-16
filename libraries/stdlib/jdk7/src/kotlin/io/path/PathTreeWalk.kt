@@ -43,7 +43,10 @@ internal class PathTreeWalk(
         entriesAction: (List<PathNode>) -> Unit
     ) {
         val path = node.path
-        path.checkFileName()
+        if (node.parent != null) {
+            // Check only for entries inside a directory
+            path.checkFileName()
+        }
         if (path.isDirectory(*linkOptions)) {
             if (node.createsCycle())
                 throw FileSystemLoopException(path.toString())
