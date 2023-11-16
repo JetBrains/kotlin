@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.kapt4
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import kotlinx.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetimeTokenProvider
@@ -15,13 +16,19 @@ import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISe
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.kapt3.base.KaptContext
+import org.jetbrains.kotlin.kapt3.base.KaptFlag
 import org.jetbrains.kotlin.kapt3.base.KaptOptions
+import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.test.KaptMessageCollectorProvider
 import org.jetbrains.kotlin.kapt3.test.kaptOptionsProvider
+import org.jetbrains.kotlin.kotlinp.Kotlinp
+import org.jetbrains.kotlin.kotlinp.KotlinpSettings
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 internal class Kapt4Facade(private val testServices: TestServices) :
@@ -64,7 +71,7 @@ private fun run(
     options: KaptOptions,
     applicationDisposable: Disposable,
     projectDisposable: Disposable,
-): Pair<Kapt4ContextForStubGeneration, Map<KtLightClass, Kapt4StubGenerator.KaptStub?>> {
+): Pair<KaptContext, Map<KtLightClass, KaptStub?>> {
     val standaloneAnalysisAPISession = buildStandaloneAnalysisAPISession(applicationDisposable, projectDisposable) {
         (project as MockProject).registerService(
             KtLifetimeTokenProvider::class.java,
@@ -76,24 +83,45 @@ private fun run(
     val (module, psiFiles) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
 
     return KtAnalysisSessionProvider.getInstance(module.project).analyze(module) {
-        val context = Kapt4ContextForStubGeneration(
+        val context = KaptContext(
             options,
             withJdk = false,
             WriterBackedKaptLogger(isVerbose = false),
-            this@analyze,
-            psiFiles.filterIsInstance<KtFile>()
         )
-        val generator = with(context) { Kapt4StubGenerator() }
-        context to generator.generateStubs()
+        val onError = { message: String ->
+            if (context.options[KaptFlag.STRICT]) {
+                context.reportKaptError(*message.split("\n").toTypedArray())
+            } else {
+                context.logger.warn(message)
+            }
+        }
+        context to generateStubs(psiFiles.filterIsInstance<KtFile>(), options, onError,this@analyze, metadataRenderer = { renderMetadata(it) })
     }
 }
 
 internal data class Kapt4ContextBinaryArtifact(
-    internal val kaptContext: Kapt4ContextForStubGeneration,
-    internal val kaptStubs: List<Kapt4StubGenerator.KaptStub>
+    internal val kaptContext: KaptContext,
+    internal val kaptStubs: List<KaptStub>
 ) : ResultingArtifact.Binary<Kapt4ContextBinaryArtifact>() {
     object Kind : BinaryKind<Kapt4ContextBinaryArtifact>("KaptArtifact")
 
     override val kind: BinaryKind<Kapt4ContextBinaryArtifact>
         get() = Kind
+}
+
+private fun Printer.renderMetadata(metadata: Metadata) {
+    val text = Kotlinp(KotlinpSettings(isVerbose = true, sortDeclarations = true)).renderClassFile(KotlinClassMetadata.read(metadata))
+    // "/*" and "*/" delimiters are used in kotlinp, for example to render type parameter names. Replace them with something else
+    // to avoid them being interpreted as Java comments.
+    val sanitized = text.split('\n')
+        .dropLast(1)
+        .map {
+            it.replace("/*", "(*").replace("*/", "*)")
+        }
+    println("/**")
+    sanitized.forEach {
+        println(" * ", it)
+    }
+    println(" */")
+    println("@kotlin.Metadata()")
 }

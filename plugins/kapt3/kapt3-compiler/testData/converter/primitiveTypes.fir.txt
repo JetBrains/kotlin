@@ -150,9 +150,9 @@ public final class PrimitiveTypes {
     public static final int intMinValue = -2147483648;
     public static final int intMaxValue = 2147483647;
     public static final int intHex = -1;
-    public static final byte byte0 = (byte)0;
-    public static final byte byte50 = (byte)50;
-    public static final short short5 = (short)5;
+    public static final byte byte0 = 0;
+    public static final byte byte50 = 50;
+    public static final short short5 = 5;
     public static final char charC = 'C';
     public static final char char0 = '\u0000';
     public static final char char10 = '\n';

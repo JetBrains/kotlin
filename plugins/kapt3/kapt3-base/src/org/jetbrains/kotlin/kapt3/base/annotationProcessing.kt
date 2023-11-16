@@ -32,6 +32,12 @@ import com.sun.tools.javac.util.List as JavacList
 fun KaptContext.doAnnotationProcessing(
     javaSourceFiles: List<File>,
     processors: List<IncrementalProcessor>,
+    binaryTypesToReprocess: List<String> = emptyList()
+) = doAnnotationProcessing(javaSourceFiles, processors, JavacList.nil(), binaryTypesToReprocess)
+
+fun KaptContext.doAnnotationProcessing(
+    javaSourceFiles: List<File>,
+    processors: List<IncrementalProcessor>,
     additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil(),
     binaryTypesToReprocess: List<String> = emptyList()
 ) {

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.kapt3.stubs
 
-import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
 
 /**
@@ -20,9 +19,9 @@ import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
  * The consequence is that the contents of the generated stub files may not be consistent across a clean build and an incremental
  * build, making the build non-deterministic and dependent tasks run unnecessarily (see KT-40882).
  */
-class MembersPositionComparator(val classSource: KotlinPosition?, val memberData: Map<JCTree, MemberData>) :
-    Comparator<JCTree> {
-    override fun compare(o1: JCTree, o2: JCTree): Int {
+class MembersPositionComparator<T>(val classSource: KotlinPosition?, val memberData: Map<T, MemberData>) :
+    Comparator<T> {
+    override fun compare(o1: T, o2: T): Int {
         val data1 = memberData.getValue(o1)
         val data2 = memberData.getValue(o2)
         classSource ?: return compareDescriptors(data1, data2)

@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.kapt4
 
 import com.intellij.psi.*
-import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
-import org.jetbrains.kotlin.kapt3.base.stubs.getJavacSignature
 import org.jetbrains.kotlin.kapt3.stubs.KaptLineMappingCollectorBase
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
-internal class Kapt4LineMappingCollector: KaptLineMappingCollectorBase() {
+internal class Kapt4LineMappingCollector : KaptLineMappingCollectorBase() {
     fun registerClass(lightClass: PsiClass) {
         register(lightClass, lightClass.qualifiedNameWithSlashes)
     }
@@ -25,13 +24,8 @@ internal class Kapt4LineMappingCollector: KaptLineMappingCollectorBase() {
         register(field, lightClass.qualifiedNameWithSlashes + "#" + field.name)
     }
 
-    fun registerSignature(declaration: JCTree.JCMethodDecl, method: PsiMethod) {
-        signatureInfo[declaration.getJavacSignature()] = method.name + method.signature
-    }
-
-    fun getPosition(lightClass: PsiClass): KotlinPosition? {
-        return lineInfo[lightClass.qualifiedNameWithSlashes]
-    }
+    fun getPosition(clazz: PsiClass): KotlinPosition? =
+        lineInfo[clazz.qualifiedNameWithSlashes]
 
     fun getPosition(lightClass: PsiClass, method: PsiMethod): KotlinPosition? =
         lineInfo[lightClass.qualifiedNameWithSlashes + "#" + method.name + method.signature]
@@ -47,4 +41,8 @@ internal class Kapt4LineMappingCollector: KaptLineMappingCollectorBase() {
 
     private val PsiClass.qualifiedNameWithSlashes: String
         get() = qualifiedNameWithDollars?.replace(".", "/") ?: "<no name provided>"
+
+    fun registerSignature(javacSignature: String, method: PsiMethod) {
+        signatureInfo[javacSignature] = method.name + method.signature
+    }
 }

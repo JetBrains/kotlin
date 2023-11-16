@@ -44,6 +44,7 @@ class Test4 {
 }
 
 enum class EnumError {
+    /** This is the one */
     One {
         override fun doIt() = ""
 

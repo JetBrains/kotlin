@@ -135,10 +135,10 @@ public enum Em {
 @kotlin.Metadata()
 public final class Foo {
     private final boolean z = true;
-    private final byte b = (byte)0;
+    private final byte b = 0;
     private final char c = 'c';
     private final char c2 = '\n';
-    private final short sh = (short)10;
+    private final short sh = 10;
     private final int i = 10;
     private final long l = -10L;
     private final float f = 1.0F;
