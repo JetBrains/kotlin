@@ -135,13 +135,16 @@ private class LLFirTypeTargetResolver(
                 val scopesBeforeContainingClass = transformer.scopesBefore
                     ?: errorWithFirSpecificEntries("The containing class scope is not found", fir = target)
 
+                val staticScopesBeforeContainingClass = transformer.staticScopesBefore
+                    ?: errorWithFirSpecificEntries("The containing class static scope is not found", fir = target)
+
                 @OptIn(PrivateForInline::class)
                 transformer.withScopeCleanup {
                     val clazz = transformer.classDeclarationsStack.last()
                     if (!transformer.removeOuterTypeParameterScope(clazz)) {
                         transformer.scopes = scopesBeforeContainingClass
                     } else {
-                        transformer.scopes = transformer.staticScopes
+                        transformer.scopes = staticScopesBeforeContainingClass
                         transformer.addTypeParametersScope(clazz)
                     }
 

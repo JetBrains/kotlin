@@ -153,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 
         public? final? [ResolvedTo(TYPES)] class MyClass : R|second/Base| {
             public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                LAZY_super<R|second/MyClass.Base|>
+                LAZY_super<R|second/Base|>
             }
 
             public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class MyClass : R|second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                LAZY_super<R|second/MyClass.Base|>
+                LAZY_super<R|second/Base|>
             }
 
             public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class MyClass : R|second/Base| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                LAZY_super<R|second/MyClass.Base|>
+                LAZY_super<R|second/Base|>
             }
 
             public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
@@ -237,7 +237,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class MyClass : R|second/Base| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                LAZY_super<R|second/MyClass.Base|>
+                LAZY_super<R|second/Base|>
             }
 
             public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
@@ -265,7 +265,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class MyClass : R|second/Base| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                LAZY_super<R|second/MyClass.Base|>
+                LAZY_super<R|second/Base|>
             }
 
             public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
@@ -293,7 +293,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class MyClass : R|second/Base| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                LAZY_super<R|second/MyClass.Base|>
+                LAZY_super<R|second/Base|>
             }
 
             public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
@@ -321,11 +321,11 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashImplicitConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class MyClass : R|second/Base| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                super<R|second/MyClass.Base|>()
+                super<R|second/Base|>()
             }
 
-            public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
+            public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
@@ -349,7 +349,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNameClashImplicitConstructorScript
 
         public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|second/Base| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                super<R|second/MyClass.Base|>()
+                super<R|second/Base|>()
             }
 
             public open [ResolvedTo(BODY_RESOLVE)] class Base : R|kotlin/Any| {
@@ -360,3 +360,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNameClashImplicitConstructorScript
             }
 
         }
+

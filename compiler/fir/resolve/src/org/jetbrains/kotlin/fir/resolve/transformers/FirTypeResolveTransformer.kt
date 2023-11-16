@@ -82,6 +82,9 @@ open class FirTypeResolveTransformer(
     @set:PrivateForInline
     var scopesBefore: PersistentList<FirScope>? = null
 
+    @set:PrivateForInline
+    var staticScopesBefore: PersistentList<FirScope>? = null
+
     private var currentDeclaration: FirDeclaration? = null
 
     private inline fun <T> withDeclaration(declaration: FirDeclaration, crossinline action: () -> T): T {
@@ -397,16 +400,21 @@ open class FirTypeResolveTransformer(
 
     inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
         val scopesBeforeSnapshot = scopes
+        val scopesBeforeBeforeSnapshot = scopesBefore
         scopesBefore = scopesBeforeSnapshot
 
-        val staticScopesBefore = staticScopes
+        val staticScopesBeforeSnapshot = staticScopes
+        val staticScopesBeforeBeforeSnapshot = staticScopesBefore
+        staticScopesBefore = staticScopesBeforeSnapshot
 
-        val result = l()
-
-        scopes = scopesBeforeSnapshot
-        staticScopes = staticScopesBefore
-
-        return result
+        return try {
+            l()
+        } finally {
+            scopes = scopesBeforeSnapshot
+            scopesBefore = scopesBeforeBeforeSnapshot
+            staticScopes = staticScopesBeforeSnapshot
+            staticScopesBefore = staticScopesBeforeBeforeSnapshot
+        }
     }
 
     private fun resolveClassContent(
