@@ -93,7 +93,8 @@ internal abstract class FirBaseTowerResolveTask(
         return ScopeTowerLevel(
             components, this,
             givenExtensionReceiverOptions = createExtensionReceiverOptions(contextReceiverGroup, extensionReceiver),
-            withHideMembersOnly, includeInnerConstructors, dispatchReceiverForStatics
+            withHideMembersOnly, includeInnerConstructors, dispatchReceiverForStatics,
+            extensionReceiversAreContexts = contextReceiverGroup != null
         )
     }
 

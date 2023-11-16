@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.SmartList
@@ -165,6 +167,7 @@ class MemberScopeTowerLevel(
     private fun <T : FirCallableSymbol<*>> FirTypeScope.collectCandidates(
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): Pair<Boolean, List<MemberWithBaseScope<T>>> {
+        val dispatchIsContext = dispatchReceiverValue is ImplicitReceiverValue<*> && dispatchReceiverValue.isContextReceiver
         var empty = true
         val result = mutableListOf<MemberWithBaseScope<T>>()
         processScopeMembers { candidate ->
@@ -177,11 +180,19 @@ class MemberScopeTowerLevel(
                 if ((fir as? FirConstructor)?.isInner == false || fir.origin == FirDeclarationOrigin.SamConstructor) {
                     return@processScopeMembers
                 }
+                // Calls on a dispatch receiver, when it's coming from context, must be accessible
+                if (dispatchIsContext && !candidate.contextuallyAccessible) {
+                    return@processScopeMembers
+                }
                 result += MemberWithBaseScope(candidate, this)
             }
         }
         return empty to result
     }
+
+    private val FirCallableSymbol<*>.contextuallyAccessible: Boolean
+        get() = originalOrSelf().directContextuallyAccessible ||
+                dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.directContextuallyAccessible == true
 
     private fun <T : FirCallableSymbol<*>> consumeCandidates(
         output: TowerScopeLevelProcessor<T>,
@@ -323,7 +334,8 @@ class ScopeTowerLevel(
     private val givenExtensionReceiverOptions: List<FirExpression>,
     private val withHideMembersOnly: Boolean,
     private val includeInnerConstructors: Boolean,
-    private val dispatchReceiverForStatics: ExpressionReceiverValue?
+    private val dispatchReceiverForStatics: ExpressionReceiverValue?,
+    private val extensionReceiversAreContexts: Boolean = false
 ) : TowerScopeLevel() {
     private val session: FirSession get() = bodyResolveComponents.session
 
@@ -413,6 +425,11 @@ class ScopeTowerLevel(
         if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
             return
         }
+
+        if (receiverExpected && extensionReceiversAreContexts && !candidate.directContextuallyAccessible) {
+            return
+        }
+
         val unwrappedCandidate = candidate.fir.importedFromObjectOrStaticData?.original?.symbol ?: candidate
         @Suppress("UNCHECKED_CAST")
         processor.consumeCandidate(
@@ -476,3 +493,6 @@ class ScopeTowerLevel(
 private fun FirCallableSymbol<*>.hasExtensionReceiver(): Boolean {
     return fir.receiverParameter != null
 }
+
+private val FirBasedSymbol<*>.directContextuallyAccessible: Boolean
+    get() = annotations.any { it.resolvedType.classId == ClassId.topLevel(FqName("kotlin.Contextual")) }
