@@ -765,6 +765,54 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
             runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/simpleLoopInOverrideScript.kts");
         }
 
+        @Test
+        @TestMetadata("superTypeCallNameClashImplicitConstructorScript.kts")
+        public void testSuperTypeCallNameClashImplicitConstructorScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashImplicitConstructorScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNameClashScript.kts")
+        public void testSuperTypeCallNameClashScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts")
+        public void testSuperTypeCallNameClashWithAnnotationImplicitConstructorScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNameClashWithAnnotationScript.kts")
+        public void testSuperTypeCallNameClashWithAnnotationScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashWithAnnotationScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNestedNameClashImplicitConstructorScript.kts")
+        public void testSuperTypeCallNestedNameClashImplicitConstructorScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashImplicitConstructorScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNestedNameClashScript.kts")
+        public void testSuperTypeCallNestedNameClashScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts")
+        public void testSuperTypeCallNestedNameClashWithAnnotationImplicitConstructorScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNestedNameClashWithAnnotationScript.kts")
+        public void testSuperTypeCallNestedNameClashWithAnnotationScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashWithAnnotationScript.kts");
+        }
+
         @Nested
         @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass")
         @TestDataPath("$PROJECT_ROOT")
@@ -925,6 +973,54 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
         @TestMetadata("simpleLoopInOverrideScript.kts")
         public void testSimpleLoopInOverrideScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/simpleLoopInOverrideScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNameClashImplicitConstructorScript.kts")
+        public void testSuperTypeCallNameClashImplicitConstructorScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashImplicitConstructorScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNameClashScript.kts")
+        public void testSuperTypeCallNameClashScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts")
+        public void testSuperTypeCallNameClashWithAnnotationImplicitConstructorScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNameClashWithAnnotationScript.kts")
+        public void testSuperTypeCallNameClashWithAnnotationScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashWithAnnotationScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNestedNameClashImplicitConstructorScript.kts")
+        public void testSuperTypeCallNestedNameClashImplicitConstructorScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashImplicitConstructorScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNestedNameClashScript.kts")
+        public void testSuperTypeCallNestedNameClashScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts")
+        public void testSuperTypeCallNestedNameClashWithAnnotationImplicitConstructorScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallNestedNameClashWithAnnotationScript.kts")
+        public void testSuperTypeCallNestedNameClashWithAnnotationScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashWithAnnotationScript.kts");
         }
     }
 
