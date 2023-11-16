@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNREACHABLE_CODE -UNUSED_PARAMETER
+
 val prop: Int =
     js("1")
 
@@ -54,60 +56,60 @@ val p14: Int = js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>delegatedVal<!>)
 
 
 fun foo0(b: Boolean): Int =
-    if (b) js("1") else js("2")
+    if (b) <!JSCODE_WRONG_CONTEXT!>js<!>("1") else <!JSCODE_WRONG_CONTEXT!>js<!>("2")
 
 fun foo1(): Int {
     println()
-    js("return x;")
+    <!JSCODE_WRONG_CONTEXT!>js<!>("return x;")
 }
 
 fun foo11() {
-    fun local1(): Int = js("1")
+    fun local1(): Int = <!JSCODE_WRONG_CONTEXT!>js<!>("1")
     fun local2(): Int {
-        js("return 1;")
+        <!JSCODE_WRONG_CONTEXT!>js<!>("return 1;")
     }
     fun local3(): Int {
         println()
-        js("return 1;")
+        <!JSCODE_WRONG_CONTEXT!>js<!>("return 1;")
     }
 }
 
 class C {
-    fun memberFun1(): Int = js("1")
+    fun memberFun1(): Int = <!JSCODE_WRONG_CONTEXT!>js<!>("1")
     fun memberFun2(): Int {
-        js("return 1;")
+        <!JSCODE_WRONG_CONTEXT!>js<!>("return 1;")
     }
 
     constructor() {
-        js("1;")
+        <!JSCODE_WRONG_CONTEXT!>js<!>("1;")
     }
 
     init {
-        js("1")
+        <!JSCODE_WRONG_CONTEXT!>js<!>("1")
     }
 
-    val memberProperty: Int = js("1")
+    val memberProperty: Int = <!JSCODE_WRONG_CONTEXT!>js<!>("1")
 }
 
-fun withDefault(x: Int = js("1")) {
+fun withDefault(x: Int = <!JSCODE_WRONG_CONTEXT!>js<!>("1")) {
     println(x)
 }
 
-suspend fun suspendFun(): Int = js("1")
+suspend fun suspendFun(): Int = <!JSCODE_UNSUPPORTED_FUNCTION_KIND!>js<!>("1")
 
-inline fun inlineFun(f: () -> Int): Int = js("f()")
+inline fun inlineFun(f: () -> Int): Int = <!JSCODE_UNSUPPORTED_FUNCTION_KIND!>js<!>("f()")
 
-fun Int.extensionFun(): Int = js("1")
+fun Int.extensionFun(): Int = <!JSCODE_UNSUPPORTED_FUNCTION_KIND!>js<!>("1")
 
 var propertyWithAccessors: Int
-    get(): Int = js("1")
+    get(): Int = <!JSCODE_WRONG_CONTEXT!>js<!>("1")
     set(value: Int) {
-        js("console.log(value);")
+        <!JSCODE_WRONG_CONTEXT!>js<!>("console.log(value);")
     }
 
 
 fun invalidNames(
-    `a b`: Int,
-    `1b`: Int,
+    <!JSCODE_INVALID_PARAMETER_NAME!>`a b`: Int<!>,
+    <!JSCODE_INVALID_PARAMETER_NAME!>`1b`: Int<!>,
     `ab$`: Int
 ): Int = js("1")

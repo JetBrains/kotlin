@@ -33,6 +33,14 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
         val WRONG_JS_FUN_TARGET by error<PsiElement>()
     }
 
+    val JSCODE by object : DiagnosticGroup("JsCode") {
+        val JSCODE_WRONG_CONTEXT by error<KtElement>(PositioningStrategy.NAME_IDENTIFIER)
+        val JSCODE_UNSUPPORTED_FUNCTION_KIND by error<KtElement>(PositioningStrategy.NAME_IDENTIFIER) {
+            parameter<String>("place")
+        }
+        val JSCODE_INVALID_PARAMETER_NAME by error<KtElement>()
+    }
+
     val WASM_INTEROP by object : DiagnosticGroup("Wasm interop") {
         val NESTED_WASM_EXPORT by error<KtElement>()
         val WASM_EXPORT_ON_EXTERNAL_DECLARATION by error<KtElement>()

@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNREACHABLE_CODE -UNUSED_PARAMETER
+
 val prop: Int =
     js("1")
 
@@ -78,15 +80,15 @@ class C {
         <!JSCODE_WRONG_CONTEXT!>js<!>("return 1;")
     }
 
-    constructor() <!UNREACHABLE_CODE!>{
+    constructor() {
         <!JSCODE_WRONG_CONTEXT!>js<!>("1;")
-    }<!>
+    }
 
     init {
         <!JSCODE_WRONG_CONTEXT!>js<!>("1")
     }
 
-    <!UNREACHABLE_CODE!>val memberProperty: Int = <!JSCODE_WRONG_CONTEXT!>js<!>("1")<!>
+    val memberProperty: Int = <!JSCODE_WRONG_CONTEXT!>js<!>("1")
 }
 
 fun withDefault(x: Int = <!JSCODE_WRONG_CONTEXT!>js<!>("1")) {
@@ -101,7 +103,7 @@ fun Int.extensionFun(): Int = <!JSCODE_UNSUPPORTED_FUNCTION_KIND!>js<!>("1")
 
 var propertyWithAccessors: Int
     get(): Int = <!JSCODE_WRONG_CONTEXT!>js<!>("1")
-    set(<!UNUSED_PARAMETER!>value<!>: Int) {
+    set(value: Int) {
         <!JSCODE_WRONG_CONTEXT!>js<!>("console.log(value);")
     }
 

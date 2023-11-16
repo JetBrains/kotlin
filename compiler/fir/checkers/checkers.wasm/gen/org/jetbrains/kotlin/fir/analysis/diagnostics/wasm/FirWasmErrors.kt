@@ -26,6 +26,11 @@ object FirWasmErrors {
     // JsFun
     val WRONG_JS_FUN_TARGET by error0<PsiElement>()
 
+    // JsCode
+    val JSCODE_WRONG_CONTEXT by error0<KtElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
+    val JSCODE_UNSUPPORTED_FUNCTION_KIND by error1<KtElement, String>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
+    val JSCODE_INVALID_PARAMETER_NAME by error0<KtElement>()
+
     // Wasm interop
     val NESTED_WASM_EXPORT by error0<KtElement>()
     val WASM_EXPORT_ON_EXTERNAL_DECLARATION by error0<KtElement>()

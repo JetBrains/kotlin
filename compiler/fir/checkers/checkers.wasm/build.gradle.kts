@@ -10,6 +10,9 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.web.common"))
     api(project(":core:compiler.common.wasm"))
 
+    // Needed for JS identifier utils
+    implementation(project(":js:js.ast"))
+
     /*
      * We can't remove this dependency until we use
      *   diagnostics framework from FE 1.0
