@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.sir
 
-/**
- * A marker interface that denotes Swift IR elements.
- */
-interface SirElement {
+enum class SwiftVisibility {
+    PRIVATE,
+    FILEPRIVATE,
+    INTERNAL,
+    PUBLIC,
+    PACKAGE,
 }
