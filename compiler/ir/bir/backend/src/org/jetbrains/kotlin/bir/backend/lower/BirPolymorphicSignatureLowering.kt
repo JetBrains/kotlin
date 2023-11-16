@@ -105,5 +105,4 @@ class BirPolymorphicSignatureLowering : BirLoweringPhase() {
             valueArguments += values
         }
     }
-
 }
