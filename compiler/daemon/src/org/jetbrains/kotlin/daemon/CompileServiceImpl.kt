@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
-import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -106,7 +104,7 @@ abstract class CompileServiceImplBase(
     val daemonOptions: DaemonOptions,
     val compilerId: CompilerId,
     val port: Int,
-    val timer: Timer
+    val timer: Timer,
 ) {
     protected val log by lazy { Logger.getLogger("compiler") }
 
@@ -118,7 +116,7 @@ abstract class CompileServiceImplBase(
     protected class ClientOrSessionProxy<out T : Any>(
         val aliveFlagPath: String?,
         val data: T? = null,
-        private var disposable: Disposable? = null
+        private var disposable: Disposable? = null,
     ) {
         val isAlive: Boolean
             get() = aliveFlagPath?.let { File(it).exists() } ?: true // assuming that if no file was given, the client is alive
@@ -211,7 +209,7 @@ abstract class CompileServiceImplBase(
         private inline fun <T> Iterable<T>.cleanMatching(
             lock: ReentrantReadWriteLock,
             crossinline pred: (T) -> Boolean,
-            crossinline clean: (T) -> Unit
+            crossinline clean: (T) -> Unit,
         ): Boolean {
             var anyDead = false
             lock.read {
@@ -288,6 +286,48 @@ abstract class CompileServiceImplBase(
         }
     }
 
+    protected fun getPerformanceMetrics(compiler: CLICompiler<CommonCompilerArguments>): List<BuildMetricsValue> {
+        val performanceMetrics = ArrayList<BuildMetricsValue>()
+        compiler.defaultPerformanceManager.getMeasurementResults().forEach {
+            when (it) {
+                is CompilerInitializationMeasurement -> {
+                    performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.COMPILER_INITIALIZATION, it.milliseconds))
+                }
+                is CodeAnalysisMeasurement -> {
+                    performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_ANALYSIS, it.milliseconds))
+                    it.lines?.apply {
+                        performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.ANALYZED_LINES_NUMBER, this.toLong()))
+                        if (it.milliseconds > 0) {
+                            performanceMetrics.add(
+                                BuildMetricsValue(
+                                    CompilationPerformanceMetrics.ANALYSIS_LPS,
+                                    this * 1000 / it.milliseconds
+                                )
+                            )
+                        }
+                    }
+                }
+                is CodeGenerationMeasurement -> {
+                    performanceMetrics.add(
+                        BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION, it.milliseconds)
+                    )
+                    it.lines?.apply {
+                        performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATED_LINES_NUMBER, this.toLong()))
+                        if (it.milliseconds > 0) {
+                            performanceMetrics.add(
+                                BuildMetricsValue(
+                                    CompilationPerformanceMetrics.CODE_GENERATION_LPS,
+                                    this * 1000 / it.milliseconds
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        return performanceMetrics
+    }
+
     protected inline fun <ServicesFacadeT, JpsServicesFacadeT, CompilationResultsT> compileImpl(
         sessionId: Int,
         compilerArguments: Array<out String>,
@@ -298,7 +338,7 @@ abstract class CompileServiceImplBase(
         createMessageCollector: (ServicesFacadeT, CompilationOptions) -> MessageCollector,
         createReporter: (ServicesFacadeT, CompilationOptions) -> DaemonMessageReporter,
         createServices: (JpsServicesFacadeT, EventManager, Profiler) -> Services,
-        getICReporter: (ServicesFacadeT, CompilationResultsT?, IncrementalCompilationOptions) -> RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+        getICReporter: (ServicesFacadeT, CompilationResultsT?, IncrementalCompilationOptions) -> RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     ) = kotlin.run {
         val messageCollector = createMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = createReporter(servicesFacade, compilationOptions)
@@ -326,7 +366,16 @@ abstract class CompileServiceImplBase(
                 withIncrementalCompilation(k2PlatformArgs, enabled = servicesFacade.hasIncrementalCaches()) {
                     doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
                         val services = createServices(servicesFacade, eventManger, profiler)
-                        compiler.exec(messageCollector, services, k2PlatformArgs)
+                        val exitCode = compiler.exec(messageCollector, services, k2PlatformArgs)
+
+                        compilationResults.also {
+                            val compilationResult = it as CompilationResults
+                            getPerformanceMetrics(compiler).forEach {
+                                compilationResult.add(CompilationResultCategory.BUILD_METRICS.code, it)
+                            }
+                        }
+
+                        exitCode
                     }
                 }
             }
@@ -391,7 +440,7 @@ abstract class CompileServiceImplBase(
         sessionId: Int,
         daemonMessageReporter: DaemonMessageReporter,
         tracer: RemoteOperationsTracer?,
-        body: (EventManager, Profiler) -> ExitCode
+        body: (EventManager, Profiler) -> ExitCode,
     ): CompileService.CallResult<Int> = run {
         log.fine("alive!")
         withValidClientOrSessionProxy(sessionId) {
@@ -417,7 +466,7 @@ abstract class CompileServiceImplBase(
     protected inline fun <R> checkedCompile(
         daemonMessageReporter: DaemonMessageReporter,
         rpcProfiler: Profiler,
-        body: () -> R
+        body: () -> R,
     ): R {
         try {
             val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
@@ -432,9 +481,11 @@ abstract class CompileServiceImplBase(
                 val pc = profiler.getTotalCounters()
                 val rpc = rpcProfiler.getTotalCounters()
 
-                "PERF: Compile on daemon: ${pc.time.ms()} ms; thread: user ${pc.threadUserTime.ms()} ms, sys ${(pc.threadTime - pc.threadUserTime).ms()} ms; rpc: ${rpc.count} calls, ${rpc.time.ms()} ms, thread ${rpc.threadTime.ms()} ms; memory: ${endMem.kb()} kb (${"%+d".format(
-                    pc.memory.kb()
-                )} kb)".let {
+                "PERF: Compile on daemon: ${pc.time.ms()} ms; thread: user ${pc.threadUserTime.ms()} ms, sys ${(pc.threadTime - pc.threadUserTime).ms()} ms; rpc: ${rpc.count} calls, ${rpc.time.ms()} ms, thread ${rpc.threadTime.ms()} ms; memory: ${endMem.kb()} kb (${
+                    "%+d".format(
+                        pc.memory.kb()
+                    )
+                } kb)".let {
                     daemonMessageReporter.report(ReportSeverity.INFO, it)
                     log.info(it)
                 }
@@ -454,9 +505,9 @@ abstract class CompileServiceImplBase(
             log.log(
                 Level.SEVERE,
                 "Exception: $e\n  ${e.stackTrace.joinToString("\n  ")}${
-                if (e.cause != null && e.cause != e) {
-                    "\nCaused by: ${e.cause}\n  ${e.cause!!.stackTrace.joinToString("\n  ")}"
-                } else ""
+                    if (e.cause != null && e.cause != e) {
+                        "\nCaused by: ${e.cause}\n  ${e.cause!!.stackTrace.joinToString("\n  ")}"
+                    } else ""
                 }"
             )
             throw e
@@ -498,7 +549,7 @@ abstract class CompileServiceImplBase(
 
     protected inline fun <R> ifAliveChecksImpl(
         minAliveness: Aliveness = Aliveness.LastSession,
-        body: () -> CompileService.CallResult<R>
+        body: () -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> {
         val curState = state.alive.get()
         return when {
@@ -519,7 +570,7 @@ abstract class CompileServiceImplBase(
 
     protected inline fun <R> withValidClientOrSessionProxy(
         sessionId: Int,
-        body: (ClientOrSessionProxy<Any>?) -> CompileService.CallResult<R>
+        body: (ClientOrSessionProxy<Any>?) -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> {
         val session: ClientOrSessionProxy<Any>? =
             if (sessionId == CompileService.NO_SESSION) null
@@ -536,7 +587,7 @@ abstract class CompileServiceImplBase(
         args: K2JSCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
-        reporter: RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+        reporter: RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     ): ExitCode {
         reporter.startMeasureGc()
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
@@ -579,7 +630,7 @@ abstract class CompileServiceImplBase(
         k2jvmArgs: K2JVMCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
-        reporter: RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+        reporter: RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     ): ExitCode {
         reporter.startMeasureGc()
         val allKotlinExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
@@ -651,7 +702,7 @@ abstract class CompileServiceImplBase(
 
     protected inline fun <R, KotlinJvmReplServiceT> withValidReplImpl(
         sessionId: Int,
-        body: KotlinJvmReplServiceT.() -> CompileService.CallResult<R>
+        body: KotlinJvmReplServiceT.() -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> =
         withValidClientOrSessionProxy(sessionId) { session ->
             @Suppress("UNCHECKED_CAST")
@@ -668,16 +719,17 @@ class CompileServiceImpl(
     val daemonJVMOptions: DaemonJVMOptions,
     port: Int,
     timer: Timer,
-    val onShutdown: () -> Unit
+    val onShutdown: () -> Unit,
 ) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, port, timer) {
 
     private inline fun <R> withValidRepl(
         sessionId: Int,
-        body: KotlinJvmReplService.() -> CompileService.CallResult<R>
+        body: KotlinJvmReplService.() -> CompileService.CallResult<R>,
     ) = withValidReplImpl(sessionId, body)
 
-    override val lastUsedSeconds: Long get() =
-        if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
+    override val lastUsedSeconds: Long
+        get() =
+            if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
 
     private val rwlock = ReentrantReadWriteLock()
 
@@ -758,7 +810,7 @@ class CompileServiceImpl(
     }
 
     override fun classesFqNamesByFiles(
-        sessionId: Int, sourceFiles: Set<File>
+        sessionId: Int, sourceFiles: Set<File>,
     ): CompileService.CallResult<Set<String>> =
         ifAlive {
             withValidClientOrSessionProxy(sessionId) {
@@ -771,7 +823,7 @@ class CompileServiceImpl(
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBase,
-        compilationResults: CompilationResults?
+        compilationResults: CompilationResults?,
     ) = ifAlive {
         compileImpl(
             sessionId,
@@ -783,7 +835,7 @@ class CompileServiceImpl(
             createMessageCollector = ::CompileServicesFacadeMessageCollector,
             createReporter = ::DaemonMessageReporter,
             createServices = this::createCompileServices,
-            getICReporter = { a, b, c -> getBuildReporter(a, b!!, c)}
+            getICReporter = { a, b, c -> getBuildReporter(a, b!!, c) }
         )
     }
 
@@ -794,7 +846,7 @@ class CompileServiceImpl(
     private fun createCompileServices(
         @Suppress("DEPRECATION") facade: CompilerCallbackServicesFacade,
         eventManager: EventManager,
-        rpcProfiler: Profiler
+        rpcProfiler: Profiler,
     ): Services {
         val builder = Services.Builder()
         if (facade.hasIncrementalCaches()) {
@@ -834,7 +886,7 @@ class CompileServiceImpl(
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBase,
         templateClasspath: List<File>,
-        templateClassName: String
+        templateClassName: String,
     ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         if (compilationOptions.targetPlatform != CompileService.TargetPlatform.JVM)
             CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
@@ -1047,7 +1099,7 @@ class CompileServiceImpl(
             state.sessions.isEmpty() -> shutdownWithDelay()
             else -> {
                 daemonOptions.autoshutdownIdleSeconds =
-                        TimeUnit.MILLISECONDS.toSeconds(daemonOptions.forceShutdownTimeoutMilliseconds).toInt()
+                    TimeUnit.MILLISECONDS.toSeconds(daemonOptions.forceShutdownTimeoutMilliseconds).toInt()
                 daemonOptions.autoshutdownUnusedSeconds = daemonOptions.autoshutdownIdleSeconds
                 log.info("Some sessions are active, waiting for them to finish")
                 log.info("Unused/idle timeouts are set to ${daemonOptions.autoshutdownUnusedSeconds}/${daemonOptions.autoshutdownIdleSeconds}s")
@@ -1101,7 +1153,7 @@ class CompileServiceImpl(
 
     private inline fun <R> ifAlive(
         minAliveness: Aliveness = Aliveness.LastSession,
-        body: () -> CompileService.CallResult<R>
+        body: () -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> = rwlock.read {
         ifAliveChecksImpl(minAliveness, body)
     }
@@ -1115,7 +1167,7 @@ class CompileServiceImpl(
 
     private inline fun <R> ifAliveExclusive(
         minAliveness: Aliveness = Aliveness.LastSession,
-        body: () -> CompileService.CallResult<R>
+        body: () -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> = rwlock.write {
         ifAliveChecksImpl(minAliveness, body)
     }

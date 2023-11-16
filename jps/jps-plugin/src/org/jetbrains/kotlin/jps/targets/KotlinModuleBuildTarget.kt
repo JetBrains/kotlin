@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.jps.incremental.loadDiff
 import org.jetbrains.kotlin.jps.incremental.localCacheVersionManager
 import org.jetbrains.kotlin.jps.model.productionOutputFilePath
 import org.jetbrains.kotlin.jps.model.testOutputFilePath
+import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -202,7 +203,8 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     abstract fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
+        buildMetricReporter: JpsBuilderMetricReporter?
     ): Boolean
 
     open fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputItems: List<GeneratedFile>) {

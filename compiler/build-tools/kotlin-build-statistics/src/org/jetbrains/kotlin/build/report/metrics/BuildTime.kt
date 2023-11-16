@@ -20,9 +20,15 @@ interface BuildTime : Serializable {
 }
 
 
+@Suppress("Reformat")
 enum class JpsBuildTime(private val parent: JpsBuildTime? = null, private val readableString: String) : BuildTime {
 
-    JPS_ITERATION(readableString = "Jps iteration")
+    JPS_ITERATION(readableString = "Jps iteration"),
+        COMPILATION_ROUND(JPS_ITERATION, "Sources compilation round"),
+            COMPILER_PERFORMANCE(COMPILATION_ROUND, readableString = "Compiler time"),
+            COMPILER_INITIALIZATION(COMPILER_PERFORMANCE, "Compiler initialization time"),
+            CODE_ANALYSIS(COMPILER_PERFORMANCE, "Compiler code analysis"),
+            CODE_GENERATION(COMPILER_PERFORMANCE, "Compiler code generation"),
     ;
 
     override fun getReadableString(): String = readableString

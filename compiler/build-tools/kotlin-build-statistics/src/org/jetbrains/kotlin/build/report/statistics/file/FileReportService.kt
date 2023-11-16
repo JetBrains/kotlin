@@ -15,34 +15,21 @@ import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FileReportService<B : BuildTime, P : BuildPerformanceMetric>(
-    private val outputFile: File,
+open class FileReportService<B : BuildTime, P : BuildPerformanceMetric>(
+    buildReportDir: File,
+    projectName: String,
     private val printMetrics: Boolean,
     private val logger: KotlinLogger,
 ) : Serializable {
     companion object {
         private val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC") }
-        fun <B : BuildTime, P : BuildPerformanceMetric> reportBuildStatInFile(
-            buildReportDir: File,
-            projectName: String,
-            includeMetricsInReport: Boolean,
-            buildData: List<CompileStatisticsData<B, P>>,
-            startParameters: BuildStartParameters,
-            failureMessages: List<String>,
-            logger: KotlinLogger,
-        ) {
-            val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
-            val reportFile = buildReportDir.resolve("$projectName-build-$ts.txt")
-
-            FileReportService<B, P>(
-                outputFile = reportFile,
-                printMetrics = includeMetricsInReport,
-                logger = logger
-            ).process(buildData, startParameters, failureMessages)
-        }
     }
+    private val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
+    private val outputFile = buildReportDir.resolve("$projectName-build-$ts.txt")
 
-    private lateinit var p: Printer
+    protected lateinit var p: Printer
+
+    open fun printCustomTaskMetrics(statisticsData: CompileStatisticsData<B, P>) {}
 
     fun process(
         statisticsData: List<CompileStatisticsData<B, P>>,
@@ -263,14 +250,18 @@ class FileReportService<B : BuildTime, P : BuildPerformanceMetric>(
         p.println()
     }
 
-    private fun printTasksLog(statisticsData: List<CompileStatisticsData<B, P>>) {
+    private fun printTasksLog(
+        statisticsData: List<CompileStatisticsData<B, P>>,
+    ) {
         for (task in statisticsData.sortedWith(compareBy({ -it.getDurationMs() }, { it.getStartTimeMs() }))) {
             printTaskLog(task)
             p.println()
         }
     }
 
-    private fun <B : BuildTime, P : BuildPerformanceMetric> printTaskLog(statisticsData: CompileStatisticsData<B, P>) {
+    private fun printTaskLog(
+        statisticsData: CompileStatisticsData<B, P>,
+    ) {
         val skipMessage = statisticsData.getSkipMessage()
         if (skipMessage != null) {
             p.println("Task '${statisticsData.getTaskName()}' was skipped: $skipMessage")
@@ -295,6 +286,7 @@ class FileReportService<B : BuildTime, P : BuildPerformanceMetric>(
                 statisticsData.getBuildTimesMetrics(), statisticsData.getPerformanceMetrics(), statisticsData.getNonIncrementalAttributes(),
                 statisticsData.getGcTimeMetrics(), statisticsData.getGcCountMetrics()
             )
+            printCustomTaskMetrics(statisticsData)
         }
     }
 }

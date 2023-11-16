@@ -10,12 +10,12 @@ import org.gradle.api.logging.Logging
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.build.report.metrics.ValueType
 import org.jetbrains.kotlin.build.report.statistics.HttpReportService
-import org.jetbrains.kotlin.build.report.statistics.file.FileReportService
 import org.jetbrains.kotlin.build.report.statistics.formatSize
 import org.jetbrains.kotlin.build.report.statistics.BuildFinishStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.statistics.GradleFileReportService
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
@@ -51,7 +51,7 @@ class BuildReportsService {
     fun close(
         buildOperationRecords: Collection<BuildOperationRecord>,
         failureMessages: List<String>,
-        parameters: BuildReportParameters
+        parameters: BuildReportParameters,
     ) {
         val buildData = BuildExecutionData(
             startParameters = parameters.startParameters,
@@ -65,14 +65,15 @@ class BuildReportsService {
             executorService.submit { reportBuildFinish(parameters) }
         }
         reportingSettings.fileReportSettings?.also {
-            FileReportService.reportBuildStatInFile(
+            GradleFileReportService(
                 it.buildReportDir,
                 parameters.projectName,
                 it.includeMetricsInReport,
+                loggerAdapter
+            ).process(
                 transformOperationRecordsToCompileStatisticsData(buildOperationRecords, parameters, onlyKotlinTask = false),
                 parameters.startParameters,
                 failureMessages.filter { it.isNotEmpty() },
-                loggerAdapter
             )
         }
 
@@ -92,7 +93,7 @@ class BuildReportsService {
         buildOperationRecords: Collection<BuildOperationRecord>,
         parameters: BuildReportParameters,
         onlyKotlinTask: Boolean,
-        metricsToShow: Set<String>? = null
+        metricsToShow: Set<String>? = null,
     ) = buildOperationRecords.mapNotNull {
         prepareData(
             taskResult = null,
@@ -112,7 +113,7 @@ class BuildReportsService {
 
     fun onFinish(
         event: TaskFinishEvent, buildOperation: BuildOperationRecord,
-        parameters: BuildReportParameters
+        parameters: BuildReportParameters,
     ) {
         addHttpReport(event, buildOperation, parameters)
     }
@@ -162,7 +163,7 @@ class BuildReportsService {
     private fun addHttpReport(
         event: TaskFinishEvent,
         buildOperationRecord: BuildOperationRecord,
-        parameters: BuildReportParameters
+        parameters: BuildReportParameters,
     ) {
         parameters.httpService?.also { httpService ->
             val data =
@@ -189,7 +190,7 @@ class BuildReportsService {
         event: TaskFinishEvent,
         buildOperationRecord: BuildOperationRecord,
         parameters: BuildReportParameters,
-        buildScanExtension: BuildScanExtensionHolder
+        buildScanExtension: BuildScanExtensionHolder,
     ) {
         val buildScanSettings = parameters.reportingSettings.buildScanReportSettings ?: return
 
@@ -212,7 +213,7 @@ class BuildReportsService {
     internal fun addBuildScanReport(
         buildOperationRecords: Collection<BuildOperationRecord>,
         parameters: BuildReportParameters,
-        buildScanExtension: BuildScanExtensionHolder
+        buildScanExtension: BuildScanExtensionHolder,
     ) {
         val buildScanSettings = parameters.reportingSettings.buildScanReportSettings ?: return
 
@@ -256,14 +257,14 @@ class BuildReportsService {
     private fun addBuildScanValue(
         buildScan: BuildScanExtensionHolder,
         data: GradleCompileStatisticsData,
-        customValue: String
+        customValue: String,
     ) {
         buildScan.buildScan.value(data.getTaskName(), customValue)
         customValues++
     }
 
     private fun reportTryNextToConsole(
-        data: BuildExecutionData
+        data: BuildExecutionData,
     ) {
         val tasksData = data.buildOperationRecord
             .filterIsInstance<TaskRecord>()
@@ -309,7 +310,8 @@ class BuildReportsService {
         }
 
         val timeData =
-            data.getBuildTimesMetrics().map { (key, value) -> "${key.getReadableString()}: ${value}ms" } //sometimes it is better to have separate variable to be able debug
+            data.getBuildTimesMetrics()
+                .map { (key, value) -> "${key.getReadableString()}: ${value}ms" } //sometimes it is better to have separate variable to be able debug
         val perfData = data.getPerformanceMetrics().map { (key, value) ->
             when (key.getType()) {
                 ValueType.BYTES -> "${key.getReadableString()}: ${formatSize(value)}"
@@ -419,5 +421,5 @@ data class BuildReportParameters(
     val label: String?,
     val projectName: String,
     val kotlinVersion: String,
-    val additionalTags: Set<StatTag>
+    val additionalTags: Set<StatTag>,
 )

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.jps.build.KotlinCompileContext
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.model.platform
+import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
 import org.jetbrains.kotlin.platform.idePlatformKind
 
 class KotlinUnsupportedModuleBuildTarget(
@@ -40,7 +41,8 @@ class KotlinUnsupportedModuleBuildTarget(
     override fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
+        buildMetricReporter: JpsBuilderMetricReporter?
     ): Boolean {
         shouldNotBeCalled()
     }
