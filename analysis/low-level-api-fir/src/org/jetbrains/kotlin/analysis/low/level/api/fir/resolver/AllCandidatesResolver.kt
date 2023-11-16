@@ -10,14 +10,17 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.AllCandidatesCollector
+import org.jetbrains.kotlin.fir.FirCallResolver
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.OverloadCandidate
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.calleeReference
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
@@ -67,12 +70,19 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         qualifiedAccess: FirQualifiedAccessExpression,
         calleeName: Name,
         element: KtElement,
+        resolutionMode: ResolutionMode,
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(firResolveSession, element)
 
         return run {
             bodyResolveComponents.callResolver
-                .collectAllCandidates(qualifiedAccess, calleeName, bodyResolveComponents.context.containers, resolutionContext)
+                .collectAllCandidates(
+                    qualifiedAccess,
+                    calleeName,
+                    bodyResolveComponents.context.containers,
+                    resolutionContext,
+                    resolutionMode,
+                )
                 .apply { postProcessCandidates() }
         }
     }
