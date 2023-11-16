@@ -78,9 +78,13 @@ publish {
     artifactId = artifactId.replace("kotlinx-", "kotlin-")
 }
 
+val archiveName = "kotlin-serialization-compiler-plugin"
+val archiveCompatName = "kotlinx-serialization-compiler-plugin"
+
 val runtimeJar = runtimeJar {
-    archiveBaseName.set("kotlin-serialization-compiler-plugin")
+    archiveBaseName.set(archiveName)
 }
+
 sourcesJar()
 javadocJar()
 testsJar()
@@ -100,7 +104,7 @@ val compatJar = tasks.register<Copy>("compatJar") {
 }
 
 artifacts {
-    add(distCompat.name, compatJar) {
+    add(distCompat.name, layout.buildDirectory.dir("libsCompat").map { it.file("$archiveCompatName-$version.jar") }) {
         builtBy(runtimeJar, compatJar)
     }
 }
