@@ -125,7 +125,18 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     }
 
     sealed class ModificationType {
-        object NewElement : ModificationType()
+        /**
+         * The element passed to [elementModified] has been added as a new element.
+         */
+        object ElementAdded : ModificationType()
+
+        /**
+         * The element passed to [elementModified] is the parent of a removed element, which is additionally passed via the modification
+         * type as [removedElement]. The removed element itself cannot be the modification "anchor" because it has already been removed and
+         * is not part of the `KtFile` anymore, but it might still be used to determine the modification's change type.
+         */
+        class ElementRemoved(val removedElement: PsiElement) : ModificationType()
+
         object Unknown : ModificationType()
     }
 
@@ -135,12 +146,13 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      *
      * Will publish event to [MODULE_OUT_OF_BLOCK_MODIFICATION] in case of out-of-block modification.
      *
-     * @param element is an element that we want to modify, remove or add.
+     * @param element is an element that we want to/did already modify, remove, or add.
      * Some examples:
      * * [element] is [KtNamedFunction][org.jetbrains.kotlin.psi.KtNamedFunction] if we
      * dropped body ([KtBlockExpression][org.jetbrains.kotlin.psi.KtBlockExpression]) of this function
      * * [element] is [KtBlockExpression][org.jetbrains.kotlin.psi.KtBlockExpression] if we replaced one body-expression with another one
      * * [element] is [KtBlockExpression][org.jetbrains.kotlin.psi.KtBlockExpression] if added a body to the function without body
+     * * [element] is the parent of an already removed element, while [ModificationType.ElementRemoved] will contain the removed element
      *
      * @param modificationType additional information to make more accurate decisions
      */
@@ -157,18 +169,52 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     private fun calculateChangeType(element: PsiElement, modificationType: ModificationType): ChangeType = when {
         // If PSI is not valid, well something bad happened; OOBM won't hurt
         !element.isValid -> ChangeType.OutOfBlock
+
         element is PsiWhiteSpace || element is PsiComment -> ChangeType.Invisible
+
         // TODO improve for Java KTIJ-21684
         element.language !is KotlinLanguage -> ChangeType.OutOfBlock
+
         else -> {
             val inBlockModificationOwner = nonLocalDeclarationForLocalChange(element)
-            if (inBlockModificationOwner != null && (element.parent != inBlockModificationOwner || modificationType != ModificationType.NewElement)) {
+            if (
+                inBlockModificationOwner != null
+                && !element.isNewDirectChildOf(inBlockModificationOwner, modificationType)
+                && !modificationType.isContractRemoval()
+            ) {
                 ChangeType.InBlock(inBlockModificationOwner, project)
             } else {
                 ChangeType.OutOfBlock
             }
         }
     }
+
+    /**
+     * This check covers cases such as a new body that was added to a function, which should cause an out-of-block modification.
+     */
+    private fun PsiElement.isNewDirectChildOf(inBlockModificationOwner: KtAnnotated, modificationType: ModificationType): Boolean =
+        modificationType == ModificationType.ElementAdded && parent == inBlockModificationOwner
+
+    /**
+     * Contract changes are always out-of-block modifications. If a contract is removed all at once, e.g. via [PsiElement.delete],
+     * [isElementInsideBody] will not see the removed contract inside the PSI *after* removal and treat the change as an in-block
+     * modification. "Before removal" events aren't necessarily paired up with "after removal" events in the IDE, so we cannot rely on the
+     * presence of the contract statement in some "before removal" event.
+     *
+     * [isContractRemoval] has to analyze the removed element out of context, as it has already been removed from its parent PSI. There
+     * might occasionally be false positives, for example removing the contract statement from:
+     *
+     * ```
+     * if (condition) {
+     *     contract { ... }
+     * }
+     * ```
+     *
+     * As it is not a valid contract statement, its removal doesn't need to trigger an out-of-block modification. Nonetheless, as such a
+     * situation should not occur frequently, false positives are acceptable and this simplifies the analysis, making it less error-prone.
+     */
+    private fun ModificationType.isContractRemoval(): Boolean =
+        this is ModificationType.ElementRemoved && (removedElement as? KtExpression)?.isContractDescriptionCallPsiCheck() == true
 
     private fun inBlockModification(declaration: KtAnnotated, ktModule: KtModule) {
         val resolveSession = ktModule.getFirResolveSession(project)
