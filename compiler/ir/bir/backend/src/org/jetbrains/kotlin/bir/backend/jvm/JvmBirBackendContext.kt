@@ -27,7 +27,7 @@ class JvmBirBackendContext @OptIn(ObsoleteDescriptorBasedAPI::class) constructor
     module: ModuleDescriptor,
     compiledBir: BirForest,
     externalModulesBir: BirForest,
-    ir2BirConverter: Ir2BirConverter,
+    val ir2BirConverter: Ir2BirConverter,
     dynamicPropertyManager: BirElementDynamicPropertyManager,
     phaseConfig: List<(JvmBirBackendContext) -> BirLoweringPhase>,
 ) : BirBackendContext(compiledBir, externalModulesBir, dynamicPropertyManager, irContext.configuration) {
