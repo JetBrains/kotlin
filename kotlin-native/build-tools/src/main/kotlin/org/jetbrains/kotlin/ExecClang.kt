@@ -62,11 +62,7 @@ abstract class ExecClang @Inject constructor(
         if (listOf("clang", "clang++").contains(executable)) {
             // TODO: This is copied from `BitcodeCompiler`. Consider sharing the code instead.
             val platform = platformManager.platform(target)
-            return if (target.family.isAppleFamily) {
-                "${platform.absoluteTargetToolchain}/usr/bin/$executable"
-            } else {
-                "${platform.absoluteTargetToolchain}/bin/$executable"
-            }
+            return "${platform.absoluteTargetToolchain}/bin/$executable"
         } else {
             throw GradleException("unsupported clang executable: $executable")
         }
