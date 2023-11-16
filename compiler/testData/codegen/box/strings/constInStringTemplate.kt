@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: WASM
-// IGNORE_BACKEND_K2: WASM
 // WITH_STDLIB
 
 import kotlin.test.assertEquals

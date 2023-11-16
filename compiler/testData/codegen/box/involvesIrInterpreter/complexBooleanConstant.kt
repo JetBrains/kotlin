@@ -1,6 +1,5 @@
-// TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: NATIVE
+// DONT_TARGET_EXACT_BACKEND: JVM
+// DONT_TARGET_EXACT_BACKEND: JS
 const val BOOL = <!EVALUATED("true")!>true<!>
 const val BOOL_OR = <!EVALUATED("false")!>false && BOOL<!>
 const val BOOL_AND = <!EVALUATED("true")!>true || BOOL<!>

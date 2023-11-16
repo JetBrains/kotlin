@@ -1,6 +1,6 @@
 // Can't be tested in JVM because frontend doesn't allow such code
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: NATIVE
+// DONT_TARGET_EXACT_BACKEND: JVM
+// DONT_TARGET_EXACT_BACKEND: JVM_IR
 // WITH_STDLIB
 
 package java.lang

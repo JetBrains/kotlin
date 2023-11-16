@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: NATIVE
+// TARGET_BACKEND: WASM
 fun <T> T.id() = this
 
 const val toStringDouble1 = 1.0.<!EVALUATED("1.0")!>toString()<!>

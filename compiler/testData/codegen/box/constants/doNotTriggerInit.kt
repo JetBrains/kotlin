@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: WASM
 var initialized = 0
 
 object O {

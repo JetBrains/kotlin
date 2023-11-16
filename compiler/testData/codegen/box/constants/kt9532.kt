@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: WASM
-
 object A {
     const val a: String = "$"
     const val b = "1234$a"

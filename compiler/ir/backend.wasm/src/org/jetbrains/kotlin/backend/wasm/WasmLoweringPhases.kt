@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLow
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.backend.wasm.lower.generateMainFunctionCalls
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.platform.WasmPlatform
+import org.jetbrains.kotlin.platform.toTargetPlatform
 
 private fun List<CompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
     reduce { acc, lowering -> acc.then(lowering) }
@@ -590,6 +593,19 @@ private val inlineObjectsWithPureInitializationLoweringPhase = makeIrModulePhase
     prerequisite = setOf(purifyObjectInstanceGettersLoweringPhase)
 )
 
+val constEvaluationPhase = makeIrModulePhase(
+    { context ->
+        val configuration = IrInterpreterConfiguration(
+            printOnlyExceptionMessage = true,
+            platform = WasmPlatform.toTargetPlatform(),
+        )
+        ConstEvaluationLowering(context, configuration = configuration)
+    },
+    name = "ConstEvaluationLowering",
+    description = "Evaluate functions that are marked as `IntrinsicConstEvaluation`",
+    prerequisite = setOf(functionInliningPhase)
+)
+
 val loweringList = listOf(
     validateIrBeforeLowering,
     jsCodeCallsLowering,
@@ -611,6 +627,7 @@ val loweringList = listOf(
     wrapInlineDeclarationsWithReifiedTypeParametersPhase,
 
     functionInliningPhase,
+    constEvaluationPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
 
     tailrecLoweringPhase,
