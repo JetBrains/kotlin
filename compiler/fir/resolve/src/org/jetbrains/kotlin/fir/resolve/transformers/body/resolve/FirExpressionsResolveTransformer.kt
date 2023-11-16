@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession2
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
@@ -47,6 +49,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -156,7 +159,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     callSite = when (data) {
                         is ResolutionMode.AssignmentLValue -> data.variableAssignment
                         else -> qualifiedAccessExpression
-                    }
+                    },
+                    data,
                 )
                 // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
                 // so candidate existence must be checked before calling completion
@@ -229,10 +233,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         isUsedAsReceiver: Boolean,
         isUsedAsGetClassReceiver: Boolean,
         callSite: FirElement,
+        data: ResolutionMode,
     ): FirStatement {
         return callResolver.resolveVariableAccessAndSelectCandidate(
             qualifiedAccessExpression, isUsedAsReceiver, isUsedAsGetClassReceiver, callSite
-        )
+        , data)
     }
 
     fun transformSuperReceiver(
@@ -444,7 +449,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
 
             val resultExpression = context.inferenceSession.onCandidatesResolution(withTransformedArguments) {
-                callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+                callResolver.resolveCallAndSelectCandidate(withTransformedArguments, data)
             }
 
             val (completeInference, callCompleted) = callCompleter.completeCall(resultExpression, data)
@@ -953,7 +958,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             .replaceArgumentList(checkNotNullCall.argumentList.transform(transformer, ResolutionMode.ContextDependent))
 
         val (result, callCompleted) = callCompleter.completeCall(
-            components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext), data
+            components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext, data), data
         )
 
         dataFlowAnalyzer.exitCheckNotNullCall(result, callCompleted && data.forceFullCompletion)
@@ -1072,7 +1077,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             callableReferenceAccess
         } else {
             components.syntheticCallGenerator.resolveCallableReferenceWithSyntheticOuterCall(
-                callableReferenceAccess, data.expectedType, resolutionContext,
+                callableReferenceAccess, data.expectedType, resolutionContext, data,
             )
         }.also {
             dataFlowAnalyzer.exitCallableReference(it)
@@ -1629,13 +1634,22 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     // Default value of array parameter (Array<T> or primitive array such as IntArray, FloatArray, ...)
                     // or argument for array parameter in annotation call.
                     arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
-                    val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(arrayLiteral, data.expectedTypeRef, resolutionContext)
+                    val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(
+                        arrayLiteral,
+                        data.expectedTypeRef,
+                        resolutionContext,
+                        data,
+                    )
                     callCompleter.completeCall(call, data)
                     arrayOfCallTransformer.transformFunctionCall(call, session)
                 }
                 else -> {
                     // Other unsupported usage.
-                    val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(arrayLiteral, resolutionContext)
+                    val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
+                        arrayLiteral,
+                        resolutionContext,
+                        data,
+                    )
                     arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
                     callCompleter.completeCall(syntheticIdCall, data)
                     arrayLiteral
