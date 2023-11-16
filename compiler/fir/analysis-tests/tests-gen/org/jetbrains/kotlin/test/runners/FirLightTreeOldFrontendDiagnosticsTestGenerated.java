@@ -25232,6 +25232,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("OpenFunctionsInMemberScope.kt")
+                public void testOpenFunctionsInMemberScope() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/overload/noConflictingOverloadsWithDeprecatedHidden/OpenFunctionsInMemberScope.kt");
+                }
+
+                @Test
                 @TestMetadata("TypeParameterMultipleBounds.kt")
                 public void testTypeParameterMultipleBounds() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/overload/noConflictingOverloadsWithDeprecatedHidden/TypeParameterMultipleBounds.kt");
