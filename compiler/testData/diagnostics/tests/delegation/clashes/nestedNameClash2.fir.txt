@@ -9,7 +9,7 @@ FILE: nestedNameClash2.kt
 
         }
         )
-        R|<local>/data|.R|SubstitutionOverride<second/MyClass.foo: R|kotlin/Unit|>|()
+        R|<local>/data|.R|second/MyClass.foo|()
     }
     public abstract interface Base<A> : R|kotlin/Any| {
         public open fun foo(): R|kotlin/Unit| {
@@ -21,7 +21,7 @@ FILE: nestedNameClash2.kt
             super<R|kotlin/Any|>()
         }
 
-        private final field $$delegate_0: R|second/MyClass.Base<second/Base<kotlin/Int>>| = R|<local>/prop|
+        private final field $$delegate_0: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
 
         public final val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public get(): R|second/Base<second/Base<kotlin/Int>>|

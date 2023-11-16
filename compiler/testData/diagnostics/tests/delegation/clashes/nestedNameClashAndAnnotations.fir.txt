@@ -24,7 +24,7 @@ FILE: nestedNameClashAndAnnotations.kt
             super<R|kotlin/Any|>()
         }
 
-        private final field $$delegate_0: R|@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  second/MyClass.Base<@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| = R|<local>/prop|
+        private final field $$delegate_0: R|@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| = R|<local>/prop|
 
         public final val prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>| = R|<local>/prop|
             public get(): R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>|

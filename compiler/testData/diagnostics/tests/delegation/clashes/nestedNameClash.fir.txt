@@ -9,7 +9,7 @@ FILE: nestedNameClash.kt
 
         }
         )
-        R|<local>/data|.R|second/Base.foo|()
+        R|<local>/data|.R|second/MyClass.foo|()
     }
     public abstract interface Base : R|kotlin/Any| {
         public open fun foo(): R|kotlin/Unit| {
@@ -21,7 +21,7 @@ FILE: nestedNameClash.kt
             super<R|kotlin/Any|>()
         }
 
-        private final field $$delegate_0: R|second/MyClass.Base| = R|<local>/prop|
+        private final field $$delegate_0: R|second/Base| = R|<local>/prop|
 
         public final val prop: R|second/Base| = R|<local>/prop|
             public get(): R|second/Base|

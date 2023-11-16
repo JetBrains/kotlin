@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(TYPES)] field $$delegate_0: R|second/MyClass.Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(TYPES)] field $$delegate_0: R|second/Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
 
         public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base<second.Base<Int>> = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base<second.Base<Int>>
@@ -135,12 +135,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(STATUS)] field $$delegate_0: R|second/MyClass.Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|second/Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
@@ -156,12 +156,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|second/MyClass.Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|second/Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
@@ -177,12 +177,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|second/MyClass.Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|second/Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
@@ -198,12 +198,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|second/MyClass.Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|second/Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
@@ -219,12 +219,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|second/MyClass.Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|second/Base<second/Base<kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
@@ -240,12 +240,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|second/MyClass.Base<second/Base<kotlin/Int>>| = R|<local>/prop|
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameClashWithNestedTypes.kt
             super<R|kotlin/Any|>()
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|second/MyClass.Base<second/Base<kotlin/Int>>| = R|<local>/prop|
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
 
         public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|

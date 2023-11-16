@@ -132,32 +132,18 @@ private class LLFirTypeTargetResolver(
         when (target) {
             is FirConstructor -> {
                 // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
-                val scopesBeforeContainingClass = transformer.scopesBefore
-                    ?: errorWithFirSpecificEntries("The containing class scope is not found", fir = target)
-
-                val staticScopesBeforeContainingClass = transformer.staticScopesBefore
-                    ?: errorWithFirSpecificEntries("The containing class static scope is not found", fir = target)
-
-                @OptIn(PrivateForInline::class)
-                transformer.withScopeCleanup {
-                    val clazz = transformer.classDeclarationsStack.last()
-                    if (!transformer.removeOuterTypeParameterScope(clazz)) {
-                        transformer.scopes = scopesBeforeContainingClass
-                    } else {
-                        transformer.scopes = staticScopesBeforeContainingClass
-                        transformer.addTypeParametersScope(clazz)
-                    }
-
-                    transformer.transformDelegatedConstructorCall(target)
-                }
-
-                target.accept(transformer, null)
+                resolveOutsideClassBody(target, transformer::transformDelegatedConstructorCall)
             }
             is FirScript -> resolveScriptTypes(target)
             is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirCallableDeclaration, is FirTypeAlias,
             is FirAnonymousInitializer,
             -> {
-                target.accept(transformer, null)
+                if (target is FirField && target.origin == FirDeclarationOrigin.Synthetic.DelegateField) {
+                    // delegated field should be resolved in the same context as super types
+                    resolveOutsideClassBody(target, transformer::transformDelegateField)
+                } else {
+                    target.accept(transformer, null)
+                }
             }
 
             is FirRegularClass -> resolveClassTypes(target)
@@ -165,6 +151,32 @@ private class LLFirTypeTargetResolver(
                 withFirEntry("declaration", target)
             }
         }
+    }
+
+    private inline fun <T : FirElementWithResolveState> resolveOutsideClassBody(
+        target: T,
+        crossinline actionOutsideClassBody: (T) -> Unit,
+    ) {
+        val scopesBeforeContainingClass = transformer.scopesBefore
+            ?: errorWithFirSpecificEntries("The containing class scope is not found", fir = target)
+
+        val staticScopesBeforeContainingClass = transformer.staticScopesBefore
+            ?: errorWithFirSpecificEntries("The containing class static scope is not found", fir = target)
+
+        @OptIn(PrivateForInline::class)
+        transformer.withScopeCleanup {
+            val clazz = transformer.classDeclarationsStack.last()
+            if (!transformer.removeOuterTypeParameterScope(clazz)) {
+                transformer.scopes = scopesBeforeContainingClass
+            } else {
+                transformer.scopes = staticScopesBeforeContainingClass
+                transformer.addTypeParametersScope(clazz)
+            }
+
+            actionOutsideClassBody(target)
+        }
+
+        target.accept(transformer, null)
     }
 
     private fun resolveScriptTypes(firScript: FirScript) {

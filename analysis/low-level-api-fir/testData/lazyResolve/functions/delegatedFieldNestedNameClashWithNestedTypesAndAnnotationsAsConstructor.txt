@@ -304,12 +304,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/MyClass.Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
         public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
@@ -351,12 +351,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/MyClass.Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
         public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
@@ -398,12 +398,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/MyClass.Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
         public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
@@ -445,12 +445,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/MyClass.Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
         public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
@@ -492,12 +492,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/MyClass.Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
         public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
@@ -539,12 +539,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
             super<R|kotlin/Any|>()
         }
 
-        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/MyClass.Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(inner#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(inner#))  kotlin/Int>>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] B> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
         public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
@@ -587,7 +587,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameClashWithNestedTypesAnd
             super<R|kotlin/Any|>()
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  second/MyClass.Base<@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| = R|<local>/prop|
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| = R|<local>/prop|
 
         public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>|

@@ -1,5 +1,4 @@
 // DUMP_IR
-// IGNORE_BACKEND_K2: ANY
 package second
 
 fun box(): String {

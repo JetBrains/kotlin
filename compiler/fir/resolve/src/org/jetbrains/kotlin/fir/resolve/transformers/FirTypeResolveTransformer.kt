@@ -431,8 +431,17 @@ open class FirTypeResolveTransformer(
                 }
 
                 // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
-                for (constructor in firClass.declarations.filterIsInstance<FirConstructor>()) {
-                    transformDelegatedConstructorCall(constructor)
+                for (declaration in firClass.declarations) {
+                    when (declaration) {
+                        is FirConstructor -> transformDelegatedConstructorCall(declaration)
+                        is FirField -> {
+                            if (declaration.origin == FirDeclarationOrigin.Synthetic.DelegateField) {
+                                transformDelegateField(declaration)
+                            }
+                        }
+
+                        else -> {}
+                    }
                 }
             }
         }
@@ -444,6 +453,10 @@ open class FirTypeResolveTransformer(
 
     fun transformDelegatedConstructorCall(constructor: FirConstructor) {
         constructor.delegatedConstructor?.let(this::resolveConstructedTypeRefForDelegatedConstructorCall)
+    }
+
+    fun transformDelegateField(field: FirField) {
+        field.transformReturnTypeRef(this, null)
     }
 
     fun removeOuterTypeParameterScope(firClass: FirClass): Boolean = !firClass.isInner && !firClass.isLocal
