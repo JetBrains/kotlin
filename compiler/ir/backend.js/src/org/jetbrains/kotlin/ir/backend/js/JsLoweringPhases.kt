@@ -429,7 +429,8 @@ private val innerClassConstructorCallsLoweringPhase = makeIrModulePhase<JsIrBack
 private val suspendFunctionsLoweringPhase = makeIrModulePhase(
     ::JsSuspendFunctionsLowering,
     name = "SuspendFunctionsLowering",
-    description = "Transform suspend functions into CoroutineImpl instance and build state machine"
+    description = "Transform suspend functions into CoroutineImpl instance and build state machine",
+    prerequisite = setOf(returnableBlockLoweringPhase)
 )
 
 private val addContinuationToNonLocalSuspendFunctionsLoweringPhase = makeIrModulePhase(
@@ -826,6 +827,7 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     enumUsageLoweringPhase,
     externalEnumUsageLoweringPhase,
     enumEntryRemovalLoweringPhase,
+    returnableBlockLoweringPhase,
     suspendFunctionsLoweringPhase,
     propertyReferenceLoweringPhase,
     interopCallableReferenceLoweringPhase,
@@ -833,7 +835,6 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     addContinuationToNonLocalSuspendFunctionsLoweringPhase,
     addContinuationToLocalSuspendFunctionsLoweringPhase,
     addContinuationToFunctionCallsLoweringPhase,
-    returnableBlockLoweringPhase,
     rangeContainsLoweringPhase,
     forLoopsLoweringPhase,
     primitiveCompanionLoweringPhase,

@@ -71,5 +71,6 @@ suspend fun box() {
 // test.kt:7 id: obj=2:number
 // test.kt:38 doResume: c=1:number, b=2:number
 // test.kt:38 doResume: c=1:number, b=2:number
+// test.kt:39 doResume: c=1:number, b=2:number
 // test.kt:30 doResume: c=1:number, b=2:number
 // test.kt:31 doResume: c=1:number, b=2:number, a=Unit

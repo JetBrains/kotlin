@@ -42,5 +42,6 @@ suspend fun box() {
 // EXPECTATIONS JS_IR
 // test.kt:31 doResume:
 // test.kt:31 doResume:
+// test.kt:31 doResume:
 // test.kt:22 doResume:
 // test.kt:23 doResume: a=Unit
