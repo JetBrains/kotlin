@@ -1317,9 +1317,7 @@ public fun Short.coerceAtMost(maximumValue: Short): Short {
  * 
  * @sample samples.comparisons.ComparableOps.coerceAtMost
  */
-public fun Int.coerceAtMost(maximumValue: Int): Int {
-    return if (this > maximumValue) maximumValue else this
-}
+public fun Int.coerceAtMost(maximumValue: Int): Int = if (this > maximumValue) maximumValue else this
 
 /**
  * Ensures that this value is not greater than the specified [maximumValue].
