@@ -5,9 +5,26 @@
 
 package org.jetbrains.kotlin.generators.tree
 
+/**
+ * Runs [block] on this element and all its parents recursively.
+ */
 fun <Element : AbstractElement<Element, *>> Element.traverseParents(block: (Element) -> Unit) {
-    block(this)
-    elementParents.forEach { it.element.traverseParents(block) }
+    traverseParentsUntil { block(it); false }
+}
+
+/**
+ * Runs [block] on this element and all its parents recursively.
+ *
+ * If [block] returns `true` at any point, aborts iteration and returns `true`.
+ *
+ * If [block] always returns `false`, visits all the parents and returns `false`.
+ */
+fun <Element : AbstractElement<Element, *>> Element.traverseParentsUntil(block: (Element) -> Boolean): Boolean {
+    if (block(this)) return true
+    for (parent in elementParents) {
+        if (parent.element.traverseParentsUntil(block)) return true
+    }
+    return false
 }
 
 /**
@@ -47,3 +64,13 @@ operator fun <K, V, U> MutableMap<K, MutableMap<V, U>>.set(k1: K, k2: V, value: 
 operator fun <K, V, U> Map<K, Map<V, U>>.get(k1: K, k2: V): U {
     return getValue(k1).getValue(k2)
 }
+
+internal fun <Field : AbstractField<*>> List<Field>.reorderFieldsIfNecessary(order: List<String>?): List<Field> =
+    if (order == null) {
+        this
+    } else {
+        sortedBy {
+            val position = order.indexOf(it.name)
+            if (position < 0) order.size else position
+        }
+    }

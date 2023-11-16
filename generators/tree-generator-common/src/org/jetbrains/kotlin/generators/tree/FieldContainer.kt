@@ -27,10 +27,18 @@ interface FieldContainer<out Field : AbstractField<*>> {
         get() = false
 
     /**
+     * Allows to override the order in which the specified children will be visited in `acceptChildren`/`transformChildren` methods.
+     */
+    val childrenOrderOverride: List<String>?
+        get() = null
+
+    /**
      * The fields on which to run the visitor in generated `acceptChildren` methods.
      */
     val walkableChildren: List<Field>
-        get() = allFields.filter { it.containsElement && !it.withGetter && it.needAcceptAndTransform }
+        get() = allFields
+            .filter { it.containsElement && !it.withGetter && it.needAcceptAndTransform }
+            .reorderFieldsIfNecessary(childrenOrderOverride)
 
     /**
      * The fields on which to run the transformer in generated `transformChildren` methods.
