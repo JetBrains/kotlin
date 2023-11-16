@@ -128,7 +128,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         valueDescription = "<path>",
         description = "Library search path.\n" +
                 "Note: This option is deprecated and will be removed in one of the future releases.\n" +
-                "Please use library paths instead of library names in all compiler options such as '-library'."
+                "Please use library paths instead of library names in all compiler options such as '-library' ('-l')."
     )
     var repositories: Array<String>? = null
 

@@ -172,9 +172,26 @@ open class ModuleDeserializer(val library: ByteArray) {
 
 }
 
+private class KlibRepoDeprecationWarning {
+    private var alreadyLogged = false
+
+    fun logOnceIfNecessary() {
+        if (!alreadyLogged) {
+            alreadyLogged = true
+            logWarning("Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
+        }
+    }
+}
+
 class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
 
-    val repository = requestedRepository?.File() ?: defaultRepository
+    private val klibRepoDeprecationWarning = KlibRepoDeprecationWarning()
+
+    val repository = requestedRepository?.let {
+        klibRepoDeprecationWarning.logOnceIfNecessary() // Due to use of "-repository" option.
+        File(it)
+    } ?: defaultRepository
+
     fun info() {
         val library = libraryInRepoOrCurrentDir(repository, libraryNameOrPath)
         val headerAbiVersion = library.versions.abiVersion
@@ -187,7 +204,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
         println("Resolved to: ${library.libraryName.File().absolutePath}")
         println("Module name: $moduleName")
         println("ABI version: $headerAbiVersion")
-        println("Compiler version: ${headerCompilerVersion}")
+        println("Compiler version: $headerCompilerVersion")
         println("Library version: $headerLibraryVersion")
         println("Metadata version: $headerMetadataVersion")
 
@@ -198,7 +215,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun install() {
-        logWarning("Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
+        klibRepoDeprecationWarning.logOnceIfNecessary()
 
         if (!repository.exists) {
             logWarning("Repository does not exist: $repository. Creating...")
@@ -216,7 +233,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun remove(blind: Boolean = false) {
-        logWarning("Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
+        klibRepoDeprecationWarning.logOnceIfNecessary()
 
         if (!repository.exists) logError("Repository does not exist: $repository")
 
