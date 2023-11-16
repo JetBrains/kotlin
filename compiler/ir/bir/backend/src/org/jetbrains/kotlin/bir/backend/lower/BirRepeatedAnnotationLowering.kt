@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.bir.backend.lower
 import org.jetbrains.kotlin.bir.BirElementDynamicPropertyKey
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
+import org.jetbrains.kotlin.bir.backend.builders.birBlock
+import org.jetbrains.kotlin.bir.backend.builders.birBlockBody
+import org.jetbrains.kotlin.bir.backend.builders.birBodyScope
 import org.jetbrains.kotlin.bir.backend.builders.build
 import org.jetbrains.kotlin.bir.backend.builders.setCall
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
@@ -48,14 +51,15 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
         it.constructedClass == KotlinRepeatableAnnotation
     }
 
-    private val repeatedAnnotationSyntheticContainerKey = BirElementDynamicPropertyKey<BirClass, BirClass>()
-    private val repeatedAnnotationSyntheticContainerToken = acquireProperty(repeatedAnnotationSyntheticContainerKey)
+    private val repeatedAnnotationSyntheticContainerToken = acquireTemporaryProperty<BirClass, BirClass>()
 
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(elementsWithMultipleAnnotations).forEach { element ->
-            transformMultipleAnnotations(element.annotations)?.let {
-                element.annotations.clear()
-                element.annotations += it
+        if (generationState.classBuilderMode.generateBodies) {
+            compiledBir.getElementsWithIndex(elementsWithMultipleAnnotations).forEach { element ->
+                transformMultipleAnnotations(element.annotations)?.let {
+                    element.annotations.clear()
+                    element.annotations += it
+                }
             }
         }
 
@@ -71,8 +75,6 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
     }
 
     private fun transformMultipleAnnotations(annotations: List<BirConstructorCall>): List<BirConstructorCall>? {
-        if (!generationState.classBuilderMode.generateBodies) return null
-
         val annotationsByClass = annotations.groupByTo(mutableMapOf()) { it.symbol.owner.constructedClass }
         if (annotationsByClass.values.none { it.size > 1 }) return null
 
@@ -111,15 +113,11 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
         entries: List<BirConstructorCall>,
     ): BirConstructorCall {
         val annotationType = annotationClass.typeWith()
-        return BirConstructorCall.build {
-            type = containerClass.defaultType
-            symbol = containerClass.primaryConstructor!!
-            valueArguments += BirVarargImpl(
-                SourceSpan.UNDEFINED,
-                birBuiltIns.arrayClass.typeWith(annotationType),
-                annotationType,
-            ).also {
-                it.elements += entries
+        return birBodyScope {
+            birCall(containerClass.primaryConstructor!!) {
+                valueArguments[0] = birVararg(annotationType) {
+                    elements += entries
+                }
             }
         }
     }
@@ -164,17 +162,11 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                 returnType = field.type
                 dispatchReceiverParameter = containerClass.thisReceiver!!.copyTo(this)
-                val function = this@build
-                body = BirBlockBody.build {
-                    statements += BirReturnImpl(
-                        SourceSpan.UNDEFINED, birBuiltIns.nothingType,
-                        BirGetFieldImpl(
-                            SourceSpan.UNDEFINED, field.type, field, null,
-                            BirGetValueImpl(SourceSpan.UNDEFINED, dispatchReceiverParameter!!.type, dispatchReceiverParameter!!, null),
-                            null
-                        ),
-                        function,
-                    )
+                body = birBodyScope {
+                    returnTarget = this@build
+                    birBlockBody {
+                        +birReturn(birGetField(birGet(dispatchReceiverParameter!!), field))
+                    }
                 }
             }
         }

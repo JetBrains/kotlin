@@ -10,6 +10,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.BirConst
+import org.jetbrains.kotlin.bir.backend.builders.BirStatementBuilderScope
+import org.jetbrains.kotlin.bir.backend.builders.birBlock
+import org.jetbrains.kotlin.bir.backend.builders.birBlockBody
+import org.jetbrains.kotlin.bir.backend.builders.birBodyScope
 import org.jetbrains.kotlin.bir.backend.builders.build
 import org.jetbrains.kotlin.bir.backend.builders.setCall
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
@@ -17,8 +21,10 @@ import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.BirSimpleFunctionImpl
 import org.jetbrains.kotlin.bir.expressions.BirCall
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
+import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.impl.*
 import org.jetbrains.kotlin.bir.get
+import org.jetbrains.kotlin.bir.symbols.ownerIfBound
 import org.jetbrains.kotlin.bir.types.*
 import org.jetbrains.kotlin.bir.types.utils.defaultType
 import org.jetbrains.kotlin.bir.types.utils.typeWith
@@ -55,32 +61,32 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
             if (!parentClass.isFileClass) return@forEach
             val isParametrized = mainMethod.isParameterizedMainMethod() ?: return@forEach
 
-            var newMainMethod: BirSimpleFunction? = null
-            if (isParametrized) {
-                if (mainMethod.isSuspend) {
-                    newMainMethod = generateMainMethod()
-                    newMainMethod.body = BirBlockBodyImpl(SourceSpan.UNDEFINED).apply {
-                        statements += birRunSuspend(mainMethod, newMainMethod!!.valueParameters[0], newMainMethod!!)
-                    }
-                }
-            } else {
-                if (mainMethod.isSuspend) {
-                    newMainMethod = generateMainMethod()
-                    newMainMethod.body = BirBlockBodyImpl(SourceSpan.UNDEFINED).apply {
-                        statements += birRunSuspend(mainMethod, null, newMainMethod!!)
+            birBodyScope {
+                var newMainMethod: BirSimpleFunction? = null
+                if (isParametrized) {
+                    if (mainMethod.isSuspend) {
+                        newMainMethod = generateMainMethod()
+                        newMainMethod.body = birBlockBody {
+                            +birRunSuspend(mainMethod, newMainMethod.valueParameters[0], newMainMethod)
+                        }
                     }
                 } else {
-                    newMainMethod = generateMainMethod()
-                    newMainMethod.body = BirBlockBodyImpl(SourceSpan.UNDEFINED).apply {
-                        statements += BirCall.build {
-                            setCall(mainMethod)
+                    if (mainMethod.isSuspend) {
+                        newMainMethod = generateMainMethod()
+                        newMainMethod.body = birBlockBody {
+                            +birRunSuspend(mainMethod, null, newMainMethod)
+                        }
+                    } else {
+                        newMainMethod = generateMainMethod()
+                        newMainMethod.body = birBlockBody {
+                            +birCall(mainMethod)
                         }
                     }
                 }
-            }
 
-            if (newMainMethod != null) {
-                parentClass.declarations += newMainMethod
+                if (newMainMethod != null) {
+                    parentClass.declarations += newMainMethod
+                }
             }
         }
     }
@@ -122,7 +128,8 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
         }
     }
 
-    private fun birRunSuspend(target: BirSimpleFunction, args: BirValueParameter?, newMain: BirSimpleFunction): BirBlockImpl {
+    context(BirStatementBuilderScope)
+    private fun birRunSuspend(target: BirSimpleFunction, args: BirValueParameter?, newMain: BirSimpleFunction): BirExpression {
         val lambdaSuperClass = builtInSymbols.lambdaClass
         val stringArrayType = birBuiltIns.arrayClass.typeWith(birBuiltIns.stringType)
 
@@ -162,26 +169,17 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
                 origin = IrDeclarationOrigin.DEFINED
                 overriddenSymbols += functionClass.declarations.filterIsInstance<BirSimpleFunction>().single()
                 val invokeFunction = this@build
-                body = BirBlockBodyImpl(SourceSpan.UNDEFINED).apply {
-                    val call = BirCall.build {
-                        setCall(target)
-                        if (args != null) {
-                            valueArguments += BirGetFieldImpl(
-                                SourceSpan.UNDEFINED,
-                                argsField!!.type,
-                                argsField!!,
-                                null,
-                                BirGetValueImpl(
-                                    SourceSpan.UNDEFINED,
-                                    invokeFunction.dispatchReceiverParameter!!.type,
-                                    invokeFunction.dispatchReceiverParameter!!,
-                                    null
-                                ),
-                                null,
-                            )
-                        }
+                body = birBodyScope {
+                    returnTarget = invokeFunction
+                    birBlockBody {
+                        +birReturn(
+                            birCall(target) {
+                                if (args != null) {
+                                    valueArguments[0] = birGetField(birGet(invokeFunction.dispatchReceiverParameter!!), argsField!!)
+                                }
+                            }
+                        )
                     }
-                    statements += BirReturnImpl(SourceSpan.UNDEFINED, call.type, call, invokeFunction)
                 }
             }
         }
@@ -195,52 +193,32 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
                     name = Name.identifier("args")
                     type = stringArrayType
                     origin = IrDeclarationOrigin.DEFINED
-                }.also {
                     valueParameters += it
                 }
             }
 
-            body = BirBlockBodyImpl(SourceSpan.UNDEFINED).apply {
-                statements += BirDelegatingConstructorCallImpl(
-                    SourceSpan.UNDEFINED,
-                    lambdaSuperClass.defaultType,
-                    lambdaSuperClass.owner.constructors.single(),
-                    null,
-                    null,
-                    null,
-                    emptyList(),
-                    0
-                ).apply {
-                    valueArguments += BirConst(0)
-                }
-
-                if (args != null) {
-                    statements += BirSetFieldImpl(
-                        SourceSpan.UNDEFINED,
-                        argsField!!.type,
-                        argsField!!,
-                        null,
-                        BirGetValueImpl(SourceSpan.UNDEFINED, wrapperClass.thisReceiver!!.type, wrapperClass.thisReceiver!!, null),
-                        null,
-                        BirGetValueImpl(SourceSpan.UNDEFINED, param!!.type, param, null),
-                    )
+            body = birBodyScope {
+                birBlockBody {
+                    +birDelegatingConstructorCall(lambdaSuperClass.owner.constructors.single()) {
+                        valueArguments[0] = birConst(0)
+                    }
+                    if (args != null) {
+                        +birSetField(birGet(wrapperClass.thisReceiver!!), argsField!!, birGet(param!!))
+                    }
                 }
             }
         }
         wrapperClass.declarations += wrapperConstructor
 
-        val block = BirBlockImpl(SourceSpan.UNDEFINED, birBuiltIns.unitType, null)
-        block.statements += wrapperClass
-        block.statements += BirCall.build {
-            setCall(builtInSymbols.runSuspendFunction.owner)
-            valueArguments += BirConstructorCall.build {
-                setCall(wrapperConstructor)
-                if (args != null) {
-                    valueArguments += BirGetValueImpl(SourceSpan.UNDEFINED, args.type, args, null)
+        return birBlock {
+            +wrapperClass
+            +birCall(builtInSymbols.runSuspendFunction.owner) {
+                valueArguments[0] = birCall(wrapperConstructor) {
+                    if (args != null) {
+                        valueArguments[0] = birGet(args)
+                    }
                 }
             }
         }
-
-        return block
     }
 }

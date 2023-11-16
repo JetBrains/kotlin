@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.bir.backend.lower
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.acceptChildren
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.jvm.JvmCachedDeclarations
@@ -22,7 +20,6 @@ import org.jetbrains.kotlin.bir.expressions.impl.BirTypeOperatorCallImpl
 import org.jetbrains.kotlin.bir.util.defaultType
 import org.jetbrains.kotlin.bir.util.hasAnnotation
 import org.jetbrains.kotlin.bir.util.isTrivial
-import org.jetbrains.kotlin.builtins.StandardNames.FqNames.annotation
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
@@ -37,6 +34,7 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
     private val callsToJvmStaticObjects = registerIndexKey<BirMemberAccessExpression<*>>(false) { call ->
         (call.symbol as? BirDeclaration)?.isJvmStaticDeclaration() == true
     }
+    private val valueReads = registerBackReferencesKey<BirGetValue> { recordReference(it.symbol.owner) }
 
     private val fieldForObjectInstanceToken = acquireProperty(JvmCachedDeclarations.FieldForObjectInstance)
     private val interfaceCompanionFieldDeclaration = acquireProperty(JvmCachedDeclarations.InterfaceCompanionFieldDeclaration)
@@ -47,8 +45,8 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
                 ?: function.parent as? BirClass
             if (parent is BirClass && parent.kind == ClassKind.OBJECT && !parent.isCompanion) {
                 function.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
+                    replaceThisByStaticReference(parent, oldDispatchReceiverParameter)
                     function.dispatchReceiverParameter = null
-                    function.replaceThisByStaticReference(parent, oldDispatchReceiverParameter)
                 }
             }
         }
@@ -67,53 +65,38 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
                 (this as? BirProperty)?.getter?.hasAnnotation(annotation) == true
     } == true
 
-    private fun BirMemberAccessExpression<*>.replaceWithStatic(replaceCallee: BirSimpleFunction?): BirExpression {
-        val receiver = dispatchReceiver ?: return this
+    private fun BirMemberAccessExpression<*>.replaceWithStatic(replaceCallee: BirSimpleFunction?) {
+        val receiver = dispatchReceiver ?: return
         dispatchReceiver = null
         if (replaceCallee != null) {
             (this as BirCall).symbol = replaceCallee
         }
         if (receiver.isTrivial()) {
             // Receiver has no side effects (aside from maybe class initialization) so discard it.
-            return this
+            return
         }
 
         val block = BirBlockImpl(sourceSpan, type, null)
         replaceWith(block)
-        block.apply {
-            statements += receiver.coerceToUnit() // evaluate for side effects
-            statements += this@replaceWithStatic
-        }
-
-        return block
+        block.statements += receiver.coerceToUnit() // evaluate for side effects
+        block.statements += this@replaceWithStatic
     }
 
     private fun BirExpression.coerceToUnit() =
         BirTypeOperatorCallImpl(sourceSpan, birBuiltIns.unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, this, birBuiltIns.unitType)
 
-    private fun BirElement.replaceThisByStaticReference(
-        irClass: BirClass,
+    private fun replaceThisByStaticReference(
+        birClass: BirClass,
         oldThisReceiverParameter: BirValueParameter,
     ) {
-        acceptChildren { element ->
-            if (element is BirGetValue && element.symbol == oldThisReceiverParameter) {
-                element.replaceWith(
-                    BirGetFieldImpl(
-                        element.sourceSpan,
-                        irClass.defaultType,
-                        JvmCachedDeclarations.getPrivateFieldForObjectInstance(
-                            irClass,
-                            interfaceCompanionFieldDeclaration,
-                            fieldForObjectInstanceToken
-                        ),
-                        null,
-                        null,
-                        null,
-                    )
-                )
-            } else {
-                element.walkIntoChildren()
-            }
+        val field = JvmCachedDeclarations.getPrivateFieldForObjectInstance(
+            birClass,
+            interfaceCompanionFieldDeclaration,
+            fieldForObjectInstanceToken
+        )
+        oldThisReceiverParameter.getBackReferences(valueReads).forEach { getValue ->
+            val new = BirGetFieldImpl(getValue.sourceSpan, birClass.defaultType, field, null, null, null)
+            getValue.replaceWith(new)
         }
     }
 }
