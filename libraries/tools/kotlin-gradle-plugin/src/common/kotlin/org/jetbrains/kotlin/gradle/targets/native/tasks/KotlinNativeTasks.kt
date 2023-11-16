@@ -1181,7 +1181,9 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
                 addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
                 addArg("-Xmodule-name", moduleName)
 
-                addArg("-libraryVersion", libraryVersion)
+                // TODO: Uncomment when KT-61096 is implemented.
+                // Don't pass library version to C-interop tool. This leads to issues like this: KT-62515
+                //addArg("-libraryVersion", libraryVersion)
 
                 addAll(extraOpts)
 
