@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.util.PrivateForInline
 
@@ -30,5 +28,9 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
         val WRONG_BODY_OF_EXTERNAL_DECLARATION by error<KtElement>()
         val WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION by error<KtElement>()
         val WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER by error<KtElement>()
+    }
+
+    val JSCODE by object : DiagnosticGroup("JsCode") {
+        val JSCODE_ARGUMENT_NON_CONST_EXPRESSION by error<KtElement>()
     }
 }

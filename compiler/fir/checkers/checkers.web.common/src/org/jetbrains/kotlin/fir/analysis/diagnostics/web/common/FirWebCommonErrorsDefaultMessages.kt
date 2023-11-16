@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.EXTERNAL_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NESTED_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE
@@ -45,5 +46,7 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER,
             "Wrong default value for parameter of external function. Must be ' = definedExternally'."
         )
+
+        map.put(JSCODE_ARGUMENT_NON_CONST_EXPRESSION, "An argument for the 'js()' function must be a constant string expression.")
     }
 }

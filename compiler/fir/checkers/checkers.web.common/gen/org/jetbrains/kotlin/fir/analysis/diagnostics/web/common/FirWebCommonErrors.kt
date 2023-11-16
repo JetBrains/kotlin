@@ -33,6 +33,9 @@ object FirWebCommonErrors {
     val WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION by error0<KtElement>()
     val WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER by error0<KtElement>()
 
+    // JsCode
+    val JSCODE_ARGUMENT_NON_CONST_EXPRESSION by error0<KtElement>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirWebCommonErrorsDefaultMessages)
     }
