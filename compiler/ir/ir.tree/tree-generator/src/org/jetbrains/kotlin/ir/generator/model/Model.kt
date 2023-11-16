@@ -166,19 +166,12 @@ sealed class Field(
 
     override fun copy() = internalCopy().also(::updateFieldsInCopy)
 
-    protected fun updateFieldsInCopy(copy: Field) {
-        copy.needAcceptAndTransform = needAcceptAndTransform
-        copy.useInBaseTransformerDetection = useInBaseTransformerDetection
-        copy.isMutable = isMutable
-        copy.optInAnnotation = optInAnnotation
+    override fun updateFieldsInCopy(copy: Field) {
+        super.updateFieldsInCopy(copy)
         copy.baseDefaultValue = baseDefaultValue
         copy.baseGetter = baseGetter
         copy.customUseInIrFactoryStrategy = customUseInIrFactoryStrategy
-        copy.fromParent = fromParent
         copy.customSetter = customSetter
-        copy.visibility = visibility
-        copy.deprecation = deprecation
-        copy.kDoc = kDoc
     }
 
     protected abstract fun internalCopy(): Field

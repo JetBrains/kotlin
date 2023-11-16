@@ -87,4 +87,17 @@ abstract class AbstractField<Field : AbstractField<Field>> {
      * Returns a copy of this field.
      */
     abstract fun copy(): Field
+
+    protected open fun updateFieldsInCopy(copy: Field) {
+        copy.kDoc = kDoc
+        copy.arbitraryImportables += arbitraryImportables
+        copy.optInAnnotation = optInAnnotation
+        copy.isMutable = isMutable
+        copy.deprecation = deprecation
+        copy.visibility = visibility
+        copy.fromParent = fromParent
+        copy.useInBaseTransformerDetection = useInBaseTransformerDetection
+        copy.needAcceptAndTransform = needAcceptAndTransform
+        copy.overriddenTypes += overriddenTypes
+    }
 }
