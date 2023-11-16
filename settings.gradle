@@ -400,7 +400,8 @@ include ":plugins:compose-compiler-plugin:compiler",
 // Swift Export modules
 include ":native:swift:sir",
         ":native:swift:sir-passes",
-        ":native:swift:sir-analysis-api"
+        ":native:swift:sir-analysis-api",
+        ":generators:sir-analysis-api-generator"
 
 void intellij(String imlPath) {
     File imlFile = new File("${rootDir}/intellij/community/plugins/kotlin/${imlPath}")
