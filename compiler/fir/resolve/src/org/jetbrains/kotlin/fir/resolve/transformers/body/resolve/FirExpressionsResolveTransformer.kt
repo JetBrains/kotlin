@@ -1019,14 +1019,18 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         val result = variableAssignment.transformRValue(
             transformer,
-            if (variableAssignment.lValue.resolvedType.contains { it is ConeTypeVariableType })
-                ResolutionMode.ContextIndependent
-            else
-                withExpectedType(
+            withExpectedType(
                 variableAssignment.lValue.resolvedType.toFirResolvedTypeRef(),
                 expectedTypeMismatchIsReportedInChecker = true
             ),
         )
+
+        (context.inferenceSession as? FirBuilderInferenceSession2)?.currentCommonSystem
+            ?.addSubtypeConstraintIfCompatible(
+                variableAssignment.lValue.resolvedType,
+                variableAssignment.rValue.resolvedType,
+                ConeExpectedTypeConstraintPosition(variableAssignment),
+            )
 
         dataFlowAnalyzer.exitVariableAssignment(result)
 
