@@ -74,13 +74,19 @@ class FirCallResolver(
     val conflictResolver: ConeCallConflictResolver =
         session.callConflictResolverFactory.create(TypeSpecificityComparator.NONE, session.inferenceComponents, components)
 
-    fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall): FirFunctionCall {
+    fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, resolutionMode: ResolutionMode): FirFunctionCall {
         val name = functionCall.calleeReference.name
-        val result = collectCandidates(functionCall, name, origin = functionCall.origin)
+        val result = collectCandidates(functionCall, name, origin = functionCall.origin, resolutionMode = resolutionMode)
 
         var forceCandidates: Collection<Candidate>? = null
         if (result.candidates.isEmpty()) {
-            val newResult = collectCandidates(functionCall, name, CallKind.VariableAccess, origin = functionCall.origin)
+            val newResult = collectCandidates(
+                functionCall,
+                name,
+                CallKind.VariableAccess,
+                origin = functionCall.origin,
+                resolutionMode = resolutionMode
+            )
             if (newResult.candidates.isNotEmpty()) {
                 forceCandidates = newResult.candidates
             }
@@ -139,12 +145,22 @@ class FirCallResolver(
         qualifiedAccess: FirQualifiedAccessExpression,
         name: Name,
         containingDeclarations: List<FirDeclaration> = transformer.components.containingDeclarations,
-        resolutionContext: ResolutionContext = transformer.resolutionContext
+        resolutionContext: ResolutionContext = transformer.resolutionContext,
+        resolutionMode: ResolutionMode,
     ): List<OverloadCandidate> {
         val collector = AllCandidatesCollector(components, components.resolutionStageRunner)
         val origin = (qualifiedAccess as? FirFunctionCall)?.origin ?: FirFunctionCallOrigin.Regular
         val result =
-            collectCandidates(qualifiedAccess, name, forceCallKind = null, origin, containingDeclarations, resolutionContext, collector)
+            collectCandidates(
+                qualifiedAccess,
+                name,
+                forceCallKind = null,
+                origin,
+                containingDeclarations,
+                resolutionContext,
+                collector,
+                resolutionMode = resolutionMode
+            )
         return collector.allCandidates.map { OverloadCandidate(it, isInBestCandidates = it in result.candidates) }
     }
 
@@ -157,6 +173,7 @@ class FirCallResolver(
         resolutionContext: ResolutionContext = transformer.resolutionContext,
         collector: CandidateCollector? = null,
         callSite: FirElement = qualifiedAccess,
+        resolutionMode: ResolutionMode,
     ): ResolutionResult {
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
@@ -174,7 +191,8 @@ class FirCallResolver(
             components.file,
             containingDeclarations,
             origin = origin,
-            isDelegateExpression = components.context.isDelegateExpression(callSite)
+            isDelegateExpression = components.context.isDelegateExpression(callSite),
+            resolutionMode = resolutionMode,
         )
         towerResolver.reset()
         val result = towerResolver.runResolver(info, resolutionContext, collector)
@@ -224,15 +242,17 @@ class FirCallResolver(
         qualifiedAccess: FirQualifiedAccessExpression,
         isUsedAsReceiver: Boolean,
         callSite: FirElement,
+        resolutionMode: ResolutionMode,
     ): FirStatement {
-        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver, callSite) { true }
+        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver, resolutionMode, callSite) { true }
     }
 
     fun resolveOnlyEnumOrQualifierAccessAndSelectCandidate(
         qualifiedAccess: FirQualifiedAccessExpression,
         isUsedAsReceiver: Boolean,
+        resolutionMode: ResolutionMode,
     ): FirStatement {
-        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver) accept@{ candidates ->
+        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver, resolutionMode) accept@{ candidates ->
             val symbol = candidates.singleOrNull()?.symbol ?: return@accept false
             symbol is FirEnumEntrySymbol || symbol is FirRegularClassSymbol
         }
@@ -241,6 +261,7 @@ class FirCallResolver(
     private fun resolveVariableAccessAndSelectCandidateImpl(
         qualifiedAccess: FirQualifiedAccessExpression,
         isUsedAsReceiver: Boolean,
+        resolutionMode: ResolutionMode,
         callSite: FirElement = qualifiedAccess,
         acceptCandidates: (Collection<Candidate>) -> Boolean,
     ): FirStatement {
@@ -251,7 +272,7 @@ class FirCallResolver(
         val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
 
         val basicResult by lazy(LazyThreadSafetyMode.NONE) {
-            collectCandidates(qualifiedAccess, callee.name, callSite = callSite)
+            collectCandidates(qualifiedAccess, callee.name, callSite = callSite, resolutionMode = resolutionMode)
         }
 
         // Even if it's not receiver, it makes sense to continue qualifier if resolution is unsuccessful
@@ -291,7 +312,7 @@ class FirCallResolver(
 
         var functionCallExpected = false
         if (result.candidates.isEmpty() && qualifiedAccess !is FirFunctionCall) {
-            val newResult = collectCandidates(qualifiedAccess, callee.name, CallKind.Function)
+            val newResult = collectCandidates(qualifiedAccess, callee.name, CallKind.Function, resolutionMode = resolutionMode)
             if (newResult.candidates.isNotEmpty()) {
                 result = newResult
                 functionCallExpected = true
@@ -492,6 +513,7 @@ class FirCallResolver(
             session,
             components.file,
             components.containingDeclarations,
+            resolutionMode = ResolutionMode.ContextIndependent,
         )
         towerResolver.reset()
 
@@ -626,7 +648,8 @@ class FirCallResolver(
         typeArguments = annotation.typeArguments,
         session,
         components.file,
-        components.containingDeclarations
+        components.containingDeclarations,
+        resolutionMode = ResolutionMode.ContextIndependent,
     )
 
     private fun getConstructorSymbol(annotationClassSymbol: FirRegularClassSymbol): FirConstructorSymbol? {
@@ -702,6 +725,7 @@ class FirCallResolver(
             transformer.components.containingDeclarations,
             candidateForCommonInvokeReceiver = null,
             isDelegateExpression = false,
+            resolutionMode = ResolutionMode.ContextIndependent,
             // Additional things for callable reference resolve
             expectedType,
             outerConstraintSystemBuilder,
