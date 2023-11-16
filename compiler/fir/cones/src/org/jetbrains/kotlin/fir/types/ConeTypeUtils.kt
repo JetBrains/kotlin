@@ -75,7 +75,7 @@ fun ConeKotlinType.lowerBoundIfFlexible(): ConeSimpleKotlinType {
     }
 }
 
-fun ConeKotlinType.originalIfDefinitelyNotNullable(): ConeKotlinType {
+fun ConeSimpleKotlinType.originalIfDefinitelyNotNullable(): ConeSimpleKotlinType {
     return when (this) {
         is ConeDefinitelyNotNullType -> original
         else -> this
