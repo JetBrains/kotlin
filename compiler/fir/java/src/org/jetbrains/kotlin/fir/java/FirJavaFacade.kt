@@ -77,7 +77,7 @@ abstract class FirJavaFacade(
     }
     private val knownClassNamesInPackage = session.firCachesFactory.createCache(classFinder::knownClassNamesInPackage)
 
-    private val parentClassTypeParameterStackCache = mutableMapOf<FirRegularClassSymbol, JavaTypeParameterStack>()
+    private val parentClassTypeParameterStackCache = mutableMapOf<FirRegularClassSymbol, MutableJavaTypeParameterStack>()
     private val parentClassEffectiveVisibilityCache = mutableMapOf<FirRegularClassSymbol, EffectiveVisibility>()
     private val statusExtensions = session.extensionService.statusTransformerExtensions
 
@@ -102,7 +102,7 @@ abstract class FirJavaFacade(
     abstract fun getModuleDataForClass(javaClass: JavaClass): FirModuleData
 
     private fun JavaTypeParameter.toFirTypeParameter(
-        javaTypeParameterStack: JavaTypeParameterStack,
+        javaTypeParameterStack: MutableJavaTypeParameterStack,
         containingDeclarationSymbol: FirBasedSymbol<*>,
         moduleData: FirModuleData,
     ): FirTypeParameter {
@@ -131,7 +131,7 @@ abstract class FirJavaFacade(
     }
 
     private fun List<JavaTypeParameter>.convertTypeParameters(
-        stack: JavaTypeParameterStack,
+        stack: MutableJavaTypeParameterStack,
         containingDeclarationSymbol: FirBasedSymbol<*>,
         moduleData: FirModuleData,
     ): List<FirTypeParameter> {
@@ -154,7 +154,7 @@ abstract class FirJavaFacade(
         javaClass: JavaClass,
     ): FirJavaClass {
         val classId = classSymbol.classId
-        val javaTypeParameterStack = JavaTypeParameterStack()
+        val javaTypeParameterStack = MutableJavaTypeParameterStack()
 
         if (parentClassSymbol != null) {
             val parentStack = parentClassTypeParameterStackCache[parentClassSymbol]
@@ -235,7 +235,7 @@ abstract class FirJavaFacade(
         classSymbol: FirRegularClassSymbol,
         parentClassSymbol: FirRegularClassSymbol?,
         classId: ClassId,
-        javaTypeParameterStack: JavaTypeParameterStack,
+        javaTypeParameterStack: MutableJavaTypeParameterStack,
     ): FirJavaClass {
         val valueParametersForAnnotationConstructor = ValueParametersForAnnotationConstructor()
         val classIsAnnotation = javaClass.classKind == ClassKind.ANNOTATION_CLASS
@@ -497,7 +497,7 @@ abstract class FirJavaFacade(
     private fun convertJavaFieldToFir(
         javaField: JavaField,
         classId: ClassId,
-        javaTypeParameterStack: JavaTypeParameterStack,
+        javaTypeParameterStack: MutableJavaTypeParameterStack,
         dispatchReceiver: ConeClassLikeType,
         moduleData: FirModuleData,
     ): FirDeclaration {
@@ -565,7 +565,7 @@ abstract class FirJavaFacade(
         containingClass: JavaClass,
         javaMethod: JavaMethod,
         classId: ClassId,
-        javaTypeParameterStack: JavaTypeParameterStack,
+        javaTypeParameterStack: MutableJavaTypeParameterStack,
         dispatchReceiver: ConeClassLikeType,
         moduleData: FirModuleData,
     ): FirJavaMethod {
@@ -630,7 +630,7 @@ abstract class FirJavaFacade(
         javaClass: JavaClass,
         ownerClassBuilder: FirJavaClassBuilder,
         classTypeParameters: List<FirTypeParameter>,
-        javaTypeParameterStack: JavaTypeParameterStack,
+        javaTypeParameterStack: MutableJavaTypeParameterStack,
         outerClassSymbol: FirRegularClassSymbol?,
         moduleData: FirModuleData,
     ): FirJavaConstructor {

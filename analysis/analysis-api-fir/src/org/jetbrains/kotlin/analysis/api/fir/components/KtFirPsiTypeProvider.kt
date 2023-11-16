@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.moduleData
@@ -121,7 +121,7 @@ internal class KtFirPsiTypeProvider(
         }
 
 
-        val javaTypeParameterStack = JavaTypeParameterStack()
+        val javaTypeParameterStack = MutableJavaTypeParameterStack()
 
         var psiClass = PsiTreeUtil.getContextOfType(useSitePosition, PsiClass::class.java, false)
         while (psiClass != null && psiClass.name == null) {

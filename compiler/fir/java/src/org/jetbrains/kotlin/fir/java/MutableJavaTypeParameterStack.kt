@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 
-class JavaTypeParameterStack : Iterable<Map.Entry<JavaTypeParameter, FirTypeParameterSymbol>> {
+class MutableJavaTypeParameterStack : JavaTypeParameterStack() {
     private val typeParameterMap = mutableMapOf<JavaTypeParameter, FirTypeParameterSymbol>()
 
     fun addParameter(javaTypeParameter: JavaTypeParameter, symbol: FirTypeParameterSymbol) {
         typeParameterMap[javaTypeParameter] = symbol
     }
 
-    fun addStack(javaTypeParameterStack: JavaTypeParameterStack) {
+    fun addStack(javaTypeParameterStack: MutableJavaTypeParameterStack) {
         typeParameterMap += javaTypeParameterStack.typeParameterMap
     }
 
-    operator fun get(javaTypeParameter: JavaTypeParameter): FirTypeParameterSymbol {
+    override operator fun get(javaTypeParameter: JavaTypeParameter): FirTypeParameterSymbol {
         return typeParameterMap[javaTypeParameter]
             ?: throw IllegalArgumentException("Cannot find Java type parameter $javaTypeParameter in stack")
     }
@@ -28,7 +28,12 @@ class JavaTypeParameterStack : Iterable<Map.Entry<JavaTypeParameter, FirTypePara
         return typeParameterMap.iterator()
     }
 
+}
+
+abstract class JavaTypeParameterStack : Iterable<Map.Entry<JavaTypeParameter, FirTypeParameterSymbol>> {
+    abstract operator fun get(javaTypeParameter: JavaTypeParameter): FirTypeParameterSymbol
+
     companion object {
-        val EMPTY: JavaTypeParameterStack = JavaTypeParameterStack()
+        val EMPTY: JavaTypeParameterStack = MutableJavaTypeParameterStack()
     }
 }

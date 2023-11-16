@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.convertAnnotationsToFir
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -49,7 +49,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     private val unenhnancedSuperTypes: List<FirTypeRef>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     internal val javaPackage: JavaPackage?,
-    val javaTypeParameterStack: JavaTypeParameterStack,
+    val javaTypeParameterStack: MutableJavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>,
     private val isDeprecatedInJavaDoc: Boolean,
 ) : FirRegularClass() {
@@ -156,7 +156,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
     var isTopLevel: Boolean by Delegates.notNull()
     var isStatic: Boolean by Delegates.notNull()
     var javaPackage: JavaPackage? = null
-    lateinit var javaTypeParameterStack: JavaTypeParameterStack
+    lateinit var javaTypeParameterStack: MutableJavaTypeParameterStack
     val existingNestedClassifierNames: MutableList<Name> = mutableListOf()
     var isDeprecatedInJavaDoc: Boolean = false
 
