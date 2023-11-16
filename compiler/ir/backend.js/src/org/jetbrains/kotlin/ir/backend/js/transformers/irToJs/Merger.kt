@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -61,8 +60,6 @@ class Merger(
 
                 rename(f.initializers)
                 rename(f.eagerInitializers)
-                f.testFunInvocation?.let { rename(it) }
-                f.suiteFn?.let { f.suiteFn = rename(it) }
             }
         }
 
@@ -229,27 +226,14 @@ class Merger(
         moduleBody.addWithComment("block: init", initializerBlock.statements)
 
         // Merge test function invocations
-        if (fragments.any { it.testFunInvocation != null }) {
-            val testFunBody = JsBlock()
-            val testFun = JsFunction(emptyScope, testFunBody, "root test fun")
-            val suiteFunRef = fragments.firstNotNullOf { it.suiteFn }.makeRef()
-
-            val tests = fragments.filter { it.testFunInvocation != null }
-                .groupBy({ it.packageFqn }) { it.testFunInvocation } // String -> [IrSimpleFunction]
-
-            for ((pkg, testCalls) in tests) {
-                val pkgTestFun = JsFunction(emptyScope, JsBlock(), "test fun for $pkg")
-                pkgTestFun.body.statements += testCalls
-                testFun.body.statements += JsInvocation(suiteFunRef, JsStringLiteral(pkg), JsBooleanLiteral(false), pkgTestFun).makeStmt()
-            }
-
+        JsTestFunctionTransformer.generateTestFunctionCall(fragments.asTestFunctionContainers())?.let {
             moduleBody.startRegion("block: tests")
-            moduleBody += JsInvocation(testFun).makeStmt()
+            moduleBody += it.makeStmt()
             moduleBody.endRegion()
         }
 
         val fragmentWithMainFunction = JsMainFunctionDetector.pickMainFunctionFromCandidates(fragments) {
-            JsMainFunctionDetector.MainFunctionCandidate(it.packageFqn, it.mainFunction)
+            JsMainFunctionDetector.MainFunctionCandidate(it.packageFqn, it.mainFunctionTag)
         }
 
         val exportStatements = declareAndCallJsExporter() + additionalExports + transitiveJsExport()
@@ -271,7 +255,7 @@ class Merger(
                 statements += moduleBody
                 statements.addWithComment("block: exports", exportStatements)
                 if (generateCallToMain && fragmentWithMainFunction != null) {
-                    val mainFunctionTag = fragmentWithMainFunction.mainFunction ?: error("Expect to have main function signature at this point")
+                    val mainFunctionTag = fragmentWithMainFunction.mainFunctionTag ?: error("Expect to have main function signature at this point")
                     val mainFunctionName = fragmentWithMainFunction.nameBindings[mainFunctionTag] ?: error("Expect to have name binding for tag $mainFunctionTag")
                     statements += JsInvocation(mainFunctionName.makeRef()).makeStmt()
                 }

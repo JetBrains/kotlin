@@ -151,20 +151,17 @@ private class JsIrAstSerializer {
             writeIrIcModel(model)
         }
 
-        ifNotNull(fragment.testFunInvocation) {
-            writeStatement(it)
+        ifNotNull(fragment.mainFunctionTag) {
+            writeString(it)
         }
 
-        ifNotNull(fragment.mainFunction) {
-            writeString(it)
+        ifNotNull(fragment.testEnvironment) {
+            writeInt(internalizeString(it.testFunctionTag))
+            writeInt(internalizeString(it.suiteFunctionTag))
         }
 
         ifNotNull(fragment.dts) {
             writeString(it.raw)
-        }
-
-        ifNotNull(fragment.suiteFn) {
-            writeInt(internalizeName(it))
         }
 
         writeCollection(fragment.definitions) {

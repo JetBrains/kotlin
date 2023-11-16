@@ -269,6 +269,9 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
         dependsOn(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
         systemProperty("kotlin.js.kotlin.test.path", "libraries/kotlin.test/js-ir/build/classes/kotlin/js/main")
         inputs.dir(rootDir.resolve("libraries/kotlin.test/js-ir/build/classes/kotlin/js/main"))
+
+        systemProperty("kotlin.js.kotlin.test.klib.path", "libraries/kotlin.test/js-ir/build/libs/kotlin-test-js-$version.klib")
+        inputs.file(rootDir.resolve("libraries/kotlin.test/js-ir/build/libs/kotlin-test-js-$version.klib"))
     }
 
     exclude("org/jetbrains/kotlin/js/testOld/api/*")

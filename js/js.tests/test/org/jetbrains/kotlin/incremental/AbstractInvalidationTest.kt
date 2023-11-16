@@ -61,9 +61,11 @@ abstract class AbstractInvalidationTest(
     companion object {
         private val OUT_DIR_PATH = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         private val STDLIB_KLIB = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
+        private val KOTLIN_TEST_KLIB = File(System.getProperty("kotlin.js.kotlin.test.klib.path") ?: error("Please set kotlin.test path")).canonicalPath
 
         private const val BOX_FUNCTION_NAME = "box"
         private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib"
+        private const val KOTLIN_TEST_MODULE_NAME = "kotlin-kotlin-test"
 
         private val TEST_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.\\w\\w$")
 
@@ -202,7 +204,7 @@ abstract class AbstractInvalidationTest(
 
             val friends = mutableListOf<File>()
             if (moduleStep.rebuildKlib) {
-                val dependencies = mutableListOf(File(STDLIB_KLIB))
+                val dependencies = mutableListOf(File(STDLIB_KLIB), File(KOTLIN_TEST_KLIB))
                 for (dep in moduleStep.dependencies) {
                     val klibFile = resolveModuleArtifact(dep.moduleName, buildDir)
                     dependencies += klibFile
@@ -229,7 +231,7 @@ abstract class AbstractInvalidationTest(
         }
 
         private fun verifyCacheUpdateStats(stepId: Int, stats: KotlinSourceFileMap<EnumSet<DirtyFileState>>, testInfo: List<TestStepInfo>) {
-            val gotStats = stats.filter { it.key.path != STDLIB_KLIB }
+            val gotStats = stats.filter { it.key.path != STDLIB_KLIB && it.key.path != KOTLIN_TEST_KLIB }
 
             val checkedLibs = mutableSetOf<KotlinLibraryFile>()
 
@@ -260,7 +262,7 @@ abstract class AbstractInvalidationTest(
         }
 
         private fun verifyJsExecutableProducerBuildModules(stepId: Int, gotRebuilt: List<String>, expectedRebuilt: List<String>) {
-            val got = gotRebuilt.filter { !it.startsWith(STDLIB_MODULE_NAME) }
+            val got = gotRebuilt.filter { !it.startsWith(STDLIB_MODULE_NAME) && !it.startsWith(KOTLIN_TEST_MODULE_NAME) }
             JUnit4Assertions.assertSameElements(got, expectedRebuilt) {
                 "Mismatched rebuilt modules at step $stepId"
             }
@@ -388,7 +390,7 @@ abstract class AbstractInvalidationTest(
 
                 val cacheUpdater = CacheUpdater(
                     mainModule = mainModuleInfo.modulePath,
-                    allModules = testInfo.mapTo(mutableListOf(STDLIB_KLIB)) { it.modulePath },
+                    allModules = testInfo.mapTo(mutableListOf(STDLIB_KLIB, KOTLIN_TEST_KLIB)) { it.modulePath },
                     mainModuleFriends = mainModuleInfo.friends,
                     cacheDir = buildDir.resolve("incremental-cache").absolutePath,
                     compilerConfiguration = configuration,

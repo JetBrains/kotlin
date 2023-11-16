@@ -42,10 +42,6 @@ class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModul
         return module.getJsOutputName()
     }
 
-    fun excludeFileNameFromExternalName(externalName: String): String {
-        return externalName.substringBeforeLast('/')
-    }
-
     private fun IrModuleFragment.getJsOutputName(): String {
         return jsOutputNamesMapping[this] ?: sanitizeName(safeName)
     }
@@ -53,6 +49,17 @@ class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModul
     private fun getFileStableName(fileName: String, packageFqn: String): String {
         val prefix = packageFqn.replace('.', '/')
         return "$prefix${if (prefix.isNotEmpty()) "/" else ""}$fileName"
+    }
+
+    fun getPackageFqn(externalName: String): String {
+        val endOfModuleNamePart = externalName.indexOf('/')
+        val startOfFileNamePart = externalName.lastIndexOf('/')
+        return if (endOfModuleNamePart == startOfFileNamePart) {
+            ""
+        } else {
+            externalName.substring(endOfModuleNamePart + 1, startOfFileNamePart)
+                .replace('/', '.')
+        }
     }
 
     private val IrFile.outputName: String get() = getJsFileName() ?: nameWithoutExtension

@@ -47,7 +47,7 @@ interface JsCommonBackendContext : CommonBackendContext {
     val enumEntries: IrClassSymbol
     val createEnumEntries: IrSimpleFunctionSymbol
 
-    fun createTestContainerFun(irFile: IrFile): IrSimpleFunction
+    fun createTestContainerFun(container: IrDeclaration): IrSimpleFunction
 
 }
 

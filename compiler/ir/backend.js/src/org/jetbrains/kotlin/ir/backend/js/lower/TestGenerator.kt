@@ -46,7 +46,7 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
         if (irFile.declarations.isEmpty()) return
         ArrayList(irFile.declarations).forEach {
             if (it is IrClass) {
-                generateTestCalls(it) { if (groupByPackage) suiteForPackage(irFile) else context.createTestContainerFun(irFile) }
+                generateTestCalls(it) { if (groupByPackage) suiteForPackage(it) else context.createTestContainerFun(it) }
             }
 
             // TODO top-level functions
@@ -55,8 +55,11 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
 
     private val packageSuites = hashMapOf<FqName, IrSimpleFunction>()
 
-    private fun suiteForPackage(irFile: IrFile) = packageSuites.getOrPut(irFile.packageFqName) {
-        context.suiteFun!!.createInvocation(irFile.packageFqName.asString(), context.createTestContainerFun(irFile))
+    private fun suiteForPackage(container: IrDeclaration): IrSimpleFunction {
+        val irFile = container.file
+        return packageSuites.getOrPut(irFile.packageFqName) {
+            context.suiteFun!!.createInvocation(irFile.packageFqName.asString(), context.createTestContainerFun(container))
+        }
     }
 
     private fun IrSimpleFunctionSymbol.createInvocation(

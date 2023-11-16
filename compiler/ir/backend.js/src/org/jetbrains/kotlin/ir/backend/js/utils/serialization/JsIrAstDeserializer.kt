@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramTestEnvironment
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
@@ -103,10 +104,9 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
             readRepeated { optionalCrossModuleImports.add(stringTable[readInt()]) }
             readRepeated { classes[nameTable[readInt()]] = readIrIcClassModel() }
 
-            ifTrue { testFunInvocation = readStatement() }
-            ifTrue { mainFunction = readString() }
+            ifTrue { mainFunctionTag = readString() }
+            ifTrue { testEnvironment = readTestEnvironment() }
             ifTrue { dts = TypeScriptFragment(readString()) }
-            ifTrue { suiteFn = nameTable[readInt()] }
 
             readRepeated { definitions += stringTable[readInt()] }
         }
@@ -117,6 +117,10 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
             readRepeated { preDeclarationBlock.statements += readStatement() }
             readRepeated { postDeclarationBlock.statements += readStatement() }
         }
+    }
+
+    private fun readTestEnvironment(): JsIrProgramTestEnvironment {
+        return JsIrProgramTestEnvironment(stringTable[readInt()], stringTable[readInt()])
     }
 
     private fun readStatement(): JsStatement {

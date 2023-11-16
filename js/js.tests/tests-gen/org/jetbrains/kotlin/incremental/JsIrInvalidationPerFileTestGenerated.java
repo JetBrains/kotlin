@@ -350,6 +350,12 @@ public class JsIrInvalidationPerFileTestGenerated extends AbstractJsIrInvalidati
     }
 
     @Test
+    @TestMetadata("kotlinTest")
+    public void testKotlinTest() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/kotlinTest/");
+    }
+
+    @Test
     @TestMetadata("languageVersionSettings")
     public void testLanguageVersionSettings() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/languageVersionSettings/");
