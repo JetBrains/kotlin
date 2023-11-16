@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
-import org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration.*
 
 object WasmTypeCheckers : TypeCheckers() {
     override val typeRefCheckers: Set<FirTypeRefChecker>
