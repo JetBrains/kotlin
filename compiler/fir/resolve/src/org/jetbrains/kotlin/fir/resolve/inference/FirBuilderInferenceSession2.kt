@@ -192,6 +192,10 @@ class FirBuilderInferenceSession2(
         if (givenExtensionReceiverOptions.any { it.resolvedType.containsNotFixedTypeVariables() }) return true
         if (callInfo.arguments.any { it in qualifiedAccessesToProcess }) return true
         if (callInfo.isDelegateExpression) return true
+        // For assignments
+        if ((callInfo.resolutionMode as? ResolutionMode.WithExpectedType)?.expectedTypeRef?.type?.containsNotFixedTypeVariables() == true) {
+            return true
+        }
         // Synthetic calls with blocks work like lambdas
         if (callInfo.callKind == CallKind.SyntheticSelect) return true
 
