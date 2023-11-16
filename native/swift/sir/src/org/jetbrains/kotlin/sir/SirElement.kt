@@ -10,3 +10,12 @@ package org.jetbrains.kotlin.sir
  */
 interface SirElement {
 }
+
+class SirModule : SirElement {
+    val declarations: MutableList<SirDeclaration> =
+        mutableListOf()
+}
+
+interface SirDeclaration
+
+class SirForeignFunction(val fqName: List<String>) : SirDeclaration
