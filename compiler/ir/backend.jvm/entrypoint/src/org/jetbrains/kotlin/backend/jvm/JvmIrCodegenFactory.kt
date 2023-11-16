@@ -356,9 +356,9 @@ open class JvmIrCodegenFactory(
         context.state.factory.registerSourceFiles(irModuleFragment.files.map(IrFile::getIoFile))
 
         //jvmLoweringPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
-        lowerWithBir(jvmLoweringPhases, context, irModuleFragment)
+        val newIrModuleFragment = lowerWithBir(jvmLoweringPhases, context, irModuleFragment)
 
-        return JvmIrCodegenInput(state, context, irModuleFragment, notifyCodegenStart)
+        return JvmIrCodegenInput(state, context, newIrModuleFragment, notifyCodegenStart)
     }
 
     override fun invokeCodegen(input: CodegenFactory.CodegenInput) {

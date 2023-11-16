@@ -76,6 +76,8 @@ abstract class BirImplElementBase : BirElementBase() {
         if (this === new) return
 
         val parent = _parent
+        require(parent != null) { "Element must have a parent" }
+
         val propertyId = replacedWithInternal(new as BirImplElementBase?)
         if (parent is BirImplElementBase) {
             parent.childReplaced(this, new)

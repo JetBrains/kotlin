@@ -52,6 +52,8 @@ abstract class Bir2IrConverterBase(
     private val externalBir2IrElements: Map<BirElement, IrSymbol>,
     private val compiledBir: BirForest,
 ) {
+    var elementConvertedCallbacck: ((BirElement, IrElement) -> Unit)? = null
+
     protected fun <Ir : IrElement, Bir : BirElement> createElementMap(expectedMaxSize: Int = 8): MutableMap<Bir, Ir> =
         IdentityHashMap<Bir, Ir>(expectedMaxSize)
 
@@ -84,6 +86,7 @@ abstract class Bir2IrConverterBase(
     ): SE {
         val new = copy()
         lateInitialize(new)
+        elementConvertedCallbacck?.invoke(old, new)
         return new
     }
 
@@ -100,6 +103,7 @@ abstract class Bir2IrConverterBase(
         val new = copy()
         map[old] = new
         lateInitialize(new)
+        elementConvertedCallbacck?.invoke(old, new)
         return new
     }
 
