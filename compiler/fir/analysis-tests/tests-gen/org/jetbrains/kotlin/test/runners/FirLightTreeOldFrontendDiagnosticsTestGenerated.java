@@ -8743,6 +8743,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("propertyTypeCollision.kt")
+            public void testPropertyTypeCollision() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/dataClasses/propertyTypeCollision.kt");
+            }
+
+            @Test
+            @TestMetadata("propertyTypeCollisionAndAnnotations.kt")
+            public void testPropertyTypeCollisionAndAnnotations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/dataClasses/propertyTypeCollisionAndAnnotations.kt");
+            }
+
+            @Test
             @TestMetadata("repeatedProperties.kt")
             public void testRepeatedProperties() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/dataClasses/repeatedProperties.kt");
@@ -10462,9 +10474,39 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("delegateFieldWithAnnotationClash.kt")
+                public void testDelegateFieldWithAnnotationClash() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegation/clashes/delegateFieldWithAnnotationClash.kt");
+                }
+
+                @Test
                 @TestMetadata("finalMemberOverridden.kt")
                 public void testFinalMemberOverridden() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegation/clashes/finalMemberOverridden.kt");
+                }
+
+                @Test
+                @TestMetadata("nestedNameClash.kt")
+                public void testNestedNameClash() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegation/clashes/nestedNameClash.kt");
+                }
+
+                @Test
+                @TestMetadata("nestedNameClash2.kt")
+                public void testNestedNameClash2() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegation/clashes/nestedNameClash2.kt");
+                }
+
+                @Test
+                @TestMetadata("nestedNameClash3.kt")
+                public void testNestedNameClash3() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegation/clashes/nestedNameClash3.kt");
+                }
+
+                @Test
+                @TestMetadata("nestedNameClashAndAnnotations.kt")
+                public void testNestedNameClashAndAnnotations() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegation/clashes/nestedNameClashAndAnnotations.kt");
                 }
 
                 @Test

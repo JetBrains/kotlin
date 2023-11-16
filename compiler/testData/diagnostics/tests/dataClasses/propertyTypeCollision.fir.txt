@@ -1,0 +1,38 @@
+FILE: propertyTypeCollision.kt
+    package one.two
+
+    public final fun main(): R|kotlin/Unit| {
+        lval value: R|one/two/MyDataClass.MyClass| = R|one/two/MyDataClass.MyClass.MyClass|()
+        lval data: R|one/two/MyDataClass| = R|one/two/MyDataClass.MyDataClass|(R|<local>/value|)
+        lval copy: R|one/two/MyDataClass| = R|<local>/data|.R|one/two/MyDataClass.copy|(R|<local>/value|)
+        lval prop: R|one/two/MyDataClass.MyClass| = R|<local>/data|.R|one/two/MyDataClass.prop|
+        lval component1: R|one/two/MyDataClass.MyClass| = R|<local>/data|.R|one/two/MyDataClass.component1|()
+        lval <destruct>: R|one/two/MyDataClass| = R|<local>/data|
+        lval destructuring: R|one/two/MyDataClass.MyClass| = R|<local>/<destruct>|.R|one/two/MyDataClass.component1|()
+    }
+    public final class MyClass : R|kotlin/Any| {
+        public constructor(): R|one/two/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final data class MyDataClass : R|kotlin/Any| {
+        public constructor(prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val prop: R|one/two/MyDataClass.MyClass| = R|<local>/prop|
+            public get(): R|one/two/MyDataClass.MyClass|
+
+        public final class MyClass : R|kotlin/Any| {
+            public constructor(): R|one/two/MyDataClass.MyClass| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final operator fun component1(): R|one/two/MyDataClass.MyClass|
+
+        public final fun copy(prop: R|one/two/MyDataClass.MyClass| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+
+    }

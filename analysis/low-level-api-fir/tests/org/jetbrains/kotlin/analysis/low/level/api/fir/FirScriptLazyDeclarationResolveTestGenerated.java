@@ -175,9 +175,39 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     }
 
     @Test
+    @TestMetadata("delegateFieldWithAnnotationClashScript.kts")
+    public void testDelegateFieldWithAnnotationClashScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/delegateFieldWithAnnotationClashScript.kts");
+    }
+
+    @Test
     @TestMetadata("delegateWithImplicitTypeScript.kts")
     public void testDelegateWithImplicitTypeScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/delegateWithImplicitTypeScript.kts");
+    }
+
+    @Test
+    @TestMetadata("delegatedFieldNestedNameClashAndAnnotationsScript.kts")
+    public void testDelegatedFieldNestedNameClashAndAnnotationsScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashAndAnnotationsScript.kts");
+    }
+
+    @Test
+    @TestMetadata("delegatedFieldNestedNameClashScript.kts")
+    public void testDelegatedFieldNestedNameClashScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashScript.kts");
+    }
+
+    @Test
+    @TestMetadata("delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts")
+    public void testDelegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts");
+    }
+
+    @Test
+    @TestMetadata("delegatedFieldNestedNameClashWithNestedTypesScript.kts")
+    public void testDelegatedFieldNestedNameClashWithNestedTypesScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashWithNestedTypesScript.kts");
     }
 
     @Test
@@ -658,6 +688,24 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
         }
 
         @Test
+        @TestMetadata("delegateFieldWithAnnotationClashScript.kts")
+        public void testDelegateFieldWithAnnotationClashScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/delegateFieldWithAnnotationClashScript.kts");
+        }
+
+        @Test
+        @TestMetadata("delegatedFieldNestedNameClashAndAnnotationsScript.kts")
+        public void testDelegatedFieldNestedNameClashAndAnnotationsScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/delegatedFieldNestedNameClashAndAnnotationsScript.kts");
+        }
+
+        @Test
+        @TestMetadata("delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts")
+        public void testDelegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts");
+        }
+
+        @Test
         @TestMetadata("functionInValueClassScript.kts")
         public void testFunctionInValueClassScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/functionInValueClassScript.kts");
@@ -716,6 +764,64 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
         public void testSimpleLoopInOverrideScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/simpleLoopInOverrideScript.kts");
         }
+
+        @Nested
+        @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DataClass {
+            @Test
+            public void testAllFilesPresentInDataClass() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("component1TypeCollisionAndAnnotationsScript.kts")
+            public void testComponent1TypeCollisionAndAnnotationsScript() throws Exception {
+                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/component1TypeCollisionAndAnnotationsScript.kts");
+            }
+
+            @Test
+            @TestMetadata("component1TypeCollisionScript.kts")
+            public void testComponent1TypeCollisionScript() throws Exception {
+                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/component1TypeCollisionScript.kts");
+            }
+
+            @Test
+            @TestMetadata("copyTypeCollisionAndAnnotationsScript.kts")
+            public void testCopyTypeCollisionAndAnnotationsScript() throws Exception {
+                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/copyTypeCollisionAndAnnotationsScript.kts");
+            }
+
+            @Test
+            @TestMetadata("copyTypeCollisionScript.kts")
+            public void testCopyTypeCollisionScript() throws Exception {
+                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/copyTypeCollisionScript.kts");
+            }
+
+            @Test
+            @TestMetadata("parameterTypeCollisionAndAnnotationsScript.kts")
+            public void testParameterTypeCollisionAndAnnotationsScript() throws Exception {
+                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/parameterTypeCollisionAndAnnotationsScript.kts");
+            }
+
+            @Test
+            @TestMetadata("parameterTypeCollisionScript.kts")
+            public void testParameterTypeCollisionScript() throws Exception {
+                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/parameterTypeCollisionScript.kts");
+            }
+
+            @Test
+            @TestMetadata("propertyTypeCollisionAndAnnotationsScript.kts")
+            public void testPropertyTypeCollisionAndAnnotationsScript() throws Exception {
+                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/propertyTypeCollisionAndAnnotationsScript.kts");
+            }
+
+            @Test
+            @TestMetadata("propertyTypeCollisionScript.kts")
+            public void testPropertyTypeCollisionScript() throws Exception {
+                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/propertyTypeCollisionScript.kts");
+            }
+        }
     }
 
     @Nested
@@ -747,6 +853,18 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
         @TestMetadata("contractScript2.kts")
         public void testContractScript2() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/contractScript2.kts");
+        }
+
+        @Test
+        @TestMetadata("delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts")
+        public void testDelegatedFieldNestedNameClashAndAnnotationsAsConstructorScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts");
+        }
+
+        @Test
+        @TestMetadata("delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsAsConstructorScript.kts")
+        public void testDelegatedFieldNestedNameClashWithNestedTypesAndAnnotationsAsConstructorScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsAsConstructorScript.kts");
         }
 
         @Test

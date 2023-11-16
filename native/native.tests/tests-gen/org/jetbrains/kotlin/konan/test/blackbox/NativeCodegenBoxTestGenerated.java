@@ -13088,6 +13088,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("nestedNameClash.kt")
+            public void testNestedNameClash() throws Exception {
+                runTest("compiler/testData/codegen/box/delegation/nestedNameClash.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedNameClash2.kt")
+            public void testNestedNameClash2() throws Exception {
+                runTest("compiler/testData/codegen/box/delegation/nestedNameClash2.kt");
+            }
+
+            @Test
             @TestMetadata("smartCastedDelegation.kt")
             public void testSmartCastedDelegation() throws Exception {
                 runTest("compiler/testData/codegen/box/delegation/smartCastedDelegation.kt");
