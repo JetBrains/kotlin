@@ -1,4 +1,7 @@
-compiler/testData/cli/jvm/jspecifyUsage.kt:2:11: error: null cannot be a value of a non-null type 'kotlin.String'.
+compiler/testData/cli/jvm/jspecifyUsage.kt:2:11: warning: Java type mismatch: inferred type is 'kotlin.String', but 'kotlin.Nothing?' was expected.
     a.foo(null)
           ^
-COMPILATION_ERROR
+compiler/testData/cli/jvm/jspecifyUsage.kt:3:5: warning: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'kotlin.String?'.
+    a.bar().hashCode()
+    ^
+OK
