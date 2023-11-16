@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.web.common
+package org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration
 
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.ClassKind

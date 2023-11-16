@@ -23,13 +23,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.superClassNotAny
-import org.jetbrains.kotlin.fir.analysis.web.common.FirWebCommonExternalChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalChecker
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNative
-import org.jetbrains.kotlin.name.WasmStandardClassIds
 import org.jetbrains.kotlin.psi.KtParameter
 
 object FirJsExternalChecker : FirWebCommonExternalChecker() {
