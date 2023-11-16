@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.generator.config
 
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.ir.generator.model.*
+import org.jetbrains.kotlin.ir.generator.model.ElementOrRef
 import org.jetbrains.kotlin.ir.generator.model.ElementRef
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.Model
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
-import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 
 abstract class AbstractTreeBuilder {
     private val configurationCallbacks = mutableListOf<() -> Element>()
@@ -22,11 +22,11 @@ abstract class AbstractTreeBuilder {
     abstract val rootElement: Element
 
     protected fun Field.skipInIrFactory() {
-        useInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.No
+        customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.No
     }
 
     protected fun Field.useFieldInIrFactory(defaultValue: String? = null) {
-        useInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.Yes(defaultValue)
+        customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.Yes(defaultValue)
     }
 
     fun element(category: Element.Category, name: String? = null, initializer: Element.() -> Unit = {}): ElementDelegate {
@@ -56,25 +56,21 @@ abstract class AbstractTreeBuilder {
 
     protected fun field(
         name: String,
-        type: TypeRefWithNullability?,
+        type: TypeRefWithNullability,
         nullable: Boolean = false,
         mutable: Boolean = true,
-        isChild: Boolean = false,
         initializer: SingleField.() -> Unit = {}
     ): SingleField {
-        checkChildType(isChild, type, name)
-        return SingleField(name, type?.copy(nullable) ?: InferredOverriddenType, mutable, isChild).apply(initializer)
+        return SingleField(name, type.copy(nullable), mutable).apply(initializer)
     }
 
     protected fun listField(
         name: String,
-        elementType: TypeRef?,
+        baseType: TypeRef,
         nullable: Boolean = false,
         mutability: ListField.Mutability,
-        isChild: Boolean = false,
         initializer: ListField.() -> Unit = {}
     ): ListField {
-        checkChildType(isChild, elementType, name)
         val listType = when (mutability) {
             ListField.Mutability.MutableList -> StandardTypes.mutableList
             ListField.Mutability.Array -> StandardTypes.array
@@ -82,20 +78,11 @@ abstract class AbstractTreeBuilder {
         }
         return ListField(
             name = name,
-            baseType = elementType ?: InferredOverriddenType,
+            baseType = baseType,
             listType = listType,
             isNullable = nullable,
             mutable = mutability == ListField.Mutability.Var,
-            isChild = isChild,
         ).apply(initializer)
-    }
-
-    private fun checkChildType(isChild: Boolean, type: TypeRef?, name: String) {
-        if (isChild) {
-            require(type == null || type is GenericElementOrRef<*, *>) {
-                "Field $name is a child field but has non-element type $type"
-            }
-        }
     }
 
     fun build(): Model {

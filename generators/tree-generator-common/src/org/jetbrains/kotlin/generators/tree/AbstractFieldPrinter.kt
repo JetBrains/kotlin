@@ -34,7 +34,9 @@ abstract class AbstractFieldPrinter<Field : AbstractField<Field>>(
         modality: Modality? = null,
     ) {
         printer.run {
-            printKDoc(field.kDoc)
+            if (!field.fromParent) {
+                printKDoc(field.kDoc)
+            }
 
             field.deprecation?.let {
                 println("@Deprecated(")
