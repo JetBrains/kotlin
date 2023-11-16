@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.bir.backend.lower
 
+import org.jetbrains.kotlin.bir.GlobalBirElementDynamicProperties
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.build
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 context(JvmBirBackendContext)
 class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
     private val functionExpressions = registerIndexKey<BirFunctionExpression>(false)
+    private val originalBeforeInlineToken = acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun invoke(module: BirModuleFragment) {
@@ -58,7 +60,7 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
                 reflectionTarget = null,
             ).apply {
                 valueArguments.resetWithNulls(function.valueParameters.size)
-                copyAttributes(expression)
+                copyAttributes(expression, originalBeforeInlineToken)
             }
         }
         expression.replaceWith(block)
