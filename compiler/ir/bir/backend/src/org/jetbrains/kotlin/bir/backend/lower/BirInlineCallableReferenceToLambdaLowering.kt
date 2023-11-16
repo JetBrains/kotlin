@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.bir.backend.lower
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.bir.BirElementBase
+import org.jetbrains.kotlin.bir.GlobalBirElementDynamicProperties
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.*
-import org.jetbrains.kotlin.bir.backend.builders.copyAttributes
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.jvm.birArray
 import org.jetbrains.kotlin.bir.backend.jvm.isInlineFunctionCall
@@ -31,6 +31,7 @@ context(JvmBirBackendContext)
 class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
     private val inlineFunctions = registerIndexKey<BirFunction>(true) { it.isInlineFunctionCall() }
     private val functionAccesses = registerBackReferencesKey<BirFunctionAccessExpression> { recordReference(it.symbol.owner) }
+    private val originalBeforeInlineToken = acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
 
     override fun invoke(module: BirModuleFragment) {
         getAllElementsWithIndex(inlineFunctions).forEach { function ->
@@ -174,7 +175,7 @@ class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
             birBlock {
                 +function
                 +birFunctionReference(function, original.type, origin = JvmLoweredStatementOrigin.INLINE_LAMBDA) {
-                    copyAttributes(original)
+                    copyAttributes(original, originalBeforeInlineToken)
                     extensionReceiver = original.dispatchReceiver ?: original.extensionReceiver
                 }
             }
