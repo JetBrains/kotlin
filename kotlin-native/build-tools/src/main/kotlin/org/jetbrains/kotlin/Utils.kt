@@ -17,11 +17,9 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
-import java.util.concurrent.TimeUnit
 import java.nio.file.Path
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.gradle.api.tasks.TaskProvider
-import java.util.*
 import kotlin.collections.HashSet
 
 /**
@@ -307,7 +305,7 @@ fun compileSwift(
 
     val (stdOut, stdErr, exitCode) = runProcess(
             executor = localExecutor(project), executable = compiler, args = args,
-            env = mapOf("DYLD_FALLBACK_FRAMEWORK_PATH" to configs.absoluteTargetToolchain + "/ExtraFrameworks")
+            env = mapOf("DYLD_FALLBACK_FRAMEWORK_PATH" to File(configs.absoluteTargetToolchain).parent + "/ExtraFrameworks")
     )
 
     println(
