@@ -179,7 +179,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
 
                 if (nonTrivialIncompatibleMembers.isNotEmpty()) {
                     reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, nonTrivialIncompatibleMembers, context)
-                } else if (checkingCompatibility.mismatchedMembers.isNotEmpty()) {
+                }
+                if (checkingCompatibility.mismatchedMembers.isNotEmpty()) {
                     reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, checkingCompatibility.mismatchedMembers, context)
                 }
             }
