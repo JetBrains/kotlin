@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableM
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.fir.FirSession
 
 class LLSessionProvider(
     val useSiteModule: KtModule,
@@ -45,7 +44,7 @@ class LLSessionProvider(
     }
 
     private fun getSession(module: KtModule, preferBinary: Boolean): LLFirSession {
-        if (module == useSiteSession.ktModule) {
+        if (module == useSiteModule) {
             return useSiteSession
         }
 
