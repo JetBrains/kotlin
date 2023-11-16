@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.bir.backend.lower
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
+import org.jetbrains.kotlin.bir.backend.builders.birBlockBody
+import org.jetbrains.kotlin.bir.backend.builders.birBodyScope
 import org.jetbrains.kotlin.bir.backend.builders.build
 import org.jetbrains.kotlin.bir.backend.builders.setCall
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
@@ -53,54 +55,40 @@ class BirJvmOverloadsAnnotationLowering : BirLoweringPhase() {
     private fun generateWrapper(target: BirFunction, numDefaultParametersToExpect: Int): BirFunction {
         val wrapperBirFunction = generateWrapperHeader(target, numDefaultParametersToExpect)
 
-        val call = when (target) {
-            is BirConstructor -> BirDelegatingConstructorCallImpl(
-                sourceSpan = SourceSpan.UNDEFINED,
-                type = birBuiltIns.unitType,
-                symbol = target,
-                dispatchReceiver = null,
-                extensionReceiver = null,
-                origin = null,
-                typeArguments = emptyList(),
-                contextReceiversCount = 0
-            )
-            is BirSimpleFunction -> BirCall.build {
-                setCall(target)
+        birBodyScope {
+            val call = when (target) {
+                is BirConstructor -> birCall(target, birBuiltIns.unitType)
+                is BirSimpleFunction -> birCall(target)
+                else -> error("unknown function kind: ${target.render()}")
             }
-            else -> error("unknown function kind: ${target.render()}")
-        }
+            call.typeArguments = wrapperBirFunction.allTypeParameters.map { it.defaultType }
+            call.dispatchReceiver = wrapperBirFunction.dispatchReceiverParameter
+                ?.let { birGet(it) }
+            call.extensionReceiver = wrapperBirFunction.extensionReceiverParameter
+                ?.let { birGet(it) }
 
-        call.typeArguments = wrapperBirFunction.allTypeParameters.map { it.defaultType }
-
-        call.dispatchReceiver = wrapperBirFunction.dispatchReceiverParameter?.let { dispatchReceiver ->
-            BirGetValueImpl(SourceSpan.UNDEFINED, dispatchReceiver.type, dispatchReceiver, null)
-        }
-        call.extensionReceiver = wrapperBirFunction.extensionReceiverParameter?.let { extensionReceiver ->
-            BirGetValueImpl(SourceSpan.UNDEFINED, extensionReceiver.type, extensionReceiver, null)
-        }
-
-        call.valueArguments += List<BirExpression?>(target.valueParameters.size) { null }
-        var parametersCopied = 0
-        var defaultParametersCopied = 0
-        for ((i, valueParameter) in target.valueParameters.withIndex()) {
-            if (valueParameter.defaultValue != null) {
-                if (defaultParametersCopied < numDefaultParametersToExpect) {
-                    defaultParametersCopied++
+            var parametersCopied = 0
+            var defaultParametersCopied = 0
+            for ((i, valueParameter) in target.valueParameters.withIndex()) {
+                if (valueParameter.defaultValue != null) {
+                    if (defaultParametersCopied < numDefaultParametersToExpect) {
+                        defaultParametersCopied++
+                        val arg = wrapperBirFunction.valueParameters[parametersCopied++]
+                        call.valueArguments[i] = birGet(arg)
+                    }
+                } else {
                     val arg = wrapperBirFunction.valueParameters[parametersCopied++]
-                    call.valueArguments[i] = BirGetValueImpl(SourceSpan.UNDEFINED, arg.type, arg, null)
+                    call.valueArguments[i] = birGet(arg)
+                }
+            }
+
+            wrapperBirFunction.body = if (target is BirConstructor) {
+                birBlockBody {
+                    +call
                 }
             } else {
-                val arg = wrapperBirFunction.valueParameters[parametersCopied++]
-                call.valueArguments[i] = BirGetValueImpl(SourceSpan.UNDEFINED, arg.type, arg, null)
+                birExpressionBody(call)
             }
-        }
-
-        wrapperBirFunction.body = if (target is BirConstructor) {
-            BirBlockBodyImpl(SourceSpan.UNDEFINED).apply {
-                statements += call
-            }
-        } else {
-            BirExpressionBodyImpl(SourceSpan.UNDEFINED, call)
         }
 
         return wrapperBirFunction
