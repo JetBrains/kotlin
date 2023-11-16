@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.build.ModuleBuildTarget
 import org.jetbrains.kotlin.jps.model.k2MetadataCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
+import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
 
 private const val COMMON_BUILD_META_INFO_FILE_NAME = "common-build-meta-info.txt"
 
@@ -47,7 +48,8 @@ class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModu
     override fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
+        buildMetricReporter: JpsBuilderMetricReporter?
     ): Boolean {
         require(chunk.representativeTarget == this)
 
@@ -60,7 +62,8 @@ class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModu
             environment,
             destination,
             dependenciesOutputDirs + libraryFiles,
-            sourceFiles // incremental K2MetadataCompiler not supported yet
+            sourceFiles, // incremental K2MetadataCompiler not supported yet
+            buildMetricReporter
         )
 
         return true

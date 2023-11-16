@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJvmCache
 import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
+import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
@@ -99,7 +100,8 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
     override fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
+        buildMetricReporter: JpsBuilderMetricReporter?
     ): Boolean {
         require(chunk.representativeTarget == this)
 
@@ -144,7 +146,8 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 module.k2JvmCompilerArguments,
                 module.kotlinCompilerSettings,
                 environment,
-                moduleFile
+                moduleFile,
+                buildMetricReporter
             )
         } finally {
             if (System.getProperty(DELETE_MODULE_FILE_PROPERTY) != "false") {

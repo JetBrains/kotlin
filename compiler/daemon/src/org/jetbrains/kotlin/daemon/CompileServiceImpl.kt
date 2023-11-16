@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
-import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -326,7 +324,60 @@ abstract class CompileServiceImplBase(
                 withIncrementalCompilation(k2PlatformArgs, enabled = servicesFacade.hasIncrementalCaches()) {
                     doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
                         val services = createServices(servicesFacade, eventManger, profiler)
-                        compiler.exec(messageCollector, services, k2PlatformArgs)
+                        val exitCode = compiler.exec(messageCollector, services, k2PlatformArgs)
+
+                        compilationResults.also {
+                            val compilationResult = it as CompilationResults
+
+                            compiler.defaultPerformanceManager.getMeasurementResults().forEach {
+                                when (it) {
+                                    is CompilerInitializationMeasurement -> {
+                                        compilationResult.add(
+                                            CompilationResultCategory.BUILD_METRICS.code,
+                                            BuildMetricsValue(CompilationPerformanceMetrics.COMPILER_INITIALIZATION, it.milliseconds)
+                                        )
+                                    }
+                                    is CodeAnalysisMeasurement -> {
+                                        compilationResult.add(
+                                            CompilationResultCategory.BUILD_METRICS.code,
+                                            BuildMetricsValue(CompilationPerformanceMetrics.CODE_ANALYSIS, it.milliseconds)
+                                        )
+                                        it.lines?.apply {
+                                            compilationResult.add(
+                                                CompilationResultCategory.BUILD_METRICS.code,
+                                                BuildMetricsValue(CompilationPerformanceMetrics.ANALYZED_LINES_NUMBER, this.toLong())
+                                            )
+                                            if (it.milliseconds > 0) {
+                                                compilationResult.add(
+                                                    CompilationResultCategory.BUILD_METRICS.code,
+                                                    BuildMetricsValue(CompilationPerformanceMetrics.ANALYSIS_LPS, this * 1000 / it.milliseconds)
+                                                )
+                                            }
+                                        }
+                                    }
+                                    is CodeGenerationMeasurement -> {
+                                        compilationResult.add(
+                                            CompilationResultCategory.BUILD_METRICS.code,
+                                            BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION, it.milliseconds)
+                                        )
+                                        it.lines?.apply {
+                                            compilationResult.add(
+                                                CompilationResultCategory.BUILD_METRICS.code,
+                                                BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATED_LINES_NUMBER, this.toLong())
+                                            )
+                                            if (it.milliseconds > 0) {
+                                                compilationResult.add(
+                                                    CompilationResultCategory.BUILD_METRICS.code,
+                                                    BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION_LPS, this * 1000 / it.milliseconds)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        exitCode
                     }
                 }
             }

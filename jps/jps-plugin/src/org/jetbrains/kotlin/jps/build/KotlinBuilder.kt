@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
 import org.jetbrains.kotlin.build.report.ICReporterBase
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.metrics.JpsBuildTime
+import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.jps.KotlinJpsBundle
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageManager
 import org.jetbrains.kotlin.jps.model.kotlinKind
+import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
 import org.jetbrains.kotlin.jps.statistic.JpsStatisticsReportService
 import org.jetbrains.kotlin.jps.targets.KotlinJvmModuleBuildTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
@@ -320,6 +322,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val fsOperations = FSOperationsHelper(context, chunk, kotlinDirtyFilesHolder, LOG)
 
         try {
+            reportService.reportDirtyFiles(kotlinDirtyFilesHolder)
             return reportService.reportMetrics(chunk, JpsBuildTime.JPS_ITERATION) {
                 val proposedExitCode =
                     doBuild(chunk, kotlinTarget, context, kotlinDirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
@@ -328,6 +331,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                     if (proposedExitCode == OK && fsOperations.hasMarkedDirty) ADDITIONAL_PASS_REQUIRED else proposedExitCode
 
                 LOG.debug("Build result: $actualExitCode")
+                reportService.reportExitCode(chunk, actualExitCode)
 
                 context.testingContext?.buildLogger?.buildFinished(actualExitCode)
                 actualExitCode
@@ -354,7 +358,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         kotlinDirtyFilesHolder: KotlinDirtySourceFilesHolder,
         messageCollector: MessageCollectorAdapter,
         outputConsumer: OutputConsumer,
-        fsOperations: FSOperationsHelper
+        fsOperations: FSOperationsHelper,
     ): ExitCode {
         // Workaround for Android Studio
         if (representativeTarget is KotlinJvmModuleBuildTarget && !JavaBuilder.IS_ENABLED[context, true]) {
@@ -448,6 +452,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LOG.debug("Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
         }
 
+        reportService.reportCompilerArguments(chunk, kotlinChunk)
         val start = System.nanoTime()
         val outputItemCollector = doCompileModuleChunk(
             kotlinChunk,
@@ -457,7 +462,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             kotlinDirtyFilesHolder,
             fsOperations,
             environment,
-            incrementalCaches
+            incrementalCaches,
+            reportService.getMetricReporter(chunk)
         )
 
         statisticsLogger.registerStatistic(chunk, System.nanoTime() - start)
@@ -591,13 +597,15 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         fsOperations: FSOperationsHelper,
         environment: JpsCompilerEnvironment,
-        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>
+        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
+        buildMetricReporter: JpsBuilderMetricReporter?,
     ): OutputItemsCollector? {
         kotlinChunk.targets.forEach {
             it.nextRound(context)
         }
 
         if (representativeTarget.isIncrementalCompilationEnabled) {
+            buildMetricReporter?.addTag(StatTag.INCREMENTAL)
             for (target in kotlinChunk.targets) {
                 val cache = incrementalCaches[target]
                 val jpsTarget = target.jpsModuleBuildTarget
@@ -613,7 +621,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             }
         }
 
-        val isDoneSomething = representativeTarget.compileModuleChunk(commonArguments, dirtyFilesHolder, environment)
+        val isDoneSomething = representativeTarget.compileModuleChunk(commonArguments, dirtyFilesHolder, environment, buildMetricReporter)
 
         return if (isDoneSomething) environment.outputItemsCollector else null
     }
