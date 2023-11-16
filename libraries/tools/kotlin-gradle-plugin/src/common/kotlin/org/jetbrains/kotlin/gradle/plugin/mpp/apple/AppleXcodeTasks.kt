@@ -187,6 +187,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
                             "\nTo make the $frameworkTaskName task pass, disable this feature. " +
                             "\nIn your Xcode project, navigate to \"Build Setting\", " +
                             "and under \"Build Options\" set \"User script sandboxing\" (ENABLE_USER_SCRIPT_SANDBOXING) to \"NO\". " +
+                            "\nThen, run \"./gradlew --stop\" to stop the Gradle daemon" +
                             "\nFor more information, see documentation: https://jb.gg/ltd9e6"
                 )
             }

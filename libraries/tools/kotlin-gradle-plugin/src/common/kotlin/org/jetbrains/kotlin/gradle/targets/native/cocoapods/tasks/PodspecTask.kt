@@ -123,14 +123,16 @@ abstract class PodspecTask @Inject constructor(private val projectLayout: Projec
 
         val deploymentTargets = run {
             listOf(ios, osx, tvos, watchos).map { it.get() }.filter { it.deploymentTarget != null }.joinToString("\n") {
-                if (extraSpecAttributes.get().containsKey("${it.name}.deployment_target")) "" else "|    spec.${it.name}.deployment_target = '${it.deploymentTarget}'"
+                if (extraSpecAttributes.get()
+                        .containsKey("${it.name}.deployment_target")
+                ) "" else "|    spec.${it.name}.deployment_target    = '${it.deploymentTarget}'"
             }
         }
 
-        val dependencies = pods.get().map { pod ->
+        val dependencies = pods.get().joinToString(separator = "\n") { pod ->
             val versionSuffix = if (pod.version != null) ", '${pod.version}'" else ""
             "|    spec.dependency '${pod.name}'$versionSuffix"
-        }.joinToString(separator = "\n")
+        }
 
         val frameworkDir = projectLayout.cocoapodsBuildDirs.framework.getFile().relativeTo(outputFile.parentFile)
         val vendoredFramework = if (publishing.get()) "${frameworkName.get()}.xcframework" else frameworkDir.resolve("${frameworkName.get()}.framework").invariantSeparatorsPath
