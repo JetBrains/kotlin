@@ -61,19 +61,11 @@ internal object FirDefaultArgumentsInExpectActualizedByFakeOverrideChecker : Fir
     ): List<FirNamedFunctionSymbol> {
         val actualFakeOverrideMembers = actualClassSymbol.collectAllMembers(isActualDeclaration = true)
             .filterIsInstance<FirNamedFunctionSymbol>()
-            .filter { isFakeOverride(it, actualClassSymbol) }
+            .filter { it.isFakeOverride(actualClassSymbol) || it.isDelegated }
 
         return actualFakeOverrideMembers
             .mapNotNull { getSingleMatchingExpect(it, expectClassSymbol, actualClassSymbol) }
             .filter(::hasDefaultArgumentValues)
-    }
-
-    private fun isFakeOverride(member: FirNamedFunctionSymbol, containingClassSymbol: FirRegularClassSymbol): Boolean {
-        val memberReceiverClassId = member.dispatchReceiverType?.classId ?: return false
-        if (memberReceiverClassId != containingClassSymbol.classId) {
-            return true
-        }
-        return member.isSubstitutionOrIntersectionOverride || member.isDelegated
     }
 
     private fun FirExpectActualMatchingContext.getSingleMatchingExpect(
