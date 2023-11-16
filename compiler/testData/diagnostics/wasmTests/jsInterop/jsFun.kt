@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @JsFun("() => {}")
 external fun topLevelExternalFun(): Unit
 

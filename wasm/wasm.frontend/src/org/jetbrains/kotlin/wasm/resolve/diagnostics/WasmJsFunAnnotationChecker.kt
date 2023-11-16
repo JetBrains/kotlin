@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-// TODO: Implement in K2: KT-56849
 object WasmJsFunAnnotationChecker : DeclarationChecker {
     private val jsFunFqName = FqName("kotlin.JsFun")
 

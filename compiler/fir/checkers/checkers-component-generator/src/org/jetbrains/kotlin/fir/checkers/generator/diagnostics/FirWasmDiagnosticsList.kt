@@ -29,6 +29,10 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
         }
     }
 
+    val JS_FUN by object : DiagnosticGroup("JsFun") {
+        val WRONG_JS_FUN_TARGET by error<PsiElement>()
+    }
+
     val WASM_INTEROP by object : DiagnosticGroup("Wasm interop") {
         val NESTED_WASM_EXPORT by error<KtElement>()
         val WASM_EXPORT_ON_EXTERNAL_DECLARATION by error<KtElement>()

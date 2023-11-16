@@ -29,6 +29,9 @@ object WasmStandardClassIds {
 
         @JvmField
         val WasmExport = "WasmExport".wasmId()
+
+        @JvmField
+        val JsFun = "JsFun".baseId()
     }
 
     object Callables {
@@ -39,6 +42,8 @@ object WasmStandardClassIds {
         val Js = "js".callableId(BASE_JS_PACKAGE)
     }
 }
+
+private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))
 
 private fun String.jsId() = ClassId(WasmStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
 
