@@ -680,7 +680,7 @@ class BodyResolveContext(
                 }
                 val receiverTypeRef = function.receiverParameter?.typeRef
                 val type = receiverTypeRef?.coneType
-                val additionalLabelName = type?.labelName()
+                val additionalLabelName = type?.labelName(holder.session)
                 withLabelAndReceiverType(function.name, function, type, holder, additionalLabelName, f)
             } else {
                 f()
@@ -688,8 +688,11 @@ class BodyResolveContext(
         }
     }
 
-    private fun ConeKotlinType.labelName(): Name? {
-        return (this as? ConeLookupTagBasedType)?.lookupTag?.name
+    private fun ConeKotlinType.labelName(session: FirSession): Name? {
+        return when {
+            !session.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers) -> null
+            else -> (this as? ConeLookupTagBasedType)?.lookupTag?.name
+        }
     }
 
     @OptIn(PrivateForInline::class)
@@ -841,7 +844,7 @@ class BodyResolveContext(
             }
             withContainer(accessor) {
                 val type = receiverTypeRef?.coneType
-                val additionalLabelName = type?.labelName()
+                val additionalLabelName = type?.labelName(holder.session)
                 withLabelAndReceiverType(property.name, property, type, holder, additionalLabelName, f)
             }
         }
