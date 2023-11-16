@@ -1,0 +1,3 @@
+fun b() {
+    println("b")
+}

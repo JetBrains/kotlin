@@ -1,0 +1,5 @@
+package = liba
+---
+static int _a() {
+    return 1;
+}
