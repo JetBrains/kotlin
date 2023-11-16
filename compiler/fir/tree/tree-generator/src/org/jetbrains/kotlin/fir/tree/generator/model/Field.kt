@@ -43,21 +43,15 @@ sealed class Field : AbstractField<Field>() {
         updateFieldsInCopy(it)
     }
 
-    protected fun updateFieldsInCopy(copy: Field) {
+    override fun updateFieldsInCopy(copy: Field) {
+        super.updateFieldsInCopy(copy)
         if (copy !is FieldWithDefault) {
             copy.needsSeparateTransform = needsSeparateTransform
             copy.needTransformInOtherChildren = needTransformInOtherChildren
-            copy.useInBaseTransformerDetection = useInBaseTransformerDetection
-            copy.isMutable = isMutable
-            copy.overriddenTypes += overriddenTypes
-            copy.arbitraryImportables += arbitraryImportables
             copy.useNullableForReplace = useNullableForReplace
             copy.customInitializationCall = customInitializationCall
-            copy.optInAnnotation = optInAnnotation
         }
-        copy.fromParent = fromParent
         copy.parentHasSeparateTransform = parentHasSeparateTransform
-        copy.kDoc = kDoc
     }
 
     protected abstract fun internalCopy(): Field
