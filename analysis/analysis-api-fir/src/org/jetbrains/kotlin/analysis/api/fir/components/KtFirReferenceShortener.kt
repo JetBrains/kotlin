@@ -539,10 +539,10 @@ private class ElementsToShortenCollector(
         yieldAll(qualifiersToShorten)
     }.filter { starImport == it.importAllInParent }.mapNotNull { it.nameToImport }.distinct()
 
-    private fun findFakePackageToShorten(typeElement: KtUserType): ShortenType? {
+    private fun findFakePackageToShorten(typeElement: KtUserType): ElementToShorten? {
         val deepestTypeWithQualifier = typeElement.qualifiedTypesWithSelf.last()
 
-        return if (deepestTypeWithQualifier.hasFakeRootPrefix()) ShortenType(deepestTypeWithQualifier) else null
+        return if (deepestTypeWithQualifier.hasFakeRootPrefix()) createElementToShorten(deepestTypeWithQualifier) else null
     }
 
     fun processTypeQualifier(resolvedQualifier: FirResolvedQualifier) {
@@ -783,13 +783,9 @@ private class ElementsToShortenCollector(
         val importDirectiveForReferencedSymbol = referenceExpression.containingKtFile.importDirectives.firstOrNull {
             it.importedFqName == referencedSymbolFqName && it.alias != null
         } ?: return null
-        return when (referenceExpression) {
-            is KtUserType -> ShortenType(referenceExpression, shortenedRef = importDirectiveForReferencedSymbol.alias?.name)
-            is KtDotQualifiedExpression -> ShortenQualifier(
-                referenceExpression, shortenedRef = importDirectiveForReferencedSymbol.alias?.name
-            )
-            else -> error("Unexpected ${referenceExpression::class}")
-        }
+
+        val aliasedName = importDirectiveForReferencedSymbol.alias?.name
+        return createElementToShorten(referenceExpression, shortenedRef = aliasedName)
     }
 
     private fun findClassifierElementsToShorten(
@@ -808,7 +804,7 @@ private class ElementsToShortenCollector(
             shortenIfAlreadyImportedAsAlias(element, classId.asSingleFqName())?.let { return it }
 
             if (shortenClassifierIfAlreadyImported(classId, element, classSymbol, positionScopes)) {
-                return createElementToShorten(element, null, false)
+                return createElementToShorten(element)
             }
             if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) continue
 
@@ -836,7 +832,7 @@ private class ElementsToShortenCollector(
                             createElementToShorten(element, classId.asSingleFqName(), importAllInParent)
                         }
                         // Otherwise, just shorten it and don't alter import statements
-                        else -> createElementToShorten(element, null, false)
+                        else -> createElementToShorten(element)
                     }
                 }
                 importedClassifierOverwritesAvailableClassifier(availableClassifier, importAllInParent) -> {
@@ -847,10 +843,15 @@ private class ElementsToShortenCollector(
         return findFakePackageToShorten(allQualifiedElements.last())
     }
 
-    private fun createElementToShorten(element: KtElement, nameToImport: FqName?, importAllInParent: Boolean): ElementToShorten {
+    private fun createElementToShorten(
+        element: KtElement,
+        nameToImport: FqName? = null,
+        importAllInParent: Boolean = false,
+        shortenedRef: String? = null,
+    ): ElementToShorten {
         return when (element) {
-            is KtUserType -> ShortenType(element, shortenedRef = null, nameToImport, importAllInParent)
-            is KtDotQualifiedExpression -> ShortenQualifier(element, shortenedRef = null, nameToImport, importAllInParent)
+            is KtUserType -> ShortenType(element, shortenedRef, nameToImport, importAllInParent)
+            is KtDotQualifiedExpression -> ShortenQualifier(element, shortenedRef, nameToImport, importAllInParent)
             else -> error("Unexpected ${element::class}")
         }
     }
@@ -1067,7 +1068,7 @@ private class ElementsToShortenCollector(
         val scopes = shorteningContext.findScopesAtPosition(qualifiedProperty, getNamesToImport(), towerContextProvider) ?: return
         val availableCallables = shorteningContext.findPropertiesInScopes(scopes, propertySymbol.name)
         if (availableCallables.isNotEmpty() && shortenIfAlreadyImported(firPropertyAccess, propertySymbol, qualifiedProperty)) {
-            addElementToShorten(ShortenQualifier(qualifiedProperty))
+            addElementToShorten(createElementToShorten(qualifiedProperty))
             return
         }
         if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
@@ -1118,7 +1119,7 @@ private class ElementsToShortenCollector(
         val scopes = shorteningContext.findScopesAtPosition(callExpression, getNamesToImport(), towerContextProvider) ?: return
         val availableCallables = shorteningContext.findFunctionsInScopes(scopes, calledSymbol.name)
         if (availableCallables.isNotEmpty() && shortenIfAlreadyImported(functionCall, calledSymbol, callExpression)) {
-            addElementToShorten(ShortenQualifier(qualifiedCallExpression))
+            addElementToShorten(createElementToShorten(qualifiedCallExpression))
             return
         }
         if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
@@ -1151,17 +1152,16 @@ private class ElementsToShortenCollector(
                 when {
                     matchedCallables.isEmpty() -> {
                         if (nameToImport == null || option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
-                        ShortenQualifier(
+                        createElementToShorten(
                             qualifiedCallExpression,
-                            shortenedRef = null,
                             nameToImport,
                             importAllInParent = option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT
                         )
                     }
                     // Respect caller's request to star import this symbol.
                     matchedCallables.any { it.importKind == ImportKind.EXPLICIT } && option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT ->
-                        ShortenQualifier(qualifiedCallExpression, null, nameToImport, importAllInParent = true)
-                    else -> ShortenQualifier(qualifiedCallExpression)
+                        createElementToShorten(qualifiedCallExpression, nameToImport, importAllInParent = true)
+                    else -> createElementToShorten(qualifiedCallExpression)
                 }
             }
             else -> findFakePackageToShorten(qualifiedCallExpression)
@@ -1207,9 +1207,9 @@ private class ElementsToShortenCollector(
             }
     }
 
-    private fun findFakePackageToShorten(wholeQualifiedExpression: KtDotQualifiedExpression): ShortenQualifier? {
+    private fun findFakePackageToShorten(wholeQualifiedExpression: KtDotQualifiedExpression): ElementToShorten? {
         val deepestQualifier = wholeQualifiedExpression.qualifiedExpressionsWithSelf.last()
-        return if (deepestQualifier.hasFakeRootPrefix()) ShortenQualifier(deepestQualifier) else null
+        return if (deepestQualifier.hasFakeRootPrefix()) createElementToShorten(deepestQualifier) else null
     }
 
     private fun KtElement.isInsideOf(another: KtElement): Boolean = another.textRange.contains(textRange)
