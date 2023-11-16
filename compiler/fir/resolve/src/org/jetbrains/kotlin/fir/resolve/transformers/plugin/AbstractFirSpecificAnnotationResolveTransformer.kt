@@ -189,7 +189,8 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         override fun resolveQualifiedAccessAndSelectCandidate(
             qualifiedAccessExpression: FirQualifiedAccessExpression,
             isUsedAsReceiver: Boolean,
-            callSite: FirElement
+            callSite: FirElement,
+            data: ResolutionMode
         ): FirStatement {
             qualifiedAccessExpression.resolveFromImportScope()
             return qualifiedAccessExpression
