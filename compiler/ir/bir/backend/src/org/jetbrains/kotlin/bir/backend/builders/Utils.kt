@@ -38,11 +38,6 @@ fun BirWhen.addIfThenElse(`if`: () -> BirBranch, `else`: () -> BirElseBranch) {
 }
 
 
-fun BirAttributeContainer.copyAttributes(other: BirAttributeContainer) {
-    attributeOwnerId = other.attributeOwnerId
-    //originalBeforeInline = other.originalBeforeInline
-}
-
 fun BirSimpleFunction.copyFlagsFrom(from: BirSimpleFunction) {
     isInline = from.isInline
     isInfix = from.isInfix

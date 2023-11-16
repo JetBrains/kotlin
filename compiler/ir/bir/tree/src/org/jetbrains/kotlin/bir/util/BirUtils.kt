@@ -441,9 +441,12 @@ fun BirStatement.isPartialLinkageRuntimeError(): Boolean {
     }
 }
 
-fun BirAttributeContainer.copyAttributes(other: BirAttributeContainer) {
+fun BirAttributeContainer.copyAttributes(
+    other: BirAttributeContainer,
+    originalBeforeInlineToken: BirElementDynamicPropertyToken<BirAttributeContainer, BirAttributeContainer?>,
+) {
     attributeOwnerId = other.attributeOwnerId
-    //originalBeforeInline = other.originalBeforeInline
+    this[originalBeforeInlineToken] = other[originalBeforeInlineToken]
 }
 
 val BirFunction.allTypeParameters: Collection<BirTypeParameter>
