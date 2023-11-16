@@ -20,7 +20,7 @@ expect class FakeOverrideActual : I {
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual class FakeOverrideExpect : A() {
+actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>FakeOverrideExpect<!> : A() {
     override fun noAnnotationOnActual() {}
 }
 
