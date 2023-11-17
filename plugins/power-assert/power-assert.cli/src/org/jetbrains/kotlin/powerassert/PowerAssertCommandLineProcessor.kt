@@ -19,15 +19,13 @@
 
 package org.jetbrains.kotlin.powerassert
 
-import com.google.auto.service.AutoService
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
-@AutoService(CommandLineProcessor::class)
 class PowerAssertCommandLineProcessor : CommandLineProcessor {
-    override val pluginId: String = "com.bnorm.kotlin-power-assert"
+    override val pluginId: String = "org.jetbrains.kotlin.powerassert"
 
     override val pluginOptions: Collection<CliOption> = listOf(
         CliOption(

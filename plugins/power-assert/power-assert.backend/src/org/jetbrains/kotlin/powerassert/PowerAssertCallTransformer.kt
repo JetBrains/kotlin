@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.backend.js.utils.asString
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.parent
@@ -36,12 +35,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isFileClass
-import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
-import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -72,8 +66,8 @@ class PowerAssertCallTransformer(
         val delegate = delegates.maxByOrNull { it.function.valueParameters.size }
         if (delegate == null) {
             val valueTypesTruncated = function.valueParameters.subList(0, function.valueParameters.size - 1)
-                .joinToString("") { it.type.asString() + ", " }
-            val valueTypesAll = function.valueParameters.joinToString("") { it.type.asString() + ", " }
+                .joinToString("") { it.type.render() + ", " }
+            val valueTypesAll = function.valueParameters.joinToString("") { it.type.render() + ", " }
             messageCollector.warn(
                 expression = expression,
                 message = """
