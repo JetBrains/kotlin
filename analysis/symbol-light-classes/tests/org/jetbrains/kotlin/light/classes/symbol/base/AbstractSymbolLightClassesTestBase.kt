@@ -11,7 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompilerExecutor
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -51,7 +51,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         super.configureTest(builder)
         with(builder) {
             useAdditionalServices(service(::CompiledLibraryProvider))
-            useDirectives(Directives, CompilerExecutor.Directives)
+            useDirectives(Directives, TestModuleCompiler.Directives)
             useAdditionalSourceProviders(::NullabilityAnnotationSourceProvider)
             defaultDirectives {
                 +ConfigurationDirectives.WITH_STDLIB
@@ -67,7 +67,7 @@ abstract class AbstractSymbolLightClassesTestBase(
     }
 
     open fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        if (isTestAgainstCompiledCode && CompilerExecutor.Directives.COMPILATION_ERRORS in module.directives) {
+        if (isTestAgainstCompiledCode && TestModuleCompiler.Directives.COMPILATION_ERRORS in module.directives) {
             return
         }
 

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModulePr
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompilerExecutor
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
@@ -117,7 +117,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
         useDirectives(*AbstractKotlinCompilerTest.defaultDirectiveContainers.toTypedArray())
         useDirectives(JvmEnvironmentConfigurationDirectives)
-        useDirectives(CompilerExecutor.Directives)
+        useDirectives(TestModuleCompiler.Directives)
 
 
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)

@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
@@ -71,7 +71,10 @@ abstract class KtModuleByCompilerConfiguration(
 
     private fun createJdkFromConfiguration(): KtSdkModule? = configuration.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
         val jdkHomePaths = StandaloneProjectFactory.getDefaultJdkModulePaths(project, jdkHome.toPath())
-        val scope = TestModuleStructureFactory.getScopeForLibraryByRoots(jdkHomePaths, testServices)
+        val scope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(
+            jdkHomePaths,
+            testServices.environmentManager.getProjectEnvironment()
+        )
 
         KtJdkModuleImpl(
             "jdk",
@@ -171,7 +174,10 @@ private class LibraryByRoots(
     override val project: Project,
     testServices: TestServices,
 ) : KtLibraryModule {
-    override val contentScope: GlobalSearchScope = TestModuleStructureFactory.getScopeForLibraryByRoots(roots, testServices)
+    override val contentScope: GlobalSearchScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(
+        roots,
+        testServices.environmentManager.getProjectEnvironment(),
+    )
     override val libraryName: String get() = "Test Library $roots"
     override val directRegularDependencies: List<KtModule> get() = emptyList()
     override val directDependsOnDependencies: List<KtModule> get() = emptyList()

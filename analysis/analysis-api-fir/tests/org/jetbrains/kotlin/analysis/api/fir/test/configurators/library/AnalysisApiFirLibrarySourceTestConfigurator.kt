@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.createKtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompilerJar
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
@@ -44,7 +41,7 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
         builder.apply {
             useAdditionalServices(ServiceRegistrationData(CompiledLibraryProvider::class, ::CompiledLibraryProvider))
             useAdditionalService<KtModuleFactory> { KtLibrarySourceModuleFactory() }
-            useAdditionalService<TestModuleCompiler> { TestModuleCompilerJar() }
+            useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
             useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
             usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
             useConfigurators(::JvmEnvironmentConfigurator)

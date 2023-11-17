@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCom
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -23,6 +24,9 @@ import org.jetbrains.kotlin.test.services.service
 abstract class AbstractLibraryGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
     override val configurator = AnalysisApiFirLibraryBinaryTestConfigurator
     override fun configureTest(builder: TestConfigurationBuilder) {
+        builder.forTestsMatching("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/*") {
+            this.defaultsProviderBuilder.targetPlatform = JsPlatforms.defaultJsPlatform
+        }
         super.configureTest(builder)
         with(builder) {
             useDirectives(Directives)
