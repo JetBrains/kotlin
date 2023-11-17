@@ -91,6 +91,9 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
         val pointersWithRendered = executeOnPooledThreadInReadAction {
             analyseForTest(ktFile) {
                 val (symbols, symbolForPrettyRendering) = collectSymbols(ktFile, testServices)
+                for (symbol in symbols) {
+                    checkContainingFileSymbol(ktFile.getFileSymbol(), symbol, testServices)
+                }
 
                 val pointerWithRenderedSymbol = symbols
                     .asSequence()

@@ -25,7 +25,17 @@ fun FirElementWithResolveState.getContainingFile(): FirFile? {
         is FirBackingField -> propertySymbol.fir.getContainingFile()
         is FirCallableDeclaration -> provider.getFirCallableContainerFile(symbol)
         is FirClassLikeDeclaration -> provider.getFirClassifierContainerFileIfAny(symbol)
-        is FirAnonymousInitializer -> containingDeclarationSymbol?.fir?.getContainingFile()
+        is FirAnonymousInitializer -> {
+            val classId = containingClassIdOrNull()
+            if (classId?.isLocal == true) {
+                containingKtFileIfAny?.let {
+                    val moduleComponents = llFirResolvableSession?.moduleComponents
+                    moduleComponents?.cache?.getCachedFirFile(it)
+                }
+            } else {
+                containingDeclarationSymbol?.fir?.getContainingFile()
+            }
+        }
         is FirDanglingModifierList, is FirCodeFragment -> {
             val ktFile = psi?.containingFile as? KtFile
                 ?: error("File for dangling modifier list cannot be null")

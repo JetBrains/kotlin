@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.types.Variance
@@ -71,9 +72,24 @@ public class DebugSymbolRenderer(
             KtSymbolContainingDeclarationProviderMixIn::class
                 .declaredMemberExtensionFunctions
                 .filter { it.name == "getContainingModule" }
+                .filterNot {
+                    // Rendering a containing symbol is prone to stack overflow.
+                    // * function symbol will render its value parameter symbol(s)
+                    //   whose containing symbol is that function symbol.
+                    // * property symbol contains accessor symbol(s) and/or backing field symbol
+                    //   whose containing symbol is that property symbol.
+                    it.name == "getContainingSymbol"
+                }
                 .forEach {
-                    appendLine()
-                    renderFunction(it, renderSymbolsFully = false, this@KtAnalysisSession, symbol)
+                    if (it.name == "getContainingJvmClassName") {
+                        if (symbol is KtCallableSymbol) {
+                            appendLine()
+                            renderFunction(it, renderSymbolsFully = false, this@KtAnalysisSession, symbol)
+                        }
+                    } else {
+                        appendLine()
+                        renderFunction(it, renderSymbolsFully = false, this@KtAnalysisSession, symbol)
+                    }
                 }
 
             KtSymbolInfoProviderMixIn::class.declaredMemberExtensionProperties
@@ -188,6 +204,7 @@ public class DebugSymbolRenderer(
             is KtClassLikeSymbol -> renderId(symbol.classIdIfNonLocal, symbol)
             is KtCallableSymbol -> renderId(symbol.callableIdIfNonLocal, symbol)
             is KtNamedSymbol -> renderValue(symbol.name, renderSymbolsFully = false)
+            is KtFileSymbol -> renderValue((symbol.psi as KtFile).name, renderSymbolsFully = false)
             else -> error("Unsupported symbol ${symbol::class}")
         }
         append(")")

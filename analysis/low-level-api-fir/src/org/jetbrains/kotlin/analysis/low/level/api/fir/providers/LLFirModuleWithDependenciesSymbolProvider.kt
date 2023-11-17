@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubDeserializedBuiltInsContainerSource
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.fir.FirSession
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -169,7 +167,7 @@ internal class LLFirDependenciesSymbolProvider(
         if (newSymbols.isEmpty()) return
         val newFacades = SmartSet.create<JvmClassName>()
         for (symbol in newSymbols) {
-            val facade = symbol.jvmClassName()
+            val facade = symbol.jvmClassNameIfDeserialized()
             if (facade != null) {
                 newFacades += facade
                 if (facade !in facades) {
@@ -180,17 +178,5 @@ internal class LLFirDependenciesSymbolProvider(
             }
         }
         facades += newFacades
-    }
-
-    private fun FirCallableSymbol<*>.jvmClassName(): JvmClassName? {
-        val containerSource = fir.containerSource
-
-        return when (containerSource) {
-            is JvmStubDeserializedBuiltInsContainerSource -> containerSource.facadeClassName
-
-            is FacadeClassSource -> containerSource.facadeClassName ?: containerSource.className
-
-            else -> null
-        }
     }
 }

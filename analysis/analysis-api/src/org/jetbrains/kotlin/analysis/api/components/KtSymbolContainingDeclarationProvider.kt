@@ -6,13 +6,19 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 public abstract class KtSymbolContainingDeclarationProvider : KtAnalysisSessionComponent() {
     public abstract fun getContainingDeclaration(symbol: KtSymbol): KtDeclarationSymbol?
+
+    public abstract fun getContainingFileSymbol(symbol: KtSymbol): KtFileSymbol?
+
+    public abstract fun getContainingJvmClassName(symbol: KtCallableSymbol): JvmClassName?
 
     public abstract fun getContainingModule(symbol: KtSymbol): KtModule
 }
@@ -26,6 +32,25 @@ public interface KtSymbolContainingDeclarationProviderMixIn : KtAnalysisSessionM
      */
     public fun KtSymbol.getContainingSymbol(): KtDeclarationSymbol? =
         withValidityAssertion { analysisSession.containingDeclarationProvider.getContainingDeclaration(this) }
+
+    /**
+     * Returns containing [KtFile] as [KtFileSymbol]
+     *
+     * Caveat: returns null if the given symbol is already [KtFileSymbol], since there is no containing file.
+     */
+    public fun KtSymbol.getContainingFileSymbol(): KtFileSymbol? =
+        withValidityAssertion { analysisSession.containingDeclarationProvider.getContainingFileSymbol(this) }
+
+    /**
+     * Returns containing class's [JvmClassName] if any for [KtCallableSymbol]
+     *
+     *   even for deserialized callables! (which is useful to look up the containing facade in [PsiElement])
+     *   for regular, non-local callables from source, it is a mere conversion of [ClassId] inside [CallableId]
+     *
+     * Note that this API is applicable for common or JVM modules only.
+     */
+    public fun KtCallableSymbol.getContainingJvmClassName(): JvmClassName? =
+        withValidityAssertion { analysisSession.containingDeclarationProvider.getContainingJvmClassName(this) }
 
     public fun KtSymbol.getContainingModule(): KtModule =
         withValidityAssertion { analysisSession.containingDeclarationProvider.getContainingModule(this) }
