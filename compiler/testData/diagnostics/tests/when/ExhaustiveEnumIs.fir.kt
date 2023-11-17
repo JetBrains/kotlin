@@ -12,7 +12,7 @@ enum class MyEnum {
 }
 
 fun foo(x: MyEnum): Int {
-    return <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    return when (x) {
         is <!IS_ENUM_ENTRY!>MyEnum.A<!> -> 1
         is <!IS_ENUM_ENTRY!>MyEnum.B<!> -> 2
         is <!IS_ENUM_ENTRY!>MyEnum.C<!> -> 3
