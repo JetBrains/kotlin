@@ -1536,4 +1536,44 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             """
         )
     }
+
+    @Test
+    fun classDelegateToComposablePropertyInComposable() {
+        check(
+            """
+                import androidx.compose.runtime.Composable
+
+                interface A
+
+                interface B {
+                    val property: A @Composable get() = TODO()
+                }
+
+                @Composable fun Test(b: B) {
+                    val a = object : A by b.property {}
+                    println(a)
+                }
+            """
+        )
+    }
+
+    @Test
+    fun classDelegateToComposablePropertyInNonComposable() {
+        check(
+            """
+                import androidx.compose.runtime.Composable
+
+                interface A
+
+                interface B {
+                    val property: A @Composable get() = TODO()
+                }
+
+                fun <!COMPOSABLE_EXPECTED!>Test<!>(b: B) {
+                    val a = object : A by b.<!COMPOSABLE_INVOCATION!>property<!> {}
+                    println(a)
+                }
+            """
+        )
+    }
 }
