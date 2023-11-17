@@ -5496,6 +5496,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/classes/namedClassObject.kt");
         }
 
+        @TestMetadata("nestedInitBlocksWithLambda.kt")
+        public void testNestedInitBlocksWithLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/classes/nestedInitBlocksWithLambda.kt");
+        }
+
         @TestMetadata("outerThis.kt")
         public void testOuterThis() throws Exception {
             runTest("compiler/testData/codegen/box/classes/outerThis.kt");

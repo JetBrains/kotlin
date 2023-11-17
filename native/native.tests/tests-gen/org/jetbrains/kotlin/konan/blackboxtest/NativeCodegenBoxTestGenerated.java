@@ -4629,6 +4629,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("nestedInitBlocksWithLambda.kt")
+            public void testNestedInitBlocksWithLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/classes/nestedInitBlocksWithLambda.kt");
+            }
+
+            @Test
             @TestMetadata("outerThis.kt")
             public void testOuterThis() throws Exception {
                 runTest("compiler/testData/codegen/box/classes/outerThis.kt");
