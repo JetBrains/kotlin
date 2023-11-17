@@ -24567,6 +24567,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("AssignOperatorWithExtensionForAny.kt")
+            public void testAssignOperatorWithExtensionForAny() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/AssignOperatorWithExtensionForAny.kt");
+            }
+
+            @Test
             @TestMetadata("AssignmentOperations.kt")
             public void testAssignmentOperations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/AssignmentOperations.kt");
