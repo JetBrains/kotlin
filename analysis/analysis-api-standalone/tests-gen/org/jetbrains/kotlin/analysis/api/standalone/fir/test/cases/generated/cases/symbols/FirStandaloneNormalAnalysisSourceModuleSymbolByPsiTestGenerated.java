@@ -173,6 +173,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("facadeWithJvmName.kt")
+    public void testFacadeWithJvmName() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/facadeWithJvmName.kt");
+    }
+
+    @Test
     @TestMetadata("forLoopVariable.kt")
     public void testForLoopVariable() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/forLoopVariable.kt");
@@ -248,6 +254,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
     @TestMetadata("memberProperties.kt")
     public void testMemberProperties() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/memberProperties.kt");
+    }
+
+    @Test
+    @TestMetadata("multifilePart.kt")
+    public void testMultifilePart() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/multifilePart.kt");
     }
 
     @Test

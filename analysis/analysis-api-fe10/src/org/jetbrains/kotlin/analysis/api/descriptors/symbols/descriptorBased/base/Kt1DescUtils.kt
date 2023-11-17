@@ -139,8 +139,8 @@ internal fun KtSymbol.getDescriptor(): DeclarationDescriptor? {
         is KtFe10DescSymbol<*> -> descriptor
         is KtFe10DescSyntheticFieldSymbol -> descriptor
         is KtFe10PsiDefaultPropertyGetterSymbol -> descriptor
+        is KtFe10PsiDefaultPropertySetterSymbol -> descriptor
         is KtFe10PsiDefaultSetterParameterSymbol -> descriptor
-        is KtFe10PsiDefaultPropertySetterSymbol -> null
         is KtFe10DescDefaultPropertySetterSymbol -> null
         is KtFe10DynamicFunctionDescValueParameterSymbol -> null
         is KtFe10FileSymbol -> null

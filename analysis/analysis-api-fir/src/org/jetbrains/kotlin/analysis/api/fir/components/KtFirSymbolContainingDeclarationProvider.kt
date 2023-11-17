@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
@@ -17,20 +18,26 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KtFirSymbolContainingDeclarationProvider(
@@ -53,7 +60,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
         if (firSymbol is FirErrorPropertySymbol && firSymbol.diagnostic is ConeDestructuringDeclarationsOnTopLevel) return null
         fun getParentSymbolByPsi() = getContainingPsi(symbol).let { with(analysisSession) { it.getSymbol() } }
         return when (symbol) {
-            is KtPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.fir.propertySymbol) as? KtDeclarationSymbol
+            is KtPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as? KtDeclarationSymbol
             is KtBackingFieldSymbol -> symbol.owningProperty
             is KtTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KtDeclarationSymbol
             is KtLocalVariableSymbol -> getParentSymbolByPsi()
@@ -98,10 +105,55 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
     }
 
+    override fun getContainingFileSymbol(symbol: KtSymbol): KtFileSymbol? {
+        if (symbol is KtFileSymbol) return null
+        val firSymbol = when (symbol) {
+            is KtFirReceiverParameterSymbol -> {
+                // symbol from receiver parameter
+                symbol.firSymbol
+            }
+            else -> {
+                // general FIR-based symbol
+                symbol.firSymbol
+            }
+        }
+        val firFileSymbol = firSymbol.fir.getContainingFile()?.symbol ?: return null
+        return firSymbolBuilder.buildFileSymbol(firFileSymbol)
+    }
+
+    override fun getContainingJvmClassName(symbol: KtCallableSymbol): JvmClassName? {
+        val platform = getContainingModule(symbol).platform
+        if (!platform.isCommon() && !platform.isJvm()) return null
+
+        val containingSymbolOrSelf = when (symbol) {
+            is KtValueParameterSymbol -> {
+                getContainingDeclaration(symbol) as? KtFunctionLikeSymbol ?: symbol
+            }
+            is KtPropertyAccessorSymbol -> {
+                getContainingDeclaration(symbol) as? KtPropertySymbol ?: symbol
+            }
+            is KtBackingFieldSymbol -> symbol.owningProperty
+            else -> symbol
+        }
+        val firSymbol = containingSymbolOrSelf.firSymbol
+
+        firSymbol.jvmClassNameIfDeserialized()?.let { return it }
+
+        return if (containingSymbolOrSelf.symbolKind == KtSymbolKind.TOP_LEVEL) {
+            (firSymbol.fir.getContainingFile()?.psi as? KtFile)
+                ?.takeUnless { it.isScript() }
+                ?.let { JvmClassName.byFqNameWithoutInnerClasses(it.javaFileFacadeFqName) }
+        } else {
+            val classId = (containingSymbolOrSelf as? KtConstructorSymbol)?.containingClassIdIfNonLocal
+                ?: containingSymbolOrSelf.callableIdIfNonLocal?.classId
+            classId?.takeUnless { it.shortClassName.isSpecial }
+                ?.let { JvmClassName.byClassId(it) }
+        }
+    }
+
     override fun getContainingModule(symbol: KtSymbol): KtModule {
         return symbol.getContainingKtModule(analysisSession.firResolveSession)
     }
-
 
     private fun getContainingPsi(symbol: KtSymbol): KtDeclaration {
         val source = symbol.firSymbol.source

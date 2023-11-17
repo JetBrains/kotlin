@@ -11,23 +11,28 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescDefaultBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DynamicFunctionDescValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtBackingFieldSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.descriptorUtil.platform
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import java.nio.file.Path
@@ -46,13 +51,89 @@ internal class KtFe10SymbolContainingDeclarationProvider(
 
         return when (symbol) {
             is KtBackingFieldSymbol -> symbol.owningProperty
-            else -> symbol.getDescriptor()?.containingDeclaration?.toKtSymbol(analysisContext) as? KtDeclarationSymbol
+            is KtPropertyAccessorSymbol -> {
+                (symbol.getDescriptor() as? PropertyAccessorDescriptor)?.correspondingProperty
+                    ?.toKtSymbol(analysisContext) as? KtDeclarationSymbol
+            }
+            else -> {
+                symbol.getDescriptor()?.containingDeclaration
+                    ?.toKtSymbol(analysisContext) as? KtDeclarationSymbol
+            }
+        }
+    }
+
+    private val KtSymbol.containingSymbolOrSelf: KtSymbol
+        get() {
+            return when (this) {
+                is KtValueParameterSymbol -> {
+                    getContainingDeclaration(this) as? KtFunctionLikeSymbol ?: this
+                }
+                is KtPropertyAccessorSymbol -> {
+                    getContainingDeclaration(this) as? KtPropertySymbol ?: this
+                }
+                is KtBackingFieldSymbol -> this.owningProperty
+                else -> this
+            }
+        }
+
+    override fun getContainingFileSymbol(symbol: KtSymbol): KtFileSymbol? {
+        if (symbol is KtFileSymbol) return null
+        // psiBased
+        (symbol.psi?.containingFile as? KtFile)?.let { ktFile ->
+            with(analysisSession) {
+                return ktFile.getFileSymbol()
+            }
+        }
+        // descriptorBased
+        val descriptor = symbol.containingSymbolOrSelf.getDescriptor()
+        val ktFile = descriptor?.let(DescriptorToSourceUtils::getContainingFile) ?: return null
+        with(analysisSession) {
+            return ktFile.getFileSymbol()
+        }
+    }
+
+    override fun getContainingJvmClassName(symbol: KtCallableSymbol): JvmClassName? {
+        val platform = getContainingModule(symbol).platform
+        if (!platform.isCommon() && !platform.isJvm()) return null
+
+        val containingSymbolOrSelf = symbol.containingSymbolOrSelf as KtSymbolWithKind
+        return when (val descriptor = containingSymbolOrSelf.getDescriptor()) {
+            is DescriptorWithContainerSource -> {
+                when (val containerSource = descriptor.containerSource) {
+                    is FacadeClassSource -> containerSource.facadeClassName ?: containerSource.className
+                    is KotlinJvmBinarySourceElement -> JvmClassName.byClassId(containerSource.binaryClass.classId)
+                    else -> null
+                }
+            }
+            else -> {
+                return if (containingSymbolOrSelf.symbolKind == KtSymbolKind.TOP_LEVEL) {
+                    descriptor?.let(DescriptorToSourceUtils::getContainingFile)
+                        ?.takeUnless { it.isScript() }
+                        ?.let { JvmClassName.byFqNameWithoutInnerClasses(it.javaFileFacadeFqName) }
+                } else {
+                    val classId = (containingSymbolOrSelf as? KtConstructorSymbol)?.containingClassIdIfNonLocal
+                        ?: (containingSymbolOrSelf as? KtCallableSymbol)?.callableIdIfNonLocal?.classId
+                    classId?.takeUnless { it.shortClassName.isSpecial }
+                        ?.let { JvmClassName.byClassId(it) }
+                }
+            }
         }
     }
 
     // TODO this is a dummy and incorrect implementation just to satisfy some tests
     override fun getContainingModule(symbol: KtSymbol): KtModule {
-        val descriptor = symbol.getDescriptor()
+        val descriptor = when (symbol) {
+            is KtValueParameterSymbol -> {
+                val paramDescriptor = symbol.getDescriptor()
+                (paramDescriptor as? ValueParameterDescriptor)?.containingDeclaration ?: paramDescriptor
+            }
+            is KtPropertyAccessorSymbol -> {
+                val accessorDescriptor = symbol.getDescriptor()
+                (accessorDescriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: accessorDescriptor
+            }
+            else ->
+                symbol.getDescriptor()
+        }
 
         val symbolPsi = descriptor?.let(DescriptorToSourceUtils::getContainingFile) ?: symbol.psi
         if (symbolPsi != null) {
@@ -75,7 +156,24 @@ internal class KtFe10SymbolContainingDeclarationProvider(
     }
 
     private fun getFakeContainingKtModule(descriptor: DescriptorWithContainerSource): KtModule {
-        val libraryPath = Paths.get((descriptor.containerSource as JvmPackagePartSource).knownJvmBinaryClass?.containingLibrary!!)
+        val library = when (val containerSource = descriptor.containerSource) {
+            is JvmPackagePartSource -> containerSource.knownJvmBinaryClass?.containingLibrary
+            is KotlinJvmBinarySourceElement -> containerSource.binaryClass.containingLibrary
+            else -> {
+                when (val containingDeclaration = descriptor.containingDeclaration) {
+                    is DescriptorWithContainerSource -> {
+                        // Deserialized member
+                        return getFakeContainingKtModule(containingDeclaration)
+                    }
+                    is LazyJavaPackageFragment -> {
+                        // Deserialized top-level
+                        (containingDeclaration.source as KotlinJvmBinarySourceElement).binaryClass.containingLibrary
+                    }
+                    else -> null
+                }
+            }
+        } ?: TODO(descriptor::class.java.name)
+        val libraryPath = Paths.get(library)
         return object : KtLibraryModule {
             override val libraryName: String = libraryPath.fileName.toString().substringBeforeLast(".")
             override val librarySources: KtLibrarySourceModule? = null
