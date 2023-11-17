@@ -40,13 +40,12 @@ abstract class AnalysisApiEnvironmentManager : TestService {
 class AnalysisApiEnvironmentManagerImpl(
     override val testServices: TestServices,
     override val testRootDisposable: Disposable,
-    private val configurator: AnalysisApiTestConfigurator,
 ) : AnalysisApiEnvironmentManager() {
     private val _projectEnvironment: KotlinCoreProjectEnvironment by lazy {
         StandaloneProjectFactory.createProjectEnvironment(
             testRootDisposable,
             testServices.applicationDisposableProvider.getApplicationRootDisposable(),
-            KotlinCoreApplicationEnvironmentMode.UnitTest(configurator.isWriteAccessAllowed),
+            KotlinCoreApplicationEnvironmentMode.UnitTest,
         )
     }
 

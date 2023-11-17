@@ -13,7 +13,9 @@ import com.intellij.lang.MetaLanguage
 import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.augment.PsiAugmentProvider
@@ -25,28 +27,22 @@ import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 
 sealed interface KotlinCoreApplicationEnvironmentMode {
-    val isWriteAccessAllowed: Boolean
+    object Production : KotlinCoreApplicationEnvironmentMode
 
-    object Production : KotlinCoreApplicationEnvironmentMode {
-        override val isWriteAccessAllowed: Boolean get() = true
-    }
-
-    class UnitTest(override val isWriteAccessAllowed: Boolean) : KotlinCoreApplicationEnvironmentMode
+    object UnitTest : KotlinCoreApplicationEnvironmentMode
 
     companion object {
         fun fromUnitTestModeFlag(isUnitTestMode: Boolean): KotlinCoreApplicationEnvironmentMode =
-            if (isUnitTestMode) UnitTest(isWriteAccessAllowed = false) else Production
+            if (isUnitTestMode) UnitTest else Production
     }
 }
 
 class KotlinCoreApplicationEnvironment private constructor(
     parentDisposable: Disposable,
-    private val environmentMode: KotlinCoreApplicationEnvironmentMode,
-) : JavaCoreApplicationEnvironment(parentDisposable, environmentMode is KotlinCoreApplicationEnvironmentMode.UnitTest) {
+    environmentMode: KotlinCoreApplicationEnvironmentMode,
+) : JavaCoreApplicationEnvironment(parentDisposable, environmentMode == KotlinCoreApplicationEnvironmentMode.UnitTest) {
 
     init {
-        application.initializeEnvironmentMode(environmentMode)
-
         registerApplicationService(JavaFileCodeStyleFacadeFactory::class.java, DummyJavaFileCodeStyleFacadeFactory())
         registerFileType(JavaClassFileType.INSTANCE, "sig")
     }
@@ -63,7 +59,7 @@ class KotlinCoreApplicationEnvironment private constructor(
          * is not yet initialized when this function is called from the superclass constructor.
          */
         return if (mock.isUnitTestMode) {
-            MockUnitTestApplication(parentDisposable)
+            KotlinCoreUnitTestApplication(parentDisposable)
         } else {
             mock
         }
@@ -129,25 +125,42 @@ class KotlinCoreApplicationEnvironment private constructor(
     }
 }
 
-private class MockUnitTestApplication(parentDisposable: Disposable) : MockApplication(parentDisposable) {
+/**
+ * A [MockApplication] which allows write actions only in [runWriteAction] blocks.
+ *
+ * The Analysis API is usually not allowed to be used from a write action. To properly support Analysis API tests, the application should
+ * not return `true` for [isWriteAccessAllowed] indiscriminately like [MockApplication]. On the other hand, we have some tests which require
+ * write access, but don't access the Analysis API. Hence, we remember which threads have started a write action with [runWriteAction].
+ */
+private class KotlinCoreUnitTestApplication(parentDisposable: Disposable) : MockApplication(parentDisposable) {
     /**
-     * We can't use [KotlinCoreApplicationEnvironment.environmentMode] in [KotlinCoreApplicationEnvironment.createApplication], because the
-     * corresponding property is not yet initialized when `createApplication` is called from the superclass constructor. So we have to
-     * initialize it later.
+     * We need to remember whether write access is allowed per thread because the application can be shared between multiple concurrent test
+     * runs.
      */
-    lateinit var environmentMode: KotlinCoreApplicationEnvironmentMode
+    private val isWriteAccessAllowedInThread: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
     override fun isUnitTestMode(): Boolean = true
 
-    override fun isWriteAccessAllowed(): Boolean = environmentMode.isWriteAccessAllowed
-}
+    override fun isWriteAccessAllowed(): Boolean = isWriteAccessAllowedInThread.get()
 
-private fun MockApplication.initializeEnvironmentMode(environmentMode: KotlinCoreApplicationEnvironmentMode) {
-    if (this !is MockUnitTestApplication) return
+    override fun runWriteAction(action: Runnable) {
+        withWriteAccessAllowedInThread {
+            action.run()
+        }
+    }
 
-    this.environmentMode = environmentMode
+    override fun <T : Any?> runWriteAction(computation: Computable<T?>): T? =
+        withWriteAccessAllowedInThread { computation.compute() }
 
-    require(isWriteAccessAllowed == environmentMode.isWriteAccessAllowed) {
-        "The mock application's `isWriteAccessAllowed` should correspond to the environment mode configuration."
+    override fun <T : Any?, E : Throwable?> runWriteAction(computation: ThrowableComputable<T?, E?>): T? =
+        withWriteAccessAllowedInThread { computation.compute() }
+
+    private inline fun <A> withWriteAccessAllowedInThread(action: () -> A): A {
+        isWriteAccessAllowedInThread.set(true)
+        try {
+            return action()
+        } finally {
+            isWriteAccessAllowedInThread.set(false)
+        }
     }
 }

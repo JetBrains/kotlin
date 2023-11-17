@@ -40,6 +40,4 @@ object AnalysisApiFirModifiablePsiSourceTestConfigurator : AnalysisApiFirSourceT
         addAll(super.serviceRegistrars)
         add(AnalysisApiModifiablePsiTestServiceRegistrar)
     }
-
-    override val isWriteAccessAllowed: Boolean get() = true
 }

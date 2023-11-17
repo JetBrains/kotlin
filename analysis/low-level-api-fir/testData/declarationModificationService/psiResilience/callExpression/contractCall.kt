@@ -1,6 +1,3 @@
-// IGNORE_FIR
-// Reason: KT-63560
-
 import kotlin.contracts.contract
 import kotlin.contracts.InvocationKind
 

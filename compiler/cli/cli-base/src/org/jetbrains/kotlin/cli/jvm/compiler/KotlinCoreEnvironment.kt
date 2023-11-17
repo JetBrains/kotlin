@@ -471,7 +471,7 @@ class KotlinCoreEnvironment private constructor(
                 createApplicationEnvironment(
                     parentDisposable,
                     configuration,
-                    KotlinCoreApplicationEnvironmentMode.UnitTest(isWriteAccessAllowed = false),
+                    KotlinCoreApplicationEnvironmentMode.UnitTest,
                 )
             val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
             return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
@@ -501,7 +501,7 @@ class KotlinCoreEnvironment private constructor(
             val appEnv = createApplicationEnvironment(
                 parentDisposable,
                 configuration,
-                KotlinCoreApplicationEnvironmentMode.UnitTest(isWriteAccessAllowed = false),
+                KotlinCoreApplicationEnvironmentMode.UnitTest,
             )
             return ProjectEnvironment(parentDisposable, appEnv, configuration)
         }
@@ -523,7 +523,7 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreApplicationEnvironment = getOrCreateApplicationEnvironment(
             parentDisposable,
             configuration,
-            KotlinCoreApplicationEnvironmentMode.UnitTest(isWriteAccessAllowed = false),
+            KotlinCoreApplicationEnvironmentMode.UnitTest,
         )
 
         fun getOrCreateApplicationEnvironment(
