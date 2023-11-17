@@ -41,6 +41,9 @@ class FirBuilderInferenceSession2(
         call.candidate()?.usedOuterCs != true
 
     override fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression, data: ResolutionMode) {
+        // Callable references are being processed together with containing its call
+        if (qualifiedAccessExpression is FirCallableReferenceAccess) return
+
         if (qualifiedAccessExpression.resolvedType.containsNotFixedTypeVariables() && (qualifiedAccessExpression as? FirResolvable)?.candidate() == null) {
             qualifiedAccessesToProcess.add(qualifiedAccessExpression)
             outerCandidate.postponedAccesses += qualifiedAccessExpression
