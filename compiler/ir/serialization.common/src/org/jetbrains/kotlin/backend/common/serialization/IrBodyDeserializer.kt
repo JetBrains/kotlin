@@ -212,7 +212,7 @@ class IrBodyDeserializer(
             val rawType = with(IrSimpleTypeBuilder()) {
                 arguments = typeParameters.memoryOptimizedMap {
                     classifier = it.symbol
-                    buildTypeProjection()
+                    buildSimpleType()
                 }
                 classifier = klass.symbol
                 buildSimpleType()

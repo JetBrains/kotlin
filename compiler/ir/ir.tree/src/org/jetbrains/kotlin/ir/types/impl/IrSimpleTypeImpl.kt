@@ -89,7 +89,6 @@ class IrSimpleTypeBuilder {
     var arguments: List<IrTypeArgument> = emptyList()
     var annotations: List<IrConstructorCall> = emptyList()
     var abbreviation: IrTypeAbbreviation? = null
-    var variance = Variance.INVARIANT
 }
 
 fun IrSimpleType.toBuilder() =
@@ -112,7 +111,7 @@ fun IrSimpleTypeBuilder.buildSimpleType() =
         abbreviation
     )
 
-fun IrSimpleTypeBuilder.buildTypeProjection() =
+fun IrSimpleTypeBuilder.buildTypeProjection(variance: Variance): IrTypeProjection =
     if (variance == Variance.INVARIANT)
         buildSimpleType()
     else
@@ -136,12 +135,11 @@ fun makeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
     when {
         type is IrCapturedType -> IrTypeProjectionImpl(type, variance)
         type is IrTypeProjection && type.variance == variance -> type
-        type is IrSimpleType -> type.toBuilder().apply { this.variance = variance }.buildTypeProjection()
+        type is IrSimpleType -> type.toBuilder().buildTypeProjection(variance)
         type is IrDynamicType -> IrDynamicTypeImpl(null, type.annotations, variance)
         type is IrErrorType -> IrErrorTypeImpl(null, type.annotations, variance)
         else -> IrTypeProjectionImpl(type, variance)
     }
-
 
 fun makeTypeIntersection(types: List<IrType>): IrType =
     with(types.map { makeTypeProjection(it, Variance.INVARIANT).type }.distinct()) {

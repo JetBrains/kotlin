@@ -126,7 +126,6 @@ abstract class TypeTranslator(
         return IrSimpleTypeBuilder().apply {
             this.kotlinType = approximatedType
             this.nullability = SimpleTypeNullability.fromHasQuestionMark(upperType.isMarkedNullable)
-            this.variance = variance
             this.abbreviation = upperType.getAbbreviation()?.toIrTypeAbbreviation()
 
             when (upperTypeDescriptor) {
@@ -169,7 +168,7 @@ abstract class TypeTranslator(
                 else ->
                     throw AssertionError("Unexpected type descriptor $upperTypeDescriptor :: ${upperTypeDescriptor::class}")
             }
-        }.buildTypeProjection()
+        }.buildTypeProjection(variance)
     }
 
     private fun approximateUpperBounds(upperBounds: Collection<KotlinType>, variance: Variance): IrTypeProjection {
