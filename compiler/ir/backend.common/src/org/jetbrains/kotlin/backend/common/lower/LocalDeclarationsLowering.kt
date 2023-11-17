@@ -585,8 +585,14 @@ class LocalDeclarationsLowering(
                 rewriteFunctionBody(it.declaration, it)
             }
 
-            localClassConstructors.values.forEach {
-                rewriteFunctionBody(it.declaration, it)
+            localClassConstructors.values.forEach { constructorContext ->
+                rewriteFunctionBody(constructorContext.declaration, constructorContext)
+
+                if (!constructorContext.declaration.isPrimary) return@forEach
+
+                constructorContext.declaration.constructedClass.declarations
+                    .filterIsInstance<IrAnonymousInitializer>()
+                    .forEach { rewriteFunctionBody(it, constructorContext) }
             }
 
             localClasses.values.forEach {
