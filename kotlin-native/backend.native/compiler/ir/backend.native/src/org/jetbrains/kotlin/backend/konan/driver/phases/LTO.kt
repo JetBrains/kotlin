@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.konan.optimizations.dce
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.dump
 
 internal val GHAPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "GHAPhase",
@@ -135,6 +136,7 @@ internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerati
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
         op = { generationState, input ->
+            println(input.irModule.dump())
             val lifetimes = mutableMapOf<IrElement, Lifetime>()
             val context = generationState.context
             val entryPoint = context.ir.symbols.entryPoint?.owner

@@ -393,14 +393,14 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
         "RETURN type=${expression.type.render()} from='${expression.returnTargetSymbol.renderReference()}'"
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
-        "CALL '${expression.symbol.renderReference()}' ${expression.renderSuperQualifier()}" +
+        "CALL ${System.identityHashCode(expression)} '${expression.symbol.renderReference()}' ${expression.renderSuperQualifier()}" +
                 "type=${expression.type.render()} origin=${expression.origin}"
 
     private fun IrCall.renderSuperQualifier(): String =
         superQualifierSymbol?.let { "superQualifier='${it.renderReference()}' " } ?: ""
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): String =
-        "CONSTRUCTOR_CALL '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+        "CONSTRUCTOR_CALL ${System.identityHashCode(expression)} '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
         "DELEGATING_CONSTRUCTOR_CALL '${expression.symbol.renderReference()}'"

@@ -15,8 +15,13 @@ import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.getAllSuperclasses
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 
 private val DataFlowIR.Node.isAlloc
@@ -411,15 +416,17 @@ internal object EscapeAnalysis {
             }
 
             statsPerFunction.entries.toList()
-                    .sortedByDescending { it.value.escapedAllocsCount }
-                    .forEach { (function, stats) ->
+                    .sortedByDescending { it.value.first.escapedAllocsCount }
+                    .forEach { (function, pair) ->
                         println(function)
+                        val (stats, escapedAllocs) = pair
                         with(stats) {
                             println("    stackAllocs = ${staticStackAllocsCount}, heapAllocs = ${globalAllocsCount}")
                             println("    escapedAllocsCount = ${escapedAllocsCount * 100.0 / (globalAllocsCount + staticStackAllocsCount)}%")
                             println("    localAllocsCount = ${localAllocsCount * 100.0 / (globalAllocsCount + staticStackAllocsCount)}%")
                             println("    leakedToParametersAllocsCount = ${leakedToParametersAllocsCount * 100.0 / (globalAllocsCount + staticStackAllocsCount)}%")
                         }
+                        escapedAllocs.forEach { println("    ${System.identityHashCode(it)}") }
                     }
 
             context.logMultiple {
@@ -482,7 +489,7 @@ internal object EscapeAnalysis {
 
         private val stats = Stats()
 
-        private val statsPerFunction = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, Stats>()
+        private val statsPerFunction = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, Pair<Stats, MutableList<IrElement>>>()
 
         private fun PointsToGraph.saveLifetimes() {
             pointsToGraphs[functionSymbol] = this
@@ -493,32 +500,48 @@ internal object EscapeAnalysis {
             stats.totalDFGSize += function.body.allScopes.sumOf { it.nodes.size }
 
             val localStats = Stats()
-            statsPerFunction[functionSymbol] = localStats
+            val escapedAllocs = mutableListOf<IrElement>()
+            statsPerFunction[functionSymbol] = localStats to escapedAllocs
 
             for (node in nodes.keys) {
                 node.ir?.let {
                     val lifetime = lifetimeOf(node)
 
+                    val skip = functionSymbol.isStaticFieldInitializer ||
+                            functionSymbol.irFunction?.let {
+                                it is IrConstructor &&
+                                        (it.constructedClass.kind == ClassKind.ENUM_CLASS
+                                                || it.constructedClass.kind == ClassKind.OBJECT)
+                            } == true ||
+                            (it is IrConstructorCall &&
+                                    context.irBuiltIns.throwableClass.owner in it.symbol.owner.constructedClass.getAllSuperclasses())
+
                     if (node.isAlloc) {
-                        if (lifetime == Lifetime.GLOBAL) {
-                            ++stats.globalAllocsCount
-                            ++localStats.globalAllocsCount
-                        }
-                        if (lifetime == Lifetime.STACK) {
-                            ++stats.staticStackAllocsCount
-                            ++localStats.staticStackAllocsCount
+                        if (!skip) {
+                            if (lifetime == Lifetime.GLOBAL) {
+                                ++stats.globalAllocsCount
+                                ++localStats.globalAllocsCount
+                            }
+                            if (lifetime == Lifetime.STACK) {
+                                ++stats.staticStackAllocsCount
+                                ++localStats.staticStackAllocsCount
+                            }
                         }
 
                         val computedLifetime = lifetimeOf(nodes[node]!!)
-                        if (computedLifetime == Lifetime.LOCAL) {
-                            ++stats.localAllocsCount
-                            ++localStats.localAllocsCount
-                        } else if (computedLifetime == Lifetime.GLOBAL) {
-                            ++stats.escapedAllocsCount
-                            ++localStats.escapedAllocsCount
-                        } else if (computedLifetime != Lifetime.STACK) {
-                            ++stats.leakedToParametersAllocsCount
-                            ++localStats.leakedToParametersAllocsCount
+
+                        if (!skip) {
+                            if (computedLifetime == Lifetime.LOCAL) {
+                                ++stats.localAllocsCount
+                                ++localStats.localAllocsCount
+                            } else if (computedLifetime == Lifetime.GLOBAL) {
+                                ++stats.escapedAllocsCount
+                                ++localStats.escapedAllocsCount
+                                escapedAllocs.add(it)
+                            } else if (computedLifetime != Lifetime.STACK) {
+                                ++stats.leakedToParametersAllocsCount
+                                ++localStats.leakedToParametersAllocsCount
+                            }
                         }
 
                         lifetimes[it] = lifetime
@@ -780,7 +803,8 @@ internal object EscapeAnalysis {
 
         private fun comeUpWithStackSelectionStrategy(): StackSelectionStrategy {
             //return buildBottomStackSelectionStrategy()
-            return buildTopStackSelectionStrategy()
+            //return buildTopStackSelectionStrategy()
+            return buildTopTopStackSelectionStrategy()
         }
 
         // Always tries to pass own stack.
@@ -788,6 +812,25 @@ internal object EscapeAnalysis {
                 object : StackSelectionStrategy {
                     override fun getStackType(functionWithLocality: FunctionWithParametersLocality, callSite: CallGraphNode.CallSite) = StackType.INNER
                 }
+
+        // Always tries to pass own stack.
+        private fun buildTopTopStackSelectionStrategy(): StackSelectionStrategy {
+            val stackTypes = mutableMapOf<Pair<FunctionWithParametersLocality, CallGraphNode.CallSite>, StackType>()
+            rootSet.forEach { rootSymbol ->
+                FunctionWithParametersLocality.allGlobal(rootSymbol).also { rootWithLocality ->
+                    val callSites = callGraph.directEdges[rootSymbol]!!.callSites.filter {
+                        !it.isVirtual && callGraph.directEdges.containsKey(it.actualCallee) // TODO: What about external callees?
+                    }
+                    for (callSite in callSites) {
+                        stackTypes[Pair(rootWithLocality, callSite)] = StackType.INNER
+                    }
+                }
+            }
+            return object : StackSelectionStrategy {
+                override fun getStackType(functionWithLocality: FunctionWithParametersLocality, callSite: CallGraphNode.CallSite) =
+                        stackTypes[Pair(functionWithLocality, callSite)] ?: StackType.OUTER
+            }
+        }
 
         // Always tries to pass outer stack.
         private fun buildTopStackSelectionStrategy(): StackSelectionStrategy {
@@ -1146,8 +1189,8 @@ internal object EscapeAnalysis {
                     )
                 } else {
                     context.log { "An unknown function - assume pessimistic result" }
-                    //FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
-                    FunctionEscapeAnalysisResult.optimistic()
+                    FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
+                    //FunctionEscapeAnalysisResult.optimistic()
                 }
             }
 
@@ -1306,8 +1349,14 @@ internal object EscapeAnalysis {
 
             fun convertBody(body: DataFlowIR.FunctionBody, returnsNode: PointsToGraphNode) {
                 val startIndex = ids.size
-                (listOf(body.rootScope) + body.allScopes.flatMap { it.nodes })
-                        .forEachIndexed { index, node -> ids[node] = startIndex + index }
+                val allNodes = listOf(body.rootScope) + body.allScopes.flatMap { it.nodes }
+                allNodes.forEachIndexed { index, node ->
+                    ids[node] = startIndex + index
+                }
+                allNodes.forEach { node ->
+                    context.log { "node #${ids[node]}: ${DataFlowIR.Function.nodeToString(node, ids)}" }
+                }
+
 
                 val nothing = moduleDFG.symbolTable.mapClassReferenceType(context.ir.symbols.nothing.owner).resolved()
                 body.forEachNonScopeNode { node ->
@@ -1461,6 +1510,8 @@ internal object EscapeAnalysis {
 
                 for (from in allNodes) {
                     if (!nodeFilter(from)) continue
+                    if (from.edges.isEmpty())
+                        +"    \"${from.format()}\""
                     for (it in from.edges) {
                         val to = it.node
                         if (!nodeFilter(to)) continue
@@ -1577,18 +1628,18 @@ internal object EscapeAnalysis {
                 for (callSite in callSites) {
                     val callee = callSite.actualCallee
                     val calleeEAResult = callGraph.directEdges[callee]?.symbol
-//                            ?.takeIf { !callSite.isVirtual }
-//                            ?.let {
-//                                escapeAnalysisResults[it] ?: FunctionEscapeAnalysisResult.pessimistic(it.parameters.size)
-//                            }
-                            //?.takeIf { !callSite.isVirtual }
+                            ?.takeIf { !callSite.isVirtual }
                             ?.let {
-                                escapeAnalysisResults[it] ?: (
-                                        //if (callSite.isVirtual)
-                                        FunctionEscapeAnalysisResult.optimistic())
+                                escapeAnalysisResults[it] ?: FunctionEscapeAnalysisResult.pessimistic(it.parameters.size)
+                            }
+                            //?.takeIf { !callSite.isVirtual }
+//                            ?.let {
+//                                escapeAnalysisResults[it] ?: (
+//                                        if (callSite.isVirtual)
+//                                        FunctionEscapeAnalysisResult.optimistic()
 //                                        else
 //                                            FunctionEscapeAnalysisResult.pessimistic(it.parameters.size))
-                            }
+//                            }
                             ?: getExternalFunctionEAResult(callSite)
                     val originalCall = originalCalls[callSite.call] ?: callSite.call
                     val startsRecursion = callSitesStartingRecursion[originalCall]?.contains(callee) == true
@@ -1642,6 +1693,8 @@ internal object EscapeAnalysis {
                     else -> // A simple call (with no recursion involved whatsoever).
                         inlineCalleeEscapeAnalysisResult(call, arguments, calleeEscapeAnalysisResult)
                 }
+
+                logDigraph(false)
             }
 
             fun inlineCall(
@@ -1653,11 +1706,13 @@ internal object EscapeAnalysis {
                     callSitesStartingRecursion: Map<DataFlowIR.Node.Call, Set<DataFlowIR.FunctionSymbol.Declared>>,
                     maxAllowedGraphSize: Int,
             ) {
+                context.log { "Inlining call to $calleeSymbol" }
                 val callee = moduleDFG.functions[calleeSymbol]!!
                 val bodyWithCallSites = FunctionBodyWithCallSites(callee.body, callGraph.directEdges[calleeSymbol]!!.callSites)
                 val (copiedBody, copiedCallSites) = bodyWithCallSites.deepCopy()
                 val localReturnsNode = newNode()
                 if (startsRecursion) {
+                    context.log { "Starts recursion" }
                     for (index in copiedBody.parameters.indices) {
                         val parameterVariable = newNode()
                         arguments[index].toPTGNode()?.let { parameterVariable.addAssignmentEdge(it) }
@@ -1676,6 +1731,9 @@ internal object EscapeAnalysis {
                 convertBody(copiedBody, localReturnsNode)
                 if (call !is DataFlowIR.Node.NewObject)
                     arguments[calleeSymbol.parameters.size].toPTGNode()?.addAssignmentEdge(localReturnsNode)
+
+                logDigraph(false)
+
                 processCalls(copiedCallSites, component, callSitesStartingRecursion, maxAllowedGraphSize)
 
                 if (startsRecursion) {
@@ -1752,8 +1810,6 @@ internal object EscapeAnalysis {
                         +"    TO ${edge.to.debugString(toArg?.let { nodeToString(it) })}"
                     }
                 }
-
-                logDigraph(false)
             }
 
             fun buildClosure(): FunctionEscapeAnalysisResult {
@@ -1769,6 +1825,9 @@ internal object EscapeAnalysis {
 
                 computeLifetimes()
 
+                context.log { "after lifetimes computation" }
+                logDigraph(true)
+
                 /*
                  * The next part determines the function's escape analysis result.
                  * Of course, the simplest way would be to just take the entire graph, but it might be big,
@@ -1778,6 +1837,9 @@ internal object EscapeAnalysis {
                  * "interesting drains" - drains that are going to be in the result.
                  */
                 val (numberOfDrains, nodeIds) = paintInterestingNodes()
+
+                context.log { "after painting interesting nodes" }
+                logDigraph(true)
 
                 logDigraph(true, { nodeIds[it] != null }, { nodeIds[it].toString() })
 
