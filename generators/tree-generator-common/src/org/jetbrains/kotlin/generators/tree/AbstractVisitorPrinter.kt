@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
-abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field>, Field : AbstractField<Field>>(
+abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, *>, Field : AbstractField<Field>>(
     val printer: SmartPrinter,
 ) {
 

@@ -85,7 +85,7 @@ fun SmartPrinter.printKDoc(kDoc: String?) {
     println(" */")
 }
 
-fun AbstractElement<*, *>.extendedKDoc(defaultKDoc: String? = null): String = buildString {
+fun AbstractElement<*, *, *>.extendedKDoc(defaultKDoc: String? = null): String = buildString {
     val doc = kDoc ?: defaultKDoc
     if (doc != null) {
         appendLine(doc)
@@ -201,7 +201,7 @@ private val dataParameter = FunctionParameter("data", dataTP)
 
 context(ImportCollector)
 fun SmartPrinter.printAcceptMethod(
-    element: AbstractElement<*, *>,
+    element: AbstractElement<*, *, *>,
     visitorClass: ClassRef<PositionTypeParameterRef>,
     hasImplementation: Boolean,
     treeName: String,
@@ -239,7 +239,7 @@ fun SmartPrinter.printAcceptMethod(
 
 context(ImportCollector)
 fun SmartPrinter.printTransformMethod(
-    element: AbstractElement<*, *>,
+    element: AbstractElement<*, *, *>,
     transformerClass: ClassRef<PositionTypeParameterRef>,
     implementation: String?,
     returnType: TypeRefWithNullability,
@@ -347,3 +347,5 @@ fun SmartPrinter.printTransformChildrenMethod(
         override = override,
     )
 }
+
+fun AbstractField<*>.call(): String = if (nullable) "?." else "."

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.generators.tree.ImplementationKind.OpenClass
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
     fun configureImplementations() {
         configure()
-        generateDefaultImplementations(FirTreeBuilder)
+        generateDefaultImplementations(FirTreeBuilder.elements)
         configureAllImplementations()
     }
 

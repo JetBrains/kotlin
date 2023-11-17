@@ -112,7 +112,7 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                                     print("?")
                                 }
                                 print(".transform(transformer, data)")
-                                val elementRef = child.typeRef as GenericElementRef<*, *>
+                                val elementRef = child.typeRef as GenericElementRef<*>
                                 if (!elementRef.element.hasTransformMethod) {
                                     print(" as ", elementRef.render())
                                 }

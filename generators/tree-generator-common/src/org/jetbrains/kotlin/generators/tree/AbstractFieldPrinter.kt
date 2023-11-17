@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
-abstract class AbstractFieldPrinter<Field : AbstractField<Field>>(
+abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
     private val printer: SmartPrinter,
 ) {
 

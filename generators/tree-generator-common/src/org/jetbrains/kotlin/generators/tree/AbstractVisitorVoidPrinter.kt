@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.utils.SmartPrinter
 abstract class AbstractVisitorVoidPrinter<Element, Field>(
     printer: SmartPrinter,
 ) : AbstractVisitorPrinter<Element, Field>(printer)
-        where Element : AbstractElement<Element, Field>,
+        where Element : AbstractElement<Element, Field, *>,
               Field : AbstractField<Field> {
 
     final override val visitorTypeParameters: List<TypeVariable>

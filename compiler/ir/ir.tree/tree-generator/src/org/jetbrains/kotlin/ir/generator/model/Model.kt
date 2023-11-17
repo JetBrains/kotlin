@@ -19,7 +19,7 @@ class Element(
     name: String,
     override val propertyName: String,
     category: Category,
-) : AbstractElement<Element, Field>(name) {
+) : AbstractElement<Element, Field, Nothing>(name) {
 
     enum class Category(private val packageDir: String, val defaultVisitorParam: String) {
         Expression("expressions", "expression"),
@@ -115,8 +115,8 @@ class Element(
     }
 }
 
-typealias ElementRef = GenericElementRef<Element, Field>
-typealias ElementOrRef = GenericElementOrRef<Element, Field>
+typealias ElementRef = GenericElementRef<Element>
+typealias ElementOrRef = GenericElementOrRef<Element>
 
 sealed class Field(
     override val name: String,
@@ -157,9 +157,6 @@ sealed class Field(
 
     override val isFinal: Boolean
         get() = defaultValueInImplementation != null
-
-    override val isLateinit: Boolean
-        get() = false
 
     override val isParameter: Boolean
         get() = false

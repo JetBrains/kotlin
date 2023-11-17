@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-fun <Element : AbstractElement<Element, *>> Element.traverseParents(block: (Element) -> Unit) {
+fun <Element : AbstractElement<Element, *, *>> Element.traverseParents(block: (Element) -> Unit) {
     traverseParents2 {
         block(it)
         false
     }
 }
 
-fun <Element : AbstractElement<Element, *>> Element.traverseParents2(block: (Element) -> Boolean): Boolean {
+fun <Element : AbstractElement<Element, *, *>> Element.traverseParents2(block: (Element) -> Boolean): Boolean {
     if (block(this)) return true
     for (parent in elementParents) {
         if (parent.element.traverseParents2(block)) return true
@@ -25,13 +25,13 @@ fun <Element : AbstractElement<Element, *>> Element.traverseParents2(block: (Ele
  * a type of a field, except when that field is explicitly opted out of it via
  * [AbstractField.useInBaseTransformerDetection].
  */
-fun <Element : AbstractElement<Element, *>> detectBaseTransformerTypes(model: Model<Element>) {
-    val usedAsFieldType = hashSetOf<AbstractElement<*, *>>()
+fun <Element : AbstractElement<Element, *, *>> detectBaseTransformerTypes(model: Model<Element>) {
+    val usedAsFieldType = hashSetOf<AbstractElement<*, *, *>>()
     for (element in model.elements) {
         for (field in element.allFields.filter { it.containsElement }) {
             if (!field.useInBaseTransformerDetection) continue
-            val fieldElement = (field.typeRef as? ElementOrRef<*, *>)?.element
-                ?: ((field as? ListField)?.baseType as? ElementOrRef<*, *>)?.element
+            val fieldElement = (field.typeRef as? ElementOrRef<*>)?.element
+                ?: ((field as? ListField)?.baseType as? ElementOrRef<*>)?.element
                 ?: continue
             if (fieldElement.isRootElement) continue
             usedAsFieldType.add(fieldElement)
