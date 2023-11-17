@@ -66,6 +66,21 @@ fun FirVisibilityChecker.isVisible(
     val callInfo = candidate.callInfo
 
     if (!isVisible(declaration, callInfo, candidate.dispatchReceiver, skipCheckForContainingClassVisibility)) {
+        // There are some examples when applying smart cast makes a callable invisible
+        // open class A {
+        //     private fun foo() {}
+        //     protected open fun bar() {}
+        //     fun test(a: A) {
+        // !!! foo is visible from a receiver of type A, but not from a receiver of type B
+        //         if (a is B) a.foo()
+        // !!! B.bar is invisible, but A.bar is visible
+        //         if (a is B) a.bar()
+        //     }
+        // }
+        // class B : A() {
+        //     override fun bar() {}
+        // }
+        // In both these examples (see !!! above) we should try to drop smart cast to B and repeat a visibility check
         val dispatchReceiverWithoutSmartCastType =
             removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiver, candidate.callInfo.session) ?: return false
 
@@ -73,7 +88,18 @@ fun FirVisibilityChecker.isVisible(
 
         // Note: in case of a smart cast, we already checked the visibility of the smart cast target before,
         // so now it's visibility is not important, only callable visibility itself should be taken into account
-        // Otherwise we avoid correct smart casts in corner cases like KT-63164
+        // Otherwise we avoid correct smart casts in corner cases with error suppresses like in KT-63164
+        // Note 2: ideally this code should be dropped at some time
+        // module M1
+        // internal class Info {
+        //    val status: String = "OK"
+        // }
+        // module M2(M1)
+        // fun getStatus(param: Any?): String {
+        //    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+        //    if (param is Info) param.status
+        // }
+        // Here smart cast is still necessary, because without it 'status' cannot be resolved at all
         if (!isVisible(declaration, callInfo, candidate.dispatchReceiver, skipCheckForContainingClassVisibility = true)) {
             candidate.dispatchReceiver = dispatchReceiverWithoutSmartCastType
         }
