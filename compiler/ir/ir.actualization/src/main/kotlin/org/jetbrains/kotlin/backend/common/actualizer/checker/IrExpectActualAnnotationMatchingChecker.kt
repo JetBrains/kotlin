@@ -25,13 +25,8 @@ internal object IrExpectActualAnnotationMatchingChecker : IrExpectActualChecker 
             if (expectSymbol is IrTypeParameterSymbol) {
                 continue
             }
-            // If the expect declaration is fake-override and is incompatible, then it means that it was overridden on actual.
-            // In such case, regular rules for annotations on overridden declarations apply.
-            if (expectSymbol.isFakeOverride) {
-                continue
-            }
-            val incompatibility =
-                AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectSymbol, actualSymbol, matchingContext) ?: continue
+            val incompatibility = AbstractExpectActualAnnotationMatchChecker
+                .areAnnotationsCompatible(expectSymbol, actualSymbol, containingExpectClass = null, matchingContext) ?: continue
 
             val reportOn = getTypealiasSymbolIfActualizedViaTypealias(expectSymbol.owner as IrDeclaration, classActualizationInfo)
                 ?: getContainingActualClassIfFakeOverride(actualSymbol)

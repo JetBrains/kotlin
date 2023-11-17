@@ -454,8 +454,8 @@ internal abstract class IrExpectActualMatchingContext(
         return !asIr().isFun
     }
 
-    override fun CallableSymbolMarker.shouldSkipMatching(containingExpectClass: RegularClassSymbolMarker): Boolean {
-        return false
+    override fun CallableSymbolMarker.isFakeOverride(containingExpectClass: RegularClassSymbolMarker?): Boolean {
+        return asIr().isFakeOverride
     }
 
     override val CallableSymbolMarker.hasStableParameterNames: Boolean
