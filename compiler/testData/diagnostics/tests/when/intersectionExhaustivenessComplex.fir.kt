@@ -35,8 +35,8 @@ fun foo(a: A) {
         is A.A2 -> "v"
     }.length // OK
 
-    <!NO_ELSE_IN_WHEN!>when<!> (a) {
+    when (a) {
         is A.A1 -> ""
         is B.B1 -> "..."
-    }.<!UNRESOLVED_REFERENCE!>length<!>
+    }.length
 }

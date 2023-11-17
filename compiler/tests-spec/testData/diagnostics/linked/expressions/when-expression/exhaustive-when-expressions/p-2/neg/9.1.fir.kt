@@ -64,12 +64,12 @@ fun case_9(value_1: Number): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
  * TESTCASE NUMBER: 10
  * DISCUSSION: maybe make exhaustive without else?
  */
-fun case_10(value_1: Any): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
+fun case_10(value_1: Any): String = when (value_1) {
     <!USELESS_IS_CHECK!>is Any<!> -> ""
 }
 
 // TESTCASE NUMBER: 11
-fun case_11(value_1: SealedClass): String = <!NO_ELSE_IN_WHEN!>when<!> {
+fun case_11(value_1: SealedClass): String = when {
     value_1 is SealedChild1 -> ""
     value_1 is SealedChild2 -> ""
     value_1 is SealedChild3 -> ""

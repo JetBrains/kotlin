@@ -46,11 +46,16 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
      */
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: Any?): FirStatement {
         processExhaustivenessCheck(whenExpression)
-        session.enumWhenTracker?.reportEnumUsageInWhen(
-            bodyResolveComponents.file.sourceFile?.path,
-            FirWhenExhaustivenessTransformer.getSubjectType(session, whenExpression)
-        )
+        session.enumWhenTracker?.reportEnumUsageInWhen(bodyResolveComponents.file.sourceFile?.path, getSubjectType(whenExpression))
         return whenExpression
+    }
+
+    private fun getSubjectType(whenExpression: FirWhenExpression): ConeKotlinType? {
+        val subjectType = whenExpression.subjectVariable?.returnTypeRef?.coneType
+            ?: whenExpression.subject?.resolvedType
+            ?: return null
+
+        return subjectType.fullyExpandedType(session).lowerBoundIfFlexible()
     }
 
     private fun processExhaustivenessCheck(whenExpression: FirWhenExpression) {
@@ -63,7 +68,7 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
         val realVariables = mutableMapOf<VariableSource, VariableInformation>()
         val subject = whenExpression.subject
         if (subject != null) {
-            val subjectType = FirWhenExhaustivenessTransformer.getSubjectType(session, whenExpression)
+            val subjectType = getSubjectType(whenExpression)
             val subjectTypeIsExpect = subjectType?.toRegularClassSymbol(session)?.isExpect
             // bail out early if we don't know the type of the subject, or it's expect
             if (subjectType == null || subjectTypeIsExpect == true) {
@@ -75,9 +80,7 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
                 return
             }
             // add the subject information
-            val subjectVariable = dataFlowAnalyzer.getVariableFromSmartcastInfo(subject)
-            val subjectSource = subjectVariable?.let { VariableSource.Real(it) } ?: VariableSource.Subject
-            realVariables[subjectSource] = VariableInformation(subject, subjectType)
+            realVariables[VariableSource.Subject] = VariableInformation(subject, subjectType)
         }
         val stableExpressions = whenExpression.branches.flatMap { computeStableExpressions(whenExpression, it.condition, realVariables) }
 
@@ -90,7 +93,7 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
         val missingCases = problems.map { problem ->
             problem.map { (variable, choice) ->
                 val originalExpression = realVariables[variable]?.originalExpression
-                val reportedExpression = originalExpression.takeIf { variable != VariableSource.Subject }?.source
+                val reportedExpression = originalExpression.takeIf { variable !is VariableSource.Subject }?.source
                 WhenMissingCaseFor(reportedExpression, choice.toWhenMissingCase())
             }
         }
@@ -109,10 +112,10 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
     // - returns 'null' if a non-stable variable or an unknown expression is mentioned
     private fun computeStableExpressions(
         completeWhenExpression: FirWhenExpression,
-        expression: FirExpression,
+        expression_: FirExpression,
         result: MutableMap<VariableSource, VariableInformation>,
     ): List<WhenBranchList> {
-        when (expression) {
+        when (val expression = expression_.unwrapSmartcastExpression()) {
             is FirElseIfTrueCondition -> return listOf(WhenBranchList.empty())
             is FirBinaryLogicExpression -> {
                 val left = computeStableExpressions(completeWhenExpression, expression.leftOperand, result)
@@ -142,23 +145,26 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
 
     private fun getInformation(
         completeWhenExpression: FirWhenExpression,
-        variable: FirExpression,
+        variable_: FirExpression,
         whole: FirExpression,
         result: MutableMap<VariableSource, VariableInformation>,
     ): WhenBranchList? {
-        val realVar = dataFlowAnalyzer.getVariableFromSmartcastInfo(variable)
-        // case in which we have the subject variable
+        val variable = variable_.unwrapSmartcastExpression()
         if (variable is FirWhenSubjectExpression && variable.whenRef.value === completeWhenExpression) {
-            val subjectSource = realVar?.let { VariableSource.Real(it) } ?: VariableSource.Subject
-            return WhenBranchList.from(subjectSource, whole)
+            // case in which we have the subject variable
+            return WhenBranchList.from(VariableSource.Subject, whole)
+        } else {
+            // otherwise we should have a stable reference
+            val realVar =
+                dataFlowAnalyzer.getVariableFromSmartcastInfo(variable)
+                    ?.takeIf { it.stability == PropertyStability.STABLE_VALUE }
+                    ?: return null
+            val source = VariableSource.Real(realVar)
+            if (source !in result) { // add information the first time
+                result[VariableSource.Real(realVar)] = VariableInformation.fromExpression(variable, session)
+            }
+            return WhenBranchList.from(source, whole)
         }
-        // otherwise we should have a stable reference
-        if (realVar?.stability != PropertyStability.STABLE_VALUE) return null
-        val source = VariableSource.Real(realVar)
-        if (source !in result) { // add information the first time
-            result[VariableSource.Real(realVar)] = VariableInformation.fromExpression(variable, session)
-        }
-        return WhenBranchList.from(source, whole)
     }
 
     private fun List<WhenBranchList>.checkExhaustiveness(
@@ -244,8 +250,11 @@ data class WhenBranchList(
 sealed interface WhenChoice {
     fun coveredBy(session: FirSession, expression: FirExpression): Boolean
     fun toWhenMissingCase(): WhenMissingCase
+    val canBeRefined: Boolean
 
     data object Null : WhenChoice {
+        override val canBeRefined: Boolean = false
+
         override fun coveredBy(session: FirSession, expression: FirExpression): Boolean = when (expression) {
             is FirEqualityOperatorCall -> when (expression.operation) {
                 // == null
@@ -266,6 +275,8 @@ sealed interface WhenChoice {
     }
 
     open class NotNull(open val type: ConeKotlinType) : WhenChoice {
+        override val canBeRefined: Boolean = true
+
         override fun coveredBy(session: FirSession, expression: FirExpression): Boolean = when (expression) {
             is FirEqualityOperatorCall -> when (expression.operation) {
                 // != null
@@ -283,10 +294,14 @@ sealed interface WhenChoice {
             else -> false
         }
 
+        override fun toString(): String = "NotNull(type=$type)"
+
         override fun toWhenMissingCase(): WhenMissingCase = WhenMissingCase.NotNullIsMissing
     }
 
     data class SealedClass(override val type: ConeKotlinType, val symbol: FirBasedSymbol<*>) : NotNull(type) {
+        override val canBeRefined: Boolean = false
+
         override fun coveredBy(session: FirSession, expression: FirExpression): Boolean {
             // check the not null part
             if (super.coveredBy(session, expression)) return true
@@ -311,10 +326,16 @@ sealed interface WhenChoice {
                     }
                 }
                 is FirTypeOperatorCall -> {
-                    val symbolToCheck = expression.conversionTypeRef.coneType.fullyExpandedType(session).toSymbol(session)
+                    val typeToCheck =
+                        expression.conversionTypeRef.coneType.fullyExpandedType(session)
+                            .withNullability(ConeNullability.NOT_NULL, session.typeContext)
+                    val symbolToCheck = typeToCheck.toSymbol(session)
                     when (expression.operation) {
                         FirOperation.IS -> true to symbolToCheck
-                        FirOperation.NOT_IS -> false to symbolToCheck
+                        FirOperation.NOT_IS -> {
+                            // we only obtain information if we can reason over the negation
+                            false to symbolToCheck.takeIf { AbstractTypeChecker.isSubtypeOf(session.typeContext, typeToCheck, type) }
+                        }
                         else -> true to null
                     }
                 }
@@ -343,6 +364,8 @@ sealed interface WhenChoice {
     }
 
     data class BooleanValue(val value: Boolean) : WhenChoice {
+        override val canBeRefined: Boolean = false
+
         @Suppress("UNCHECKED_CAST")
         override fun coveredBy(session: FirSession, expression: FirExpression): Boolean {
             // note: we know that the expression mentions the expression
@@ -374,37 +397,46 @@ sealed interface WhenChoice {
     }
 }
 
-fun ConeKotlinType.choices(session: FirSession): List<WhenChoice> {
-    val symbol = this.toSymbol(session) as? FirRegularClassSymbol
-    val notNullType = this.withNullability(ConeNullability.NOT_NULL, session.typeContext)
-    val base = when {
-        isNothingOrNullableNothing -> emptyList()
-        isBooleanOrNullableBoolean -> listOf(WhenChoice.BooleanValue(true), WhenChoice.BooleanValue(false))
-        symbol?.fir?.modality == Modality.SEALED || symbol?.fir?.classKind == ClassKind.ENUM_CLASS ->
-            (symbol.collectSealedSubclassesAndEnumEntries(session) - symbol).map { WhenChoice.SealedClass(notNullType, it) }
-        else -> listOf(WhenChoice.NotNull(notNullType))
+fun ConeKotlinType.choices(session: FirSession): Set<WhenChoice> = when (this) {
+    is ConeIntersectionType -> {
+        val intersectionChoices = intersectedTypes.map { it.choices(session) }
+        val unrefinableChoices = intersectionChoices.filter { it.none(WhenChoice::canBeRefined) }
+        if (unrefinableChoices.isNotEmpty()) {
+            // if we have a list of possible sealed classes / enum entries, just intersect those
+            unrefinableChoices.reduce(Set<WhenChoice>::intersect)
+        } else {
+            // otherwise take the union of possibilities as upper bound
+            intersectionChoices.flatten().toSet()
+        }
     }
-    return base + listOfNotNull(WhenChoice.Null.takeIf { canBeNull })
+    else -> {
+        val symbol = this.toSymbol(session) as? FirRegularClassSymbol
+        val notNullType = this.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+        val base = when {
+            isNothingOrNullableNothing -> emptySet()
+            isBooleanOrNullableBoolean -> setOf(WhenChoice.BooleanValue(true), WhenChoice.BooleanValue(false))
+            symbol?.isInSealedOrEnumHierarchy(session) == true ->
+                symbol.collectSealedSubclassesAndEnumEntries(session).map { WhenChoice.SealedClass(notNullType, it) }.toSet()
+            else -> setOf(WhenChoice.NotNull(notNullType))
+        }
+        base + setOfNotNull(WhenChoice.Null.takeIf { canBeNull })
+    }
 }
 
-fun FirClassLikeSymbol<*>.collectSealedSubclassesAndEnumEntries(session: FirSession): List<FirBasedSymbol<*>> =
-    collectSealedSubclasses(session) + collectEnumEntries(session)
-
-fun FirClassLikeSymbol<*>.collectSealedSubclasses(session: FirSession): List<FirClassLikeSymbol<*>> = when {
-    this is FirRegularClassSymbol && fir.modality == Modality.SEALED ->
-        fir.getSealedClassInheritors(session)
-            .mapNotNull { session.symbolProvider.getClassLikeSymbolByClassId(it) }
-            .flatMap { it.collectSealedSubclasses(session) }
-    else -> listOf(this)
-}
-
-// collect enum entries, going into potential sealed classes too (which could be enum at the end)
-fun FirClassLikeSymbol<*>.collectEnumEntries(session: FirSession): Collection<FirEnumEntrySymbol> = when {
+fun FirClassLikeSymbol<*>.collectSealedSubclassesAndEnumEntries(session: FirSession): Set<FirBasedSymbol<*>> = when {
     this is FirRegularClassSymbol && fir.classKind == ClassKind.ENUM_CLASS ->
-        fir.collectEnumEntries().map { it.symbol }
+        fir.collectEnumEntries().map { it.symbol }.toSet()
     this is FirRegularClassSymbol && fir.modality == Modality.SEALED ->
         fir.getSealedClassInheritors(session)
             .mapNotNull { session.symbolProvider.getClassLikeSymbolByClassId(it) }
-            .flatMap { it.collectEnumEntries(session) }
-    else -> emptyList()
+            .flatMap { it.collectSealedSubclassesAndEnumEntries(session) }
+            .toSet()
+    else -> setOf(this)
 }
+
+fun FirClassSymbol<*>.isInSealedOrEnumHierarchy(session: FirSession): Boolean =
+    isSealedOrEnum || resolvedSuperTypes.mapNotNull { it.toSymbol(session) as? FirClassSymbol<*> }
+        .any { it.isInSealedOrEnumHierarchy(session) }
+
+val FirClassSymbol<*>.isSealedOrEnum: Boolean
+    get() = fir.modality == Modality.SEALED || fir.classKind == ClassKind.ENUM_CLASS
