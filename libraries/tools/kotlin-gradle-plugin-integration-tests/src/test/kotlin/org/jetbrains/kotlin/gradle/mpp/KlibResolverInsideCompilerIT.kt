@@ -20,11 +20,9 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 
 @NativeGradlePluginTests
 @DisplayName("Tests for KLIB resolver inside the Kotlin compiler")
-@GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_2)
 class KlibResolverInsideCompilerIT : KGPBaseTest() {
     @DisplayName("Test resolver with C-interop KLIBs (KT-62515)")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0, maxVersion = TestVersions.Gradle.G_8_2)
     fun testResolverWithCInteropKlibs(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         buildProjects(
             baseDir = "mpp-klib-resolver-inside-compiler/with-cinterop",
@@ -34,7 +32,6 @@ class KlibResolverInsideCompilerIT : KGPBaseTest() {
 
     @DisplayName("Test resolver without C-interop KLIBs (KT-62515)")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0, maxVersion = TestVersions.Gradle.G_8_2)
     fun testResolverWithoutCInteropKlibs(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         buildProjects(
             baseDir = "mpp-klib-resolver-inside-compiler/without-cinterop",
