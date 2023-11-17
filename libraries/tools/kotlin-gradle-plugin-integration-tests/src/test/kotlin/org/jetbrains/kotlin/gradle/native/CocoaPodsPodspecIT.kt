@@ -107,7 +107,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
                     spec.summary                  = 'CocoaPods test library'
                     spec.vendored_frameworks      = 'build/cocoapods/framework/$frameworkName.framework'
                     spec.libraries                = 'c++'
-                    spec.ios.deployment_target = '11.0'
+                    spec.ios.deployment_target    = '11.0'
                     spec.dependency 'pod_dependency', '1.0'
                     spec.dependency 'subspec_dependency/Core', '1.0'
                     if !Dir.exist?('build/cocoapods/framework/$frameworkName.framework') || Dir.empty?('build/cocoapods/framework/$frameworkName.framework')
@@ -117,6 +117,9 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
                             ./gradlew :kotlin-library:generateDummyFramework
                         Alternatively, proper pod installation is performed during Gradle sync in the IDE (if Podfile location is set)"
                     end
+                    spec.xcconfig = {
+                        'ENABLE_USER_SCRIPT_SANDBOXING' => 'NO',
+                    }
                     spec.pod_target_xcconfig = {
                         'KOTLIN_PROJECT_PATH' => ':kotlin-library',
                         'PRODUCT_MODULE_NAME' => '$frameworkName',
@@ -161,6 +164,9 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
                             ./gradlew :second-library:generateDummyFramework
                         Alternatively, proper pod installation is performed during Gradle sync in the IDE (if Podfile location is set)"
                     end
+                    spec.xcconfig = {
+                        'ENABLE_USER_SCRIPT_SANDBOXING' => 'NO',
+                    }
                     spec.pod_target_xcconfig = {
                         'KOTLIN_PROJECT_PATH' => ':second-library',
                         'PRODUCT_MODULE_NAME' => '$frameworkName',
