@@ -35,7 +35,11 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val innerClassesCapturesOuterTypeParameters: Boolean
         get() = true
 
-    // Try to drop it once KT-61105 is fixed
+    // Default params are not checked on backend because we want to keep "default params in actual" to be suppressible
+    // with @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS") but backend errors are not suppressible (KT-60426)
+    // Known clients that do suppress:
+    // - stdlib
+    // - coroutines
     val shouldCheckAbsenceOfDefaultParamsInActual: Boolean
 
     /**
