@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.internal.state.getTaskLogger
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
-import org.slf4j.LoggerFactory
 import java.io.*
 import java.net.URLClassLoader
 import java.rmi.RemoteException
@@ -77,97 +75,86 @@ internal class GradleKotlinCompilerWorkArguments(
     val errorsFiles: Set<File>?,
     val kotlinPluginVersion: String,
     val kotlinLanguageVersion: KotlinVersion,
+    val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 1
+        const val serialVersionUID: Long = 2L
     }
 }
 
 internal class GradleKotlinCompilerWork @Inject constructor(
-    /**
-     * Arguments are passed through [GradleKotlinCompilerWorkArguments],
-     * because Gradle Workers API does not support nullable arguments (https://github.com/gradle/gradle/issues/2405),
-     * and because Workers API does not support named arguments,
-     * which are useful when there are many arguments with the same type
-     * (to protect against parameters reordering bugs)
-     */
-    config: GradleKotlinCompilerWorkArguments
+    private val config: GradleKotlinCompilerWorkArguments
 ) : Runnable {
 
-    private val projectRootFile = config.projectFiles.projectRootFile
-    private val clientIsAliveFlagFile = config.projectFiles.clientIsAliveFlagFile
-    private val sessionFlagFile = config.projectFiles.sessionFlagFile
-    private val compilerFullClasspath = config.compilerFullClasspath
-    private val compilerClassName = config.compilerClassName
-    private val compilerArgs = config.compilerArgs
-    private val isVerbose = config.isVerbose
-    private val incrementalCompilationEnvironment = config.incrementalCompilationEnvironment
-    private val incrementalModuleInfo = config.incrementalModuleInfo
-    private val outputFiles = config.outputFiles
-    private val taskPath = config.taskPath
-    private val reportingSettings = config.reportingSettings
-    private val kotlinScriptExtensions = config.kotlinScriptExtensions
-    private val allWarningsAsErrors = config.allWarningsAsErrors
-    private val buildDir = config.projectFiles.buildDir
-    private val metrics = if (reportingSettings.buildReportOutputs.isNotEmpty()) BuildMetricsReporterImpl() else DoNothingBuildMetricsReporter
+    private val metrics = if (config.reportingSettings.buildReportOutputs.isNotEmpty()) {
+        BuildMetricsReporterImpl()
+    } else {
+        DoNothingBuildMetricsReporter
+    }
     private var icLogLines: List<String> = emptyList()
-    private val compilerExecutionSettings = config.compilerExecutionSettings
-    private val errorsFiles = config.errorsFiles
-    private val kotlinPluginVersion = config.kotlinPluginVersion
-    private val kotlinLanguageVersion = config.kotlinLanguageVersion
 
-    private val log: KotlinLogger = getTaskLogger(taskPath, null, "GradleKotlinCompilerWork")
+    private val log: KotlinLogger = getTaskLogger(config.taskPath, null, "GradleKotlinCompilerWork")
 
     private val isIncremental: Boolean
-        get() = incrementalCompilationEnvironment != null
+        get() = config.incrementalCompilationEnvironment != null
 
     override fun run() {
         metrics.addTimeMetric(GradleBuildPerformanceMetric.START_WORKER_EXECUTION)
         metrics.startMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
         try {
-            val gradlePrintingMessageCollector = GradlePrintingMessageCollector(log, allWarningsAsErrors)
-            val gradleMessageCollector = GradleErrorMessageCollector(log, gradlePrintingMessageCollector, kotlinPluginVersion = kotlinPluginVersion)
-            val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(gradleMessageCollector)
-            if (incrementalCompilationEnvironment?.disableMultiModuleIC == true) {
-                incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
+            val gradlePrintingMessageCollector = GradlePrintingMessageCollector(log, config.allWarningsAsErrors)
+            val gradleMessageCollector = GradleErrorMessageCollector(
+                log,
+                gradlePrintingMessageCollector,
+                kotlinPluginVersion = config.kotlinPluginVersion
+            )
+            val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(gradleMessageCollector, config.compilerArgumentsLogLevel)
+            if (config.incrementalCompilationEnvironment?.disableMultiModuleIC == true) {
+                config.incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
             }
-            errorsFiles?.let {
+            config.errorsFiles?.let {
                 gradleMessageCollector.flush(it)
             }
 
             throwExceptionIfCompilationFailed(exitCode, executionStrategy)
         } finally {
             val taskInfo = TaskExecutionInfo(
-                kotlinLanguageVersion = kotlinLanguageVersion,
-                changedFiles = incrementalCompilationEnvironment?.changedFiles,
-                compilerArguments = if (reportingSettings.includeCompilerArguments) compilerArgs else emptyArray(),
+                kotlinLanguageVersion = config.kotlinLanguageVersion,
+                changedFiles = config.incrementalCompilationEnvironment?.changedFiles,
+                compilerArguments = if (config.reportingSettings.includeCompilerArguments) config.compilerArgs else emptyArray(),
                 tags = collectStatTags(),
             )
             metrics.endMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
             val result = TaskExecutionResult(buildMetrics = metrics.getMetrics(), icLogLines = icLogLines, taskInfo = taskInfo)
-            TaskExecutionResults[taskPath] = result
+            TaskExecutionResults[config.taskPath] = result
         }
     }
 
     private fun collectStatTags(): Set<StatTag> {
         val statTags = HashSet<StatTag>()
-        incrementalCompilationEnvironment?.withAbiSnapshot?.ifTrue { statTags.add(StatTag.ABI_SNAPSHOT) }
-        if (incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+        config.incrementalCompilationEnvironment?.withAbiSnapshot?.ifTrue { statTags.add(StatTag.ABI_SNAPSHOT) }
+        if (config.incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
             statTags.add(StatTag.ARTIFACT_TRANSFORM)
         }
         return statTags
     }
 
-    private fun compileWithDaemonOrFallbackImpl(messageCollector: MessageCollector): Pair<ExitCode, KotlinCompilerExecutionStrategy> {
+    private fun compileWithDaemonOrFallbackImpl(
+        messageCollector: MessageCollector,
+        compilerArgsLogLevel: KotlinCompilerArgumentsLogLevel,
+    ): Pair<ExitCode, KotlinCompilerExecutionStrategy> {
         with(log) {
-            kotlinDebug { "Kotlin compiler class: $compilerClassName" }
+            kotlinDebug { "Kotlin compiler class: ${config.compilerClassName}" }
             kotlinDebug {
-                "Kotlin compiler classpath: ${compilerFullClasspath.joinToString(File.pathSeparator) { it.normalize().absolutePath }}"
+                val compilerClasspath = config.compilerFullClasspath.joinToString(File.pathSeparator) { it.normalize().absolutePath }
+                "Kotlin compiler classpath: $compilerClasspath"
             }
-            kotlinDebug { "$taskPath Kotlin compiler args: ${compilerArgs.joinToString(" ")}" }
+            logCompilerArgumentsMessage(compilerArgsLogLevel) {
+                "${config.taskPath} Kotlin compiler args: ${config.compilerArgs.joinToString(" ")}"
+            }
         }
 
-        if (compilerExecutionSettings.strategy == KotlinCompilerExecutionStrategy.DAEMON) {
+        if (config.compilerExecutionSettings.strategy == KotlinCompilerExecutionStrategy.DAEMON) {
             try {
                 return compileWithDaemon(messageCollector) to KotlinCompilerExecutionStrategy.DAEMON
             } catch (e: Throwable) {
@@ -175,7 +162,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                     severity = CompilerMessageSeverity.EXCEPTION,
                     message = "Daemon compilation failed: ${e.message}\n${e.stackTraceToString()}"
                 )
-                if (!compilerExecutionSettings.useDaemonFallbackStrategy) {
+                if (!config.compilerExecutionSettings.useDaemonFallbackStrategy) {
                     throw RuntimeException(
                         "Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off. " +
                                 "Try ./gradlew --stop if this issue persists.",
@@ -194,7 +181,9 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }
 
         val isGradleDaemonUsed = System.getProperty("org.gradle.daemon")?.let(String::toBoolean)
-        return if (compilerExecutionSettings.strategy == KotlinCompilerExecutionStrategy.IN_PROCESS || isGradleDaemonUsed == false) {
+        return if (config.compilerExecutionSettings.strategy == KotlinCompilerExecutionStrategy.IN_PROCESS ||
+            isGradleDaemonUsed == false
+        ) {
             compileInProcess(messageCollector) to KotlinCompilerExecutionStrategy.IN_PROCESS
         } else {
             compileOutOfProcess() to KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
@@ -208,12 +197,12 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         val connection =
             metrics.measure(GradleBuildTime.CONNECT_TO_DAEMON) {
                 GradleCompilerRunner.getDaemonConnectionImpl(
-                    clientIsAliveFlagFile,
-                    sessionFlagFile,
-                    compilerFullClasspath,
+                    config.projectFiles.clientIsAliveFlagFile,
+                    config.projectFiles.sessionFlagFile,
+                    config.compilerFullClasspath,
                     daemonMessageCollector,
                     isDebugEnabled = isDebugEnabled,
-                    daemonJvmArgs = compilerExecutionSettings.daemonJvmArgs
+                    daemonJvmArgs = config.compilerExecutionSettings.daemonJvmArgs
                 )
             } ?: throw RuntimeException(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE) // TODO: Add root cause
 
@@ -227,11 +216,11 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
         val memoryUsageBeforeBuild = daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
 
-        val targetPlatform = when (compilerClassName) {
+        val targetPlatform = when (config.compilerClassName) {
             KotlinCompilerClass.JVM -> CompileService.TargetPlatform.JVM
             KotlinCompilerClass.JS -> CompileService.TargetPlatform.JS
             KotlinCompilerClass.METADATA -> CompileService.TargetPlatform.METADATA
-            else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
+            else -> throw IllegalArgumentException("Unknown compiler type ${config.compilerClassName}")
         }
         val bufferingMessageCollector = GradleBufferingMessageCollector()
         val exitCode = try {
@@ -281,15 +270,15 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         val compilationOptions = CompilationOptions(
             compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
             targetPlatform = targetPlatform,
-            reportCategories = reportCategories(isVerbose),
-            reportSeverity = reportSeverity(isVerbose),
+            reportCategories = reportCategories(config.isVerbose),
+            reportSeverity = reportSeverity(config.isVerbose),
             requestedCompilationResults = emptyArray(),
-            kotlinScriptExtensions = kotlinScriptExtensions
+            kotlinScriptExtensions = config.kotlinScriptExtensions
         )
         val servicesFacade = GradleCompilerServicesFacadeImpl(log, bufferingMessageCollector)
-        val compilationResults = GradleCompilationResults(log, projectRootFile)
+        val compilationResults = GradleCompilationResults(log, config.projectFiles.projectRootFile)
         return metrics.measure(GradleBuildTime.NON_INCREMENTAL_COMPILATION_DAEMON) {
-            daemon.compile(sessionId, compilerArgs, compilationOptions, servicesFacade, compilationResults)
+            daemon.compile(sessionId, config.compilerArgs, compilationOptions, servicesFacade, compilationResults)
         }.also {
             metrics.addMetrics(compilationResults.buildMetrics)
             icLogLines = compilationResults.icLogLines
@@ -302,7 +291,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         targetPlatform: CompileService.TargetPlatform,
         bufferingMessageCollector: GradleBufferingMessageCollector
     ): CompileService.CallResult<Int> {
-        val icEnv = incrementalCompilationEnvironment ?: error("incrementalCompilationEnvironment is null!")
+        val icEnv = config.incrementalCompilationEnvironment ?: error("incrementalCompilationEnvironment is null!")
         val knownChangedFiles = icEnv.changedFiles as? SourcesChanges.Known
         val requestedCompilationResults = requestedCompilationResults()
         val compilationOptions = IncrementalCompilationOptions(
@@ -311,18 +300,18 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             deletedFiles = knownChangedFiles?.removedFiles,
             classpathChanges = icEnv.classpathChanges,
             workingDir = icEnv.workingDir,
-            reportCategories = reportCategories(isVerbose),
-            reportSeverity = reportSeverity(isVerbose),
+            reportCategories = reportCategories(config.isVerbose),
+            reportSeverity = reportSeverity(config.isVerbose),
             requestedCompilationResults = requestedCompilationResults.map { it.code }.toTypedArray(),
             compilerMode = CompilerMode.INCREMENTAL_COMPILER,
             targetPlatform = targetPlatform,
             usePreciseJavaTracking = icEnv.usePreciseJavaTracking,
-            outputFiles = outputFiles,
+            outputFiles = config.outputFiles,
             multiModuleICSettings = icEnv.multiModuleICSettings,
-            modulesInfo = incrementalModuleInfo,
+            modulesInfo = config.incrementalModuleInfo,
             rootProjectDir = icEnv.rootProjectDir,
             buildDir = icEnv.buildDir,
-            kotlinScriptExtensions = kotlinScriptExtensions,
+            kotlinScriptExtensions = config.kotlinScriptExtensions,
             withAbiSnapshot = icEnv.withAbiSnapshot,
             preciseCompilationResultsBackup = icEnv.preciseCompilationResultsBackup,
             keepIncrementalCompilationCachesInMemory = icEnv.keepIncrementalCompilationCachesInMemory
@@ -330,10 +319,10 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(log, bufferingMessageCollector)
-        val compilationResults = GradleCompilationResults(log, projectRootFile)
+        val compilationResults = GradleCompilationResults(log, config.projectFiles.projectRootFile)
         metrics.addTimeMetric(GradleBuildPerformanceMetric.CALL_KOTLIN_DAEMON)
         return metrics.measure(GradleBuildTime.RUN_COMPILATION) {
-            daemon.compile(sessionId, compilerArgs, compilationOptions, servicesFacade, compilationResults)
+            daemon.compile(sessionId, config.compilerArgs, compilationOptions, servicesFacade, compilationResults)
         }.also {
             metrics.addMetrics(compilationResults.buildMetrics)
             icLogLines = compilationResults.icLogLines
@@ -342,16 +331,22 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
     private fun compileOutOfProcess(): ExitCode {
         metrics.addAttribute(BuildAttribute.OUT_OF_PROCESS_EXECUTION)
-        cleanOutputsAndLocalState(outputFiles, log, metrics, reason = "out-of-process execution strategy is non-incremental")
+        cleanOutputsAndLocalState(config.outputFiles, log, metrics, reason = "out-of-process execution strategy is non-incremental")
 
         return metrics.measure(GradleBuildTime.NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS) {
-            runToolInSeparateProcess(compilerArgs, compilerClassName, compilerFullClasspath, log, buildDir)
+            runToolInSeparateProcess(
+                config.compilerArgs,
+                config.compilerClassName,
+                config.compilerFullClasspath,
+                log,
+                config.projectFiles.buildDir,
+            )
         }
     }
 
     private fun compileInProcess(messageCollector: MessageCollector): ExitCode {
         metrics.addAttribute(BuildAttribute.IN_PROCESS_EXECUTION)
-        cleanOutputsAndLocalState(outputFiles, log, metrics, reason = "in-process execution strategy is non-incremental")
+        cleanOutputsAndLocalState(config.outputFiles, log, metrics, reason = "in-process execution strategy is non-incremental")
 
         metrics.startMeasure(GradleBuildTime.NON_INCREMENTAL_COMPILATION_IN_PROCESS)
         // in-process compiler should always be run in a different thread
@@ -375,10 +370,10 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         val stream = ByteArrayOutputStream()
         val out = PrintStream(stream)
         // todo: cache classloader?
-        val classLoader = URLClassLoader(compilerFullClasspath.map { it.toURI().toURL() }.toTypedArray())
+        val classLoader = URLClassLoader(config.compilerFullClasspath.map { it.toURI().toURL() }.toTypedArray())
         val servicesClass = Class.forName(Services::class.java.canonicalName, true, classLoader)
         val emptyServices = servicesClass.getField("EMPTY").get(servicesClass)
-        val compiler = Class.forName(compilerClassName, true, classLoader)
+        val compiler = Class.forName(config.compilerClassName, true, classLoader)
 
         val exec = compiler.getMethod(
             "execAndOutputXml",
@@ -387,7 +382,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             Array<String>::class.java
         )
 
-        val res = exec.invoke(compiler.newInstance(), out, emptyServices, compilerArgs)
+        val res = exec.invoke(compiler.declaredConstructors.single().newInstance(), out, emptyServices, config.compilerArgs)
         val exitCode = ExitCode.valueOf(res.toString())
         processCompilerOutput(
             messageCollector,
@@ -410,12 +405,12 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
     private fun requestedCompilationResults(): EnumSet<CompilationResultCategory> {
         val requestedCompilationResults = EnumSet.of(CompilationResultCategory.IC_COMPILE_ITERATION)
-        when (reportingSettings.buildReportMode) {
+        when (config.reportingSettings.buildReportMode) {
             BuildReportMode.NONE -> null
             BuildReportMode.SIMPLE -> CompilationResultCategory.BUILD_REPORT_LINES
             BuildReportMode.VERBOSE -> CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES
         }?.let { requestedCompilationResults.add(it) }
-        if (reportingSettings.buildReportOutputs.isNotEmpty()) {
+        if (config.reportingSettings.buildReportOutputs.isNotEmpty()) {
             requestedCompilationResults.add(CompilationResultCategory.BUILD_METRICS)
         }
         return requestedCompilationResults

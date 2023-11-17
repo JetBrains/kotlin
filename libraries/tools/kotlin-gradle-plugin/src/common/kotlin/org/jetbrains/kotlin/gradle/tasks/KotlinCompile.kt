@@ -342,7 +342,8 @@ abstract class KotlinCompile @Inject constructor(
                     - (classpathSnapshotProperties.classpathSnapshotDir.orNull?.asFile?.let { setOf(it) } ?: emptySet()),
             reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv,
-            kotlinScriptExtensions = scriptExtensions.get().toTypedArray()
+            kotlinScriptExtensions = scriptExtensions.get().toTypedArray(),
+            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
         )
         compilerRunner.runJvmCompilerAsync(
             args,

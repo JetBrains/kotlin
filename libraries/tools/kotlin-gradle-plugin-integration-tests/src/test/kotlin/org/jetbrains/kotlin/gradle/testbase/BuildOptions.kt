@@ -54,6 +54,7 @@ data class BuildOptions(
     val runViaBuildToolsApi: Boolean? = null,
     val konanDataDir: Path? = konanDir, // null can be used only if you are using custom 'kotlin.native.home' or 'org.jetbrains.kotlin.native.home' property instead of konanDir
     val kotlinUserHome: Path? = testKitDir.resolve(".kotlin"),
+    val compilerArgumentsLogLevel: String? = "info"
 ) {
     val isK2ByDefault
         get() = KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0
@@ -220,6 +221,10 @@ data class BuildOptions(
 
         if (kotlinUserHome != null) {
             arguments.add("-Pkotlin.user.home=${kotlinUserHome.absolutePathString()}")
+        }
+
+        if (compilerArgumentsLogLevel != null) {
+            arguments.add("-Pkotlin.internal.compiler.arguments.log.level=$compilerArgumentsLogLevel")
         }
 
         arguments.addAll(freeArgs)

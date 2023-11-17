@@ -249,8 +249,9 @@ fun findParameterInOutput(name: String, output: String): String? =
 fun BuildResult.assertCompilerArgument(
     taskPath: String,
     expectedArgument: String,
+    logLevel: LogLevel = LogLevel.DEBUG
 ) {
-    val taskOutput = getOutputForTask(taskPath)
+    val taskOutput = getOutputForTask(taskPath, logLevel)
     val compilerArguments = taskOutput.lines().first {
         it.contains("Kotlin compiler args:")
     }.substringAfter("Kotlin compiler args:")
@@ -280,8 +281,9 @@ fun BuildResult.assertNativeTasksClasspath(
 fun BuildResult.assertCompilerArguments(
     taskPath: String,
     vararg expectedArguments: String,
+    logLevel: LogLevel = LogLevel.DEBUG,
 ) {
-    val taskOutput = getOutputForTask(taskPath)
+    val taskOutput = getOutputForTask(taskPath, logLevel)
     val compilerArguments = taskOutput.lines().first {
         it.contains("Kotlin compiler args:")
     }.substringAfter("Kotlin compiler args:")
@@ -301,8 +303,9 @@ fun BuildResult.assertCompilerArguments(
 fun BuildResult.assertNoCompilerArgument(
     taskPath: String,
     notExpectedArgument: String,
+    logLevel: LogLevel = LogLevel.DEBUG,
 ) {
-    val taskOutput = getOutputForTask(taskPath)
+    val taskOutput = getOutputForTask(taskPath, logLevel)
     val compilerArguments = taskOutput.lines().first {
         it.contains("Kotlin compiler args:")
     }.substringAfter("Kotlin compiler args:")

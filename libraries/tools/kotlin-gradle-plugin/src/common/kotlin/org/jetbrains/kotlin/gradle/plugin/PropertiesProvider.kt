@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
@@ -530,6 +531,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     internal fun get(propertyName: String): String? = propertiesBuildService.get(propertyName, project)
 
+    internal fun getProvider(propertyName: String): Provider<String> = propertiesBuildService.property(propertyName, project)
+
     /**
      * The directory where Kotlin global caches, logs, or project persistent data are stored.
      *
@@ -551,6 +554,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val kotlinProjectPersistentDirGradleDisableWrite: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_PROJECT_PERSISTENT_DIR_GRADLE_DISABLE_WRITE) ?: false
+
+    val kotlinCompilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>
+        get() = getProvider(PropertyNames.KOTLIN_COMPILER_ARGUMENTS_LOG_LEVEL)
+            .map { KotlinCompilerArgumentsLogLevel.fromPropertyValue(it) }
+            .orElse(KotlinCompilerArgumentsLogLevel.DEFAULT)
 
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
@@ -660,6 +668,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val MPP_13X_FLAGS_SET_BY_PLUGIN = property("$KOTLIN_INTERNAL_NAMESPACE.mpp.13X.flags.setByPlugin")
         val KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS =
             property("$KOTLIN_INTERNAL_NAMESPACE.mpp.createArchiveTasksForCustomCompilations")
+        val KOTLIN_COMPILER_ARGUMENTS_LOG_LEVEL = property("$KOTLIN_INTERNAL_NAMESPACE.compiler.arguments.log.level")
     }
 
     companion object {

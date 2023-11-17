@@ -235,7 +235,8 @@ internal open class GradleCompilerRunner(
             errorsFiles = errorsFiles,
             kotlinPluginVersion = getKotlinPluginVersion(loggerProvider),
             //no need to log warnings in MessageCollector hear it will be logged by compiler
-            kotlinLanguageVersion = parseLanguageVersion(compilerArgs.languageVersion, compilerArgs.useK2)
+            kotlinLanguageVersion = parseLanguageVersion(compilerArgs.languageVersion, compilerArgs.useK2),
+            compilerArgumentsLogLevel = environment.compilerArgumentsLogLevel,
         )
         TaskLoggers.put(pathProvider, loggerProvider)
         return runCompilerAsync(

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.logging
 
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 
 internal fun Logger.kotlinInfo(message: String) {
     this.info("[KOTLIN] $message")
@@ -44,15 +45,14 @@ internal inline fun KotlinLogger.kotlinDebug(message: () -> String) {
     }
 }
 
-internal inline fun <T> KotlinLogger.logTime(action: String, fn: () -> T): T {
-    val startNs = System.nanoTime()
-    val result = fn()
-    val endNs = System.nanoTime()
-
-    val timeNs = endNs - startNs
-    val timeMs = timeNs.toDouble() / 1_000_000
-
-    debug(String.format("%s took %.2f ms", action, timeMs))
-
-    return result
+internal fun KotlinLogger.logCompilerArgumentsMessage(
+    logLevel: KotlinCompilerArgumentsLogLevel,
+    message: () -> String
+) {
+    when (logLevel) {
+        KotlinCompilerArgumentsLogLevel.ERROR -> kotlinError(message)
+        KotlinCompilerArgumentsLogLevel.WARNING -> kotlinWarn(message)
+        KotlinCompilerArgumentsLogLevel.INFO -> kotlinInfo(message)
+        KotlinCompilerArgumentsLogLevel.DEBUG -> kotlinDebug(message)
+    }
 }

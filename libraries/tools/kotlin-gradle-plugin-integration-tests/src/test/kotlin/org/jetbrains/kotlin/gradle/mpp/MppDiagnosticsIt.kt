@@ -15,6 +15,9 @@ import kotlin.io.path.writeText
 
 @MppGradlePluginTests
 class MppDiagnosticsIt : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(compilerArgumentsLogLevel = null)
+
     @GradleTest
     fun testDiagnosticsRenderingSmoke(gradleVersion: GradleVersion) {
         project("diagnosticsRenderingSmoke", gradleVersion) {
