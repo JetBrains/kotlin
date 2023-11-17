@@ -125,7 +125,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     /**
      * Returns all symbols that are overridden by [this] symbol, including self
      */
-    fun FunctionSymbolMarker.allRecursivelyOverriddenDeclarationsIncludingSelf(): Sequence<CallableSymbolMarker>
+    fun FunctionSymbolMarker.allRecursivelyOverriddenDeclarationsIncludingSelf(containingClass: RegularClassSymbolMarker?): List<CallableSymbolMarker>
 
     val CallableSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
         get() = (this as? FunctionSymbolMarker)?.valueParameters ?: emptyList()

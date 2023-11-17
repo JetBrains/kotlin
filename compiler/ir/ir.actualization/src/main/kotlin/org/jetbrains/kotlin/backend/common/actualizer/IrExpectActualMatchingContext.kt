@@ -298,10 +298,10 @@ internal abstract class IrExpectActualMatchingContext(
             onEnumEntry = { emptyList() }
         )
 
-    override fun FunctionSymbolMarker.allRecursivelyOverriddenDeclarationsIncludingSelf(): Sequence<CallableSymbolMarker> =
+    override fun FunctionSymbolMarker.allRecursivelyOverriddenDeclarationsIncludingSelf(containingClass: RegularClassSymbolMarker?): List<CallableSymbolMarker> =
         when (val node = asIr()) {
-            is IrConstructor -> sequenceOf(this)
-            is IrSimpleFunction -> (sequenceOf(this) + node.overriddenSymbols)
+            is IrConstructor -> listOf(this)
+            is IrSimpleFunction -> (listOf(this) + node.overriddenSymbols)
                 // Tests work even if you don't filter out fake-overrides. Filtering fake-overrides is needed because
                 // the returned descriptors are compared by `equals`. And `equals` for fake-overrides is weird.
                 // I didn't manage to invent a test that would check this condition

@@ -259,14 +259,13 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val CallableSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>
         get() = asSymbol().typeParameterSymbols
 
-    override fun FunctionSymbolMarker.allRecursivelyOverriddenDeclarationsIncludingSelf(): Sequence<CallableSymbolMarker> {
+    override fun FunctionSymbolMarker.allRecursivelyOverriddenDeclarationsIncludingSelf(containingClass: RegularClassSymbolMarker?): List<CallableSymbolMarker> {
         return when (val symbol = asSymbol()) {
-            is FirConstructorSymbol, is FirFunctionWithoutNameSymbol -> sequenceOf(this)
+            is FirConstructorSymbol, is FirFunctionWithoutNameSymbol -> listOf(symbol)
             is FirNamedFunctionSymbol -> {
+                if (containingClass == null) return listOf(symbol)
                 val session = symbol.moduleData.session
-                val containingClass = symbol.containingClassLookupTag()?.toFirRegularClassSymbol(session)
-                    ?: return sequenceOf(symbol)
-                (sequenceOf(symbol) + symbol.overriddenFunctions(containingClass, session, actualScopeSession).asSequence())
+                (listOf(symbol) + symbol.overriddenFunctions(containingClass.asSymbol(), session, actualScopeSession).asSequence())
                     // Tests work even if you don't filter out fake-overrides. Filtering fake-overrides is needed because
                     // the returned descriptors are compared by `equals`. And `equals` for fake-overrides is weird.
                     // I didn't manage to invent a test that would check this condition
