@@ -194,6 +194,8 @@ void gc::ParallelMarkConcurrentSweep::PerformFullGC(int64_t epoch) noexcept {
 
     resumeTheWorld(gcHandle);
 
+    state_.allowAssist(epoch);
+
 #ifndef CUSTOM_ALLOCATOR
     alloc::SweepExtraObjects<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *extraObjectFactoryIterable);
     extraObjectFactoryIterable = std::nullopt;

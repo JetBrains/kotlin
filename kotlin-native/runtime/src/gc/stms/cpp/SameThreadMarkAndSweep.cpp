@@ -78,6 +78,8 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     }
     allocator_.prepareForGC();
 
+    state_.allowAssist(epoch);
+
 #ifndef CUSTOM_ALLOCATOR
     // Taking the locks before the pause is completed. So that any destroying thread
     // would not publish into the global state at an unexpected time.

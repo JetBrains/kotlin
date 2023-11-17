@@ -7,7 +7,6 @@
 
 #include <condition_variable>
 #include <mutex>
-#include <atomic>
 #include <optional>
 
 #include "KAssert.h"
@@ -27,6 +26,7 @@ public:
         std::unique_lock lock(mutex_);
         shutdownFlag_ = true;
         startedEpoch.notify();
+        assistEpoch.notify();
         finishedEpoch.notify();
         scheduledEpoch.notify();
         finalizedEpoch.notify();
@@ -34,9 +34,15 @@ public:
 
     void start(int64_t epoch) { startedEpoch.set(epoch); }
 
+    void allowAssist(int64_t epoch) { assistEpoch.set(epoch); }
+
     void finish(int64_t epoch) { finishedEpoch.set(epoch); }
 
     void finalized(int64_t epoch) { finalizedEpoch.set(epoch); }
+
+    void waitEpochAssist(int64_t epoch) {
+        assistEpoch.wait([this, epoch] { return *assistEpoch >= epoch || shutdownFlag_; });
+    }
 
     void waitEpochFinished(int64_t epoch) {
         finishedEpoch.wait([this, epoch] { return *finishedEpoch >= epoch || shutdownFlag_; });
@@ -88,6 +94,7 @@ private:
     std::mutex mutex_;
     // Use a separate conditional variable for each counter to mitigate a winpthreads bug (see KT-50948 for details).
     ValueWithCondVar<int64_t> startedEpoch{0, mutex_};
+    ValueWithCondVar<int64_t> assistEpoch{0, mutex_};
     ValueWithCondVar<int64_t> finishedEpoch{0, mutex_};
     ValueWithCondVar<int64_t> scheduledEpoch{0, mutex_};
     ValueWithCondVar<int64_t> finalizedEpoch{0, mutex_};

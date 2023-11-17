@@ -76,6 +76,7 @@ public:
 
     // TODO: These should exist only in the scheduler.
     int64_t Schedule() noexcept;
+    void WaitAssist(int64_t epoch) noexcept;
     void WaitFinished(int64_t epoch) noexcept;
     void WaitFinalizers(int64_t epoch) noexcept;
 

@@ -76,6 +76,10 @@ int64_t gc::GC::Schedule() noexcept {
     return impl_->gc().state().schedule();
 }
 
+void gc::GC::WaitAssist(int64_t epoch) noexcept {
+    impl_->gc().state().waitEpochAssist(epoch);
+}
+
 void gc::GC::WaitFinished(int64_t epoch) noexcept {
     impl_->gc().state().waitEpochFinished(epoch);
 }
