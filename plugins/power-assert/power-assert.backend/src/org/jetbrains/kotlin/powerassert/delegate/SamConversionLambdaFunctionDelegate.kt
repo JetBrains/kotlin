@@ -19,7 +19,6 @@
 
 package org.jetbrains.kotlin.powerassert.delegate
 
-import org.jetbrains.kotlin.powerassert.irLambda
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irSamConversion
@@ -27,32 +26,33 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.powerassert.irLambda
 
 class SamConversionLambdaFunctionDelegate(
-  private val overload: IrSimpleFunctionSymbol,
-  override val messageParameter: IrValueParameter,
+    private val overload: IrSimpleFunctionSymbol,
+    override val messageParameter: IrValueParameter,
 ) : FunctionDelegate {
-  override val function = overload.owner
+    override val function = overload.owner
 
-  override fun buildCall(
-    builder: IrBuilderWithScope,
-    original: IrCall,
-    dispatchReceiver: IrExpression?,
-    extensionReceiver: IrExpression?,
-    valueArguments: List<IrExpression?>,
-    messageArgument: IrExpression,
-  ): IrExpression = with(builder) {
-    val lambda = irLambda(context.irBuiltIns.stringType, messageParameter.type) {
-      +irReturn(messageArgument)
+    override fun buildCall(
+        builder: IrBuilderWithScope,
+        original: IrCall,
+        dispatchReceiver: IrExpression?,
+        extensionReceiver: IrExpression?,
+        valueArguments: List<IrExpression?>,
+        messageArgument: IrExpression,
+    ): IrExpression = with(builder) {
+        val lambda = irLambda(context.irBuiltIns.stringType, messageParameter.type) {
+            +irReturn(messageArgument)
+        }
+        val expression = irSamConversion(lambda, messageParameter.type)
+        irCallCopy(
+            overload = overload,
+            original = original,
+            dispatchReceiver = dispatchReceiver,
+            extensionReceiver = extensionReceiver,
+            valueArguments = valueArguments,
+            messageArgument = expression,
+        )
     }
-    val expression = irSamConversion(lambda, messageParameter.type)
-    irCallCopy(
-      overload = overload,
-      original = original,
-      dispatchReceiver = dispatchReceiver,
-      extensionReceiver = extensionReceiver,
-      valueArguments = valueArguments,
-      messageArgument = expression,
-    )
-  }
 }

@@ -19,41 +19,37 @@
 
 package org.jetbrains.kotlin.powerassert.diagram
 
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irFalse
-import org.jetbrains.kotlin.ir.builders.irIfThenElse
-import org.jetbrains.kotlin.ir.builders.irTrue
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
 fun IrBuilderWithScope.buildDiagramNesting(
-  root: Node,
-  variables: List<IrTemporaryVariable> = emptyList(),
-  call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
+    root: Node,
+    variables: List<IrTemporaryVariable> = emptyList(),
+    call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
-  return buildExpression(root, variables) { argument, subStack ->
-    call(argument, subStack)
-  }
+    return buildExpression(root, variables) { argument, subStack ->
+        call(argument, subStack)
+    }
 }
 
 fun IrBuilderWithScope.buildDiagramNestingNullable(
-  root: Node?,
-  variables: List<IrTemporaryVariable> = emptyList(),
-  call: IrBuilderWithScope.(IrExpression?, List<IrTemporaryVariable>) -> IrExpression,
+    root: Node?,
+    variables: List<IrTemporaryVariable> = emptyList(),
+    call: IrBuilderWithScope.(IrExpression?, List<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
-  return if (root != null) buildDiagramNesting(root, variables, call) else call(null, variables)
+    return if (root != null) buildDiagramNesting(root, variables, call) else call(null, variables)
 }
 
 private fun IrBuilderWithScope.buildExpression(
-  node: Node,
-  variables: List<IrTemporaryVariable>,
-  call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
+    node: Node,
+    variables: List<IrTemporaryVariable>,
+    call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression = when (node) {
-  is ExpressionNode -> add(node, variables, call)
-  is AndNode -> nest(node, 0, variables, call)
-  is OrNode -> nest(node, 0, variables, call)
-  else -> TODO("Unknown node type=$node")
+    is ExpressionNode -> add(node, variables, call)
+    is AndNode -> nest(node, 0, variables, call)
+    is OrNode -> nest(node, 0, variables, call)
+    else -> TODO("Unknown node type=$node")
 }
 
 /**
@@ -70,17 +66,17 @@ private fun IrBuilderWithScope.buildExpression(
  * ```
  */
 private fun IrBuilderWithScope.add(
-  node: ExpressionNode,
-  variables: List<IrTemporaryVariable>,
-  call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
+    node: ExpressionNode,
+    variables: List<IrTemporaryVariable>,
+    call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
-  return irBlock {
-    val head = node.expressions.first().deepCopyWithSymbols(scope.getLocalDeclarationParent())
-    val expressions = (buildTree(head) as ExpressionNode).expressions
-    val transformer = IrTemporaryExtractionTransformer(this@irBlock, expressions.toSet())
-    val transformed = expressions.first().transform(transformer, null)
-    +call(transformed, variables + transformer.variables)
-  }
+    return irBlock {
+        val head = node.expressions.first().deepCopyWithSymbols(scope.getLocalDeclarationParent())
+        val expressions = (buildTree(head) as ExpressionNode).expressions
+        val transformer = IrTemporaryExtractionTransformer(this@irBlock, expressions.toSet())
+        val transformed = expressions.first().transform(transformer, null)
+        +call(transformed, variables + transformer.variables)
+    }
 }
 
 /**
@@ -100,25 +96,25 @@ private fun IrBuilderWithScope.add(
  * ```
  */
 private fun IrBuilderWithScope.nest(
-  node: AndNode,
-  index: Int,
-  variables: List<IrTemporaryVariable>,
-  call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
+    node: AndNode,
+    index: Int,
+    variables: List<IrTemporaryVariable>,
+    call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
-  val children = node.children
-  val child = children[index]
-  return buildExpression(child, variables) { argument, newVariables ->
-    if (index + 1 == children.size) {
-      call(argument, newVariables) // last expression, result is false
-    } else {
-      irIfThenElse(
-        context.irBuiltIns.anyType,
-        argument,
-        nest(node, index + 1, newVariables, call), // more expressions, continue nesting
-        call(irFalse(), newVariables), // short-circuit result to false
-      )
+    val children = node.children
+    val child = children[index]
+    return buildExpression(child, variables) { argument, newVariables ->
+        if (index + 1 == children.size) {
+            call(argument, newVariables) // last expression, result is false
+        } else {
+            irIfThenElse(
+                context.irBuiltIns.anyType,
+                argument,
+                nest(node, index + 1, newVariables, call), // more expressions, continue nesting
+                call(irFalse(), newVariables), // short-circuit result to false
+            )
+        }
     }
-  }
 }
 
 /**
@@ -138,23 +134,23 @@ private fun IrBuilderWithScope.nest(
  * ```
  */
 private fun IrBuilderWithScope.nest(
-  node: OrNode,
-  index: Int,
-  variables: List<IrTemporaryVariable>,
-  call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
+    node: OrNode,
+    index: Int,
+    variables: List<IrTemporaryVariable>,
+    call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
-  val children = node.children
-  val child = children[index]
-  return buildExpression(child, variables) { argument, newVariables ->
-    if (index + 1 == children.size) {
-      call(argument, newVariables) // last expression, result is false
-    } else {
-      irIfThenElse(
-        context.irBuiltIns.anyType,
-        argument,
-        call(irTrue(), newVariables), // short-circuit result to true
-        nest(node, index + 1, newVariables, call), // more expressions, continue nesting
-      )
+    val children = node.children
+    val child = children[index]
+    return buildExpression(child, variables) { argument, newVariables ->
+        if (index + 1 == children.size) {
+            call(argument, newVariables) // last expression, result is false
+        } else {
+            irIfThenElse(
+                context.irBuiltIns.anyType,
+                argument,
+                call(irTrue(), newVariables), // short-circuit result to true
+                nest(node, index + 1, newVariables, call), // more expressions, continue nesting
+            )
+        }
     }
-  }
 }

@@ -20,6 +20,6 @@
 package org.jetbrains.kotlin.powerassert.gradle
 
 open class PowerAssertGradleExtension {
-  var functions: List<String> = listOf("kotlin.assert")
-  var excludedSourceSets: List<String> = listOf()
+    var functions: List<String> = listOf("kotlin.assert")
+    var excludedSourceSets: List<String> = listOf()
 }

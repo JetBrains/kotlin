@@ -26,24 +26,24 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 class SimpleFunctionDelegate(
-  private val overload: IrSimpleFunctionSymbol,
-  override val messageParameter: IrValueParameter,
+    private val overload: IrSimpleFunctionSymbol,
+    override val messageParameter: IrValueParameter,
 ) : FunctionDelegate {
-  override val function = overload.owner
+    override val function = overload.owner
 
-  override fun buildCall(
-    builder: IrBuilderWithScope,
-    original: IrCall,
-    dispatchReceiver: IrExpression?,
-    extensionReceiver: IrExpression?,
-    valueArguments: List<IrExpression?>,
-    messageArgument: IrExpression,
-  ): IrExpression = builder.irCallCopy(
-    overload = overload,
-    original = original,
-    dispatchReceiver = dispatchReceiver,
-    extensionReceiver = extensionReceiver,
-    valueArguments = valueArguments,
-    messageArgument = messageArgument,
-  )
+    override fun buildCall(
+        builder: IrBuilderWithScope,
+        original: IrCall,
+        dispatchReceiver: IrExpression?,
+        extensionReceiver: IrExpression?,
+        valueArguments: List<IrExpression?>,
+        messageArgument: IrExpression,
+    ): IrExpression = builder.irCallCopy(
+        overload = overload,
+        original = original,
+        dispatchReceiver = dispatchReceiver,
+        extensionReceiver = extensionReceiver,
+        valueArguments = valueArguments,
+        messageArgument = messageArgument,
+    )
 }

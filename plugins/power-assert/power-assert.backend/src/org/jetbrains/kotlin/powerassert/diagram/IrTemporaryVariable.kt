@@ -28,25 +28,25 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 data class IrTemporaryVariable(
-  val temporary: IrVariable,
-  val original: IrExpression,
+    val temporary: IrVariable,
+    val original: IrExpression,
 )
 
 class IrTemporaryExtractionTransformer(
-  private val builder: IrStatementsBuilder<*>,
-  private val transform: Set<IrExpression>,
+    private val builder: IrStatementsBuilder<*>,
+    private val transform: Set<IrExpression>,
 ) : IrElementTransformerVoid() {
-  private val _variables = mutableListOf<IrTemporaryVariable>()
-  val variables: List<IrTemporaryVariable> = _variables
+    private val _variables = mutableListOf<IrTemporaryVariable>()
+    val variables: List<IrTemporaryVariable> = _variables
 
-  override fun visitExpression(expression: IrExpression): IrExpression {
-    return if (expression in transform) {
-      val copy = expression.deepCopyWithSymbols(builder.scope.getLocalDeclarationParent())
-      val variable = builder.irTemporary(super.visitExpression(expression))
-      _variables.add(IrTemporaryVariable(variable, copy))
-      builder.irGet(variable)
-    } else {
-      super.visitExpression(expression)
+    override fun visitExpression(expression: IrExpression): IrExpression {
+        return if (expression in transform) {
+            val copy = expression.deepCopyWithSymbols(builder.scope.getLocalDeclarationParent())
+            val variable = builder.irTemporary(super.visitExpression(expression))
+            _variables.add(IrTemporaryVariable(variable, copy))
+            builder.irGet(variable)
+        } else {
+            super.visitExpression(expression)
+        }
     }
-  }
 }

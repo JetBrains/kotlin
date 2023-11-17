@@ -27,24 +27,23 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.powerassert.PowerAssertIrGenerationExtension
 
 val KEY_FUNCTIONS = CompilerConfigurationKey<List<String>>("fully-qualified function names")
 
 @AutoService(CompilerPluginRegistrar::class)
 class PowerAssertCompilerPluginRegistrar(
-  private val functions: Set<FqName>,
+    private val functions: Set<FqName>,
 ) : CompilerPluginRegistrar() {
-  @Suppress("unused")
-  constructor() : this(emptySet()) // Used by service loader
+    @Suppress("unused")
+    constructor() : this(emptySet()) // Used by service loader
 
-  override val supportsK2: Boolean = true
+    override val supportsK2: Boolean = true
 
-  override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-    val functions = configuration[KEY_FUNCTIONS]?.map { FqName(it) } ?: functions
-    if (functions.isEmpty()) return
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        val functions = configuration[KEY_FUNCTIONS]?.map { FqName(it) } ?: functions
+        if (functions.isEmpty()) return
 
-    val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-    IrGenerationExtension.registerExtension(PowerAssertIrGenerationExtension(messageCollector, functions.toSet()))
-  }
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+        IrGenerationExtension.registerExtension(PowerAssertIrGenerationExtension(messageCollector, functions.toSet()))
+    }
 }
