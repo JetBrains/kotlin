@@ -3,6 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.CacheableTransfor
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import kotlinx.metadata.jvm.KotlinModuleMetadata
+import kotlinx.metadata.jvm.UnstableMetadataApi
 import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
 import org.gradle.kotlin.dsl.support.serviceOf
@@ -11,7 +12,7 @@ description = "Kotlin Full Reflection Library"
 
 buildscript {
     dependencies {
-        classpath("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.6.2")
+        classpath("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.7.0")
     }
 }
 
@@ -59,6 +60,7 @@ dependencies {
 }
 
 @CacheableTransformer
+@OptIn(UnstableMetadataApi::class)
 class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
     @Suppress("ArrayInDataClass")
     private data class Entry(val path: String, val bytes: ByteArray)
@@ -76,8 +78,7 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
 
         logger.info("Transforming ${context.path}")
         val metadata = KotlinModuleMetadata.read(context.`is`.readBytes())
-            ?: error("Not a .kotlin_module file: ${context.path}")
-        val module = metadata.toKmModule()
+        val module = metadata.kmModule
 
         val packageParts = module.packageParts.toMap()
         module.packageParts.clear()
@@ -91,7 +92,7 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
             relocate(fqName) to parts
         }.toMap(module.packageParts)
 
-        data += Entry(context.path, KotlinModuleMetadata.write(module).bytes)
+        data += Entry(context.path, KotlinModuleMetadata.write(module))
     }
 
     override fun hasTransformedResource(): Boolean = data.isNotEmpty()

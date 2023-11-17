@@ -13,7 +13,7 @@ shadow = "8.1.1" # Should be in sync with version in kotlin-native/
 spdx = "0.1.0-dev-10"
 proguard = "6.2.2"
 ktor = "2.3.3"
-kotlinx-metadataJvm = "0.6.2"
+kotlinx-metadataJvm = "0.7.0"
 # Forcing gson version because of https://github.com/google/gson/pull/1991
 gson = { strictly = "2.8.9" } # should be in sync with version.properties
 jetbrains-ideaExt = "1.0.1"
