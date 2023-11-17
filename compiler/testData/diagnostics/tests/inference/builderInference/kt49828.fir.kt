@@ -82,7 +82,7 @@ fun main() {
         add("one")
 
         with (get(0)) {
-            <!NONE_APPLICABLE!>bar<!>()
+            bar()
         }
     }
     val list71 = buildList {
@@ -90,7 +90,7 @@ fun main() {
 
         with (get(0)) l1@ {
             with (listOf(1)) {
-                <!NONE_APPLICABLE!>bar<!>()
+                bar()
             }
         }
     }
@@ -99,7 +99,7 @@ fun main() {
 
         with (get(0)) {
             with (listOf(1)) {
-                <!NONE_APPLICABLE!>bar<!>()
+                bar()
             }
         }
     }
@@ -113,7 +113,7 @@ fun main() {
 
         with (get(0)) {
             with (Inv(this)) {
-                <!NONE_APPLICABLE!>foo2<!>()
+                foo2()
             }
         }
     }
@@ -122,7 +122,7 @@ fun main() {
 
         with (get(0)) {
             with (Inv(this)) {
-                <!NONE_APPLICABLE!>bar<!>()
+                bar()
             }
         }
     }
@@ -161,7 +161,7 @@ fun main() {
         add("one")
 
         with (get(0)) {
-            <!NONE_APPLICABLE!>foo0003<!>(0f, this@l1.get(0))
+            foo0003(0f, <!ARGUMENT_TYPE_MISMATCH!>this@l1.get(0)<!>)
         }
     }
 
@@ -211,7 +211,7 @@ fun test() {
             add("")
             with (get()) {
                 with (listOf(1)) {
-                    <!NONE_APPLICABLE!>bar<!>()
+                    bar()
                 }
             }
         },
