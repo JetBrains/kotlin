@@ -2291,4 +2291,22 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             @Composable fun Text(text: String) {}
         """
     )
+
+    @Test
+    fun testComposableInAnonymousObjectDelegate() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+                interface A
+
+                interface B {
+                    val property: A @Composable get() = TODO()
+                }
+
+                @Composable fun Test(b: B) {
+                    val a = object : A by b.property {}
+                    println(a)
+                }
+        """
+    )
 }
