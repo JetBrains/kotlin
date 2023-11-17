@@ -1,12 +1,12 @@
 FILE: missingBooleanBranch.kt
     public final fun test_1(cond: R|kotlin/Boolean|): R|kotlin/Unit| {
-        lval x: R|kotlin/Unit| = when (R|<local>/cond|) {
+        lval x: R|kotlin/Int| = when (R|<local>/cond|) {
             ==($subj$, Boolean(true)) ->  {
                 Int(1)
             }
         }
 
-        lval y: R|kotlin/Unit| = when (R|<local>/cond|) {
+        lval y: R|kotlin/Int| = when (R|<local>/cond|) {
             ==($subj$, Boolean(false)) ->  {
                 Int(2)
             }
@@ -23,7 +23,7 @@ FILE: missingBooleanBranch.kt
 
     }
     public final fun test_2(cond: R|kotlin/Boolean?|): R|kotlin/Unit| {
-        lval x: R|kotlin/Unit| = when (R|<local>/cond|) {
+        lval x: R|kotlin/Int| = when (R|<local>/cond|) {
             ==($subj$, Boolean(true)) ->  {
                 Int(1)
             }

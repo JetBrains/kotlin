@@ -18,7 +18,7 @@ FILE: exhaustiveness_enum.kt
 
     }
     public final fun test_1(e: R|Enum|): R|kotlin/Unit| {
-        lval a: R|kotlin/Unit| = when (R|<local>/e|) {
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
             ==($subj$, Q|Enum|.R|/Enum.A|) ->  {
                 Int(1)
             }
@@ -27,7 +27,7 @@ FILE: exhaustiveness_enum.kt
             }
         }
 
-        lval b: R|kotlin/Unit| = when (R|<local>/e|) {
+        lval b: R|kotlin/Int| = when (R|<local>/e|) {
             ==($subj$, Q|Enum|.R|/Enum.A|) ->  {
                 Int(1)
             }
@@ -62,7 +62,7 @@ FILE: exhaustiveness_enum.kt
 
     }
     public final fun test_2(e: R|Enum?|): R|kotlin/Unit| {
-        lval a: R|kotlin/Unit| = when (R|<local>/e|) {
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
             ==($subj$, Q|Enum|.R|/Enum.A|) ->  {
                 Int(1)
             }

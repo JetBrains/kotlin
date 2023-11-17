@@ -16,7 +16,7 @@ FILE: enumWithTheSameNameAsEntry.kt
             public get(): R|kotlin/enums/EnumEntries<A>|
 
     }
-    public final fun test(a: R|A|): R|kotlin/Unit| {
+    public final fun test(a: R|A|): R|kotlin/String| {
         ^test when (R|<local>/a|) {
             ==($subj$, R|/A.A|.<Unresolved name: A>#) ->  {
                 String(A)

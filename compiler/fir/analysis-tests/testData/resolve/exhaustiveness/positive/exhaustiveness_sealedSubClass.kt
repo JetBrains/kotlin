@@ -35,18 +35,18 @@ fun test_2(e: A) {
     val a = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         is D -> 1
         is E -> 2
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.plus(0)
 
     val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         is B -> 1
         is D -> 2
         is E -> 3
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.plus(0)
 
     val c = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         is B -> 1
         is D -> 2
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.plus(0)
 
     val d = when (e) {
         is C -> 1

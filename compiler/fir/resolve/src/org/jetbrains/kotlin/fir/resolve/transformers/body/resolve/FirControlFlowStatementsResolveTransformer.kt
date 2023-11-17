@@ -68,7 +68,9 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             var completionNeeded = false
             context.withWhenSubjectType(subjectType, components) {
                 when {
-                    whenExpression.branches.isEmpty() -> {}
+                    whenExpression.branches.isEmpty() -> {
+                        whenExpression.resultType = session.builtinTypes.unitType.type
+                    }
                     whenExpression.isOneBranch() && data.forceFullCompletion && data !is ResolutionMode.WithExpectedType -> {
                         whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
                         whenExpression.resultType = whenExpression.branches.first().result.resolvedType
@@ -115,7 +117,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     }
 
     private fun FirWhenExpression.replaceReturnTypeIfNotExhaustive(): FirWhenExpression {
-        if (!isProperlyExhaustive) {
+        if (!isProperlyExhaustive && !usedAsExpression) {
             resultType = session.builtinTypes.unitType.type
         }
         return this

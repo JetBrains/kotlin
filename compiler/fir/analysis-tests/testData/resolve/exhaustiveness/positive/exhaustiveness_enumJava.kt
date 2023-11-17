@@ -10,13 +10,13 @@ fun test_1(e: JavaEnum) {
     val a = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.plus(0)
 
     val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         is String -> 3
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.plus(0)
 
     val c = when (e) {
         JavaEnum.A -> 1
@@ -35,7 +35,7 @@ fun test_2(e: JavaEnum?) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.plus(0)
 
     val b = when (e) {
         JavaEnum.A -> 1

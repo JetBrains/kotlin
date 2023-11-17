@@ -38,5 +38,5 @@ fun foo(a: A) {
     <!NO_ELSE_IN_WHEN!>when<!> (a) {
         is A.A1 -> ""
         is B.B1 -> "..."
-    }.<!UNRESOLVED_REFERENCE!>length<!>
+    }.length
 }

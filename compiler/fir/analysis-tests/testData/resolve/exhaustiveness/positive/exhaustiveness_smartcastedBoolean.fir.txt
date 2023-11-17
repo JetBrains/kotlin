@@ -1,7 +1,7 @@
 FILE: exhaustiveness_smartcastedBoolean.kt
     public final fun test_1(b: R|kotlin/Any|): R|kotlin/Unit| {
         R|kotlin/require|((R|<local>/b| is R|kotlin/Boolean|))
-        lval x: R|kotlin/Unit| = when (R|<local>/b|) {
+        lval x: R|kotlin/Int| = when (R|<local>/b|) {
             ==($subj$, Boolean(true)) ->  {
                 Int(1)
             }
@@ -28,7 +28,7 @@ FILE: exhaustiveness_smartcastedBoolean.kt
     }
     public final fun test_2(b: R|kotlin/Any?|): R|kotlin/Unit| {
         R|kotlin/require|((R|<local>/b| is R|kotlin/Boolean?|))
-        lval x: R|kotlin/Unit| = when (R|<local>/b|) {
+        lval x: R|kotlin/Int| = when (R|<local>/b|) {
             ==($subj$, Boolean(true)) ->  {
                 Int(1)
             }

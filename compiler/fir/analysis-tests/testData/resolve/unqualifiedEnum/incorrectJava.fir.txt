@@ -1,5 +1,5 @@
 FILE: test.kt
-    public final fun foo(javaEnum: R|JavaEnum|): R|kotlin/Unit| {
+    public final fun foo(javaEnum: R|JavaEnum|): R|kotlin/Int| {
         ^foo when (R|<local>/javaEnum|) {
             ==($subj$, <Unresolved name: first>#()) ->  {
                 Int(1)

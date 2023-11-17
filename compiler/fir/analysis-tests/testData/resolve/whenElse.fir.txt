@@ -44,7 +44,7 @@ FILE: whenElse.kt
     }
     public final fun case2(): R|kotlin/Unit| {
         lval flag: R|kotlin/Any| = R|/get|(Boolean(false))
-        lval l1: R|kotlin/Unit| = when (R|<local>/flag|!!) {
+        lval l1: R|B| = when (R|<local>/flag|!!) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -53,7 +53,7 @@ FILE: whenElse.kt
             }
         }
 
-        lval l2: R|kotlin/Unit| = when (R|<local>/flag|) {
+        lval l2: R|B| = when (R|<local>/flag|) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -65,7 +65,7 @@ FILE: whenElse.kt
     }
     public final fun case2(): R|kotlin/Unit| {
         lval flag: R|kotlin/Any| = R|/get|(Boolean(true))
-        lval l1: R|kotlin/Unit| = when (R|<local>/flag|!!) {
+        lval l1: R|B| = when (R|<local>/flag|!!) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -74,7 +74,7 @@ FILE: whenElse.kt
             }
         }
 
-        lval l2: R|kotlin/Unit| = when (R|<local>/flag|) {
+        lval l2: R|B| = when (R|<local>/flag|) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -86,7 +86,7 @@ FILE: whenElse.kt
     }
     public final fun case3(): R|kotlin/Unit| {
         lval flag: R|kotlin/String| = String()
-        lval l1: R|kotlin/Unit| = when (R|<local>/flag|!!) {
+        lval l1: R|B| = when (R|<local>/flag|!!) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -95,7 +95,7 @@ FILE: whenElse.kt
             }
         }
 
-        lval l2: R|kotlin/Unit| = when (R|<local>/flag|) {
+        lval l2: R|B| = when (R|<local>/flag|) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }

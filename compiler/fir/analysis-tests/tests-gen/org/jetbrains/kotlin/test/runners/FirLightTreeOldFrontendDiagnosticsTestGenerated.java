@@ -8537,6 +8537,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("noTypeMismatchWithWhenWithoutElse.kt")
+            public void testNoTypeMismatchWithWhenWithoutElse() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/noTypeMismatchWithWhenWithoutElse.kt");
+            }
+
+            @Test
             @TestMetadata("nonExhaustiveIfInElvis_after.kt")
             public void testNonExhaustiveIfInElvis_after() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/nonExhaustiveIfInElvis_after.kt");
