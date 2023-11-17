@@ -128,19 +128,18 @@ data class TypeRefWithVariance<out T : TypeRef>(val variance: Variance, val type
         TypeRefWithVariance(variance, typeRef.substitute(map))
 }
 
-interface ElementOrRef<Element, Field> : ParametrizedTypeRef<ElementOrRef<Element, Field>, NamedTypeParameterRef>, ClassOrElementRef
-        where Element : AbstractElement<Element, Field>,
-              Field : AbstractField<Field> {
+interface ElementOrRef<Element> : ParametrizedTypeRef<ElementOrRef<Element>, NamedTypeParameterRef>, ClassOrElementRef
+        where Element : AbstractElement<Element, *, *> {
     val element: Element
 
-    override fun copy(nullable: Boolean): ElementRef<Element, Field>
+    override fun copy(nullable: Boolean): ElementRef<Element>
 }
 
-data class ElementRef<Element : AbstractElement<Element, Field>, Field : AbstractField<Field>>(
+data class ElementRef<Element : AbstractElement<Element, *, *>>(
     override val element: Element,
     override val args: Map<NamedTypeParameterRef, TypeRef> = emptyMap(),
     override val nullable: Boolean = false,
-) : ElementOrRef<Element, Field> {
+) : ElementOrRef<Element> {
     override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementRef(element, args, nullable)
     override fun copy(nullable: Boolean) = ElementRef(element, args, nullable)
 
@@ -307,12 +306,12 @@ fun type(packageName: String, name: String, kind: TypeKind = TypeKind.Interface)
 
 val ClassOrElementRef.typeKind: TypeKind
     get() = when (this) {
-        is ElementOrRef<*, *> -> element.kind!!.typeKind
+        is ElementOrRef<*> -> element.kind!!.typeKind
         is ClassRef<*> -> kind
     }
 
 fun ClassOrElementRef.inheritanceClauseParenthesis(): String = when (this) {
-    is ElementOrRef<*, *> -> element.kind.braces()
+    is ElementOrRef<*> -> element.kind.braces()
     is ClassRef<*> -> when (kind) {
         TypeKind.Class -> "()"
         TypeKind.Interface -> ""

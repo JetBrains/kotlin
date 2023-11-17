@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-data class Model<Element : AbstractElement<Element, *, *>>(
-    val elements: List<Element>,
-    val rootElement: Element,
-)
+interface AbstractFieldWithDefaultValue<OriginField : AbstractField<OriginField>> {
+    val origin: OriginField
+    var withGetter: Boolean
+    var customSetter: String?
+    var notNull: Boolean
+    var defaultValueInImplementation: String?
+}

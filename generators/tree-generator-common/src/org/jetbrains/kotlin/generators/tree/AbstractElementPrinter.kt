@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.utils.withIndent
 /**
  * A common class for printing FIR or IR tree elements.
  */
-abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field>, Field : AbstractField<Field>>(
+abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, *>, Field : AbstractField<Field>>(
     private val printer: SmartPrinter,
 ) {
 

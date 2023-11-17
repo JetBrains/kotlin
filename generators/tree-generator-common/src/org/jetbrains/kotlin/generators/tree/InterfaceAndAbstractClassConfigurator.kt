@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.generators.util.solveGraphForClassVsInterface
  *
  * @property elements The list of elements of the tree to infer their [ImplementationKind].
  */
-open class InterfaceAndAbstractClassConfigurator(val elements: List<ImplementationKindOwner>) {
+class InterfaceAndAbstractClassConfigurator(val elements: List<ImplementationKindOwner>) {
 
     private inner class NodeImpl(val element: ImplementationKindOwner) : Node {
         override val parents: List<NodeImpl>
@@ -27,10 +27,8 @@ open class InterfaceAndAbstractClassConfigurator(val elements: List<Implementati
         override fun hashCode(): Int = element.hashCode()
     }
 
-    /**
-     * If [element]'s kind was inferred as abstract class, allows to forcibly make that element a final class instead.
-     */
-    protected open fun shouldBeFinalClass(element: ImplementationKindOwner, allParents: Set<ImplementationKindOwner>): Boolean = false
+    private fun shouldBeFinalClass(element: ImplementationKindOwner, allParents: Set<ImplementationKindOwner>): Boolean =
+        element is AbstractImplementation<*, *, *> && element !in allParents
 
     private fun updateKinds(nodes: List<NodeImpl>, solution: List<Boolean>) {
         val allParents = nodes.flatMapTo(mutableSetOf()) { element -> element.parents.map { it.origin.element } }
@@ -59,7 +57,7 @@ open class InterfaceAndAbstractClassConfigurator(val elements: List<Implementati
     private fun updateSealedKinds(nodes: Collection<NodeImpl>) {
         for (node in nodes) {
             val element = node.element
-            if (element is AbstractElement<*, *>) {
+            if (element is AbstractElement<*, *, *>) {
                 if (element.isSealed) {
                     element.kind = when (element.kind) {
                         ImplementationKind.AbstractClass -> ImplementationKind.SealedClass

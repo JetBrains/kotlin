@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
-class Element(name: String, override val propertyName: String, kind: Kind) : AbstractElement<Element, Field>(name) {
+class Element(name: String, override val propertyName: String, kind: Kind) : AbstractElement<Element, Field, Implementation>(name) {
     companion object {
         private val allowedKinds = setOf(
             ImplementationKind.Interface,
@@ -40,9 +40,6 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
     override val elementParents = mutableListOf<ElementRef>()
 
     override val otherParents = mutableListOf<ClassRef<*>>()
-
-    var defaultImplementation: Implementation? = null
-    val customImplementations = mutableListOf<Implementation>()
 
     override val params = mutableListOf<TypeVariable>()
 
@@ -76,18 +73,7 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
     override val visitorParameterName: String
         get() = safeDecapitalizedName
 
-    var doesNotNeedImplementation: Boolean = false
-
     val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || elementParents.any { it.element.needTransformOtherChildren }
-    val allImplementations: List<Implementation> by lazy {
-        if (doesNotNeedImplementation) {
-            emptyList()
-        } else {
-            val implementations = customImplementations.toMutableList()
-            defaultImplementation?.let { implementations += it }
-            implementations
-        }
-    }
 
     override fun toString(): String {
         return with(ImportCollector("")) { render() }
@@ -104,6 +90,6 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
     }
 }
 
-typealias ElementRef = GenericElementRef<Element, Field>
+typealias ElementRef = GenericElementRef<Element>
 
-typealias ElementOrRef = GenericElementOrRef<Element, Field>
+typealias ElementOrRef = GenericElementOrRef<Element>

@@ -75,14 +75,11 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
             if (!element.isRootElement) {
                 printBlock {
                     for (child in element.walkableChildren) {
-                        print(child.name)
-                        if (child.nullable) {
-                            print("?")
-                        }
+                        print(child.name, child.call())
                         when (child) {
-                            is SingleField -> println(".accept(visitor, data)")
+                            is SingleField -> println("accept(visitor, data)")
                             is ListField -> {
-                                print(".forEach { it")
+                                print("forEach { it")
                                 if (child.baseType.nullable) {
                                     print("?")
                                 }
@@ -109,12 +106,9 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                         print(child.name)
                         when (child) {
                             is SingleField -> {
-                                print(" = ", child.name)
-                                if (child.nullable) {
-                                    print("?")
-                                }
-                                print(".transform(transformer, data)")
-                                val elementRef = child.typeRef as GenericElementRef<*, *>
+                                print(" = ", child.name, child.call())
+                                print("transform(transformer, data)")
+                                val elementRef = child.typeRef as GenericElementRef<*>
                                 if (!elementRef.element.hasTransformMethod) {
                                     print(" as ", elementRef.render())
                                 }
@@ -122,15 +116,13 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                             }
                             is ListField -> {
                                 if (child.isMutable) {
-                                    print(" = ", child.name)
-                                    if (child.nullable) {
-                                        print("?")
-                                    }
+                                    print(" = ", child.name, child.call())
                                     addImport(transformIfNeeded)
-                                    println(".transformIfNeeded(transformer, data)")
+                                    println("transformIfNeeded(transformer, data)")
                                 } else {
                                     addImport(transformInPlace)
-                                    println(".transformInPlace(transformer, data)")
+                                    print(child.call())
+                                    println("transformInPlace(transformer, data)")
                                 }
                             }
                         }

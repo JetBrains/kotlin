@@ -25,10 +25,10 @@ fun Implementation.generateCode(generationPath: File): GeneratedFile =
         fileSuppressions = listOf("DuplicatedCode", "unused"),
     ) {
         addAllImports(usedTypes)
-        printImplementation(this@generateCode)
+        ImplementationPrinter(this).printImplementation(this@generateCode)
     }
 
-private class ImplementationFieldPrinter(printer: SmartPrinter) : AbstractFieldPrinter<Field>(printer) {
+private class ImplementationFieldPrinter(printer: SmartPrinter) : AbstractFieldPrinter<FieldWithDefault>(printer) {
 
     private fun Field.isMutableOrEmptyIfList(): Boolean = when (this) {
         is FieldList -> isMutableOrEmptyList
@@ -36,91 +36,44 @@ private class ImplementationFieldPrinter(printer: SmartPrinter) : AbstractFieldP
         else -> true
     }
 
-    override fun forceMutable(field: Field): Boolean = field.isMutable && field.isMutableOrEmptyIfList()
+    override fun forceMutable(field: FieldWithDefault): Boolean = field.isMutable && field.isMutableOrEmptyIfList()
 
-    override fun actualTypeOfField(field: Field) = field.getMutableType()
+    override fun actualTypeOfField(field: FieldWithDefault) = field.getMutableType()
 }
 
-context(ImportCollector)
-fun SmartPrinter.printImplementation(implementation: Implementation) {
-    fun Field.transform() {
-        when (this) {
-            is FieldWithDefault -> origin.transform()
+private class ImplementationPrinter(
+    printer: SmartPrinter
+) : AbstractImplementationPrinter<Implementation, Element, FieldWithDefault>(printer) {
 
-            is FirField ->
-                println("$name = ${name}${call()}transform(transformer, data)")
+    override val implementationOptInAnnotation: ClassRef<*>
+        get() = firImplementationDetailType
 
-            is FieldList -> {
-                addImport(transformInPlaceImport)
-                println("${name}.transformInplace(transformer, data)")
-            }
 
-            else -> throw IllegalStateException()
-        }
-    }
+    override val pureAbstractElementType: ClassRef<*>
+        get() = org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 
-    with(implementation) {
-        buildSet {
-            if (requiresOptIn) {
-                add(firImplementationDetailType)
-            }
+    override fun makeFieldPrinter(printer: SmartPrinter) = ImplementationFieldPrinter(printer)
 
-            for (field in fieldsWithoutDefault) {
-                field.optInAnnotation?.let {
-                    add(it)
+    context(ImportCollector)
+    override fun SmartPrinter.printAdditionalMethods(implementation: Implementation) {
+        fun Field.transform() {
+            when (this) {
+                is FieldWithDefault -> origin.transform()
+
+                is FirField ->
+                    println("$name = ${name}${call()}transform(transformer, data)")
+
+                is FieldList -> {
+                    addImport(transformInPlaceImport)
+                    println("${name}.transformInplace(transformer, data)")
                 }
+
+                else -> throw IllegalStateException()
             }
-        }.ifNotEmpty {
-            println("@OptIn(${joinToString { "${it.render()}::class" }})")
         }
-
-        if (!isPublic) {
-            print("internal ")
-        }
-        print("${kind!!.title} ${this.typeName}")
-        print(element.params.typeParameters(end = " "))
-
-        val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
-        val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass
-
-        val fieldPrinter = ImplementationFieldPrinter(this@printImplementation)
-
-        if (!isInterface && !isAbstract && fieldsWithoutDefault.isNotEmpty()) {
-            if (isPublic) {
-                print(" @${firImplementationDetailType.render()} constructor")
-            }
-            println("(")
-            withIndent {
-                fieldsWithoutDefault.forEachIndexed { _, field ->
-                    if (field.isParameter) {
-                        print("${field.name}: ${field.typeRef.render()}")
-                        if (field.nullable) print("?")
-                        println(",")
-                    } else if (!field.isFinal) {
-                        fieldPrinter.printField(field, override = true, inConstructor = true)
-                    }
-                }
-            }
-            print(")")
-        }
-
-        print(" : ")
-        if (needPureAbstractElement) {
-            print("${pureAbstractElementType.render()}(), ")
-        }
-        print(allParents.joinToString { "${it.render()}${it.kind.braces()}" })
-        printBlock {
-            if (isInterface || isAbstract) {
-                allFields.forEach {
-                    fieldPrinter.printField(it, override = true, modality = Modality.ABSTRACT.takeIf { isAbstract })
-                }
-            } else {
-                fieldsWithDefault.forEach {
-                    fieldPrinter.printField(it, override = true)
-                }
-            }
-
-
+        with(implementation) {
+            val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
+            val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass
             val bindingCalls = element.allFields.filter {
                 it.withBindThis && it.hasSymbolType && it !is FieldList && it.name != "companionObjectSymbol"
             }.takeIf {
@@ -199,7 +152,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                             }
 
                                             is FieldList -> {
-                                                println("${field.name}.forEach { it.accept(visitor, data) }")
+                                                println(field.name, field.call(), "forEach { it.accept(visitor, data) }")
                                             }
 
                                             else -> throw IllegalStateException()

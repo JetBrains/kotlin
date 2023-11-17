@@ -9,7 +9,7 @@ val ImplementationKindOwner.needPureAbstractElement: Boolean
     get() = !(kind?.isInterface ?: false) &&
             allParents.none { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
 
-fun addPureAbstractElement(elements: List<AbstractElement<*, *>>, pureAbstractElement: ClassRef<*>) {
+fun addPureAbstractElement(elements: List<AbstractElement<*, *, *>>, pureAbstractElement: ClassRef<*>) {
     for (el in elements) {
         if (el.needPureAbstractElement) {
             el.otherParents.add(pureAbstractElement)

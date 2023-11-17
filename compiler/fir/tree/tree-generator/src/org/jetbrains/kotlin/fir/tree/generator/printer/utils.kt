@@ -88,6 +88,4 @@ fun Field.getMutableType(forBuilder: Boolean = false): TypeRefWithNullability = 
     else -> typeRef
 }
 
-fun Field.call(): String = if (nullable) "?." else "."
-
 val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.replaceFirstChar(Char::lowercaseChar)

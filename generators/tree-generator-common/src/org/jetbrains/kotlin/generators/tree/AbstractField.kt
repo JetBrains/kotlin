@@ -20,7 +20,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     abstract val isFinal: Boolean
 
-    abstract val isLateinit: Boolean
+    open var isLateinit: Boolean = false
 
     abstract val isParameter: Boolean
 
@@ -42,7 +42,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
      * Whether this field can contain an element either directly or e.g. in a list.
      */
     open val containsElement: Boolean
-        get() = typeRef is ElementOrRef<*, *> || this is ListField && baseType is ElementOrRef<*, *>
+        get() = typeRef is ElementOrRef<*> || this is ListField && baseType is ElementOrRef<*>
 
     open val defaultValueInImplementation: String? get() = null
 
@@ -90,6 +90,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     protected open fun updateFieldsInCopy(copy: Field) {
         copy.kDoc = kDoc
+        copy.isLateinit = isLateinit
         copy.arbitraryImportables += arbitraryImportables
         copy.optInAnnotation = optInAnnotation
         copy.isMutable = isMutable

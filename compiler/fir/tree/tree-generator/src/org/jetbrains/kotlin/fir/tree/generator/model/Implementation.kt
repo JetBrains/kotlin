@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
 
-class Implementation(val element: Element, val name: String?) : FieldContainer<FieldWithDefault>, ImplementationKindOwner {
-    override val allParents: List<ImplementationKindOwner> get() = listOf(element)
-    val isDefault = name == null
-    override val typeName = name ?: (element.typeName + "Impl")
+class Implementation(element: Element, name: String?) : AbstractImplementation<Implementation, Element, FieldWithDefault>(element, name) {
 
     override val allFields = element.allFields.toMutableList().mapTo(mutableListOf()) {
         FieldWithDefault(it)
@@ -28,49 +25,7 @@ class Implementation(val element: Element, val name: String?) : FieldContainer<F
             }
         }
 
-    context(ImportCollector)
-    override fun renderTo(appendable: Appendable) {
-        addImport(this)
-        appendable.append(this.typeName)
-        if (element.params.isNotEmpty()) {
-            element.params.joinTo(appendable, prefix = "<", postfix = ">") { it.name }
-        }
-    }
-
-    override fun substitute(map: TypeParameterSubstitutionMap) = this
-
-    override val packageName = element.packageName + ".impl"
-    val usedTypes = mutableListOf<Importable>()
-
-    var isPublic = false
-    var requiresOptIn = false
     var builder: LeafBuilder? = null
-
-    init {
-        if (isDefault) {
-            element.defaultImplementation = this
-        } else {
-            element.customImplementations += this
-        }
-    }
-
-    override val hasAcceptChildrenMethod: Boolean
-        get() {
-            val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
-            val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass
-            return !isInterface && !isAbstract
-        }
-
-    override val hasTransformChildrenMethod: Boolean
-        get() = true
-
-    override fun get(fieldName: String): FieldWithDefault? {
-        return allFields.firstOrNull { it.name == fieldName }
-    }
-
-    val fieldsWithoutDefault by lazy { allFields.filter { it.defaultValueInImplementation == null } }
-    val fieldsWithDefault by lazy { allFields.filter { it.defaultValueInImplementation != null } }
-
 }
 
 val ImplementationKind.hasLeafBuilder: Boolean
