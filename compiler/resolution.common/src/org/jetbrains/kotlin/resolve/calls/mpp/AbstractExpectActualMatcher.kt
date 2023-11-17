@@ -74,36 +74,6 @@ object AbstractExpectActualMatcher {
         ExpectActualMatchingCompatibility.MatchedSuccessfully
     }
 
-    fun recursivelyMatchClassScopes( // todo drop KT-62913
-        expectClassSymbol: RegularClassSymbolMarker,
-        actualClassSymbol: RegularClassSymbolMarker,
-        context: ExpectActualMatchingContext<*>,
-    ): Unit = with(context) {
-        val expectTypeParameterSymbols = expectClassSymbol.typeParameters
-        val actualTypeParameterSymbols = actualClassSymbol.typeParameters
-        val substitutor = createExpectActualTypeParameterSubstitutor(
-            (expectTypeParameterSymbols zipIfSizesAreEqual actualTypeParameterSymbols) ?: return,
-            parentSubstitutor = null,
-        )
-
-        val actualMembersByName = actualClassSymbol.collectAllMembers(isActualDeclaration = true).groupBy { it.name }
-
-        outer@ for (expectMember in expectClassSymbol.collectAllMembers(isActualDeclaration = false)) {
-            val actualMembers = getPossibleActualsByExpectName(expectMember, actualMembersByName)
-
-            matchSingleExpectAgainstPotentialActuals(
-                expectMember,
-                actualMembers,
-                substitutor,
-                expectClassSymbol,
-                actualClassSymbol,
-                mismatchedMembers = null,
-            )
-        }
-
-        // TODO: check static scope?
-    }
-
     /**
      * Besides returning the matched declaration
      *

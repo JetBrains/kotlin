@@ -24883,6 +24883,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                     }
 
                     @Test
+                    @TestMetadata("delegation2.kt")
+                    public void testDelegation2() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/delegation2.kt");
+                    }
+
+                    @Test
                     @TestMetadata("disabledFeature.kt")
                     public void testDisabledFeature() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualFakeOverride/disabledFeature.kt");

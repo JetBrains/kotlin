@@ -43,7 +43,7 @@ class FirExpectActualMatchingContextImpl private constructor(
     private val actualScopeSession: ScopeSession,
     private val allowedWritingMemberExpectForActualMapping: Boolean,
 ) : FirExpectActualMatchingContext, TypeSystemContext by actualSession.typeContext {
-    override val shouldCheckAbsenceOfDefaultParamsInActual: Boolean
+    override val shouldCheckDefaultParams: Boolean
         get() = true
 
     override val allowClassActualizationWithWiderVisibility: Boolean
@@ -257,7 +257,7 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val CallableSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>
         get() = asSymbol().typeParameterSymbols
 
-    override fun FunctionSymbolMarker.allOverriddenDeclarationsRecursive(): Sequence<CallableSymbolMarker> {
+    override fun FunctionSymbolMarker.allRecursivelyOverriddenDeclarationsIncludingSelf(): Sequence<CallableSymbolMarker> {
         return when (val symbol = asSymbol()) {
             is FirConstructorSymbol, is FirFunctionWithoutNameSymbol -> sequenceOf(this)
             is FirNamedFunctionSymbol -> {
@@ -283,6 +283,9 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val ValueParameterSymbolMarker.isCrossinline: Boolean
         get() = asSymbol().isCrossinline
     override val ValueParameterSymbolMarker.hasDefaultValue: Boolean
+        get() = asSymbol().hasDefaultValue
+
+    override val ValueParameterSymbolMarker.hasDefaultValueNonRecursive: Boolean
         get() = asSymbol().hasDefaultValue
 
     override fun CallableSymbolMarker.isAnnotationConstructor(): Boolean {
@@ -374,6 +377,9 @@ class FirExpectActualMatchingContextImpl private constructor(
         }
         return symbol.isSubstitutionOrIntersectionOverride
     }
+
+    override val CallableSymbolMarker.isDelegatedMember: Boolean
+        get() = asSymbol().isDelegated
 
     override val CallableSymbolMarker.hasStableParameterNames: Boolean
         get() = asSymbol().rawStatus.hasStableParameterNames

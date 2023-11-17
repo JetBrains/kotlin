@@ -51,7 +51,7 @@ public actual open class FastArrayList<E> internal constructor(
     var array: Array<Any?>,
     var _size: Int = array.size,
     var arrayCapacity: Int = array.size,
-) : <!DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE!>AbstractMutableList<E>(), MutableListEx<E>, RandomAccess<!> {
+) : AbstractMutableList<E>(), MutableListEx<E>, RandomAccess {
     public actual constructor() : this(arrayOfNulls(16), 0) {}
     public actual constructor(initialCapacity: Int) : this(arrayOfNulls(initialCapacity), 0) {}
     public actual constructor(elements: Collection<E>) : this(elements.toTypedArray<Any?>()) {}
