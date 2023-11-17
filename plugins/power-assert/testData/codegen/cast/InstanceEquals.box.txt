@@ -1,0 +1,4 @@
+Assertion failed
+assert(null is String)
+            |
+            false

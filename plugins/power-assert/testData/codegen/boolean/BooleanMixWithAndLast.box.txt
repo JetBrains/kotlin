@@ -1,0 +1,10 @@
+Assertion failed
+assert((text.length == 1 || text.toLowerCase() == text) && text.length == 1)
+        |    |      |       |    |             |  |
+        |    |      |       |    |             |  Hello
+        |    |      |       |    |             false
+        |    |      |       |    hello
+        |    |      |       Hello
+        |    |      false
+        |    5
+        Hello

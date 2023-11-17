@@ -1,0 +1,5 @@
+Assertion failed
+assert(i++ == 4)
+       |   |
+       |   false
+       1

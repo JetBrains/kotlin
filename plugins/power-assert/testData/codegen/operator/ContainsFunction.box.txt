@@ -1,0 +1,5 @@
+Assertion failed
+assert(listOf("Hello", "World").contains("Name"))
+       |                        |
+       |                        false
+       [Hello, World]

@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.kapt4.AbstractKotlinKapt4ContextTest
 import org.jetbrains.kotlin.lombok.*
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
+import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
+import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
 import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
@@ -352,6 +354,15 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFirPsiDiagnosticTestForLombok> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("plugins/power-assert/tests-gen", "plugins/power-assert/testData") {
+            testClass<AbstractIrBlackBoxCodegenTestForPowerAssert> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
             }
         }
 

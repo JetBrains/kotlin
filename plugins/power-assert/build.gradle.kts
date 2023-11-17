@@ -5,6 +5,8 @@ plugins {
     id("jps-compatible")
 }
 
+val junit5Classpath by configurations.creating
+
 dependencies {
     embedded(project(":kotlin-power-assert-compiler-plugin.backend")) { isTransitive = false }
     embedded(project(":kotlin-power-assert-compiler-plugin.cli")) { isTransitive = false }
@@ -18,6 +20,8 @@ dependencies {
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+
+    junit5Classpath(libs.junit.jupiter.api)
 }
 
 optInToExperimentalCompilerApi()
@@ -41,4 +45,10 @@ projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
+
+    val localJunit5Classpath: FileCollection = junit5Classpath
+
+    doFirst {
+        systemProperty("junit5.classpath", localJunit5Classpath.files.joinToString(",") { it.absolutePath })
+    }
 }

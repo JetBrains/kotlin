@@ -30,7 +30,26 @@ import java.io.File
 data class SourceFile(
     private val irFile: IrFile,
 ) {
-    private val source: String = File(irFile.path).readText()
+    companion object {
+        private val KOTLIN_POWER_ASSERT_ADD_SRC_ROOTS = System.getProperty("KOTLIN_POWER_ASSERT_ADD_SRC_ROOTS") ?: ""
+        private val sourceRoots = listOf(".") + KOTLIN_POWER_ASSERT_ADD_SRC_ROOTS.split(",").map { it.trim() }
+    }
+
+    private val source: String = run {
+        File(irFile.path).also { file ->
+            if (file.exists()) {
+                return@run file.readText()
+            }
+        }
+
+        for (root in sourceRoots) {
+            val file = File(root, irFile.path)
+            if (file.exists()) {
+                return@run file.readText()
+            }
+        }
+        throw IllegalArgumentException("Unable to find source for IrFile: ${irFile.path}")
+    }
         .replace("\r\n", "\n") // https://youtrack.jetbrains.com/issue/KT-41888
 
     fun getSourceRangeInfo(element: IrElement): SourceRangeInfo {

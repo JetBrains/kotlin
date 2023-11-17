@@ -1,0 +1,5 @@
+Wrapper(1 + 1) mustEqual (2 + 4)
+|         |                 |
+|         |                 6
+|         2
+Wrapper

@@ -1,0 +1,4 @@
+the world is broken
+require(1 == 2) { "the world is broken" }
+          |
+          false
