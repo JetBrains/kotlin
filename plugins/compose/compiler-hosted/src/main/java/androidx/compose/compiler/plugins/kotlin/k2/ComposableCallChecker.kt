@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -172,7 +173,7 @@ private fun checkComposableCall(
                     context
                 )
             }
-        }
+        },
     )
     reporter.reportOn(
         expression.calleeReference.source,
@@ -259,6 +260,15 @@ private inline fun CheckerContext.visitCurrentScope(
             }
             is FirAnonymousObject, is FirAnonymousInitializer -> {
                 // Anonymous objects don't change the current scope, continue.
+            }
+            is FirField -> {
+                if (element.origin == FirDeclarationOrigin.Synthetic.DelegateField) {
+                    // Delegating in constructor creates a synthetic field in FIR.
+                    // Continue through in this case in case it is an anonymous declaration.
+                } else {
+                    // Other fields introduce new scope which cannot be composable.
+                    return
+                }
             }
             // Every other declaration introduces a new scope which cannot be composable.
             is FirDeclaration -> return
