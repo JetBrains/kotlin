@@ -16644,6 +16644,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("callableReferenceInsideInvokeCall.kt")
+                public void testCallableReferenceInsideInvokeCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/callableReferenceInsideInvokeCall.kt");
+                }
+
+                @Test
                 @TestMetadata("changingResolveIfDontUseBuilderInference.kt")
                 public void testChangingResolveIfDontUseBuilderInference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/changingResolveIfDontUseBuilderInference.kt");
