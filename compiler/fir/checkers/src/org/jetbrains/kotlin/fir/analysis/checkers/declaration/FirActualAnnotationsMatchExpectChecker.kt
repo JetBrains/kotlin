@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
 
 /**
@@ -33,19 +34,23 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
 
         val actualSymbol = declaration.symbol
         val expectSymbol = actualSymbol.getSingleMatchedExpectForActualOrNull() ?: return
-        checkAnnotationsMatch(expectSymbol, actualSymbol, context, reporter)
+
+        val actualContainingClass = context.containingDeclarations.lastOrNull()?.symbol as? FirRegularClassSymbol
+        val expectContainingClass = actualContainingClass?.getSingleMatchedExpectForActualOrNull() as? FirRegularClassSymbol
+        checkAnnotationsMatch(expectSymbol, actualSymbol, expectContainingClass, context, reporter)
     }
 
     @OptIn(InternalDiagnosticFactoryMethod::class)
     private fun checkAnnotationsMatch(
         expectSymbol: FirBasedSymbol<*>,
         actualSymbol: FirBasedSymbol<*>,
+        expectContainingClass: FirRegularClassSymbol?,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
         val matchingContext = context.session.expectActualMatchingContextFactory.create(context.session, context.scopeSession)
         val incompatibility =
-            AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectSymbol, actualSymbol, matchingContext) ?: return
+            AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectSymbol, actualSymbol, expectContainingClass, matchingContext) ?: return
         val actualAnnotationTargetSourceElement = (incompatibility.actualAnnotationTargetElement as FirSourceElement).element
 
         reporter.report(

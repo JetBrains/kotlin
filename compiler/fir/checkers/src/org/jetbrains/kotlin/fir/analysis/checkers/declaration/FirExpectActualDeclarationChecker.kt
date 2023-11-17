@@ -128,13 +128,13 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         val matchingCompatibilityToMembersMap = symbol.expectForActual ?: return
         val expectedSingleCandidate =
             matchingCompatibilityToMembersMap[ExpectActualMatchingCompatibility.MatchedSuccessfully]?.singleOrNull()
+        val expectActualMatchingContext = context.session.expectActualMatchingContextFactory.create(
+            context.session, context.scopeSession,
+            allowedWritingMemberExpectForActualMapping = true,
+        )
+        val actualContainingClass = context.containingDeclarations.lastOrNull()?.symbol as? FirRegularClassSymbol
+        val expectContainingClass = actualContainingClass?.getSingleMatchedExpectForActualOrNull() as? FirRegularClassSymbol
         val checkingCompatibility = if (expectedSingleCandidate != null) {
-            val expectActualMatchingContext = context.session.expectActualMatchingContextFactory.create(
-                context.session, context.scopeSession,
-                allowedWritingMemberExpectForActualMapping = true,
-            )
-            val actualContainingClass = context.containingDeclarations.lastOrNull()?.symbol as? FirRegularClassSymbol
-            val expectContainingClass = actualContainingClass?.getSingleMatchedExpectForActualOrNull() as? FirRegularClassSymbol
             getCheckingCompatibility(
                 symbol,
                 expectedSingleCandidate,

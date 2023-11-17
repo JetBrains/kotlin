@@ -361,15 +361,16 @@ class FirExpectActualMatchingContextImpl private constructor(
         return !isSam
     }
 
-    override fun CallableSymbolMarker.shouldSkipMatching(containingExpectClass: RegularClassSymbolMarker): Boolean {
+    override fun CallableSymbolMarker.isFakeOverride(containingExpectClass: RegularClassSymbolMarker?): Boolean {
+        if (containingExpectClass == null) {
+            return false
+        }
         val symbol = asSymbol()
         val classSymbol = containingExpectClass.asSymbol()
         if (symbol !is FirConstructorSymbol && symbol.dispatchReceiverType?.classId != classSymbol.classId) {
-            // Skip fake overrides
             return true
         }
-        return symbol.isSubstitutionOrIntersectionOverride // Skip fake overrides
-                || !symbol.isExpect // Skip non-expect declarations like equals, hashCode, toString and any inherited declarations from non-expect super types
+        return symbol.isSubstitutionOrIntersectionOverride
     }
 
     override val CallableSymbolMarker.hasStableParameterNames: Boolean

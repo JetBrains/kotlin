@@ -156,13 +156,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
 
     fun RegularClassSymbolMarker.isNotSamInterface(): Boolean
 
-    /*
-     * Determines should some declaration from expect class scope be checked
-     *  - FE 1.0: skip fake overrides
-     *  - FIR: skip fake overrides
-     *  - IR: skip nothing
-     */
-    fun CallableSymbolMarker.shouldSkipMatching(containingExpectClass: RegularClassSymbolMarker): Boolean
+    fun CallableSymbolMarker.isFakeOverride(containingExpectClass: RegularClassSymbolMarker?): Boolean
 
     val CallableSymbolMarker.hasStableParameterNames: Boolean
 
