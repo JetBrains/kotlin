@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle.android
 
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.forceKapt4
-import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.DisplayName
 
+@OsCondition(enabledOnCI = [OS.LINUX])
 @DisplayName("android with kapt4 external dependencies tests")
 class Kapt4AndroidExternalIT : Kapt3AndroidExternalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()

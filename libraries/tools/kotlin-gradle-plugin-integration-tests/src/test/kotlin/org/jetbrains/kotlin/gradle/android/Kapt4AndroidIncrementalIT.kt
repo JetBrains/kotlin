@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.forceKapt4
-import org.jetbrains.kotlin.gradle.testbase.JdkVersions
-import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
+@OsCondition(enabledOnCI = [OS.LINUX])
 @DisplayName("android with kapt4 incremental build tests")
 class Kapt4AndroidIncrementalIT : Kapt3AndroidIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
@@ -24,6 +25,7 @@ class Kapt4AndroidIncrementalIT : Kapt3AndroidIncrementalIT() {
     override fun testAndroidDaggerIC(gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk) {}
 }
 
+@OsCondition(enabledOnCI = [OS.LINUX])
 @DisplayName("android with kapt4 incremental build tests with precise compilation outputs backup")
 class Kapt4AndroidIncrementalWithPreciseBackupIT : Kapt3AndroidIncrementalWithPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()

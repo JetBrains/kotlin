@@ -9,10 +9,12 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.appendText
 import kotlin.io.path.name
 import kotlin.io.path.walk
 
+@OsCondition(enabledOnCI = [OS.LINUX])
 @DisplayName("Kapt 4 base checks")
 class Kapt4IT : Kapt3IT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
@@ -55,6 +57,7 @@ class Kapt4IT : Kapt3IT() {
     }
 }
 
+@OsCondition(enabledOnCI = [OS.LINUX])
 @DisplayName("Kapt 4 with classloaders cache")
 class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
