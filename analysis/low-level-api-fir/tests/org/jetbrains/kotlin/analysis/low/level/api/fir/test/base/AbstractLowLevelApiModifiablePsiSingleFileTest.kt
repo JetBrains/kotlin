@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiModifiablePsiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -25,11 +24,9 @@ abstract class AbstractLowLevelApiModifiablePsiSingleFileTest : AbstractLowLevel
     abstract fun doTestWithPsiModification(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices)
 
     final override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        ApplicationManager.getApplication().invokeAndWait {
+        CommandProcessor.getInstance().runUndoTransparentAction {
             runWriteAction {
-                WriteCommandAction.runWriteCommandAction(ktFile.project) {
-                    doTestWithPsiModification(ktFile, moduleStructure, testServices)
-                }
+                doTestWithPsiModification(ktFile, moduleStructure, testServices)
             }
         }
     }
