@@ -23,7 +23,7 @@ internal interface UsesLibraryFilterCachingService : Task {
 }
 
 internal abstract class LibraryFilterCachingService : BuildService<BuildServiceParameters.None>, AutoCloseable {
-    internal data class LibraryFilterCacheKey(val dependency: File, val irEnabled: Boolean, val preIrDisabled: Boolean)
+    internal data class LibraryFilterCacheKey(val dependency: File)
 
     private val cache = ConcurrentHashMap<LibraryFilterCacheKey, Boolean>()
 

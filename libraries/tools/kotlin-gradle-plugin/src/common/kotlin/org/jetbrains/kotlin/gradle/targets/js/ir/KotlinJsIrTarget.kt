@@ -464,9 +464,7 @@ constructor(
     internal override val compilerOptions: KotlinJsCompilerOptions = project.objects
         .newInstance<KotlinJsCompilerOptionsDefault>()
         .apply {
-            configureJsDefaultOptions(platformType)
-
-            freeCompilerArgs.add(DISABLE_PRE_IR)
+            configureJsDefaultOptions()
         }
 }
 

@@ -95,8 +95,6 @@ internal open class KotlinJsIrLinkConfig(
             if (none { it.startsWith(arg) }) add(arg)
         }
 
-        add(PRODUCE_JS)
-
         if (compilation.platformType == KotlinPlatformType.wasm) {
             add(WASM_BACKEND)
             val wasmTargetType = ((compilation.origin as KotlinJsIrCompilation).target as KotlinJsIrTarget).wasmTargetType!!

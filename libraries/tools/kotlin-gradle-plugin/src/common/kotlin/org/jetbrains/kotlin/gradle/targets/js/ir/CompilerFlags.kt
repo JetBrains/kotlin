@@ -9,16 +9,11 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
  * @see [compiler/testData/cli/js/jsExtraHelp.out]
  */
 
-internal const val ENTRY_IR_MODULE = "-Xinclude"
-
-internal const val DISABLE_PRE_IR = "-Xir-only"
 internal const val ENABLE_DCE = "-Xir-dce"
 
 internal const val GENERATE_D_TS = "-Xgenerate-dts"
 
-internal const val PRODUCE_JS = "-Xir-produce-js"
 internal const val PRODUCE_UNZIPPED_KLIB = "-Xir-produce-klib-dir"
-internal const val PRODUCE_ZIPPED_KLIB = "-Xir-produce-klib-file"
 
 internal const val MINIMIZED_MEMBER_NAMES = "-Xir-minimized-member-names"
 

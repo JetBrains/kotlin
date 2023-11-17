@@ -9,7 +9,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
-import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
@@ -36,21 +35,12 @@ abstract class AbstractKotlinJsIncrementalGradlePluginIT(
             jsOptions = defaultJsOptions,
         )
 
-    protected fun BuildResult.checkIrCompilationMessage() {
-        if (irBackend) {
-            assertOutputContains(USING_JS_IR_BACKEND_MESSAGE)
-        } else {
-            assertOutputDoesNotContain(USING_JS_IR_BACKEND_MESSAGE)
-        }
-    }
-
     @DisplayName("incremental compilation for js works")
     @GradleTest
     fun testIncrementalCompilation(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         project("kotlin2JsICProject", gradleVersion, buildOptions = buildOptions) {
             build("compileKotlinJs", "compileTestKotlinJs") {
-                checkIrCompilationMessage()
                 assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
                 assertCompiledKotlinSources(projectPath.allKotlinFiles.relativizeTo(projectPath), output)
             }
@@ -64,7 +54,6 @@ abstract class AbstractKotlinJsIncrementalGradlePluginIT(
                 it.replace("val x = 0", "val x = \"a\"")
             }
             build("compileKotlinJs", "compileTestKotlinJs") {
-                checkIrCompilationMessage()
                 assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
                 val affectedFiles = listOf("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt").mapNotNull {
                     projectPath.findInPath(it)
@@ -77,13 +66,10 @@ abstract class AbstractKotlinJsIncrementalGradlePluginIT(
     @DisplayName("non-incremental compilation works")
     @GradleTest
     fun testIncrementalCompilationDisabled(gradleVersion: GradleVersion) {
-        val jsOptions = defaultJsOptions.run {
-            if (irBackend) copy(incrementalJsKlib = false) else copy(incrementalJs = false)
-        }
+        val jsOptions = defaultJsOptions.copy(incrementalJsKlib = false, incrementalJs = false)
         val options = defaultBuildOptions.copy(jsOptions = jsOptions)
         project("kotlin2JsICProject", gradleVersion, buildOptions = options) {
             build("compileKotlinJs", "compileTestKotlinJs") {
-                checkIrCompilationMessage()
                 assertOutputDoesNotContain(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
             }
         }

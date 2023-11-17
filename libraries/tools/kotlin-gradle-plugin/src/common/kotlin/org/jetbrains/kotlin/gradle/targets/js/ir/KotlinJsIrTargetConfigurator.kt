@@ -9,22 +9,15 @@ import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 open class KotlinJsIrTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true) {
 
     internal companion object {
-        internal fun KotlinJsCompilerOptions.configureJsDefaultOptions(
-            platformType: KotlinPlatformType,
-        ) {
-            moduleKind.set(JsModuleKind.MODULE_UMD)
-            sourceMap.set(true)
-            sourceMapEmbedSources.set(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)
-
-            if (platformType == KotlinPlatformType.wasm) {
-                freeCompilerArgs.add(WASM_BACKEND)
-            }
+        internal fun KotlinJsCompilerOptions.configureJsDefaultOptions() {
+            moduleKind.convention(JsModuleKind.MODULE_UMD)
+            sourceMap.convention(true)
+            sourceMapEmbedSources.convention(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)
         }
     }
 }
