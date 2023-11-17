@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.platform.impl
 
-import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.JvmTarget
@@ -21,15 +20,15 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 object JvmIdePlatformKind : IdePlatformKind() {
     override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform.isJvm()
 
+    private val jvmTargetDescriptionMap by lazy {
+        JvmTarget.values().associateBy { it.description }
+    }
+
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
         if (arguments !is K2JVMCompilerArguments) return null
 
-        val jvmTargetDescription = arguments.jvmTarget
-            ?: return JvmPlatforms.defaultJvmPlatform
-
-        val jvmTarget = JvmTarget.values()
-            .firstOrNull { VersionComparatorUtil.COMPARATOR.compare(it.description, jvmTargetDescription) >= 0 }
-            ?: return JvmPlatforms.defaultJvmPlatform
+        val jvmTargetDescription = arguments.jvmTarget ?: return JvmPlatforms.defaultJvmPlatform
+        val jvmTarget = jvmTargetDescriptionMap[jvmTargetDescription] ?: return JvmPlatforms.defaultJvmPlatform
 
         return JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget)
     }
