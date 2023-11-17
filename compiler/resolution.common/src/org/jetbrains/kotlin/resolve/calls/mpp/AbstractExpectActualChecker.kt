@@ -369,19 +369,31 @@ object AbstractExpectActualChecker {
 
         getTypeParametersVarianceOrReifiedIncompatibility(expectedTypeParameters, actualTypeParameters)?.let { return it }
 
-        if (shouldCheckAbsenceOfDefaultParamsInActual) {
-            // "Default parameters in actual" check is required only for functions, because only functions can have parameters
-            if (actualDeclaration is FunctionSymbolMarker && expectDeclaration is FunctionSymbolMarker) {
-                // Actual annotation constructors can have default argument values; their consistency with arguments in the expected annotation
-                // is checked in ExpectedActualDeclarationChecker.checkAnnotationConstructors
-                if (!actualDeclaration.isAnnotationConstructor() &&
-                    // If default params came from common supertypes of actual class and expect class then it's a valid code.
-                    // Here we filter out such default params.
-                    (actualDeclaration.allOverriddenDeclarationsRecursive() - expectDeclaration.allOverriddenDeclarationsRecursive().toSet())
-                        .flatMap { it.valueParameters }.any { it.hasDefaultValue }
-                ) {
-                    return ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters
-                }
+        if (shouldCheckDefaultParams &&
+            // "parameters" checks are required only for functions, because only functions can have parameters
+            actualDeclaration is FunctionSymbolMarker && expectDeclaration is FunctionSymbolMarker
+        ) {
+            if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitDefaultArgumentsInExpectActualizedByFakeOverride) &&
+                (actualDeclaration.isFakeOverride(actualContainingClass) || actualDeclaration.isDelegatedMember) &&
+                // If default params came from common supertypes of actual class and expect class then it's a valid code.
+                // Here we filter out such default params.
+                (expectDeclaration.allRecursivelyOverriddenDeclarationsIncludingSelf() -
+                        actualDeclaration.allRecursivelyOverriddenDeclarationsIncludingSelf().toSet())
+                    .flatMap { it.valueParameters }.any { it.hasDefaultValueNonRecursive }
+            ) {
+                return ExpectActualCheckingCompatibility.DefaultArgumentsInExpectActualizedByFakeOverride
+            }
+
+            // Actual annotation constructors can have default argument values; their consistency with arguments in the expected annotation
+            // is checked in ExpectedActualDeclarationChecker.checkAnnotationConstructors
+            if (!actualDeclaration.isAnnotationConstructor() &&
+                // If default params came from common supertypes of actual class and expect class then it's a valid code.
+                // Here we filter out such default params.
+                (actualDeclaration.allRecursivelyOverriddenDeclarationsIncludingSelf() -
+                        expectDeclaration.allRecursivelyOverriddenDeclarationsIncludingSelf().toSet())
+                    .flatMap { it.valueParameters }.any { it.hasDefaultValue }
+            ) {
+                return ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters
             }
         }
 

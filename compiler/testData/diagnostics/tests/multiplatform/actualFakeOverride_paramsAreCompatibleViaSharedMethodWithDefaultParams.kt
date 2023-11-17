@@ -9,4 +9,4 @@ expect class Foo : Shared
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
-actual class Foo : <!DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE!>Shared<!>
+actual class Foo : Shared
