@@ -117,7 +117,6 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isClassWithFqName
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.isNullableNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
@@ -1857,10 +1856,10 @@ class ComposableFunctionBodyTransformer(
                 (expectedTarget == null || expectedTarget == expr.returnTargetSymbol.owner)
             ) {
                 block.statements.pop()
-                return if (expr.value.type.isUnitOrNullableUnit() ||
-                    expr.value.type.isNothing() ||
-                    expr.value.type.isNullableNothing()
-                ) {
+                val valueType = expr.value.type
+                val returnType = (expr.returnTargetSymbol as? IrFunctionSymbol)?.owner?.returnType
+                    ?: valueType
+                return if (returnType.isUnit() || returnType.isNothing() || valueType.isNothing()) {
                     block.statements.add(expr.value)
                     original to null
                 } else {
