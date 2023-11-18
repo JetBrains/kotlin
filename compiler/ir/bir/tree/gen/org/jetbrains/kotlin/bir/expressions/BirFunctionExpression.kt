@@ -9,9 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.accept
-import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
@@ -27,10 +25,6 @@ abstract class BirFunctionExpression : BirExpression() {
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         function?.accept(data, visitor)
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        function?.acceptLite(visitor)
     }
 
     companion object
