@@ -12,21 +12,4 @@ class Implementation(element: Element, name: String?) : AbstractImplementation<I
     override val allFields = element.allFields.toMutableList().mapTo(mutableListOf()) {
         FieldWithDefault(it)
     }
-    override var kind: ImplementationKind? = null
-        set(value) {
-            field = value
-            if (kind != ImplementationKind.FinalClass) {
-                isPublic = true
-            }
-            if (value?.hasLeafBuilder == true) {
-                builder = builder ?: LeafBuilder(this)
-            } else {
-                builder = null
-            }
-        }
-
-    var builder: LeafBuilder? = null
 }
-
-val ImplementationKind.hasLeafBuilder: Boolean
-    get() = this == ImplementationKind.FinalClass || this == ImplementationKind.OpenClass

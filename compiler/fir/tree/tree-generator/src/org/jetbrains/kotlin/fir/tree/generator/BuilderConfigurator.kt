@@ -5,16 +5,10 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractBuilderConfigurator
-import org.jetbrains.kotlin.fir.tree.generator.model.Element
-import org.jetbrains.kotlin.fir.tree.generator.model.Field
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
-import org.jetbrains.kotlin.fir.tree.generator.model.LeafBuilder
-import org.jetbrains.kotlin.fir.tree.generator.printer.invisibleField
-import org.jetbrains.kotlin.generators.tree.traverseParents
+import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirBuilderConfigurator
 
-object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder) {
-    fun configureBuilders() = with(firTreeBuilder) {
+object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder.elements) {
+    fun configureBuilders() = with(FirTreeBuilder) {
         val declarationBuilder by builder {
             fields from declaration without "symbol"
         }
@@ -457,37 +451,4 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             useTypes(unresolvedDeprecationsProviderType)
         }
     }
-
-    private inline fun findImplementationsWithElementInParents(
-        element: Element,
-        implementationPredicate: (Implementation) -> Boolean = { true }
-    ): Collection<Implementation> {
-        return FirTreeBuilder.elements.flatMap { it.allImplementations }.mapNotNullTo(mutableSetOf()) {
-            if (!implementationPredicate(it)) return@mapNotNullTo null
-            var hasAnnotations = false
-            if (it.element == element) return@mapNotNullTo null
-            it.element.traverseParents {
-                if (it == element) {
-                    hasAnnotations = true
-                }
-            }
-            it.takeIf { hasAnnotations }
-        }
-    }
-
-    private fun configureFieldInAllLeafBuilders(
-        field: String,
-        builderPredicate: ((LeafBuilder) -> Boolean)? = null,
-        fieldPredicate: ((Field) -> Boolean)? = null,
-        init: LeafBuilderConfigurationContext.(field: String) -> Unit
-    ) {
-        val builders = FirTreeBuilder.elements.flatMap { it.allImplementations }.mapNotNull { it.builder }
-        for (builder in builders) {
-            if (builderPredicate != null && !builderPredicate(builder)) continue
-            if (!builder.allFields.any { it.name == field }) continue
-            if (fieldPredicate != null && !fieldPredicate(builder[field])) continue
-            LeafBuilderConfigurationContext(builder).init(field)
-        }
-    }
-
 }

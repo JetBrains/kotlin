@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.ElementRef
-import org.jetbrains.kotlin.fir.tree.generator.model.IntermediateBuilder
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import org.jetbrains.kotlin.generators.tree.ClassRef
 import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
@@ -26,7 +25,6 @@ abstract class AbstractFirTreeBuilder {
     }
 
     val elements = mutableListOf(baseFirElement)
-    val intermediateBuilders = mutableListOf<IntermediateBuilder>()
 
     protected fun element(kind: Element.Kind, vararg dependencies: Element): ElementDelegateProvider {
         return ElementDelegateProvider(kind, dependencies, isSealed = false, predefinedName = null)

@@ -11,4 +11,5 @@ interface AbstractFieldWithDefaultValue<OriginField : AbstractField<OriginField>
     var customSetter: String?
     var notNull: Boolean
     var defaultValueInImplementation: String?
+    var defaultValueInBuilder: String?
 }
