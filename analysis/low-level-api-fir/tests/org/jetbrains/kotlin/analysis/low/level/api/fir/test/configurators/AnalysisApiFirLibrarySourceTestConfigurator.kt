@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.fir.test.configurators.library
+package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtMod
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.createKtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
