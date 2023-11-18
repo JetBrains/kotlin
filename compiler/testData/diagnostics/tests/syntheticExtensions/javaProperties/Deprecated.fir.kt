@@ -12,11 +12,11 @@ fun foo(javaClass: JavaClass) {
 
     javaClass.<!DEPRECATION!>something4<!>
     javaClass.<!DEPRECATION!>something4<!> = 1
-    javaClass.<!DEPRECATION, DEPRECATION!>something4<!>++
+    javaClass.<!DEPRECATION!>something4<!>++
 
     javaClass.<!DEPRECATION!>something5<!>
     javaClass.<!DEPRECATION!>something5<!> = 1
-    javaClass.<!DEPRECATION, DEPRECATION!>something5<!>++
+    javaClass.<!DEPRECATION!>something5<!>++
 }
 
 // FILE: JavaClass.java

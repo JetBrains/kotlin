@@ -26,9 +26,9 @@ fun <T> test(x: T) {
     baz<Int?, String>(null, <!NULL_FOR_NONNULL_TYPE!>null<!>, ::foo)
     <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>baz<!>(null, "", ::foo)
     <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>baz<!>(1, null, ::foo)
-    <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>baz<!>(null, null, ::foo)
+    <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>baz<!>(null, null, ::foo)
 
-    val s3: Pair<Int, String?> = <!TYPE_MISMATCH, TYPE_MISMATCH!>bar(null, null, ::foo)<!>
+    val s3: Pair<Int, String?> = <!TYPE_MISMATCH!>bar(null, null, ::foo)<!>
     val s4: Pair<Int?, String> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>bar(null, null, ::foo)<!>
 
     val s5: Pair<Int, String> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>bar(1, "", ::foo)<!>

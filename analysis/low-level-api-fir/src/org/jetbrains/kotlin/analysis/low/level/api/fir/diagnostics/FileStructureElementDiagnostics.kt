@@ -36,7 +36,7 @@ internal class FileStructureElementDiagnostics(
         }
 
 
-    inline fun forEach(filter: DiagnosticCheckerFilter, action: (List<KtPsiDiagnostic>) -> Unit) {
+    inline fun forEach(filter: DiagnosticCheckerFilter, action: (Collection<KtPsiDiagnostic>) -> Unit) {
         if (filter.runCommonCheckers) {
             diagnosticByCommonCheckers.forEach(action)
         }

@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 
-fun <T> select(vararg x: <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>T<!>) = x[0]
+fun <T> select(vararg x: <!CANNOT_INFER_PARAMETER_TYPE!>T<!>) = x[0]
 fun <K> id(x: K) = x
 
 fun main() {

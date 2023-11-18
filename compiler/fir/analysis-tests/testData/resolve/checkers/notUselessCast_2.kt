@@ -19,5 +19,5 @@ fun test_1(): Wrapper<Foo?> {
 fun test_2(): Wrapper<Foo?> {
     return <!RETURN_TYPE_MISMATCH!>Wrapper(Bar("bar"))
         .map { it.toFoo() }
-        .swapWrappedValue { <!TYPE_MISMATCH, TYPE_MISMATCH!>Wrapper(null)<!> }<!>
+        .swapWrappedValue { <!TYPE_MISMATCH!>Wrapper(null)<!> }<!>
 }

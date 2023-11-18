@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.diagnostics.Severity
 
 class PendingDiagnosticsCollectorWithSuppress(override val rawReport: (Boolean, String) -> Unit) : BaseDiagnosticsCollector() {
     private val pendingDiagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
-    private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
+    private val _diagnosticsByFilePath: MutableMap<String?, MutableSet<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
         get() = _diagnosticsByFilePath.flatMap { it.value }
     override val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
-        get() = _diagnosticsByFilePath
+        get() = _diagnosticsByFilePath.mapValues { it.value.toList() }
 
     override var hasErrors = false
         private set
@@ -35,7 +35,7 @@ class PendingDiagnosticsCollectorWithSuppress(override val rawReport: (Boolean, 
     ) {
         val commitEverything = context == null
         for ((path, pendingList) in pendingDiagnosticsByFilePath) {
-            val committedList = _diagnosticsByFilePath.getOrPut(path) { mutableListOf() }
+            val committedSet = _diagnosticsByFilePath.getOrPut(path) { mutableSetOf() }
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {
                 val diagnostic = iterator.next()
@@ -49,7 +49,7 @@ class PendingDiagnosticsCollectorWithSuppress(override val rawReport: (Boolean, 
                     }
                     diagnostic.element == element || commitEverything -> {
                         iterator.remove()
-                        committedList += diagnostic
+                        committedSet += diagnostic
                         if (!hasErrors && diagnostic.severity == Severity.ERROR) {
                             hasErrors = true
                         }

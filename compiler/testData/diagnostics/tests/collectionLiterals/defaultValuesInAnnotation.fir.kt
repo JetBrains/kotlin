@@ -8,9 +8,9 @@ annotation class Foo(
 )
 
 annotation class Bar(
-        val a: Array<String> = <!TYPE_MISMATCH, TYPE_MISMATCH!>[' ']<!>,
+        val a: Array<String> = <!TYPE_MISMATCH!>[' ']<!>,
         val b: Array<String> = ["", <!EMPTY_CHARACTER_LITERAL!>''<!>],
-        val c: Array<String> = <!TYPE_MISMATCH, TYPE_MISMATCH!>[1]<!>
+        val c: Array<String> = <!TYPE_MISMATCH!>[1]<!>
 )
 
 annotation class Base(
@@ -22,5 +22,5 @@ annotation class Base(
 
 annotation class Err(
         val a: IntArray = [<!ARGUMENT_TYPE_MISMATCH!>1L<!>],
-        val b: Array<String> = <!TYPE_MISMATCH, TYPE_MISMATCH!>[1]<!>
+        val b: Array<String> = <!TYPE_MISMATCH!>[1]<!>
 )
