@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 
 import org.jetbrains.kotlin.analysis.api.fe10.test.configurator.AnalysisApiFe10TestConfiguratorFactory
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory
-import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AnalysisApiFirStandaloneModeTestConfiguratorFactory
+import org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators.AnalysisApiFirStandaloneModeTestConfiguratorFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 
 object AnalysisApiConfiguratorFactoryProvider {
