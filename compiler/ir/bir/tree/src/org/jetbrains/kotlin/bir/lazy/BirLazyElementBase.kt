@@ -51,14 +51,14 @@ abstract class BirLazyElementBase(
         }
     }
 
-    protected fun <Bir : BirElementBase> convertChild(originalChild: IrElement): Bir {
+    protected fun <Bir : BirElement> convertChild(originalChild: IrElement): Bir {
         val new = converter.remapElement<Bir>(originalChild)
-        initChild(new)
+        initChild(new as BirElementBase?)
         return new
     }
 
     @JvmName("convertChildNullable")
-    protected fun <Bir : BirElementBase> convertChild(originalChild: IrElement?): Bir? =
+    protected fun <Bir : BirElement?> convertChild(originalChild: IrElement?): Bir? =
         if (originalChild == null) null else convertChild(originalChild)
 
     protected fun <P : BirLazyElementBase, T> lazyVar(initializer: P.() -> T): SynchronizedLazyBirElementVar<P, T> =

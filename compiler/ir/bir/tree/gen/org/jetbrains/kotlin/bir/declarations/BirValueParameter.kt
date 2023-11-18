@@ -9,9 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.accept
-import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.symbols.BirValueParameterSymbol
 import org.jetbrains.kotlin.bir.types.BirType
@@ -73,11 +71,6 @@ interface BirValueParameter : BirDeclaration, BirValueDeclaration, BirValueParam
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)
         defaultValue?.accept(data, visitor)
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        annotations.acceptChildrenLite(visitor)
-        defaultValue?.acceptLite(visitor)
     }
 
     companion object

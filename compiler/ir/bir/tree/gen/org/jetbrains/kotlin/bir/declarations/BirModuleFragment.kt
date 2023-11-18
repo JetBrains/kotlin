@@ -11,7 +11,6 @@ package org.jetbrains.kotlin.bir.declarations
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -30,10 +29,6 @@ abstract class BirModuleFragment : BirImplElementBase(), BirElement {
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         files.acceptChildren(visitor, data)
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        files.acceptChildrenLite(visitor)
     }
 
     companion object

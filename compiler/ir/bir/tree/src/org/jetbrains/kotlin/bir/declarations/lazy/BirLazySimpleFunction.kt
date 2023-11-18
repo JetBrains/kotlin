@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.bir.declarations.lazy
 
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirBody
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
+import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
+import org.jetbrains.kotlin.bir.lazy.acceptLiteIfPresent
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
 import org.jetbrains.kotlin.bir.types.BirType
@@ -68,18 +71,21 @@ class BirLazySimpleFunction(
     override var returnType: BirType by lazyVar<BirLazySimpleFunction, _> {
         converter.remapType(originalIrElement.returnType)
     }
-    override var dispatchReceiverParameter: BirValueParameter? by lazyVar<BirLazySimpleFunction, _> {
-        convertChild(originalIrElement.dispatchReceiverParameter)
+    private val _dispatchReceiverParameter = lazyVar<BirLazySimpleFunction, _> {
+        convertChild<BirValueParameter?>(originalIrElement.dispatchReceiverParameter)
     }
-    override var extensionReceiverParameter: BirValueParameter? by lazyVar<BirLazySimpleFunction, _> {
-        convertChild(originalIrElement.extensionReceiverParameter)
+    override var dispatchReceiverParameter: BirValueParameter? by _dispatchReceiverParameter
+    private val _extensionReceiverParameter = lazyVar<BirLazySimpleFunction, _> {
+        convertChild<BirValueParameter?>(originalIrElement.extensionReceiverParameter)
     }
+    override var extensionReceiverParameter: BirValueParameter? by _extensionReceiverParameter
     override var contextReceiverParametersCount: Int
         get() = originalIrElement.contextReceiverParametersCount
         set(value) = mutationNotSupported()
-    override var body: BirBody? by lazyVar<BirLazySimpleFunction, _> {
-        convertChild(originalIrElement.body)
+    private val _body = lazyVar<BirLazySimpleFunction, _> {
+        convertChild<BirBody?>(originalIrElement.body)
     }
+    override var body: BirBody? by _body
     override var attributeOwnerId: BirAttributeContainer by lazyVar<BirLazySimpleFunction, _> {
         converter.remapElement(originalIrElement.attributeOwnerId)
     }
@@ -89,4 +95,13 @@ class BirLazySimpleFunction(
     override val annotations = lazyChildElementList<BirLazySimpleFunction, BirConstructorCall>(1) { originalIrElement.annotations }
     override val typeParameters = lazyChildElementList<BirLazySimpleFunction, BirTypeParameter>(2) { originalIrElement.typeParameters }
     override val valueParameters = lazyChildElementList<BirLazySimpleFunction, BirValueParameter>(3) { originalIrElement.valueParameters }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
+        typeParameters.acceptChildrenLite(visitor)
+        _dispatchReceiverParameter.acceptLiteIfPresent(visitor)
+        _extensionReceiverParameter.acceptLiteIfPresent(visitor)
+        valueParameters.acceptChildrenLite(visitor)
+        _body.acceptLiteIfPresent(visitor)
+    }
 }

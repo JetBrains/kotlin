@@ -10,9 +10,7 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.accept
-import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
 
 /**
@@ -30,11 +28,6 @@ abstract class BirDynamicOperatorExpression : BirDynamicExpression() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         receiver?.accept(data, visitor)
         arguments.acceptChildren(visitor, data)
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        receiver?.acceptLite(visitor)
-        arguments.acceptChildrenLite(visitor)
     }
 
     companion object
