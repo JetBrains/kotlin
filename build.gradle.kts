@@ -469,6 +469,7 @@ val coreLibProjects by extra {
 val mppProjects by extra {
     listOf(
         ":kotlin-stdlib",
+        ":kotlin-test",
     )
 }
 
