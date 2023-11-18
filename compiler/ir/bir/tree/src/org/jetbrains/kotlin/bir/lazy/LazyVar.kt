@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.bir.lazy
 
+import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
+import org.jetbrains.kotlin.bir.acceptLite
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -17,7 +20,7 @@ class SynchronizedLazyBirElementVar<P : BirLazyElementBase, T>(
     @Volatile
     private var _value: Any? = NotInitializedValue
 
-    private val isInitialized
+    val isInitialized
         get() = _value !== NotInitializedValue
 
     val value: T
@@ -46,4 +49,10 @@ class SynchronizedLazyBirElementVar<P : BirLazyElementBase, T>(
     }
 
     private object NotInitializedValue
+}
+
+internal fun <T : BirElement?> SynchronizedLazyBirElementVar<*, T>.acceptLiteIfPresent(visitor: BirElementVisitorLite) {
+    if (isInitialized) {
+        value?.acceptLite(visitor)
+    }
 }

@@ -9,9 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.accept
-import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 
 /**
@@ -28,12 +26,6 @@ abstract class BirFunctionReference : BirCallableReference<BirFunctionSymbol>() 
         dispatchReceiver?.accept(data, visitor)
         extensionReceiver?.accept(data, visitor)
         valueArguments.acceptChildren(visitor, data)
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        dispatchReceiver?.acceptLite(visitor)
-        extensionReceiver?.acceptLite(visitor)
-        valueArguments.acceptChildrenLite(visitor)
     }
 
     companion object

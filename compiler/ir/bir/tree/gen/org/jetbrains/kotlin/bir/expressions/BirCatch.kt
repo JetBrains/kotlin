@@ -10,10 +10,8 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.accept
-import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 
 /**
@@ -29,11 +27,6 @@ abstract class BirCatch : BirImplElementBase(), BirElement {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         catchParameter?.accept(data, visitor)
         result?.accept(data, visitor)
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        catchParameter?.acceptLite(visitor)
-        result?.acceptLite(visitor)
     }
 
     companion object

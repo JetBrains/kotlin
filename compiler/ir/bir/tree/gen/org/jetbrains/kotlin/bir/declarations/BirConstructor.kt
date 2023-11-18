@@ -9,9 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.accept
-import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -34,15 +32,6 @@ interface BirConstructor : BirFunction, BirConstructorSymbol {
         extensionReceiverParameter?.accept(data, visitor)
         valueParameters.acceptChildren(visitor, data)
         body?.accept(data, visitor)
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        annotations.acceptChildrenLite(visitor)
-        typeParameters.acceptChildrenLite(visitor)
-        dispatchReceiverParameter?.acceptLite(visitor)
-        extensionReceiverParameter?.acceptLite(visitor)
-        valueParameters.acceptChildrenLite(visitor)
-        body?.acceptLite(visitor)
     }
 
     companion object

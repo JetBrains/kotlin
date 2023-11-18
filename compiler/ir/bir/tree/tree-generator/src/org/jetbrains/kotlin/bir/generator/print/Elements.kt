@@ -96,30 +96,6 @@ fun printElements(generationPath: File, model: Model) = sequence {
                             }
                             .build()
                     )
-
-                    // It will be overridden in Impl classes
-                    addFunction(
-                        FunSpec
-                            .builder("acceptChildrenLite")
-                            .addModifiers(KModifier.OVERRIDE)
-                            .addParameter("visitor", elementVisitorLite)
-                            .apply {
-                                element.allChildren.forEach { child ->
-                                    when (child) {
-                                        is SingleField -> {
-                                            addCode(child.name)
-                                            addCode("?")
-                                            addCode(".%M(visitor)\n", elementAcceptLite)
-                                        }
-                                        is ListField -> {
-                                            addCode(child.name)
-                                            addCode(".acceptChildrenLite(visitor)\n")
-                                        }
-                                    }
-                                }
-                            }
-                            .build()
-                    )
                 }
             }
 

@@ -10,9 +10,7 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.accept
-import org.jetbrains.kotlin.bir.acceptLite
 
 /**
  * A leaf IR tree element.
@@ -30,12 +28,6 @@ abstract class BirTry : BirExpression() {
         tryResult?.accept(data, visitor)
         catches.acceptChildren(visitor, data)
         finallyExpression?.accept(data, visitor)
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        tryResult?.acceptLite(visitor)
-        catches.acceptChildrenLite(visitor)
-        finallyExpression?.acceptLite(visitor)
     }
 
     companion object

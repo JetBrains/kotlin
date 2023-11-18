@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.bir.declarations.lazy
 
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirBody
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
+import org.jetbrains.kotlin.bir.lazy.acceptLiteIfPresent
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.descriptors.*
@@ -50,16 +52,28 @@ class BirLazyConstructor(
     override var returnType: BirType by lazyVar<BirLazyConstructor, _> {
         converter.remapType(originalIrElement.returnType)
     }
-    override var dispatchReceiverParameter: BirValueParameter? by lazyVar<BirLazyConstructor, _> {
-        convertChild(originalIrElement.dispatchReceiverParameter)
+    private val _dispatchReceiverParameter = lazyVar<BirLazyConstructor, _> {
+        convertChild<BirValueParameter?>(originalIrElement.dispatchReceiverParameter)
     }
-    override var extensionReceiverParameter: BirValueParameter? by lazyVar<BirLazyConstructor, _> {
-        convertChild(originalIrElement.extensionReceiverParameter)
+    override var dispatchReceiverParameter: BirValueParameter? by _dispatchReceiverParameter
+    private val _extensionReceiverParameter = lazyVar<BirLazyConstructor, _> {
+        convertChild<BirValueParameter?>(originalIrElement.extensionReceiverParameter)
     }
-    override var body: BirBody? by lazyVar<BirLazyConstructor, _> {
-        convertChild(originalIrElement.body)
+    override var extensionReceiverParameter: BirValueParameter? by _extensionReceiverParameter
+    private val _body = lazyVar<BirLazyConstructor, _> {
+        convertChild<BirBody?>(originalIrElement.body)
     }
+    override var body: BirBody? by _body
     override val annotations = lazyChildElementList<BirLazyConstructor, BirConstructorCall>(1) { originalIrElement.annotations }
     override val typeParameters = lazyChildElementList<BirLazyConstructor, BirTypeParameter>(2) { originalIrElement.typeParameters }
     override val valueParameters = lazyChildElementList<BirLazyConstructor, BirValueParameter>(3) { originalIrElement.valueParameters }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
+        typeParameters.acceptChildrenLite(visitor)
+        _dispatchReceiverParameter.acceptLiteIfPresent(visitor)
+        _extensionReceiverParameter.acceptLiteIfPresent(visitor)
+        valueParameters.acceptChildrenLite(visitor)
+        _body.acceptLiteIfPresent(visitor)
+    }
 }

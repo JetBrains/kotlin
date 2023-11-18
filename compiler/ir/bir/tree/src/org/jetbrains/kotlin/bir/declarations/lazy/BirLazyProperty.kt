@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.bir.declarations.lazy
 
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
+import org.jetbrains.kotlin.bir.lazy.acceptLiteIfPresent
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -59,17 +62,27 @@ class BirLazyProperty(
     override var attributeOwnerId: BirAttributeContainer by lazyVar<BirLazyProperty, _> {
         converter.remapElement(originalIrElement.attributeOwnerId)
     }
-    override var backingField: BirField? by lazyVar<BirLazyProperty, _> {
-        converter.remapElement(originalIrElement.backingField)
+    private val _backingField = lazyVar<BirLazyProperty, _> {
+        convertChild<BirField?>(originalIrElement.backingField)
     }
-    override var getter: BirSimpleFunction? by lazyVar<BirLazyProperty, _> {
-        convertChild(originalIrElement.getter)
+    override var backingField: BirField? by _backingField
+    private val _getter = lazyVar<BirLazyProperty, _> {
+        convertChild<BirSimpleFunction?>(originalIrElement.getter)
     }
-    override var setter: BirSimpleFunction? by lazyVar<BirLazyProperty, _> {
-        convertChild(originalIrElement.setter)
+    override var getter: BirSimpleFunction? by _getter
+    private val _setter = lazyVar<BirLazyProperty, _> {
+        convertChild<BirSimpleFunction?>(originalIrElement.setter)
     }
+    override var setter: BirSimpleFunction? by _setter
     override var overriddenSymbols: List<BirPropertySymbol> by lazyVar<BirLazyProperty, _> {
         originalIrElement.overriddenSymbols.map { converter.remapSymbol(it) }
     }
     override val annotations = lazyChildElementList<BirLazyProperty, BirConstructorCall>(1) { originalIrElement.annotations }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
+        _backingField.acceptLiteIfPresent(visitor)
+        _getter.acceptLiteIfPresent(visitor)
+        _setter.acceptLiteIfPresent(visitor)
+    }
 }

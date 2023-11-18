@@ -9,9 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.accept
-import org.jetbrains.kotlin.bir.acceptLite
 
 /**
  * A leaf IR tree element.
@@ -22,11 +20,6 @@ abstract class BirWhileLoop : BirLoop() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         body?.accept(data, visitor)
         condition?.accept(data, visitor)
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        body?.acceptLite(visitor)
-        condition?.acceptLite(visitor)
     }
 
     companion object

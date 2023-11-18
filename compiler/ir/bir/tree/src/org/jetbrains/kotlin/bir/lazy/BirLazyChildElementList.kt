@@ -119,10 +119,17 @@ class BirLazyChildElementList<E : BirElement?>(
 
 
     override fun acceptChildrenLite(visitor: BirElementVisitorScopeLite.(BirElementBase) -> Unit) {
+        // todo: thread-safety
+        
+        val size = _size
+        if (size == 0) return
+
         val scope = BirElementVisitorScopeLite(visitor)
-        for (element in this) {
+        val elementArray = elementArray
+        for (i in 0..<size) {
+            val element = elementArray.getOrNull(i)
             if (element != null) {
-                visitor.invoke(scope, element as BirElementBase)
+                visitor.invoke(scope, element)
             }
         }
     }

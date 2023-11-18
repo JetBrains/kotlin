@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
@@ -28,10 +27,6 @@ abstract class BirConstantObject : BirConstantValue() {
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         valueArguments.acceptChildren(visitor, data)
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        valueArguments.acceptChildrenLite(visitor)
     }
 
     companion object

@@ -79,7 +79,7 @@ value class BirElementVisitorScopeLite(
     }
 }
 
-internal inline fun BirElement.acceptLite(noinline visitor: BirElementVisitorLite) {
+inline fun BirElement.acceptLite(noinline visitor: BirElementVisitorLite) {
     val scope = BirElementVisitorScopeLite(visitor)
     visitor(scope, this@acceptLite as BirElementBase)
 }

@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.bir.declarations.lazy
 
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.*
+import org.jetbrains.kotlin.bir.expressions.BirBody
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
+import org.jetbrains.kotlin.bir.lazy.acceptLiteIfPresent
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
@@ -45,11 +49,17 @@ class BirLazyField(
     override var type: BirType by lazyVar<BirLazyField, _> {
         converter.remapType(originalIrElement.type)
     }
-    override var initializer: BirExpressionBody? by lazyVar<BirLazyField, _> {
-        convertChild(originalIrElement.initializer)
+    private val _initializer = lazyVar<BirLazyField, _> {
+        convertChild<BirExpressionBody?>(originalIrElement.initializer)
     }
+    override var initializer: BirExpressionBody? by _initializer
     override var correspondingPropertySymbol: BirPropertySymbol? by lazyVar<BirLazyField, _> {
         converter.remapSymbol(originalIrElement.correspondingPropertySymbol)
     }
     override val annotations = lazyChildElementList<BirLazyField, BirConstructorCall>(1) { originalIrElement.annotations }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
+        _initializer.acceptLiteIfPresent(visitor)
+    }
 }
