@@ -71,4 +71,20 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     val fieldsWithDefault by lazy { allFields.filter(::withDefault) }
 
     var requiresOptIn = false
+
+    override var kind: ImplementationKind? = null
+        set(value) {
+            field = value
+            if (kind != ImplementationKind.FinalClass) {
+                isPublic = true
+            }
+            @Suppress("UNCHECKED_CAST")
+            builder = if (value?.hasLeafBuilder == true) {
+                builder ?: LeafBuilder(this as Implementation)
+            } else {
+                null
+            }
+        }
+
+    var builder: LeafBuilder<Field, Element, Implementation>? = null
 }

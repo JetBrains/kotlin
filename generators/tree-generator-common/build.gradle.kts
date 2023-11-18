@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api(project(":core:compiler.common"))
 
+    implementation(project(":compiler:util"))
     implementation(project(":generators"))
 }
 

@@ -74,3 +74,6 @@ internal fun <Field : AbstractField<*>> List<Field>.reorderFieldsIfNecessary(ord
             if (position < 0) order.size else position
         }
     }
+
+val ImplementationKind.hasLeafBuilder: Boolean
+    get() = this == ImplementationKind.FinalClass || this == ImplementationKind.OpenClass

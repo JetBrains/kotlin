@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
     addPureAbstractElement(FirTreeBuilder.elements, pureAbstractElementType)
     BuilderConfigurator.configureBuilders()
     val previouslyGeneratedFiles = collectPreviouslyGeneratedFiles(generationPath)
-    val generatedFiles = generateElements(FirTreeBuilder, generationPath)
+    val generatedFiles = generateElements(FirTreeBuilder, BuilderConfigurator, generationPath)
     generatedFiles.forEach { GeneratorsFileUtil.writeFileIfContentChanged(it.file, it.newText, logNotChanged = false) }
     removeExtraFilesFromPreviousGeneration(previouslyGeneratedFiles, generatedFiles.map { it.file })
 }

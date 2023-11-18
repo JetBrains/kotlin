@@ -14,8 +14,6 @@ sealed class Field : AbstractField<Field>() {
     var parentHasSeparateTransform: Boolean = true
     open var needTransformInOtherChildren: Boolean = false
 
-    open var customInitializationCall: String? = null
-
     open val isMutableOrEmptyList: Boolean
         get() = false
 
@@ -105,7 +103,7 @@ class FieldWithDefault(override val origin: Field) : Field(), AbstractFieldWithD
         set(_) {}
 
     override var defaultValueInImplementation: String? = origin.defaultValueInImplementation
-    var defaultValueInBuilder: String? = null
+    override var defaultValueInBuilder: String? = null
     override var isMutable: Boolean = origin.isMutable
     override val isMutableOrEmptyList: Boolean
         get() = origin.isMutableOrEmptyList
