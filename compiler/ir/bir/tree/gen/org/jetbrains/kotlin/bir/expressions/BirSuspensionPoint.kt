@@ -9,9 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.accept
-import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 
 /**
@@ -30,12 +28,6 @@ abstract class BirSuspensionPoint : BirExpression() {
         suspensionPointIdParameter?.accept(data, visitor)
         result?.accept(data, visitor)
         resumeResult?.accept(data, visitor)
-    }
-
-    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        suspensionPointIdParameter?.acceptLite(visitor)
-        result?.acceptLite(visitor)
-        resumeResult?.acceptLite(visitor)
     }
 
     companion object
