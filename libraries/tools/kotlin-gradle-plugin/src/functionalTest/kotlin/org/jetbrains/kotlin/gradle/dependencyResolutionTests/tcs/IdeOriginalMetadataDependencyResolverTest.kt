@@ -24,6 +24,7 @@ class IdeOriginalMetadataDependencyResolverTest {
 
     @Test
     fun `test kotlin-test-common`() {
+        val lastLegacyMetadataKotlinTestVersion = "1.9.20"
         val project = buildProject {
             enableDependencyVerification(false)
             enableDefaultStdlibDependency(false)
@@ -39,13 +40,13 @@ class IdeOriginalMetadataDependencyResolverTest {
         kotlin.linuxArm64()
 
         kotlin.sourceSets.commonTest.dependencies {
-            implementation("org.jetbrains.kotlin:kotlin-test-common:${kotlin.coreLibrariesVersion}")
+            implementation("org.jetbrains.kotlin:kotlin-test-common:$lastLegacyMetadataKotlinTestVersion")
         }
 
         project.evaluate()
 
         IdeOriginalMetadataDependencyResolver.resolve(kotlin.sourceSets.commonTest.get()).assertMatches(
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-test-common:${kotlin.coreLibrariesVersion}")
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-test-common:$lastLegacyMetadataKotlinTestVersion")
         )
     }
 

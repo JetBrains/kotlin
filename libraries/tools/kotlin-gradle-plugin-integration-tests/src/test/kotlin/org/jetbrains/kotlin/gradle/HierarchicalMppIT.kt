@@ -283,7 +283,9 @@ open class HierarchicalMppIT : KGPBaseTest() {
                         "kotlin-stdlib-${buildOptions.kotlinVersion}-all.jar",
                         "kotlin-dom-api-compat-${buildOptions.kotlinVersion}.klib",
                         "kotlin-stdlib-js-${buildOptions.kotlinVersion}.klib",
+                        "kotlin-test-${buildOptions.kotlinVersion}-all.jar",
                         "kotlin-test-js-${buildOptions.kotlinVersion}.klib",
+                        "kotlin-test-junit-${buildOptions.kotlinVersion}.jar",
                     ).toSortedSet(),
                     transformedArtifacts().toSortedSet()
                 )
@@ -720,7 +722,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion, localRepoDir = tempDir)
 
             subProject("my-lib-foo").buildGradleKts
-                .appendText("\ndependencies { \"jvmAndJsMainCompileOnly\"(kotlin(\"test-annotations-common\")) }")
+                .appendText("\ndependencies { \"jvmAndJsMainCompileOnly\"(kotlin(\"test\")) }")
             projectPath.resolve("my-lib-foo/src/jvmAndJsMain/kotlin/UseCompileOnlyDependency.kt").writeText(
                 """
             import kotlin.test.Test
