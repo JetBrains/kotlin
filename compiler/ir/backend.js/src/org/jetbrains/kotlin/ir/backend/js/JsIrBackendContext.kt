@@ -105,6 +105,7 @@ class JsIrBackendContext(
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
     val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
     override val es6mode = configuration[JSConfigurationKeys.USE_ES6_CLASSES] ?: false
+    val platformArgumentsProviderJsExpression = configuration[JSConfigurationKeys.DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS]
 
     val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
 

@@ -47,6 +47,12 @@ interface KotlinJsTargetDsl : KotlinTarget, KotlinTargetWithNodeJsDsl {
     fun useCommonJs()
     fun useEsModules()
 
+    /**
+     * The function accepts [jsExpression] and puts this expression as the "args: Array<String>" argument in place of main-function call
+     */
+    @ExperimentalMainFunctionArgumentsDsl
+    fun passAsArgumentToMainFunction(jsExpression: String)
+
     fun generateTypeScriptDefinitions()
 
     val binaries: KotlinJsBinaryContainer
@@ -98,4 +104,7 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
 
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
     fun runTask(body: Action<NodeJsExec>)
+
+    @ExperimentalMainFunctionArgumentsDsl
+    fun passProcessArgvToMainFunction()
 }

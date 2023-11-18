@@ -3,16 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.example
+package org.jetbrains.kotlin.gradle.targets.js.dsl
 
-fun best(): Int {
-    return 42
-}
-
-fun simpleBest(): Int {
-    return 73
-}
-
-fun main(args: Array<String>) {
-    println("ACCEPTED: ${args.drop(2).joinToString(";")}")
-}
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Target(AnnotationTarget.FUNCTION)
+annotation class ExperimentalMainFunctionArgumentsDsl

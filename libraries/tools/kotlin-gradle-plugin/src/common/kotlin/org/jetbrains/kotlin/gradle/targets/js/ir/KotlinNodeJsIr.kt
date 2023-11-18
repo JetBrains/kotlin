@@ -32,6 +32,10 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
     }
 
+    override fun passProcessArgvToMainFunction() {
+        target.passAsArgumentToMainFunction("process.argv")
+    }
+
     override fun locateOrRegisterRunTask(binary: JsIrBinary, name: String) {
         if (project.locateTask<NodeJsExec>(name) != null) return
 

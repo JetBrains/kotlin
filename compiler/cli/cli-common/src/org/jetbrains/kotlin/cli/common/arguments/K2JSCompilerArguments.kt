@@ -494,6 +494,16 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
             field = value
         }
 
+    @Argument(
+        value = "-Xplatform-arguments-in-main-function",
+        description = "JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function"
+    )
+    var platformArgumentsProviderJsExpression: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @GradleOption(
         value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,

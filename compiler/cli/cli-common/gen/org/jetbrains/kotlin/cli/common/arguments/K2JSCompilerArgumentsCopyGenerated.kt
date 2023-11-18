@@ -57,6 +57,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.outputPrefix = from.outputPrefix
     to.partialLinkageLogLevel = from.partialLinkageLogLevel
     to.partialLinkageMode = from.partialLinkageMode
+    to.platformArgumentsProviderJsExpression = from.platformArgumentsProviderJsExpression
     to.sourceMap = from.sourceMap
     to.sourceMapBaseDirs = from.sourceMapBaseDirs
     to.sourceMapEmbedSources = from.sourceMapEmbedSources

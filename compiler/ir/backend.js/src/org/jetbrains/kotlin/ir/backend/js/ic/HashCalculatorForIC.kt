@@ -179,7 +179,13 @@ internal class ICHasher {
             hashCalculator.update(value.ordinal)
         }
 
-        hashCalculator.updateConfigKeys(config, listOf(JSConfigurationKeys.SOURCE_MAP_PREFIX)) { value: String ->
+        hashCalculator.updateConfigKeys(
+            config,
+            listOf(
+                JSConfigurationKeys.SOURCE_MAP_PREFIX,
+                JSConfigurationKeys.DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS
+            )
+        ) { value: String ->
             hashCalculator.update(value)
         }
 

@@ -47,6 +47,24 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("nodejs main function arguments")
+    @GradleTest
+    fun testNodeJsMainArguments(gradleVersion: GradleVersion) {
+        project("kotlin-js-nodejs-project", gradleVersion) {
+            buildGradle.appendText(
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec).configureEach {
+                |   args += ["test", "'Hello, World'"]
+                |}
+               """.trimMargin()
+            )
+            build("nodeRun") {
+                assertOutputContains("ACCEPTED: test;'Hello, World'")
+            }
+        }
+    }
+
     @DisplayName("stale output is cleaned")
     @GradleTest
     fun testCleanOutputWithEmptySources(gradleVersion: GradleVersion) {

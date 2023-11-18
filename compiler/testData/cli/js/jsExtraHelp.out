@@ -49,6 +49,8 @@ where advanced options include:
                              Define the compile-time log level for partial linkage.
   -Xpartial-linkage={enable|disable}
                              Use partial linkage mode.
+  -Xplatform-arguments-in-main-function
+                             JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. This is available in the IR backend only.
   -Xtyped-arrays             Translate primitive arrays into JS typed arrays.
   -Xes-classes               Let generated JavaScript code use ES2015 classes.
