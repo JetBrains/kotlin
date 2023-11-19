@@ -76,7 +76,8 @@ class Element(
 
     override var kind: ImplementationKind? = null
 
-    override val typeName = "Ir$name"
+    override val namePrefix: String
+        get() = "Ir"
 
     /**
      * Whether this element is semantically a leaf element in the hierarchy.

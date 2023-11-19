@@ -163,6 +163,18 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         )
 
     context(ImportCollector)
+    private fun SmartPrinter.contractCallsInPlaceExactlyOnce() {
+        addStarImport("kotlin.contracts")
+        print("contract")
+        printBlock {
+            println("callsInPlace(init, InvocationKind.EXACTLY_ONCE)")
+        }
+    }
+
+    private fun builderFunctionName(builder: LeafBuilder<BuilderField, Element, Implementation>) =
+        "build" + builder.implementation.run { name?.removePrefix(namePrefix) ?: element.name }
+
+    context(ImportCollector)
     private fun SmartPrinter.printDslBuildFunction(
         builder: LeafBuilder<BuilderField, Element, Implementation>,
         hasRequiredFields: Boolean,
@@ -173,10 +185,9 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         } else if (builder.implementation.isPublic) {
             println("@OptIn(", implementationDetailAnnotation.render(), "::class)")
         }
-        val name = builder.implementation.name?.replaceFirst("Fir", "") ?: builder.implementation.element.name
         val initParameter = if (isEmpty) null else lambdaParameterForBuilderFunction(builder, hasRequiredFields)
         printFunctionWithBlockBody(
-            name = "build$name",
+            name = builderFunctionName(builder),
             parameters = listOfNotNull(initParameter),
             returnType = builder.implementation.element,
             typeParameters = builder.implementation.element.params,
@@ -325,12 +336,10 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
             .filter { !it.invisibleField }
             .mapNotNullTo(mutableSetOf(experimentalContractsAnnotation)) { it.optInAnnotation }
         println("@OptIn(", optIns.joinToString { "${it.render()}::class" }, ")")
-        // FIXME: Avoid FIR-specific code here
-        val name = builder.implementation.name?.replaceFirst("Fir", "") ?: builder.implementation.element.name
         val originalParameter = FunctionParameter(name = "original", type = builder.implementation.element)
         val initParameter = lambdaParameterForBuilderFunction(builder, hasRequiredFields)
         printFunctionWithBlockBody(
-            name = "build${name}Copy",
+            name = builderFunctionName(builder) + "Copy",
             parameters = listOf(originalParameter, initParameter),
             returnType = builder.implementation.element,
             typeParameters = builder.implementation.element.params,

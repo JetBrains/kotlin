@@ -23,7 +23,11 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     override val allParents: List<ImplementationKindOwner>
         get() = listOf(element)
 
-    override val typeName: String = name ?: (element.typeName + "Impl")
+    val namePrefix: String
+        get() = element.namePrefix
+
+    override val typeName: String
+        get() = name ?: (element.typeName + "Impl")
 
     context(ImportCollector)
     override fun renderTo(appendable: Appendable) {

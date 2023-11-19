@@ -51,11 +51,7 @@ class LeafBuilder<BuilderField, Element, Implementation>(
               Element : AbstractElement<Element, *, Implementation>,
               Implementation : AbstractImplementation<Implementation, Element, BuilderField> {
     override val typeName: String
-        get() = if (implementation.name != null) {
-            "${implementation.name}Builder"
-        } else {
-            "${implementation.element.typeName}Builder"
-        }
+        get() = (implementation.name ?: implementation.element.typeName) + "Builder"
 
     override val allFields: List<BuilderField> by lazy { implementation.fieldsWithoutDefault }
 

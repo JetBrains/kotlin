@@ -33,7 +33,9 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
     override var kDoc: String? = null
 
     override val fields = mutableSetOf<Field>()
-    override val typeName: String = "Fir$name"
+
+    override val namePrefix: String
+        get() = "Fir"
 
     override val packageName: String = BASE_PACKAGE + kind.packageName.let { if (it.isBlank()) it else "." + it }
 
