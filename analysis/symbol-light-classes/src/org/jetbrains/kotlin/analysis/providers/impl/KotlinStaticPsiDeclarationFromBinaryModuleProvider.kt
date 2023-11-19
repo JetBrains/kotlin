@@ -91,10 +91,12 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
         return listOfNotNull(javaFileManager.findClass(classId.asFqNameString(), scope))
     }
 
-    // TODO(dimonchik0036): support 'is' accessor
     override fun getProperties(callableId: CallableId): Collection<PsiMember> {
         val classes = callableId.classId?.let { classId ->
-            getClassesByClassId(classId)
+            val classFromCurrentClassId = getClassesByClassId(classId)
+            // property in companion object is actually materialized at the containing class.
+            val classFromOuterClassID = classId.outerClassId?.let { getClassesByClassId(it) } ?: emptyList()
+            classFromCurrentClassId + classFromOuterClassID
         } ?: clsClassImplsInPackage(callableId.packageName)
         return classes.flatMap { psiClass ->
             psiClass.children
@@ -102,16 +104,25 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
                 .filter { psiMember ->
                     if (psiMember !is PsiMethod && psiMember !is PsiField) return@filter false
                     val name = psiMember.name ?: return@filter false
+                    val id = callableId.callableName.identifier
                     // PsiField a.k.a. backing field
-                    name == callableId.callableName.identifier ||
-                            // PsiMethod, i.e., accessors
-                            (name.startsWith("get") || name.startsWith("set")) &&
+                    if (name == id) return@filter true
+                    // PsiMethod, i.e., accessors
+                    val nameWithoutPrefix = name.nameWithoutAccessorPrefix ?: return@filter false
+                    // E.g., getJVM_FIELD -> JVM_FIELD
+                    nameWithoutPrefix == id ||
                             // E.g., getFooBar -> FooBar -> fooBar
-                            (name.substring(3).decapitalizeSmart().endsWith(callableId.callableName.identifier))
-
+                            nameWithoutPrefix.decapitalizeSmart().endsWith(id)
                 }
         }.toList()
     }
+
+    private val String.nameWithoutAccessorPrefix: String?
+        get() = when {
+            this.startsWith("get") || this.startsWith("set") -> substring(3)
+            this.startsWith("is") -> substring(2)
+            else -> null
+        }
 
     override fun getFunctions(callableId: CallableId): Collection<PsiMethod> {
         val classes = callableId.classId?.let { classId ->

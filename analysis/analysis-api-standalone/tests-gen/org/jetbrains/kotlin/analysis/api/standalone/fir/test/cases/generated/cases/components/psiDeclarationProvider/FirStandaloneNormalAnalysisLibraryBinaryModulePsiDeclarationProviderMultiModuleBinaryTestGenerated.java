@@ -51,4 +51,46 @@ public class FirStandaloneNormalAnalysisLibraryBinaryModulePsiDeclarationProvide
     public void testMultifileFacade() throws Exception {
         runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/multifileFacade.kt");
     }
+
+    @Test
+    @TestMetadata("propertiesInCompanionObject.kt")
+    public void testPropertiesInCompanionObject() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("propertiesInCompanionObject_JvmField.kt")
+    public void testPropertiesInCompanionObject_JvmField() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInCompanionObject_JvmField.kt");
+    }
+
+    @Test
+    @TestMetadata("propertiesInCompanionObject_JvmStatic.kt")
+    public void testPropertiesInCompanionObject_JvmStatic() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInCompanionObject_JvmStatic.kt");
+    }
+
+    @Test
+    @TestMetadata("propertiesInNamedCompanionObject.kt")
+    public void testPropertiesInNamedCompanionObject() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInNamedCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("propertiesInNamedCompanionObject_JvmField.kt")
+    public void testPropertiesInNamedCompanionObject_JvmField() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInNamedCompanionObject_JvmField.kt");
+    }
+
+    @Test
+    @TestMetadata("propertiesInNamedCompanionObject_JvmStatic.kt")
+    public void testPropertiesInNamedCompanionObject_JvmStatic() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInNamedCompanionObject_JvmStatic.kt");
+    }
+
+    @Test
+    @TestMetadata("propertiesInObject.kt")
+    public void testPropertiesInObject() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInObject.kt");
+    }
 }
