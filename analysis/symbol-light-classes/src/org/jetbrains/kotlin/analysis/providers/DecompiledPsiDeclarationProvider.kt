@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.providers
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -58,10 +59,15 @@ object DecompiledPsiDeclarationProvider {
         project: Project
     ): PsiElement? {
         return variableLikeSymbol.callableIdIfNonLocal?.let {
-            project.createPsiDeclarationProvider(variableLikeSymbol.scope(project))
+            val candidates = project.createPsiDeclarationProvider(variableLikeSymbol.scope(project))
                 ?.getProperties(it)
-                // TODO: needs to pick field/getter/setter accordingly?
-                ?.firstOrNull()
+            if (candidates?.size == 1)
+                candidates.single()
+            else {
+                // Weigh [PsiField]
+                candidates?.firstOrNull { psiMember -> psiMember is PsiField }
+                    ?: candidates?.firstOrNull()
+            }
         }
     }
 
