@@ -36,6 +36,7 @@ abstract class KotlinMultiplatformExtension
     KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts,
     KotlinHierarchyDsl,
+    HasConfigurableCompilerOptions<KotlinCommonCompilerOptions>,
     KotlinMultiplatformSourceSetConventions by KotlinMultiplatformSourceSetConventionsImpl {
     @Deprecated(
         PRESETS_API_IS_DEPRECATED_MESSAGE,
@@ -244,22 +245,12 @@ abstract class KotlinMultiplatformExtension
     }
 
     @ExperimentalKotlinGradlePluginApi
-    internal val compilerOptions: KotlinCommonCompilerOptions = project.objects
+    override val compilerOptions: KotlinCommonCompilerOptions = project.objects
         .newInstance<KotlinCommonCompilerOptionsDefault>()
         .configureExperimentalTryNext(project)
         .also {
             syncCommonOptions(it)
         }
-
-    @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
-        configure(compilerOptions)
-    }
-
-    @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
-        configure.execute(compilerOptions)
-    }
 }
 
 @DeprecatedTargetPresetApi
