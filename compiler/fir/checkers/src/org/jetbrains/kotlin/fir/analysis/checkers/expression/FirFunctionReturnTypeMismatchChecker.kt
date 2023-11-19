@@ -17,10 +17,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULL_FOR_NONNULL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSIBLE
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.expressions.isExhaustive
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.SplitPostponedLambdasNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.types.*
 
@@ -92,7 +91,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
             }
         } else if (resultExpression.source?.kind is KtFakeSourceElementKind.ImplicitUnit &&
             !functionReturnType.lowerBoundIfFlexible().isUnit &&
-            shouldCheckMismatchForAnonymousFunction(targetElement, expression)
+            shouldCheckMismatchForAnonymousFunction(targetElement, expression, context)
         ) {
             // Disallow cases like
             //     fun foo(): Any { return }
@@ -117,9 +116,28 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
         }
     }
 
-    private fun shouldCheckMismatchForAnonymousFunction(targetElement: FirFunction, expression: FirReturnExpression): Boolean {
+    private fun shouldCheckMismatchForAnonymousFunction(targetElement: FirFunction, expression: FirReturnExpression, context: CheckerContext): Boolean {
         if (targetElement !is FirAnonymousFunction || !targetElement.isLambda) return true
         val cfgNodes = targetElement.controlFlowGraphReference?.controlFlowGraph?.exitNode?.previousCfgNodes ?: return true
+        val splitPostponedLambdasNode =
+            targetElement.controlFlowGraphReference?.controlFlowGraph?.enterNode?.previousCfgNodes?.singleOrNull() as? SplitPostponedLambdasNode
+        if (splitPostponedLambdasNode != null) {
+            val functionCall = splitPostponedLambdasNode.fir as FirFunctionCall
+            val argumentList = functionCall.argumentList
+            if (argumentList is FirResolvedArgumentList) {
+                for ((key, value) in argumentList.mapping) {
+                    val anonymousFunction = when (key) {
+                        is FirAnonymousFunctionExpression -> key.anonymousFunction
+                        is FirLambdaArgumentExpression -> (key.expression as? FirAnonymousFunctionExpression)?.anonymousFunction
+                        else -> null
+                    } ?: continue
+                    if (anonymousFunction == targetElement && value.returnTypeRef.coneType.returnType(context.session) !is ConeTypeParameterType) {
+                        return true
+                    }
+                }
+            }
+        }
+
         // Check if any return expression other than the current is explicit and not Unit
         return cfgNodes.any {
             val fir = it.fir

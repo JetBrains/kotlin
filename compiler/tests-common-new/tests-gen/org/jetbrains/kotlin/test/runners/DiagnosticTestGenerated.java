@@ -13403,6 +13403,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("explicitAnonymousFunctionReturnType.kt")
+            public void testExplicitAnonymousFunctionReturnType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/functionLiterals/explicitAnonymousFunctionReturnType.kt");
+            }
+
+            @Test
             @TestMetadata("functionExpressionAsLastExpressionInBlock.kt")
             public void testFunctionExpressionAsLastExpressionInBlock() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/functionLiterals/functionExpressionAsLastExpressionInBlock.kt");
