@@ -57,6 +57,7 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
                     virtualFilesFromKotlinModule.ifEmpty { virtualFilesFromModule(binaryModule, fqName, isPackageName = true) }
                 }
             }
+            .distinct()
             .mapNotNull {
                 createClsJavaClassFromVirtualFile(it)
             }

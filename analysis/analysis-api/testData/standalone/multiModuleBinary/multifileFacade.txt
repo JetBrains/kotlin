@@ -1,0 +1,2 @@
+Resolved to:
+PsiMethod:myMapOf(vararg pairs: PsiType:Pair<? extends K, ? extends V>...): PsiType:Map<K, V>
