@@ -126,11 +126,13 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-test-common</artifactId>
                 <version>${kotlin.version}</version>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-test-annotations-common</artifactId>
                 <version>${kotlin.version}</version>
+                <type>pom</type>
             </dependency>
             <!-- Scripting -->
             <dependency>

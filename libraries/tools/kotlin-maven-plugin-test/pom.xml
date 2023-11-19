@@ -130,8 +130,8 @@
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-reflect:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-test-common:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-test-annotations-common:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-common:${project.version}:pom</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-annotations-common:${project.version}:pom</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-junit:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-junit5:${project.version}</artifact>
