@@ -103,7 +103,7 @@ inline fun buildAnonymousFunction(init: FirAnonymousFunctionBuilder.() -> Unit):
 @OptIn(ExperimentalContracts::class)
 inline fun buildAnonymousFunctionCopy(original: FirAnonymousFunction, init: FirAnonymousFunctionBuilder.() -> Unit): FirAnonymousFunction {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirAnonymousFunctionBuilder()
     copyBuilder.source = original.source

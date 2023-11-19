@@ -163,6 +163,15 @@ abstract class AbstractBuilderPrinter<BuilderField, ElementField, Element, Imple
         )
 
     context(ImportCollector)
+    private fun SmartPrinter.contractCallsInPlaceExactlyOnce() {
+        addStarImport("kotlin.contracts")
+        print("contract")
+        printBlock {
+            println("callsInPlace(init, InvocationKind.EXACTLY_ONCE)")
+        }
+    }
+
+    context(ImportCollector)
     private fun SmartPrinter.printDslBuildFunction(
         builder: LeafBuilder<BuilderField, Element, Implementation>,
         hasRequiredFields: Boolean,
@@ -183,12 +192,7 @@ abstract class AbstractBuilderPrinter<BuilderField, ElementField, Element, Imple
             isInline = !isEmpty,
         ) {
             if (!isEmpty) {
-                addStarImport("kotlin.contracts")
-                println("contract {")
-                withIndent {
-                    println("callsInPlace(init, InvocationKind.EXACTLY_ONCE)")
-                }
-                println("}")
+                contractCallsInPlaceExactlyOnce()
             }
             print("return ")
             if (isEmpty) {
@@ -336,10 +340,7 @@ abstract class AbstractBuilderPrinter<BuilderField, ElementField, Element, Imple
             typeParameters = builder.implementation.element.params,
             isInline = true,
         ) {
-            print("contract")
-            printBlock {
-                println("callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)")
-            }
+            contractCallsInPlaceExactlyOnce()
             val copyBuilderVariableName = "copyBuilder"
             println("val ", copyBuilderVariableName, " = ", builder.render(), "()")
             for (field in builder.allFields) {

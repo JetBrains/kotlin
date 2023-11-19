@@ -95,7 +95,7 @@ inline fun buildConstructor(init: FirConstructorBuilder.() -> Unit): FirConstruc
 @OptIn(ExperimentalContracts::class)
 inline fun buildConstructorCopy(original: FirConstructor, init: FirConstructorBuilder.() -> Unit): FirConstructor {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirConstructorBuilder()
     copyBuilder.source = original.source

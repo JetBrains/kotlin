@@ -47,7 +47,7 @@ inline fun buildReceiverParameter(init: FirReceiverParameterBuilder.() -> Unit):
 @OptIn(ExperimentalContracts::class)
 inline fun buildReceiverParameterCopy(original: FirReceiverParameter, init: FirReceiverParameterBuilder.() -> Unit): FirReceiverParameter {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirReceiverParameterBuilder()
     copyBuilder.source = original.source

@@ -68,7 +68,7 @@ inline fun buildTypeAlias(init: FirTypeAliasBuilder.() -> Unit): FirTypeAlias {
 @OptIn(ExperimentalContracts::class)
 inline fun buildTypeAliasCopy(original: FirTypeAlias, init: FirTypeAliasBuilder.() -> Unit): FirTypeAlias {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirTypeAliasBuilder()
     copyBuilder.source = original.source

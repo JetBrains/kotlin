@@ -70,7 +70,7 @@ inline fun buildTypeParameter(init: FirTypeParameterBuilder.() -> Unit): FirType
 @OptIn(ExperimentalContracts::class)
 inline fun buildTypeParameterCopy(original: FirTypeParameter, init: FirTypeParameterBuilder.() -> Unit): FirTypeParameter {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirTypeParameterBuilder()
     copyBuilder.source = original.source
