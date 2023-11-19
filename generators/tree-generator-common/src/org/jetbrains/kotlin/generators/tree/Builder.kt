@@ -52,7 +52,7 @@ class LeafBuilder<BuilderField, Element, Implementation>(
               Implementation : AbstractImplementation<Implementation, Element, BuilderField> {
     override val typeName: String
         get() = if (implementation.name != null) {
-            "${implementation.name}Builder"
+            "${implementation.namePrefix}${implementation.name}Builder"
         } else {
             "${implementation.element.typeName}Builder"
         }

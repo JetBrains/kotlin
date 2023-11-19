@@ -19,6 +19,8 @@ abstract class AbstractElement<Element, Field, Implementation>(
      */
     abstract val propertyName: String
 
+    abstract val namePrefix: String
+
     abstract val kDoc: String?
 
     abstract val fields: Set<Field>
@@ -68,6 +70,9 @@ abstract class AbstractElement<Element, Field, Implementation>(
 
     override val allParents: List<Element>
         get() = elementParents.map { it.element }
+
+    override val typeName: String
+        get() = namePrefix + name
 
     context(ImportCollector)
     final override fun renderTo(appendable: Appendable) {

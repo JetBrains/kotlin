@@ -68,7 +68,8 @@ class Element(
 
     override var kind: ImplementationKind? = null
 
-    override val typeName = "Ir$name"
+    override val namePrefix: String
+        get() = "Ir"
 
     var isLeaf = false
 

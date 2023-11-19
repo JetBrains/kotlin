@@ -171,6 +171,9 @@ abstract class AbstractBuilderPrinter<BuilderField, ElementField, Element, Imple
         }
     }
 
+    private fun builderFunctionName(builder: LeafBuilder<BuilderField, Element, Implementation>) =
+        "build" + (builder.implementation.name ?: builder.implementation.element.name)
+
     context(ImportCollector)
     private fun SmartPrinter.printDslBuildFunction(
         builder: LeafBuilder<BuilderField, Element, Implementation>,
@@ -182,10 +185,9 @@ abstract class AbstractBuilderPrinter<BuilderField, ElementField, Element, Imple
         } else if (builder.implementation.isPublic) {
             println("@OptIn(", implementationDetailAnnotation.render(), "::class)")
         }
-        val name = builder.implementation.name?.replaceFirst("Fir", "") ?: builder.implementation.element.name
         val initParameter = if (isEmpty) null else lambdaParameterForBuilderFunction(builder, hasRequiredFields)
         printFunctionWithBlockBody(
-            name = "build$name",
+            name = builderFunctionName(builder),
             parameters = listOfNotNull(initParameter),
             returnType = builder.implementation.element,
             typeParameters = builder.implementation.element.params,
@@ -329,12 +331,10 @@ abstract class AbstractBuilderPrinter<BuilderField, ElementField, Element, Imple
             .filter { !it.invisibleField }
             .mapNotNullTo(mutableSetOf(experimentalContractsAnnotation)) { it.optInAnnotation }
         println("@OptIn(", optIns.joinToString { "${it.render()}::class" }, ")")
-        // FIXME: Avoid FIR-specific code here
-        val name = builder.implementation.name?.replaceFirst("Fir", "") ?: builder.implementation.element.name
         val originalParameter = FunctionParameter(name = "original", type = builder.implementation.element)
         val initParameter = lambdaParameterForBuilderFunction(builder, hasRequiredFields)
         printFunctionWithBlockBody(
-            name = "build${name}Copy",
+            name = builderFunctionName(builder) + "Copy",
             parameters = listOf(originalParameter, initParameter),
             returnType = builder.implementation.element,
             typeParameters = builder.implementation.element.params,

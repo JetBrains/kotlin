@@ -21,7 +21,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultFalse("isPrimary", withGetter = true)
         }
 
-        impl(constructor, "FirPrimaryConstructor") {
+        impl(constructor, "PrimaryConstructor") {
             publicImplementation()
             defaultTrue("isPrimary", withGetter = true)
         }
@@ -175,7 +175,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
-        impl(delegatedConstructorCall, "FirLazyDelegatedConstructorCall") {
+        impl(delegatedConstructorCall, "LazyDelegatedConstructorCall") {
             val error = """error("FirLazyDelegatedConstructorCall should be calculated before accessing")"""
             default("source") {
                 value = error
@@ -204,7 +204,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
-        impl(expression, "FirElseIfTrueCondition") {
+        impl(expression, "ElseIfTrueCondition") {
             defaultBuiltInType("Boolean")
             useTypes(implicitBooleanTypeRefType)
             publicImplementation()
@@ -212,7 +212,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(block)
 
-        val emptyExpressionBlock = impl(block, "FirEmptyExpressionBlock") {
+        val emptyExpressionBlock = impl(block, "EmptyExpressionBlock") {
             noSource()
             defaultEmptyList("statements")
             defaultEmptyList("annotations")
@@ -246,7 +246,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(emptyExpressionBlock, coneStubDiagnosticType)
         }
 
-        impl(expression, "FirExpressionStub") {
+        impl(expression, "ExpressionStub") {
             publicImplementation()
         }
 
@@ -397,7 +397,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultNoReceivers()
         }
 
-        impl(expression, "FirUnitExpression") {
+        impl(expression, "UnitExpression") {
             defaultBuiltInType("Unit")
             useTypes(implicitUnitTypeRefType)
             publicImplementation()
@@ -465,7 +465,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(resolvedNamedReference)
 
-        impl(resolvedNamedReference, "FirPropertyFromParameterResolvedNamedReference") {
+        impl(resolvedNamedReference, "PropertyFromParameterResolvedNamedReference") {
             publicImplementation()
         }
 
@@ -473,7 +473,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(resolvedCallableReference)
 
-        impl(namedReference, "FirSimpleNamedReference") {
+        impl(namedReference, "SimpleNamedReference") {
             publicImplementation()
         }
 
@@ -493,7 +493,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(thisReference, "FirExplicitThisReference") {
+        impl(thisReference, "ExplicitThisReference") {
             default("boundSymbol") {
                 value = "null"
                 isMutable = true
@@ -501,7 +501,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultFalse("isImplicit")
         }
 
-        impl(thisReference, "FirImplicitThisReference") {
+        impl(thisReference, "ImplicitThisReference") {
             noSource()
             default("labelName") {
                 value = "null"
@@ -513,7 +513,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultTrue("isImplicit")
         }
 
-        impl(superReference, "FirExplicitSuperReference")
+        impl(superReference, "ExplicitSuperReference")
 
         noImpl(controlFlowGraphReference)
 
@@ -543,7 +543,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(functionTypeRef)
         noImpl(implicitTypeRef)
 
-        impl(reference, "FirStubReference") {
+        impl(reference, "StubReference") {
             default("source") {
                 value = "null"
                 withGetter = true
@@ -573,7 +573,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultNull("getter", "setter", "initializer", "delegate", "receiverParameter", withGetter = true)
         }
 
-        impl(valueParameter, "FirDefaultSetterValueParameter") {
+        impl(valueParameter, "DefaultSetterValueParameter") {
             default("name", "Name.identifier(\"value\")")
         }
 

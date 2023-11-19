@@ -12,4 +12,7 @@ class Implementation(element: Element, name: String?) : AbstractImplementation<I
     override val allFields = element.allFields.toMutableList().mapTo(mutableListOf()) {
         FieldWithDefault(it)
     }
+
+    override val namePrefix: String
+        get() = "Fir"
 }
