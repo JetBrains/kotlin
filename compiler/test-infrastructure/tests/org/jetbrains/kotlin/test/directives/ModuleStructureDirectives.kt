@@ -18,14 +18,14 @@ object ModuleStructureDirectives : SimpleDirectivesContainer() {
 
     val DEPENDENCY by stringDirective(
         """
-            Usage: // DEPENDENCY: {name} [SOURCE|KLIB|BINARY]
+            Usage: // DEPENDENCY: {name} [Source|Klib|Binary]
             Declares simple dependency on other module 
         """.trimIndent()
     )
 
     val DEPENDS_ON by stringDirective(
         """
-            Usage: // DEPENDS_ON: {name} [SOURCE|KLIB|BINARY]
+            Usage: // DEPENDS_ON: {name} [Source|Klib|Binary]
             Declares dependency on other module witch may contains `expect`
              declarations which has corresponding `expect` declarations
              in current module
