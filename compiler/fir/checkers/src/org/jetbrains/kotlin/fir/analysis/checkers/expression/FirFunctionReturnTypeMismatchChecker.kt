@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSI
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.SplitPostponedLambdasNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.types.*
 
@@ -119,10 +118,8 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
     private fun shouldCheckMismatchForAnonymousFunction(targetElement: FirFunction, expression: FirReturnExpression, context: CheckerContext): Boolean {
         if (targetElement !is FirAnonymousFunction || !targetElement.isLambda) return true
         val cfgNodes = targetElement.controlFlowGraphReference?.controlFlowGraph?.exitNode?.previousCfgNodes ?: return true
-        val splitPostponedLambdasNode =
-            targetElement.controlFlowGraphReference?.controlFlowGraph?.enterNode?.previousCfgNodes?.singleOrNull() as? SplitPostponedLambdasNode
-        if (splitPostponedLambdasNode != null) {
-            val functionCall = splitPostponedLambdasNode.fir as FirFunctionCall
+        val functionCall = context.callsOrAssignments.lastOrNull() as? FirFunctionCall
+        if (functionCall != null) {
             val argumentList = functionCall.argumentList
             if (argumentList is FirResolvedArgumentList) {
                 for ((key, value) in argumentList.mapping) {
