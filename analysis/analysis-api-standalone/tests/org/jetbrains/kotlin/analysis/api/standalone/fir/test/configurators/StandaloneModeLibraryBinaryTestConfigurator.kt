@@ -3,52 +3,77 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
+package org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.KtLibraryBinaryModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.DispatchingTestModuleCompiler
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompiler
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompilerJar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.ExternalAnnotationsEnvironmentConfigurator
 
-abstract class AnalysisApiFirSourceLikeTestConfigurator(override val analyseInDependentSession: Boolean) : AnalysisApiTestConfigurator() {
-    override val frontendKind: FrontendKind get() = FrontendKind.Fir
+object StandaloneModeLibraryBinaryTestConfigurator : StandaloneModeConfiguratorBase() {
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
-        builder.apply {
+        with(builder) {
             useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
             usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
             configureOptionalTestCompilerPlugin()
             useConfigurators(::AnalysisApiJvmEnvironmentConfigurator)
             useConfigurators(::ExternalAnnotationsEnvironmentConfigurator)
             useSourcePreprocessor(::ExternalAnnotationsSourcePreprocessor)
+
+            useAdditionalService<KtModuleFactory> { KtCombinedModuleFactory() }
+            useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
+            useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
         }
     }
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = listOf(
-        AnalysisApiBaseTestServiceRegistrar,
-        AnalysisApiDecompiledCodeTestServiceRegistrar,
-        AnalysisApiFirTestServiceRegistrar,
-    )
+    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
+        get() = listOf(
+            AnalysisApiBaseTestServiceRegistrar,
+            AnalysisApiFirTestServiceRegistrar,
+            AnalysisApiLibraryBaseTestServiceRegistrar,
+            StandaloneModeTestServiceRegistrar,
+        )
 
     override fun createModules(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
-        project: Project
+        project: Project,
     ): KtModuleProjectStructure {
         return TestModuleStructureFactory.createProjectStructureByTestStructure(moduleStructure, testServices, project)
+    }
+}
+
+private class KtCombinedModuleFactory : KtModuleFactory {
+    private val sourceModuleFactory = KtSourceModuleFactory()
+    private val libraryBinaryModuleFactory = KtLibraryBinaryModuleFactory()
+
+    override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
+        return if (testModule.name == "app") {
+            sourceModuleFactory.createModule(testModule, testServices, project)
+        } else {
+            libraryBinaryModuleFactory.createModule(testModule, testServices, project)
+        }
     }
 }

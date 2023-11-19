@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
+import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderMultiModuleBinaryTest
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
@@ -108,6 +109,12 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         generateAnalysisApiComponentsTests()
         generateAnalysisApiNonComponentsTests()
         generateResolveExtensionsTests()
+    }
+    group(
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibraryBinary) and
+                analysisApiModeIs(AnalysisApiMode.Standalone)
+    ) {
+        generateAnalysisApiStandaloneTests()
     }
 }
 
@@ -216,14 +223,24 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             model(it, "typeSubstitution")
         }
     }
+}
 
-    group("standalone", filter = analysisApiModeIs(AnalysisApiMode.Standalone)) {
-        test(AbstractPsiDeclarationProviderSingleModuleTest::class) {
+private fun AnalysisApiTestGroup.generateAnalysisApiStandaloneTests() {
+    group("standalone") {
+        test(
+            AbstractPsiDeclarationProviderSingleModuleTest::class,
+            filter = testModuleKindIs(TestModuleKind.Source)
+        ) {
             model(it, "singleModule")
+        }
+        test(
+            AbstractPsiDeclarationProviderMultiModuleBinaryTest::class,
+            filter = testModuleKindIs(TestModuleKind.LibraryBinary)
+        ) {
+            model(it, "multiModuleBinary")
         }
     }
 }
-
 
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("callResolver", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {

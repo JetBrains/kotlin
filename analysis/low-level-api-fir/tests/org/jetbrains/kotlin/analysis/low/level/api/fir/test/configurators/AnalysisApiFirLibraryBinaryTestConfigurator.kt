@@ -56,7 +56,7 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
         )
 }
 
-private class KtLibraryBinaryModuleFactory : KtModuleFactory {
+class KtLibraryBinaryModuleFactory : KtModuleFactory {
     override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
         val library = testServices.compiledLibraryProvider.compileToLibrary(testModule).artifact
         val decompiledFiles = testServices.testModuleDecompiler.getAllPsiFilesFromLibrary(library, project)

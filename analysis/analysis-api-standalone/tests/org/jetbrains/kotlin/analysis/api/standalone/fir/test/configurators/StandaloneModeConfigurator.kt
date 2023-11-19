@@ -8,36 +8,16 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.ExternalAnnotationsEnvironmentConfigurator
 
-object StandaloneModeConfigurator : AnalysisApiTestConfigurator() {
-    override val analyseInDependentSession: Boolean get() = false
-    override val frontendKind: FrontendKind get() = FrontendKind.Fir
-
-    override val testPrefix: String?
-        get() = "standalone.fir"
+object StandaloneModeConfigurator : StandaloneModeConfiguratorBase() {
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
-        with(builder) {
-            useAdditionalService<KtModuleFactory> { KtSourceModuleFactory() }
-            useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
-            usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
-            configureOptionalTestCompilerPlugin()
-            useConfigurators(::ExternalAnnotationsEnvironmentConfigurator)
-            useSourcePreprocessor(::ExternalAnnotationsSourcePreprocessor)
-        }
+        sourceConfigurator.configureTest(builder, disposable)
     }
 
     private val sourceConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)

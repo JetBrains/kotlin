@@ -17,6 +17,11 @@ object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConf
                 AnalysisSessionMode.Dependent -> unsupportedModeError(data)
             }
 
+            TestModuleKind.LibraryBinary -> when (data.analysisSessionMode) {
+                AnalysisSessionMode.Normal -> StandaloneModeLibraryBinaryTestConfigurator
+                AnalysisSessionMode.Dependent -> unsupportedModeError(data)
+            }
+
             else -> {
                 unsupportedModeError(data)
             }
@@ -29,10 +34,11 @@ object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConf
             data.analysisSessionMode != AnalysisSessionMode.Normal -> false
             data.analysisApiMode != AnalysisApiMode.Standalone -> false
             else -> when (data.moduleKind) {
-                TestModuleKind.Source -> true
-                TestModuleKind.ScriptSource,
+                TestModuleKind.Source,
                 TestModuleKind.LibraryBinary,
-                TestModuleKind.LibrarySource,
+                -> true
+                TestModuleKind.ScriptSource,
+                TestModuleKind.LibrarySource
                 -> false
             }
         }
