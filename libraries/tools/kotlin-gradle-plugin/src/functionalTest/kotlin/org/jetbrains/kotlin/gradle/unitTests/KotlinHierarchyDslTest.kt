@@ -319,7 +319,7 @@ class KotlinHierarchyDslTest {
             common {
                 group("web") {
                     withJs()
-                    withWasm()
+                    withWasmJs()
                 }
             }
         }
@@ -347,7 +347,7 @@ class KotlinHierarchyDslTest {
                     withJvm()
                 }
                 group("wasmAndLinux") {
-                    withWasm()
+                    withWasmJs()
                     withLinuxX64()
                 }
             }

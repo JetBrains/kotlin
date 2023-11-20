@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.hierarchy
 import org.gradle.api.InvalidUserCodeException
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 import org.jetbrains.kotlin.konan.target.Family
@@ -148,7 +150,15 @@ private class KotlinHierarchyBuilderImpl(
     // Don't check for instance of [KotlinJsTargetDsl] or [KotlinWasmTargetDsl] because they are implemented by single target [KotlinJsIrTarget]
     override fun withJs() = withTargets { it.platformType == KotlinPlatformType.js }
 
-    override fun withWasm() = withTargets { it.platformType == KotlinPlatformType.wasm }
+    override fun withWasm() = withWasmJs()
+
+    override fun withWasmJs() = withTargets {
+        it.platformType == KotlinPlatformType.wasm && it is KotlinJsIrTarget && it.wasmTargetType == KotlinWasmTargetType.JS
+    }
+
+    override fun withWasmWasi() = withTargets {
+        it.platformType == KotlinPlatformType.wasm && it is KotlinJsIrTarget && it.wasmTargetType == KotlinWasmTargetType.WASI
+    }
 
     override fun withJvm() = withTargets {
         it is KotlinJvmTarget ||

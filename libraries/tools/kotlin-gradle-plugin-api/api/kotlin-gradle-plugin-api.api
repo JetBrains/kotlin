@@ -944,6 +944,8 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinHierarc
 	public abstract fun withTvosX64 ()V
 	public abstract fun withWasm ()V
 	public abstract fun withWasm32 ()V
+	public abstract fun withWasmJs ()V
+	public abstract fun withWasmWasi ()V
 	public abstract fun withWatchos ()V
 	public abstract fun withWatchosArm32 ()V
 	public abstract fun withWatchosArm64 ()V

@@ -137,7 +137,10 @@ interface KotlinHierarchyBuilder {
 
     /* Actual targets */
     fun withJs()
+    @Deprecated("Renamed to 'withWasmJs''", replaceWith = ReplaceWith("withWasmJs()"))
     fun withWasm()
+    fun withWasmJs()
+    fun withWasmWasi()
     fun withJvm()
 
     @Deprecated("Renamed to 'withAndroidTarget''", replaceWith = ReplaceWith("withAndroidTarget()"))
