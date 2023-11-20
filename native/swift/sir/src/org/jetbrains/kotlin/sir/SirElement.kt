@@ -14,12 +14,13 @@ interface SirElement {
 
 interface SirDeclaration : SirElement
 
+// TODO: this is a mock-implementation. Should be replaced with actual implementation from KT-63266
 interface SirVisitor<Data, Result> {
-    fun acceptModule(module: SirModule, data: Data): Result
-    fun acceptForeignFunction(function: SirForeignFunction, data: Data): Result
-    fun acceptSwiftFunction(function: SirFunction, data: Data): Result
-    fun acceptType(type: SirType, data: Data): Result
-    fun acceptParameter(param: SirParameter, data: Data): Result
+    fun visitModule(module: SirModule, data: Data): Result
+    fun visitForeignFunction(function: SirForeignFunction, data: Data): Result
+    fun visitSwiftFunction(function: SirFunction, data: Data): Result
+    fun visitType(type: SirType, data: Data): Result
+    fun visitParameter(param: SirParameter, data: Data): Result
 }
 
 data class SirModule(
@@ -28,14 +29,14 @@ data class SirModule(
     override fun <Data, Result> accept(
         visitor: SirVisitor<Data, Result>,
         data: Data
-    ): Result = visitor.acceptModule(this, data)
+    ): Result = visitor.visitModule(this, data)
 }
 
-data class SirType(val name: String) : SirDeclaration {
+data class SirType(val name: String) : SirElement {
     override fun <Data, Result> accept(
         visitor: SirVisitor<Data, Result>,
         data: Data
-    ): Result = visitor.acceptType(this, data)
+    ): Result = visitor.visitType(this, data)
 
 }
 data class SirForeignFunction(
@@ -44,18 +45,18 @@ data class SirForeignFunction(
     override fun <Data, Result> accept(
         visitor: SirVisitor<Data, Result>,
         data: Data
-    ): Result = visitor.acceptForeignFunction(this, data)
+    ): Result = visitor.visitForeignFunction(this, data)
 }
 
 data class SirFunction(
     val name: String,
-    val arguments: MutableList<SirParameter> = mutableListOf(),
+    val parameters: MutableList<SirParameter> = mutableListOf(),
     val returnType: SirType
 ) : SirDeclaration {
     override fun <Data, Result> accept(
         visitor: SirVisitor<Data, Result>,
         data: Data
-    ): Result = visitor.acceptSwiftFunction(this, data)
+    ): Result = visitor.visitSwiftFunction(this, data)
 }
 
 data class SirParameter(
@@ -65,5 +66,5 @@ data class SirParameter(
     override fun <Data, Result> accept(
         visitor: SirVisitor<Data, Result>,
         data: Data
-    ): Result = visitor.acceptParameter(this, data)
+    ): Result = visitor.visitParameter(this, data)
 }
