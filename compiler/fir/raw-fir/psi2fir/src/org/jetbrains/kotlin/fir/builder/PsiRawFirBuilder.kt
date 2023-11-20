@@ -702,25 +702,17 @@ open class PsiRawFirBuilder(
             }
 
             val propertySource = toFirSourceElement(KtFakeSourceElementKind.PropertyFromParameter)
-            // We can't just reuse a type from firParameter to avoid annotation leak.
-            val type = (typeReference?.toFirType() ?: createNoTypeForParameterTypeRef(propertySource)).let {
-                if (it is FirErrorTypeRef && firParameter.isVararg) {
-                    it.wrapIntoArray()
-                } else {
-                    it
-                }
-            }
-
             val propertyName = nameAsSafeName
             val parameterAnnotations = mutableListOf<FirAnnotationCall>()
             for (annotationEntry in annotationEntries) {
                 parameterAnnotations += annotationEntry.convert<FirAnnotationCall>()
             }
+
             return buildProperty {
                 source = propertySource
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
-                returnTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyFromParameter)
+                returnTypeRef = firParameter.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyFromParameter)
                 name = propertyName
                 initializer = buildPropertyAccessExpression {
                     source = propertySource
@@ -752,7 +744,7 @@ open class PsiRawFirBuilder(
                     defaultAccessorSource,
                     baseModuleData,
                     FirDeclarationOrigin.Source,
-                    type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                    returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                     visibility,
                     symbol,
                     isInline = hasModifier(INLINE_KEYWORD),
@@ -764,7 +756,7 @@ open class PsiRawFirBuilder(
                     defaultAccessorSource,
                     baseModuleData,
                     FirDeclarationOrigin.Source,
-                    type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                    returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                     visibility,
                     symbol,
                     parameterAnnotations = parameterAnnotations.filterUseSiteTarget(SETTER_PARAMETER),

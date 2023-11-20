@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollisionAndAnnotations.kt
 
     }
     public? final? data [ResolvedTo(TYPES)] class MyDataClass : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|one/two/MyDataClass| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: @R|one/two/Anno|[Unresolved](IntegerLiteral(0).plus#(constant#)) MyClass<R|@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>|>): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
