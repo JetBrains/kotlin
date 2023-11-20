@@ -70,6 +70,13 @@ data class TestDokkaSourceSet (
     val analysisPlatform: Platform,
 
     /**
+     * Display name of the source set, used both internally and externally
+     *
+     * @see DokkaConfiguration.DokkaSourceSet.displayName
+     */
+    val displayName: String,
+
+    /**
      * A unique identifier of this source set in the scope of the project.
      *
      * It must be unique even if two source sets have the same name,

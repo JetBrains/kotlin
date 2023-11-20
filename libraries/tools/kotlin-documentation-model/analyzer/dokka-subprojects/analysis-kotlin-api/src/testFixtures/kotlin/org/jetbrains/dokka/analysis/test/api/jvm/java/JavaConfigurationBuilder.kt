@@ -48,6 +48,7 @@ class JavaTestSourceSetBuilder : BaseTestDokkaSourceSetBuilder() {
     override fun build(): TestDokkaSourceSet {
         return TestDokkaSourceSet(
             analysisPlatform = Platform.jvm,
+            displayName = "JavaJvmSourceSet",
             sourceSetID = DokkaSourceSetID(scopeId = "project", sourceSetName = "java"),
             dependentSourceSets = setOf(),
             sourceRoots = additionalSourceRoots + setOf(JavaTestProject.DEFAULT_SOURCE_ROOT),
