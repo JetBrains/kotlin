@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.diagnostics.ExtendedWhenMissingCase
-import org.jetbrains.kotlin.diagnostics.WhenMissingCaseFor
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer2Worker
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
@@ -40,9 +40,14 @@ internal class KtFirExpressionInfoProvider(
 
     override fun getWhenMissingCases(whenExpression: KtWhenExpression): List<ExtendedWhenMissingCase> {
         val firWhenExpression = whenExpression.getOrBuildFirSafe<FirWhenExpression>(analysisSession.firResolveSession) ?: return emptyList()
-        return FirWhenExhaustivenessTransformer
-            .computeAllMissingCases(analysisSession.firResolveSession.useSiteFirSession, firWhenExpression)
-            .map { listOf(WhenMissingCaseFor(null, it)) }
+        val exhaustiveness =
+            FirWhenExhaustivenessTransformer2Worker(analysisSession.firResolveSession.useSiteFirSession).processExhaustivenessCheck(
+                firWhenExpression
+            )
+        return when (exhaustiveness) {
+            is ExhaustivenessStatus.NotExhaustive -> exhaustiveness.reasons
+            else -> emptyList()
+        }
     }
 
     override fun isUsedAsExpression(expression: KtExpression): Boolean =

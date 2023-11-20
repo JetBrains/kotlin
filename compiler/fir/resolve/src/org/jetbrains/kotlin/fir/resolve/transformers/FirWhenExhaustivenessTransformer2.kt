@@ -34,8 +34,6 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyResolveComponents) : FirTransformer<Any?>() {
-    private val session: FirSession = bodyResolveComponents.session
-    private val dataFlowAnalyzer: FirDataFlowAnalyzer = bodyResolveComponents.dataFlowAnalyzer
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         throw IllegalArgumentException("Should not be there")
@@ -45,12 +43,20 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
      * The synthetic call for the whole [whenExpression] might be not completed yet
      */
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: Any?): FirStatement {
-        processExhaustivenessCheck(whenExpression)
-        session.enumWhenTracker?.reportEnumUsageInWhen(bodyResolveComponents.file.sourceFile?.path, getSubjectType(whenExpression))
+        val session = bodyResolveComponents.session
+        val dataFlowAnalyzer = bodyResolveComponents.dataFlowAnalyzer
+        val worker = FirWhenExhaustivenessTransformer2Worker(session, dataFlowAnalyzer)
+        whenExpression.replaceExhaustivenessStatus(worker.processExhaustivenessCheck(whenExpression))
+        session.enumWhenTracker?.reportEnumUsageInWhen(bodyResolveComponents.file.sourceFile?.path, worker.getSubjectType(whenExpression))
         return whenExpression
     }
+}
 
-    private fun getSubjectType(whenExpression: FirWhenExpression): ConeKotlinType? {
+class FirWhenExhaustivenessTransformer2Worker(
+    private val session: FirSession,
+    private val dataFlowAnalyzer: FirDataFlowAnalyzer? = null
+) {
+    fun getSubjectType(whenExpression: FirWhenExpression): ConeKotlinType? {
         val subjectType = whenExpression.subjectVariable?.returnTypeRef?.coneType
             ?: whenExpression.subject?.resolvedType
             ?: return null
@@ -58,10 +64,9 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
         return subjectType.fullyExpandedType(session).lowerBoundIfFlexible()
     }
 
-    private fun processExhaustivenessCheck(whenExpression: FirWhenExpression) {
+    fun processExhaustivenessCheck(whenExpression: FirWhenExpression): ExhaustivenessStatus {
         if (whenExpression.branches.any { it.condition is FirElseIfTrueCondition } || whenExpression.isTrueAndFalse()) {
-            whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.ProperlyExhaustive)
-            return
+            return ExhaustivenessStatus.ProperlyExhaustive
         }
 
         // compute the information about variables and expressions
@@ -72,21 +77,20 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
             val subjectTypeIsExpect = subjectType?.toRegularClassSymbol(session)?.isExpect
             // bail out early if we don't know the type of the subject, or it's expect
             if (subjectType == null || subjectTypeIsExpect == true) {
-                whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.NotExhaustive.unknownMissingCase(subject.source))
-                return
+                return ExhaustivenessStatus.NotExhaustive.unknownMissingCase(subject.source)
             }
             if (subjectType.isNothing) {
-                whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.ExhaustiveAsNothing)
-                return
+                return ExhaustivenessStatus.ExhaustiveAsNothing
             }
             // add the subject information
             realVariables[VariableSource.Subject] = VariableInformation(subject, subjectType)
         }
-        val stableExpressions = whenExpression.branches.flatMap { computeStableExpressions(whenExpression, it.condition, realVariables) }
+        val stableExpressions = whenExpression.branches.flatMap {
+            computeStableExpressions(whenExpression, it.condition, realVariables)
+        }
 
         if (realVariables.isEmpty() || stableExpressions.isEmpty()) {
-            whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.NotExhaustive.unknownMissingCase(null))
-            return
+            return ExhaustivenessStatus.NotExhaustive.unknownMissingCase(null)
         }
 
         val problems: List<List<Pair<VariableSource, WhenChoice>>> = stableExpressions.checkExhaustiveness(realVariables.toList())
@@ -97,10 +101,10 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
                 WhenMissingCaseFor(reportedExpression, choice.toWhenMissingCase())
             }
         }
-        if (missingCases.isEmpty()) {
-            whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.ProperlyExhaustive)
+        return if (missingCases.isEmpty()) {
+            ExhaustivenessStatus.ProperlyExhaustive
         } else {
-            whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.NotExhaustive(missingCases))
+            ExhaustivenessStatus.NotExhaustive(missingCases)
         }
     }
 
@@ -156,7 +160,7 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
         } else {
             // otherwise we should have a stable reference
             val realVar =
-                dataFlowAnalyzer.getVariableFromSmartcastInfo(variable)
+                dataFlowAnalyzer?.getVariableFromSmartcastInfo(variable)
                     ?.takeIf { it.stability == PropertyStability.STABLE_VALUE }
                     ?: return null
             val source = VariableSource.Real(realVar)
