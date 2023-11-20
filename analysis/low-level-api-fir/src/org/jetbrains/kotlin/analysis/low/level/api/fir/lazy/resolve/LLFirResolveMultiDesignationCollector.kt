@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithAllCallablesResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
@@ -24,13 +23,13 @@ internal object LLFirResolveMultiDesignationCollector {
         is FirFile -> listOf(LLFirSingleResolveTarget(target))
         is FirSyntheticPropertyAccessor -> getDesignationsToResolve(target.delegate)
         is FirSyntheticProperty -> getDesignationsToResolve(target.getter) + target.setter?.let(::getDesignationsToResolve).orEmpty()
-        else -> getMainDesignationToResolve(target)?.withAnnotationContainer()
-    } ?: emptyList()
+        else -> listOfNotNull(getMainDesignationToResolve(target))
+    }
 
     fun getDesignationsToResolveWithCallableMembers(target: FirRegularClass): List<LLFirResolveTarget> {
         val designation = target.tryCollectDesignationWithFile() ?: return emptyList()
         val resolveTarget = LLFirClassWithAllCallablesResolveTarget(designation.firFile, designation.path, target)
-        return resolveTarget.withAnnotationContainer()
+        return listOf(resolveTarget)
     }
 
     fun getDesignationsToResolveRecursively(target: FirElementWithResolveState): List<LLFirResolveTarget> {
@@ -39,16 +38,7 @@ internal object LLFirResolveMultiDesignationCollector {
         if (!target.shouldBeResolved()) return emptyList()
         val designation = target.tryCollectDesignationWithFile() ?: return emptyList()
         val resolveTarget = LLFirWholeElementResolveTarget(designation.firFile, designation.path, target)
-        return resolveTarget.withAnnotationContainer()
-    }
-
-    private fun LLFirResolveTarget.withAnnotationContainer(): List<LLFirResolveTarget> {
-        val annotationsContainer = firFile.annotationsContainer
-        if (annotationsContainer?.shouldBeResolved() != true) return listOf(this)
-        return buildList {
-            add(annotationsContainer.collectDesignationWithFile().asResolveTarget())
-            add(this@withAnnotationContainer)
-        }
+        return listOf(resolveTarget)
     }
 
     private fun getMainDesignationToResolve(target: FirElementWithResolveState): LLFirResolveTarget? {

@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
 internal abstract class LLFirTargetResolver(
     protected val resolveTarget: LLFirResolveTarget,
@@ -23,17 +25,6 @@ internal abstract class LLFirTargetResolver(
     private val _nestedClassesStack = mutableListOf<FirRegularClass>()
 
     val nestedClassesStack: List<FirRegularClass> get() = _nestedClassesStack.toList()
-
-    /**
-     * Must be executed without a lock
-     */
-    private fun resolveFileAnnotationContainerIfNeeded(elementWithResolveState: FirElementWithResolveState) {
-        if (elementWithResolveState !is FirFile) return
-        val annotationContainer = elementWithResolveState.annotationsContainer ?: return
-        withFile(elementWithResolveState) {
-            performResolve(annotationContainer)
-        }
-    }
 
     /**
      * @see resolveDependencyTarget
@@ -49,7 +40,8 @@ internal abstract class LLFirTargetResolver(
     private fun resolveDependencyTarget(target: FirElementWithResolveState) {
         if (skipDependencyTargetResolutionStep) return
 
-        resolveFileAnnotationContainerIfNeeded(target)
+        if (target is FirFileAnnotationsContainer) return
+        resolveTarget.firFile.annotationsContainer?.lazyResolveToPhase(resolverPhase)
     }
 
     override fun withFile(firFile: FirFile, action: () -> Unit) {
