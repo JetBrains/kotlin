@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.tests.native.swift.sir.analysis.api
+package org.jetbrains.kotlin.generators.tests.native.swift.sir
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.sir.analysisapi.AbstractKotlinSirContextTest

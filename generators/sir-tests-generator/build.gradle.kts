@@ -17,7 +17,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
 }
 
-val generateSirAnalysisApiTests by generator("org.jetbrains.kotlin.generators.tests.native.swift.sir.analysis.api.GenerateSirAnalysisApiTestsKt")
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.native.swift.sir.GenerateSirTestsKt")
 
 testsJar()
 
