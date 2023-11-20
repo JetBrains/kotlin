@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.callableId
-import org.jetbrains.kotlin.ir.util.classIdOrFail
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
@@ -61,8 +60,9 @@ internal class ExpectActualCollector(
     }
 
     private fun collectActualDeclarations(): ClassActualizationInfo {
+        val expectTopLevelClasses = ExpectTopLevelClassesCollector.collect(dependentFragments)
         val fragmentsWithActuals = dependentFragments.drop(1) + mainFragment
-        return ActualDeclarationsCollector.collectActualsFromFragments(fragmentsWithActuals)
+        return ActualDeclarationsCollector.collectActualsFromFragments(fragmentsWithActuals, expectTopLevelClasses)
     }
 
     private fun matchAllExpectDeclarations(
@@ -95,12 +95,36 @@ internal data class ClassActualizationInfo(
     }
 }
 
-
-
-private class ActualDeclarationsCollector {
+private class ExpectTopLevelClassesCollector {
     companion object {
-        fun collectActualsFromFragments(fragments: List<IrModuleFragment>): ClassActualizationInfo {
-            val collector = ActualDeclarationsCollector()
+        fun collect(fragments: List<IrModuleFragment>): Map<ClassId, IrClassSymbol> {
+            val collector = ExpectTopLevelClassesCollector()
+            collector.collect(fragments)
+            return collector.expectTopLevelClasses
+        }
+    }
+
+    private val expectTopLevelClasses = mutableMapOf<ClassId, IrClassSymbol>()
+
+    fun collect(fragments: List<IrModuleFragment>) {
+        for (fragment in fragments) {
+            for (file in fragment.files) {
+                for (declaration in file.declarations) {
+                    if (declaration is IrClass && declaration.isExpect && declaration.isTopLevel) {
+                        expectTopLevelClasses[declaration.classIdOrFail] = declaration.symbol
+                    }
+                }
+            }
+        }
+    }
+}
+
+private class ActualDeclarationsCollector(
+    private val expectTopLevelClasses: Map<ClassId, IrClassSymbol>,
+) {
+    companion object {
+        fun collectActualsFromFragments(fragments: List<IrModuleFragment>, expectTopLevelClasses: Map<ClassId, IrClassSymbol>): ClassActualizationInfo {
+            val collector = ActualDeclarationsCollector(expectTopLevelClasses)
             for (fragment in fragments) {
                 collector.collect(fragment)
             }
@@ -146,6 +170,7 @@ private class ActualDeclarationsCollector {
                 actualSymbolsToFile[element.symbol] = currentFile
 
                 collect(expandedTypeSymbol.owner)
+                recordMappingsForNestedClassesActualizedViaTypealias(classId, expandedTypeSymbol)
             }
             is IrClass -> {
                 if (element.isExpect || !visitedActualClasses.add(element)) return
@@ -173,6 +198,28 @@ private class ActualDeclarationsCollector {
                 recordActualCallable(element, element.callableId)
             }
         }
+    }
+
+    /**
+     * For given actual typealias goes through all nested classes in expect class to record their mappings in [actualClasses].
+     *
+     * This is needed because in case of `expect` nested classes actualized via typealias we can't simply find actual symbol by
+     * `expect` `ClassId` (like we do for top-level classes), because `ClassId` is different.
+     * For example, `expect` class `com/example/ExpectClass.Nested` may have actual with id `real/package/ActualTypeliasTarget.Nested`.
+     */
+    private fun recordMappingsForNestedClassesActualizedViaTypealias(typealiasClassId: ClassId, actualClassSymbol: IrClassSymbol) {
+        fun recordRecursively(expectClass: IrClass, actualClass: IrClass) {
+            val actualNestedClassesByName = actualClass.nestedClasses.associateBy { it.name }
+
+            for (expectNestedClass in expectClass.nestedClasses) {
+                val actualNestedClass = actualNestedClassesByName[expectNestedClass.name] ?: continue
+                actualClasses[expectNestedClass.classIdOrFail] = actualNestedClass.symbol
+                recordRecursively(expectNestedClass, actualNestedClass)
+            }
+        }
+
+        val expectClassSymbol = expectTopLevelClasses[typealiasClassId] ?: return
+        recordRecursively(expectClassSymbol.owner, actualClassSymbol.owner)
     }
 
     private fun recordActualCallable(callableDeclaration: IrDeclarationWithName, callableId: CallableId) {

@@ -261,6 +261,11 @@ val IrClass.fields: Sequence<IrField>
 
 // This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
 @UnsafeDuringIrConstructionAPI
+val IrClass.nestedClasses: Sequence<IrClass>
+    get() = declarations.asSequence().filterIsInstance<IrClass>()
+
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@UnsafeDuringIrConstructionAPI
 val IrClassSymbol.fields: Sequence<IrFieldSymbol>
     get() = owner.fields.map { it.symbol }
 

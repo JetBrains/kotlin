@@ -23,5 +23,5 @@ class FooImpl {
 actual typealias Foo = FooImpl
 
 actual annotation class Ann(
-    actual val p: KClass<*> = <!ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE!>FooImpl.Nested::class<!>
+    actual val p: KClass<*> = FooImpl.Nested::class
 )
