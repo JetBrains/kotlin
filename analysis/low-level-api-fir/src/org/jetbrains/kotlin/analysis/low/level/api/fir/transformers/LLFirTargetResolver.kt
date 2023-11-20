@@ -27,12 +27,29 @@ internal abstract class LLFirTargetResolver(
     /**
      * Must be executed without a lock
      */
-    protected fun resolveFileAnnotationContainerIfNeeded(elementWithResolveState: FirElementWithResolveState) {
+    private fun resolveFileAnnotationContainerIfNeeded(elementWithResolveState: FirElementWithResolveState) {
         if (elementWithResolveState !is FirFile) return
         val annotationContainer = elementWithResolveState.annotationsContainer ?: return
         withFile(elementWithResolveState) {
             performResolve(annotationContainer)
         }
+    }
+
+    /**
+     * @see resolveDependencyTarget
+     */
+    open val skipDependencyTargetResolutionStep: Boolean get() = false
+
+    /**
+     * Requests the resolution for dependency targets to avoid race in the case of FIR instance sharing.
+     * Will be executed before resolution without a lock.
+     *
+     * @see skipDependencyTargetResolutionStep
+     */
+    private fun resolveDependencyTarget(target: FirElementWithResolveState) {
+        if (skipDependencyTargetResolutionStep) return
+
+        resolveFileAnnotationContainerIfNeeded(target)
     }
 
     override fun withFile(firFile: FirFile, action: () -> Unit) {
@@ -57,10 +74,7 @@ internal abstract class LLFirTargetResolver(
 
     protected open fun checkResolveConsistency() {}
 
-    protected open fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
-        resolveFileAnnotationContainerIfNeeded(target)
-        return false
-    }
+    protected open fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean = false
 
     protected abstract fun doLazyResolveUnderLock(target: FirElementWithResolveState)
 
@@ -74,6 +88,8 @@ internal abstract class LLFirTargetResolver(
     }
 
     protected fun performResolve(target: FirElementWithResolveState) {
+        resolveDependencyTarget(target)
+
         if (doResolveWithoutLock(target)) return
         performCustomResolveUnderLock(target) {
             doLazyResolveUnderLock(target)

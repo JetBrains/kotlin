@@ -120,7 +120,6 @@ private class LLFirSuperTypeTargetResolver(
                 superTypeUpdater = { target.replaceExpandedTypeRef(it.single()) },
             )
             else -> {
-                resolveFileAnnotationContainerIfNeeded(target)
                 performCustomResolveUnderLock(target) {
                     // just update the phase
                 }

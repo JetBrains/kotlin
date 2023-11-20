@@ -148,7 +148,7 @@ private class LLFirStatusTargetResolver(
             true
         }
 
-        else -> super.doResolveWithoutLock(target)
+        else -> false
     }
 
     private inline fun <T : FirCallableDeclaration> performResolveWithOverriddenCallables(

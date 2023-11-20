@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] annotations.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
     @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
     @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }
 
