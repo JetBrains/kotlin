@@ -57,3 +57,11 @@ class IrFunctionFakeOverrideSymbol(
 ) : IrFakeOverrideSymbolBase<IrSimpleFunctionSymbol, IrSimpleFunction, FunctionDescriptor>(
     originalSymbol, containingClassSymbol, idSignature
 ), IrSimpleFunctionSymbol
+
+class IrPropertyFakeOverrideSymbol(
+    originalSymbol: IrPropertySymbol,
+    containingClassSymbol: IrClassSymbol,
+    idSignature: IdSignature?
+) : IrFakeOverrideSymbolBase<IrPropertySymbol, IrProperty, PropertyDescriptor>(
+    originalSymbol, containingClassSymbol, idSignature
+), IrPropertySymbol

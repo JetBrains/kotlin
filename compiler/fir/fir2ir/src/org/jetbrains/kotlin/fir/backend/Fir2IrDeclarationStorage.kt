@@ -333,17 +333,24 @@ class Fir2IrDeclarationStorage(
         ) {
             return createFunctionSymbol(signature)
         }
-        val containingClassLookupTag = when {
-            fakeOverrideOwnerLookupTag != null -> fakeOverrideOwnerLookupTag
-            function.isSubstitutionOrIntersectionOverride -> function.containingClassLookupTag()
-            else -> shouldNotBeCalled()
-        }
-        requireNotNull(containingClassLookupTag) { "Containing class not found for ${function.render()}"}
-        val containingClassSymbol = classifierStorage.findIrClass(containingClassLookupTag)?.symbol
-            ?: error("IR class for $containingClassLookupTag not found")
+        val containingClassSymbol = findContainingIrClassSymbol(function, fakeOverrideOwnerLookupTag)
         val originalFirFunction = function.unwrapFakeOverrides()
         val originalSymbol = getIrFunctionSymbol(originalFirFunction.symbol) as IrSimpleFunctionSymbol
         return IrFunctionFakeOverrideSymbol(originalSymbol, containingClassSymbol, signature)
+    }
+
+    private fun findContainingIrClassSymbol(
+        callable: FirCallableDeclaration,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+    ): IrClassSymbol {
+        val containingClassLookupTag = when {
+            fakeOverrideOwnerLookupTag != null -> fakeOverrideOwnerLookupTag
+            callable.isSubstitutionOrIntersectionOverride -> callable.containingClassLookupTag()
+            else -> shouldNotBeCalled()
+        }
+        requireNotNull(containingClassLookupTag) { "Containing class not found for ${callable.render()}"}
+        return classifierStorage.findIrClass(containingClassLookupTag)?.symbol
+            ?: error("IR class for $containingClassLookupTag not found")
     }
 
     private fun cacheIrFunctionSymbol(
@@ -526,7 +533,16 @@ class Fir2IrDeclarationStorage(
         signature: IdSignature?,
         property: FirProperty,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+        parentIsExternal: Boolean
     ): PropertySymbols {
+        if (
+            configuration.useIrFakeOverrideBuilder &&
+            !parentIsExternal &&
+            property.isFakeOverride(fakeOverrideOwnerLookupTag)
+        ) {
+            return createFakeOverridePropertySymbols(signature, property, fakeOverrideOwnerLookupTag)
+        }
+
         val propertySymbol = when {
             signature != null -> when (property.isStubPropertyForPureField) {
                 // Very special case when two similar properties can exist so conflicts in SymbolTable are possible.
@@ -555,6 +571,34 @@ class Fir2IrDeclarationStorage(
         }
 
         return PropertySymbols(propertySymbol, getterSymbol, setterSymbol, backingFieldSymbol)
+    }
+
+    private fun createFakeOverridePropertySymbols(
+        signature: IdSignature?,
+        property: FirProperty,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+    ): PropertySymbols {
+        val originalFirProperty = property.unwrapFakeOverrides()
+        val originalSymbols = getIrPropertySymbols(originalFirProperty.symbol, isLocal = false)
+        require(property.isStubPropertyForPureField != true) {
+            "What are we doing here?"
+        }
+
+        val containingClassSymbol = findContainingIrClassSymbol(property, fakeOverrideOwnerLookupTag)
+        val propertySymbol = IrPropertyFakeOverrideSymbol(originalSymbols.propertySymbol, containingClassSymbol, signature)
+
+        val getterSignature = runIf(signature != null) {
+            signatureComposer.composeAccessorSignature(property, isSetter = false, fakeOverrideOwnerLookupTag)
+        }
+        val getterSymbol = IrFunctionFakeOverrideSymbol(originalSymbols.getterSymbol, containingClassSymbol, getterSignature)
+
+        val setterSymbol = runIf(property.isVar) {
+            val setterSignature = runIf(signature != null) {
+                signatureComposer.composeAccessorSignature(property, isSetter = true, fakeOverrideOwnerLookupTag)
+            }
+            IrFunctionFakeOverrideSymbol(originalSymbols.setterSymbol!!, containingClassSymbol, setterSignature)
+        }
+        return PropertySymbols(propertySymbol, getterSymbol, setterSymbol, backingFieldSymbol = null)
     }
 
     private fun cacheIrPropertySymbols(
@@ -636,9 +680,9 @@ class Fir2IrDeclarationStorage(
         val signature = runIf(!isLocal && configuration.linkViaSignatures) {
             signatureComposer.composeSignature(property, fakeOverrideOwnerLookupTag)
         }
-        val symbols = createPropertySymbols(signature, property, fakeOverrideOwnerLookupTag)
         val irParent = findIrParent(property, fakeOverrideOwnerLookupTag)
         if (irParent?.isExternalParent() == true) {
+            val symbols = createPropertySymbols(signature, property, fakeOverrideOwnerLookupTag, parentIsExternal = true)
             val firForLazyProperty = calculateFirForLazyDeclaration(
                 property, fakeOverrideOwnerLookupTag, irParent,
                 fakeOverrideGenerator::createFirPropertyFakeOverrideIfNeeded
@@ -653,8 +697,12 @@ class Fir2IrDeclarationStorage(
             ).also {
                 check(it is Fir2IrLazyProperty)
             }
+
+            cacheIrPropertySymbols(property, symbols, fakeOverrideOwnerLookupTag)
+            return symbols
         }
 
+        val symbols = createPropertySymbols(signature, property, fakeOverrideOwnerLookupTag, parentIsExternal = false)
         cacheIrPropertySymbols(property, symbols, fakeOverrideOwnerLookupTag)
 
         return symbols
