@@ -10,32 +10,26 @@ package org.jetbrains.kotlin.bir.util
 
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.*
-import org.jetbrains.kotlin.bir.declarations.impl.*
-import org.jetbrains.kotlin.bir.declarations.lazy.*
 import org.jetbrains.kotlin.bir.expressions.*
-import org.jetbrains.kotlin.bir.expressions.impl.*
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Bir2IrConverter(
     dynamicPropertyManager: BirElementDynamicPropertyManager,
-    externalIr2BirElements: Map<BirElement, IrSymbol>,
+    remapedIr2BirElements: Map<BirElement, IrSymbol>,
     private val irBuiltIns: IrBuiltIns,
     compiledBir: BirForest,
     expectedTreeSize: Int = 0,
-) : Bir2IrConverterBase(externalIr2BirElements, compiledBir) {
+) : Bir2IrConverterBase(remapedIr2BirElements, compiledBir) {
     private val modules = createElementMap<IrModuleFragment, BirModuleFragment>(1)
     private val classes = createElementMap<IrClass, BirClass>((expectedTreeSize * 0.004).toInt())
     private val scripts = createElementMap<IrScript, BirScript>()
@@ -153,6 +147,16 @@ class Bir2IrConverter(
         type = remapType(old.type)
         varargElementType = old.varargElementType?.let { remapType(it) }
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        origin = old.origin
+        name = old.name
+        varargElementType = null
+        isCrossinline = old.isCrossinline
+        isNoinline = old.isNoinline
+        isHidden = old.isHidden
+        index = old.index
     }
 
     private fun copyClass(old: BirClass): IrClass = copyReferencedElement(old, classes, {
@@ -179,11 +183,28 @@ class Bir2IrConverter(
         copyAttributes(old)
         thisReceiver = old.thisReceiver?.let { copyChildElement<IrValueParameter>(it) }
         typeParameters = old.typeParameters.map { copyChildElement(it) }
-        old.declarations.mapTo(declarations) { copyChildElement(it) }
+        old.declarations.copyTo(declarations) { copyChildElement(it) }
         annotations = old.annotations.map { copyChildElement(it) }
         superTypes = old.superTypes.memoryOptimizedMap { remapType(it) }
         valueClassRepresentation = old.valueClassRepresentation?.mapUnderlyingType { remapSimpleType(it) }
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        origin = old.origin
+        visibility = old.visibility
+        name = old.name
+        isExternal = old.isExternal
+        kind = old.kind
+        modality = old.modality
+        isCompanion = old.isCompanion
+        isInner = old.isInner
+        isData = old.isData
+        isValue = old.isValue
+        isExpect = old.isExpect
+        isFun = old.isFun
+        hasEnumEntries = old.hasEnumEntries
+        assert(source == old.source)
     }
 
     private fun copyAnonymousInitializer(old: BirAnonymousInitializer): IrAnonymousInitializer = copyNotReferencedElement(old, {
@@ -215,6 +236,14 @@ class Bir2IrConverter(
         annotations = old.annotations.map { copyChildElement(it) }
         superTypes = old.superTypes.memoryOptimizedMap { remapType(it) }
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        origin = old.origin
+        name = old.name
+        variance = old.variance
+        isReified = old.isReified
+        index = old.index
     }
 
     private fun copyConstructor(old: BirConstructor): IrConstructor = copyReferencedElement(old, constructors, {
@@ -241,6 +270,16 @@ class Bir2IrConverter(
         returnType = remapType(old.returnType)
         contextReceiverParametersCount = old.contextReceiverParametersCount
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        origin = old.origin
+        visibility = old.visibility
+        name = old.name
+        isExternal = old.isExternal
+        isInline = old.isInline
+        isExpect = old.isExpect
+        isPrimary = old.isPrimary
     }
 
     private fun copyEnumEntry(old: BirEnumEntry): IrEnumEntry = copyReferencedElement(old, enumEntries, {
@@ -256,6 +295,11 @@ class Bir2IrConverter(
         correspondingClass = old.correspondingClass?.let { copyChildElement(it) }
         annotations = old.annotations.map { copyChildElement(it) }
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        origin = old.origin
+        name = old.name
     }
 
     private fun copyErrorDeclaration(old: BirErrorDeclaration): IrErrorDeclaration = copyNotReferencedElement(old, {
@@ -289,6 +333,15 @@ class Bir2IrConverter(
         annotations = old.annotations.map { copyChildElement(it) }
         type = remapType(old.type)
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        origin = old.origin
+        visibility = old.visibility
+        name = old.name
+        isExternal = old.isExternal
+        isFinal = old.isFinal
+        isStatic = old.isStatic
     }
 
     private fun copyLocalDelegatedProperty(old: BirLocalDelegatedProperty): IrLocalDelegatedProperty =
@@ -309,6 +362,12 @@ class Bir2IrConverter(
             copyDynamicProperties(old)
             delegate = copyChildElement(old.delegate)
             getter = copyChildElement(old.getter)
+
+            assert(startOffset == old.sourceSpan.start)
+            assert(endOffset == old.sourceSpan.end)
+            origin = old.origin
+            name = old.name
+            isVar = old.isVar
         }
 
     private fun copyModuleFragment(old: BirModuleFragment): IrModuleFragment = copyReferencedElement(old, modules, {
@@ -317,7 +376,7 @@ class Bir2IrConverter(
             irBuiltins = irBuiltIns,
         )
     }) {
-        old.files.mapTo(files) { copyChildElement(it) }
+        old.files.copyTo(files) { copyChildElement(it) }
         copyDynamicProperties(old)
     }
 
@@ -346,6 +405,20 @@ class Bir2IrConverter(
         overriddenSymbols = old.overriddenSymbols.memoryOptimizedMap { remapSymbol(it) }
         annotations = old.annotations.map { copyChildElement(it) }
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        origin = old.origin
+        name = old.name
+        isExternal = old.isExternal
+        visibility = old.visibility
+        modality = old.modality
+        isFakeOverride = old.isFakeOverride
+        isVar = old.isVar
+        isConst = old.isConst
+        isLateinit = old.isLateinit
+        isDelegated = old.isDelegated
+        isExpect = old.isExpect
     }
 
     private fun copyScript(old: BirScript): IrScript = copyReferencedElement(old, scripts, {
@@ -363,7 +436,7 @@ class Bir2IrConverter(
         providedPropertiesParameters = old.providedPropertiesParameters.map { copyChildElement(it) }
         earlierScriptsParameter = old.earlierScriptsParameter?.let { copyChildElement(it) }
         constructor = old.constructor?.let { remapElement(it) }
-        old.statements.mapTo(statements) { copyChildElement(it) }
+        old.statements.copyTo(statements) { copyChildElement(it) }
         annotations = old.annotations.map { copyChildElement(it) }
         baseClass = old.baseClass?.let { remapType(it) }
         origin = old.origin
@@ -373,6 +446,10 @@ class Bir2IrConverter(
         targetClass = old.targetClass?.let { remapSymbol(it) }
         importedScripts = old.importedScripts?.memoryOptimizedMap { remapSymbol(it) }
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        name = old.name
     }
 
     private fun copySimpleFunction(old: BirSimpleFunction): IrSimpleFunction = copyReferencedElement(old, functions, {
@@ -407,6 +484,21 @@ class Bir2IrConverter(
         returnType = remapType(old.returnType)
         contextReceiverParametersCount = old.contextReceiverParametersCount
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        origin = old.origin
+        visibility = old.visibility
+        name = old.name
+        isExternal = old.isExternal
+        isInline = old.isInline
+        isExpect = old.isExpect
+        modality = old.modality
+        isFakeOverride = old.isFakeOverride
+        isTailrec = old.isTailrec
+        isSuspend = old.isSuspend
+        isOperator = old.isOperator
+        isInfix = old.isInfix
     }
 
     private fun copyTypeAlias(old: BirTypeAlias): IrTypeAlias = copyReferencedElement(old, typeAliases, {
@@ -425,6 +517,13 @@ class Bir2IrConverter(
         annotations = old.annotations.map { copyChildElement(it) }
         expandedType = remapType(old.expandedType)
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        origin = old.origin
+        name = old.name
+        visibility = old.visibility
+        isActual = old.isActual
     }
 
     private fun copyVariable(old: BirVariable): IrVariable = copyReferencedElement(old, variables, {
@@ -444,6 +543,14 @@ class Bir2IrConverter(
         annotations = old.annotations.map { copyChildElement(it) }
         type = remapType(old.type)
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        origin = old.origin
+        name = old.name
+        isVar = old.isVar
+        isConst = old.isConst
+        isLateinit = old.isLateinit
     }
 
     private fun copyExternalPackageFragment(old: BirExternalPackageFragment): IrExternalPackageFragment =
@@ -453,7 +560,7 @@ class Bir2IrConverter(
                 packageFqName = old.packageFqName,
             )
         }) {
-            old.declarations.mapTo(declarations) { copyChildElement(it) }
+            old.declarations.copyTo(declarations) { copyChildElement(it) }
             copyDynamicProperties(old)
         }
 
@@ -464,7 +571,7 @@ class Bir2IrConverter(
             symbol = createBindableSymbol(old),
         )
     }) {
-        old.declarations.mapTo(declarations) { copyChildElement(it) }
+        old.declarations.copyTo(declarations) { copyChildElement(it) }
         annotations = old.annotations.map { copyChildElement(it) }
         copyDynamicProperties(old)
     }
@@ -485,7 +592,7 @@ class Bir2IrConverter(
             endOffset = old.sourceSpan.end,
         )
     }) {
-        old.statements.mapTo(statements) { copyChildElement(it) }
+        old.statements.copyTo(statements) { copyChildElement(it) }
         copyDynamicProperties(old)
     }
 
@@ -555,7 +662,7 @@ class Bir2IrConverter(
         )
     }) {
         copyAttributes(old)
-        old.statements.mapTo(statements) { copyChildElement(it) }
+        old.statements.copyTo(statements) { copyChildElement(it) }
         copyDynamicProperties(old)
     }
 
@@ -568,7 +675,7 @@ class Bir2IrConverter(
         )
     }) {
         copyAttributes(old)
-        old.statements.mapTo(statements) { copyChildElement(it) }
+        old.statements.copyTo(statements) { copyChildElement(it) }
         copyDynamicProperties(old)
     }
 
@@ -582,8 +689,12 @@ class Bir2IrConverter(
         )
     }) {
         copyAttributes(old)
-        old.statements.mapTo(statements) { copyChildElement(it) }
+        old.statements.copyTo(statements) { copyChildElement(it) }
         copyDynamicProperties(old)
+
+        assert(startOffset == old.sourceSpan.start)
+        assert(endOffset == old.sourceSpan.end)
+        origin = old.origin
     }
 
     private fun copyInlinedFunctionBlock(old: BirInlinedFunctionBlock): IrInlinedFunctionBlock = copyNotReferencedElement(old, {
@@ -597,7 +708,7 @@ class Bir2IrConverter(
         )
     }) {
         copyAttributes(old)
-        old.statements.mapTo(statements) { copyChildElement(it) }
+        old.statements.copyTo(statements) { copyChildElement(it) }
         copyDynamicProperties(old)
     }
 
@@ -765,7 +876,7 @@ class Bir2IrConverter(
         )
     }) {
         copyAttributes(old)
-        old.valueArguments.mapTo(valueArguments) { copyChildElement(it) }
+        old.valueArguments.copyTo(valueArguments) { copyChildElement(it) }
         copyDynamicProperties(old)
     }
 
@@ -778,7 +889,7 @@ class Bir2IrConverter(
         )
     }) {
         copyAttributes(old)
-        old.elements.mapTo(elements) { copyChildElement(it) }
+        old.elements.copyTo(elements) { copyChildElement(it) }
         copyDynamicProperties(old)
     }
 
@@ -813,7 +924,7 @@ class Bir2IrConverter(
         }) {
             copyAttributes(old)
             receiver = copyChildElement(old.receiver)
-            old.arguments.mapTo(arguments) { copyChildElement(it) }
+            old.arguments.copyTo(arguments) { copyChildElement(it) }
             copyDynamicProperties(old)
         }
 
@@ -862,7 +973,7 @@ class Bir2IrConverter(
         }) {
             copyAttributes(old)
             explicitReceiver = old.explicitReceiver?.let { copyChildElement(it) }
-            old.arguments.mapTo(arguments) { copyChildElement(it) }
+            old.arguments.copyTo(arguments) { copyChildElement(it) }
             copyDynamicProperties(old)
 
         }
@@ -935,7 +1046,6 @@ class Bir2IrConverter(
         }) {
             copyAttributes(old)
             copyDynamicProperties(old)
-
         }
 
     private fun copyWhileLoop(old: BirWhileLoop): IrWhileLoop = copyReferencedElement(old, loops, {
@@ -951,6 +1061,8 @@ class Bir2IrConverter(
         condition = copyChildElement(old.condition)
         label = old.label
         copyDynamicProperties(old)
+
+        origin = old.origin
     }
 
     private fun copyDoWhileLoop(old: BirDoWhileLoop): IrDoWhileLoop =
@@ -967,6 +1079,8 @@ class Bir2IrConverter(
             condition = copyChildElement(old.condition)
             label = old.label
             copyDynamicProperties(old)
+
+            origin = old.origin
         }
 
     private fun copyReturn(old: BirReturn): IrReturn = copyNotReferencedElement(old, {
@@ -991,7 +1105,7 @@ class Bir2IrConverter(
             )
         }) {
             copyAttributes(old)
-            old.arguments.mapTo(arguments) { copyChildElement(it) }
+            old.arguments.copyTo(arguments) { copyChildElement(it) }
             copyDynamicProperties(old)
 
         }
@@ -1047,7 +1161,7 @@ class Bir2IrConverter(
         )
     }) {
         copyAttributes(old)
-        old.catches.mapTo(catches) { copyChildElement(it) }
+        old.catches.copyTo(catches) { copyChildElement(it) }
         tryResult = copyChildElement(old.tryResult)
         finallyExpression = old.finallyExpression?.let { copyChildElement(it) }
         copyDynamicProperties(old)
@@ -1121,7 +1235,7 @@ class Bir2IrConverter(
             )
         }) {
             copyAttributes(old)
-            old.elements.mapTo(elements) { copyChildElement(it) }
+            old.elements.copyTo(elements) { copyChildElement(it) }
             copyDynamicProperties(old)
 
         }
@@ -1148,7 +1262,7 @@ class Bir2IrConverter(
             )
         }) {
             copyAttributes(old)
-            old.branches.mapTo(branches) { copyChildElement(it) }
+            old.branches.copyTo(branches) { copyChildElement(it) }
             copyDynamicProperties(old)
 
         }
