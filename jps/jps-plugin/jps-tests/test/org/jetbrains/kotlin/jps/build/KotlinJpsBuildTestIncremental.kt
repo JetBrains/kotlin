@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
-import org.jetbrains.kotlin.konan.file.use
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -52,7 +51,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
 
         @Suppress("UNREACHABLE_CODE")
         fun getReportFile(): File {
-            return Files.list(reportDir.toPath()).use {
+            return Files.list(reportDir.toPath()).let {
                 val files = it.toArray()
                 val singleFile = (files.singleOrNull() as Path?).also {
                     it ?: fail("The directory must contain a single file, but got: $files")

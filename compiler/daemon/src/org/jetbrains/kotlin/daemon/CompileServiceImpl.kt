@@ -309,7 +309,6 @@ abstract class CompileServiceImplBase(
                 }
                 is CodeGenerationMeasurement -> {
                     performanceMetrics.add(
-                        CompilationResultCategory.BUILD_METRICS.code,
                         BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION, it.milliseconds)
                     )
                     it.lines?.apply {
