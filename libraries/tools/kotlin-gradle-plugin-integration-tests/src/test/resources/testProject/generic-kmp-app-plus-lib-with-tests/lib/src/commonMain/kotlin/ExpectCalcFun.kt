@@ -1,0 +1,1 @@
+expect fun calc(expression: String): Double

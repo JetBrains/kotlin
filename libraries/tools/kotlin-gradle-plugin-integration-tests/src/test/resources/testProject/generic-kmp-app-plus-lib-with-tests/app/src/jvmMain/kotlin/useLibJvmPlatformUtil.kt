@@ -1,0 +1,1 @@
+fun useLibJvmPlatformUtil() = libJvmPlatformUtil()
