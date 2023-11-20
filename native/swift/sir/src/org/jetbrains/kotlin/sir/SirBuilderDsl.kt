@@ -5,6 +5,5 @@
 
 package org.jetbrains.kotlin.sir
 
-@Suppress("unused")
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
-annotation class SwiftIrImplementationDetail
+@DslMarker
+annotation class SirBuilderDsl

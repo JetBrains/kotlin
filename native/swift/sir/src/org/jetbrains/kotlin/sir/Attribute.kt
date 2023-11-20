@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.sir
 
-data class Attribute(val name: String, val arguments: List<Pair<String, SwiftIrExpression>>? = null)
+data class Attribute(val name: String, val arguments: List<Pair<String, SirExpression>>? = null)

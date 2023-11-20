@@ -40,7 +40,7 @@ class Element(name: String, override val propertyName: String) : AbstractElement
     override var kind: ImplementationKind? = null
 
     override val namePrefix: String
-        get() = "SwiftIr"
+        get() = "Sir"
 
     override val packageName: String
         get() = BASE_PACKAGE

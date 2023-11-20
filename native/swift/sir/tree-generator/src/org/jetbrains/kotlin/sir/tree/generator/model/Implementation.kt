@@ -13,5 +13,5 @@ class Implementation(element: Element, name: String?) : AbstractImplementation<I
     override val allFields: List<Field> = element.allFields.map { it.copy() }
 
     override val namePrefix: String
-        get() = "SwiftIr"
+        get() = "Sir"
 }

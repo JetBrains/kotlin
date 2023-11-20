@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.sir
 
-import org.jetbrains.kotlin.sir.visitors.SwiftIrTransformer
-import org.jetbrains.kotlin.sir.visitors.SwiftIrVisitor
+import org.jetbrains.kotlin.sir.visitors.SirVisitor
+import org.jetbrains.kotlin.sir.visitors.SirTransformer
 
-sealed class SwiftIrElementBase : SwiftIrElement {
-    abstract override fun <R, D> accept(visitor: SwiftIrVisitor<R, D>, data: D): R
+sealed class SirElementBase : SirElement {
+    abstract override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R
 
-    abstract override fun <E : SwiftIrElement, D> transform(transformer: SwiftIrTransformer<D>, data: D): E
+    abstract override fun <E : SirElement, D> transform(transformer: SirTransformer<D>, data: D): E
 }

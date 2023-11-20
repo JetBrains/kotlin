@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.builder.SirClassBuilder
 import org.junit.Test
 import kotlin.test.assertTrue
 
@@ -18,6 +19,10 @@ class SirTest {
     }
 
     private fun produceSwiftElement(): Any {
-        return object : SirElement {}
+        return SirClassBuilder().apply {
+            origin = Origin()
+            name = "name"
+            visibility = SwiftVisibility.PUBLIC
+        }.build()
     }
 }

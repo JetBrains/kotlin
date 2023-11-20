@@ -16,7 +16,7 @@ abstract class AbstractSwiftIrTreeBuilderConfigurator(
 ) : AbstractBuilderConfigurator<Element, Implementation, Field, Field>(elements) {
 
     override val namePrefix: String
-        get() = "SwiftIr"
+        get() = "Sir"
 
     override val defaultBuilderPackage: String
         get() = "$BASE_PACKAGE.builder"
