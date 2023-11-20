@@ -112,7 +112,14 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     // RTTI:
     val implementSymbol = getInternalFunction("implement")
-    val setMetadataForSymbol = getInternalFunction("setMetadataFor")
+    val initMetadataForSymbol = getInternalFunction("initMetadataFor")
+    val initMetadataForClassSymbol = getInternalFunction("initMetadataForClass")
+    val initMetadataForObjectSymbol = getInternalFunction("initMetadataForObject")
+    val initMetadataForInterfaceSymbol = getInternalFunction("initMetadataForInterface")
+    val initMetadataForLambdaSymbol = getInternalFunction("initMetadataForLambda")
+    val initMetadataForCoroutineSymbol = getInternalFunction("initMetadataForCoroutine")
+    val initMetadataForFunctionReferenceSymbol = getInternalFunction("initMetadataForFunctionReference")
+    val initMetadataForCompanionSymbol = getInternalFunction("initMetadataForCompanion")
 
     val isInterfaceSymbol = getInternalFunction("isInterface")
     val isArraySymbol = getInternalFunction("isArray")
@@ -197,10 +204,6 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val promiseClassSymbol: IrClassSymbol by context.lazy2 {
         getInternalClassWithoutPackage("kotlin.js.Promise")
     }
-
-    val metadataInterfaceConstructorSymbol = getInternalFunction("interfaceMeta")
-    val metadataObjectConstructorSymbol = getInternalFunction("objectMeta")
-    val metadataClassConstructorSymbol = getInternalFunction("classMeta")
 
     val longToDouble = context.symbolTable.descriptorExtension.referenceSimpleFunction(
         context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(

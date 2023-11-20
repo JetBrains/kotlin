@@ -4,6 +4,8 @@
  */
 package kotlin.js
 
+// TODO: Remove this file after bootstrap
+
 internal fun setMetadataFor(
     ctor: Ctor,
     name: String?,
@@ -31,21 +33,6 @@ internal fun setMetadataFor(
     }
 }
 
-// There was a problem with per-module compilation (KT-55758) when the top-level state (iid) was reinitialized during stdlib module initialization
-// As a result we miss already incremented iid and had the same iids in two different modules
-// So, to keep the state consistent it was moved into the variable without initializer and function
-@Suppress("MUST_BE_INITIALIZED")
-private var iid: dynamic
-
-private fun generateInterfaceId(): Int {
-    if (iid === VOID) {
-        iid = 0
-    }
-    iid = iid.unsafeCast<Int>() + 1
-    return iid.unsafeCast<Int>()
-}
-
-
 internal fun interfaceMeta(
     name: String?,
     defaultConstructor: dynamic,
@@ -53,7 +40,7 @@ internal fun interfaceMeta(
     associatedObjects: dynamic,
     suspendArity: Array<Int>?
 ): Metadata {
-    return createMetadata("interface", name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity, generateInterfaceId())
+    return createMetadata(METADATA_KIND_INTERFACE, name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity)
 }
 
 internal fun objectMeta(
@@ -63,7 +50,7 @@ internal fun objectMeta(
     associatedObjects: dynamic,
     suspendArity: Array<Int>?
 ): Metadata {
-    return createMetadata("object", name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity, null)
+    return createMetadata(METADATA_KIND_OBJECT, name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity)
 }
 
 internal fun classMeta(
@@ -73,45 +60,5 @@ internal fun classMeta(
     associatedObjects: dynamic,
     suspendArity: Array<Int>?
 ): Metadata {
-    return createMetadata("class", name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity, null)
-}
-
-// Seems like we need to disable this check if variables are used inside js annotation
-@Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
-private fun createMetadata(
-    kind: String,
-    name: String?,
-    defaultConstructor: dynamic,
-    associatedObjectKey: Number?,
-    associatedObjects: dynamic,
-    suspendArity: Array<Int>?,
-    iid: Int?
-): Metadata {
-    val undef = VOID
-    return js("""({
-    kind: kind,
-    simpleName: name,
-    associatedObjectKey: associatedObjectKey,
-    associatedObjects: associatedObjects,
-    suspendArity: suspendArity,
-    ${'$'}kClass$: undef,
-    defaultConstructor: defaultConstructor,
-    iid: iid
-})""")
-}
-
-internal external interface Metadata {
-    val kind: String
-    // This field gives fast access to the prototype of metadata owner (Object.getPrototypeOf())
-    // Can be pre-initialized or lazy initialized and then should be immutable
-    val simpleName: String?
-    val associatedObjectKey: Number?
-    val associatedObjects: dynamic
-    val suspendArity: Array<Int>?
-    val iid: Int?
-
-    var `$kClass$`: dynamic
-    val defaultConstructor: dynamic
-
-    var errorInfo: Int? // Bits set for overridden properties: "message" => 0x1, "cause" => 0x2
+    return createMetadata(METADATA_KIND_CLASS, name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity)
 }

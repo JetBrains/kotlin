@@ -114,7 +114,7 @@ internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     val constructor = if (jsClassType == "object") jsGetPrototypeOf(jsClass) else jsClass
     val klassMetadata = constructor.`$metadata$`
 
-    if (klassMetadata?.kind === "interface") {
+    if (klassMetadata?.kind === METADATA_KIND_INTERFACE) {
         val iid = klassMetadata.iid.unsafeCast<Int?>() ?: return false
         return isInterfaceImpl(obj, iid)
     }

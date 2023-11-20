@@ -42,7 +42,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     private var IrFunction.coroutineConstructor by context.mapping.suspendFunctionToCoroutineConstructor
 
-    protected companion object {
+    companion object {
         val DECLARATION_ORIGIN_COROUTINE_IMPL = IrDeclarationOriginImpl("COROUTINE_IMPL")
     }
 

@@ -34,7 +34,7 @@ suspend fun box() {
 
 // EXPECTATIONS JS_IR
 // test.kt:12 doResume:
-// test.kt:8 h: $completion=$boxCOROUTINE$0
+// test.kt:8 h: $completion=Coroutine
 // test.kt:4 doResume:
 // test.kt:4 doResume: x=41:number
 // test.kt:19 doResume: x=41:number, x=41:number

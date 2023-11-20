@@ -30,8 +30,8 @@ suspend fun box() {
 // test.kt:13 box: $completion=EmptyContinuation
 // test.kt:12 box: $completion=EmptyContinuation
 // test.kt:6 doResume:
-// test.kt:4 foo: $completion=$foo1COROUTINE$0
+// test.kt:4 foo: $completion=Coroutine
 // test.kt:7 doResume:
-// test.kt:4 foo: $completion=$foo1COROUTINE$0
+// test.kt:4 foo: $completion=Coroutine
 // test.kt:8 doResume:
 // test.kt:9 doResume: dead=kotlin.Long
