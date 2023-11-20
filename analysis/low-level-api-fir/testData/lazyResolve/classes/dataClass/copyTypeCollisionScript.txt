@@ -397,7 +397,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionScript.kts
         }
 
         public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -451,3 +451,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] copyTypeCollisionScript.kts
             public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] prop: R|one/two/MyDataClass.MyClass| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
+

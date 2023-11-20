@@ -89,7 +89,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
     }
     public? final? [ResolvedTo(RAW_FIR)] class Sub : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Sub] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -124,7 +124,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
     }
     public? final? [ResolvedTo(RAW_FIR)] class Sub : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Sub] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -159,7 +159,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
     }
     public? final? [ResolvedTo(SUPER_TYPES)] class Sub : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Sub] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
     }
     public? final? [ResolvedTo(TYPES)] class Sub : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Sub] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -264,7 +264,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
     }
     public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Sub] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -299,7 +299,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
     }
     public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -334,7 +334,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
     }
     public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Sub] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -369,7 +369,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
     }
     public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = <strcat>(String(param), R|/stringConstant|)) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -404,7 +404,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
     }
     public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = <strcat>(String(param), R|/stringConstant|)) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 

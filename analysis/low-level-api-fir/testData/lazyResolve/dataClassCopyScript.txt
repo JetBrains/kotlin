@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -334,3 +334,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] dataClassCopyScript.kts
             public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
         }
+

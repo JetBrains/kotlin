@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
     public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 

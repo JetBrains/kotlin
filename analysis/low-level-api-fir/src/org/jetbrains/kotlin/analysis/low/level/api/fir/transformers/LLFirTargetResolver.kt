@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
 internal abstract class LLFirTargetResolver(
@@ -42,6 +44,11 @@ internal abstract class LLFirTargetResolver(
 
         if (target is FirFileAnnotationsContainer) return
         resolveTarget.firFile.annotationsContainer?.lazyResolveToPhase(resolverPhase)
+
+        if (target is FirProperty) {
+            // We share type references and annotations with the original parameter
+            target.correspondingValueParameterFromPrimaryConstructor?.lazyResolveToPhase(resolverPhase)
+        }
     }
 
     override fun withFile(firFile: FirFile, action: () -> Unit) {

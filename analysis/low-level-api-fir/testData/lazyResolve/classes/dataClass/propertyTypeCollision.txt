@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollision.kt
 
     }
     public? final? data [ResolvedTo(RAW_FIR)] class MyDataClass : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: MyClass): R|one/two/MyDataClass| {
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: MyClass): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -94,7 +94,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollision.kt
 
     }
     public? final? data [ResolvedTo(RAW_FIR)] class MyDataClass : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: MyClass): R|one/two/MyDataClass| {
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: MyClass): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -123,7 +123,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollision.kt
 
     }
     public? final? data [ResolvedTo(SUPER_TYPES)] class MyDataClass : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: MyClass): R|one/two/MyDataClass| {
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: MyClass): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollision.kt
 
     }
     public? final? data [ResolvedTo(TYPES)] class MyDataClass : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: MyClass): R|one/two/MyDataClass| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -210,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollision.kt
 
     }
     public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -239,7 +239,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollision.kt
 
     }
     public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -268,7 +268,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollision.kt
 
     }
     public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -297,7 +297,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollision.kt
 
     }
     public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -326,7 +326,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollision.kt
 
     }
     public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
