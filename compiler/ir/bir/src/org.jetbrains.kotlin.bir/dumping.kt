@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.bir
 import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
-import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
-import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.util.Bir2IrConverter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
@@ -54,7 +52,7 @@ fun dumpBirPhase(
         val compiledBir = input.birModule.getContainingForest()!!
         val bir2IrConverter = Bir2IrConverter(
             input.dynamicPropertyManager,
-            input.externalIr2BirElements,
+            input.mappedIr2BirElements,
             context.irBuiltIns,
             compiledBir,
             input.estimatedIrTreeSize

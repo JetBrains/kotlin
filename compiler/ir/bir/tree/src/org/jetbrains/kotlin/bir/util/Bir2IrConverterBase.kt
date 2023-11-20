@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -42,14 +41,12 @@ import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class Bir2IrConverterBase(
-    private val externalBir2IrElements: Map<BirElement, IrSymbol>,
+    private val remapedIr2BirElements: Map<BirElement, IrSymbol>,
     private val compiledBir: BirForest,
 ) {
     var elementConvertedCallbacck: ((BirElement, IrElement) -> Unit)? = null
@@ -100,7 +97,10 @@ abstract class Bir2IrConverterBase(
             @Suppress("UNCHECKED_CAST")
             return it as SE
         }
-        val new = copy()
+
+        @Suppress("UNCHECKED_CAST")
+        val new = remapedIr2BirElements[old]?.owner as SE?
+            ?: copy()
         map[old] = new
         lateInitialize(new)
         elementConvertedCallbacck?.invoke(old, new)
@@ -112,13 +112,6 @@ abstract class Bir2IrConverterBase(
         if (birElement is BirLazyElementBase) {
             @Suppress("UNCHECKED_CAST")
             return birElement.originalIrElement.symbol as IrS
-        }
-
-        if ((birElement as BirElementBase).getContainingForest() !== compiledBir) {
-            externalBir2IrElements.getValue(birElement).let {
-                @Suppress("UNCHECKED_CAST")
-                return it as IrS
-            }
         }
 
         val irElement = remapElement<IrSymbolOwner>(birElement)
@@ -172,6 +165,14 @@ abstract class Bir2IrConverterBase(
 
     protected val IrMemberAccessExpression<*>.typeArguments: List<IrType?>
         get() = List(typeArgumentsCount) { getTypeArgument(it) }
+
+    protected inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.copyTo(destination: C, transform: (T) -> R): C {
+        destination.clear()
+        for (item in this)
+            destination.add(transform(item))
+        return destination
+    }
+
 
     fun remapType(birType: BirType): IrType = when (birType) {
         is BirSimpleType -> remapSimpleType(birType)
