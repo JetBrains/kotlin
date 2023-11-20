@@ -17,18 +17,43 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * [KtAnalysisSession] is the entry point into all frontend-related work. It has the following contracts:
+ * [KtAnalysisSession] is the entry point to all frontend-related work. It has the following contracts:
  *
- * - It should not be accessed from event dispatch thread.
- * - It should not be accessed outside a read action.
- * - It should not be leaked outside the read action it was created in.
- * - To be sure that an analysis session is not leaked, it is forbidden to store it in a variable. Consider working with it only inside
- *   [analyze] blocks, and pass it to functions via context receivers (e.g. `context(KtAnalysisSession)`).
+ * - It should not be accessed from the event dispatch thread or outside a read action.
+ * - It should not be leaked outside the read action it was created in. To ensure that an analysis session isn't leaked, there are
+ *   additional conventions, explained further below.
  * - All entities retrieved from an analysis session should not be leaked outside the read action the analysis session was created in.
  *
- * To pass a symbol from one read action to another use [KtSymbolPointer], which can be created from a symbol by [KtSymbol.createPointer].
+ * To pass a symbol from one read action to another, use [KtSymbolPointer], which can be created from a symbol by [KtSymbol.createPointer].
  *
  * To create a [KtAnalysisSession], please use [analyze] or one of its siblings.
+ *
+ * ### Conventions to avoid leakage
+ *
+ * It is crucial to avoid leaking the analysis session outside the read action it was created in, as the analysis session itself and all
+ * entities retrieved from it will become invalid. An analysis session also shouldn't be leaked from the [analyze] call it was created in.
+ *
+ * It is forbidden to store an analysis session in a variable, parameter, or property. From the [analyze] block which provides the analysis
+ * session, the analysis session should be passed to functions via context receivers. For example:
+ *
+ * ```kotlin
+ * context(KtAnalysisSession)
+ * fun foo() { ... }
+ * ```
+ *
+ * **Class context receivers** should not be used to pass analysis sessions. While a context receiver on a class will make the analysis
+ * session available in the constructor, it will also be captured by the class as a property. This behavior is easy to miss and a high risk
+ * for unintentional leakage. For example:
+ *
+ * ```kotlin
+ * // DO NOT DO THIS
+ * context(KtAnalysisSession)
+ * class Usage {
+ *     fun foo() {
+ *         // The `KtAnalysisSession` is available here.
+ *     }
+ * }
+ * ```
  */
 @OptIn(KtAnalysisApiInternals::class, KtAnalysisNonPublicApi::class)
 @Suppress("AnalysisApiMissingLifetimeCheck")
