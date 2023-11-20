@@ -305,7 +305,7 @@ class FirSyntheticPropertiesScope private constructor(
                 return false
             }
             is FirTypeParameterSymbol -> {
-                error("Type parameter symbol ${dispatchReceiverClassSymbol.name} is not expected here")
+                return false
             }
         }
     }
