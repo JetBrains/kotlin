@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// !DIAGNOSTICS: -ERROR_SUPPRESSION
 // FILE: A.kt
 @file:Suppress("OPT_IN_USAGE", "JS_NAME_CLASH")
 package foo

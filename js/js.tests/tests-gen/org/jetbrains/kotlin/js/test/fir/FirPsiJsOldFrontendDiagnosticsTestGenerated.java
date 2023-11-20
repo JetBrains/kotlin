@@ -463,6 +463,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
         }
 
         @Test
+        @TestMetadata("genericClassWithInner.kt")
+        public void testGenericClassWithInner() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/genericClassWithInner.kt");
+        }
+
+        @Test
         @TestMetadata("jsExportOnNestedDeclarations.kt")
         public void testJsExportOnNestedDeclarations() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/jsExportOnNestedDeclarations.kt");

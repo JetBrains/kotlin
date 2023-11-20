@@ -8,17 +8,17 @@ abstract class C
 interface I
 
 @JsExport
-fun <T : C>foo() { }
+fun <T : <!NON_EXPORTABLE_TYPE("upper bound; foo.C")!>C<!>>foo() { }
 
 @JsExport
-class A<T : C, S: I>
+class A<T : <!NON_EXPORTABLE_TYPE("upper bound; foo.C")!>C<!>, S: <!NON_EXPORTABLE_TYPE("upper bound; foo.I")!>I<!>>
 
 @JsExport
-interface I2<T> where T : C, T : I
+interface I2<T> where T : <!NON_EXPORTABLE_TYPE("upper bound; foo.C")!>C<!>, T : <!NON_EXPORTABLE_TYPE("upper bound; foo.I")!>I<!>
 
 @JsExport
-class B<T>(val a: T, val b: Comparable<T>) {
-    val c: Comparable<T> = b
+class B<T>(val a: T, <!NON_EXPORTABLE_TYPE("parameter; kotlin.Comparable<T>")!>val b: Comparable<T><!>) {
+    <!NON_EXPORTABLE_TYPE("property; kotlin.Comparable<T>")!>val c: Comparable<T><!> = b
 }
 
 @JsExport

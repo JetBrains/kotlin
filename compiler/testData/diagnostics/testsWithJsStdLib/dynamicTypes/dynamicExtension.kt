@@ -1,5 +1,5 @@
 // !MARK_DYNAMIC_CALLS
-
+// !DIAGNOSTICS: -ERROR_SUPPRESSION
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @kotlin.internal.DynamicExtension
 fun dynamic.onDynamicFun() = 1

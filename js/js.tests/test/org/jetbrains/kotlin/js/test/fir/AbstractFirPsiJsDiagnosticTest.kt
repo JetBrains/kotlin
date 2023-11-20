@@ -43,7 +43,6 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
 
         defaultDirectives {
             +ConfigurationDirectives.WITH_STDLIB
-            DiagnosticsDirectives.DIAGNOSTICS with listOf("-warnings", "-infos")
         }
 
         configureFirParser(parser)

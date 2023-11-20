@@ -3,25 +3,25 @@
 
 package foo
 
-@JsExport
-fun delete() {}
+<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("delete")!>@JsExport
+fun delete() {}<!>
+
+<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("instanceof")!>@JsExport
+val instanceof = 4<!>
+
+<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("eval")!>@JsExport
+class eval<!>
 
 @JsExport
-val instanceof = 4
-
-@JsExport
-class eval
-
-@JsExport
-@JsName("await")
+@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("await")!>"await"<!>)
 fun foo() {}
 
 @JsExport
-@JsName("this")
+@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("this")!>"this"<!>)
 val bar = 4
 
 @JsExport
-@JsName("super")
+@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("super")!>"super"<!>)
 class Baz
 
 @JsExport
