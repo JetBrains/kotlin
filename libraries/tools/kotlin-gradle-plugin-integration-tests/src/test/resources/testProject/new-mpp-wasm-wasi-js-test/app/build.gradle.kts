@@ -15,13 +15,13 @@ kotlin {
     }
 
     sourceSets {
-        val wasmJsMain by getting {
+        wasmJsMain {
             dependencies {
                 implementation(project(":lib"))
             }
         }
 
-        val wasmWasiMain by getting {
+        wasmWasiMain {
             dependencies {
                 implementation(project(":lib"))
             }

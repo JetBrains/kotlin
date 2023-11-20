@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.P
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.Family
@@ -52,6 +53,18 @@ interface KotlinMultiplatformSourceSetConventions {
     val NamedDomainObjectContainer<KotlinSourceSet>.jsMain: NamedDomainObjectProvider<KotlinSourceSet>
     val NamedDomainObjectContainer<KotlinSourceSet>.jsTest: NamedDomainObjectProvider<KotlinSourceSet>
     val NamedDomainObjectContainer<KotlinSourceSet>.androidMain: NamedDomainObjectProvider<KotlinSourceSet>
+
+    @ExperimentalWasmDsl
+    val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsMain: NamedDomainObjectProvider<KotlinSourceSet>
+
+    @ExperimentalWasmDsl
+    val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsTest: NamedDomainObjectProvider<KotlinSourceSet>
+
+    @ExperimentalWasmDsl
+    val NamedDomainObjectContainer<KotlinSourceSet>.wasmWasiMain: NamedDomainObjectProvider<KotlinSourceSet>
+
+    @ExperimentalWasmDsl
+    val NamedDomainObjectContainer<KotlinSourceSet>.wasmWasiTest: NamedDomainObjectProvider<KotlinSourceSet>
 
     operator fun NamedDomainObjectProvider<KotlinSourceSet>.invoke(
         configure: KotlinSourceSet.() -> Unit,
@@ -94,6 +107,18 @@ internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatfor
     override val NamedDomainObjectContainer<KotlinSourceSet>.jsMain by KotlinSourceSetConvention
     override val NamedDomainObjectContainer<KotlinSourceSet>.jsTest by KotlinSourceSetConvention
     override val NamedDomainObjectContainer<KotlinSourceSet>.androidMain by KotlinSourceSetConvention
+
+    @ExperimentalWasmDsl
+    override val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsMain by KotlinSourceSetConvention
+
+    @ExperimentalWasmDsl
+    override val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsTest by KotlinSourceSetConvention
+
+    @ExperimentalWasmDsl
+    override val NamedDomainObjectContainer<KotlinSourceSet>.wasmWasiMain by KotlinSourceSetConvention
+
+    @ExperimentalWasmDsl
+    override val NamedDomainObjectContainer<KotlinSourceSet>.wasmWasiTest by KotlinSourceSetConvention
 }
 
 /* Checkers */

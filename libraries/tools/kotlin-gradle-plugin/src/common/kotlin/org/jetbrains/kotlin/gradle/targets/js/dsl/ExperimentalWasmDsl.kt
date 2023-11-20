@@ -6,5 +6,5 @@
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 annotation class ExperimentalWasmDsl
