@@ -1,4 +1,5 @@
 // IGNORE K2
+// ^ KT-63655 K2: incorrect short class name in metadata for anonymous object inside a local class
 
 fun test() {
     class Local {

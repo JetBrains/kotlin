@@ -1,0 +1,186 @@
+// A.class
+// ------------------------------------------
+public final annotation class A : kotlin/Annotation {
+
+  // signature: <init>(ZCBSIFJDLkotlin/UInt;Lkotlin/UByte;Lkotlin/UShort;Lkotlin/ULong;Lkotlin/UInt;Lkotlin/UByte;Lkotlin/UShort;Lkotlin/ULong;[Z[C[B[S[I[F[J[DLjava/lang/String;Lkotlin/annotation/AnnotationTarget;Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;LB;Lkotlin/Array;Lkotlin/Array;Lkotlin/Array;Lkotlin/Array;)V
+  public constructor(z: kotlin/Boolean, c: kotlin/Char, b: kotlin/Byte, s: kotlin/Short, i: kotlin/Int, f: kotlin/Float, j: kotlin/Long, d: kotlin/Double, ui: kotlin/UInt, ub: kotlin/UByte, us: kotlin/UShort, ul: kotlin/ULong, ui_max: kotlin/UInt, ub_max: kotlin/UByte, us_max: kotlin/UShort, ul_max: kotlin/ULong, za: kotlin/BooleanArray, ca: kotlin/CharArray, ba: kotlin/ByteArray, sa: kotlin/ShortArray, ia: kotlin/IntArray, fa: kotlin/FloatArray, ja: kotlin/LongArray, da: kotlin/DoubleArray, str: kotlin/String, enum: kotlin/annotation/AnnotationTarget, klass: kotlin/reflect/KClass<*>, klass2: kotlin/reflect/KClass<*>, anno: B, stra: kotlin/Array<kotlin/String>, ka: kotlin/Array<kotlin/reflect/KClass<*>>, ea: kotlin/Array<kotlin/annotation/AnnotationTarget>, aa: kotlin/Array<B>)
+
+  // getter: aa()[LB;
+  public final val aa: kotlin/Array<B>
+    public final get
+
+  // getter: anno()LB;
+  public final val anno: B
+    public final get
+
+  // getter: b()B
+  public final val b: kotlin/Byte
+    public final get
+
+  // getter: ba()[B
+  public final val ba: kotlin/ByteArray
+    public final get
+
+  // getter: c()C
+  public final val c: kotlin/Char
+    public final get
+
+  // getter: ca()[C
+  public final val ca: kotlin/CharArray
+    public final get
+
+  // getter: d()D
+  public final val d: kotlin/Double
+    public final get
+
+  // getter: da()[D
+  public final val da: kotlin/DoubleArray
+    public final get
+
+  // getter: ea()[Lkotlin/annotation/AnnotationTarget;
+  public final val ea: kotlin/Array<kotlin/annotation/AnnotationTarget>
+    public final get
+
+  // getter: enum()Lkotlin/annotation/AnnotationTarget;
+  public final val enum: kotlin/annotation/AnnotationTarget
+    public final get
+
+  // getter: f()F
+  public final val f: kotlin/Float
+    public final get
+
+  // getter: fa()[F
+  public final val fa: kotlin/FloatArray
+    public final get
+
+  // getter: i()I
+  public final val i: kotlin/Int
+    public final get
+
+  // getter: ia()[I
+  public final val ia: kotlin/IntArray
+    public final get
+
+  // getter: j()J
+  public final val j: kotlin/Long
+    public final get
+
+  // getter: ja()[J
+  public final val ja: kotlin/LongArray
+    public final get
+
+  // getter: ka()[Ljava/lang/Class;
+  public final val ka: kotlin/Array<kotlin/reflect/KClass<*>>
+    public final get
+
+  // getter: klass()Ljava/lang/Class;
+  public final val klass: kotlin/reflect/KClass<*>
+    public final get
+
+  // getter: klass2()Ljava/lang/Class;
+  public final val klass2: kotlin/reflect/KClass<*>
+    public final get
+
+  // getter: s()S
+  public final val s: kotlin/Short
+    public final get
+
+  // getter: sa()[S
+  public final val sa: kotlin/ShortArray
+    public final get
+
+  // getter: str()Ljava/lang/String;
+  public final val str: kotlin/String
+    public final get
+
+  // getter: stra()[Ljava/lang/String;
+  public final val stra: kotlin/Array<kotlin/String>
+    public final get
+
+  // getter: ub()B
+  public final val ub: kotlin/UByte
+    public final get
+
+  // getter: ub_max()B
+  public final val ub_max: kotlin/UByte
+    public final get
+
+  // getter: ui()I
+  public final val ui: kotlin/UInt
+    public final get
+
+  // getter: ui_max()I
+  public final val ui_max: kotlin/UInt
+    public final get
+
+  // getter: ul()J
+  public final val ul: kotlin/ULong
+    public final get
+
+  // getter: ul_max()J
+  public final val ul_max: kotlin/ULong
+    public final get
+
+  // getter: us()S
+  public final val us: kotlin/UShort
+    public final get
+
+  // getter: us_max()S
+  public final val us_max: kotlin/UShort
+    public final get
+
+  // getter: z()Z
+  public final val z: kotlin/Boolean
+    public final get
+
+  // getter: za()[Z
+  public final val za: kotlin/BooleanArray
+    public final get
+
+  // module name: test-module
+}
+// B.class
+// ------------------------------------------
+public final annotation class B : kotlin/Annotation {
+
+  // signature: <init>(Ljava/lang/String;)V
+  public constructor(value: kotlin/String)
+
+  // getter: value()Ljava/lang/String;
+  public final val value: kotlin/String
+    public final get
+
+  // module name: test-module
+}
+// C.class
+// ------------------------------------------
+public final class C : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // signature: parameterTypeAnnotation(Ljava/lang/Object;)Ljava/lang/Object;
+  public final fun parameterTypeAnnotation(p: @JvmNamed(value = "Q_Q") kotlin/Any): kotlin/Any
+
+  // signature: returnTypeAnnotation()V
+  public final fun returnTypeAnnotation(): @A(z = true, c = 'x', b = 1.toByte(), s = 42.toShort(), i = 42424242, f = -2.72f, j = 239239239239239L, d = 3.14, ui = 1u, ub = 255.toUByte(), us = 3.toUShort(), ul = 4uL, ui_max = 4294967295u, ub_max = 255.toUByte(), us_max = 65535.toUShort(), ul_max = 18446744073709551615uL, za = [true], ca = ['\''], ba = [1.toByte()], sa = [42.toShort()], ia = [42424242], fa = [-2.72f], ja = [239239239239239L], da = [3.14], str = "aba\ncaba'\"\t\u0001\u0002ꙮ", enum = kotlin/annotation/AnnotationTarget.CLASS, klass = C::class, klass2 = kotlin/IntArray::class, anno = B(value = "aba\ncaba'\"\t\u0001\u0002ꙮ"), stra = ["lmao"], ka = [kotlin/Double::class, kotlin/Unit::class, kotlin/LongArray::class, kotlin/Array<kotlin/String::class>], ea = [kotlin/annotation/AnnotationTarget.TYPEALIAS, kotlin/annotation/AnnotationTarget.FIELD], aa = [B(value = "2"), B(value = "3")]) kotlin/Unit
+
+  // module name: test-module
+}
+// JvmNamed.class
+// ------------------------------------------
+public final annotation class JvmNamed : kotlin/Annotation {
+
+  // signature: <init>(Ljava/lang/String;)V
+  public constructor(value: kotlin/String)
+
+  // getter: uglyJvmName()Ljava/lang/String;
+  public final val value: kotlin/String
+    public final /* non-default */ get
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

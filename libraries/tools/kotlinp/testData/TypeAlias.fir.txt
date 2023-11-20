@@ -1,0 +1,17 @@
+// TypeAliasKt.class
+// ------------------------------------------
+package {
+
+  public typealias F<T#0 /* T */, T#1 /* U */> = kotlin/collections/Map<T#0, kotlin/Function1<java/lang/StringBuilder /* = kotlin/text/StringBuilder^ */, T#1?>> /* = kotlin/collections/Map<T#0, kotlin/Function1<java/lang/StringBuilder /* = kotlin/text/StringBuilder^ */, T#1?>> */
+
+  public typealias G<T#0 /* S */> = kotlin/collections/Map<kotlin/collections/List<T#0>, kotlin/Function1<java/lang/StringBuilder /* = kotlin/text/StringBuilder^ */, kotlin/collections/Set<T#0>?>> /* = F^<kotlin/collections/List<T#0>, kotlin/collections/Set<T#0>> */ /* = kotlin/collections/Map<kotlin/collections/List<T#0>, kotlin/Function1<java/lang/StringBuilder /* = kotlin/text/StringBuilder^ */, kotlin/collections/Set<T#0>?>> */
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    TypeAliasKt
+  }
+}

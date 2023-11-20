@@ -124,6 +124,11 @@ public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
         runTest("libraries/tools/kotlinp/testData/SyntheticClass.kt");
     }
 
+    @TestMetadata("TypeAlias.kt")
+    public void testTypeAlias() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/TypeAlias.kt");
+    }
+
     @TestMetadata("TypeParameters.kt")
     public void testTypeParameters() throws Exception {
         runTest("libraries/tools/kotlinp/testData/TypeParameters.kt");
