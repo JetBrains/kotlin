@@ -241,6 +241,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
                 }
 
                 @Test
+                @TestMetadata("override.kt")
+                public void testOverride() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/override.kt");
+                }
+
+                @Test
                 @TestMetadata("safeCalls.kt")
                 public void testSafeCalls() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305/nullabilityWarnings/safeCalls.kt");

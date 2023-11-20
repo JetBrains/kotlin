@@ -35,6 +35,7 @@ object FirOverrideJavaNullabilityWarningChecker : FirAbstractOverrideChecker() {
 
         for (member in declaration.declarations) {
             var anyBaseEnhanced = false
+            var anyReported = false
 
             if (member is FirSimpleFunction) {
                 val enhancedOverrides = scope
@@ -44,7 +45,8 @@ object FirOverrideJavaNullabilityWarningChecker : FirAbstractOverrideChecker() {
                         val substitutedBase = it.fir.substituteOrNull(substitutor, context) ?: return@map it
                         anyBaseEnhanced = true
 
-                        if (!context.session.firOverrideChecker.isOverriddenFunction(member, substitutedBase)) {
+                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenFunction(member, substitutedBase)) {
+                            anyReported = true
                             reporter.reportOn(
                                 member.source,
                                 FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
@@ -57,7 +59,7 @@ object FirOverrideJavaNullabilityWarningChecker : FirAbstractOverrideChecker() {
                         substitutedBase.symbol
                     }
 
-                if (anyBaseEnhanced) {
+                if (anyBaseEnhanced && !anyReported) {
                     member.symbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
                         reporter.reportOn(
                             member.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, member.symbol, it, context
@@ -72,7 +74,8 @@ object FirOverrideJavaNullabilityWarningChecker : FirAbstractOverrideChecker() {
                         val substitutedBase = it.fir.substituteOrNull(substitutor, context) ?: return@map it
                         anyBaseEnhanced = true
 
-                        if (!context.session.firOverrideChecker.isOverriddenProperty(member, substitutedBase)) {
+                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenProperty(member, substitutedBase)) {
+                            anyReported = true
                             reporter.reportOn(
                                 member.source,
                                 FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
@@ -85,7 +88,7 @@ object FirOverrideJavaNullabilityWarningChecker : FirAbstractOverrideChecker() {
                         substitutedBase.symbol
                     }
 
-                if (anyBaseEnhanced) {
+                if (anyBaseEnhanced && !anyReported) {
                     member.symbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
                         reporter.reportOn(
                             member.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, member.symbol, it, context
