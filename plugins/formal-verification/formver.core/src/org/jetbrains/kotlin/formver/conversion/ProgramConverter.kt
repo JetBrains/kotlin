@@ -42,6 +42,14 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private val classes: MutableMap<MangledName, ClassTypeEmbedding> = mutableMapOf()
     private val properties: MutableMap<MangledName, PropertyEmbedding> = mutableMapOf()
 
+    // Cast is valid since we check that values are not null. We specify the type for `filterValues` explicitly to ensure there's no
+    // loss of type information earlier.
+    @Suppress("UNCHECKED_CAST")
+    val debugExpEmbeddings: Map<MangledName, ExpEmbedding>
+        get() = methods
+            .mapValues { (it.value as? UserFunctionEmbedding)?.body?.debugExpEmbedding }
+            .filterValues { value: ExpEmbedding? -> value != null } as Map<MangledName, ExpEmbedding>
+
     override val whileIndexProducer = indexProducer()
     override val catchLabelNameProducer = simpleFreshEntityProducer { CatchLabelName(it) }
     override val tryExitLabelNameProducer = simpleFreshEntityProducer { TryExitLabelName(it) }

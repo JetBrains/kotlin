@@ -1,4 +1,4 @@
-/full_viper_dump.kt:(54,55): info: Generated Viper text for f:
+/full_viper_dump.kt:(134,135): info: Generated Viper text for f:
 domain dom$Any  {
 
 
@@ -325,3 +325,16 @@ method special$invoke_function_object(anonymous$0: Ref)
   ensures old(anonymous$0.special$function_object_call_counter) + 1 ==
     anonymous$0.special$function_object_call_counter
 
+
+/full_viper_dump.kt:(134,135): info: Generated ExpEmbedding for global$fun_f$fun_take$$return$T_Unit:
+Function(
+    name = global$fun_f$fun_take$$return$T_Unit,
+    {
+        Declare(
+            Var(local0$foo),
+            T_class_global$class_Foo,
+            MethodCall(callee = class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo, Int(0)),
+        );
+    },
+    return = label$ret$0,
+)

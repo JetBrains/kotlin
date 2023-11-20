@@ -19,6 +19,12 @@ object FormalVerificationPluginErrorMessages : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING,
         )
         put(
+            PluginErrors.EXP_EMBEDDING,
+            "Generated ExpEmbedding for {0}:\n{1}",
+            CommonRenderers.STRING,
+            CommonRenderers.STRING,
+        )
+        put(
             PluginErrors.VIPER_VERIFICATION_ERROR,
             "Viper verification error: {0}",
             CommonRenderers.STRING,

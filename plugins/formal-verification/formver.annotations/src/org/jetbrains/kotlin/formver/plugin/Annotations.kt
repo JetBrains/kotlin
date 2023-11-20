@@ -8,3 +8,4 @@ package org.jetbrains.kotlin.formver.plugin
 annotation class NeverConvert
 annotation class NeverVerify
 annotation class AlwaysVerify
+annotation class DumpExpEmbeddings

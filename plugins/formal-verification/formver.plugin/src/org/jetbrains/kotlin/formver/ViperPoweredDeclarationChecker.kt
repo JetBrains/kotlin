@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.formver.conversion.ProgramConverter
+import org.jetbrains.kotlin.formver.embeddings.expression.debug.print
 import org.jetbrains.kotlin.formver.reporting.VerifierErrorInterpreter
 import org.jetbrains.kotlin.formver.viper.Verifier
 import org.jetbrains.kotlin.formver.viper.ast.Program
@@ -50,6 +51,18 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
 
             getProgramForLogging(program)?.let {
                 reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, declaration.name.asString(), it.toDebugOutput(), context)
+            }
+
+            if (shouldDumpExpEmbeddings(declaration)) {
+                for ((name, embedding) in programConversionContext.debugExpEmbeddings) {
+                    reporter.reportOn(
+                        declaration.source,
+                        PluginErrors.EXP_EMBEDDING,
+                        name.mangled,
+                        embedding.debugTreeView.print(),
+                        context
+                    )
+                }
             }
 
             val verifier = Verifier()
@@ -88,6 +101,7 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
     private val neverConvertId: ClassId = getAnnotationId("NeverConvert")
     private val neverVerifyId: ClassId = getAnnotationId("NeverVerify")
     private val alwaysVerifyId: ClassId = getAnnotationId("AlwaysVerify")
+    private val dumpExpEmbeddingsId: ClassId = getAnnotationId("DumpExpEmbeddings")
 
     private fun PluginConfiguration.shouldConvert(declaration: FirSimpleFunction): Boolean = when {
         declaration.hasAnnotation(neverConvertId, session) -> false
@@ -100,4 +114,7 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
         declaration.hasAnnotation(alwaysVerifyId, session) -> true
         else -> verificationSelection.applicable(declaration)
     }
+
+    private fun shouldDumpExpEmbeddings(declaration: FirSimpleFunction): Boolean =
+        declaration.hasAnnotation(dumpExpEmbeddingsId, session)
 }
