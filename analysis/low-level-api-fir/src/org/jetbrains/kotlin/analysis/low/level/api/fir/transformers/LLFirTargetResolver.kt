@@ -8,15 +8,23 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal abstract class LLFirTargetResolver(
     protected val resolveTarget: LLFirResolveTarget,
@@ -26,7 +34,26 @@ internal abstract class LLFirTargetResolver(
 ) : LLFirResolveTargetVisitor {
     private val _nestedClassesStack = mutableListOf<FirRegularClass>()
 
-    val nestedClassesStack: List<FirRegularClass> get() = _nestedClassesStack.toList()
+    val nestedClassesStack: List<FirRegularClass> get() = _nestedClassesStack
+
+    /**
+     * @param context used as a context in the case of exception
+     * @return the last class from [nestedClassesStack]
+     */
+    fun containingClass(context: FirElement): FirRegularClass = nestedClassesStack.lastOrNull()
+        ?: errorWithAttachment("Containing class is not found") {
+            withFirEntry("context", context)
+        }
+
+    protected inline fun withClassInStack(clazz: FirRegularClass, action: () -> Unit) {
+        _nestedClassesStack += clazz
+        action()
+        val removed = _nestedClassesStack.removeLast()
+        checkWithAttachment(removed === clazz, { "Unexpected state"}) {
+            withFirEntry("expected", clazz)
+            withFirEntry("actual", removed)
+        }
+    }
 
     /**
      * @see resolveDependencyTarget
@@ -40,14 +67,33 @@ internal abstract class LLFirTargetResolver(
      * @see skipDependencyTargetResolutionStep
      */
     private fun resolveDependencyTarget(target: FirElementWithResolveState) {
-        if (skipDependencyTargetResolutionStep) return
-
-        if (target is FirFileAnnotationsContainer) return
+        if (skipDependencyTargetResolutionStep || target is FirFileAnnotationsContainer) return
         resolveTarget.firFile.annotationsContainer?.lazyResolveToPhase(resolverPhase)
 
         if (target is FirProperty) {
             // We share type references and annotations with the original parameter
             target.correspondingValueParameterFromPrimaryConstructor?.lazyResolveToPhase(resolverPhase)
+        }
+
+        if (target is FirSimpleFunction && target.origin == FirDeclarationOrigin.Synthetic.DataClassMember) {
+            resolveDataClassMemberDependencies(target)
+        }
+    }
+
+    private fun resolveDataClassMemberDependencies(function: FirSimpleFunction) {
+        when {
+            /**
+             * componentN method shares the return type with the corresponding property
+             * also status for the componentN method transforms during the corresponding property transformation
+             * [org.jetbrains.kotlin.fir.resolve.transformers.AbstractFirStatusResolveTransformer.transformProperty]
+             */
+            DataClassResolver.isComponentLike(function.name) -> {
+                val property = containingClass(function).declarations.firstNotNullOfOrNull { declaration ->
+                    (declaration as? FirProperty)?.takeIf { it.componentFunctionSymbol?.fir == function }
+                }
+
+                property?.lazyResolveToPhase(resolverPhase)
+            }
         }
     }
 
@@ -66,9 +112,9 @@ internal abstract class LLFirTargetResolver(
 
     @Suppress("DEPRECATION_ERROR")
     final override fun withRegularClass(firClass: FirRegularClass, action: () -> Unit) {
-        _nestedClassesStack += firClass
-        withRegularClassImpl(firClass, action)
-        check(_nestedClassesStack.removeLast() === firClass)
+        withClassInStack(firClass) {
+            withRegularClassImpl(firClass, action)
+        }
     }
 
     protected open fun checkResolveConsistency() {}

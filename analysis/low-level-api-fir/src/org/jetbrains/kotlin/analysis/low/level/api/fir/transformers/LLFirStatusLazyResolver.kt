@@ -190,7 +190,10 @@ private class LLFirStatusTargetResolver(
 
         if (resolveMode.resolveSupertypes) {
             transformer.storeClass(firClass) {
-                resolveCallableMembers(firClass)
+                withClassInStack(firClass) {
+                    resolveCallableMembers(firClass)
+                }
+
                 firClass
             }
 
