@@ -39,7 +39,11 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
     private val caller: Caller<M> = if (oldCaller is CallerImpl.Method.BoundStatic) {
         val receiverType = (descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter)?.type
-        if (receiverType != null && receiverType.needsMfvcFlattening() && (!isDefault || descriptor.valueParameters.any { it.declaresDefaultValue() })) {
+        if (
+            receiverType != null &&
+            receiverType.needsMfvcFlattening() &&
+            (!isDefault || descriptor.valueParameters.any { it.declaresDefaultValue() })
+        ) {
             val unboxMethods = getMfvcUnboxMethods(receiverType.asSimpleType())!!
             val boundReceiverComponents = unboxMethods.map { it.invoke(oldCaller.boundReceiver) }.toTypedArray()
             @Suppress("UNCHECKED_CAST")
@@ -285,10 +289,13 @@ private fun makeKotlinParameterTypes(
         val containingDeclaration = descriptor.containingDeclaration
         val isOwner = member?.declaringClass?.kotlin?.isValue == true
         if (containingDeclaration is ClassDescriptor && containingDeclaration.isSpecificClass()) {
-            if (isOwner) {
+            if (isOwner) { // Not containingDeclaration.isValue because it refers to IC/MFVC when the actual member is of DefaultImpls class.
                 kotlinParameterTypes.add(containingDeclaration.defaultType)
             } else {
                 // hack to forbid unboxing dispatchReceiver if it is used upcasted
+                // kotlinParameterTypes are used to determine shifts and calls according to whether type is MFVC/IC or not.
+                // If it is MFVC/IC, boxes are unboxed. If isOwner is false, it means that the actual called member lies in DefaultImpls class
+                // which accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
                 kotlinParameterTypes.add(containingDeclaration.defaultType.makeNullable())
             }
         }

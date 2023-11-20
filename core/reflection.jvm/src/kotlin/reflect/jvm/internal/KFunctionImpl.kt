@@ -102,24 +102,32 @@ internal class KFunctionImpl private constructor(
         }.createValueClassAwareCallerIfNeeded(descriptor)
     }
 
+    private fun getDefaultImplsForValueClassOrNull(): FunctionDescriptor? {
+        if (
+            descriptor.valueParameters.none { it.declaresDefaultValue() } &&
+            descriptor.containingDeclaration.isValueClass() &&
+            Modifier.isStatic(caller.member!!.modifiers)
+        ) {
+            // firstOrNull is used to mimic the wrong behaviour of regular class reflection as KT-40327 is not fixed.
+            // The behaviours equality is currently backed by codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt. 
+            return descriptor.overriddenTreeAsSequence(useOriginal = false)
+                .firstOrNull { function -> function.valueParameters.any { it.declaresDefaultValue() } } as? FunctionDescriptor
+        }
+        return null
+    }
+
     override val defaultCaller: Caller<*>? by lazy(PUBLICATION) defaultCaller@{
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinFunction -> run {
                 if (descriptor.let { it.containingDeclaration.isMultiFieldValueClass() && it is ConstructorDescriptor && it.isPrimary }) {
                     throw KotlinReflectionInternalError("${descriptor.containingDeclaration} cannot have default arguments")
                 }
-                if (
-                    descriptor.valueParameters.none { it.declaresDefaultValue() } &&
-                    descriptor.containingDeclaration.isValueClass() &&
-                    Modifier.isStatic(caller.member!!.modifiers)
-                ) {
-                    val defaultValuedFunction = descriptor.overriddenTreeAsSequence(false)
-                        .firstOrNull { function -> function.valueParameters.any { it.declaresDefaultValue() } } as? FunctionDescriptor
-                    if (defaultValuedFunction != null) {
-                        val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultValuedFunction) as KotlinFunction
-                        return@run container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)
-                    }
+
+                getDefaultImplsForValueClassOrNull()?.let { defaultImplsFunction ->
+                    val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultImplsFunction) as KotlinFunction
+                    return@run container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)
                 }
+
                 container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc, !Modifier.isStatic(caller.member!!.modifiers))
             }
             is KotlinConstructor -> {
@@ -158,6 +166,9 @@ internal class KFunctionImpl private constructor(
     private val boundReceiver
         get() = rawBoundReceiver.coerceToExpectedReceiverType(descriptor)
 
+    // boundReceiver is unboxed receiver when the receiver is inline class.
+    // However, when the expected dispatch receiver type is an interface,
+    // the member belongs to DefaultImpls, so the receiver should not be unboxed.
     private fun useBoxedBoundReceiver(member: Method) =
         descriptor.dispatchReceiverParameter?.type?.isInlineClassType() == true && member.parameterTypes.firstOrNull()?.isInterface == true
 
