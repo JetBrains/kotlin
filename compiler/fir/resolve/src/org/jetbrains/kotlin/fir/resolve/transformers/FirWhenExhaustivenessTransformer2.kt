@@ -151,11 +151,11 @@ class FirWhenExhaustivenessTransformer2Worker(
             val operatorOk = operator != null && operator.isOperator && operator.name == OperatorNameConventions.NOT
             val receiver = expression.dispatchReceiver
             if (!operatorOk || receiver == null) null.orNotUseful()
-            else getInformation(completeWhenExpression, receiver, expression, variableInformation).orNotUseful()
+            else getInformation(completeWhenExpression, receiver, expression, variableInformation) { it.isBoolean }.orNotUseful()
         }
         else ->
             // lone Boolean variables
-            getInformation(completeWhenExpression, expression, expression, variableInformation).orNotUseful()
+            getInformation(completeWhenExpression, expression, expression, variableInformation) { it.isBoolean }.orNotUseful()
     }
 
     private fun getInformation(
@@ -163,6 +163,7 @@ class FirWhenExhaustivenessTransformer2Worker(
         variable: FirExpression,
         whole: FirExpression,
         variableInformation: MutableMap<VariableSource, VariableInformation>,
+        onlyForType: (ConeKotlinType) -> Boolean = { true },
     ): WhenBranchList? {
         val unwrapped = variable.unwrapSmartcastExpression()
         if (unwrapped is FirWhenSubjectExpression && unwrapped.whenRef.value === completeWhenExpression) {
@@ -175,6 +176,8 @@ class FirWhenExhaustivenessTransformer2Worker(
                     ?.takeIf { it.stability == PropertyStability.STABLE_VALUE }
                     ?: return null
             val source = VariableSource.Real(realVar)
+            val info = VariableInformation.fromExpression(unwrapped, session)
+            if (!onlyForType(info.type)) return null
             if (source !in variableInformation) { // add information the first time
                 variableInformation[VariableSource.Real(realVar)] = VariableInformation.fromExpression(unwrapped, session)
             }
