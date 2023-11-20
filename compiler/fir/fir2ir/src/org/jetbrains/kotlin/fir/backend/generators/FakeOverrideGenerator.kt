@@ -57,15 +57,15 @@ class FakeOverrideGenerator(
         }
     }
 
-    fun IrClass.computeFakeOverrides(klass: FirClass, realDeclarations: Collection<FirDeclaration>) {
+    fun computeFakeOverrides(firClass: FirClass, irClass: IrClass, realDeclarations: Collection<FirDeclaration>) {
         val result = mutableListOf<IrDeclaration>()
-        val useSiteMemberScope = klass.unsubstitutedScope()
+        val useSiteMemberScope = firClass.unsubstitutedScope()
 
         val superTypesCallableNames = useSiteMemberScope.getCallableNames()
         val realDeclarationSymbols = realDeclarations.mapTo(mutableSetOf(), FirDeclaration::symbol)
 
         for (name in superTypesCallableNames) {
-            generateFakeOverridesForName(this, useSiteMemberScope, name, klass, result, realDeclarationSymbols)
+            generateFakeOverridesForName(irClass, useSiteMemberScope, name, firClass, result, realDeclarationSymbols)
         }
     }
 
