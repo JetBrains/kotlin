@@ -400,7 +400,7 @@ include ":native:swift:sir",
         ":native:swift:sir-passes",
         ":native:swift:sir-analysis-api",
         ":native:swift:sir-compiler-bridge",
-        ":generators:sir-analysis-api-generator"
+        ":generators:sir-tests-generator"
 
 void intellij(String imlPath) {
     File imlFile = new File("${rootDir}/intellij/community/plugins/kotlin/${imlPath}")

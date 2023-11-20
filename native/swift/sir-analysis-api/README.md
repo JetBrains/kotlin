@@ -11,13 +11,13 @@ It should be possible to populate SIR from two types of artefacts:
 
 ### How to generate tests:
 ```bash
-./gradlew :generators:sir-analysis-api-generator:generateSirAnalysisApiTests
+./gradlew :generators:sir-tests-generator:generateTests
 ```
 this will generate test by their input files. Input files could be found and should be placed here - `native/swift/sir-analysis-api/testData`
 
 The test expects to find `.sir` file, containing serialized SIR for the test-case. Name of the `.sir` file should be the same as a name of corresponding `.kt` file.
 
-The project for the generator can be found here - `generators/sir-analysis-api-generator/build.gradle.kts`
+The project for the generator can be found here - `generators/sir-tests-generator/build.gradle.kts`
 
 ### How to run tests:
 ```bash
