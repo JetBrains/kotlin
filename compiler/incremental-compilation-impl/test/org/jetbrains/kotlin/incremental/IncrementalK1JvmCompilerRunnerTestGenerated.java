@@ -2647,11 +2647,6 @@ public class IncrementalK1JvmCompilerRunnerTestGenerated extends AbstractIncreme
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/incrementalJvmCompilerOnly"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
         }
 
-        @TestMetadata("buildReport")
-        public void testBuildReport() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/incrementalJvmCompilerOnly/buildReport/");
-        }
-
         @TestMetadata("changeAnnotationInJavaClass")
         public void testChangeAnnotationInJavaClass() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/incrementalJvmCompilerOnly/changeAnnotationInJavaClass/");
@@ -2690,19 +2685,6 @@ public class IncrementalK1JvmCompilerRunnerTestGenerated extends AbstractIncreme
 
             public void testAllFilesPresentInAddNestedClass() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/incrementalJvmCompilerOnly/addNestedClass"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
-            }
-        }
-
-        @TestMetadata("jps/jps-plugin/testData/incremental/incrementalJvmCompilerOnly/buildReport")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class BuildReport extends AbstractIncrementalK1JvmCompilerRunnerTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInBuildReport() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/incrementalJvmCompilerOnly/buildReport"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
             }
         }
 

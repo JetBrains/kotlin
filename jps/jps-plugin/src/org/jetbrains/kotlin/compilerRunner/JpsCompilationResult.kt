@@ -28,8 +28,6 @@ class JpsCompilationResult : CompilationResults,
     private val log = JpsKotlinLogger(KotlinBuilder.LOG)
     @Throws(RemoteException::class)
     override fun add(compilationResultCategory: Int, value: Serializable) {
-        System.out.println("DEBUG: $compilationResultCategory category $value")
-        log.info("DEBUG: $compilationResultCategory category $value")
         when (compilationResultCategory) {
             CompilationResultCategory.IC_COMPILE_ITERATION.code -> {
                 @Suppress("UNCHECKED_CAST")

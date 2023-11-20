@@ -82,7 +82,6 @@ object DummyJpsStatisticsReportService : JpsStatisticsReportService() {
 
 }
 
-// TODO test UserDataHolder in CompileContext to store CompileStatisticsData.Build or KotlinBuilderMetric
 class JpsStatisticsReportServiceImpl(
     private val fileReportSettings: FileReportSettings?,
     httpReportSettings: HttpReportSettings?,
