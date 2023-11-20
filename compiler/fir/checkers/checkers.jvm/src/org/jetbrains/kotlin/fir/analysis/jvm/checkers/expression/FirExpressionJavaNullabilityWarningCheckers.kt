@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -153,7 +152,7 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
 
     if (!actualTypeForComparison.isSubtypeOf(context.session.typeContext, expectedTypeForComparison) &&
         // Don't report anything if the original types didn't match.
-        actualType.isSubtypeOf(context.session.typeContext, expectedType.asExpectedFunctionTypeIfSam(actualType, context))
+        actualType.isSubtypeOf(context.session.typeContext, expectedType)
     ) {
         reporter.reportOn(source, factory, actualTypeForComparison, expectedTypeForComparison, context)
     }
@@ -178,22 +177,5 @@ private fun getEnhancedTypesForComparison(
     val actualTypeForComparison = enhancedActualType ?: actualType
     val expectedTypeForComparison = enhancedExpectedType ?: expectedType
 
-    val expectedTypeAsFunctionTypeIfSam = expectedTypeForComparison.asExpectedFunctionTypeIfSam(actualTypeForComparison, context)
-
-    return actualTypeForComparison to expectedTypeAsFunctionTypeIfSam
-}
-
-/**
- * If the receiver is a SAM type and the [actualType] is a function type, converts the receiver to the corresponding function type.
- * Otherwise, returns receiver.
- *
- * TODO remove after KT-62847
- * */
-private fun ConeKotlinType.asExpectedFunctionTypeIfSam(actualType: ConeKotlinType, context: CheckerContext): ConeKotlinType {
-    if (!actualType.isSomeFunctionType(context.session) || isSomeFunctionType(context.session)) {
-        return this
-    }
-
-    val samResolver = FirSamResolver(context.session, context.scopeSession)
-    return samResolver.getFunctionTypeForPossibleSamType(this) ?: this
+    return actualTypeForComparison to expectedTypeForComparison
 }
