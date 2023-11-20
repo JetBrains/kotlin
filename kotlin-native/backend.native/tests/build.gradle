@@ -2840,6 +2840,9 @@ standaloneTest("stress_gc_allocations") {
 }
 
 standaloneTest("array_out_of_memory") {
+    // This test allocs a large array that may make Linux
+    // kill any process inlcuding Gradle with OOM-killer
+    enabled = project.target.family != Family.LINUX
     source = "runtime/memory/array_out_of_memory.kt"
     flags = ['-tr']
     switch(project.target.architecture) {
