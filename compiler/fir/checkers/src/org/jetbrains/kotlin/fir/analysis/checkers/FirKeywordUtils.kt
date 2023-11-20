@@ -87,6 +87,8 @@ sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywor
 fun KtSourceElement?.getModifierList(): FirModifierList? {
     return when (this) {
         null -> null
+        // todo this code is buggy. psi for fake declarations (e.g. ImplicitConstructor, EnumGeneratedDeclaration) means a completely different thing
+        //  KT-63751
         is KtPsiSourceElement -> (psi as? KtModifierListOwner)?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
         is KtLightSourceElement -> {
             val modifierListNode = lighterASTNode.getChildren(treeStructure).find { it.tokenType == KtNodeTypes.MODIFIER_LIST }

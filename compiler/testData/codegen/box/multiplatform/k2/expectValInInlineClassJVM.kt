@@ -15,7 +15,7 @@ expect value class Wrapper(val obj: Any) {
 
 @JvmInline
 actual value class Wrapper(val obj: Any) {
-    val prop: String
+    actual val prop: String
         get() = "OK"
 }
 

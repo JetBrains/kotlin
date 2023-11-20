@@ -32,7 +32,7 @@ expect class ImplicitlyActualizedByJvmDeclarationOnExpectOnly
 package kotlin
 
 @OptIn(ExperimentalMultiplatform::class)
-actual annotation class <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT!>OptionalExpectationOnExpectOnly<!>
+actual annotation class <!ACTUAL_WITHOUT_EXPECT!>OptionalExpectationOnExpectOnly<!>
 
 actual fun <!ACTUAL_WITHOUT_EXPECT!>skippedAnnotationsOnExpectOnly<!>() {}
 

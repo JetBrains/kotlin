@@ -11,6 +11,6 @@ open class Base<R> {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual open class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!><E, F : E> : Base<E>() {
-    override fun foo(): F = null!!
+actual open class Foo<E, F : E> : Base<E>() {
+    override fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>(): F = null!!
 }

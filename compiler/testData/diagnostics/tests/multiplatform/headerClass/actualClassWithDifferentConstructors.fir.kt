@@ -37,7 +37,7 @@ actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Bar1<!>(val s: String)
 actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Bar2<!>(val p: String = "value", i: Int)
 actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Bar3<!> = JavaBar
 actual class Bar4(val s: String) {
-    constructor() : this("")
+    <!ACTUAL_MISSING!>constructor() : this("")<!>
 }
 
 actual class Bar5 {
@@ -45,7 +45,7 @@ actual class Bar5 {
     constructor(s: String)
 }
 
-class Bar6 {
+class <!ACTUAL_MISSING!>Bar6<!> {
     actual constructor()
 }
 

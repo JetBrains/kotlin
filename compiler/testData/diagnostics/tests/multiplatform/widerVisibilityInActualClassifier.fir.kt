@@ -18,8 +18,8 @@ internal expect open class Other {
 
 // MODULE: platform-jvm()()(common)
 public actual open class Some { // should be allowed
-    public class ProtectedNested  // should be allowed
-    public class InternalNested // should be allowed
+    public class <!ACTUAL_MISSING!>ProtectedNested<!>  // should be allowed
+    public class <!ACTUAL_MISSING!>InternalNested<!> // should be allowed
 
     public actual fun publicFun() {} // should be allowed
     public actual fun internalFun() {} // should be allowed

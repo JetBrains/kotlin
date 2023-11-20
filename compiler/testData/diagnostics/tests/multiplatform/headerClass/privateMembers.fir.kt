@@ -16,8 +16,8 @@ expect class A private constructor() {
 // FILE: jvm.kt
 
 actual class A actual private constructor() {
-    private fun foo() {}
-    private val bar: String = ""
+    private fun <!ACTUAL_MISSING!>foo<!>() {}
+    private val <!ACTUAL_MISSING!>bar<!>: String = ""
     actual private fun Int.memExt(): Any = 0
 
     actual private class Nested

@@ -1,3 +1,4 @@
+// LANGUAGE: +MultiPlatformProjects
 fun main() {
     println("Hello, Kotlin/Native!")
 }

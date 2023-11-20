@@ -13,8 +13,8 @@ open class Base {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual open class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> : Base() {
-    override lateinit var red1: String
-    override var red2: String = ""
+actual open class Foo : Base() {
+    override lateinit var <!ACTUAL_WITHOUT_EXPECT!>red1<!>: String
+    override var <!ACTUAL_WITHOUT_EXPECT!>red2<!>: String = ""
     override lateinit var green: String
 }

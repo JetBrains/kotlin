@@ -41,5 +41,5 @@ actual class C {
 actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!>
 
 actual class E {
-    class N
+    class <!ACTUAL_MISSING!>N<!>
 }

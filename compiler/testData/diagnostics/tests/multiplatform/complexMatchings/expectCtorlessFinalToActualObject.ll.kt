@@ -28,10 +28,10 @@ expect annotation class ANNO01
 // FILE: jvm.kt
 
 actual object E01
-actual object <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E02<!>
+actual object <!ACTUAL_WITHOUT_EXPECT!>E02<!>
 actual object <!ACTUAL_WITHOUT_EXPECT!>E03<!>
 
-actual object <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E04<!>
+actual object <!ACTUAL_WITHOUT_EXPECT!>E04<!>
 
 actual object <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E05<!>
 actual object <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E06<!>

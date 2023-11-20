@@ -15,6 +15,6 @@ public class Foo {
 
 // FILE: jvm.kt
 
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!><T>(t: T) {
-    fun foo() {}
+class <!ACTUAL_MISSING, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!><T>(t: T) {
+    fun <!ACTUAL_MISSING!>foo<!>() {}
 }

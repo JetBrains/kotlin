@@ -6,6 +6,6 @@
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual open class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> {
-    final override fun toString() = "Foo"
+actual open class Foo {
+    final override fun <!ACTUAL_WITHOUT_EXPECT!>toString<!>() = "Foo"
 }

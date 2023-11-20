@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -108,7 +109,7 @@ internal fun checkStatementsAreResolved(script: FirScript) {
 }
 
 internal fun checkExpectForActualIsResolved(memberDeclaration: FirMemberDeclaration) {
-    if (!memberDeclaration.isActual) return
+    if (memberDeclaration.isExpect) return
 
     checkWithAttachment(
         condition = memberDeclaration.expectForActual != null,

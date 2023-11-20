@@ -16,14 +16,14 @@ expect open class Foo : Base {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual open class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> : Base() {
+actual open class Foo : Base() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 
     fun injectedMethod() {}
     val injectedProperty: Int = 42
-    override fun overrideReturnType(): String = ""
-    final override fun overrideModality1(): Any = ""
-    final override fun overrideModality2(): Any = ""
-    public override fun overrideVisibility(): Any = ""
+    override fun <!ACTUAL_WITHOUT_EXPECT!>overrideReturnType<!>(): String = ""
+    final override fun <!ACTUAL_WITHOUT_EXPECT!>overrideModality1<!>(): Any = ""
+    final override fun <!ACTUAL_WITHOUT_EXPECT!>overrideModality2<!>(): Any = ""
+    public override fun <!ACTUAL_WITHOUT_EXPECT!>overrideVisibility<!>(): Any = ""
 }
