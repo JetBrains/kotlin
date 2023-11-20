@@ -249,7 +249,14 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
             .mapNotNullTo(mutableListOf()) { it.kotlinFile.script }
     }
 
-    override fun computePackageNames(): Set<String>? = null
+    override fun computePackageNames(): Set<String>? =
+        buildSet {
+            extensionProvider.extensions.forEach { extension ->
+                extension.getContainedPackages().forEach { fqName ->
+                    add(fqName.asString())
+                }
+            }
+        }
 
     override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
     override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
