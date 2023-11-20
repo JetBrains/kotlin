@@ -75,7 +75,7 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
         enableBuildScan: Boolean = false,
         addHeapDumpOptions: Boolean = true,
         enableGradleDebug: Boolean = false,
-        enableKotlinDaemonMemoryLimitInMb: Int? = 3072,
+        enableKotlinDaemonMemoryLimitInMb: Int? = 3512,
         projectPathAdditionalSuffix: String = "",
         buildJdk: File? = null,
         localRepoDir: Path? = null,
