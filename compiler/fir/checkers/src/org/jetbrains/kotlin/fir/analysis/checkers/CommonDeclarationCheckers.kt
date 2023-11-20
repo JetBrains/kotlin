@@ -126,6 +126,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirOptInAnnotationClassChecker,
             FirCommonConstructorDelegationIssuesChecker,
             FirDelegationSuperCallInEnumConstructorChecker,
+            FirDelegationInExpectClassSyntaxChecker,
             FirDelegationInInterfaceSyntaxChecker,
             FirEnumClassSimpleChecker,
             FirLocalEntityNotAllowedChecker,
