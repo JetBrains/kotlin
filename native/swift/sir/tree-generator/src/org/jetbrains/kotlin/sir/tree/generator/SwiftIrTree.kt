@@ -9,6 +9,8 @@ package org.jetbrains.kotlin.sir.tree.generator
 
 import org.jetbrains.kotlin.generators.tree.StandardTypes.string
 import org.jetbrains.kotlin.sir.tree.generator.config.AbstractSwiftIrTreeBuilder
+import org.jetbrains.kotlin.sir.tree.generator.model.Element
+import org.jetbrains.kotlin.generators.tree.type
 
 object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
@@ -18,7 +20,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
     val module by element {
         customParentInVisitor = rootElement
-        // TODO
+        parent(declarationContainer)
     }
 
     val declarationParent by sealedElement()
@@ -33,12 +35,15 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val declaration by sealedElement {
         customParentInVisitor = rootElement
         +field("origin", originType)
-        +listField("attributes", attributeType)
         +field("visibility", swiftVisibilityType)
         +field("parent", declarationParent, mutable = true) {
             needAcceptAndTransform = false
             useInBaseTransformerDetection = false
         }
+    }
+
+    val foreignDeclaration by sealedElement {
+        parent(declaration)
     }
 
     val declarationWithName by sealedElement {
@@ -51,29 +56,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declarationWithName)
     }
 
-    val typeAlias by element {
-        parent(namedTypeDeclaration)
-    }
-
-    val `class` by element {
-        customParentInVisitor = namedTypeDeclaration
-        parent(namedTypeDeclaration)
-        parent(declarationContainer)
-    }
-
-    val actor by element {
-        customParentInVisitor = namedTypeDeclaration
-        parent(namedTypeDeclaration)
-        parent(declarationContainer)
-    }
-
-    val struct by element {
-        customParentInVisitor = namedTypeDeclaration
-        parent(namedTypeDeclaration)
-        parent(declarationContainer)
-    }
-
-    val enum by element {
+    val enum: Element by element {
         customParentInVisitor = namedTypeDeclaration
         parent(namedTypeDeclaration)
         parent(declarationContainer)
@@ -81,14 +64,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("cases", enumCase)
     }
 
-    val enumCase by element {
+    val enumCase: Element by element {
         parent(declarationWithName)
-    }
-
-    val protocol by element {
-        customParentInVisitor = namedTypeDeclaration
-        parent(namedTypeDeclaration)
-        parent(declarationContainer)
     }
 
     val callable by sealedElement {
@@ -98,41 +75,18 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val function by element {
         customParentInVisitor = callable
         parent(callable)
-        parent(declarationWithName)
+
+        +field("name", string)
+        +listField("parameters", parameterType)
+        +field("returnType", typeType)
     }
 
-    val init by element {
+    val foreignFunction by element {
+        customParentInVisitor = callable
         parent(callable)
-    }
+        parent(foreignDeclaration)
 
-    val accessor by sealedElement {
-        parent(callable)
-    }
-
-    val getter by element {
-        parent(accessor)
-    }
-
-    val setter by element {
-        parent(accessor)
-    }
-
-    val accessorContainer by sealedElement {
-        customParentInVisitor = rootElement
-        +field("getter", getter)
-        +field("setter", setter, nullable = true)
-    }
-
-    val property by element {
-        customParentInVisitor = accessorContainer
-        parent(declarationWithName)
-        parent(accessorContainer)
-    }
-
-    val subscript by element {
-        customParentInVisitor = accessorContainer
-        parent(declaration)
-        parent(accessorContainer)
+        +field("source", type<Any>())
     }
 
     val expression by element {

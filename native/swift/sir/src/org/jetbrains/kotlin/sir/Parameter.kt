@@ -5,4 +5,9 @@
 
 package org.jetbrains.kotlin.sir
 
-data class Attribute(val name: String, val arguments: List<Pair<String, SirExpression>>? = null)
+data class SirParameter(
+    val argumentName: String? = null,
+    val parameterName: String? = null,
+    val type: SirType,
+    /* TODO:  val defaultValue: Expression? = null, */
+)

@@ -5,6 +5,4 @@
 
 package org.jetbrains.kotlin.sir
 
-class Origin {
-    // TODO
-}
+data class Origin(val path: List<String>)

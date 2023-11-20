@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.sir
 
-import org.jetbrains.kotlin.sir.builder.SirClassBuilder
+import org.jetbrains.kotlin.sir.builder.SirEnumBuilder
 import org.junit.Test
 import kotlin.test.assertTrue
 
@@ -15,12 +15,14 @@ class SirTest {
     @Test
     fun exampleTest() {
         val fakeElement = produceSwiftElement()
+
+        println(fakeElement)
         assertTrue(fakeElement is SirElement)
     }
 
     private fun produceSwiftElement(): Any {
-        return SirClassBuilder().apply {
-            origin = Origin()
+        return SirEnumBuilder().apply {
+            origin = Origin(path = listOf())
             name = "name"
             visibility = SwiftVisibility.PUBLIC
         }.build()
