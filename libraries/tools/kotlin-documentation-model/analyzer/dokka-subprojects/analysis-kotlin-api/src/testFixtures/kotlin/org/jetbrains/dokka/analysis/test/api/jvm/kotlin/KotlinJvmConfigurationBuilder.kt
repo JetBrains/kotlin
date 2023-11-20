@@ -43,6 +43,7 @@ class KotlinJvmTestSourceSetBuilder : BaseTestDokkaSourceSetBuilder() {
     override fun build(): TestDokkaSourceSet {
         return TestDokkaSourceSet(
             analysisPlatform = Platform.jvm,
+            displayName = "KotlinJvmSourceSet",
             sourceSetID = DokkaSourceSetID(scopeId = "project", sourceSetName = "kotlin"),
             dependentSourceSets = setOf(),
             sourceRoots = additionalSourceRoots + setOf(KotlinJvmTestProject.DEFAULT_SOURCE_ROOT),

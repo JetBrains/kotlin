@@ -53,6 +53,7 @@ class MixedJvmTestSourceSetBuilder : BaseTestDokkaSourceSetBuilder() {
     override fun build(): TestDokkaSourceSet {
         return TestDokkaSourceSet(
             analysisPlatform = Platform.jvm,
+            displayName = "MixedJvmSourceSet",
             sourceSetID = DokkaSourceSetID(scopeId = "project", sourceSetName = "jvm"),
             dependentSourceSets = setOf(),
             sourceRoots = additionalSourceRoots + setOf(
