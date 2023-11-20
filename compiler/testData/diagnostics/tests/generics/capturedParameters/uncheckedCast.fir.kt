@@ -1,16 +1,16 @@
 fun <E> foo(x: Any, y: Any) : Any {
     class C
     // without E?
-    if(x is <!NO_TYPE_ARGUMENTS_ON_RHS!>C<!>) {
+    if (x is <!CANNOT_CHECK_FOR_ERASED!>C<!>) {
         return x
     }
 
     if (1 == 2) {
-        x as C
+        x <!UNCHECKED_CAST!>as C<!>
     }
 
     if (2 == 3) {
-        x as? C
+        x <!UNCHECKED_CAST!>as? C<!>
     }
 
     class Outer<F> {
@@ -18,16 +18,27 @@ fun <E> foo(x: Any, y: Any) : Any {
     }
 
     // bare type
+    if (y is <!NO_TYPE_ARGUMENTS_ON_RHS!>Outer<!>) {
+        return y
+    }
+
+    if (y is <!CANNOT_CHECK_FOR_ERASED!>Outer<*><!>) {
+        return y
+    }
+
     if (y is <!NO_TYPE_ARGUMENTS_ON_RHS!>Outer.Inner<!>) {
         return y
     }
 
-    if (y is Outer<*>.Inner) {
+    if (y is <!CANNOT_CHECK_FOR_ERASED!>Outer<*>.Inner<!>) {
         return y
     }
 
-    y as Outer<*>.Inner
-    y as Outer.Inner
+    y <!UNCHECKED_CAST!>as Outer<*><!>
+    y as <!NO_TYPE_ARGUMENTS_ON_RHS!>Outer<!>
+
+    y <!UNCHECKED_CAST!>as Outer<*>.Inner<!>
+    y as <!NO_TYPE_ARGUMENTS_ON_RHS!>Outer.Inner<!>
 
     return C()
 }

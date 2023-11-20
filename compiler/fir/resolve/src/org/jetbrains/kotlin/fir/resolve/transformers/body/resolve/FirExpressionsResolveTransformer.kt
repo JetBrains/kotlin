@@ -12,9 +12,14 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirOperation.AS
+import org.jetbrains.kotlin.fir.expressions.FirOperation.IS
+import org.jetbrains.kotlin.fir.expressions.FirOperation.NOT_IS
+import org.jetbrains.kotlin.fir.expressions.FirOperation.SAFE_AS
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
@@ -842,8 +847,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (firClass.typeParameters.isEmpty()) return this
 
         val originalType = argument.unwrapExpression().resolvedType
+        val outerClasses by lazy(LazyThreadSafetyMode.NONE) { firClass.symbol.getClassAndItsOuterClassesWhenLocal(session) }
         val newType = components.computeRepresentativeTypeForBareType(type, originalType)
-            ?: if (firClass.isLocal && (operation == FirOperation.AS || operation == FirOperation.SAFE_AS)) {
+            ?: if (
+                firClass.isLocal && firClass.typeParameters.none { it.symbol.containingDeclarationSymbol in outerClasses } &&
+                (operation == NOT_IS || operation == IS || operation == AS || operation == SAFE_AS)
+            ) {
                 (firClass as FirClass).defaultType()
             } else return buildErrorTypeRef {
                 source = this@withTypeArgumentsForBareType.source
@@ -857,7 +866,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode,
     ): FirStatement {
         val resolved = components.typeResolverTransformer.withBareTypes {
-            if (typeOperatorCall.operation == FirOperation.IS || typeOperatorCall.operation == FirOperation.NOT_IS) {
+            if (typeOperatorCall.operation == IS || typeOperatorCall.operation == NOT_IS) {
                 components.typeResolverTransformer.withIsOperandOfIsOperator {
                     typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
                 }
@@ -882,13 +891,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }, null)
 
         when (resolved.operation) {
-            FirOperation.IS, FirOperation.NOT_IS -> {
+            IS, NOT_IS -> {
                 resolved.resultType = session.builtinTypes.booleanType.type
             }
-            FirOperation.AS -> {
+            AS -> {
                 resolved.resultType = conversionTypeRef.coneType
             }
-            FirOperation.SAFE_AS -> {
+            SAFE_AS -> {
                 resolved.resultType = conversionTypeRef.coneType.withNullability(
                     ConeNullability.NULLABLE, session.typeContext,
                 )
@@ -900,7 +909,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     private fun FirTypeOperatorCall.transformTypeOperatorCallChildren(): FirTypeOperatorCall {
-        if (operation == FirOperation.AS || operation == FirOperation.SAFE_AS) {
+        if (operation == AS || operation == SAFE_AS) {
             val argument = argumentList.arguments.singleOrNull() ?: error("Not a single argument: ${this.render()}")
 
             // For calls in the form of (materialize() as MyClass) we've got a special rule that adds expect type to the `materialize()` call
@@ -914,7 +923,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                             it.typeArguments.isNotEmpty() ||
                             (it.lookupTag.toSymbol(session)?.fir as? FirTypeParameterRefsOwner)?.typeParameters?.isEmpty() == true
                 }?.let {
-                    if (operation == FirOperation.SAFE_AS)
+                    if (operation == SAFE_AS)
                         it.withNullability(ConeNullability.NULLABLE, session.typeContext)
                     else
                         it

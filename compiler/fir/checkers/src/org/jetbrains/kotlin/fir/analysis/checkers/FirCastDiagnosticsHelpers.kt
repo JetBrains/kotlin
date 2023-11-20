@@ -7,9 +7,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.getClassAndItsOuterClassesWhenLocal
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -169,6 +174,13 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     else if (subtype is ConeTypeParameterType) return false
 
     val regularClassSymbol = subtype.toRegularClassSymbol(context.session) ?: return true
+
+    val outerClasses = regularClassSymbol.getClassAndItsOuterClassesWhenLocal(context.session)
+
+    if (regularClassSymbol.isLocal && regularClassSymbol.typeParameterSymbols.any { it.containingDeclarationSymbol !in outerClasses }) {
+        return true
+    }
+
     val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, regularClassSymbol, context)
 
     // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
