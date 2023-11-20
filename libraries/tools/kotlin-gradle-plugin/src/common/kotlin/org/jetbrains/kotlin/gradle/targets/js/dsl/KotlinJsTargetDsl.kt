@@ -10,6 +10,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
@@ -33,7 +34,10 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
     fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit)
 }
 
-interface KotlinJsTargetDsl : KotlinTarget, KotlinTargetWithNodeJsDsl {
+interface KotlinJsTargetDsl :
+    KotlinTarget,
+    KotlinTargetWithNodeJsDsl,
+    HasBinaries<KotlinJsBinaryContainer>{
     var moduleName: String?
 
     fun browser() = browser { }
@@ -55,8 +59,6 @@ interface KotlinJsTargetDsl : KotlinTarget, KotlinTargetWithNodeJsDsl {
 
     fun generateTypeScriptDefinitions()
 
-    val binaries: KotlinJsBinaryContainer
-
     @Deprecated(
         message = "produceExecutable() was changed on binaries.executable()",
         replaceWith = ReplaceWith("binaries.executable()"),
@@ -70,6 +72,8 @@ interface KotlinJsTargetDsl : KotlinTarget, KotlinTargetWithNodeJsDsl {
 
     // Need to compatibility when users use KotlinJsCompilation specific in build script
     override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
+
+    override val binaries: KotlinJsBinaryContainer
 }
 
 interface KotlinTargetWithNodeJsDsl {

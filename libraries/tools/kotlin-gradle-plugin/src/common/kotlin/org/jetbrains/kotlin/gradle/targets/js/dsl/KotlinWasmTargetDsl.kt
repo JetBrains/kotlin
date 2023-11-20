@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 
-interface KotlinWasmTargetDsl : KotlinTarget {
+interface KotlinWasmTargetDsl : KotlinTarget, HasBinaries<KotlinJsBinaryContainer> {
     val wasmTargetType: KotlinWasmTargetType?
 
     fun applyBinaryen() = applyBinaryen { }
@@ -20,4 +24,8 @@ interface KotlinWasmTargetDsl : KotlinTarget {
             fn.execute(this)
         }
     }
+
+    override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
+
+    override val binaries: KotlinJsBinaryContainer
 }

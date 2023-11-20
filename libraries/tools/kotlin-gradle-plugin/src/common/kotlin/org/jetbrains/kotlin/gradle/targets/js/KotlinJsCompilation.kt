@@ -25,7 +25,8 @@ import javax.inject.Inject
 
 open class KotlinJsCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilation) {
+) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilation),
+    HasBinaries<KotlinJsBinaryContainer> {
 
     @Suppress("UNCHECKED_CAST")
     final override val compilerOptions: HasCompilerOptions<KotlinJsCompilerOptions>
@@ -39,7 +40,7 @@ open class KotlinJsCompilation @Inject internal constructor(
         configure.execute(compilerOptions.options)
     }
 
-    val binaries: KotlinJsBinaryContainer =
+    override val binaries: KotlinJsBinaryContainer =
         compilation.target.project.objects.newInstance(
             KotlinJsBinaryContainer::class.java,
             compilation.target,
