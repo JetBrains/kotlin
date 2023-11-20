@@ -409,7 +409,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileElements.kt
     public? final? [ResolvedTo(RAW_FIR)] val c: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun test1(): R|kotlin/Unit| { LAZY_BLOCK }
-    @Deprecated[Unresolved](String()) @Anno[Unresolved](IntegerLiteral(2)) public? final? [ResolvedTo(RAW_FIR)] fun test2(): R|kotlin/Unit| { LAZY_BLOCK }
+    @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun test2(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
             LAZY_super<R|kotlin/Any|>
@@ -420,7 +420,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileElements.kt
         @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun test4(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Anno[Unresolved](IntegerLiteral(4)) @Deprecated[Unresolved](String()) public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+    @Anno[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -448,7 +448,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fileElements.kt
     public final [ResolvedTo(BODY_RESOLVE)] val c: R|kotlin/Int| = R|one/b|.R|kotlin/Int.plus|(R|one/a|)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public? final? [ResolvedTo(RAW_FIR)] fun test1(): R|kotlin/Unit| { LAZY_BLOCK }
-    @Deprecated[Unresolved](String()) @Anno[Unresolved](IntegerLiteral(2)) public? final? [ResolvedTo(RAW_FIR)] fun test2(): R|kotlin/Unit| { LAZY_BLOCK }
+    @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun test2(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
             LAZY_super<R|kotlin/Any|>
@@ -459,7 +459,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fileElements.kt
         @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun test4(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Anno[Unresolved](IntegerLiteral(4)) @Deprecated[Unresolved](String()) public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+    @Anno[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
             LAZY_super<R|kotlin/Any|>
         }

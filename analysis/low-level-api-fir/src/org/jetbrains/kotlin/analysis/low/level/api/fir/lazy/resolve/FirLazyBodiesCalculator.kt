@@ -674,6 +674,11 @@ private object FirTargetLazyAnnotationCalculatorTransformer : FirLazyAnnotationT
         // We shouldn't process blocks because there are no lazy annotations
         return block
     }
+
+    override fun transformFile(file: FirFile, data: FirLazyAnnotationTransformerData): FirFile {
+        file.transformAnnotationsContainer(this, data)
+        return file
+    }
 }
 
 private abstract class FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTransformerData>() {
