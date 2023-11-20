@@ -52,7 +52,7 @@ fun f4() {
 
     receiver.hello1
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello1<!><Int>
-    receiver.hello1<Int, String>() // legal `String.invoke` call
+    receiver.<!TYPE_ARGUMENTS_NOT_ALLOWED!>hello1<!><Int, String>()
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello1<!><String>
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello1<!><Int, String>
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello1<!><Int, String, String>
@@ -60,14 +60,14 @@ fun f4() {
     with (ContextImpl<String>()) {
         hello2
         <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello2<!><String>
-        hello2<String, Int>() // legal `String.invoke` call
+        <!TYPE_ARGUMENTS_NOT_ALLOWED!>hello2<!><String, Int>()
         <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello2<!><Int>
         <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello2<!><String, Int>
         <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello2<!><String, Int, Int>
 
         receiver.hello3
         receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello3<!><Int, String>
-        receiver.hello3<Int, String>() // legal `String.invoke` call
+        receiver.<!TYPE_ARGUMENTS_NOT_ALLOWED!>hello3<!><Int, String>()
         receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello3<!><String, Int>
         receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello3<!><Int>
         receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello3<!><Int, String, String>

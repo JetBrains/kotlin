@@ -251,7 +251,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             for (part in typeRef.qualifier) {
                 if (part.typeArgumentList.typeArguments.isNotEmpty()) {
                     return ConeErrorType(
-                        ConeUnexpectedTypeArgumentsError("Type arguments not allowed", part.typeArgumentList.source),
+                        ConeUnexpectedTypeArgumentsError("Type arguments not allowed for type parameters", part.typeArgumentList.source),
                         typeArguments = resultingArguments
                     )
                 }
@@ -289,7 +289,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             if (currentDeclaration == null) {
                 // It's a package name
                 if (qualifierPartArgsCount > 0) {
-                    return ConeTypeArgumentsNotAllowedError(typeArgumentList.source!!)
+                    return ConeTypeArgumentsNotAllowedOnPackageError(typeArgumentList.source!!)
                 }
                 break
             }
