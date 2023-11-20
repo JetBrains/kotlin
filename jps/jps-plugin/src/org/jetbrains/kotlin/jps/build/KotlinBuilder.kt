@@ -68,7 +68,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             System.getProperty("kotlin.jps.classesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
         private val classPrefixesToLoadByParentFromRegistry =
             System.getProperty("kotlin.jps.classPrefixesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
-        private val reportService = JpsStatisticsReportService()
+        private val reportService = JpsStatisticsReportService.create()
 
         val classesToLoadByParent: ClassCondition
             get() = ClassCondition { className ->
