@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
@@ -277,7 +279,7 @@ class FirSyntheticPropertiesScope private constructor(
      */
     private fun isJavaTypeOnThePath(baseType: ConeSimpleKotlinType?): Boolean {
         val lookupTagToStop = (baseType as? ConeLookupTagBasedType)?.lookupTag ?: return false
-        val dispatchReceiverClass = (dispatchReceiverType as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session) ?: return false
+        val dispatchReceiverClassSymbol = (dispatchReceiverType as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session) ?: return false
 
         val typeContext = session.typeContext
         fun checkType(type: ConeClassLikeType): Boolean {
@@ -294,10 +296,17 @@ class FirSyntheticPropertiesScope private constructor(
             return true
         }
 
-        val superTypes = lookupSuperTypes(dispatchReceiverClass, lookupInterfaces = true, deep = true, session)
-        for (superType in superTypes) {
-            if (checkType(superType)) return true
+        when (dispatchReceiverClassSymbol) {
+            is FirClassLikeSymbol -> {
+                val superTypes = lookupSuperTypes(dispatchReceiverClassSymbol, lookupInterfaces = true, deep = true, session)
+                for (superType in superTypes) {
+                    if (checkType(superType)) return true
+                }
+                return false
+            }
+            is FirTypeParameterSymbol -> {
+                error("Type parameter symbol ${dispatchReceiverClassSymbol.name} is not expected here")
+            }
         }
-        return false
     }
 }

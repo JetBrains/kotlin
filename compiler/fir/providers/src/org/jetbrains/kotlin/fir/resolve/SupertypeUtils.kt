@@ -64,7 +64,7 @@ fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): Lis
 }
 
 fun lookupSuperTypes(
-    symbols: List<FirClassifierSymbol<*>>,
+    symbols: List<FirClassSymbol<*>>,
     lookupInterfaces: Boolean,
     deep: Boolean,
     useSiteSession: FirSession,
@@ -161,7 +161,7 @@ fun FirClass.isThereLoopInSupertypes(session: FirSession): Boolean {
 }
 
 fun lookupSuperTypes(
-    symbol: FirClassifierSymbol<*>,
+    symbol: FirClassLikeSymbol<*>,
     lookupInterfaces: Boolean,
     deep: Boolean,
     useSiteSession: FirSession
@@ -231,7 +231,7 @@ private fun ConeClassLikeType.computePartialExpansion(
     supertypeSupplier: SupertypeSupplier
 ): ConeClassLikeType = fullyExpandedType(useSiteSession) { supertypeSupplier.expansionForTypeAlias(it, useSiteSession) }
 
-private fun FirClassifierSymbol<*>.collectSuperTypes(
+private fun FirClassLikeSymbol<*>.collectSuperTypes(
     list: MutableList<ConeClassLikeType>,
     visitedSymbols: MutableSet<FirClassifierSymbol<*>>,
     deep: Boolean,
@@ -287,7 +287,6 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
             expansion.lookupTag.toSymbol(useSiteSession)
                 ?.collectSuperTypes(list, visitedSymbols, deep, lookupInterfaces, substituteSuperTypes, useSiteSession, supertypeSupplier)
         }
-        else -> error("?!id:1")
     }
 }
 
