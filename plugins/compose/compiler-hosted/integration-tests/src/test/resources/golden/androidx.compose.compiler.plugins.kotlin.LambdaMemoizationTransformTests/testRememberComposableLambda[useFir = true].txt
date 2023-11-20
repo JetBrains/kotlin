@@ -58,7 +58,7 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
         }
       }
     }
-    (%composer, 6)
+    (%composer, 0)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

@@ -3093,6 +3093,13 @@ class ComposableFunctionBodyTransformer(
                 before = listOf(irStartReplaceableGroup(expression, blockScope)),
                 after = listOf(irEndReplaceableGroup(scope = blockScope))
             )
+        }.also { block ->
+            if (
+                stabilityInferencer.stabilityOf(block.type).knownStable() &&
+                    inputArgMetas.all { it.isStatic }
+            ) {
+                context.irTrace.record(ComposeWritableSlices.IS_STATIC_EXPRESSION, block, true)
+            }
         }
     }
 
