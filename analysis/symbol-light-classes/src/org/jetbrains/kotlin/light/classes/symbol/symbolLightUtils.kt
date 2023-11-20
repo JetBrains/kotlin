@@ -199,14 +199,14 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
             values.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent) }
         }
 
-    is KtAnnotationApplicationValue ->
+    is KtAnnotationApplicationValue -> {
         SymbolLightSimpleAnnotation(
             fqName = annotationValue.classId?.asFqNameString(),
             parent = parent,
-            arguments = annotationValue.arguments,
+            arguments = annotationValue.normalizedArguments(),
             kotlinOrigin = annotationValue.psi,
         )
-
+    }
     is KtConstantAnnotationValue -> {
         constantValue.createPsiExpression(parent)?.let {
             when (it) {
@@ -220,6 +220,22 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
     is KtKClassAnnotationValue -> toAnnotationMemberValue(parent)
     KtUnsupportedAnnotationValue -> null
 }
+
+internal fun KtAnnotationApplicationWithArgumentsInfo.normalizedArguments(): List<KtNamedAnnotationValue> {
+    val args = arguments
+    val ctorSymbolPointer = constructorSymbolPointer ?: return args
+    val element = psi ?: return args // May work incorrectly. See KT-63568
+
+    return analyzeForLightClasses(element) {
+        val constructorSymbol = ctorSymbolPointer.restoreSymbolOrThrowIfDisposed()
+        val params = constructorSymbol.valueParameters
+        val missingVarargParameterName =
+            params.singleOrNull { it.isVararg && !it.hasDefaultValue }?.name?.takeIf { name -> args.none { it.name == name } }
+        if (missingVarargParameterName == null) args
+        else args + KtNamedAnnotationValue(missingVarargParameterName, KtArrayAnnotationValue(emptyList(), null))
+    }
+}
+
 
 private fun KtEnumEntryAnnotationValue.asPsiReferenceExpression(parent: PsiElement): SymbolPsiReference? {
     val fqName = this.callableId?.asSingleFqName()?.asString() ?: return null
