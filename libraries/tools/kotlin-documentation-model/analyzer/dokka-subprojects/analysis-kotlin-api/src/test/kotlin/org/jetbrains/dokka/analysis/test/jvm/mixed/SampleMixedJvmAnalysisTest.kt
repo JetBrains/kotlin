@@ -72,10 +72,12 @@ class SampleMixedJvmAnalysisTest {
         val secondClasslike = pckg.classlikes[1]
         assertEquals("MyJavaFileInJava", secondClasslike.name)
 
-        val firstFunction = pckg.functions[0]
+        // TODO #3250 address unstable order
+        val functions = pckg.functions.sortedBy { it.name }
+        val firstFunction = functions[0]
         assertEquals("bar", firstFunction.name)
 
-        val secondFunction = pckg.functions[1]
+        val secondFunction = functions[1]
         assertEquals("foo", secondFunction.name)
     }
 }

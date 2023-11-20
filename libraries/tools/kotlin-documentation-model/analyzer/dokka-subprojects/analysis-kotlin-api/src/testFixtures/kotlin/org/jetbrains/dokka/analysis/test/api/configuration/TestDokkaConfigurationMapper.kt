@@ -88,6 +88,7 @@ fun TestDokkaConfiguration.toDokkaConfiguration(projectDir: File): DokkaConfigur
 
 private fun TestDokkaSourceSet.toDokkaSourceSet(relativeToDir: File): DokkaConfiguration.DokkaSourceSet {
     val analysisPlatform = this.analysisPlatform
+    val displayName = this.displayName
     val sourceSetID = this.sourceSetID
     val dependentSourceSets = this.dependentSourceSets
     val sourceRoots = this.sourceRoots.mapToSet { it.relativeTo(relativeToDir) }
@@ -108,6 +109,9 @@ private fun TestDokkaSourceSet.toDokkaSourceSet(relativeToDir: File): DokkaConfi
 
         override val analysisPlatform: Platform
             get() = analysisPlatform
+
+        override val displayName: String
+            get() = displayName
 
         override val sourceSetID: DokkaSourceSetID
             get() = sourceSetID
@@ -142,8 +146,6 @@ private fun TestDokkaSourceSet.toDokkaSourceSet(relativeToDir: File): DokkaConfi
          * analysis (i.e starts throwing an exception), a corresponding
          * test property should be added along with the mapping.
          */
-        override val displayName: String
-            get() = throw NotImplementedError("Not expected to be used by analysis modules")
         @Suppress("OVERRIDE_DEPRECATION")
         override val includeNonPublic: Boolean
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
