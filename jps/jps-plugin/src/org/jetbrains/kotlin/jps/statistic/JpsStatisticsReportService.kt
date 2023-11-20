@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.build.report.FileReportSettings
 import org.jetbrains.kotlin.build.report.HttpReportSettings
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.*
-import org.jetbrains.kotlin.build.report.statistics.file.FileReportService
 import org.jetbrains.kotlin.compilerRunner.JpsCompilationResult
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinLogger
 import org.jetbrains.kotlin.jps.build.KotlinChunk
@@ -21,6 +20,8 @@ import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import java.io.File
 import java.net.InetAddress
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayList
 
 interface JpsBuilderMetricReporter : BuildMetricsReporter<JpsBuildTime, JpsBuildPerformanceMetric> {
@@ -152,20 +153,20 @@ class JpsStatisticsReportService {
         }
     }
 
-    private val buildMetrics = HashMap<String, JpsBuilderMetricReporter>()
-    private val finishedModuleBuildMetrics = ArrayList<JpsBuilderMetricReporter>()
+    private val buildMetrics = ConcurrentHashMap<String, JpsBuilderMetricReporter>()
+    private val finishedModuleBuildMetrics = ConcurrentLinkedQueue<JpsBuilderMetricReporter>()
     private val log = Logger.getInstance("#org.jetbrains.kotlin.jps.statistic.KotlinBuilderReportService")
     private val loggerAdapter = JpsKotlinLogger(log)
     private val httpService = httpReportSettings?.let { HttpReportService(it.url, it.user, it.password) }
 
     fun moduleBuildStarted(chunk: ModuleChunk) {
         val moduleName = chunk.name
-        if (buildMetrics[moduleName] != null) {
+        val jpsReporter = JpsBuilderMetricReporterImpl(chunk, BuildMetricsReporterImpl())
+        if (buildMetrics.putIfAbsent(moduleName, jpsReporter) != jpsReporter) {
             log.warn("Service already initialized for context")
             return
         }
         log.info("JpsStatisticsReportService: Service started")
-        buildMetrics[moduleName] = JpsBuilderMetricReporterImpl(chunk, BuildMetricsReporterImpl())
     }
 
     internal fun getMetricReporter(chunk: ModuleChunk): JpsBuilderMetricReporter? {
