@@ -1,7 +1,7 @@
 // FILE: one.kt
 
 package com.awesome.namespace
-fun foo() = println("")
+fun foo(): Unit = println("")
 
 fun bar() = ""
 

@@ -1,4 +1,15 @@
-[namespace, foo]
-[namespace, foo]
-[other, namespace, foo]
-[other, namespace, foo]
+    fqName: [namespace, foo]
+    params: [(arg1, kotlin/Int)]
+    returnType: kotlin/Unit
+
+    fqName: [namespace, foo]
+    params: [(arg1, kotlin/Double)]
+    returnType: kotlin/Unit
+
+    fqName: [other, namespace, foo]
+    params: [(arg1, kotlin/Int)]
+    returnType: kotlin/Unit
+
+    fqName: [other, namespace, foo]
+    params: [(arg1, kotlin/Double)]
+    returnType: kotlin/Unit

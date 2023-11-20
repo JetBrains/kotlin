@@ -18,4 +18,8 @@ class SirModule : SirElement {
 
 interface SirDeclaration
 
-class SirForeignFunction(val fqName: List<String>) : SirDeclaration
+class SirForeignFunction(
+    val fqName: List<String>,
+    val arguments: List<Pair<String, String>>,
+    val returnType: String
+) : SirDeclaration

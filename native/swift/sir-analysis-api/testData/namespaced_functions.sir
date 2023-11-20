@@ -1,3 +1,11 @@
-[com, awesome, namespace, foo]
-[com, awesome, namespace, bar]
-[com, awesome, other, namespace, foo]
+    fqName: [com, awesome, namespace, foo]
+    params: []
+    returnType: kotlin/Unit
+
+    fqName: [com, awesome, namespace, bar]
+    params: []
+    returnType: kotlin/String
+
+    fqName: [com, awesome, other, namespace, foo]
+    params: []
+    returnType: kotlin/String

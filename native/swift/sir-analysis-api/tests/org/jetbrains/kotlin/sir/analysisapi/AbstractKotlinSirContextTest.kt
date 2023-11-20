@@ -55,10 +55,16 @@ abstract class AbstractKotlinSirContextTestBase : AbstractAnalysisApiBasedTest()
             module.declarations
                 .filterIsInstance<SirForeignFunction>()
                 .forEach {
-                    appendLine("${it.fqName}")
+                    appendLine(it.print())
                 }
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".sir")
     }
+}
+
+fun SirForeignFunction.print(): String = buildString {
+    appendLine("fqName: $fqName".prependIndent())
+    appendLine("params: $arguments".prependIndent())
+    appendLine("returnType: $returnType".prependIndent())
 }
