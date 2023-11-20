@@ -41,18 +41,16 @@ open class B {
 
 // CHECK:
 //   Mangled name: D
-//   Public signature: [ File '<unknown>' <- /D|null[0] ]
+//   Public signature: [ File '/test.kt' <- /D|null[0] ]
 private class D : C {
   // CHECK:
   //   Mangled name: D#<init>(A){}
-  //   Public signature: /D.<init>|-3166999336802030902[0]
-  //   Public signature debug description: <init>(A){}
+  //   Public signature: [ File '/test.kt' <- /D.<init>|-3166999336802030902[0] ]
   constructor(a: A) /* primary */
 
   // CHECK:
   //   Mangled name: D#getA(){0§<A>}0:0
-  //   Public signature: /D.getA|6265629995120627543[0]
-  //   Public signature debug description: getA(){0§<A>}0:0
+  //   Public signature: [ File '/test.kt' <- /D.getA|6265629995120627543[0] ]
   /* fake */ override fun <T : A> getA(): T
 
 }

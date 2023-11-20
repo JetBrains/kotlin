@@ -7,11 +7,6 @@ class Impl : A, B {
   //   Public signature: /Impl.<init>|1084968671839233134[0]
   //   Public signature debug description: <init>(Foo.B){}
   constructor(b: B) /* primary */
-  // CHECK:
-  //   Mangled name: Impl.$$delegate_0
-  //   Public signature: /Impl.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: B
   // CHECK JVM_IR:
   //   Mangled name: Impl#add(kotlin.String?){}kotlin.Boolean
   //   Public signature: /Impl.add|-2525808668243873976[0]

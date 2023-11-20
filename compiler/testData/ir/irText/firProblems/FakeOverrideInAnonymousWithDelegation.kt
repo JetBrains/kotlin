@@ -1,8 +1,3 @@
-// DUMP_LOCAL_DECLARATION_SIGNATURES
-
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57430
-
 class Wrapper {
     private val dummy = object : Bar {}
     private val bar = object : Bar by dummy {}

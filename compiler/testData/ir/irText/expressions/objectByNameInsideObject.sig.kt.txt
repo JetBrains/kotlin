@@ -7,7 +7,6 @@ open class Base {
   //   Public signature: /Base.f1|-3626880138223960403[0]
   //   Public signature debug description: {}f1
   val f1: Function0<Any>
-    field
     // CHECK JVM_IR:
     //   Mangled name: Base#<get-f1>(){}kotlin.Function0<kotlin.Any>
     //   Public signature: /Base.f1.<get-f1>|8566118280674785385[0]
@@ -35,13 +34,6 @@ object Thing : Base {
   //   Public signature: /Thing.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   private constructor() /* primary */
-    // CHECK JVM_IR:
-    //   Mangled name: Thing#<init>(){}#<anonymous>#static(){}kotlin.Any
-    //   Mangled name for the signature: <init>(){}<anonymous>#static(){}kotlin.Any
-    // CHECK JS_IR NATIVE:
-    //   Mangled name: Thing#<init>(){}#<anonymous>#static(){}
-    //   Mangled name for the signature: <init>(){}<anonymous>#static(){}
-    local fun <anonymous>(): Any
 
   // CHECK JVM_IR:
   //   Mangled name: Thing#test1(){}Thing

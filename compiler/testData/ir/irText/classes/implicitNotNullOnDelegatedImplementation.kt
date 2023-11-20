@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57788
+// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
+// ^ KT-57788: Fix computing mangled names of types with @EnhancedNullability from IR-based declaration descriptors
 
 // FILE: implicitNotNullOnDelegatedImplementation.kt
 interface IFoo {

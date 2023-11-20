@@ -2,9 +2,6 @@
 // FULL_JDK
 // WITH_STDLIB
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57778
-
 import java.lang.reflect.Type
 
 interface ComponentContainer

@@ -7,16 +7,6 @@ class C : J, K {
   //   Public signature: /C.<init>|-2567074436149559695[0]
   //   Public signature debug description: <init>(J;K){}
   constructor(j: J, k: K) /* primary */
-  // CHECK:
-  //   Mangled name: C.$$delegate_0
-  //   Public signature: /C.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: J
-  // CHECK:
-  //   Mangled name: C.$$delegate_1
-  //   Public signature: /C.$$delegate_1|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_1: K
   // CHECK JVM_IR:
   //   Mangled name: C#jf1(){}kotlin.collections.MutableCollection<out|kotlin.CharSequence?>?
   //   Public signature: /C.jf1|-387990976967063904[0]

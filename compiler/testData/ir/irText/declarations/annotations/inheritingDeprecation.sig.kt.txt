@@ -49,11 +49,6 @@ class Delegated : IFoo {
   //   Public signature: /Delegated.<init>|-657369904845510135[0]
   //   Public signature debug description: <init>(IFoo){}
   constructor(foo: IFoo) /* primary */
-  // CHECK:
-  //   Mangled name: Delegated.$$delegate_0
-  //   Public signature: /Delegated.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: IFoo
 
   // CHECK:
   //   Mangled name: Delegated@kotlin.String{}extProp

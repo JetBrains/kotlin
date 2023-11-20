@@ -18,8 +18,10 @@ fun foo(arg: Number): Unit
 //   Mangled name: #main(kotlin.Array<kotlin.String>){}
 //   Mangled name for the signature computed from Ir:         main(kotlin.Array<kotlin.String>){}
 //   Mangled name for the signature computed from Descriptor: main(kotlin.Array<kotlin.String>){}%argumentMappedWithError.kt
-//   Public signature: /main|5561668743171252170[0]
-//   Public signature debug description: main(kotlin.Array<kotlin.String>){}%argumentMappedWithError.kt
+//   Public signature by IR: /main|5976701115139892152[0]
+//   Public signature by IR debug description: main(kotlin.Array<kotlin.String>){}
+//   Public signature by Frontend: /main|5561668743171252170[0]
+//   Public signature by Frontend debug description: main(kotlin.Array<kotlin.String>){}%argumentMappedWithError.kt
 // CHECK JS_IR NATIVE:
 //   Mangled name: #main(kotlin.Array<kotlin.String>){}
 //   Public signature: /main|5976701115139892152[0]

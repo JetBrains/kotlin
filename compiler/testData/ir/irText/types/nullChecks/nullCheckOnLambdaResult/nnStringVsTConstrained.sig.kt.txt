@@ -3,10 +3,6 @@
 //   Public signature: /testWithNullCheck|7420857220126640924[0]
 //   Public signature debug description: testWithNullCheck(kotlin.Array<kotlin.String>){}
 fun testWithNullCheck(xs: Array<String>): Unit
-  // CHECK JVM_IR:
-  //   Mangled name: #testWithNullCheck(kotlin.Array<kotlin.String>){}#<anonymous>#static(){}kotlin.String
-  //   Mangled name for the signature: testWithNullCheck(kotlin.Array<kotlin.String>){}<anonymous>#static(){}kotlin.String
-  local fun <anonymous>(): String
 
 // CHECK JVM_IR:
 //   Mangled name: #useTConstrained(kotlin.Array<0:0>;kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0

@@ -1,8 +1,7 @@
 // FIR_IDENTICAL
-// DUMP_LOCAL_DECLARATION_SIGNATURES
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57755, KT-57430
+// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
+// ^ KT-57755: Fix computing a mangled name for the `main` function
 
 fun main() {
     class Foo {

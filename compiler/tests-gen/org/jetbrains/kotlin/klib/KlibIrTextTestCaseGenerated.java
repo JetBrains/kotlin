@@ -1303,6 +1303,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/incrementDecrement.kt");
         }
 
+        @TestMetadata("inlinedBreakContinue.kt")
+        public void testInlinedBreakContinue() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/inlinedBreakContinue.kt");
+        }
+
         @TestMetadata("interfaceThisRef.kt")
         public void testInterfaceThisRef() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/interfaceThisRef.kt");

@@ -35,9 +35,7 @@ class Foo {
 //   Public signature debug description: box(){}
 fun box(): String
 
-// CHECK JVM_IR:
+// CHECK:
 //   Mangled name: PropAlias
-//   Public signature: [ File 'reflectGetOnNullableTypeAlias.kt' <- /PropAlias|null[0] ]
-// CHECK JS_IR NATIVE:
-//   Mangled name: PropAlias
+//   Public signature: [ File '/reflectGetOnNullableTypeAlias.kt' <- /PropAlias|null[0] ]
 private typealias PropAlias<T : Any?> = KProperty1<T, Any?>?

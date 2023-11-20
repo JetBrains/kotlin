@@ -35,11 +35,4 @@ fun f(): Any
 //   Public signature: /test|6620506149988718649[0]
 //   Public signature debug description: test(){}
 fun test(): Unit
-  // CHECK JVM_IR:
-  //   Mangled name: #test(){}#<anonymous>#static@Context(){}kotlin.Int
-  //   Mangled name for the signature: test(){}<anonymous>#static@Context(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: #test(){}#<anonymous>#static@Context(){}
-  //   Mangled name for the signature: test(){}<anonymous>#static@Context(){}
-  local fun Context.<anonymous>(): Int
 

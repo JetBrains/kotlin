@@ -7,8 +7,10 @@ val test1: ErrorType
   //   Mangled name: #<get-test1>(){}<ERROR CLASS>
   //   Mangled name for the signature computed from Ir:         <get-test1>(){}<ERROR CLASS>
   //   Mangled name for the signature computed from Descriptor: <get-test1>(){}<Error class: unknown class>
-  //   Public signature: /test1.<get-test1>|-4817139884021780494[0]
-  //   Public signature debug description: <get-test1>(){}<Error class: unknown class>
+  //   Public signature by IR: /test1.<get-test1>|3342025465423582211[0]
+  //   Public signature by IR debug description: <get-test1>(){}<ERROR CLASS>
+  //   Public signature by Frontend: /test1.<get-test1>|-4817139884021780494[0]
+  //   Public signature by Frontend debug description: <get-test1>(){}<Error class: unknown class>
   get
 
 // CHECK:
@@ -20,8 +22,10 @@ val test2: ErrorType
   //   Mangled name: #<get-test2>(){}<ERROR CLASS>
   //   Mangled name for the signature computed from Ir:         <get-test2>(){}<ERROR CLASS>
   //   Mangled name for the signature computed from Descriptor: <get-test2>(){}<Error class: unknown class>
-  //   Public signature: /test2.<get-test2>|1859255286326922853[0]
-  //   Public signature debug description: <get-test2>(){}<Error class: unknown class>
+  //   Public signature by IR: /test2.<get-test2>|-7934828597056891230[0]
+  //   Public signature by IR debug description: <get-test2>(){}<ERROR CLASS>
+  //   Public signature by Frontend: /test2.<get-test2>|1859255286326922853[0]
+  //   Public signature by Frontend debug description: <get-test2>(){}<Error class: unknown class>
   get
 
 // CHECK:
@@ -33,8 +37,10 @@ val test3: ErrorType
   //   Mangled name: #<get-test3>(){}<ERROR CLASS>
   //   Mangled name for the signature computed from Ir:         <get-test3>(){}<ERROR CLASS>
   //   Mangled name for the signature computed from Descriptor: <get-test3>(){}<Error class: unknown class>
-  //   Public signature: /test3.<get-test3>|-2322568342617474229[0]
-  //   Public signature debug description: <get-test3>(){}<Error class: unknown class>
+  //   Public signature by IR: /test3.<get-test3>|3662345001344960274[0]
+  //   Public signature by IR debug description: <get-test3>(){}<ERROR CLASS>
+  //   Public signature by Frontend: /test3.<get-test3>|-2322568342617474229[0]
+  //   Public signature by Frontend debug description: <get-test3>(){}<Error class: unknown class>
   get
 
 // CHECK:
@@ -46,7 +52,9 @@ val test4: ErrorType
   //   Mangled name: #<get-test4>(){}<ERROR CLASS>
   //   Mangled name for the signature computed from Ir:         <get-test4>(){}<ERROR CLASS>
   //   Mangled name for the signature computed from Descriptor: <get-test4>(){}<Error class: unknown class>
-  //   Public signature: /test4.<get-test4>|-5181690683324812065[0]
-  //   Public signature debug description: <get-test4>(){}<Error class: unknown class>
+  //   Public signature by IR: /test4.<get-test4>|-8718941795621950036[0]
+  //   Public signature by IR debug description: <get-test4>(){}<ERROR CLASS>
+  //   Public signature by Frontend: /test4.<get-test4>|-5181690683324812065[0]
+  //   Public signature by Frontend debug description: <get-test4>(){}<Error class: unknown class>
   get
 

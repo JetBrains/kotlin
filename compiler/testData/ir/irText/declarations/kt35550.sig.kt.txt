@@ -7,11 +7,6 @@ class A : I {
   //   Public signature: /A.<init>|605687824747116295[0]
   //   Public signature debug description: <init>(I){}
   constructor(i: I) /* primary */
-  // CHECK:
-  //   Mangled name: A.$$delegate_0
-  //   Public signature: /A.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: I
 
   // CHECK:
   //   Mangled name: A@0:0{0§<kotlin.Any?>}id

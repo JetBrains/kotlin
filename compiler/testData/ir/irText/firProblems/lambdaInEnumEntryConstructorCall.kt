@@ -1,14 +1,6 @@
 // WITH_STDLIB
-// DUMP_LOCAL_DECLARATION_SIGNATURES
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// KT-50774
-
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57427
-
-// KT-61141: absent enum fake_overrides: finalize, getDeclaringClass, clone
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JS_IR JS_IR_ES6 NATIVE
+// ^ KT-61141: absent enum fake_overrides: finalize, getDeclaringClass, clone
 
 class Wrapper(var baseUrl: String)
 

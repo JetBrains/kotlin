@@ -7,7 +7,6 @@ class Wrapper {
   //   Public signature: /Wrapper.baseUrl|8725729733335673706[0]
   //   Public signature debug description: {}baseUrl
   var baseUrl: String
-    field
     // CHECK JVM_IR:
     //   Mangled name: Wrapper#<get-baseUrl>(){}kotlin.String
     //   Public signature: /Wrapper.baseUrl.<get-baseUrl>|-3814925406424189958[0]
@@ -44,11 +43,6 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
   //   Mangled name: ConfigurationParameter.BASE_URL
   //   Public signature: /ConfigurationParameter.BASE_URL|null[0]
   BASE_URL
-    // CHECK:
-    //   Mangled name: ConfigurationParameter#<anonymous>#static(kotlin.String;Wrapper){}
-    //   Mangled name for the signature computed from Ir:         <anonymous>#static(kotlin.String;Wrapper){}
-    //   Mangled name for the signature computed from Descriptor: <init>(){}<anonymous>#static(kotlin.String;Wrapper){}
-    local fun <anonymous>(value: String, nc: Wrapper): Unit
 
   // CHECK JVM_IR:
   //   Mangled name: ConfigurationParameter#valueOf#static(kotlin.String){}ConfigurationParameter

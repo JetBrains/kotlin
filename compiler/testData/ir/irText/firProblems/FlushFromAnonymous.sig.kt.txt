@@ -8,26 +8,11 @@ class Serializer {
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
 
-  // CHECK JVM_IR:
+  // CHECK:
   //   Mangled name: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>
   //   Public signature: /Serializer.createMessageCollector|2610567021773551177[0]
   //   Public signature debug description: createMessageCollector(){}Serializer#createMessageCollector.<no name provided>
   private fun createMessageCollector(): <no name provided>
-    // CHECK:
-    //   Mangled name: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>.<no name provided>
-    //   Mangled name for the signature: createMessageCollector(){}Serializer#createMessageCollector.<no name provided>
-    local class <no name provided> : Collector {
-      // CHECK:
-      //   Mangled name: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>.<no name provided>#<init>(){}
-      //   Mangled name for the signature: createMessageCollector(){}Serializer#createMessageCollector.<no name provided><init>(){}
-      constructor() /* primary */
-
-      // CHECK:
-      //   Mangled name: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>.<no name provided>#flush(){}
-      //   Mangled name for the signature: createMessageCollector(){}Serializer#createMessageCollector.<no name provided>flush(){}
-      /* fake */ override fun flush(): Unit
-
-    }
 
   // CHECK:
   //   Mangled name: Serializer#serialize(){}

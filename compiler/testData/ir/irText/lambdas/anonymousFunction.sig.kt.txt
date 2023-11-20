@@ -3,19 +3,6 @@
 //   Public signature: /anonymous|-1633601112294415930[0]
 //   Public signature debug description: {}anonymous
 val anonymous: Function0<Unit>
-  field
-    // CHECK JVM_IR:
-    //   Mangled name (compatible mode: false): {}anonymous#<no name provided>#static(){}
-    //   Mangled name (compatible mode: true):  anonymous#<no name provided>#static(){}
-    //   Mangled name for the signature (compatible mode: false): {}anonymous<no name provided>#static(){}
-    //   Mangled name for the signature (compatible mode: true):  <no name provided>#static(){}
-    // CHECK JS_IR NATIVE:
-    //   Mangled name (compatible mode: false): {}anonymous#<no name provided>#static(){}
-    //   Mangled name (compatible mode: true):  anonymous#<no name provided>#static(){}
-    //   Mangled name for the signature (compatible mode: false): {}anonymous<no name provided>#static(){}
-    //   Mangled name for the signature (compatible mode: true):  <no name provided>#static(){}
-    local fun <no name provided>(): Unit
-
   // CHECK JVM_IR:
   //   Mangled name: #<get-anonymous>(){}kotlin.Function0<kotlin.Unit>
   //   Public signature: /anonymous.<get-anonymous>|4047260013555274752[0]

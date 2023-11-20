@@ -15,68 +15,10 @@ inline fun foo(block: Function0<Unit>): Unit
 //   Public signature: /test1|4297044443957252634[0]
 //   Public signature debug description: test1(){}
 fun test1(): Unit
-  // CHECK:
-  //   Mangled name: #test1(){}#<anonymous>#static(){}
-  //   Mangled name for the signature: test1(){}<anonymous>#static(){}
-  local fun <anonymous>(): Unit
-
-  // CHECK:
-  //   Mangled name: #test1(){}#<anonymous>#static(){}
-  //   Mangled name for the signature: test1(){}<anonymous>#static(){}
-  local fun <anonymous>(): Unit
-
-  // CHECK:
-  //   Mangled name: #test1(){}#<no name provided>#static(){}
-  //   Mangled name for the signature: test1(){}<no name provided>#static(){}
-  local fun <no name provided>(): Unit
-
-  // CHECK:
-  //   Mangled name: #test1(){}#<no name provided>#static(){}
-  //   Mangled name for the signature: test1(){}<no name provided>#static(){}
-  local fun <no name provided>(): Unit
 
 // CHECK:
 //   Mangled name: #test2(){}
 //   Public signature: /test2|4279114864133353152[0]
 //   Public signature debug description: test2(){}
 fun test2(): Unit
-  // CHECK:
-  //   Mangled name: #test2(){}#<anonymous>#static(){}
-  //   Mangled name for the signature: test2(){}<anonymous>#static(){}
-  local fun <anonymous>(): Unit
-
-  // CHECK:
-  //   Mangled name: #test2(){}#<anonymous>#static(){}
-  //   Mangled name for the signature: test2(){}<anonymous>#static(){}
-  local fun <anonymous>(): Unit
-
-  // CHECK:
-  //   Mangled name: #test2(){}#<anonymous>#static(){}
-  //   Mangled name for the signature: test2(){}<anonymous>#static(){}
-  local fun <anonymous>(): Unit
-
-  // CHECK:
-  //   Mangled name: #test2(){}#<anonymous>#static(){}
-  //   Mangled name for the signature: test2(){}<anonymous>#static(){}
-  local fun <anonymous>(): Unit
-
-  // CHECK:
-  //   Mangled name: #test2(){}#<no name provided>#static(){}
-  //   Mangled name for the signature: test2(){}<no name provided>#static(){}
-  local fun <no name provided>(): Unit
-
-  // CHECK:
-  //   Mangled name: #test2(){}#<no name provided>#static(){}
-  //   Mangled name for the signature: test2(){}<no name provided>#static(){}
-  local fun <no name provided>(): Unit
-
-  // CHECK:
-  //   Mangled name: #test2(){}#<no name provided>#static(){}
-  //   Mangled name for the signature: test2(){}<no name provided>#static(){}
-  local fun <no name provided>(): Unit
-
-  // CHECK:
-  //   Mangled name: #test2(){}#<no name provided>#static(){}
-  //   Mangled name for the signature: test2(){}<no name provided>#static(){}
-  local fun <no name provided>(): Unit
 

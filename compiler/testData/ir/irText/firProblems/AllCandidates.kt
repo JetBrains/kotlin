@@ -2,9 +2,6 @@
 // WITH_STDLIB
 // FULL_JDK
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57778
-
 // FILE: OverloadResolutionResultsImpl.java
 
 import java.util.*;

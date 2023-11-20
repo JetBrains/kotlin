@@ -34,11 +34,4 @@ fun foo(f: Foo): String
 //   Public signature: /test|6620506149988718649[0]
 //   Public signature debug description: test(){}
 fun test(): String
-  // CHECK JVM_IR:
-  //   Mangled name: #test(){}kotlin.String#<anonymous>#static(){}kotlin.String
-  //   Mangled name for the signature: test(){}kotlin.String<anonymous>#static(){}kotlin.String
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: #test(){}#<anonymous>#static(){}
-  //   Mangled name for the signature: test(){}<anonymous>#static(){}
-  local fun <anonymous>(): String
 

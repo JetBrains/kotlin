@@ -132,20 +132,18 @@ interface SendChannel<in E : Any?> {
 
 // CHECK JVM_IR:
 //   Mangled name: #asChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>
-//   Mangled name for the signature: asChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>
-//   Public signature: [ File 'castsInsideCoroutineInference.kt' <- /asChannel|-3549601571428075944[0] ]
+//   Public signature: [ File '/castsInsideCoroutineInference.kt' <- /asChannel|-3549601571428075944[0] ]
 // CHECK JS_IR NATIVE:
 //   Mangled name: #asChannel@CoroutineScope(Flow<*>){}
-//   Mangled name for the signature: asChannel@CoroutineScope(Flow<*>){}
+//   Public signature: [ File '/castsInsideCoroutineInference.kt' <- /asChannel|-2163265367975014424[0] ]
 private fun CoroutineScope.asChannel(flow: Flow<*>): ReceiveChannel<Any>
 
 // CHECK JVM_IR:
 //   Mangled name: #asFairChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>
-//   Mangled name for the signature: asFairChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>
-//   Public signature: [ File 'castsInsideCoroutineInference.kt' <- /asFairChannel|-8739457176543595950[0] ]
+//   Public signature: [ File '/castsInsideCoroutineInference.kt' <- /asFairChannel|-8739457176543595950[0] ]
 // CHECK JS_IR NATIVE:
 //   Mangled name: #asFairChannel@CoroutineScope(Flow<*>){}
-//   Mangled name for the signature: asFairChannel@CoroutineScope(Flow<*>){}
+//   Public signature: [ File '/castsInsideCoroutineInference.kt' <- /asFairChannel|-1848542361619040771[0] ]
 private fun CoroutineScope.asFairChannel(flow: Flow<*>): ReceiveChannel<Any>
 
 // CHECK:

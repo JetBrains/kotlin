@@ -1481,6 +1481,12 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
         }
 
         @Test
+        @TestMetadata("inlinedBreakContinue.kt")
+        public void testInlinedBreakContinue() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/inlinedBreakContinue.kt");
+        }
+
+        @Test
         @TestMetadata("interfaceThisRef.kt")
         public void testInterfaceThisRef() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/interfaceThisRef.kt");

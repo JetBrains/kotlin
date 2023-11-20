@@ -79,11 +79,6 @@ class TestJFoo : IFoo {
   //   Public signature: /TestJFoo.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
-  // CHECK:
-  //   Mangled name: TestJFoo.$$delegate_0
-  //   Public signature: /TestJFoo.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: JFoo
   // CHECK JVM_IR:
   //   Mangled name: TestJFoo#foo(){}kotlin.String
   //   Public signature: /TestJFoo.foo|485335955883620819[0]
@@ -101,11 +96,6 @@ class TestK1 : IFoo {
   //   Public signature: /TestK1.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
-  // CHECK:
-  //   Mangled name: TestK1.$$delegate_0
-  //   Public signature: /TestK1.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: K1
   // CHECK JVM_IR:
   //   Mangled name: TestK1#foo(){}kotlin.String
   //   Public signature: /TestK1.foo|485335955883620819[0]
@@ -123,11 +113,6 @@ class TestK2 : IFoo {
   //   Public signature: /TestK2.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
-  // CHECK:
-  //   Mangled name: TestK2.$$delegate_0
-  //   Public signature: /TestK2.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: K2
   // CHECK JVM_IR:
   //   Mangled name: TestK2#foo(){}kotlin.String
   //   Public signature: /TestK2.foo|485335955883620819[0]
@@ -145,11 +130,6 @@ class TestK3 : IFoo {
   //   Public signature: /TestK3.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
-  // CHECK:
-  //   Mangled name: TestK3.$$delegate_0
-  //   Public signature: /TestK3.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: K3
   // CHECK JVM_IR:
   //   Mangled name: TestK3#foo(){}kotlin.String
   //   Public signature: /TestK3.foo|485335955883620819[0]
@@ -167,11 +147,6 @@ class TestK4 : IFoo {
   //   Public signature: /TestK4.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
-  // CHECK:
-  //   Mangled name: TestK4.$$delegate_0
-  //   Public signature: /TestK4.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: K4
   // CHECK JVM_IR:
   //   Mangled name: TestK4#foo(){}kotlin.String
   //   Public signature: /TestK4.foo|485335955883620819[0]

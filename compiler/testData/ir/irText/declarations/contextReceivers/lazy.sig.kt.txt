@@ -10,50 +10,6 @@ interface Lazy<T : Any?> {
 //   Public signature: /f|-6064829949850642050[0]
 //   Public signature debug description: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<0:0>;Lazy<Lazy<0:0>>){0§<kotlin.Any?>}
 fun <T : Any?> f(lazy1: Lazy<Int>, lazy2: Lazy<CharSequence>, lazyT: Lazy<T>, lazyLazyT: Lazy<Lazy<T>>): Unit
-  // CHECK:
-  //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<1:0>;Lazy<Lazy<1:0>>){0§<kotlin.Any?>}#<anonymous>#static@Lazy<kotlin.Int>(){}
-  //   Mangled name for the signature: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<1:0>;Lazy<Lazy<1:0>>){0§<kotlin.Any?>}<anonymous>#static@Lazy<kotlin.Int>(){}
-  local fun Lazy<Int>.<anonymous>(): Unit
-    // CHECK:
-    //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<2:0>;Lazy<Lazy<2:0>>){0§<kotlin.Any?>}#<anonymous>#static@Lazy<kotlin.Int>(){}#<anonymous>#static@Lazy<kotlin.CharSequence>(){}
-    //   Mangled name for the signature: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<2:0>;Lazy<Lazy<2:0>>){0§<kotlin.Any?>}<anonymous>#static@Lazy<kotlin.Int>(){}<anonymous>#static@Lazy<kotlin.CharSequence>(){}
-    local fun Lazy<CharSequence>.<anonymous>(): Unit
-
-  // CHECK:
-  //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<1:0>;Lazy<Lazy<1:0>>){0§<kotlin.Any?>}#<anonymous>#static@Lazy<kotlin.CharSequence>(){}
-  //   Mangled name for the signature: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<1:0>;Lazy<Lazy<1:0>>){0§<kotlin.Any?>}<anonymous>#static@Lazy<kotlin.CharSequence>(){}
-  local fun Lazy<CharSequence>.<anonymous>(): Unit
-    // CHECK:
-    //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<2:0>;Lazy<Lazy<2:0>>){0§<kotlin.Any?>}#<anonymous>#static@Lazy<kotlin.CharSequence>(){}#<anonymous>#static@Lazy<kotlin.Int>(){}
-    //   Mangled name for the signature: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<2:0>;Lazy<Lazy<2:0>>){0§<kotlin.Any?>}<anonymous>#static@Lazy<kotlin.CharSequence>(){}<anonymous>#static@Lazy<kotlin.Int>(){}
-    local fun Lazy<Int>.<anonymous>(): Unit
-
-  // CHECK:
-  //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<1:0>;Lazy<Lazy<1:0>>){0§<kotlin.Any?>}#<anonymous>#static@Lazy<1:0>(){}
-  //   Mangled name for the signature: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<1:0>;Lazy<Lazy<1:0>>){0§<kotlin.Any?>}<anonymous>#static@Lazy<1:0>(){}
-  local fun Lazy<T>.<anonymous>(): Unit
-    // CHECK:
-    //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<2:0>;Lazy<Lazy<2:0>>){0§<kotlin.Any?>}#<anonymous>#static@Lazy<2:0>(){}#<anonymous>#static@Lazy<kotlin.Int>(){}
-    //   Mangled name for the signature: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<2:0>;Lazy<Lazy<2:0>>){0§<kotlin.Any?>}<anonymous>#static@Lazy<2:0>(){}<anonymous>#static@Lazy<kotlin.Int>(){}
-    local fun Lazy<Int>.<anonymous>(): Unit
-
-  // CHECK:
-  //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<1:0>;Lazy<Lazy<1:0>>){0§<kotlin.Any?>}#<anonymous>#static@Lazy<Lazy<1:0>>(){}
-  //   Mangled name for the signature: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<1:0>;Lazy<Lazy<1:0>>){0§<kotlin.Any?>}<anonymous>#static@Lazy<Lazy<1:0>>(){}
-  local fun Lazy<Lazy<T>>.<anonymous>(): Unit
-    // CHECK:
-    //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<2:0>;Lazy<Lazy<2:0>>){0§<kotlin.Any?>}#<anonymous>#static@Lazy<Lazy<2:0>>(){}#<anonymous>#static@Lazy<kotlin.Int>(){}
-    //   Mangled name for the signature: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<2:0>;Lazy<Lazy<2:0>>){0§<kotlin.Any?>}<anonymous>#static@Lazy<Lazy<2:0>>(){}<anonymous>#static@Lazy<kotlin.Int>(){}
-    local fun Lazy<Int>.<anonymous>(): Unit
-
-  // CHECK:
-  //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<1:0>;Lazy<Lazy<1:0>>){0§<kotlin.Any?>}#<anonymous>#static@Lazy<kotlin.Int>(){}
-  //   Mangled name for the signature: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<1:0>;Lazy<Lazy<1:0>>){0§<kotlin.Any?>}<anonymous>#static@Lazy<kotlin.Int>(){}
-  local fun Lazy<Int>.<anonymous>(): Unit
-    // CHECK:
-    //   Mangled name: #f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<2:0>;Lazy<Lazy<2:0>>){0§<kotlin.Any?>}#<anonymous>#static@Lazy<kotlin.Int>(){}#<anonymous>#static@Lazy<Lazy<2:0>>(){}
-    //   Mangled name for the signature: f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<2:0>;Lazy<Lazy<2:0>>){0§<kotlin.Any?>}<anonymous>#static@Lazy<kotlin.Int>(){}<anonymous>#static@Lazy<Lazy<2:0>>(){}
-    local fun Lazy<Lazy<T>>.<anonymous>(): Unit
 
 // CHECK:
 //   Mangled name: #test1!Lazy<kotlin.Int>!Lazy<kotlin.CharSequence>(){}

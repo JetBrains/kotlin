@@ -1,8 +1,7 @@
 // TARGET_BACKEND: JVM
-// DUMP_LOCAL_DECLARATION_SIGNATURES
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57430, KT-57788
+// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
+// ^ KT-57788: Fix computing mangled names of types with @EnhancedNullability from IR-based declaration descriptors
 
 // FILE: kt43217.kt
 class A {

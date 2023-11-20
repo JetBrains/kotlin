@@ -179,15 +179,6 @@ class CounterIterator : Iterator<Int> {
   //   Public signature: /CounterIterator.<init>|4731448293962665986[0]
   //   Public signature debug description: <init>!CounterConfig(Counter){}
   constructor($context_receiver_0: CounterConfig, counter: Counter) /* primary */
-  // CHECK JVM_IR:
-  //   Mangled name: CounterIterator.contextReceiverField0
-  //   Mangled name for the signature computed from Ir:
-  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0#jf
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: CounterIterator.contextReceiverField0
-  //   Mangled name for the signature computed from Ir:
-  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0
-  private /* final field */ val contextReceiverField0: CounterConfig
 
   // CHECK JVM_IR:
   //   Mangled name: CounterIterator#hasNext(){}kotlin.Boolean

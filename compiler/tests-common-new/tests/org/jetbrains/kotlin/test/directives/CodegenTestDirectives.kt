@@ -162,10 +162,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val DUMP_LOCAL_DECLARATION_SIGNATURES by directive(
-        description = "For tests with $DUMP_SIGNATURES, also dumps signatures and mangled names for local functions and classes"
-    )
-
     val SKIP_SIGNATURE_DUMP by directive(
         description = "Disables dumping signatures and mangled names of declarations to the ${IrMangledNameAndSignatureDumpHandler.DUMP_EXTENSION} file"
     )

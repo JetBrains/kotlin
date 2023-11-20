@@ -8,11 +8,6 @@ class C : IFooBar {
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
   // CHECK:
-  //   Mangled name: C.$$delegate_0
-  //   Public signature: /C.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: FooBarImpl
-  // CHECK:
   //   Mangled name: C#foo(){}
   //   Public signature: /C.foo|-1041209573719867811[0]
   //   Public signature debug description: foo(){}

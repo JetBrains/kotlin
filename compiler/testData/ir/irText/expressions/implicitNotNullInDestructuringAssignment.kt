@@ -1,8 +1,5 @@
 // TARGET_BACKEND: JVM
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57778
-
 // FILE: implicitNotNullInDestructuringAssignment.kt
 
 // NB extension receiver is nullable

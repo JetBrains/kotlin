@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.ir.util.parents
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.interpreter.intrinsicConstEvaluationAnnotation
+import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
@@ -29,8 +31,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
+import org.jetbrains.kotlin.test.backend.handlers.ComputedSignature.ComputedBy
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_LOCAL_DECLARATION_SIGNATURES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.MUTE_SIGNATURE_COMPARISON_K2
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_SIGNATURE_DUMP
@@ -58,7 +60,6 @@ private const val CHECK_MARKER = "// CHECK"
  * Other useful directives:
  * - [MUTE_SIGNATURE_COMPARISON_K2] can be used for muting the comparison result on the K2 frontend. The comparison will
  *   still be performed, and if it succeeds, the test will fail with a message reminding you to unmute it.
- * - [DUMP_LOCAL_DECLARATION_SIGNATURES] enables printing signatures for local functions and classes.
  *
  * Since mangled names and signatures may be different depending on the backend, in order to reduce the number
  * of expectation files, this handler uses `// CHECK` blocks to compare the dump with an expectation in a smarter way than
@@ -143,10 +144,7 @@ class IrMangledNameAndSignatureDumpHandler(
                 ),
                 printFilePath = false,
                 printFakeOverridesStrategy = FakeOverridesStrategy.ALL_EXCEPT_ANY,
-                bodyPrintingStrategy = if (DUMP_LOCAL_DECLARATION_SIGNATURES in module.directives)
-                    BodyPrintingStrategy.PRINT_ONLY_LOCAL_CLASSES_AND_FUNCTIONS
-                else
-                    BodyPrintingStrategy.NO_BODIES,
+                bodyPrintingStrategy = BodyPrintingStrategy.NO_BODIES,
                 printUnitReturnType = true,
                 stableOrder = true,
             ),
@@ -192,6 +190,8 @@ class IrMangledNameAndSignatureDumpHandler(
             it.dispatchReceiverParameter?.type?.classOrNull == irBuiltIns.enumClass && it.name in HIDDEN_ENUM_METHOD_NAMES
         }
 
+        private val signatureComposer = PublicIdSignatureComputer(irMangler)
+
         private fun Printer.printCheckMarkerForNewDeclaration() {
             printlnCheckMarker(
                 when (targetBackend) {
@@ -207,42 +207,54 @@ class IrMangledNameAndSignatureDumpHandler(
 
             val symbol = declaration.symbol
 
+            // Can dump mangled names and signatures (both computed by the FE) only if
+            // this is effectively a non-private declaration.
+            val canDumpMangledNameAndSignaturesComputedByFrontend =
+                (declaration as? IrDeclarationWithVisibility)?.isEffectivelyPrivate() != true
+
+            val signatures = mutableListOf<ComputedSignature>()
             val fullMangledNames = mutableListOf<ComputedMangledName>()
             val signatureMangledNames = mutableListOf<ComputedMangledName>()
 
-            irMangler.addFullMangledNameTo(fullMangledNames, declaration)
-            irMangler.addSignatureMangledNameTo(signatureMangledNames, declaration)
-            descriptorMangler.addSignatureMangledNameTo(signatureMangledNames, symbol.descriptor)
-            ((declaration as? IrMetadataSourceOwner)?.metadata as? FirMetadataSource)?.fir?.let {
-                firMangler?.addSignatureMangledNameTo(
-                    signatureMangledNames,
-                    it
+            signatureComposer.inFile(declaration.fileOrNull?.symbol) {
+                addSignatureTo(
+                    signatures,
+                    signatureComposer.computeSignature(declaration),
+                    ComputedBy.IR,
+                    isPublic = true
                 )
             }
 
-            fun IdSignature.print(name: String) {
-                val commentPrefix = "//   "
-                // N.B. We do use IdSignatureRenderer.LEGACY because it renders public signatures with hashes which are
-                // computed from mangled names. So no real need in testing IdSignatureRenderer.DEFAULT which renders mangled names
-                // instead of hashes.
-                println(commentPrefix, name, ": ", render(IdSignatureRenderer.LEGACY))
-                asPublic()?.description?.let {
-                    println(commentPrefix, name, " debug description: ", it)
+            irMangler.addFullMangledNameTo(fullMangledNames, declaration)
+            irMangler.addSignatureMangledNameTo(signatureMangledNames, declaration)
+
+            if (canDumpMangledNameAndSignaturesComputedByFrontend) {
+                addSignatureTo(signatures, symbol.signature, ComputedBy.FE, isPublic = true)
+                addSignatureTo(signatures, symbol.privateSignature, ComputedBy.FE, isPublic = false)
+
+                descriptorMangler.addSignatureMangledNameTo(signatureMangledNames, symbol.descriptor)
+
+                ((declaration as? IrMetadataSourceOwner)?.metadata as? FirMetadataSource)?.fir?.let {
+                    firMangler?.addSignatureMangledNameTo(
+                        signatureMangledNames,
+                        it
+                    )
                 }
             }
 
             fun printActualMangledNamesAndSignatures() {
                 printMangledNames(fullMangledNames, prefix = "Mangled name")
 
-                // Signature mangled names computed from descriptors, IR and FIR must be all equal to the signature description, which
-                // we already print (see the IdSignature.print function above).
-                // If this is not the case, print them separately.
-                if (signatureMangledNames.any { it.value != symbol.signature?.asPublic()?.description.orEmpty() }) {
-                    printMangledNames(signatureMangledNames, prefix = "Mangled name for the signature")
+                if (canDumpMangledNameAndSignaturesComputedByFrontend) {
+                    // Signature mangled names computed from descriptors, IR and FIR of declarations that are not
+                    // effectively private must be all equal to the signature description, which we already print
+                    // (see the printSignatures() function below). If this is not the case, print them separately.
+                    if (signatureMangledNames.any { it.value != symbol.signature?.asPublic()?.description.orEmpty() }) {
+                        printMangledNames(signatureMangledNames, prefix = "Mangled name for the signature")
+                    }
                 }
 
-                symbol.signature?.print("Public signature")
-                symbol.privateSignature?.print("Private signature")
+                printSignatures(signatures)
             }
 
             var printedActualMangledNameAndSignature = false
@@ -280,6 +292,13 @@ class IrMangledNameAndSignatureDumpHandler(
         override fun willPrintElement(element: IrElement, container: IrDeclaration?, printer: Printer): Boolean {
             if (element !is IrDeclaration) return true
             if (element is IrAnonymousInitializer) return false
+
+            // Don't print synthetic property-less fields for delegates and context receivers. Ex:
+            // class Foo {
+            //   private /* final field */ val contextReceiverField0: ContextReceiverType
+            //   private /* final field */ val $$delegate_0: BaseClassType
+            // }
+            if (element is IrField && element.origin.isSynthetic) return false
 
             // Don't print fake overrides of Java fields
             if (element is IrProperty &&
@@ -342,6 +361,19 @@ private val EXCLUDED_ANNOTATIONS = setOf(
 
 private val HIDDEN_ENUM_METHOD_NAMES = setOf(Name.identifier("finalize"), Name.identifier("getDeclaringClass"))
 
+private data class ComputedSignature(
+    val computedBy: ComputedBy,
+    val isPublic: Boolean,
+    val value: String,
+    val description: String?
+) {
+    enum class ComputedBy(private val humanReadableDescription: String) {
+        FE("Frontend"), IR("IR");
+
+        override fun toString() = humanReadableDescription
+    }
+}
+
 private data class ComputedMangledName(
     val manglerName: String,
     val compatibleMode: Boolean,
@@ -379,6 +411,32 @@ private fun Iterable<Pair<String, String>>.aligned(): List<String> {
 
 private inline fun Iterable<ComputedMangledName>.printAligned(printer: Printer, prefix: (ComputedMangledName) -> String) {
     map { prefix(it) to it.value }.aligned().forEach(printer::println)
+}
+
+private fun Printer.printSignatures(computedSignatures: List<ComputedSignature>) {
+    val (publicSignatures, privateSignatures) = computedSignatures.partition { it.isPublic }
+    printSignatures(publicSignatures, "Public signature")
+    printSignatures(privateSignatures, "Private signature")
+}
+
+private fun Printer.printSignatures(signatures: List<ComputedSignature>, prefix: String) {
+    val distinctSignatures = signatures.distinctBy { it.value to it.description }
+    when (distinctSignatures.size) {
+        0 -> Unit
+        1 -> printSignature(distinctSignatures.single(), prefix)
+        else -> {
+            distinctSignatures.forEach {
+                printSignature(it, "$prefix by ${it.computedBy}")
+            }
+        }
+    }
+}
+
+private fun Printer.printSignature(computedSignature: ComputedSignature, prefix: String) {
+    println("//   $prefix: ${computedSignature.value}")
+    computedSignature.description?.let {
+        println("//   $prefix debug description: $it")
+    }
 }
 
 private fun Printer.printMangledNames(computedMangledNames: List<ComputedMangledName>, prefix: String) {
@@ -444,6 +502,25 @@ private fun <Declaration> addMangledNameTo(
             }
         }
         ComputedMangledName(manglerName, compatibleMode, mangledName)
+    }
+}
+
+private fun addSignatureTo(
+    collector: MutableList<ComputedSignature>,
+    signature: IdSignature?,
+    origin: ComputedBy,
+    isPublic: Boolean,
+) {
+    if (signature != null) {
+        // N.B. We do use IdSignatureRenderer.LEGACY because it renders public signatures with hashes which are
+        // computed from mangled names. So no real need in testing IdSignatureRenderer.DEFAULT which renders mangled names
+        // instead of hashes.
+        collector += ComputedSignature(
+            origin,
+            isPublic,
+            value = signature.render(IdSignatureRenderer.LEGACY),
+            description = signature.asPublic()?.description
+        )
     }
 }
 

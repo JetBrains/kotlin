@@ -7,11 +7,6 @@ class Test1 : IBase {
   //   Public signature: /Test1.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
-  // CHECK:
-  //   Mangled name: Test1.$$delegate_0
-  //   Public signature: /Test1.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: BaseImpl
   // CHECK JVM_IR:
   //   Mangled name: Test1#bar(){}kotlin.Int
   //   Public signature: /Test1.bar|-6436649210114349217[0]
@@ -45,16 +40,6 @@ class Test2 : IBase, IOther {
   //   Public signature: /Test2.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
-  // CHECK:
-  //   Mangled name: Test2.$$delegate_0
-  //   Public signature: /Test2.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_0: BaseImpl
-  // CHECK:
-  //   Mangled name: Test2.$$delegate_1
-  //   Public signature: /Test2.$$delegate_1|-7286425919675154353[0]
-  //   Public signature debug description: 
-  private /* final field */ val $$delegate_1: IOther
   // CHECK JVM_IR:
   //   Mangled name: Test2#bar(){}kotlin.Int
   //   Public signature: /Test2.bar|-6436649210114349217[0]

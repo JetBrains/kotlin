@@ -23,11 +23,4 @@ fun foo($context_receiver_0: Int, $context_receiver_1: String): Int
 //   Public signature: /test|6620506149988718649[0]
 //   Public signature debug description: test(){}
 fun test(): Unit
-  // CHECK JVM_IR:
-  //   Mangled name: #test(){}#<anonymous>#static@kotlin.Int(){}kotlin.Int
-  //   Mangled name for the signature: test(){}<anonymous>#static@kotlin.Int(){}kotlin.Int
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: #test(){}#<anonymous>#static@kotlin.Int(){}
-  //   Mangled name for the signature: test(){}<anonymous>#static@kotlin.Int(){}
-  local fun Int.<anonymous>(): Int
 

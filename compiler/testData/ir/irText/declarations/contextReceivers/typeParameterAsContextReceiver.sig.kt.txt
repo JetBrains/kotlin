@@ -3,14 +3,6 @@
 //   Public signature: /test|6620506149988718649[0]
 //   Public signature debug description: test(){}
 fun test(): Unit
-  // CHECK:
-  //   Mangled name: #test(){}#<anonymous>#static@kotlin.Int(){}
-  //   Mangled name for the signature: test(){}<anonymous>#static@kotlin.Int(){}
-  local fun Int.<anonymous>(): Unit
-    // CHECK:
-    //   Mangled name: #test(){}#<anonymous>#static@kotlin.Int(){}#<anonymous>#static(kotlin.Int){}
-    //   Mangled name for the signature: test(){}<anonymous>#static@kotlin.Int(){}<anonymous>#static(kotlin.Int){}
-    local fun <anonymous>(i: Int): Unit
 
 // CHECK:
 //   Mangled name: #useContext!0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}

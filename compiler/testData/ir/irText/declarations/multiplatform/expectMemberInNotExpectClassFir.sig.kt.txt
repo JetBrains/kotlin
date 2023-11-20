@@ -13,21 +13,31 @@ class C2 : C1 {
   // CHECK JVM_IR:
   //   Mangled name: C2#f(){}kotlin.String
   //   Mangled name for the signature: f(){}kotlin.String
+  //   Public signature: /C2.f|9098388873611041001[0]
+  //   Public signature debug description: f(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: C2#f(){}
   //   Mangled name for the signature: f(){}
+  //   Public signature: /C2.f|5316533450599009716[0]
+  //   Public signature debug description: f(){}
   /* fake */ override fun f(): String
 
   // CHECK:
   //   Mangled name: C2{}p
   //   Mangled name for the signature: {}p
+  //   Public signature: /C2.p|6715504260787941082[0]
+  //   Public signature debug description: {}p
   /* fake */ override val p: Int
     // CHECK JVM_IR:
     //   Mangled name: C2#<get-p>(){}kotlin.Int
     //   Mangled name for the signature: <get-p>(){}kotlin.Int
+    //   Public signature: /C2.p.<get-p>|5329635969197638839[0]
+    //   Public signature debug description: <get-p>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
     //   Mangled name: C2#<get-p>(){}
     //   Mangled name for the signature: <get-p>(){}
+    //   Public signature: /C2.p.<get-p>|-1162552463316289847[0]
+    //   Public signature debug description: <get-p>(){}
     /* fake */ override get(): Int
 
 }

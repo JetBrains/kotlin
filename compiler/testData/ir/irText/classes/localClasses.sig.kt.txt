@@ -3,19 +3,4 @@
 //   Public signature: /outer|1607449560170809066[0]
 //   Public signature debug description: outer(){}
 fun outer(): Unit
-  // CHECK:
-  //   Mangled name: #outer(){}.LocalClass
-  //   Mangled name for the signature: outer(){}
-  local class LocalClass {
-    // CHECK:
-    //   Mangled name: #outer(){}.LocalClass#<init>(){}
-    //   Mangled name for the signature: outer(){}<init>(){}
-    constructor() /* primary */
-
-    // CHECK:
-    //   Mangled name: #outer(){}.LocalClass#foo(){}
-    //   Mangled name for the signature: outer(){}foo(){}
-    fun foo(): Unit
-
-  }
 

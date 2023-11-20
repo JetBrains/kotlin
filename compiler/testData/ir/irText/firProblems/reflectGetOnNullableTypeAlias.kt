@@ -2,9 +2,6 @@
 // SKIP_KLIB_TEST
 // WITH_REFLECT
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57778
-
 import kotlin.reflect.KProperty1
 
 private typealias PropAlias<T> = KProperty1<T, Any?>?

@@ -3,10 +3,6 @@
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}
 fun box(): Unit
-  // CHECK:
-  //   Mangled name: #box(){}#<anonymous>#static(kotlin.String){}
-  //   Mangled name for the signature: box(){}<anonymous>#static(kotlin.String){}
-  local fun <anonymous>(it: String): Unit
 
 // CHECK:
 //   Mangled name: #foo@0:0(){0§<kotlin.Any?>}

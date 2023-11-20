@@ -2,57 +2,13 @@
 //   Mangled name: #main(){}
 //   Mangled name for the signature computed from Ir:         main(){}
 //   Mangled name for the signature computed from Descriptor: main(){}%localCompanion.kt
-//   Public signature: /main|1798078925369608927[0]
-//   Public signature debug description: main(){}%localCompanion.kt
+//   Public signature by IR: /main|-4284757841571462650[0]
+//   Public signature by IR debug description: main(){}
+//   Public signature by Frontend: /main|1798078925369608927[0]
+//   Public signature by Frontend debug description: main(){}%localCompanion.kt
 // CHECK JS_IR NATIVE:
 //   Mangled name: #main(){}
 //   Public signature: /main|-4284757841571462650[0]
 //   Public signature debug description: main(){}
 fun main(): Unit
-  // CHECK JVM_IR:
-  //   Mangled name: #main(){}.Foo
-  //   Mangled name for the signature computed from Ir:         main(){}
-  //   Mangled name for the signature computed from Descriptor: main(){}%localCompanion.kt
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: #main(){}.Foo
-  //   Mangled name for the signature: main(){}
-  local class Foo {
-    // CHECK JVM_IR:
-    //   Mangled name: #main(){}.Foo.Companion
-    //   Mangled name for the signature computed from Ir:         main(){}
-    //   Mangled name for the signature computed from Descriptor: main(){}%localCompanion.kt
-    // CHECK JS_IR NATIVE:
-    //   Mangled name: #main(){}.Foo.Companion
-    //   Mangled name for the signature: main(){}
-    local companion object Companion {
-      // CHECK JVM_IR:
-      //   Mangled name: #main(){}.Foo.Companion#<init>(){}
-      //   Mangled name for the signature computed from Ir:         main(){}<init>(){}
-      //   Mangled name for the signature computed from Descriptor: main(){}%localCompanion.kt<init>(){}
-      // CHECK JS_IR NATIVE:
-      //   Mangled name: #main(){}.Foo.Companion#<init>(){}
-      //   Mangled name for the signature: main(){}<init>(){}
-      private constructor() /* primary */
-
-      // CHECK JVM_IR:
-      //   Mangled name: #main(){}.Foo.Companion#bar(){}
-      //   Mangled name for the signature computed from Ir:         main(){}bar(){}
-      //   Mangled name for the signature computed from Descriptor: main(){}%localCompanion.ktbar(){}
-      // CHECK JS_IR NATIVE:
-      //   Mangled name: #main(){}.Foo.Companion#bar(){}
-      //   Mangled name for the signature: main(){}bar(){}
-      fun bar(): Unit
-
-    }
-
-    // CHECK JVM_IR:
-    //   Mangled name: #main(){}.Foo#<init>(){}
-    //   Mangled name for the signature computed from Ir:         main(){}<init>(){}
-    //   Mangled name for the signature computed from Descriptor: main(){}%localCompanion.kt<init>(){}
-    // CHECK JS_IR NATIVE:
-    //   Mangled name: #main(){}.Foo#<init>(){}
-    //   Mangled name for the signature: main(){}<init>(){}
-    constructor() /* primary */
-
-  }
 

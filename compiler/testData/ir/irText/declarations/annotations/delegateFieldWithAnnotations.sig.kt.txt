@@ -3,19 +3,6 @@
 //   Public signature: /test1|6005685442305498193[0]
 //   Public signature debug description: {}test1
 val test1: Int /* by */
-  field
-    // CHECK JVM_IR:
-    //   Mangled name (compatible mode: false): {}test1#<anonymous>#static(){}kotlin.Int
-    //   Mangled name (compatible mode: true):  test1$delegate#<anonymous>#static(){}kotlin.Int
-    //   Mangled name for the signature (compatible mode: false): {}test1<anonymous>#static(){}kotlin.Int
-    //   Mangled name for the signature (compatible mode: true):  <anonymous>#static(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
-    //   Mangled name (compatible mode: false): {}test1#<anonymous>#static(){}
-    //   Mangled name (compatible mode: true):  test1$delegate#<anonymous>#static(){}
-    //   Mangled name for the signature (compatible mode: false): {}test1<anonymous>#static(){}
-    //   Mangled name for the signature (compatible mode: true):  <anonymous>#static(){}
-    local fun <anonymous>(): Int
-
   // CHECK JVM_IR:
   //   Mangled name: #<get-test1>(){}kotlin.Int
   //   Public signature: /test1.<get-test1>|3978508226793108919[0]

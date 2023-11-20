@@ -7,7 +7,6 @@ class MyClass {
   //   Public signature: /MyClass.value|1987073854177347439[0]
   //   Public signature debug description: {}value
   val value: String
-    field
     // CHECK JVM_IR:
     //   Mangled name: MyClass#<get-value>(){}kotlin.String
     //   Public signature: /MyClass.value.<get-value>|-7202092821145242726[0]
@@ -35,21 +34,6 @@ class MyClass {
 //   Public signature: /box|2173511048851971368[0]
 //   Public signature debug description: box(){}
 fun box(): String
-  // CHECK JVM_IR:
-  //   Mangled name: #box(){}kotlin.String#<get-testO>#static(){}kotlin.String
-  //   Mangled name for the signature: box(){}kotlin.String<get-testO>#static(){}kotlin.String
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: #box(){}#<get-testO>#static(){}
-  //   Mangled name for the signature: box(){}<get-testO>#static(){}
-  local fun <get-testO>(): String
-
-  // CHECK JVM_IR:
-  //   Mangled name: #box(){}kotlin.String#<get-testK>#static(){}kotlin.String
-  //   Mangled name for the signature: box(){}kotlin.String<get-testK>#static(){}kotlin.String
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: #box(){}#<get-testK>#static(){}
-  //   Mangled name for the signature: box(){}<get-testK>#static(){}
-  local fun <get-testK>(): String
 
 // CHECK JVM_IR:
 //   Mangled name: #getValue@kotlin.String(kotlin.Any?;kotlin.Any){}kotlin.String

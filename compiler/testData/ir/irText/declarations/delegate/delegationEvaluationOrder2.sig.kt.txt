@@ -104,24 +104,6 @@ class Derived : DerivedBase, Base, Base2 {
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
   // CHECK JVM_IR:
-  //   Mangled name: foo.Derived.$$delegate_0
-  //   Public signature: foo/Derived.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description:
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: foo.Derived.$$delegate_0
-  //   Public signature: foo/Derived.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description:
-  private /* final field */ val $$delegate_0: Base
-  // CHECK JVM_IR:
-  //   Mangled name: foo.Derived.$$delegate_1
-  //   Public signature: foo/Derived.$$delegate_1|-7286425919675154353[0]
-  //   Public signature debug description:
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: foo.Derived.$$delegate_1
-  //   Public signature: foo/Derived.$$delegate_1|-7286425919675154353[0]
-  //   Public signature debug description:
-  private /* final field */ val $$delegate_1: Base2
-  // CHECK JVM_IR:
   //   Mangled name: foo.Derived#bar(kotlin.String){}kotlin.String
   //   Public signature: foo/Derived.bar|2000415168157940991[0]
   //   Public signature debug description: bar(kotlin.String){}kotlin.String
@@ -153,24 +135,6 @@ class Derived1 : DerivedBase, Base, Base2 {
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
   // CHECK JVM_IR:
-  //   Mangled name: foo.Derived1.$$delegate_0
-  //   Public signature: foo/Derived1.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description:
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: foo.Derived1.$$delegate_0
-  //   Public signature: foo/Derived1.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description:
-  private /* final field */ val $$delegate_0: Base
-  // CHECK JVM_IR:
-  //   Mangled name: foo.Derived1.$$delegate_1
-  //   Public signature: foo/Derived1.$$delegate_1|-7286425919675154353[0]
-  //   Public signature debug description:
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: foo.Derived1.$$delegate_1
-  //   Public signature: foo/Derived1.$$delegate_1|-7286425919675154353[0]
-  //   Public signature debug description:
-  private /* final field */ val $$delegate_1: Base2
-  // CHECK JVM_IR:
   //   Mangled name: foo.Derived1#bar(kotlin.String){}kotlin.String
   //   Public signature: foo/Derived1.bar|2000415168157940991[0]
   //   Public signature debug description: bar(kotlin.String){}kotlin.String
@@ -201,24 +165,6 @@ class Derived2 : DerivedBase, Base, Base2 {
   //   Public signature: foo/Derived2.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
-  // CHECK JVM_IR:
-  //   Mangled name: foo.Derived2.$$delegate_0
-  //   Public signature: foo/Derived2.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description:
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: foo.Derived2.$$delegate_0
-  //   Public signature: foo/Derived2.$$delegate_0|-7286425919675154353[0]
-  //   Public signature debug description:
-  private /* final field */ val $$delegate_0: Base
-  // CHECK JVM_IR:
-  //   Mangled name: foo.Derived2.$$delegate_1
-  //   Public signature: foo/Derived2.$$delegate_1|-7286425919675154353[0]
-  //   Public signature debug description:
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: foo.Derived2.$$delegate_1
-  //   Public signature: foo/Derived2.$$delegate_1|-7286425919675154353[0]
-  //   Public signature debug description:
-  private /* final field */ val $$delegate_1: Base2
   // CHECK JVM_IR:
   //   Mangled name: foo.Derived2#bar(kotlin.String){}kotlin.String
   //   Public signature: foo/Derived2.bar|2000415168157940991[0]

@@ -7,15 +7,6 @@ class A<T : Any?> {
   //   Public signature: /A.<init>|5547349096232763669[0]
   //   Public signature debug description: <init>!1:0(){}
   constructor($context_receiver_0: T) /* primary */
-  // CHECK JVM_IR:
-  //   Mangled name: A.contextReceiverField0
-  //   Mangled name for the signature computed from Ir:
-  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0#jf
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: A.contextReceiverField0
-  //   Mangled name for the signature computed from Ir:
-  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0
-  private /* final field */ val contextReceiverField0: T
 
 }
 
@@ -28,15 +19,6 @@ class B<P : Any?> {
   //   Public signature: /B.<init>|-5453957848603821578[0]
   //   Public signature debug description: <init>!kotlin.collections.Collection<1:0>(){}
   constructor($context_receiver_0: Collection<P>) /* primary */
-  // CHECK JVM_IR:
-  //   Mangled name: B.contextReceiverField0
-  //   Mangled name for the signature computed from Ir:
-  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0#jf
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: B.contextReceiverField0
-  //   Mangled name for the signature computed from Ir:
-  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0
-  private /* final field */ val contextReceiverField0: Collection<P>
 
 }
 
