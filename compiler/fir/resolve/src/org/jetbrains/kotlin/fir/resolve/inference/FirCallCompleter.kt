@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.resolve.calls.inference.addEqualityConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -184,16 +183,8 @@ class FirCallCompleter(
                     )
                 }
             }
-            !expectedType.isUnitOrFlexibleUnit || !resolutionMode.mayBeCoercionToUnitApplied -> {
-                system.addSubtypeConstraint(initialType, expectedType, position)
-            }
-            system.notFixedTypeVariables.isEmpty() -> return
-            expectedType.isUnit -> {
-                system.addEqualityConstraintIfCompatible(initialType, expectedType, position)
-            }
-            else -> {
-                system.addSubtypeConstraintIfCompatible(initialType, expectedType, position)
-            }
+            expectedType.isUnitOrFlexibleUnit && resolutionMode.mayBeCoercionToUnitApplied -> return
+            else -> system.addSubtypeConstraint(initialType, expectedType, position)
         }
     }
 
