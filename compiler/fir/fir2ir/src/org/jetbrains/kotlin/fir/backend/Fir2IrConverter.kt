@@ -280,7 +280,10 @@ class Fir2IrConverter(
             }
             declarationStorage.leaveScope(irConstructor.symbol)
         }
-        fakeOverrideGenerator.computeFakeOverrides(klass, irClass, allDeclarations)
+
+        if (!configuration.useIrFakeOverrideBuilder) {
+            fakeOverrideGenerator.computeFakeOverrides(klass, irClass, allDeclarations)
+        }
 
         return irClass
     }
