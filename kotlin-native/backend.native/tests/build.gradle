@@ -1239,6 +1239,14 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.headers "$projectDir/interop/objc/overridabilityCondition/lib.h"
         it.extraOpts "-Xcompile-source", "$projectDir/interop/objc/overridabilityCondition/lib.m"
     }
+    createInterop("kt63423_dispose_on_main_stress") {
+        it.defFile 'interop/objc/kt63423_dispose_on_main_stress/objclib.def'
+        it.headers "$projectDir/interop/objc/kt63423_dispose_on_main_stress/objclib.h"
+        it.extraOpts "-Xcompile-source", "$projectDir/interop/objc/kt63423_dispose_on_main_stress/objclib.m"
+        it.extraOpts "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)="
+        it.extraOpts "-Xsource-compiler-option", "-fobjc-arc"
+        it.extraOpts "-Xsource-compiler-option", "-ObjC++"
+    }
 }
 
 createInterop("withSpaces") {
@@ -1847,6 +1855,18 @@ if (PlatformInfo.isAppleTarget(project)) {
         enabled = target.family != Family.WATCHOS
         source = 'interop/kt59167/main.kt'
         interop = 'kt59167'
+    }
+
+    interopTest("interop_objc_kt63423_dispose_on_main_stress") {
+        // Test depends on macOS-specific AppKit
+        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
+            && !isNoopGC // requires some GC
+        source = 'interop/objc/kt63423_dispose_on_main_stress/main.kt'
+        interop = "kt63423_dispose_on_main_stress"
+        flags = [
+            '-opt-in=kotlin.native.internal.InternalForKotlinNative', // MemoryUsageInfo is internal
+            '-Xbinary=gcSchedulerType=manual', // This test requires very careful timing when GC can happen
+        ]
     }
 }
 
