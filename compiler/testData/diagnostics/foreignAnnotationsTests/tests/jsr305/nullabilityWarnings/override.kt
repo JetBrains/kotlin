@@ -62,3 +62,23 @@ abstract class A<T> : Provider<T> {
     <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun getSet(x: T): T = x
     <!NOTHING_TO_OVERRIDE!>override<!> fun getSetNullable(x: T): T = x
 }
+
+abstract class B<T> : Provider<T> {
+    override fun get(): T & Any = null!!
+    override fun getNullable(): T? = null!!
+    <!NOTHING_TO_OVERRIDE!>override<!> fun set(x: T & Any) {} // False positive in K1
+    override fun setNullable(x: T?) {}
+
+    <!NOTHING_TO_OVERRIDE!>override<!> fun getSet(x: T & Any): T & Any = x // False positive in K1
+    override fun getSetNullable(x: T?): T? = x
+}
+
+abstract class C<T> : Provider<T> {
+    override fun getSet(x: T): T & Any = x!! // Missing warning in K1, K2 get's this right
+    <!NOTHING_TO_OVERRIDE!>override<!> fun getSetNullable(x: T): T? = x
+}
+
+abstract class D<T> : Provider<T> {
+    <!NOTHING_TO_OVERRIDE!>override<!> fun getSet(x: T & Any): T = x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> // False positive in K1
+    override fun getSetNullable(x: T?): T = x!!
+}

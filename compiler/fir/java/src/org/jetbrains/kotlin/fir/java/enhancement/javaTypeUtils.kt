@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal fun ConeKotlinType.enhance(session: FirSession, qualifiers: IndexedJavaTypeQualifiers): ConeKotlinType? =
     enhanceConeKotlinType(session, qualifiers, 0, mutableListOf<Int>().apply { computeSubtreeSizes(this) })
@@ -115,6 +116,10 @@ private fun ConeSimpleKotlinType.enhanceInflexibleType(
             enhancedTag.constructType(typeArguments, isNullable, newAttributes)
         } else {
             this.withAttributes(newAttributes)
+        }.applyIf(isFromDefinitelyNotNullType) {
+            // If the original type was DNN, we need to wrap the result in a DNN type because `this` is the non-DNN part of the original.
+            // In the non-warning case, this happens in the nested call and so `enhanced` is already DNN.
+            ConeDefinitelyNotNullType.create(this, session.typeContext)
         }
     } else {
         enhanced

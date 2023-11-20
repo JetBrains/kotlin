@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: warn
 // FILE: J1.java
 import org.jspecify.nullness.*;
