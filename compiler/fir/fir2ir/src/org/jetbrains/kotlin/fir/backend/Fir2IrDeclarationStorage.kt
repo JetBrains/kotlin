@@ -460,10 +460,6 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun preparePropertySymbol(symbol: FirPropertySymbol): FirPropertySymbol {
-        return prepareProperty(symbol.fir).symbol
-    }
-
     fun getOrCreateIrPropertyByPureField(
         field: FirField,
         irParent: IrDeclarationParent
