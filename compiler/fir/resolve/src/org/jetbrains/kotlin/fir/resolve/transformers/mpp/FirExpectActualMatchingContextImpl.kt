@@ -11,8 +11,12 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -30,12 +34,10 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.Annota
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.AbstractTypeRefiner
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-import org.jetbrains.kotlin.types.model.TypeSystemContext
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
 class FirExpectActualMatchingContextImpl private constructor(
@@ -321,21 +323,23 @@ class FirExpectActualMatchingContextImpl private constructor(
                 return false
             }
         }
+        val actualizedExpectType = (expectType as ConeKotlinType).actualize()
+        val actualizedActualType = (actualType as ConeKotlinType).actualize()
 
-        if (parameterOfAnnotationComparisonMode && expectType is ConeClassLikeType && expectType.isArrayType &&
-            actualType is ConeClassLikeType && actualType.isArrayType
+        if (parameterOfAnnotationComparisonMode && actualizedExpectType is ConeClassLikeType && actualizedExpectType.isArrayType &&
+            actualizedActualType is ConeClassLikeType && actualizedActualType.isArrayType
         ) {
             return AbstractTypeChecker.equalTypes(
                 createTypeCheckerState(),
-                expectType.convertToArrayWithOutProjections(),
-                actualType.convertToArrayWithOutProjections()
+                actualizedExpectType.convertToArrayWithOutProjections(),
+                actualizedActualType.convertToArrayWithOutProjections()
             )
         }
 
         return AbstractTypeChecker.equalTypes(
             actualSession.typeContext,
-            expectType,
-            actualType
+            actualizedExpectType,
+            actualizedActualType
         )
     }
 
@@ -353,6 +357,41 @@ class FirExpectActualMatchingContextImpl private constructor(
             createTypeCheckerState(),
             subType = actualType,
             superType = expectType
+        )
+    }
+
+    private fun ConeKotlinType.actualize(): ConeKotlinType {
+        val classId = classId
+        if (this is ConeClassLikeType && classId?.isNestedClass == true) {
+            val classSymbol = classId.toSymbol(actualSession)
+            if (classSymbol is FirRegularClassSymbol && classSymbol.isExpect) {
+                tryExpandExpectNestedClassActualizedViaTypealias(this, classSymbol)?.let { return it }
+            }
+        }
+        return fullyExpandedType(actualSession)
+    }
+
+    /**
+     * In case of `expect` nested classes actualized via typealias we can't simply find actual symbol by `expect` `ClassId`
+     * (like we do for top-level classes), because `ClassId` is different.
+     * For example, `expect` class `com/example/ExpectClass.Nested` may have actual with id `real/package/ActualTypeliasTarget.Nested`.
+     * So, we first expand outermost class, and then construct `ClassId` for nested class.
+     */
+    private fun tryExpandExpectNestedClassActualizedViaTypealias(
+        expectNestedClassType: ConeClassLikeType,
+        expectNestedClassSymbol: FirRegularClassSymbol,
+    ): ConeClassLikeType? {
+        val expectNestedClassId = expectNestedClassSymbol.classId
+        val expectOutermostClassId = expectNestedClassId.outermostClassId
+        val actualTypealiasSymbol = expectOutermostClassId.toSymbol(actualSession) as? FirTypeAliasSymbol ?: return null
+        val actualOutermostClassId = actualTypealiasSymbol.fullyExpandedClass(actualSession)?.classId ?: return null
+        val actualNestedClassId = ClassId.fromString(
+            expectNestedClassId.asString().replaceFirst(
+                expectOutermostClassId.asString(), actualOutermostClassId.asString()
+            )
+        )
+        return actualNestedClassId.constructClassLikeType(
+            expectNestedClassType.typeArguments, expectNestedClassType.isNullable, expectNestedClassType.attributes
         )
     }
 
@@ -451,7 +490,7 @@ class FirExpectActualMatchingContextImpl private constructor(
             getAnnotationConeType()?.toRegularClassSymbol(actualSession)
 
         private fun getAnnotationConeType(): ConeClassLikeType? {
-            val coneType = annotation.toAnnotationClassLikeType(actualSession)
+            val coneType = annotation.toAnnotationClassLikeType(actualSession)?.actualize() as? ConeClassLikeType
             if (coneType is ConeErrorType) {
                 return null
             }

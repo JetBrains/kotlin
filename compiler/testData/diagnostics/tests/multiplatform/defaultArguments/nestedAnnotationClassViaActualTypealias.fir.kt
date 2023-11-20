@@ -11,4 +11,4 @@ class DefaultArgsInNestedClassImpl {
 }
 
 // Incompatible because of bug KT-31636
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>DefaultArgsInNestedClass<!> = DefaultArgsInNestedClassImpl
+actual typealias DefaultArgsInNestedClass = DefaultArgsInNestedClassImpl
