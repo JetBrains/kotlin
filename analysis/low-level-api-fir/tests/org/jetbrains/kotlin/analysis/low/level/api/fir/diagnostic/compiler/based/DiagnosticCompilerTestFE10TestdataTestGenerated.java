@@ -27261,6 +27261,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("dnnOverridesFlexible.kt")
+            public void testDnnOverridesFlexible() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/dnnOverridesFlexible.kt");
+            }
+
+            @Test
             @TestMetadata("DuplicateMethod.kt")
             public void testDuplicateMethod() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/DuplicateMethod.kt");
