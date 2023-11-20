@@ -30,7 +30,8 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO 
     override val targetName: String,
     compilerOptionsFactory: () -> HasCompilerOptions<CO>,
     kotlinOptionsFactory: (CO) -> KotlinOptionsType
-) : AbstractKotlinTarget(project) {
+) : AbstractKotlinTarget(project),
+    HasConfigurableCompilerOptions<KotlinJvmCompilerOptions> {
     override var disambiguationClassifier: String? = null
         internal set
 

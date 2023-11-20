@@ -743,18 +743,17 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedE
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation$Delegate;)V
 }
 
-public class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget : org/jetbrains/kotlin/gradle/plugin/mpp/InternalKotlinTarget {
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget : org/jetbrains/kotlin/gradle/plugin/mpp/InternalKotlinTarget {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget$Delegate;)V
 	public fun attributes (Lkotlin/jvm/functions/Function1;)V
 	public fun attributes (Lorg/gradle/api/Action;)V
-	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
-	public fun compilerOptions (Lorg/gradle/api/Action;)V
 	public final fun getApiElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public fun getApiElementsConfigurationName ()Ljava/lang/String;
 	public final fun getApiElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public fun getArtifactsTaskName ()Ljava/lang/String;
 	public fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
 	public fun getCompilations ()Lorg/gradle/api/NamedDomainObjectContainer;
+	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
 	public fun getComponents ()Ljava/util/Set;
 	public fun getDisambiguationClassifier ()Ljava/lang/String;
 	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
@@ -37,7 +39,9 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
 interface KotlinJsTargetDsl :
     KotlinTarget,
     KotlinTargetWithNodeJsDsl,
-    HasBinaries<KotlinJsBinaryContainer>{
+    HasBinaries<KotlinJsBinaryContainer>,
+    HasConfigurableCompilerOptions<KotlinJsCompilerOptions> {
+
     var moduleName: String?
 
     fun browser() = browser { }

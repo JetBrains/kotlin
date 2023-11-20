@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
-
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
@@ -17,7 +15,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
@@ -65,21 +62,6 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val preset: KotlinTargetPreset<out KotlinTarget>?
 
     override fun getName(): String = targetName
-
-    @Deprecated(
-        "Kotlin target level compiler options DSL is not available in this release!",
-        level = DeprecationLevel.ERROR
-    )
-    fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
-        throw UnsupportedOperationException("Kotlin target level compiler options DSL is not available in this release!")
-    }
-    @Deprecated(
-        "Kotlin target level compiler options DSL is not available in this release!",
-        level = DeprecationLevel.ERROR
-    )
-    fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
-        throw UnsupportedOperationException("Kotlin target level compiler options DSL is not available in this release!")
-    }
 
     @Deprecated(
         "Accessing 'sourceSets' container on the Kotlin target level DSL is deprecated. " +

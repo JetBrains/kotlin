@@ -37,8 +37,6 @@ abstract class AbstractKotlinTarget(
 
     override fun getAttributes(): AttributeContainer = attributeContainer
 
-    internal abstract val compilerOptions: KotlinCommonCompilerOptions
-
     @Deprecated("Scheduled for removal with Kotlin 2.2")
     override var useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true
         internal set

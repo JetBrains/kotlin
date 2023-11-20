@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.jvm
 
-import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
@@ -48,6 +47,7 @@ import javax.inject.Inject
 abstract class KotlinJvmTarget @Inject constructor(
     project: Project,
 ) : KotlinOnlyTarget<KotlinJvmCompilation>(project, KotlinPlatformType.jvm),
+    HasConfigurableCompilerOptions<KotlinJvmCompilerOptions>,
     KotlinTargetWithTests<JvmClasspathTestRunSource, KotlinJvmTestRun> {
 
     override val testRuns: NamedDomainObjectContainer<KotlinJvmTestRun> by lazy {
@@ -334,9 +334,8 @@ abstract class KotlinJvmTarget @Inject constructor(
     private fun areRuntimeOrCompileConfigurationsAvailable(): Boolean =
         GradleVersion.version(project.gradle.gradleVersion) <= GradleVersion.version("6.8.3")
 
-    @Suppress("RedundantVisibilityModifier")
     @ExperimentalKotlinGradlePluginApi
-    internal override val compilerOptions: KotlinJvmCompilerOptions = project.objects
+    override val compilerOptions: KotlinJvmCompilerOptions = project.objects
         .newInstance<KotlinJvmCompilerOptionsDefault>()
         .apply {
             DefaultKotlinJavaToolchain.wireJvmTargetToToolchain(
@@ -344,15 +343,4 @@ abstract class KotlinJvmTarget @Inject constructor(
                 project
             )
         }
-
-    @ExperimentalKotlinGradlePluginApi
-    internal fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
-        configure(compilerOptions)
-    }
-
-    @ExperimentalKotlinGradlePluginApi
-    internal fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
-        configure.execute(compilerOptions)
-    }
 }
-

@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
 
@@ -23,7 +25,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
  * #### Sample
  *
  * ```kotlin
- * class MyCustomJvmTarget(delegate: Delegate): DecoratedExternalKotlinTarget(delegate) {
+ * @OptIn(ExperimentalKotlinGradlePluginApi::class)
+ * class MyCustomJvmTarget(delegate: Delegate): DecoratedExternalKotlinTarget(delegate),
+ *     HasConfigurableCompilerOptions<KotlinJvmCompilerOptions> {
+ *
  *     // Some property decorating our target
  *     val myCustomProperty: String = "hello there"
  *
@@ -32,17 +37,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
  *         get() = super.compilations as NamedDomainObjectContainer<MyCustomCompilationType>
  *
  *     // Covariant override of target compiler options that should be used to configure all target compilation compiler options
+ *     @ExperimentalKotlinGradlePluginApi
  *     override val compilerOptions: KotlinJvmCompilerOptions
  *         get() = super.compilerOptions as KotlinJvmCompilerOptions
- *
- *     // Optionally follow api exposed in Kotlin built-in targets to configure compiler options
- *     fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
- *         configure(compilerOptions)
- *     }
- *
- *     fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
- *         configure.execute(compilerOptions)
- *     }
  * }
  * ```
  *
@@ -52,7 +49,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
  * providing a factory function in the [ExternalKotlinTargetDescriptor]
  */
 @ExternalKotlinTargetApi
-open class DecoratedExternalKotlinTarget internal constructor(
+abstract class DecoratedExternalKotlinTarget internal constructor(
     internal val delegate: ExternalKotlinTargetImpl,
 ) : InternalKotlinTarget by delegate {
     constructor(delegate: Delegate) : this(delegate.impl)
@@ -78,6 +75,32 @@ open class DecoratedExternalKotlinTarget internal constructor(
     val sourcesElementsPublishedConfiguration: Configuration = delegate.sourcesElementsPublishedConfiguration
 
     internal val logger: Logger = delegate.logger
+
+    /**
+     * Target implementation could override return type to the specific platform type:
+     * - [KotlinPlatformType.common] - should be [KotlinCommonCompilerOptions]
+     * - [KotlinPlatformType.jvm] or [KotlinPlatformType.androidJvm] - could be [KotlinJvmCompilerOptions]
+     * - [KotlinPlatformType.js] or [KotlinPlatformType.wasm] - could be [KotlinJsCompilerOptions]
+     * - [KotlinPlatformType.native] - could be [KotlinNativeCompilerOptions]
+     *
+     * Example:
+     * ```kotlin
+     * @OptIn(ExperimentalKotlinGradlePluginApi::class)
+     * class MyCustomNativeTarget(delegate: Delegate): DecoratedExternalKotlinTarget(delegate),
+     *     HasConfigurableCompilerOptions<KotlinNativeCompilerOptions> {
+     *
+     *     // Covariant override of target compiler options that should be used to configure
+     *     // all target compilation compiler options
+     *     @ExperimentalKotlinGradlePluginApi
+     *     override val compilerOptions: KotlinNativeCompilerOptions
+     *         get() = super.compilerOptions as KotlinNativeCompilerOptions
+     * }
+     * ```
+     *
+     * @since 2.0.0
+     */
+    @ExperimentalKotlinGradlePluginApi
+    open val compilerOptions: KotlinCommonCompilerOptions = delegate.compilerOptions
 }
 
 internal val ExternalKotlinTargetImpl.decoratedInstance: DecoratedExternalKotlinTarget

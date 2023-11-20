@@ -1159,8 +1159,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree$Compan
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget : org/gradle/api/Named, org/gradle/api/attributes/HasAttributes, org/jetbrains/kotlin/gradle/plugin/HasProject, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
 	public abstract fun attributes (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun attributes (Lorg/gradle/api/Action;)V
-	public abstract fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
-	public abstract fun compilerOptions (Lorg/gradle/api/Action;)V
 	public abstract fun getApiElementsConfigurationName ()Ljava/lang/String;
 	public abstract fun getArtifactsTaskName ()Ljava/lang/String;
 	public abstract fun getCompilations ()Lorg/gradle/api/NamedDomainObjectContainer;
@@ -1184,8 +1182,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinTarget$DefaultImpls {
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lkotlin/jvm/functions/Function1;)V
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lorg/gradle/api/Action;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lkotlin/jvm/functions/Function1;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Ljava/lang/String;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lkotlin/jvm/functions/Function1;)V
@@ -1244,8 +1240,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests$Comp
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests$DefaultImpls {
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;Lkotlin/jvm/functions/Function1;)V
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;Lorg/gradle/api/Action;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;Lkotlin/jvm/functions/Function1;)V
-	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;)Ljava/lang/String;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests;Lkotlin/jvm/functions/Function1;)V

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -45,7 +44,6 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
-    @Disabled("DSL was demoted to 'internal'; Design is planned for 2.0")
     @GradleTest
     @DisplayName("Jvm project target compiler options DSL override project level options")
     @JvmGradlePluginTests
@@ -241,7 +239,6 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
-    @Disabled("DSL was demoted to 'internal'; Design is planned for 2.0")
     @DisplayName("Android target compiler options override project level compiler options")
     @AndroidGradlePluginTests
     @GradleAndroidTest
@@ -388,7 +385,6 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
     @DisplayName("KT-57959: should be possible to configure module name in MPP/android")
     @GradleAndroidTest
     @AndroidGradlePluginTests
-    @Disabled("DSL was demoted to 'internal'; Design is planned for 2.0")
     fun mppAndroidModuleName(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -426,7 +422,6 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
-    @Disabled("DSL was demoted to 'internal'; Design is planned for 2.0")
     @GradleTest
     @DisplayName("Multiplatform compiler option DSL hierarchy")
     @JvmGradlePluginTests
@@ -503,7 +498,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             }
 
             build(":compileKotlinLinuxX64") {
-                extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinuxX64", logLevel = LogLevel.DEBUG) {
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinuxX64") {
                     assertCommandLineArgumentsContain("-language-version", "1.7")
                     assertCommandLineArgumentsContain("-api-version", "1.7")
                     assertCommandLineArgumentsContain("-progressive")
@@ -513,7 +508,6 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
     }
 
 
-    @Disabled("DSL was demoted to 'internal'; Design is planned for 2.0")
     @DisplayName("KT-61303: Multiplatform/Android module name is changed")
     @AndroidGradlePluginTests
     @GradleAndroidTest

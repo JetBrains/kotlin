@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -27,7 +28,8 @@ import javax.inject.Inject
 abstract class KotlinAndroidTarget @Inject constructor(
     final override val targetName: String,
     project: Project,
-) : AbstractKotlinTarget(project) {
+) : AbstractKotlinTarget(project),
+    HasConfigurableCompilerOptions<KotlinJvmCompilerOptions> {
 
     final override val disambiguationClassifier: String = targetName
 
@@ -328,22 +330,11 @@ abstract class KotlinAndroidTarget @Inject constructor(
         attribute: Attribute<*>,
     ): Boolean = attribute.name != "com.android.build.api.attributes.AgpVersionAttr"
 
-    @Suppress("RedundantVisibilityModifier")
     @ExperimentalKotlinGradlePluginApi
-    internal override val compilerOptions: KotlinJvmCompilerOptions = project.objects
+    override val compilerOptions: KotlinJvmCompilerOptions = project.objects
         .newInstance<KotlinJvmCompilerOptionsDefault>()
         .apply {
             DefaultKotlinJavaToolchain.wireJvmTargetToToolchain(this, project)
         }
-
-    @ExperimentalKotlinGradlePluginApi
-    internal fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
-        configure(compilerOptions)
-    }
-
-    @ExperimentalKotlinGradlePluginApi
-    internal fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
-        configure.execute(compilerOptions)
-    }
 }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.NamedDomainObjectContainer
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -20,11 +21,16 @@ class FakeCompilation(delegate: Delegate) : DecoratedExternalKotlinCompilation(d
         get() = super.compilerOptions as HasCompilerOptions<KotlinJvmCompilerOptions>
 }
 
-class FakeTarget(delegate: Delegate) : DecoratedExternalKotlinTarget(delegate) {
+class FakeTarget(delegate: Delegate) : DecoratedExternalKotlinTarget(delegate),
+    HasConfigurableCompilerOptions<KotlinJvmCompilerOptions> {
 
     @Suppress("UNCHECKED_CAST")
     override val compilations: NamedDomainObjectContainer<FakeCompilation>
         get() = super.compilations as NamedDomainObjectContainer<FakeCompilation>
+
+    @ExperimentalKotlinGradlePluginApi
+    override val compilerOptions: KotlinJvmCompilerOptions
+        get() = super.compilerOptions as KotlinJvmCompilerOptions
 }
 
 fun ExternalKotlinTargetDescriptorBuilder<FakeTarget>.defaults() {

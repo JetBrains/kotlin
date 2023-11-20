@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 abstract class KotlinMetadataTarget @Inject constructor(
     project: Project,
-) : KotlinOnlyTarget<KotlinCompilation<*>>(project, KotlinPlatformType.common) {
+) : KotlinOnlyTarget<KotlinCompilation<*>>(project, KotlinPlatformType.common),
+    HasConfigurableCompilerOptions<KotlinCommonCompilerOptions> {
 
     override val artifactsTaskName: String
         // The IDE import looks at this task name to determine the artifact and register the path to the artifact;
@@ -37,9 +39,8 @@ abstract class KotlinMetadataTarget @Inject constructor(
         emptySet()
     }
 
-    @Suppress("RedundantVisibilityModifier")
     @ExperimentalKotlinGradlePluginApi
-    internal override val compilerOptions: KotlinCommonCompilerOptions = project.objects
+    override val compilerOptions: KotlinCommonCompilerOptions = project.objects
         .newInstance<KotlinCommonCompilerOptionsDefault>()
 
     companion object {
