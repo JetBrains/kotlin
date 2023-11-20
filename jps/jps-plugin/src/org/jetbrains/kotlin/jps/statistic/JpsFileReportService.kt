@@ -19,6 +19,6 @@ internal class JpsFileReportService(
     logger: JpsKotlinLogger,
 ) : FileReportService<JpsBuildTime, JpsBuildPerformanceMetric>(buildReportDir, projectName, printMetrics, logger) {
     override fun printCustomTaskMetrics(statisticsData: CompileStatisticsData<JpsBuildTime, JpsBuildPerformanceMetric>) {
-        p.print("Changed files: ${statisticsData.getChanges()}")
+        p.print("Changed files: ${statisticsData.getChanges().sorted()}")
     }
 }
