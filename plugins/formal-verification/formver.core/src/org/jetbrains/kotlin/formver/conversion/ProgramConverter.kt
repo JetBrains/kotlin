@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.formver.ErrorCollector
 import org.jetbrains.kotlin.formver.PluginConfiguration
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
-import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.*
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.formver.linearization.SeqnBuilder
 import org.jetbrains.kotlin.formver.linearization.SharedLinearizationState
 import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Program
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -64,10 +63,11 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     fun registerForVerification(declaration: FirSimpleFunction) {
         val signature = embedFullSignature(declaration.symbol)
-        // Note: it is important that `viperMethod` is only set later, as we need to
+        // Note: it is important that `body` is only set after `embedUserFunction` is complete, as we need to
         // place the embedding in the map before processing the body.
-        val embedding = embedUserFunction(declaration.symbol, signature)
-        embedding.viperMethod = convertMethodWithBody(declaration, signature)
+        embedUserFunction(declaration.symbol, signature).apply {
+            body = convertMethodWithBody(declaration, signature)
+        }
     }
 
     fun embedUserFunction(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): UserFunctionEmbedding {
@@ -81,9 +81,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         methods.getOrPut(symbol.embedName(this)) {
             val signature = embedFullSignature(symbol)
             val callable = processCallable(symbol, signature)
-            val embedding = UserFunctionEmbedding(callable)
-            embedding.viperMethod = callable.toViperMethod()
-            embedding
+            UserFunctionEmbedding(callable)
         }
 
     private fun embedClass(symbol: FirRegularClassSymbol): ClassTypeEmbedding {
@@ -196,6 +194,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                     returnVariable.accessInvariants() +
                     contractVisitor.getPostconditions(ContractVisitorContext(returnVariable, symbol)) +
                     subSignature.stdLibPostConditions(returnVariable)
+
+            override val declarationSource: KtSourceElement? = symbol.source
         }
     }
 
@@ -255,33 +255,33 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         }
 
     @OptIn(SymbolInternals::class)
-    private fun processCallable(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): ViperAwareCallableEmbedding {
+    private fun processCallable(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): RichCallableEmbedding {
         val body = symbol.fir.body
         return if (symbol.isInline && body != null) {
             InlineNamedFunction(signature, symbol, body)
         } else {
-            NonInlineNamedFunction(signature, symbol.source)
+            // We generate a dummy method header here to ensure all required types are processed already. If we skip this, any types
+            // that are used only in contracts cause an error because they are not processed until too late.
+            // TODO: fit this into the flow in some logical way instead.
+            NonInlineNamedFunction(signature).also { it.toViperMethodHeader() }
         }
     }
 
-    private fun convertMethodWithBody(declaration: FirSimpleFunction, signature: FullNamedFunctionSignature): Method {
+    private fun convertMethodWithBody(declaration: FirSimpleFunction, signature: FullNamedFunctionSignature): FunctionBodyEmbedding? {
+        val firBody = declaration.body ?: return null
         val returnTarget = returnTargetProducer.getFresh(signature.returnType)
-        val body = declaration.body?.let {
-            val methodCtx =
-                MethodConverter(
-                    this,
-                    signature,
-                    RootParameterResolver(this, signature, signature.sourceName, returnTarget),
-                    scopeIndexProducer.getFresh(),
-                )
-            val stmtCtx = StmtConverter(methodCtx)
-            val bodyExp = FunctionExp(signature, stmtCtx.convert(it), returnTarget.label)
-            val linearizer = Linearizer(SharedLinearizationState(anonVarProducer), SeqnBuilder(declaration.source), declaration.source)
-            bodyExp.toViperUnusedResult(linearizer)
-            linearizer.block
-        }
-
-        return signature.toViperMethod(body, returnTarget.variable, declaration.source.asPosition)
+        val methodCtx =
+            MethodConverter(
+                this,
+                signature,
+                RootParameterResolver(this, signature, signature.sourceName, returnTarget),
+                scopeIndexProducer.getFresh(),
+            )
+        val stmtCtx = StmtConverter(methodCtx)
+        val bodyExp = FunctionExp(signature, stmtCtx.convert(firBody), returnTarget.label)
+        val linearizer = Linearizer(SharedLinearizationState(anonVarProducer), SeqnBuilder(declaration.source), declaration.source)
+        bodyExp.toViperUnusedResult(linearizer)
+        return FunctionBodyEmbedding(linearizer.block, returnTarget, bodyExp)
     }
 
     private fun unimplementedTypeEmbedding(type: ConeKotlinType): TypeEmbedding =

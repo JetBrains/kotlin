@@ -14,15 +14,15 @@ import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 class InlineNamedFunction(
     val signature: FullNamedFunctionSignature,
     val symbol: FirFunctionSymbol<*>,
-    val body: FirBlock,
-) : ViperAwareCallableEmbedding, FullNamedFunctionSignature by signature {
+    val firBody: FirBlock,
+) : RichCallableEmbedding, FullNamedFunctionSignature by signature {
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
         ctx: StmtConversionContext,
     ): ExpEmbedding {
         val paramNames = symbol.valueParameterSymbols.map { it.name }
-        return ctx.insertInlineFunctionCall(signature, paramNames, args, body, signature.sourceName)
+        return ctx.insertInlineFunctionCall(signature, paramNames, args, firBody, signature.sourceName)
     }
 
-    override fun toViperMethod(): Nothing? = null
+    override fun toViperMethodHeader(): Nothing? = null
 }

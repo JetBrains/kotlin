@@ -5,13 +5,23 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
+import org.jetbrains.kotlin.formver.embeddings.FunctionBodyEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.Method
 
 interface FunctionEmbedding : CallableEmbedding {
     val viperMethod: Method?
 }
 
-class UserFunctionEmbedding(private val callable: CallableEmbedding) : FunctionEmbedding,
+/**
+ * An embedding of a user-defined function.
+ */
+class UserFunctionEmbedding(private val callable: RichCallableEmbedding) : FunctionEmbedding,
     CallableEmbedding by callable {
-    override var viperMethod: Method? = null
+    /**
+     * The presence of the body indicates that the function should be verified, as opposed to simply having a declaration available.
+     */
+    var body: FunctionBodyEmbedding? = null
+
+    override val viperMethod: Method?
+        get() = body?.toViperMethod(callable) ?: callable.toViperMethodHeader()
 }

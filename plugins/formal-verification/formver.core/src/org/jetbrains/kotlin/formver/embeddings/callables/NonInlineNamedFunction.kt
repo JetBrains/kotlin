@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.MethodCall
@@ -14,15 +12,12 @@ import org.jetbrains.kotlin.formver.embeddings.expression.PlaceholderVariableEmb
 import org.jetbrains.kotlin.formver.names.PlaceholderReturnVariableName
 import org.jetbrains.kotlin.formver.viper.ast.Method
 
-class NonInlineNamedFunction(
-    val signature: FullNamedFunctionSignature,
-    val source: KtSourceElement?,
-) : ViperAwareCallableEmbedding, FullNamedFunctionSignature by signature {
+class NonInlineNamedFunction(val signature: FullNamedFunctionSignature) : RichCallableEmbedding, FullNamedFunctionSignature by signature {
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
         ctx: StmtConversionContext,
     ): ExpEmbedding = MethodCall(signature, args)
 
-    override fun toViperMethod(): Method =
-        signature.toViperMethod(null, PlaceholderVariableEmbedding(PlaceholderReturnVariableName, signature.returnType), source.asPosition)
+    override fun toViperMethodHeader(): Method =
+        signature.toViperMethod(null, PlaceholderVariableEmbedding(PlaceholderReturnVariableName, signature.returnType))
 }
