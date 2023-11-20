@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.bir
 
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+
 @JvmInline
 value class SourceSpan constructor(
     private val packed: Long
 ) {
-    constructor(start: Int, end: Int) : this(start.toLong() or (end.toLong() shl 32))
+    constructor(start: Int, end: Int) : this(start.toUInt().toLong() or (end.toLong() shl 32))
 
     val start: Int
         get() = packed.toInt()
@@ -17,12 +20,12 @@ value class SourceSpan constructor(
         get() = (packed shr 32).toInt()
 
     val isUndefined: Boolean
-        get() = packed == -1L
+        get() = this == UNDEFINED
 
     override fun toString() = "[$start, $end]"
 
     companion object {
-        val UNDEFINED = SourceSpan(-1)
-        val SYNTHETIC = SourceSpan(-2)
+        val UNDEFINED = SourceSpan(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        val SYNTHETIC = SourceSpan(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
     }
 }
