@@ -996,7 +996,8 @@ class ComposerLambdaMemoization(
 
         return irBuilder.irCall(
             callee = rememberFunctionSymbol,
-            type = expression.type
+            type = expression.type,
+            origin = ComposeMemoizedLambdaOrigin
         ).apply {
             // The result type type parameter is first, followed by the argument types
             putTypeArgument(0, expression.type)
@@ -1042,7 +1043,7 @@ class ComposerLambdaMemoization(
         irCurrentComposer(),
         value,
         inferredStable = false,
-        strongSkippingEnabled = strongSkippingModeEnabled
+        compareInstanceForUnstableValues = strongSkippingModeEnabled
     )
 
     private fun IrValueDeclaration.isVar(): Boolean =
@@ -1135,3 +1136,5 @@ class ComposerLambdaMemoization(
 
 // This must match the highest value of FunctionXX which is current Function22
 private const val MAX_RESTART_ARGUMENT_COUNT = 22
+
+internal object ComposeMemoizedLambdaOrigin : IrStatementOrigin
