@@ -51,13 +51,8 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiLa
     ): Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)> = when {
         Directives.RESOLVE_FILE_ANNOTATIONS in moduleStructure.allDirectives -> {
             val annotationContainer = firResolveSession.getOrBuildFirFile(ktFile).annotationsContainer!!
-            val session = annotationContainer.moduleData.session as LLFirResolvableModuleSession
             annotationContainer to fun(phase: FirResolvePhase) {
-                session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
-                    annotationContainer,
-                    session.getScopeSession(),
-                    phase,
-                )
+                annotationContainer.lazyResolveToPhase(phase)
             }
         }
         Directives.RESOLVE_FILE in moduleStructure.allDirectives -> {

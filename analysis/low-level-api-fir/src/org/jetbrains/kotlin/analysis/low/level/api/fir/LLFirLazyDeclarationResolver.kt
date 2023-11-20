@@ -6,32 +6,31 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 @ThreadSafeMutableState
 internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
     override fun startResolvingPhase(phase: FirResolvePhase) {}
     override fun finishResolvingPhase(phase: FirResolvePhase) {}
 
-    override fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {
-        val fir = symbol.fir
-        val session = fir.moduleData.session
+    override fun lazyResolveToPhase(element: FirElementWithResolveState, toPhase: FirResolvePhase) {
+        val session = element.moduleData.session
         if (session !is LLFirResolvableModuleSession) return
         val moduleComponents = session.moduleComponents
         moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
-            target = fir,
+            target = element,
             scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
             toPhase = toPhase,
         )
     }
 
-    override fun lazyResolveToPhaseWithCallableMembers(symbol: FirClassSymbol<*>, toPhase: FirResolvePhase) {
-        val fir = symbol.fir as? FirRegularClass ?: return
+    override fun lazyResolveToPhaseWithCallableMembers(clazz: FirClass, toPhase: FirResolvePhase) {
+        val fir = clazz as? FirRegularClass ?: return
         val session = fir.moduleData.session
         if (session !is LLFirResolvableModuleSession) return
         val moduleComponents = session.moduleComponents
@@ -42,13 +41,12 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
         )
     }
 
-    override fun lazyResolveToPhaseRecursively(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {
-        val fir = symbol.fir
-        val session = fir.moduleData.session
+    override fun lazyResolveToPhaseRecursively(element: FirElementWithResolveState, toPhase: FirResolvePhase) {
+        val session = element.moduleData.session
         if (session !is LLFirResolvableModuleSession) return
         val moduleComponents = session.moduleComponents
         moduleComponents.firModuleLazyDeclarationResolver.lazyResolveRecursively(
-            target = fir,
+            target = element,
             scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
             toPhase = toPhase,
         )
