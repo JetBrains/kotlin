@@ -402,8 +402,7 @@ object KotlinCompilerClient {
                 .thenBy(FileAgeComparator()) { it.runFile }
         val optsCopy = daemonJVMOptions.copy()
         // if required options fit into fattest running daemon - return the daemon and required options with memory params set to actual ones in the daemon
-        @Suppress("DEPRECATION") // TODO: replace with maxWithOrNull as soon as minimal version of Gradle that we support has Kotlin 1.4+.
-        return aliveWithMetadata.maxWith(comparator)?.takeIf { daemonJVMOptions memorywiseFitsInto it.jvmOptions }?.let {
+        return aliveWithMetadata.maxWithOrNull(comparator)?.takeIf { daemonJVMOptions memorywiseFitsInto it.jvmOptions }?.let {
             Pair(it.daemon, optsCopy.updateMemoryUpperBounds(it.jvmOptions))
         }
         // else combine all options from running daemon to get fattest option for a new daemon to run
