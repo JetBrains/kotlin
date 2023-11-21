@@ -68,4 +68,15 @@ class Fir2IrComponentsStorage(
 
     override val lock: IrLock
         get() = symbolTable.lock
+
+    override val manglers: Fir2IrComponents.Manglers = object : Fir2IrComponents.Manglers {
+        override val descriptorMangler: KotlinMangler.DescriptorMangler
+            get() = symbolTable.signaturer.mangler
+
+        override val irMangler: KotlinMangler.IrMangler
+            get() = irMangler
+
+        override val firMangler: FirMangler
+            get() = commonMemberStorage.firSignatureComposer.mangler
+    }
 }

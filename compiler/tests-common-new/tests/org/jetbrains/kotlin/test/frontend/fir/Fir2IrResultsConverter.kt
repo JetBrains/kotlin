@@ -21,9 +21,10 @@ import org.jetbrains.kotlin.test.services.TestServices
  * In multi-platform projects this option is passed to IrActualizer instead
  * @see [IrActualizerAndPluginsFacade]
  */
-fun TestModule.shouldUseIrFakeOverrideBuilderInConvertToIr() =
-    CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in directives &&
+fun TestModule.shouldUseIrFakeOverrideBuilderInConvertToIr(): Boolean {
+    return CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in directives &&
             !languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+}
 
 class Fir2IrResultsConverter(
     testServices: TestServices

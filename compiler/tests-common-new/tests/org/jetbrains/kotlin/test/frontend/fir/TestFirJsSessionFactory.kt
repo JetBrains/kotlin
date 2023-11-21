@@ -65,5 +65,6 @@ object TestFirJsSessionFactory {
         )
 }
 
-fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices) =
-    JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices) + getTransitivesAndFriendsPaths(module, testServices)
+fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {
+    return JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices) + getTransitivesAndFriendsPaths(module, testServices)
+}

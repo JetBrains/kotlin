@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface Fir2IrComponents {
@@ -31,6 +32,8 @@ interface Fir2IrComponents {
     val symbolTable: SymbolTable
     val irBuiltIns: IrBuiltInsOverFir
     val builtIns: Fir2IrBuiltIns
+    val manglers: Manglers
+
     val irFactory: IrFactory
     val irProviders: List<IrProvider>
     val lock: IrLock
@@ -56,4 +59,10 @@ interface Fir2IrComponents {
     val configuration: Fir2IrConfiguration
 
     val annotationsFromPluginRegistrar: Fir2IrAnnotationsFromPluginRegistrar
+
+    interface Manglers {
+        val descriptorMangler: KotlinMangler.DescriptorMangler
+        val irMangler: KotlinMangler.IrMangler
+        val firMangler: FirMangler
+    }
 }
