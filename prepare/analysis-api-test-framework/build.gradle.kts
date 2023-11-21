@@ -5,6 +5,7 @@ plugins {
 val testModules = listOf(
     ":analysis:analysis-api-fir",
     ":analysis:low-level-api-fir",
+    ":analysis:low-level-api-fir:tests-jdk11",
     ":analysis:analysis-test-framework",
     ":analysis:analysis-api-impl-barebone",
     ":analysis:analysis-api-impl-base",

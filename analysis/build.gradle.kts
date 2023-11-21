@@ -13,6 +13,7 @@ tasks.register("analysisAllTests") {
         ":analysis:analysis-api-fe10:test",
         ":analysis:analysis-api-standalone:test",
         ":analysis:low-level-api-fir:test",
+        ":analysis:low-level-api-fir:tests-jdk11:test",
         ":analysis:symbol-light-classes:test"
     )
 
