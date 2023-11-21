@@ -101,6 +101,9 @@ object LightClassUtil {
 
     fun getLightClassBackingField(declaration: KtDeclaration): PsiField? {
         var psiClass: PsiClass = getWrappingClass(declaration) ?: return null
+        var fieldFinder: (PsiField) -> Boolean = { psiField ->
+            psiField is KtLightElement<*, *> && psiField.kotlinOrigin === declaration
+        }
 
         if (psiClass is KtLightClass) {
             val origin = psiClass.kotlinOrigin
@@ -112,15 +115,23 @@ object LightClassUtil {
                         psiClass = containingLightClass
                     }
                 }
+            } else {
+                // Decompiled version of [KtLightClass] may not have [kotlinOrigin]
+                val containingDeclaration = declaration.containingClassOrObject
+                if (containingDeclaration is KtObjectDeclaration &&
+                    containingDeclaration.isCompanion()
+                ) {
+                    psiClass.containingClass?.let { containingClass ->
+                        psiClass = containingClass
+                        fieldFinder = { psiField ->
+                            psiField.name == declaration.name
+                        }
+                    }
+                }
             }
         }
 
-        for (field in psiClass.fields) {
-            if (field is KtLightField && field.kotlinOrigin === declaration) {
-                return field
-            }
-        }
-        return null
+        return psiClass.fields.find(fieldFinder)
     }
 
     fun getLightClassPropertyMethods(parameter: KtParameter): PropertyAccessorsPsiMethods {
