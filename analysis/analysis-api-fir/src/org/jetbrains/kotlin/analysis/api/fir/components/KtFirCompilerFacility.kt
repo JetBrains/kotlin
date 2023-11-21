@@ -16,11 +16,7 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KtCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedId
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedValueAnalyzer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerCollector
@@ -73,11 +69,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.DelicateSymbolTableApi
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -91,7 +83,7 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import java.util.Collections
+import java.util.*
 
 internal class KtFirCompilerFacility(
     override val analysisSession: KtFirAnalysisSession
@@ -185,7 +177,7 @@ internal class KtFirCompilerFacility(
         ProgressManager.checkCanceled()
 
         val irGeneratorExtensions = IrGenerationExtension.getInstances(project)
-        targetFir2IrResult.components.applyIrGenerationExtensions(targetFir2IrResult.irModuleFragment, irGeneratorExtensions)
+        targetFir2IrResult.pluginContext.applyIrGenerationExtensions(targetFir2IrResult.irModuleFragment, irGeneratorExtensions)
 
         val bindingContext = NoScopeRecordCliBindingTrace().bindingContext
         val codegenFactory = createJvmIrCodegenFactory(targetConfiguration, file is KtCodeFragment, targetFir2IrResult.irModuleFragment)

@@ -6,25 +6,21 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.js.FirJsKotlinMangler
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -33,7 +29,6 @@ import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.incrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
@@ -74,49 +69,53 @@ class Fir2IrWasmResultsConverter(
     ): IrBackendInput {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        lateinit var mainIrPart: IrModuleFragment
-        val dependentIrParts = mutableListOf<IrModuleFragment>()
         val sourceFiles = mutableListOf<KtSourceFile>()
         val firFilesAndComponentsBySourceFile = mutableMapOf<KtSourceFile, Pair<FirFile, Fir2IrComponents>>()
-        lateinit var mainPluginContext: IrPluginContext
-        var irBuiltIns: IrBuiltInsOverFir? = null
 
-        val commonMemberStorage = Fir2IrCommonMemberStorage(IdSignatureDescriptor(JsManglerDesc), FirJsKotlinMangler())
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
-        for ((index, part) in inputArtifact.partsForDependsOnModules.withIndex()) {
-            val (irModuleFragment, components, pluginContext) =
-                part.firAnalyzerFacade.result.outputs.single().convertToWasmIr(
-                    testServices,
-                    module,
-                    configuration,
-                    diagnosticReporter,
-                    commonMemberStorage,
-                    irBuiltIns,
-                )
-            irBuiltIns = components.irBuiltIns
-            mainPluginContext = pluginContext
+        // TODO: consider avoiding repeated libraries resolution
+        val libraries = resolveWasmLibraries(module, testServices, configuration)
+        val (dependencies, builtIns) = loadResolvedLibraries(libraries, configuration.languageVersionSettings, testServices)
 
-            if (index < inputArtifact.partsForDependsOnModules.size - 1) {
-                dependentIrParts.add(irModuleFragment)
-            } else {
-                mainIrPart = irModuleFragment
+        val fir2IrConfiguration = Fir2IrConfiguration(
+            languageVersionSettings = configuration.languageVersionSettings,
+            diagnosticReporter = diagnosticReporter,
+            linkViaSignatures = true,
+            evaluatedConstTracker = configuration
+                .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+            inlineConstTracker = null,
+            expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
+            allowNonCachedDeclarations = false,
+            useIrFakeOverrideBuilder = module.shouldUseIrFakeOverrideBuilderInConvertToIr(),
+        )
+
+        val fir2irResult = inputArtifact.toFirResult().convertToIrAndActualize(
+            Fir2IrExtensions.Default,
+            fir2IrConfiguration,
+            module.irGenerationExtensions(testServices),
+            IdSignatureDescriptor(JsManglerDesc),
+            JsManglerIr,
+            FirJsKotlinMangler(),
+            Fir2IrVisibilityConverter.Default,
+            builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
+            ::IrTypeSystemContextImpl
+        ) { firPart, irPart ->
+            sourceFiles.addAll(firPart.fir.mapNotNull { it.sourceFile })
+            for (firFile in firPart.fir) {
+                firFilesAndComponentsBySourceFile[firFile.sourceFile!!] = firFile to irPart.components
             }
-
-            sourceFiles.addAll(part.firFiles.mapNotNull { it.value.sourceFile })
-
-            for (firFile in part.firFiles.values) {
-                firFilesAndComponentsBySourceFile[firFile.sourceFile!!] = firFile to components
-            }
+        }.also {
+            (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
         }
 
+
+        val commonMemberStorage = Fir2IrCommonMemberStorage(IdSignatureDescriptor(JsManglerDesc), FirJsKotlinMangler())
         val metadataVersion = configuration.metadataVersion(module.languageVersionSettings.languageVersion)
 
-        var actualizedExpectDeclarations: Set<FirDeclaration>? = null
-
         return IrBackendInput.WasmBackendInput(
-            mainIrPart,
-            mainPluginContext,
+            fir2irResult.irModuleFragment,
+            fir2irResult.pluginContext,
             sourceFiles,
             configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
             diagnosticReporter = diagnosticReporter,
@@ -124,12 +123,11 @@ class Fir2IrWasmResultsConverter(
             descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
             irMangler = JsManglerIr,
             firMangler = commonMemberStorage.firSignatureComposer.mangler,
-        ) { file, irActualizedResult ->
+        ) { file ->
             val (firFile, components) = firFilesAndComponentsBySourceFile[file]
                 ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
-            if (actualizedExpectDeclarations == null && irActualizedResult != null) {
-                actualizedExpectDeclarations = irActualizedResult.actualizedExpectDeclarations.extractFirDeclarations()
-            }
+
+            val actualizedExpectDeclarations = fir2irResult.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
             serializeSingleFirFile(
                 firFile,
                 components.session,
@@ -144,44 +142,6 @@ class Fir2IrWasmResultsConverter(
                 configuration.languageVersionSettings,
             )
         }
-    }
-}
-
-fun ModuleCompilerAnalyzedOutput.convertToWasmIr(
-    testServices: TestServices,
-    module: TestModule,
-    configuration: CompilerConfiguration,
-    diagnosticReporter: DiagnosticReporter,
-    commonMemberStorage: Fir2IrCommonMemberStorage,
-    irBuiltIns: IrBuiltInsOverFir?
-): Fir2IrResult {
-    // TODO: consider avoiding repeated libraries resolution
-    val libraries = resolveWasmLibraries(module, testServices, configuration)
-    val (dependencies, builtIns) = loadResolvedLibraries(libraries, configuration.languageVersionSettings, testServices)
-
-    val fir2IrConfiguration = Fir2IrConfiguration(
-        languageVersionSettings = configuration.languageVersionSettings,
-        diagnosticReporter = diagnosticReporter,
-        linkViaSignatures = true,
-        evaluatedConstTracker = configuration
-            .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
-        inlineConstTracker = null,
-        expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
-        allowNonCachedDeclarations = false,
-        useIrFakeOverrideBuilder = module.shouldUseIrFakeOverrideBuilderInConvertToIr(),
-    )
-
-    return convertToIr(
-        Fir2IrExtensions.Default,
-        fir2IrConfiguration,
-        commonMemberStorage,
-        irBuiltIns,
-        JsManglerIr,
-        Fir2IrVisibilityConverter.Default,
-        builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
-        typeContextProvider = ::IrTypeSystemContextImpl,
-    ).also {
-        (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
     }
 }
 

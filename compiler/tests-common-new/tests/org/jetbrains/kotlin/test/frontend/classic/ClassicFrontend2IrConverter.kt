@@ -117,7 +117,7 @@ class ClassicFrontend2IrConverter(
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
             irMangler = JsManglerIr,
             firMangler = null,
-        ) { file, _ ->
+        ) { file ->
             metadataSerializer.serializeScope(file, analysisResult.bindingContext, moduleFragment.descriptor)
         }
     }
@@ -159,7 +159,7 @@ class ClassicFrontend2IrConverter(
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
             irMangler = JsManglerIr,
             firMangler = null,
-        ) { file, _ ->
+        ) { file ->
             metadataSerializer.serializeScope(file, analysisResult.bindingContext, moduleFragment.descriptor)
         }
     }

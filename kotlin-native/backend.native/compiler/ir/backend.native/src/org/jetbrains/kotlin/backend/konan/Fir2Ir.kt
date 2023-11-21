@@ -40,7 +40,9 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrMemberWithContainerSource
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.DelicateSymbolTableApi
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
@@ -115,9 +117,9 @@ internal fun PhaseContext.fir2Ir(
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
             actualizerTypeContextProvider = ::IrTypeSystemContextImpl,
-            fir2IrResultPostCompute = {
+            fir2IrResultPostCompute = { _, irOutput ->
                 // it's important to compare manglers before actualization, since IR will be actualized, while FIR won't
-                irModuleFragment.acceptVoid(
+                irOutput.irModuleFragment.acceptVoid(
                         ManglerChecker(
                                 KonanManglerIr,
                                 Ir2FirManglerAdapter(FirNativeKotlinMangler),

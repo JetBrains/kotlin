@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test
 
-import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
@@ -15,32 +13,27 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
-import org.jetbrains.kotlin.test.frontend.fir.resolveLibraries
+import org.jetbrains.kotlin.test.frontend.fir.*
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -74,92 +67,43 @@ class Fir2IrNativeResultsConverter(
     ): IrBackendInput {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        lateinit var mainIrPart: IrModuleFragment
-        val dependentIrParts = mutableListOf<IrModuleFragment>()
-        val sourceFiles = mutableListOf<KtSourceFile>()
-        val firFilesAndComponentsBySourceFile = mutableMapOf<KtSourceFile, Pair<FirFile, Fir2IrComponents>>()
+        val libraries = resolveLibraries(configuration, getAllNativeDependenciesPaths(module, testServices))
+        val (dependencies, builtIns) = loadResolvedLibraries(libraries, configuration.languageVersionSettings, testServices)
 
-        lateinit var mainPluginContext: IrPluginContext
-        var irBuiltIns: IrBuiltInsOverFir? = null
-
-        val commonMemberStorage = Fir2IrCommonMemberStorage(IdSignatureDescriptor(KonanManglerDesc), FirNativeKotlinMangler)
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
-
-        for ((index, part) in inputArtifact.partsForDependsOnModules.withIndex()) {
-            val (irModuleFragment, components, pluginContext) =
-                part.firAnalyzerFacade.result.outputs.single().convertToNativeIr(
-                    testServices,
-                    module,
-                    configuration,
-                    diagnosticReporter,
-                    commonMemberStorage,
-                    irBuiltIns,
-                    KonanManglerIr
-                )
-            irBuiltIns = components.irBuiltIns
-            mainPluginContext = pluginContext
-
-            if (index < inputArtifact.partsForDependsOnModules.size - 1) {
-                dependentIrParts.add(irModuleFragment)
-            } else {
-                mainIrPart = irModuleFragment
-            }
-
-            sourceFiles.addAll(part.firFiles.mapNotNull { it.value.sourceFile })
-
-            for (firFile in part.firFiles.values) {
-                firFilesAndComponentsBySourceFile[firFile.sourceFile!!] = firFile to components
-            }
+        val fir2IrConfiguration = Fir2IrConfiguration(
+            languageVersionSettings = configuration.languageVersionSettings,
+            diagnosticReporter = diagnosticReporter,
+            linkViaSignatures = true,
+            evaluatedConstTracker = configuration
+                .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+            inlineConstTracker = null,
+            allowNonCachedDeclarations = false,
+            expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
+            useIrFakeOverrideBuilder = configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
+        )
+        val fir2irResult = inputArtifact.toFirResult().convertToIrAndActualize(
+            Fir2IrExtensions.Default,
+            fir2IrConfiguration,
+            module.irGenerationExtensions(testServices),
+            IdSignatureDescriptor(KonanManglerDesc),
+            KonanManglerIr,
+            FirNativeKotlinMangler,
+            Fir2IrVisibilityConverter.Default,
+            builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
+            ::IrTypeSystemContextImpl
+        ).also {
+            (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
         }
 
-        val result = IrBackendInput.NativeBackendInput(
-            mainIrPart,
-            mainPluginContext,
+        return IrBackendInput.NativeBackendInput(
+            fir2irResult.irModuleFragment,
+            fir2irResult.pluginContext,
             diagnosticReporter = diagnosticReporter,
-            descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
+            descriptorMangler = fir2irResult.components.symbolTable.signaturer.mangler,
             irMangler = KonanManglerIr,
-            firMangler = commonMemberStorage.firSignatureComposer.mangler,
+            firMangler = fir2irResult.components.signatureComposer.mangler,
         )
-
-        return result
-    }
-}
-
-fun ModuleCompilerAnalyzedOutput.convertToNativeIr(
-    testServices: TestServices,
-    module: TestModule,
-    configuration: CompilerConfiguration,
-    diagnosticReporter: DiagnosticReporter,
-    commonMemberStorage: Fir2IrCommonMemberStorage,
-    irBuiltIns: IrBuiltInsOverFir?,
-    irMangler: KotlinMangler.IrMangler,
-): Fir2IrResult {
-    // TODO: consider avoiding repeated libraries resolution
-    val libraries = resolveLibraries(configuration, getAllNativeDependenciesPaths(module, testServices))
-    val (dependencies, builtIns) = loadResolvedLibraries(libraries, configuration.languageVersionSettings, testServices)
-
-    val fir2IrConfiguration = Fir2IrConfiguration(
-        languageVersionSettings = configuration.languageVersionSettings,
-        diagnosticReporter = diagnosticReporter,
-        linkViaSignatures = true,
-        evaluatedConstTracker = configuration
-            .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
-        inlineConstTracker = null,
-        allowNonCachedDeclarations = false,
-        expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
-        useIrFakeOverrideBuilder = configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
-    )
-    return convertToIr(
-        Fir2IrExtensions.Default,
-        fir2IrConfiguration,
-        commonMemberStorage,
-        irBuiltIns,
-        irMangler,
-        Fir2IrVisibilityConverter.Default,
-        builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
-        ::IrTypeSystemContextImpl
-    ).also {
-        (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
     }
 }
 
@@ -196,4 +140,3 @@ private fun loadResolvedLibraries(
         }
     } to builtInsModule
 }
-

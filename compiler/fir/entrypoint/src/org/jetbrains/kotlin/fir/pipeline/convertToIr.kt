@@ -31,29 +31,7 @@ data class ModuleCompilerAnalyzedOutput(
     val session: FirSession,
     val scopeSession: ScopeSession,
     val fir: List<FirFile>
-) {
-    fun convertToIr(
-        fir2IrExtensions: Fir2IrExtensions,
-        fir2IrConfiguration: Fir2IrConfiguration,
-        commonMemberStorage: Fir2IrCommonMemberStorage,
-        irBuiltIns: IrBuiltInsOverFir?,
-        irMangler: KotlinMangler.IrMangler,
-        visibilityConverter: Fir2IrVisibilityConverter,
-        kotlinBuiltIns: KotlinBuiltIns,
-        typeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
-    ): Fir2IrResult {
-        return Fir2IrConverter.createIrModuleFragment(
-            session, scopeSession, fir,
-            fir2IrExtensions, fir2IrConfiguration,
-            irMangler, IrFactoryImpl, visibilityConverter,
-            Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO KT-60526: replace with appropriate (probably empty) implementation for other backends.
-            kotlinBuiltIns = kotlinBuiltIns,
-            commonMemberStorage = commonMemberStorage,
-            initializedIrBuiltIns = irBuiltIns,
-            typeContextProvider = typeContextProvider
-        )
-    }
-}
+)
 
 data class Fir2IrActualizedResult(
     val irModuleFragment: IrModuleFragment,
@@ -81,7 +59,7 @@ fun FirResult.convertToIrAndActualize(
     visibilityConverter: Fir2IrVisibilityConverter,
     kotlinBuiltIns: KotlinBuiltIns,
     actualizerTypeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
-    fir2IrResultPostCompute: Fir2IrResult.() -> Unit = {},
+    fir2IrResultPostCompute: (ModuleCompilerAnalyzedOutput, Fir2IrResult) -> Unit = { _, _ -> },
 ): Fir2IrActualizedResult {
     val fir2IrResult: Fir2IrResult
     val actualizationResult: IrActualizedResult?
@@ -91,7 +69,9 @@ fun FirResult.convertToIrAndActualize(
     when (outputs.size) {
         0 -> error("No modules found")
         1 -> {
-            fir2IrResult = outputs.single().convertToIr(
+            val output = outputs.single()
+            fir2IrResult = convertToIr(
+                output,
                 fir2IrExtensions,
                 fir2IrConfiguration,
                 commonMemberStorage = commonMemberStorage,
@@ -101,7 +81,7 @@ fun FirResult.convertToIrAndActualize(
                 kotlinBuiltIns,
                 actualizerTypeContextProvider,
             ).also { result ->
-                fir2IrResultPostCompute(result)
+                fir2IrResultPostCompute(output, result)
             }
             actualizationResult = null
         }
@@ -110,10 +90,11 @@ fun FirResult.convertToIrAndActualize(
             val commonOutputs = outputs.dropLast(1)
             var irBuiltIns: IrBuiltInsOverFir? = null
             val commonIrOutputs = commonOutputs.map {
-                it.convertToIr(
-                    fir2IrExtensions,
+                convertToIr(
+                    it,
                     // We need to build all modules before rebuilding fake overrides
                     // to avoid fixing declaration storages
+                    fir2IrExtensions,
                     fir2IrConfiguration.copy(useIrFakeOverrideBuilder = false),
                     commonMemberStorage = commonMemberStorage,
                     irBuiltIns = irBuiltIns,
@@ -122,13 +103,14 @@ fun FirResult.convertToIrAndActualize(
                     kotlinBuiltIns,
                     actualizerTypeContextProvider,
                 ).also { result ->
-                    fir2IrResultPostCompute(result)
+                    fir2IrResultPostCompute(it, result)
                     if (irBuiltIns == null) {
                         irBuiltIns = result.components.irBuiltIns
                     }
                 }
             }
-            fir2IrResult = platformOutput.convertToIr(
+            fir2IrResult = convertToIr(
+                platformOutput,
                 fir2IrExtensions,
                 fir2IrConfiguration,
                 commonMemberStorage = commonMemberStorage,
@@ -138,7 +120,7 @@ fun FirResult.convertToIrAndActualize(
                 kotlinBuiltIns,
                 actualizerTypeContextProvider,
             ).also {
-                fir2IrResultPostCompute(it)
+                fir2IrResultPostCompute(platformOutput, it)
             }
 
             actualizationResult = IrActualizer.actualize(
@@ -158,13 +140,31 @@ fun FirResult.convertToIrAndActualize(
     }
 
     val (irModuleFragment, components, pluginContext) = fir2IrResult
-    components.applyIrGenerationExtensions(irModuleFragment, irGeneratorExtensions)
+    pluginContext.applyIrGenerationExtensions(irModuleFragment, irGeneratorExtensions)
     return Fir2IrActualizedResult(irModuleFragment, components, pluginContext, actualizationResult)
 }
 
-fun Fir2IrComponents.applyIrGenerationExtensions(irModuleFragment: IrModuleFragment, irGenerationExtensions: Collection<IrGenerationExtension>) {
-    if (irGenerationExtensions.isEmpty()) return
-    Fir2IrPluginContext(this, irModuleFragment.descriptor).applyIrGenerationExtensions(irModuleFragment, irGenerationExtensions)
+private fun convertToIr(
+    firOutput: ModuleCompilerAnalyzedOutput,
+    fir2IrExtensions: Fir2IrExtensions,
+    fir2IrConfiguration: Fir2IrConfiguration,
+    commonMemberStorage: Fir2IrCommonMemberStorage,
+    irBuiltIns: IrBuiltInsOverFir?,
+    irMangler: KotlinMangler.IrMangler,
+    visibilityConverter: Fir2IrVisibilityConverter,
+    kotlinBuiltIns: KotlinBuiltIns,
+    typeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
+): Fir2IrResult {
+    return Fir2IrConverter.createIrModuleFragment(
+        firOutput.session, firOutput.scopeSession, firOutput.fir,
+        fir2IrExtensions, fir2IrConfiguration,
+        irMangler, IrFactoryImpl, visibilityConverter,
+        Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO KT-60526: replace with appropriate (probably empty) implementation for other backends.
+        kotlinBuiltIns = kotlinBuiltIns,
+        commonMemberStorage = commonMemberStorage,
+        initializedIrBuiltIns = irBuiltIns,
+        typeContextProvider = typeContextProvider
+    )
 }
 
 fun IrPluginContext.applyIrGenerationExtensions(irModuleFragment: IrModuleFragment, irGenerationExtensions: Collection<IrGenerationExtension>) {

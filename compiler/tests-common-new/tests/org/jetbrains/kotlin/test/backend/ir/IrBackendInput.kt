@@ -73,7 +73,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val descriptorMangler: KotlinMangler.DescriptorMangler,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
-        val serializeSingleFile: (KtSourceFile, IrActualizedResult?) -> ProtoBuf.PackageFragment,
+        val serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment,
     ) : IrBackendInput()
 
     data class JsIrDeserializedFromKlibBackendInput(
@@ -99,7 +99,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val descriptorMangler: KotlinMangler.DescriptorMangler,
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
-        val serializeSingleFile: (KtSourceFile, IrActualizedResult?) -> ProtoBuf.PackageFragment,
+        val serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment,
     ) : IrBackendInput()
 
     class JvmIrBackendInput(
