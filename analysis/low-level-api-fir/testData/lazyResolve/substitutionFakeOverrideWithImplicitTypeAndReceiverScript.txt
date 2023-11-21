@@ -48,8 +48,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverS
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] val R|T|.property: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): <implicit>
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val R|T|.property: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AbstractClass] get(): <implicit>
 
             public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
@@ -77,8 +77,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverS
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] val R|T|.property: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): <implicit>
+            public final [ResolvedTo(CONTRACTS)] val R|T|.property: <implicit> = foo#()
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] get(): <implicit>
 
             public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
@@ -135,8 +135,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverS
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val R|T|.property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
-                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val R|T|.property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
             public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|T|
 
@@ -164,8 +164,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiverS
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val R|T|.property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
-                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val R|T|.property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
             public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|T|
 

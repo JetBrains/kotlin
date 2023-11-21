@@ -43,7 +43,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(STATUS)] fun R|T|.resolveMe([ResolvedTo(STATUS)] param: R|T|): R|T|
+            public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun R|T|.resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|T|): R|T|
 
         }
 
@@ -68,7 +68,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(STATUS)] fun R|T|.resolveMe([ResolvedTo(STATUS)] param: R|T|): R|T|
+            public abstract [ResolvedTo(CONTRACTS)] fun R|T|.resolveMe([ResolvedTo(CONTRACTS)] param: R|T|): R|T|
 
         }
 
@@ -93,7 +93,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(STATUS)] fun R|T|.resolveMe([ResolvedTo(STATUS)] param: R|T|): R|T|
+            public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun R|T|.resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|T|): R|T|
 
         }
 
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(STATUS)] fun R|T|.resolveMe([ResolvedTo(STATUS)] param: R|T|): R|T|
+            public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun R|T|.resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|T|): R|T|
 
         }
 
@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(STATUS)] fun R|T|.resolveMe([ResolvedTo(STATUS)] param: R|T|): R|T|
+            public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun R|T|.resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|T|): R|T|
 
         }
 

@@ -22,7 +22,7 @@ TARGET: public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CallableCopySubstituti
 
 FILE: [ResolvedTo(IMPORTS)] Interface.kt
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-        public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+        public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
     }
 
@@ -41,7 +41,7 @@ TARGET: public open [ResolvedTo(CONTRACTS)] [CallableCopySubstitutionKey=Callabl
 
 FILE: [ResolvedTo(IMPORTS)] Interface.kt
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-        public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+        public open [ResolvedTo(CONTRACTS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
     }
 
@@ -81,7 +81,7 @@ TARGET: public open [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegatedWrapperDataKey=
 
 FILE: [ResolvedTo(IMPORTS)] Interface.kt
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|kotlin/Int| {
             ^implicitType Int(42)
         }
 
@@ -102,7 +102,7 @@ TARGET: public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped
 
 FILE: [ResolvedTo(IMPORTS)] Interface.kt
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|kotlin/Int| {
             ^implicitType Int(42)
         }
 

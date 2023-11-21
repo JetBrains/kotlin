@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+            public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+            public open [ResolvedTo(CONTRACTS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+            public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|kotlin/Int| {
                 ^implicitType Int(42)
             }
 
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+            public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|kotlin/Int| {
                 ^implicitType Int(42)
             }
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
+import org.jetbrains.kotlin.fir.originalIfFakeOverrideOrDelegated
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.DataClassResolver
@@ -71,13 +73,16 @@ internal abstract class LLFirTargetResolver(
         if (skipDependencyTargetResolutionStep || target is FirFileAnnotationsContainer) return
         resolveTarget.firFile.annotationsContainer?.lazyResolveToPhase(resolverPhase)
 
-        if (target is FirProperty) {
-            // We share type references and annotations with the original parameter
-            target.correspondingValueParameterFromPrimaryConstructor?.lazyResolveToPhase(resolverPhase)
-        }
+        val originalDeclaration = (target as? FirCallableDeclaration)?.originalIfFakeOverrideOrDelegated()
+        when {
+            // Fake or delegate declaration shared types and annotations from the original one
+            originalDeclaration != null -> originalDeclaration.lazyResolveToPhase(resolverPhase)
 
-        if (target is FirSimpleFunction && target.origin == FirDeclarationOrigin.Synthetic.DataClassMember) {
-            resolveDataClassMemberDependencies(target)
+            // We share type references and annotations with the original parameter
+            target is FirProperty -> target.correspondingValueParameterFromPrimaryConstructor?.lazyResolveToPhase(resolverPhase)
+            target is FirSimpleFunction && target.origin == FirDeclarationOrigin.Synthetic.DataClassMember -> {
+                resolveDataClassMemberDependencies(target)
+            }
         }
     }
 

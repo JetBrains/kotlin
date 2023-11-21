@@ -565,13 +565,13 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(STATUS)] var kind: R|Kind<T>|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=IrConst] get(): R|Kind<T>|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=IrConst] set([ResolvedTo(STATUS)] value: R|Kind<T>|): R|kotlin/Unit|
+            public abstract [ResolvedTo(CONTRACTS)] var kind: R|Kind<T>|
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=IrConst] get(): R|Kind<T>|
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=IrConst] set([ResolvedTo(CONTRACTS)] value: R|Kind<T>|): R|kotlin/Unit|
 
-            public abstract [ResolvedTo(STATUS)] var value: R|T|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=IrConst] get(): R|T|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=IrConst] set([ResolvedTo(STATUS)] value: R|T|): R|kotlin/Unit|
+            public abstract [ResolvedTo(CONTRACTS)] var value: R|T|
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=IrConst] get(): R|T|
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=IrConst] set([ResolvedTo(CONTRACTS)] value: R|T|): R|kotlin/Unit|
 
         }
 
@@ -632,3 +632,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fakeOverrideScript.kts
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IrConst] set([ResolvedTo(BODY_RESOLVE)] value: R|T|): R|kotlin/Unit|
 
         }
+

@@ -399,7 +399,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            @R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] @R|second/Anno|[Types](LAZY_EXPRESSION) t: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  T|): R|second/AbstractClass<T>| {
+            @R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|second/Anno|[Types](LAZY_EXPRESSION) t: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  T|): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -438,3 +438,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorScript.kts
             }
 
         }
+

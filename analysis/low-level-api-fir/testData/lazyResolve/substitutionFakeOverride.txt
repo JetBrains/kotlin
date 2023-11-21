@@ -35,8 +35,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public abstract [ResolvedTo(STATUS)] val R|T|.property: R|T|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+        public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val R|T|.property: R|T|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AbstractClass] get(): R|T|
 
     }
 
@@ -56,8 +56,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public abstract [ResolvedTo(STATUS)] val R|T|.property: R|T|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+        public abstract [ResolvedTo(CONTRACTS)] val R|T|.property: R|T|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
     }
 
@@ -77,8 +77,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public abstract [ResolvedTo(STATUS)] val R|T|.property: R|T|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+        public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val R|T|.property: R|T|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
 
     }
 
@@ -98,8 +98,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public abstract [ResolvedTo(STATUS)] val R|T|.property: R|T|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] val R|T|.property: R|T|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
     }
 
@@ -119,8 +119,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public abstract [ResolvedTo(STATUS)] val R|T|.property: R|T|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] val R|T|.property: R|T|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
     }
 
