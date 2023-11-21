@@ -81,6 +81,8 @@ fun main() = EventQueue.invokeLater {
             e.stackTraceToString()
         } catch (e: org.opentest4j.AssertionFailedError) {
             e.stackTraceToString()
+        } catch (e: java.lang.AssertionError) {
+            e.stackTraceToString()
         }
 
         if (sourceInitially != mainFrame.mainCode) {
