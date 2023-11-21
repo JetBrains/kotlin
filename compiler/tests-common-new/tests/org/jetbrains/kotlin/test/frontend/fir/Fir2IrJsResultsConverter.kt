@@ -76,7 +76,6 @@ class Fir2IrJsResultsConverter(
         val sourceFiles = mutableListOf<KtSourceFile>()
         val firFilesAndComponentsBySourceFile = mutableMapOf<KtSourceFile, Pair<FirFile, Fir2IrComponents>>()
         lateinit var mainPluginContext: IrPluginContext
-        lateinit var mainComponents: Fir2IrComponents
         var irBuiltIns: IrBuiltInsOverFir? = null
 
         val commonMemberStorage = Fir2IrCommonMemberStorage(IdSignatureDescriptor(JsManglerDesc), FirJsKotlinMangler())
@@ -101,7 +100,6 @@ class Fir2IrJsResultsConverter(
                 dependentIrParts.add(irModuleFragment)
             } else {
                 mainIrPart = irModuleFragment
-                mainComponents = components
             }
 
             sourceFiles.addAll(part.firFiles.mapNotNull { it.value.sourceFile })
@@ -117,7 +115,6 @@ class Fir2IrJsResultsConverter(
 
         val result = IrBackendInput.JsIrBackendInput(
             mainIrPart,
-            dependentIrParts,
             mainPluginContext,
             sourceFiles,
             configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
@@ -126,7 +123,6 @@ class Fir2IrJsResultsConverter(
             descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
             irMangler = irMangler,
             firMangler = commonMemberStorage.firSignatureComposer.mangler,
-            fir2IrComponents = mainComponents
         ) { file, irActualizedResult ->
             val (firFile, components) = firFilesAndComponentsBySourceFile[file]
                 ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
@@ -147,7 +143,6 @@ class Fir2IrJsResultsConverter(
                 configuration.languageVersionSettings,
             )
         }
-
         return result
     }
 }

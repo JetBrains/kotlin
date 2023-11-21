@@ -118,7 +118,7 @@ class Fir2IrJvmResultsConverter(
                 FirJvmVisibilityConverter,
                 DefaultBuiltIns.Instance,
                 typeContextProvider = ::JvmIrTypeSystemContext,
-                )
+            )
             irBuiltIns = components.irBuiltIns
 
             if (index < inputArtifact.partsForDependsOnModules.size - 1) {
@@ -154,12 +154,10 @@ class Fir2IrJvmResultsConverter(
             generationState,
             codegenFactory,
             backendInput,
-            dependentIrParts,
             sourceFiles,
             descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
             irMangler = irMangler,
             firMangler = commonMemberStorage.firSignatureComposer.mangler,
-            fir2IrComponents = mainModuleComponents
         )
 
         return result

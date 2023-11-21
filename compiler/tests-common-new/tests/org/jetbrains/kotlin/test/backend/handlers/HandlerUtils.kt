@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.KtDefaultJvmErrorMessages
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
@@ -29,11 +28,11 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
+// TODO: inline this function
 inline fun IrBackendInput.processAllIrModuleFragments(
     module: TestModule,
     processor: (irModuleFragment: IrModuleFragment, moduleName: String) -> Unit
 ) {
-    dependentIrModuleFragments.forEach { processor(it, it.name.asString()) }
     processor(irModuleFragment, module.name)
 }
 

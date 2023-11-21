@@ -114,13 +114,11 @@ class Fir2IrNativeResultsConverter(
 
         val result = IrBackendInput.NativeBackendInput(
             mainIrPart,
-            dependentIrParts,
             mainPluginContext,
             diagnosticReporter = diagnosticReporter,
             descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
             irMangler = KonanManglerIr,
             firMangler = commonMemberStorage.firSignatureComposer.mangler,
-            fir2IrComponents = null,
         )
 
         return result

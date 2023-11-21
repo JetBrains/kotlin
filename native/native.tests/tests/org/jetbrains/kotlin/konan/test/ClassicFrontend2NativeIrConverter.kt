@@ -127,13 +127,11 @@ class ClassicFrontend2NativeIrConverter(
 
         return IrBackendInput.NativeBackendInput(
             moduleFragment,
-            dependentIrModuleFragments = emptyList(),
             pluginContext,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(),
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
             irMangler = KonanManglerIr,
             firMangler = null,
-            fir2IrComponents = null,
         )
     }
 

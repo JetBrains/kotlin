@@ -63,7 +63,7 @@ class JsKlibBackendFacade(
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
                 jsOutputName = null
             ) {
-                inputArtifact.serializeSingleFile(it, inputArtifact.irActualizerResult)
+                inputArtifact.serializeSingleFile(it, TODO("Will be fixed in the next commit"))
             }
         }
 
