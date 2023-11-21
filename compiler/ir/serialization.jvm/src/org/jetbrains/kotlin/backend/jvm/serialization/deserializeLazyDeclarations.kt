@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.LazyIrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
@@ -91,7 +92,23 @@ fun deserializeFromByteArray(
         internationService = internationService
     )
     for (declarationProto in irProto.declarationList) {
-        deserializer.deserializeDeclaration(declarationProto, setParent = false)
+        val declaration = deserializer.deserializeDeclaration(declarationProto, setParent = false)
+        val parent = try {
+            declaration.parent
+        } catch (_: UninitializedPropertyAccessException) {
+            // If declaration.parent has a parent by itself, then such a parent is its inner class parent
+            // If it does not, then it is a function in toplevelParent not knowing about it...
+            //
+            // We have no other way to check whether parent was set or not.
+            declaration.parent = toplevelParent
+            declaration.parent
+        }
+
+        check(parent is IrDeclarationContainer) { "parent is not a declaration container" }
+
+        if (declaration !in parent.declarations) {
+            parent.declarations += declaration
+        }
     }
 
     symbolTable.signaturer.withFileSignature(dummyFileSignature) {

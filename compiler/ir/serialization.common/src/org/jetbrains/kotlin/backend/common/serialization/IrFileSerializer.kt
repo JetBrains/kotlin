@@ -1059,7 +1059,7 @@ open class IrFileSerializer(
             proto.addValueParameter(serializeIrValueParameter(it))
         }
 
-        if (!bodiesOnlyForInlines || function.isInline) {
+        if (!bodiesOnlyForInlines || function.isInline || function.parents.any { it is IrFunction && it.isInline }) {
             function.body?.let { proto.body = serializeIrStatementBody(it) }
         }
 

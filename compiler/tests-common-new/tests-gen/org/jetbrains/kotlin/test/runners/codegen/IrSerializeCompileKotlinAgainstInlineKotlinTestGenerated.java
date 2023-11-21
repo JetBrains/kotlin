@@ -4531,6 +4531,12 @@ public class IrSerializeCompileKotlinAgainstInlineKotlinTestGenerated extends Ab
         }
 
         @Test
+        @TestMetadata("kt-.kt")
+        public void testKt56710() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/simple/kt56710.kt");
+        }
+
+        @Test
         @TestMetadata("params.kt")
         public void testParams() throws Exception {
             runTest("compiler/testData/codegen/boxInline/simple/params.kt");
