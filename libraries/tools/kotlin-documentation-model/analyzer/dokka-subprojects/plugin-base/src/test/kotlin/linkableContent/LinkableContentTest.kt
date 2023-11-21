@@ -6,6 +6,7 @@ package linkableContent
 
 import org.jetbrains.dokka.SourceLinkDefinitionImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.base.transformers.pages.DefaultSamplesTransformer
 import org.jetbrains.dokka.base.transformers.pages.sourcelinks.SourceLinksTransformer
 import org.jetbrains.dokka.model.WithGenerics
 import org.jetbrains.dokka.model.dfs
@@ -192,10 +193,8 @@ class LinkableContentTest : BaseAbstractTest() {
         }
 
         testFromData(configuration) {
-            renderingStage = { rootPageNode, _ ->
-                // TODO [beresnev] :(((
-//                val newRoot = DefaultSamplesTransformer(dokkaContext).invoke(rootPageNode)
-                val newRoot = rootPageNode
+            renderingStage = { rootPageNode, dokkaContext ->
+                val newRoot = DefaultSamplesTransformer(dokkaContext).invoke(rootPageNode)
                 val moduleChildren = newRoot.children
                 assertEquals(1, moduleChildren.size)
                 val packageChildren = moduleChildren.first().children
@@ -212,12 +211,16 @@ class LinkableContentTest : BaseAbstractTest() {
                         .let { it as ContentCodeBlock }.children.single()
                         .let { it as ContentText }.text
                     assertEquals(
-                        """|import p2.${name}Class
-                                |fun main() { 
-                                |   //sampleStart 
-                                |   ${name}Class().printWithExclamation("Hi, $name") 
-                                |   //sampleEnd
-                                |}""".trimMargin(),
+                        """
+                        |import p2.${name}Class
+                        |import kotlin.collections.List
+                        |import kotlin.collections.Map
+                            |
+                            |fun main() { 
+                            |   //sampleStart 
+                            |   ${name}Class().printWithExclamation("Hi, $name") 
+                            |   //sampleEnd
+                            |}""".trimMargin(),
                         text
                     )
                 }

@@ -5,6 +5,8 @@
 package samples
 
 import p2.JvmClass
+import kotlin.collections.List
+import kotlin.collections.Map
 
 class SamplesJvm {
 

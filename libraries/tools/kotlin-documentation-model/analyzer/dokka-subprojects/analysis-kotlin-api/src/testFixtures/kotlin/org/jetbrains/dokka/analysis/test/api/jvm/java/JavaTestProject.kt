@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.analysis.test.api.jvm.java
 
+import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.analysis.test.api.TestData
 import org.jetbrains.dokka.analysis.test.api.TestDataFile
 import org.jetbrains.dokka.analysis.test.api.TestProject
@@ -67,7 +68,8 @@ class JavaTestProject : TestProject, JavaFileCreator, MdFileCreator {
                 ")"
     }
 
-    internal companion object {
-        internal const val DEFAULT_SOURCE_ROOT = "/src/main/java"
+    companion object {
+        const val DEFAULT_SOURCE_ROOT = "/src/main/java"
+        val DEFAULT_SOURCE_SET_ID = DokkaSourceSetID(scopeId = "project", sourceSetName = "java")
     }
 }
