@@ -89,7 +89,7 @@ class JpsStatisticsReportServiceImpl(
 
     private val buildMetrics = ConcurrentHashMap<String, JpsBuilderMetricReporter>()
     private val finishedModuleBuildMetrics = ConcurrentLinkedQueue<JpsBuilderMetricReporter>()
-    private val log = Logger.getInstance("#org.jetbrains.kotlin.jps.statistic.KotlinBuilderReportService")
+    private val log = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
     private val loggerAdapter = JpsKotlinLogger(log)
     private val httpService = httpReportSettings?.let { HttpReportService(it.url, it.user, it.password) }
 
