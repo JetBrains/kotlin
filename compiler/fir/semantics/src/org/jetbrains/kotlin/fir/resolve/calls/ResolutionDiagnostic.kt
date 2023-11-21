@@ -50,8 +50,7 @@ class NamedArgumentNotAllowed(
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class ArgumentPassedTwice(
-    override val argument: FirExpression,
-    val valueParameter: FirValueParameter
+    override val argument: FirNamedArgumentExpression,
 ) : InapplicableArgumentDiagnostic()
 
 class VarargArgumentOutsideParentheses(

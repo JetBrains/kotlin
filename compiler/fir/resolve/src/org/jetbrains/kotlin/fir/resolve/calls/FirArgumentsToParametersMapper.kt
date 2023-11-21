@@ -37,7 +37,7 @@ data class ArgumentMapping(
     //      foo(b = bar(), a = qux())
     // parameterToCallArgumentMap.values() should be [ 'bar()', 'foo()' ]
     val parameterToCallArgumentMap: LinkedHashMap<FirValueParameter, ResolvedCallArgument>,
-    val diagnostics: List<ResolutionDiagnostic>
+    val diagnostics: List<ResolutionDiagnostic>,
 ) {
     fun toArgumentToParameterMapping(): LinkedHashMap<FirExpression, FirValueParameter> {
         val argumentToParameterMapping = linkedMapOf<FirExpression, FirValueParameter>()
@@ -65,7 +65,7 @@ fun BodyResolveComponents.mapArguments(
     arguments: List<FirExpression>,
     function: FirFunction,
     originScope: FirScope?,
-    callSiteIsOperatorCall: Boolean
+    callSiteIsOperatorCall: Boolean,
 ): ArgumentMapping {
     if (arguments.isEmpty() && function.valueParameters.isEmpty()) {
         return EmptyArgumentMapping
@@ -110,12 +110,15 @@ private class FirCallArgumentsProcessor(
     private val function: FirFunction,
     private val bodyResolveComponents: BodyResolveComponents,
     private val originScope: FirScope?,
-    private val isIndexedSetOperator: Boolean
+    private val isIndexedSetOperator: Boolean,
 ) {
     private var state = State.POSITION_ARGUMENTS
     private var currentPositionedParameterIndex = 0
     private var varargArguments: MutableList<FirExpression>? = null
     private var nameToParameter: Map<Name, FirValueParameter>? = null
+    private var namedDynamicArgumentsNamesImpl: MutableSet<Name>? = null
+    private val namedDynamicArgumentsNames: MutableSet<Name>
+        get() = namedDynamicArgumentsNamesImpl ?: mutableSetOf<Name>().also { namedDynamicArgumentsNamesImpl = it }
     var diagnostics: MutableList<ResolutionDiagnostic>? = null
         private set
     val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap(function.valueParameters.size)
@@ -165,6 +168,9 @@ private class FirCallArgumentsProcessor(
             // process named argument
             function.origin == FirDeclarationOrigin.DynamicScope -> {
                 processPositionArgument(argument.expression, isLastArgument)
+                if (!namedDynamicArgumentsNames.add(argument.name)) {
+                    addDiagnostic(ArgumentPassedTwice(argument))
+                }
             }
             else -> {
                 if (state == State.VARARG_POSITION) {
@@ -228,7 +234,7 @@ private class FirCallArgumentsProcessor(
         val parameter = findParameterByName(argument) ?: return
 
         result[parameter]?.let {
-            addDiagnostic(ArgumentPassedTwice(argument, parameter))
+            addDiagnostic(ArgumentPassedTwice(argument))
             return
         }
 

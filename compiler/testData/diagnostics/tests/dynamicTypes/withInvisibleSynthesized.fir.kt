@@ -24,7 +24,7 @@ class K: J.C() {
         sam(null)
         sam(
             name = null,
-            name = null
+            <!ARGUMENT_PASSED_TWICE!>name<!> = null
         )
     }
 
