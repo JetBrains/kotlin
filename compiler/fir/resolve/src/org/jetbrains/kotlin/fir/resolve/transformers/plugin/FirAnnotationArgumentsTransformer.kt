@@ -307,6 +307,8 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
     override fun transformField(field: FirField, data: ResolutionMode): FirField {
         context.withField(field) {
             field.transformAnnotations(transformer, data)
+                .transformReturnTypeRef(transformer, data)
+                .transformBackingField(transformer, data)
         }
 
         return field

@@ -624,13 +624,13 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldNestedNameScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
         }
 
@@ -648,12 +648,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(i = IntegerLiteral(0).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.outer|))  second/Base<@R|second/Anno|(i = IntegerLiteral(1).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.outer|))  second/Base<@R|second/Anno|(i = IntegerLiteral(2).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.outer|))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|@R|second/Anno|(i = IntegerLiteral(0).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.outer|))  second/Base<@R|second/Anno|(i = IntegerLiteral(1).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.outer|))  second/Base<@R|second/Anno|(i = IntegerLiteral(2).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.outer|))  kotlin/Int>>| = LAZY_EXPRESSION
 
             private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| = LAZY_EXPRESSION
 
@@ -662,8 +662,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
                     LAZY_super<<implicit>>
                 }
 
-                public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val outer: R|kotlin/String| = String()
+                    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/String|
 
                 public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
                     public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
@@ -803,3 +803,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameScript.kts
             }
 
         }
+
