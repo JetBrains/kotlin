@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -66,6 +67,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import java.util.Arrays
 
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
@@ -652,7 +654,7 @@ private class ElementsToShortenCollector(
      *
      * This function determines the distance based on [ClassId].
      */
-    private fun FirScope.isScopeForClassCloserThanAnotherScopeForClass(another: FirScope, from: KtClass): Boolean {
+    private fun FirScope.isScopeForClassCloserThanAnotherScopeForClass(another: FirScope, from: KtClassOrObject): Boolean {
         // Make sure both are scopes for classes
         if (!isScopeForClass() || !another.isScopeForClass()) return false
 
@@ -673,12 +675,12 @@ private class ElementsToShortenCollector(
      * Travels all containing classes of [innerClass] and finds the one matching ClassId with one of [candidates]. Returns the matching
      * ClassId. If it does not have a matching ClassId, it returns null.
      */
-    private fun findMostInnerClassMatchingId(innerClass: KtClass, candidates: Set<ClassId>): ClassId? {
-        var classInNestedClass: KtClass? = innerClass
+    private fun findMostInnerClassMatchingId(innerClass: KtClassOrObject, candidates: Set<ClassId>): ClassId? {
+        var classInNestedClass: KtClassOrObject? = innerClass
         while (classInNestedClass != null) {
             val containingClassId = classInNestedClass.getClassId()
             if (containingClassId in candidates) return containingClassId
-            classInNestedClass = classInNestedClass.containingClass()
+            classInNestedClass = classInNestedClass.findClassOrObjectParent()
         }
         return null
     }
@@ -745,7 +747,7 @@ private class ElementsToShortenCollector(
      */
     private fun List<FirScope>.hasScopeCloserThan(base: FirScope, from: KtElement) = any { scope ->
         if (scope.isScopeForClass() && base.isScopeForClass()) {
-            val classContainingFrom = from.containingClass() ?: return@any false
+            val classContainingFrom = from.findClassOrObjectParent() ?: return@any false
             return@any scope.isScopeForClassCloserThanAnotherScopeForClass(base, classContainingFrom)
         }
         base.isWiderThan(scope)
@@ -1494,3 +1496,12 @@ private fun KtElement.getQualifier(): KtElement? = when (this) {
     is KtThisExpression -> labelQualifier
     else -> error("Unexpected ${this::class}")
 }
+
+/**
+ * N.B. We don't use [containingClassOrObject] because it works only for [KtDeclaration]s,
+ * and also check only the immediate (direct) parent.
+ *
+ * For this function, we want to find the parent [KtClassOrObject] declaration no matter
+ * how far it is from the element.
+ */
+private fun KtElement.findClassOrObjectParent(): KtClassOrObject? = parentOfType()
