@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.io.File
 import java.net.URLClassLoader
+import java.rmi.RemoteException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
@@ -217,6 +218,12 @@ internal object CompilationServiceImpl : CompilationService {
                 compilationConfiguration.aggregatedIcConfiguration?.options?.rootProjectDir
             )
         ).get()
+
+        try {
+            daemon.releaseCompileSession(sessionId)
+        } catch (e: RemoteException) {
+            loggerAdapter.kotlinLogger.warn("Unable to release compile session, maybe daemon is already down: $e")
+        }
 
         return (ExitCode.entries.find { it.code == exitCode } ?: if (exitCode == 0) {
             ExitCode.OK
