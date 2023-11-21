@@ -42,12 +42,9 @@ class IrSourceRangesDumpHandler(
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (CodegenTestDirectives.DUMP_SOURCE_RANGES_IR !in module.directives) return
-        info.processAllIrModuleFragments(module) { irModuleFragment, moduleName ->
-            val builder = baseDumper.builderForModule(moduleName)
-
-            for (irFile in irModuleFragment.files) {
-                builder.append(irFile.dumpWithSourceLocations(irFile.fileEntry))
-            }
+        val builder = baseDumper.builderForModule(module.name)
+        for (irFile in info.irModuleFragment.files) {
+            builder.append(irFile.dumpWithSourceLocations(irFile.fileEntry))
         }
     }
 

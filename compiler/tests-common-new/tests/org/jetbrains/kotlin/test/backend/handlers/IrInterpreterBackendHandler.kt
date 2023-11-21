@@ -37,11 +37,9 @@ open class IrInterpreterBackendHandler(testServices: TestServices) : AbstractIrH
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        info.processAllIrModuleFragments(module) { moduleFragment, _ ->
-            val evaluator = Evaluator(IrInterpreter(moduleFragment.irBuiltins), globalMetadataInfoHandler)
-            for ((irFile, testFile) in matchIrFileWithTestFile(moduleFragment, module)) {
-                evaluator.evaluate(irFile, testFile)
-            }
+        val evaluator = Evaluator(IrInterpreter(info.irModuleFragment.irBuiltins), globalMetadataInfoHandler)
+        for ((irFile, testFile) in matchIrFileWithTestFile(info.irModuleFragment, module)) {
+            evaluator.evaluate(irFile, testFile)
         }
     }
 }

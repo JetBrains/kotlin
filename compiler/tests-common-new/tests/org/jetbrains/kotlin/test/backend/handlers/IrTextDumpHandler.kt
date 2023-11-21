@@ -76,18 +76,15 @@ class IrTextDumpHandler(
             printTypeAbbreviations = false,
         )
 
-        info.processAllIrModuleFragments(module) { irModuleFragment, moduleName ->
-            val builder = baseDumper.builderForModule(moduleName)
-            val testFileToIrFile = irModuleFragment.files.groupWithTestFiles(module)
-
-            for ((testFile, irFile) in testFileToIrFile) {
-                if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
-                var actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
-                if (actualDump.isEmpty()) {
-                    actualDump = irFile.dumpTreesFromLineNumber(lineNumber = UNDEFINED_OFFSET, dumpOptions)
-                }
-                builder.append(actualDump)
+        val builder = baseDumper.builderForModule(module.name)
+        val testFileToIrFile = info.irModuleFragment.files.groupWithTestFiles(module)
+        for ((testFile, irFile) in testFileToIrFile) {
+            if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
+            var actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
+            if (actualDump.isEmpty()) {
+                actualDump = irFile.dumpTreesFromLineNumber(lineNumber = UNDEFINED_OFFSET, dumpOptions)
             }
+            builder.append(actualDump)
         }
 
         compareDumpsOfExternalClasses(module, info)

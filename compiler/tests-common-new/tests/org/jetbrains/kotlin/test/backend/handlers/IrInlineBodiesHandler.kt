@@ -26,10 +26,8 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        info.processAllIrModuleFragments(module) { irModule, _ ->
-            irModule.acceptChildrenVoid(InlineFunctionsCollector())
-            irModule.acceptChildrenVoid(InlineCallBodiesCheck(firEnabled = module.frontendKind == FrontendKinds.FIR))
-        }
+        info.irModuleFragment.acceptChildrenVoid(InlineFunctionsCollector())
+        info.irModuleFragment.acceptChildrenVoid(InlineCallBodiesCheck(firEnabled = module.frontendKind == FrontendKinds.FIR))
 
         assertions.assertTrue((info as IrBackendInput.JvmIrBackendInput).backendInput.symbolTable.descriptorExtension.allUnboundSymbols.isEmpty())
     }
