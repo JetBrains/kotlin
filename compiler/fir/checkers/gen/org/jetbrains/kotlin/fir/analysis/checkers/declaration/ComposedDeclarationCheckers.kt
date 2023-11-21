@@ -35,6 +35,8 @@ class ComposedDeclarationCheckers : DeclarationCheckers() {
         get() = _constructorCheckers
     override val fileCheckers: Set<FirFileChecker>
         get() = _fileCheckers
+    override val scriptCheckers: Set<FirScriptChecker>
+        get() = _scriptCheckers
     override val typeParameterCheckers: Set<FirTypeParameterChecker>
         get() = _typeParameterCheckers
     override val typeAliasCheckers: Set<FirTypeAliasChecker>
@@ -68,6 +70,7 @@ class ComposedDeclarationCheckers : DeclarationCheckers() {
     private val _regularClassCheckers: MutableSet<FirRegularClassChecker> = mutableSetOf()
     private val _constructorCheckers: MutableSet<FirConstructorChecker> = mutableSetOf()
     private val _fileCheckers: MutableSet<FirFileChecker> = mutableSetOf()
+    private val _scriptCheckers: MutableSet<FirScriptChecker> = mutableSetOf()
     private val _typeParameterCheckers: MutableSet<FirTypeParameterChecker> = mutableSetOf()
     private val _typeAliasCheckers: MutableSet<FirTypeAliasChecker> = mutableSetOf()
     private val _anonymousFunctionCheckers: MutableSet<FirAnonymousFunctionChecker> = mutableSetOf()
@@ -92,6 +95,7 @@ class ComposedDeclarationCheckers : DeclarationCheckers() {
         _regularClassCheckers += checkers.regularClassCheckers
         _constructorCheckers += checkers.constructorCheckers
         _fileCheckers += checkers.fileCheckers
+        _scriptCheckers += checkers.scriptCheckers
         _typeParameterCheckers += checkers.typeParameterCheckers
         _typeAliasCheckers += checkers.typeAliasCheckers
         _anonymousFunctionCheckers += checkers.anonymousFunctionCheckers

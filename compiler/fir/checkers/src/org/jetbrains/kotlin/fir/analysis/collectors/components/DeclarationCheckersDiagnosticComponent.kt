@@ -108,7 +108,7 @@ class DeclarationCheckersDiagnosticComponent(
     }
 
     override fun visitScript(script: FirScript, data: CheckerContext) {
-        checkers.allBasicDeclarationCheckers.check(script, data)
+        checkers.allScriptCheckers.check(script, data)
     }
 
     override fun visitCodeFragment(codeFragment: FirCodeFragment, data: CheckerContext) {

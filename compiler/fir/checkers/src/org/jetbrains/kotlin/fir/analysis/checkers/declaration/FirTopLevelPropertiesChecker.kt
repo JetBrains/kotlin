@@ -34,42 +34,48 @@ import org.jetbrains.kotlin.lexer.KtTokens
 // See old FE's [DeclarationsChecker]
 object FirTopLevelPropertiesChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
-        val topLevelProperties = declaration.effectiveTopLevelProperties
-        val info = declaration.collectionInitializationInfo(topLevelProperties, context, reporter)
-        for (topLevelProperty in topLevelProperties) {
-            val symbol = topLevelProperty.symbol
-            val isDefinitelyAssigned = info?.get(symbol)?.isDefinitelyVisited() == true
-            checkProperty(containingDeclaration = null, topLevelProperty, isDefinitelyAssigned, context, reporter, reachable = true)
-        }
+        val topLevelProperties = declaration.declarations.filterIsInstance<FirProperty>()
+        checkFileLikeDeclaration(declaration, topLevelProperties, context, reporter)
     }
+}
 
-    /**
-     * Scripts are nested as a single declaration under [FirFile]s and contain their own statements. To properly check all "top-level"
-     * properties, script statements need to be unwrapped.
-     */
-    private val FirFile.effectiveTopLevelProperties: List<FirProperty>
-        get() = when (val script = declarations.singleOrNull()) {
-            is FirScript -> script.statements.filterIsInstance<FirProperty>()
-            else -> declarations.filterIsInstance<FirProperty>()
-        }
-
-    private fun FirFile.collectionInitializationInfo(
-        topLevelProperties: List<FirProperty>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ): PropertyInitializationInfo? {
-        val graph = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return null
-
-        val propertySymbols = topLevelProperties.mapNotNullTo(mutableSetOf()) { declaration ->
-            declaration.symbol.takeIf { it.requiresInitialization(isForInitialization = true) }
-        }
-        if (propertySymbols.isEmpty()) return null
-
-        // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
-        val data = PropertyInitializationInfoData(propertySymbols, receiver = null, graph)
-        data.checkPropertyAccesses(isForInitialization = true, context, reporter)
-        return data.getValue(graph.exitNode)[NormalPath]
+object FirScriptPropertiesChecker : FirScriptChecker() {
+    override fun check(declaration: FirScript, context: CheckerContext, reporter: DiagnosticReporter) {
+        val topLevelProperties = declaration.statements.filterIsInstance<FirProperty>()
+        checkFileLikeDeclaration(declaration, topLevelProperties, context, reporter)
     }
+}
+
+private fun checkFileLikeDeclaration(
+    declaration: FirDeclaration,
+    topLevelProperties: List<FirProperty>,
+    context: CheckerContext,
+    reporter: DiagnosticReporter,
+) {
+    val info = declaration.collectionInitializationInfo(topLevelProperties, context, reporter)
+    for (topLevelProperty in topLevelProperties) {
+        val symbol = topLevelProperty.symbol
+        val isDefinitelyAssigned = info?.get(symbol)?.isDefinitelyVisited() == true
+        checkProperty(containingDeclaration = null, topLevelProperty, isDefinitelyAssigned, context, reporter, reachable = true)
+    }
+}
+
+private fun FirDeclaration.collectionInitializationInfo(
+    topLevelProperties: List<FirProperty>,
+    context: CheckerContext,
+    reporter: DiagnosticReporter,
+): PropertyInitializationInfo? {
+    val graph = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return null
+
+    val propertySymbols = topLevelProperties.mapNotNullTo(mutableSetOf()) { declaration ->
+        declaration.symbol.takeIf { it.requiresInitialization(isForInitialization = true) }
+    }
+    if (propertySymbols.isEmpty()) return null
+
+    // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
+    val data = PropertyInitializationInfoData(propertySymbols, receiver = null, graph)
+    data.checkPropertyAccesses(isForInitialization = true, context, reporter)
+    return data.getValue(graph.exitNode)[NormalPath]
 }
 
 // Matched FE 1.0's [DeclarationsChecker#checkPropertyInitializer].

@@ -44,6 +44,12 @@ class ControlFlowAnalysisDiagnosticComponent(
         analyze(file, data)
     }
 
+    // ------------------------------- File -------------------------------
+
+    override fun visitScript(script: FirScript, data: CheckerContext) {
+        analyze(script, data)
+    }
+
     // ------------------------------- Class initializer -------------------------------
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: CheckerContext) {

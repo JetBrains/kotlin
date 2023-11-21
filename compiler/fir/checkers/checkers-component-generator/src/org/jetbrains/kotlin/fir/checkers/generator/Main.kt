@@ -79,6 +79,7 @@ fun main(args: Array<String>) {
         alias<FirRegularClass>("RegularClassChecker")
         alias<FirConstructor>("ConstructorChecker")
         alias<FirFile>("FileChecker")
+        alias<FirScript>("ScriptChecker")
         alias<FirTypeParameter>("FirTypeParameterChecker")
         alias<FirTypeAlias>("TypeAliasChecker")
         alias<FirAnonymousFunction>("AnonymousFunctionChecker")

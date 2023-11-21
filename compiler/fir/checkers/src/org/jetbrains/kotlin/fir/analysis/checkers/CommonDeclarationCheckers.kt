@@ -157,6 +157,11 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirTopLevelPropertiesChecker,
         )
 
+    override val scriptCheckers: Set<FirScriptChecker>
+        get() = setOf(
+            FirScriptPropertiesChecker
+        )
+
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>
         get() = setOf(
             FirCallsEffectAnalyzer,
