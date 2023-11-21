@@ -1,0 +1,9 @@
+MODULE main
+	CLASS A.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(I)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(x: kotlin/Int)
+					K2
+						(@AnnParameterProperty @AnnParameterField x: kotlin/Int)

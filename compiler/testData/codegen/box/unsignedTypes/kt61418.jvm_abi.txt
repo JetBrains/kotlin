@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Kt61418_testKt.class
+		PACKAGE METADATA
+			FUNCTION f(Ljava/util/List;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(x: kotlin/collections/List<kotlin/Int>)
+					K2
+						(@kotlin/internal/ImplicitIntegerCoercion x: kotlin/collections/List<kotlin/Int>)

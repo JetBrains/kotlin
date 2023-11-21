@@ -1,0 +1,9 @@
+MODULE main
+	CLASS I.class
+		CLASS METADATA
+			FUNCTION m(Ljava/lang/String;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(s: kotlin/String)
+					K2
+						(@Ann s: kotlin/String)

@@ -238,6 +238,7 @@ public final class Experiment {
 
     @Experiment.Type()
     /**
+     * @Experiment.Type
      * public final data class Experiment.Group : kotlin/Any {
      *
      *   // signature: <init>(Ljava/lang/String;)V
@@ -440,6 +441,7 @@ public abstract interface IFoo {
 
         @IFoo.IBar.Anno(value = {IFoo.IBar.IZoo.class})
         /**
+         * @IFoo.IBar.Anno(value = [IFoo.IBar.IZoo::class])
          * public abstract interface IFoo.IBar.IZoo : kotlin/Any {
          *
          *   // module name: main
@@ -492,6 +494,7 @@ public class JavaClass {
 
 @IFoo.IBar.Anno(value = {IFoo.IBar.IZoo.class, Foo.Bar.class})
 /**
+ * @IFoo.IBar.Anno(value = [IFoo.IBar.IZoo::class, Foo.Bar::class])
  * public final class Test1 : Foo.Bar, IFoo.IBar, IFoo.IBar.IZoo {
  *
  *   // signature: <init>(LFoo$Bar$Zoo;)V

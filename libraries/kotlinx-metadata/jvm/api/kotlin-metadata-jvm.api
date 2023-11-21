@@ -356,6 +356,7 @@ public final class kotlin/metadata/KmAnnotationArgument$UShortValue : kotlin/met
 public final class kotlin/metadata/KmClass : kotlin/metadata/KmDeclarationContainer {
 	public field name Ljava/lang/String;
 	public fun <init> ()V
+	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getCompanionObject ()Ljava/lang/String;
 	public final fun getConstructors ()Ljava/util/List;
 	public final fun getContextReceiverTypes ()Ljava/util/List;
@@ -426,6 +427,7 @@ public final class kotlin/metadata/KmConstantValue {
 
 public final class kotlin/metadata/KmConstructor {
 	public fun <init> ()V
+	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getValueParameters ()Ljava/util/List;
 	public final fun getVersionRequirements ()Ljava/util/List;
 }
@@ -504,6 +506,7 @@ public final class kotlin/metadata/KmFlexibleTypeUpperBound$Companion {
 public final class kotlin/metadata/KmFunction {
 	public field returnType Lkotlin/metadata/KmType;
 	public fun <init> (Ljava/lang/String;)V
+	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getContextReceiverTypes ()Ljava/util/List;
 	public final fun getContract ()Lkotlin/metadata/KmContract;
 	public final fun getName ()Ljava/lang/String;
@@ -535,6 +538,7 @@ public final class kotlin/metadata/KmPackage : kotlin/metadata/KmDeclarationCont
 public final class kotlin/metadata/KmProperty {
 	public field returnType Lkotlin/metadata/KmType;
 	public fun <init> (Ljava/lang/String;)V
+	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getContextReceiverTypes ()Ljava/util/List;
 	public final fun getGetter ()Lkotlin/metadata/KmPropertyAccessorAttributes;
 	public final fun getName ()Ljava/lang/String;
@@ -553,6 +557,7 @@ public final class kotlin/metadata/KmProperty {
 
 public final class kotlin/metadata/KmPropertyAccessorAttributes {
 	public fun <init> ()V
+	public final fun getAnnotations ()Ljava/util/List;
 }
 
 public final class kotlin/metadata/KmType {
@@ -620,6 +625,7 @@ public final class kotlin/metadata/KmTypeProjection$Companion {
 public final class kotlin/metadata/KmValueParameter {
 	public field type Lkotlin/metadata/KmType;
 	public fun <init> (Ljava/lang/String;)V
+	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getType ()Lkotlin/metadata/KmType;
 	public final fun getVarargElementType ()Lkotlin/metadata/KmType;

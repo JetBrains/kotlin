@@ -1,0 +1,59 @@
+// test/D.class
+// ------------------------------------------
+public final annotation class test/D : kotlin/Annotation {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// test/OptionalAnnotationKt.class
+// ------------------------------------------
+package {
+
+  // signature: ok()V
+  @test/A(x = 42)
+  @test/B(a = ["OK", ""])
+  @test/C
+  @test/D
+  public final fun ok(): kotlin/Unit
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package test {
+    test/OptionalAnnotationKt
+  }
+
+  // Optional annotations
+
+  public final expect annotation class test/A : kotlin/Annotation {
+
+    // signature: <init>(I)V
+    public constructor(x: kotlin/Int)
+
+    public final expect val x: kotlin/Int
+      public final get
+
+    // module name: main
+  }
+  public final expect annotation class test/B : kotlin/Annotation {
+
+    // signature: <init>(Lkotlin/Array;)V
+    public constructor(a: kotlin/Array<kotlin/String>)
+
+    public final expect val a: kotlin/Array<kotlin/String>
+      public final get
+
+    // module name: main
+  }
+  public final expect annotation class test/C : kotlin/Annotation {
+
+    // signature: <init>()V
+    public constructor()
+
+    // module name: main
+  }
+}

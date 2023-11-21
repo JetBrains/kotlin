@@ -1,0 +1,9 @@
+MODULE main
+	CLASS C.class
+		CLASS METADATA
+			FUNCTION foo(I)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(x: kotlin/Int)
+					K2
+						(@A(x = "SomeWord") x: kotlin/Int)

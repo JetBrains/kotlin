@@ -1,0 +1,15 @@
+MODULE main
+	CLASS Foo.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Ljava/lang/String;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(s: kotlin/String)
+					K2
+						(@Ann s: kotlin/String)
+			FUNCTION foo(Ljava/lang/String;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(s: kotlin/String)
+					K2
+						(@Ann s: kotlin/String)

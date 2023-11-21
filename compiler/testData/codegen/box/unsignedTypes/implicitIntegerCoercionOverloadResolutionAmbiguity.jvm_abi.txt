@@ -1,0 +1,43 @@
+MODULE main
+	CLASS FooInt.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(I)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(x: kotlin/Int)
+					K2
+						(@kotlin/internal/ImplicitIntegerCoercion x: kotlin/Int)
+			CONSTRUCTOR <init>(Ljava/lang/String;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(y: kotlin/String)
+					K2
+						(@kotlin/internal/ImplicitIntegerCoercion y: kotlin/String)
+	CLASS FooUInt.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(x: kotlin/UInt)
+					K2
+						(@kotlin/internal/ImplicitIntegerCoercion x: kotlin/UInt)
+			CONSTRUCTOR <init>(Ljava/lang/String;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(y: kotlin/String)
+					K2
+						(@kotlin/internal/ImplicitIntegerCoercion y: kotlin/String)
+	CLASS FooMyUInt.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(x: kotlin/UInt /* = myUInt^ */)
+					K2
+						(@kotlin/internal/ImplicitIntegerCoercion x: kotlin/UInt /* = myUInt^ */)
+			CONSTRUCTOR <init>(Ljava/lang/String;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(y: kotlin/String)
+					K2
+						(@kotlin/internal/ImplicitIntegerCoercion y: kotlin/String)

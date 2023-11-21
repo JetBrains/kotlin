@@ -1,0 +1,9 @@
+MODULE main
+	CLASS PropertyAccessorsKt.class
+		PACKAGE METADATA
+			PROPERTY getFoo()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						value: kotlin/String
+					K2
+						@SetParam value: kotlin/String
