@@ -29,6 +29,12 @@ sourceSets {
     cli_bc {
         kotlin.srcDir 'cli.bc/src'
     }
+
+    test {
+        kotlin {
+            srcDir 'functionalTest/src'
+        }
+    }
 }
 
 compileCompilerKotlin {
@@ -119,7 +125,6 @@ kotlinNativeInterop {
     }
 }
 
-
 configurations {
     compilerApi {
         extendsFrom kotlinNativeInterop['llvm'].configuration
@@ -182,8 +187,9 @@ dependencies {
     cli_bcApi sourceSets.compiler.output
 
     cli_bcApiElements sourceSets.cli_bc.output
-}
 
+    testImplementation(project(path: ":compiler:tests-common", configuration: "tests-jar"))
+}
 
 classes.dependsOn 'compilerClasses', 'cli_bcClasses'
 
@@ -243,3 +249,25 @@ RepoArtifacts.sourcesJar(project) {
 }
 
 RepoArtifacts.javadocJar(project)
+
+/*
+Configure 'test' task
+ */
+
+TasksKt.projectTest(project)
+tasks {
+    test {
+        dependsOn ':kotlin-native:dist'
+        systemProperty("org.jetbrains.kotlin.native.home", distDir.canonicalPath)
+        workingDir(rootProject.projectDir)
+    }
+}
+
+kotlin {
+    target {
+        compilations {
+            test.associateWith(compiler)
+        }
+    }
+}
+

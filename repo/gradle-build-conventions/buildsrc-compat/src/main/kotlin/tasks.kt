@@ -104,6 +104,11 @@ enum class JUnitMode {
 }
 
 /**
+ * Convenience function to expose Project.projectTest for groovy
+ */
+fun projectTest(project: Project) = project.projectTest()
+
+/**
  * @param parallel is redundant if @param jUnit5Enabled is true, because
  *   JUnit5 supports parallel test execution by itself, without gradle help
  */

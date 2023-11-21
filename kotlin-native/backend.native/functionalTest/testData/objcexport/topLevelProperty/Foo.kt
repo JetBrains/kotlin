@@ -1,0 +1,1 @@
+val myTopLevelProperty = 42
