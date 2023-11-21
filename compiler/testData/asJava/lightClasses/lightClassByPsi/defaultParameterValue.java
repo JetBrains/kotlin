@@ -34,6 +34,9 @@ public final class Foo /* Foo*/ {
   private final java.lang.String s;
 
   @org.jetbrains.annotations.NotNull()
+  private final java.lang.String[] empty;
+
+  @org.jetbrains.annotations.NotNull()
   private final java.lang.String[] sarr;
 
   @org.jetbrains.annotations.NotNull()
@@ -79,6 +82,9 @@ public final class Foo /* Foo*/ {
   public final java.lang.String getS();//  getS()
 
   @org.jetbrains.annotations.NotNull()
+  public final java.lang.String[] getEmpty();//  getEmpty()
+
+  @org.jetbrains.annotations.NotNull()
   public final java.lang.String[] getSarr();//  getSarr()
 
   @org.jetbrains.annotations.NotNull()
@@ -86,7 +92,7 @@ public final class Foo /* Foo*/ {
 
   public  Foo();//  .ctor()
 
-  public  Foo(boolean, byte, char, char, short, int, long, float, double, @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() int[], @org.jetbrains.annotations.NotNull() long[], @org.jetbrains.annotations.NotNull() double[], @org.jetbrains.annotations.NotNull() java.lang.String[], @org.jetbrains.annotations.NotNull() java.lang.Class<?>, @org.jetbrains.annotations.NotNull() java.lang.Class<?>[], @org.jetbrains.annotations.NotNull() Em, @org.jetbrains.annotations.NotNull() Em[]);//  .ctor(boolean, byte, char, char, short, int, long, float, double, java.lang.String, int[], long[], double[], java.lang.String[], java.lang.Class<?>, java.lang.Class<?>[], Em, Em[])
+  public  Foo(boolean, byte, char, char, short, int, long, float, double, @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() int[], @org.jetbrains.annotations.NotNull() long[], @org.jetbrains.annotations.NotNull() double[], @org.jetbrains.annotations.NotNull() java.lang.String[], @org.jetbrains.annotations.NotNull() java.lang.Class<?>, @org.jetbrains.annotations.NotNull() java.lang.Class<?>[], @org.jetbrains.annotations.NotNull() Em, @org.jetbrains.annotations.NotNull() Em[], @org.jetbrains.annotations.NotNull() java.lang.String[]);//  .ctor(boolean, byte, char, char, short, int, long, float, double, java.lang.String, int[], long[], double[], java.lang.String[], java.lang.Class<?>, java.lang.Class<?>[], Em, Em[], java.lang.String[])
 
   public final boolean getZ();//  getZ()
 
@@ -105,6 +111,8 @@ public final class Foo /* Foo*/ {
   public final long getL();//  getL()
 
   public final short getSh();//  getSh()
+
+  public final void bar(@org.jetbrains.annotations.NotNull() int[]);//  bar(int[])
 
   public final void foo(int);//  foo(int)
 }

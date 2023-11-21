@@ -12,6 +12,9 @@ public final class UnsafePropertyInitializersKt /* UnsafePropertyInitializersKt*
   private static final int[] arrayOfIntPrimitives;
 
   @org.jetbrains.annotations.NotNull()
+  private static final int[] emptyArayOfInts;
+
+  @org.jetbrains.annotations.NotNull()
   private static final java.lang.Character[] arrayOfCharObjects;
 
   @org.jetbrains.annotations.NotNull()
@@ -31,6 +34,9 @@ public final class UnsafePropertyInitializersKt /* UnsafePropertyInitializersKt*
 
   @org.jetbrains.annotations.NotNull()
   private static final java.lang.String[] arrayOfStrings;
+
+  @org.jetbrains.annotations.NotNull()
+  private static final java.lang.String[] emptyArayOfStrings;
 
   @org.jetbrains.annotations.NotNull()
   private static final java.util.List<java.lang.String> listOfStrings;
@@ -57,6 +63,9 @@ public final class UnsafePropertyInitializersKt /* UnsafePropertyInitializersKt*
   public static final int[] getArrayOfIntPrimitives();//  getArrayOfIntPrimitives()
 
   @org.jetbrains.annotations.NotNull()
+  public static final int[] getEmptyArayOfInts();//  getEmptyArayOfInts()
+
+  @org.jetbrains.annotations.NotNull()
   public static final java.lang.Character[] getArrayOfCharObjects();//  getArrayOfCharObjects()
 
   @org.jetbrains.annotations.NotNull()
@@ -76,6 +85,9 @@ public final class UnsafePropertyInitializersKt /* UnsafePropertyInitializersKt*
 
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String[] getArrayOfStrings();//  getArrayOfStrings()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.String[] getEmptyArayOfStrings();//  getEmptyArayOfStrings()
 
   @org.jetbrains.annotations.NotNull()
   public static final java.util.List<java.lang.String> getListOfStrings();//  getListOfStrings()

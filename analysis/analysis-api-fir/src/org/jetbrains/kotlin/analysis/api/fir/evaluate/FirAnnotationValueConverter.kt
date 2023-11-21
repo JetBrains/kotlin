@@ -148,7 +148,8 @@ internal object FirAnnotationValueConverter {
                     is FirNamedFunctionSymbol -> {
                         // arrayOf call with a single vararg argument.
                         if (resolvedSymbol.callableId.asSingleFqName() in ArrayFqNames.ARRAY_CALL_FQ_NAMES)
-                            argumentList.arguments.single().convertConstantExpression(builder)
+                            argumentList.arguments.singleOrNull()?.convertConstantExpression(builder)
+                                ?: KtArrayAnnotationValue(emptyList(), sourcePsi)
                         else null
                     }
 

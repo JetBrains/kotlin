@@ -13,3 +13,5 @@ val arrayOfFloatPrimitives = floatArrayOf(2f + 3f, -1.23E-7f, Float.MIN_VALUE, F
 val arrayOfStrings = arrayOf("", "quotes \" ''quotes", "\r\n", "你好世界")
 val arrayOfEnums = arrayOf(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 val arrayOfNAny = arrayOf(1, 2L, "abc", AnnotationTarget.CLASS, null)
+val emptyArayOfStrings: Array<String> = arrayOf()
+val emptyArayOfInts: IntArray = intArrayOf()

@@ -17,9 +17,11 @@ class Foo(
     val cl: Class<*> = Foo::class.java,
     val clarr: Array<Class<*>> = arrayOf(Foo::class.java),
     val em: Em = Em.BAR,
-    val emarr: Array<Em> = arrayOf(Em.FOO, Em.BAR)
+    val emarr: Array<Em> = arrayOf(Em.FOO, Em.BAR),
+    val empty: Array<String> = arrayOf()
 ) {
     fun foo(a: Int = 5) {}
+    fun bar(x: IntArray = intArrayOf()) {}
 }
 
 enum class Em {
