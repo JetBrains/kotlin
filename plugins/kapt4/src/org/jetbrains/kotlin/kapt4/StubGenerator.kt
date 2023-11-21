@@ -297,18 +297,17 @@ private class StubGenerator(
                 }
             }
 
-            private fun Printer.printField(psiVariable: PsiVariable) {
-                if (!isValidIdentifier(psiVariable.name!!)) return
-                if ((psiVariable is PsiField) && (psiVariable.containingClass != null) && !checkIfValidTypeName(psiVariable.type)) return
+            private fun Printer.printField(field: PsiField) {
+                if (!isValidIdentifier(field.name) || !checkIfValidTypeName(field.type)) return
 
-                printComment(psiVariable)
-                printModifiers(psiVariable)
-                printType(psiVariable.type)
-                printWithNoIndent(" ", psiVariable.name)
-                if (psiVariable.hasInitializer() && (dumpDefaultParameterValues || psiVariable.navigationElement !is KtParameter)) {
-                    printWithNoIndent(" = ", psiVariable.initializer?.text)
-                } else if (psiVariable.isFinal) {
-                    printWithNoIndent(" = ", defaultValue(psiVariable.type))
+                printComment(field)
+                printModifiers(field)
+                printType(field.type)
+                printWithNoIndent(" ", field.name)
+                if (field.hasInitializer() && (dumpDefaultParameterValues || field.navigationElement !is KtParameter)) {
+                    printWithNoIndent(" = ", field.initializer?.text)
+                } else if (field.isFinal) {
+                    printWithNoIndent(" = ", defaultValue(field.type))
                 }
                 printlnWithNoIndent(";")
                 printlnWithNoIndent()
