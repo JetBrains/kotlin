@@ -1,7 +1,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!NO_ACTUAL_FOR_EXPECT!>expect class Foo { // also, it's important that Foo doesn't override equals
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class Foo { // also, it's important that Foo doesn't override equals
     fun foo()
 }<!>
 

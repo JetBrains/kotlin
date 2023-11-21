@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.services.DefaultsProvider
 import org.jetbrains.kotlin.test.services.ModuleStructureTransformer
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 
 // TODO remove when duplicate files names are supported by prefix their path with the module name KT-63252
 @OptIn(TestInfrastructureInternals::class)
 object DuplicateFileNameChecker : ModuleStructureTransformer() {
-    override fun transformModuleStructure(moduleStructure: TestModuleStructure): TestModuleStructure {
+    override fun transformModuleStructure(moduleStructure: TestModuleStructure, defaultsProvider: DefaultsProvider): TestModuleStructure {
         val files = mutableSetOf<String>()
 
         for (module in moduleStructure.modules) {

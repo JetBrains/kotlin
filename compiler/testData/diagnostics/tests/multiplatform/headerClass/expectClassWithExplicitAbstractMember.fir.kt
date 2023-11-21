@@ -5,7 +5,7 @@ interface Foo {
     fun foo()
 }
 
-<!NO_ACTUAL_FOR_EXPECT!>expect class NonAbstractClass : Foo {
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class NonAbstractClass : Foo {
     <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS!>abstract<!> fun bar()
 
     <!ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS!>abstract<!> val baz: Int
@@ -13,7 +13,7 @@ interface Foo {
     <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS!>abstract<!> override fun foo()
 }<!>
 
-<!NO_ACTUAL_FOR_EXPECT!>expect abstract class AbstractClass : Foo {
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect abstract class AbstractClass : Foo {
     abstract fun bar()
 
     abstract val baz: Int

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.DefaultsProvider
 import org.jetbrains.kotlin.test.services.ModuleStructureTransformer
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -59,7 +60,7 @@ object KtResolveExtensionTestSupport {
     private class ResolveExtensionDirectiveModuleStructureTransformer(
         private val testServices: TestServices,
     ) : ModuleStructureTransformer() {
-        override fun transformModuleStructure(moduleStructure: TestModuleStructure): TestModuleStructure {
+        override fun transformModuleStructure(moduleStructure: TestModuleStructure, defaultsProvider: DefaultsProvider): TestModuleStructure {
             check(Directives.WITH_RESOLVE_EXTENSION in moduleStructure.allDirectives) {
                 "configureResolveExtensions() was called, but no modules specify WITH_RESOLVE_EXTENSION."
             }

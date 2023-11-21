@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
  */
 @TestInfrastructureInternals
 class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
-    override fun transformModuleStructure(moduleStructure: TestModuleStructure): TestModuleStructure {
+    override fun transformModuleStructure(moduleStructure: TestModuleStructure, defaultsProvider: DefaultsProvider): TestModuleStructure {
         if (moduleStructure.modules.size > 1) {
             // The test is already multimodule, no need to split it into modules further.
             return moduleStructure

@@ -1,7 +1,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!NO_ACTUAL_FOR_EXPECT!>expect class Foo {
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class Foo {
     val justVal: String
     var justVar: String
 
