@@ -14,13 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_FROM_UM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.DELEGATION_BY_DYNAMIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_ENUM_ENTRY_WITH_BODY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_INTERFACE_AS_CLASS_LITERAL
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION
@@ -55,7 +52,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.PROPERTY_DEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNOTATION_NOT_SUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_EXPORTED_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_MULTIPLE_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC
@@ -155,11 +151,6 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Expected argument with external type, but type ''{0}'' is non-external.",
             FirDiagnosticRenderers.RENDER_TYPE
         )
-        map.put(
-            EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT,
-            "Cannot pass external interface ''{0}'' for reified type parameter.",
-            FirDiagnosticRenderers.RENDER_TYPE
-        )
         map.put(JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY, "'@JsName' is prohibited for extension properties.")
         map.put(
             JS_BUILTIN_NAME_CLASH,
@@ -186,18 +177,6 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(JS_NAME_PROHIBITED_FOR_OVERRIDE, "'@JsName' is prohibited for overridden members.")
         map.put(JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED, "'@JsName' annotation is prohibited for primary constructors.")
         map.put(JS_NAME_ON_ACCESSOR_AND_PROPERTY, "'@JsName' can be either on a property or its accessors, not both of them.")
-        map.put(
-            CANNOT_CHECK_FOR_EXTERNAL_INTERFACE,
-            "Cannot check for external interface: ''{0}''",
-            FirDiagnosticRenderers.RENDER_TYPE,
-        )
-        map.put(
-            UNCHECKED_CAST_TO_EXTERNAL_INTERFACE,
-            "Unchecked cast to external interface: ''{0}'' to ''{1}''.",
-            FirDiagnosticRenderers.RENDER_TYPE,
-            FirDiagnosticRenderers.RENDER_TYPE,
-        )
-        map.put(EXTERNAL_INTERFACE_AS_CLASS_LITERAL, "Cannot refer to external interface from class literal.")
         map.put(WRONG_EXPORTED_DECLARATION, "Declaration of such kind ({0}) cannot be exported to JavaScript.", CommonRenderers.STRING)
         map.put(
             NON_EXPORTABLE_TYPE,

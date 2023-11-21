@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.js.checkers.expression
+package org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression
 
-import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsWebCheckerUtils
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.FirWasmWebCheckerUtils
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirAbstractReifiedExternalChecker
 
-object FirJsReifiedExternalChecker : FirAbstractReifiedExternalChecker(FirJsWebCheckerUtils)
+object FirWasmReifiedExternalChecker : FirAbstractReifiedExternalChecker(FirWasmWebCheckerUtils)

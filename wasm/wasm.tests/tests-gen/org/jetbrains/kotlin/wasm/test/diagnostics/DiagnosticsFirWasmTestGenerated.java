@@ -128,6 +128,46 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
         public void testWrongQualifier() throws Exception {
             runTest("compiler/testData/diagnostics/wasmTests/jsInterop/wrongQualifier.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop/rtti")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Rtti {
+            @Test
+            public void testAllFilesPresentInRtti() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/jsInterop/rtti"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("castToNativeInterface.kt")
+            public void testCastToNativeInterface() throws Exception {
+                runTest("compiler/testData/diagnostics/wasmTests/jsInterop/rtti/castToNativeInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("checkForNativeInterface.kt")
+            public void testCheckForNativeInterface() throws Exception {
+                runTest("compiler/testData/diagnostics/wasmTests/jsInterop/rtti/checkForNativeInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("nativeInterfaceAsReifiedTypeArgument.kt")
+            public void testNativeInterfaceAsReifiedTypeArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/wasmTests/jsInterop/rtti/nativeInterfaceAsReifiedTypeArgument.kt");
+            }
+
+            @Test
+            @TestMetadata("nativeInterfaceClassLiteral.kt")
+            public void testNativeInterfaceClassLiteral() throws Exception {
+                runTest("compiler/testData/diagnostics/wasmTests/jsInterop/rtti/nativeInterfaceClassLiteral.kt");
+            }
+
+            @Test
+            @TestMetadata("whenIsNativeInterface.kt")
+            public void testWhenIsNativeInterface() throws Exception {
+                runTest("compiler/testData/diagnostics/wasmTests/jsInterop/rtti/whenIsNativeInterface.kt");
+            }
+        }
     }
 
     @Nested

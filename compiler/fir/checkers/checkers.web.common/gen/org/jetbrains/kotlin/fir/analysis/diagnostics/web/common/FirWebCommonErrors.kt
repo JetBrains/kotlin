@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -35,6 +36,10 @@ object FirWebCommonErrors {
     val WRONG_BODY_OF_EXTERNAL_DECLARATION by error0<KtElement>()
     val WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION by error0<KtElement>()
     val WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER by error0<KtElement>()
+    val CANNOT_CHECK_FOR_EXTERNAL_INTERFACE by error1<KtElement, ConeKotlinType>()
+    val UNCHECKED_CAST_TO_EXTERNAL_INTERFACE by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
+    val EXTERNAL_INTERFACE_AS_CLASS_LITERAL by error0<KtElement>()
+    val EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     // Export
     val NESTED_JS_EXPORT by error0<KtElement>()
