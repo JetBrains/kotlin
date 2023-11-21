@@ -39,6 +39,7 @@ kotlin {
 
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
+    dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform { }
 }
