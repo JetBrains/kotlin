@@ -1,0 +1,45 @@
+MODULE main
+	CLASS Test.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(z: Z, a: kotlin/Int)
+					K2
+						(z: Z, @Ann a: kotlin/Int)
+			CONSTRUCTOR <init>(ILjava/lang/String;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(z: Z, s: kotlin/String)
+					K2
+						(z: Z, @Ann s: kotlin/String)
+			CONSTRUCTOR <init>(ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(z: Z)
+					K2
+						(@Ann z: Z)
+	CLASS Test$Inner.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(LTest;IILjava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(x: kotlin/Int, z2: Z, y: kotlin/String)
+					K2
+						(x: kotlin/Int, @Ann z2: Z, @Ann y: kotlin/String)
+	CLASS Sealed.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(I)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(z: Z)
+					K2
+						(@Ann z: Z)
+	CLASS Sealed$Inner.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(LSealed;IILjava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(x: kotlin/Int, z2: Z, y: kotlin/String)
+					K2
+						(x: kotlin/Int, @Ann z2: Z, @Ann y: kotlin/String)

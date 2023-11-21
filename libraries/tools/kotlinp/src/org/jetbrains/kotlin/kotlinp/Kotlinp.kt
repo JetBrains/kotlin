@@ -529,15 +529,15 @@ abstract class Kotlinp(protected val settings: Settings) {
         )
     }
 
-    protected open fun getAnnotations(clazz: KmClass): List<KmAnnotation> = emptyList()
-    protected open fun getAnnotations(constructor: KmConstructor): List<KmAnnotation> = emptyList()
-    protected open fun getAnnotations(function: KmFunction): List<KmAnnotation> = emptyList()
-    protected open fun getAnnotations(property: KmProperty): List<KmAnnotation> = emptyList()
-    protected open fun getGetterAnnotations(property: KmProperty): List<KmAnnotation> = emptyList()
-    protected open fun getSetterAnnotations(property: KmProperty): List<KmAnnotation> = emptyList()
+    protected abstract fun getAnnotations(clazz: KmClass): List<KmAnnotation>
+    protected abstract fun getAnnotations(constructor: KmConstructor): List<KmAnnotation>
+    protected abstract fun getAnnotations(function: KmFunction): List<KmAnnotation>
+    protected abstract fun getAnnotations(property: KmProperty): List<KmAnnotation>
+    protected abstract fun getGetterAnnotations(property: KmProperty): List<KmAnnotation>
+    protected abstract fun getSetterAnnotations(property: KmProperty): List<KmAnnotation>
     protected abstract fun getAnnotations(typeParameter: KmTypeParameter): List<KmAnnotation>
     protected abstract fun getAnnotations(type: KmType): List<KmAnnotation>
-    protected open fun getAnnotations(valueParameter: KmValueParameter): List<KmAnnotation> = emptyList()
+    protected abstract fun getAnnotations(valueParameter: KmValueParameter): List<KmAnnotation>
 
     protected open fun sortConstructors(constructors: List<KmConstructor>): List<KmConstructor> = constructors
     protected open fun sortFunctions(functions: List<KmFunction>): List<KmFunction> = functions

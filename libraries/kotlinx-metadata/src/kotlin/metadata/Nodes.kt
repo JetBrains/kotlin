@@ -7,11 +7,11 @@
 
 package kotlin.metadata
 
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import kotlin.contracts.ExperimentalContracts
 import kotlin.metadata.internal.FlagImpl
 import kotlin.metadata.internal.extensions.*
 import kotlin.metadata.internal.propertyBooleanFlag
-import org.jetbrains.kotlin.metadata.deserialization.Flags
-import kotlin.contracts.ExperimentalContracts
 
 /**
  * Represents a Kotlin declaration container, such as a class or a package fragment.
@@ -109,6 +109,11 @@ public class KmClass : KmDeclarationContainer {
     public var inlineClassUnderlyingType: KmType? = null
 
     /**
+     * Annotations on the class.
+     */
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
+    /**
      * Types of context receivers of the class.
      */
     @ExperimentalContextReceivers
@@ -177,6 +182,11 @@ public class KmConstructor internal constructor(internal var flags: Int) {
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
 
+    /**
+     * Annotations on the constructor.
+     */
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
     internal val extensions: List<KmConstructorExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createConstructorExtension)
 }
@@ -230,6 +240,11 @@ public class KmFunction internal constructor(internal var flags: Int, public var
     @ExperimentalContracts
     public var contract: KmContract? = null
 
+    /**
+     * Annotations on the function.
+     */
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
     internal val extensions: List<KmFunctionExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createFunctionExtension)
 }
@@ -237,11 +252,16 @@ public class KmFunction internal constructor(internal var flags: Int, public var
 /**
  * Represents a Kotlin property accessor.
  *
- * Does not contain meaningful information except attributes, such as visibility and modality.
+ * Contains only accessor annotations and attributes, such as visibility and modality.
  * Attributes can be read and written using extension properties, e.g. [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
  */
 public class KmPropertyAccessorAttributes internal constructor(internal var flags: Int) {
     public constructor() : this(0)
+
+    /**
+     * Annotations on the property accessor.
+     */
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
 }
 
 /**
@@ -327,6 +347,11 @@ public class KmProperty internal constructor(
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
 
+    /**
+     * Annotations on the property.
+     */
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
+
     internal val extensions: List<KmPropertyExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createPropertyExtension)
 }
@@ -401,6 +426,11 @@ public class KmValueParameter internal constructor(
      * Type of the `vararg` value parameter, or `null` if this is not a `vararg` parameter.
      */
     public var varargElementType: KmType? = null
+
+    /**
+     * Annotations on the value parameter.
+     */
+    public val annotations: MutableList<KmAnnotation> = ArrayList(0)
 
     internal val extensions: List<KmValueParameterExtension> =
         MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createValueParameterExtension)

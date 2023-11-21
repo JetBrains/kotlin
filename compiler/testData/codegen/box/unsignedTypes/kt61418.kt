@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
+// JVM_ABI_K1_K2_DIFF: K2 stores annotations in metadata (KT-57919).
+
 // FILE: signedToUnsignedConversions_annotation.kt
 
 package kotlin.internal

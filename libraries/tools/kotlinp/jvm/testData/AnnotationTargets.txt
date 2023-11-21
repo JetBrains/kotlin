@@ -1,0 +1,83 @@
+// A.class
+// ------------------------------------------
+public final annotation class A : kotlin/Annotation {
+
+  // signature: <init>(Ljava/lang/String;)V
+  public constructor(s: kotlin/String)
+
+  // getter: s()Ljava/lang/String;
+  public final val s: kotlin/String
+    public final get
+
+  // module name: test-module
+}
+// A$Container.class
+// ------------------------------------------
+synthetic class
+// AnnotationTargetsKt.class
+// ------------------------------------------
+package {
+
+  // signature: topLevel()V
+  public final fun topLevel(): kotlin/Unit
+
+  @A(s = "typealias")
+  public typealias Z = kotlin/String /* = kotlin/String */
+
+  // local delegated property #0
+  // local final /* delegated */ val ldp: kotlin/Int
+  //   local final get
+
+  // module name: test-module
+}
+// C.class
+// ------------------------------------------
+public final class C<@A(s = "class-type-param") T#0 /* T */> : kotlin/Any {
+
+  // signature: <init>()V
+  public /* secondary */ constructor()
+
+  // signature: <init>(I)V
+  public constructor(p: kotlin/Int)
+
+  // signature: f(Ljava/lang/Object;)V
+  public final fun <@A(s = "fun-type-param") T#1 /* T */> f(r: kotlin/Any): @A(s = "return-type") kotlin/Unit
+
+  // field: p:I
+  // getter: getP()I
+  // synthetic method for annotations: getP$annotations()V
+  public final val p: kotlin/Int
+    public final get
+
+  // field: q:I
+  // getter: getQ()I
+  // setter: setQ(I)V
+  // synthetic method for annotations: getQ$annotations()V
+  public final var q: kotlin/Int
+    public final /* non-default */ get
+    public final /* non-default */ set(value: kotlin/Int)
+
+  // nested class: Nested
+
+  // local delegated property #0
+  // local final /* delegated */ val <@A(s = "fun-type-param") T#0 /* T */, @A(s = "class-type-param") T#1 /* T */> ldp: kotlin/Int
+  //   local final get
+
+  // module name: test-module
+}
+// C$Nested.class
+// ------------------------------------------
+public final class C.Nested : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    AnnotationTargetsKt
+  }
+}

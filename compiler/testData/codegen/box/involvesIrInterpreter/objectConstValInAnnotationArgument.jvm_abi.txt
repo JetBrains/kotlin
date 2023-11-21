@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Messanger.class
+		CLASS METADATA
+			FUNCTION message(Ljava/lang/String;)Ljava/lang/String;
+				Property: class.metadata.function.valueParameters
+					K1
+						(text: kotlin/String /* = ... */)
+					K2
+						(@Key(value = "OK") text: kotlin/String /* = ... */)

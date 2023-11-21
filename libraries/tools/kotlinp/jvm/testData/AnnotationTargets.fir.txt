@@ -1,0 +1,97 @@
+// A.class
+// ------------------------------------------
+@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPEALIAS])
+@kotlin/annotation/Repeatable
+public final annotation class A : kotlin/Annotation {
+
+  // signature: <init>(Ljava/lang/String;)V
+  public constructor(s: kotlin/String)
+
+  // getter: s()Ljava/lang/String;
+  public final val s: kotlin/String
+    public final get
+
+  // module name: test-module
+}
+// A$Container.class
+// ------------------------------------------
+synthetic class
+// AnnotationTargetsKt.class
+// ------------------------------------------
+package {
+
+  // signature: topLevel()V
+  public final fun topLevel(): kotlin/Unit
+
+  @A(s = "typealias")
+  public typealias Z = kotlin/String /* = kotlin/String */
+
+  // local delegated property #0
+  // @A(s = "local-delegated-property-in-file")
+  // local final /* delegated */ val ldp: kotlin/Int
+  //   local final get
+
+  // module name: test-module
+}
+// C.class
+// ------------------------------------------
+@A(s = "class-1")
+@A(s = "class-2")
+public final class C<@A(s = "class-type-param") T#0 /* T */> : kotlin/Any {
+
+  // signature: <init>()V
+  @A(s = "secondary-ctor")
+  public /* secondary */ constructor()
+
+  // signature: <init>(I)V
+  @A(s = "primary-ctor")
+  public constructor(@A(s = "ctor-param") p: kotlin/Int)
+
+  // signature: f(Ljava/lang/Object;)V
+  @A(s = "fun")
+  public final fun <@A(s = "fun-type-param") T#1 /* T */> f(@A(s = "fun-param-1") @A(s = "fun-param-2") r: kotlin/Any): @A(s = "return-type") kotlin/Unit
+
+  // field: p:I
+  // getter: getP()I
+  // synthetic method for annotations: getP$annotations()V
+  @A(s = "ctor-property")
+  public final val p: kotlin/Int
+    public final get
+
+  // field: q:I
+  // getter: getQ()I
+  // setter: setQ(I)V
+  // synthetic method for annotations: getQ$annotations()V
+  @A(s = "property")
+  public final var q: kotlin/Int
+    @A(s = "getter")
+    public final /* non-default */ get
+    @A(s = "setter")
+    public final /* non-default */ set(@A(s = "setparam-1") @A(s = "setparam-2") value: kotlin/Int)
+
+  // nested class: Nested
+
+  // local delegated property #0
+  // @A(s = "local-delegated-property-in-class")
+  // local final /* delegated */ val ldp: kotlin/Int
+  //   local final get
+
+  // module name: test-module
+}
+// C$Nested.class
+// ------------------------------------------
+@A(s = "nested-class")
+public final class C.Nested : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    AnnotationTargetsKt
+  }
+}

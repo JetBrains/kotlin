@@ -116,6 +116,7 @@ private fun WriteContext.writeConstructor(kmConstructor: KmConstructor): ProtoBu
     if (kmConstructor.flags != ProtoBuf.Constructor.getDefaultInstance().flags) {
         t.flags = kmConstructor.flags
     }
+    t.addAllAnnotation(kmConstructor.annotations.map { it.writeAnnotation(strings).build() })
     return t
 }
 
@@ -139,6 +140,7 @@ private fun WriteContext.writeFunction(kmFunction: KmFunction): ProtoBuf.Functio
     if (kmFunction.flags != ProtoBuf.Function.getDefaultInstance().flags) {
         t.flags = kmFunction.flags
     }
+    t.addAllAnnotation(kmFunction.annotations.map { it.writeAnnotation(strings).build() })
     return t
 }
 
@@ -165,7 +167,13 @@ public fun WriteContext.writeProperty(kmProperty: KmProperty): ProtoBuf.Property
     }
     // TODO: do not write getterFlags/setterFlags if not needed
     t.getterFlags = kmProperty.getter.flags
-    if (kmProperty.setter != null) t.setterFlags = kmProperty.setter!!.flags
+
+    t.addAllAnnotation(kmProperty.annotations.map { it.writeAnnotation(strings).build() })
+    t.addAllGetterAnnotation(kmProperty.getter.annotations.map { it.writeAnnotation(strings).build() })
+    kmProperty.setter?.let { setter ->
+        t.setterFlags = setter.flags
+        t.addAllSetterAnnotation(setter.annotations.map { it.writeAnnotation(strings).build() })
+    }
     return t
 }
 
@@ -180,6 +188,7 @@ private fun WriteContext.writeValueParameter(
         t.flags = kmValueParameter.flags
     }
     t.name = this[kmValueParameter.name]
+    t.addAllAnnotation(kmValueParameter.annotations.map { it.writeAnnotation(strings).build() })
     return t
 }
 
@@ -330,6 +339,8 @@ public open class ClassWriter(stringTable: StringTable, contextExtensions: List<
         t.addAllContextReceiverType(kmClass.contextReceiverTypes.map { c.writeType(it).build() })
 
         t.addAllVersionRequirement(kmClass.versionRequirements.mapNotNull { c.writeVersionRequirement(it) })
+
+        t.addAllAnnotation(kmClass.annotations.map { it.writeAnnotation(c.strings).build() })
 
         c.extensions.forEach { it.writeClassExtensions(kmClass, t, c) }
 

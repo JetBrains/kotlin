@@ -1,4 +1,4 @@
-// JVM_ABI_K1_K2_DIFF: KT-63955
+// JVM_ABI_K1_K2_DIFF: KT-63955, also K2 stores annotations in metadata (KT-57919).
 
 // FILE: nullabilityAnnotationsOnDelegatedMembers.kt
 class JImpl(j: J) : J by j

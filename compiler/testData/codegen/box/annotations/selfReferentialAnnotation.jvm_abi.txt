@@ -1,0 +1,17 @@
+MODULE main
+	CLASS Ann.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(I)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(e: kotlin/Int)
+					K2
+						(@Ann(e = 1) e: kotlin/Int)
+	CLASS MyRequiresOptIn.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Ljava/lang/String;LMyRequiresOptIn$MyLevel;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(a: kotlin/String /* = ... */, b: MyRequiresOptIn.MyLevel /* = ... */)
+					K2
+						(a: kotlin/String /* = ... */, @MyRequiresOptIn(a = "", b = MyRequiresOptIn.MyLevel.WARNING) b: MyRequiresOptIn.MyLevel /* = ... */)

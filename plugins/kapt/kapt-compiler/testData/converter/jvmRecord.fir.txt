@@ -35,10 +35,11 @@ public abstract interface I {
 
 @A()
 /**
+ * @A
  * public final data class R<T#0 (* T *)> : I, java/lang/Record {
  *
  *   // signature: <init>(ILjava/lang/Object;)V
- *   public constructor(x: kotlin/Int, y: T#0)
+ *   public constructor(@A x: kotlin/Int, y: T#0)
  *
  *   // signature: <init>(Ljava/lang/Object;)V
  *   public (* secondary *) constructor(y: T#0)
@@ -50,7 +51,7 @@ public abstract interface I {
  *   public final (* synthesized *) operator fun component2(): T#0
  *
  *   // signature: copy(ILjava/lang/Object;)LR;
- *   public final (* synthesized *) fun copy(x: kotlin/Int (* = ... *), y: T#0 (* = ... *)): R<T#0>
+ *   public final (* synthesized *) fun copy(@A x: kotlin/Int (* = ... *), y: T#0 (* = ... *)): R<T#0>
  *
  *   // signature: equals(Ljava/lang/Object;)Z
  *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean

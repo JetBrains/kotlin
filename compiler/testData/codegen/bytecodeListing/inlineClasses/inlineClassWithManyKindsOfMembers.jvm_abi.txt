@@ -1,6 +1,30 @@
 MODULE main
 	CLASS Z.class
 		CLASS METADATA
+			PROPERTY getNonOverridingExtVar-impl(ILjava/lang/String;)I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						v: kotlin/Int
+					K2
+						@ASetParam v: kotlin/Int
+			PROPERTY getNonOverridingVar-impl(I)I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						v: kotlin/Int
+					K2
+						@ASetParam v: kotlin/Int
+			PROPERTY getOverridingExtVar-impl(ILjava/lang/String;)I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						v: kotlin/Int
+					K2
+						@ASetParam v: kotlin/Int
+			PROPERTY getOverridingVar-impl(I)I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						v: kotlin/Int
+					K2
+						@ASetParam v: kotlin/Int
 			PROPERTY getX()I
 				Property: class.metadata.property.getterModifiers
 					K1

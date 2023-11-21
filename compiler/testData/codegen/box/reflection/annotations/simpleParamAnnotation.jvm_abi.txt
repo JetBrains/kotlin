@@ -1,0 +1,9 @@
+MODULE main
+	CLASS SimpleParamAnnotationKt.class
+		PACKAGE METADATA
+			FUNCTION test(I)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(x: kotlin/Int)
+					K2
+						(@Simple(value = "OK") x: kotlin/Int)

@@ -1,5 +1,5 @@
 // LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
-// JVM_ABI_K1_K2_DIFF: KT-63843, KT-63984
+// JVM_ABI_K1_K2_DIFF: KT-63843, KT-63984, also K2 stores annotations in metadata (KT-57919).
 
 import kotlin.reflect.KProperty
 

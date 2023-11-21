@@ -1,0 +1,9 @@
+MODULE main
+	CLASS KEnum.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Ljava/lang/String;ILjava/lang/Object;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(value: kotlin/Any)
+					K2
+						(@A value: kotlin/Any)

@@ -1,6 +1,12 @@
 MODULE main
 	CLASS A.class
 		CLASS METADATA
+			CONSTRUCTOR constructor-impl(II)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(x: kotlin/Int, y: kotlin/Int)
+					K2
+						(@Ann @Ann @Ann @Ann x: kotlin/Int, @Ann @Ann @Ann @Ann y: kotlin/Int)
 			PROPERTY getX()I
 				Property: class.metadata.property.getterModifiers
 					K1
@@ -15,6 +21,12 @@ MODULE main
 						public final /* non-default */
 	CLASS B.class
 		CLASS METADATA
+			CONSTRUCTOR constructor-impl(IILA;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(x: A, y: A?)
+					K2
+						(x: A, @Ann @Ann @Ann @Ann y: A?)
 			PROPERTY getY()LA;
 				Property: class.metadata.property.getterModifiers
 					K1
@@ -23,6 +35,12 @@ MODULE main
 						public final /* non-default */
 	CLASS C.class
 		CLASS METADATA
+			CONSTRUCTOR <init>(IILA;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(x: A, y: A?)
+					K2
+						(x: A, @Ann @Ann @Ann @Ann y: A?)
 			PROPERTY getX()LA;
 				Property: class.metadata.property.setterModifiers
 					K1
@@ -49,9 +67,21 @@ MODULE main
 					K1
 						---
 					K2
-						value: A?
+						@Ann @Ann value: A?
 	CLASS AnnotationsKt.class
 		PACKAGE METADATA
+			FUNCTION t-9uZSGF8(LC;IIIILA;LC;)I
+				Property: class.metadata.function.valueParameters
+					K1
+						(a: A, b: B, c: C)
+					K2
+						(a: A, b: B, @Ann @Ann c: C)
+			FUNCTION t-bZ3EKo0(IIIIIILA;LC;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(a: A, b: B, c: C)
+					K2
+						(a: A, b: B, @Ann @Ann c: C)
 			PROPERTY getT(LC;)LA;
 				Property: class.metadata.property.setterValueParameter
 					K1
