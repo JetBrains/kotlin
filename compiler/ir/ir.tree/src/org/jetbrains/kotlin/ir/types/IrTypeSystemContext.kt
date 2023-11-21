@@ -303,6 +303,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean =
         this is IrClassSymbol && isClassWithFqName(StandardNames.FqNames.nothing)
 
+    override fun TypeConstructorMarker.isArrayConstructor(): Boolean =
+        this is IrClassSymbol && isClassWithFqName(StandardNames.FqNames.array)
+
     override fun SimpleTypeMarker.isSingleClassifierType() = true
 
     override fun SimpleTypeMarker.possibleIntegerTypes() = irBuiltIns.run {

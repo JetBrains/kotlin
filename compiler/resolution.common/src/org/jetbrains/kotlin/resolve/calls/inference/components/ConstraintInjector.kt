@@ -466,7 +466,12 @@ class ConstraintInjector(
             isFromNullabilityConstraint: Boolean,
             isFromDeclaredUpperBound: Boolean
         ) {
-            if (lowerType === upperType) return
+            // Avoid checking trivial incorporated constraints
+            if (isK2) {
+                if (lowerType == upperType) return
+            } else {
+                if (lowerType === upperType) return
+            }
             if (c.isAllowedType(lowerType) && c.isAllowedType(upperType)) {
                 fun runIsSubtypeOf() =
                     runIsSubtypeOf(lowerType, upperType, shouldTryUseDifferentFlexibilityForUpperType, isFromNullabilityConstraint)

@@ -518,6 +518,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun TypeConstructorMarker.isAnyConstructor(): Boolean
     fun TypeConstructorMarker.isNothingConstructor(): Boolean
+    fun TypeConstructorMarker.isArrayConstructor(): Boolean
 
     /**
      *

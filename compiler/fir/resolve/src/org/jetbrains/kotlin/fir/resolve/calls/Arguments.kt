@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompat
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 import org.jetbrains.kotlin.types.model.typeConstructor
 
@@ -303,28 +302,9 @@ private fun argumentTypeWithCustomConversion(
     }
 }
 
-fun Candidate.prepareCapturedType(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType {
-    return captureTypeFromExpressionOrNull(argumentType, context) ?: argumentType
-}
-
-private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType? {
-    val type = argumentType.fullyExpandedType(context.session)
-    if (type is ConeIntersectionType) {
-        val intersectedTypes = type.intersectedTypes.map { captureTypeFromExpressionOrNull(it, context) ?: it }
-        if (intersectedTypes == type.intersectedTypes) return null
-        return ConeIntersectionType(
-            intersectedTypes,
-            type.alternativeType?.let { captureTypeFromExpressionOrNull(it, context) ?: it }
-        )
-    }
-
-    if (type !is ConeClassLikeType && type !is ConeFlexibleType) return null
-
-    if (type.typeArguments.isEmpty()) return null
-
-    return context.session.typeContext.captureFromArgumentsInternal(
-        type, CaptureStatus.FROM_EXPRESSION
-    )
+internal fun prepareCapturedType(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType {
+    if (argumentType.isRaw()) return argumentType
+    return context.typeContext.captureFromExpression(argumentType.fullyExpandedType(context.session)) ?: argumentType
 }
 
 private fun checkApplicabilityForArgumentType(

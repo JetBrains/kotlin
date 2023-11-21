@@ -412,6 +412,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this is ConeClassLikeLookupTag && classId == StandardClassIds.Nothing
     }
 
+    override fun TypeConstructorMarker.isArrayConstructor(): Boolean {
+        return this is ConeClassLikeLookupTag && classId == StandardClassIds.Array
+    }
+
     override fun SimpleTypeMarker.isSingleClassifierType(): Boolean {
         if (isError()) return false
         if (this is ConeCapturedType) return true
