@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
@@ -262,6 +263,9 @@ fun <T> List<T>.smartPlus(other: List<T>): List<T> = when {
 
 // Source element may be missing if the class came from a library
 fun FirVariable.isEnumEntries(containingClass: FirClass) = isStatic && name == StandardNames.ENUM_ENTRIES && containingClass.isEnumClass
+fun FirVariable.isEnumEntries(containingClassSymbol: FirClassSymbol<*>): Boolean {
+    return isStatic && name == StandardNames.ENUM_ENTRIES && containingClassSymbol.isEnumClass
+}
 
 val FirExpression.isArraySet: Boolean
     get() {
