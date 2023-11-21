@@ -1031,11 +1031,6 @@ internal class PotentiallyNonReportedAnnotationImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KtFirDiagnostic.PotentiallyNonReportedAnnotation
 
-internal class WrongJsQualifierImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.WrongJsQualifier
-
 internal class JsModuleProhibitedOnVarImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
@@ -1168,6 +1163,11 @@ internal class JsFakeNameClashImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.JsFakeNameClash
+
+internal class WrongJsQualifierImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.WrongJsQualifier
 
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
@@ -4657,24 +4657,6 @@ internal class NonExternalDeclarationInInappropriateFileImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NonExternalDeclarationInInappropriateFile
 
-internal class CannotCheckForExternalInterfaceImpl(
-    override val targetType: KtType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.CannotCheckForExternalInterface
-
-internal class UncheckedCastToExternalInterfaceImpl(
-    override val sourceType: KtType,
-    override val targetType: KtType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.UncheckedCastToExternalInterface
-
-internal class ExternalInterfaceAsClassLiteralImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ExternalInterfaceAsClassLiteral
-
 internal class JsExternalInheritorsOnlyImpl(
     override val parent: KtClassLikeSymbol,
     override val kid: KtClassLikeSymbol,
@@ -4687,17 +4669,6 @@ internal class JsExternalArgumentImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.JsExternalArgument
-
-internal class ExternalInterfaceAsReifiedTypeArgumentImpl(
-    override val typeArgument: KtType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ExternalInterfaceAsReifiedTypeArgument
-
-internal class NestedJsExportImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NestedJsExport
 
 internal class WrongExportedDeclarationImpl(
     override val kind: String,
@@ -4717,6 +4688,11 @@ internal class NonConsumableExportedIdentifierImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NonConsumableExportedIdentifier
+
+internal class NestedJsExportImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NestedJsExport
 
 internal class DelegationByDynamicImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -4805,6 +4781,30 @@ internal class WrongDefaultValueForExternalFunParameterImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.WrongDefaultValueForExternalFunParameter
+
+internal class CannotCheckForExternalInterfaceImpl(
+    override val targetType: KtType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.CannotCheckForExternalInterface
+
+internal class UncheckedCastToExternalInterfaceImpl(
+    override val sourceType: KtType,
+    override val targetType: KtType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.UncheckedCastToExternalInterface
+
+internal class ExternalInterfaceAsClassLiteralImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ExternalInterfaceAsClassLiteral
+
+internal class ExternalInterfaceAsReifiedTypeArgumentImpl(
+    override val typeArgument: KtType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ExternalInterfaceAsReifiedTypeArgument
 
 internal class JscodeArgumentNonConstExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,
