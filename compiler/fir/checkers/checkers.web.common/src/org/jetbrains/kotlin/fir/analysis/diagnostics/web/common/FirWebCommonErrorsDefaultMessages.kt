@@ -22,10 +22,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.WRONG_JS_QUALIFIER
 
 @Suppress("unused")
 object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
+        map.put(WRONG_JS_QUALIFIER, "Qualifier contains illegal characters.")
         map.put(NESTED_EXTERNAL_DECLARATION, "Non-top-level 'external' declaration.")
         map.put(WRONG_EXTERNAL_DECLARATION, "Declaration of such kind ({0}) cannot be external.", CommonRenderers.STRING)
         map.put(NESTED_CLASS_IN_EXTERNAL_INTERFACE, "Interface cannot contain nested classes and objects.")

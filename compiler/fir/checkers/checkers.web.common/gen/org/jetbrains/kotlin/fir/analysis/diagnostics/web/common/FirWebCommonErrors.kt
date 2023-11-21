@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.psi.KtParameter
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WEB_COMMON_DIAGNOSTICS_LIST]
  */
 object FirWebCommonErrors {
+    // Annotations
+    val WRONG_JS_QUALIFIER by error0<KtElement>()
+
     // Externals
     val NESTED_EXTERNAL_DECLARATION by error0<KtExpression>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val WRONG_EXTERNAL_DECLARATION by error1<KtExpression, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)

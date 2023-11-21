@@ -122,6 +122,12 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
         public void testTypes() throws Exception {
             runTest("compiler/testData/diagnostics/wasmTests/jsInterop/types.kt");
         }
+
+        @Test
+        @TestMetadata("wrongQualifier.kt")
+        public void testWrongQualifier() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/wrongQualifier.kt");
+        }
     }
 
     @Nested

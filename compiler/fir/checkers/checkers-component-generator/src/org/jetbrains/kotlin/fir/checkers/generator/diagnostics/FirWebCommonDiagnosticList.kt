@@ -13,6 +13,10 @@ import org.jetbrains.kotlin.util.PrivateForInline
 @Suppress("ClassName", "unused")
 @OptIn(PrivateForInline::class)
 object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
+    val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
+        val WRONG_JS_QUALIFIER by error<KtElement>()
+    }
+
     val EXTERNALS by object : DiagnosticGroup("Externals") {
         val NESTED_EXTERNAL_DECLARATION by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val WRONG_EXTERNAL_DECLARATION by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {

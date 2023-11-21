@@ -57,14 +57,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_EXPORTED_DECLARATION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_JS_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_MULTIPLE_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC
 
 @Suppress("unused")
 object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
-        map.put(WRONG_JS_QUALIFIER, "Qualifier contains illegal characters.")
         map.put(JS_MODULE_PROHIBITED_ON_VAR, "'@JsModule' and '@JsNonModule' annotations are prohibited for 'var' declarations. Use 'val' instead.")
         map.put(JS_MODULE_PROHIBITED_ON_NON_NATIVE, "'@JsModule' and '@JsNonModule' annotations are prohibited for non-external declarations.")
         map.put(

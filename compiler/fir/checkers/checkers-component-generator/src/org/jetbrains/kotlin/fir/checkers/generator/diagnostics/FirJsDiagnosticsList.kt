@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.psi.*
 @OptIn(PrivateForInline::class)
 object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
     val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
-        val WRONG_JS_QUALIFIER by error<KtElement>()
         val JS_MODULE_PROHIBITED_ON_VAR by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val JS_MODULE_PROHIBITED_ON_NON_NATIVE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val NESTED_JS_MODULE_PROHIBITED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
