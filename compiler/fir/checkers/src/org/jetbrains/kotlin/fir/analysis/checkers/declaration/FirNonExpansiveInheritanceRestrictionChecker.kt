@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.collectUpperBounds
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * @see org.jetbrains.kotlin.resolve.NonExpansiveInheritanceRestrictionChecker
@@ -81,6 +84,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker() {
         val visitedSymbols = SmartSet.create<FirClassifierSymbol<*>>()
         fun visit(symbol: FirRegularClassSymbol) {
             val typeParameters = symbol.typeParameterSymbols
+            if (typeParameters.isEmpty()) return
 
             // For each type parameter T, let ST be the set of all constituent types of all immediate supertypes of the owner of T.
             // If T appears as a constituent type of a simple type argument A in a generic type in ST, add an edge from T
@@ -89,10 +93,16 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker() {
             for (constituentType in symbol.resolvedSuperTypes.flatMap { it.constituentTypes() }) {
                 val constituentTypeSymbol = constituentType.toRegularClassSymbol(session) ?: continue
                 if (visitedSymbols.add(constituentTypeSymbol)) visit(constituentTypeSymbol)
-                if (constituentTypeSymbol.typeParameterSymbols.size != constituentType.typeArguments.size) continue
 
-                for ((i, typeProjection) in constituentType.typeArguments.withIndex()) {
-                    val constituentTypeParameterSymbol = constituentTypeSymbol.typeParameterSymbols[i]
+                val parameters = constituentTypeSymbol.typeParameterSymbols
+                val arguments = constituentType.typeArguments.asList()
+                if (parameters.size != arguments.size) continue
+                val substitutor = runIf(arguments.any { it.kind != ProjectionKind.INVARIANT }) {
+                    substitutorByType(parameters, arguments, session)
+                }
+
+                for ((i, typeProjection) in arguments.withIndex()) {
+                    val constituentTypeParameterSymbol = parameters[i]
                     if (typeProjection.kind == ProjectionKind.INVARIANT) {
                         val constituents = typeProjection.type!!.constituentTypes()
 
@@ -109,7 +119,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker() {
                         // upper bounds of a skolem type variable Q in a skolemization of a projected generic type in ST, add an
                         // expanding edge from T to V, where V is the type parameter corresponding to Q.
                         val bounds = SmartSet.create<ConeKotlinType>()
-                        constituentTypeParameterSymbol.resolvedBounds.mapTo(bounds) { it.type }
+                        constituentTypeParameterSymbol.resolvedBounds.mapNotNullTo(bounds) { substitutor!!.substituteOrNull(it.type) }
                         typeProjection.type?.let(bounds::add)
                         val boundClosure = bounds.flatMapTo(SmartSet.create()) { it.collectUpperBounds() }
 
@@ -172,4 +182,23 @@ private fun ConeKotlinType.constituentTypes(): Set<ConeKotlinType> {
     val constituentTypes = SmartSet.create<ConeKotlinType>()
     forEachType { constituentTypes.add(it) }
     return constituentTypes
+}
+
+private fun substitutorByType(
+    parameters: List<FirTypeParameterSymbol>,
+    arguments: List<ConeTypeProjection>,
+    session: FirSession,
+): ConeSubstitutor {
+    require(parameters.size == arguments.size)
+
+    val substitution = buildMap {
+        for (index in parameters.indices) {
+            val argumentType = arguments[index].type
+            if (argumentType != null) {
+                put(parameters[index], argumentType)
+            }
+        }
+    }
+
+    return substitutorByMap(substitution, session)
 }

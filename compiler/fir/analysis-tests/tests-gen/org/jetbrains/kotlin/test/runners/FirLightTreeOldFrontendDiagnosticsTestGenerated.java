@@ -9748,6 +9748,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("Comparable.kt")
+                public void testComparable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/declarationChecks/nonExpansiveInheritanceRestriction/Comparable.kt");
+                }
+
+                @Test
                 @TestMetadata("JavaWithKotlin.kt")
                 public void testJavaWithKotlin() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/declarationChecks/nonExpansiveInheritanceRestriction/JavaWithKotlin.kt");
