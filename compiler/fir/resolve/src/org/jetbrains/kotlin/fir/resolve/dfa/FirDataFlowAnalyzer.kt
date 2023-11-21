@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
@@ -30,7 +31,10 @@ import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -903,6 +907,10 @@ abstract class FirDataFlowAnalyzer(
 
     private fun FirStatement.orderedArguments(callee: FirFunction): Array<out FirExpression?>? {
         fun FirQualifiedAccessExpression.firstReceiver(): FirExpression? {
+            val candidate = candidate()
+            if (candidate != null) {
+                return candidate.chosenExtensionReceiverExpression() ?: candidate.dispatchReceiverExpression()
+            }
             return extensionReceiver ?: dispatchReceiver
         }
 
@@ -914,7 +922,7 @@ abstract class FirDataFlowAnalyzer(
 
         return when (this) {
             is FirFunctionCall -> {
-                val argumentToParameter = resolvedArgumentMapping ?: return null
+                val argumentToParameter = resolvedArgumentMapping ?: candidate()?.argumentMapping ?: return null
                 val parameterToArgument = argumentToParameter.entries.associate { it.value to it.key.unwrapArgument() }
                 Array(callee.valueParameters.size + 1) { i ->
                     if (i > 0) parameterToArgument[callee.valueParameters[i - 1]] else receiver
