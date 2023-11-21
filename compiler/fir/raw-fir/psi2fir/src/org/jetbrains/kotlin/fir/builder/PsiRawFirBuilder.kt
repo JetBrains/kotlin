@@ -85,7 +85,7 @@ open class PsiRawFirBuilder(
     }
 
     override fun PsiElement.toFirSourceElement(kind: KtFakeSourceElementKind?): KtPsiSourceElement {
-        val actualKind = kind ?: this@PsiRawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind
+        val actualKind = kind ?: KtRealSourceElementKind
         return this.toKtPsiSourceElement(actualKind)
     }
 
@@ -317,7 +317,7 @@ open class PsiRawFirBuilder(
                 else -> buildErrorExpression {
                     nonExpressionElement = fir
                     diagnostic = diagnosticFn()
-                    source = fir?.source?.withForcedKindFrom(this@PsiRawFirBuilder.context) ?: toFirSourceElement()
+                    source = fir?.source?.realElement() ?: toFirSourceElement()
                 }
             }
         }

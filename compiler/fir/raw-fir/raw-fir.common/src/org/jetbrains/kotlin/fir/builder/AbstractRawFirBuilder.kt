@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1001,16 +1001,6 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
 
     protected fun FirCallableDeclaration.initContainingClassAttr() {
         initContainingClassAttr(context)
-    }
-
-    protected inline fun <R> withDefaultSourceElementKind(newDefault: KtSourceElementKind, action: () -> R): R {
-        val currentForced = context.forcedElementSourceKind
-        context.forcedElementSourceKind = newDefault
-        try {
-            return action()
-        } finally {
-            context.forcedElementSourceKind = currentForced
-        }
     }
 
     protected fun buildLabelAndErrorSource(rawName: String, source: KtSourceElement): Pair<FirLabel, KtSourceElement?> {

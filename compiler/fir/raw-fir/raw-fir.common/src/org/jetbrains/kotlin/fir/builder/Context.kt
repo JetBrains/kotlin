@@ -1,15 +1,13 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.builder
 
-import org.jetbrains.kotlin.KtSourceElementKind
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirLoopTarget
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -19,6 +17,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.PrivateForInline
 
 class Context<T> {
     lateinit var packageFqName: FqName
@@ -51,7 +50,6 @@ class Context<T> {
     val capturedTypeParameters = mutableListOf<StatusFirTypeParameterSymbolList>()
     val arraySetArgument = mutableMapOf<T, FirExpression>()
 
-    var forcedElementSourceKind: KtSourceElementKind? = null
     val dispatchReceiverTypesStack = mutableListOf<ConeClassLikeType>()
     var containerIsExpect: Boolean = false
 

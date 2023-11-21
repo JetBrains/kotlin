@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -706,14 +706,6 @@ fun AnnotationUseSiteTarget?.appliesToPrimaryConstructorParameter() = this == nu
         this == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER ||
         this == AnnotationUseSiteTarget.RECEIVER ||
         this == AnnotationUseSiteTarget.FILE
-
-fun KtSourceElement.withForcedKindFrom(context: Context<*>): KtSourceElement {
-    return when (val forcedKind = context.forcedElementSourceKind) {
-        kind -> this
-        is KtFakeSourceElementKind -> fakeElement(forcedKind)
-        else -> this.realElement()
-    }
-}
 
 fun FirErrorTypeRef.wrapIntoArray(): FirResolvedTypeRef {
     val typeRef = this
