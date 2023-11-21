@@ -115,9 +115,10 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
                 "Changed files: [${workDir.resolve("src/Foo.kt").path}, ${workDir.resolve("src/main.kt").path}]"
             )
         }
-
+        println(">>>>>" + reportDir.path)
         withDaemon {
             withSystemProperty("kotlin.build.report.file.output_dir", reportDir.path) {
+                println(">>>>>" + reportDir.path)
                 testImpl()
             }
         }
