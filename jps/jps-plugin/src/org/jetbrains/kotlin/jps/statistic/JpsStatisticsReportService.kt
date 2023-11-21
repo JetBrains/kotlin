@@ -25,20 +25,28 @@ private const val jpsBuildTaskName = "JPS build"
 
 sealed class JpsStatisticsReportService {
     companion object {
+        private val log = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
         fun create(): JpsStatisticsReportService {
+
             val fileReportSettings = initFileReportSettings()
             val httpReportSettings = initHttpReportSettings()
 
             return if (fileReportSettings == null && httpReportSettings == null) {
+                log.info("JpsStatisticsReportService is dummy")
                 DummyJpsStatisticsReportService
             } else {
+                log.info("JpsStatisticsReportService is real")
                 JpsStatisticsReportServiceImpl(fileReportSettings, httpReportSettings)
             }
 
         }
 
         private fun initFileReportSettings(): FileReportSettings? {
-            return System.getProperty("kotlin.build.report.file.output_dir")?.let { FileReportSettings(File(it)) }
+            return System.getProperty("kotlin.build.report.file.output_dir").also {
+                log.info("JpsStatisticsReportService: out put dir is $it")
+            }?.let {
+                FileReportSettings(File(it))
+            }
         }
 
         private fun initHttpReportSettings(): HttpReportSettings? {
