@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.compilerRunner.JpsKotlinLogger
 import java.io.File
 import java.net.InetAddress
 import java.util.*
-import kotlin.collections.ArrayList
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 
 interface JpsBuilderMetricReporter : BuildMetricsReporter<JpsBuildTime, JpsBuildPerformanceMetric> {
     fun flush(context: CompileContext): JpsCompileStatisticsData
@@ -34,7 +35,7 @@ class JpsBuilderMetricReporterImpl(
     chunk: ModuleChunk,
     private val reporter: BuildMetricsReporterImpl<JpsBuildTime, JpsBuildPerformanceMetric>,
     private val label: String? = null,
-    private val kotlinVersion: String = "kotlin_version"
+    private val kotlinVersion: String = "kotlin_version",
 ) :
     JpsBuilderMetricReporter, BuildMetricsReporter<JpsBuildTime, JpsBuildPerformanceMetric> by reporter {
 
@@ -90,13 +91,20 @@ class JpsBuilderMetricReporterImpl(
 
 }
 
-// TODO test UserDataHolder in CompileContext to store CompileStatisticsData.Build or KotlinBuilderMetric
-class JpsStatisticsReportService {
-
-    private val fileReportSettings: FileReportSettings? = initFileReportSettings()
-    private val httpReportSettings: HttpReportSettings? = initHttpReportSettings()
-
+sealed class JpsStatisticsReportService {
     companion object {
+        fun create(): JpsStatisticsReportService {
+            val fileReportSettings = initFileReportSettings()
+            val httpReportSettings = initHttpReportSettings()
+
+            return if (fileReportSettings == null && httpReportSettings == null) {
+                DummyJpsStatisticsReportService
+            } else {
+                JpsStatisticsReportServiceImpl(fileReportSettings, httpReportSettings)
+            }
+
+        }
+
         private fun initFileReportSettings(): FileReportSettings? {
             return System.getProperty("kotlin.build.report.file.output_dir")?.let { FileReportSettings(File(it)) }
         }
@@ -111,36 +119,76 @@ class JpsStatisticsReportService {
         }
     }
 
-    private val buildMetrics = HashMap<String, JpsBuilderMetricReporter>()
-    private val finishedModuleBuildMetrics = ArrayList<JpsBuilderMetricReporter>()
+    abstract fun <T> reportMetrics(chunk: ModuleChunk, metric: JpsBuildTime, action: () -> T): T
+    abstract fun buildStarted(context: CompileContext)
+    abstract fun buildFinish(context: CompileContext)
+
+    abstract fun moduleBuildFinished(chunk: ModuleChunk, context: CompileContext)
+    abstract fun moduleBuildStarted(chunk: ModuleChunk)
+}
+
+
+object DummyJpsStatisticsReportService : JpsStatisticsReportService() {
+    override fun <T> reportMetrics(chunk: ModuleChunk, metric: JpsBuildTime, action: () -> T): T {
+        return action()
+    }
+
+    override fun buildStarted(context: CompileContext) {}
+    override fun buildFinish(context: CompileContext) {}
+    override fun moduleBuildFinished(chunk: ModuleChunk, context: CompileContext) {}
+    override fun moduleBuildStarted(chunk: ModuleChunk) {}
+
+}
+
+class JpsStatisticsReportServiceImpl(
+    private val fileReportSettings: FileReportSettings?,
+    httpReportSettings: HttpReportSettings?,
+) : JpsStatisticsReportService() {
+
+    private val buildMetrics = ConcurrentHashMap<String, JpsBuilderMetricReporter>()
+    private val finishedModuleBuildMetrics = ConcurrentLinkedQueue<JpsBuilderMetricReporter>()
     private val log = Logger.getInstance("#org.jetbrains.kotlin.jps.statistic.KotlinBuilderReportService")
     private val loggerAdapter = JpsKotlinLogger(log)
     private val httpService = httpReportSettings?.let { HttpReportService(it.url, it.user, it.password) }
 
-    fun moduleBuildStarted(chunk: ModuleChunk) {
+    override fun moduleBuildStarted(chunk: ModuleChunk) {
         val moduleName = chunk.name
-        if (buildMetrics[moduleName] != null) {
-            log.warn("Service already initialized for context")
+        val jpsReporter = JpsBuilderMetricReporterImpl(chunk, BuildMetricsReporterImpl())
+        if (buildMetrics.putIfAbsent(moduleName, jpsReporter) != jpsReporter) {
+            log.warn("Service already initialized for $moduleName module")
             return
         }
-        log.info("JpsStatisticsReportService: Service started")
-        buildMetrics[moduleName] = JpsBuilderMetricReporterImpl(chunk, BuildMetricsReporterImpl())
+        log.debug("JpsStatisticsReportService: Build started for $moduleName module")
     }
 
+    private fun getMetricReporter(chunk: ModuleChunk): JpsBuilderMetricReporter? {
+        val moduleName = chunk.name
+        return getMetricReporter(moduleName)
+    }
 
-    fun moduleBuildFinished(chunk: ModuleChunk, context: CompileContext) {
+    private fun getMetricReporter(moduleName: String): JpsBuilderMetricReporter? {
+        val metricReporter = buildMetrics[moduleName]
+        if (metricReporter == null) {
+            //At some point log should be changed to exception
+            log.warn("Service hasn't initialized for $moduleName module")
+            return null
+        }
+        return metricReporter
+    }
+
+    override fun moduleBuildFinished(chunk: ModuleChunk, context: CompileContext) {
         val moduleName = chunk.name
         val metrics = buildMetrics.remove(moduleName)
         if (metrics == null) {
-            log.warn("Service hasn't initialized for context")
+            log.warn("Service hasn't initialized for $moduleName module")
             return
         }
-        log.info("JpsStatisticsReportService: Service finished")
+        log.debug("JpsStatisticsReportService: Build started for $moduleName module")
         metrics.buildFinish(chunk, context)
         finishedModuleBuildMetrics.add(metrics)
     }
 
-    fun buildFinish(context: CompileContext) {
+    override fun buildFinish(context: CompileContext) {
         val compileStatisticsData = finishedModuleBuildMetrics.map { it.flush(context) }
         httpService?.sendData(compileStatisticsData, loggerAdapter)
         fileReportSettings?.also {
@@ -151,23 +199,12 @@ class JpsStatisticsReportService {
         }
     }
 
-
-    fun <T> reportMetrics(chunk: ModuleChunk, metric: JpsBuildTime, action: () -> T): T {
-        val moduleName = chunk.name
-        val metrics = buildMetrics[moduleName]
-        if (metrics == null) {
-            log.warn("Service hasn't initialized for context")
-            return action.invoke()
-        }
-        log.info("JpsStatisticsReportService: report metrics")
-        return metrics.measure(metric, action)
+    override fun <T> reportMetrics(chunk: ModuleChunk, metric: JpsBuildTime, action: () -> T): T {
+        return getMetricReporter(chunk)?.measure(metric, action) ?: action.invoke()
     }
 
-    fun buildStarted(context: CompileContext) {
-        loggerAdapter.info("Build started for $context")
+    override fun buildStarted(context: CompileContext) {
+        loggerAdapter.info("Build started for $context with enabled build metric reports.")
     }
 
 }
-
-
-
