@@ -28,6 +28,7 @@ package app;
  *   public constructor(delegate: androidx/annotation/Box)
  *
  *   // signature: foo()Ljava/lang/String;
+ *   @androidx/annotation/RecentlyNullable
  *   public open (* delegation *) fun foo(): kotlin/String!
  *
  *   // field: delegate:Landroidx/annotation/Box;

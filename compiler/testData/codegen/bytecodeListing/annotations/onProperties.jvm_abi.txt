@@ -4,9 +4,9 @@ MODULE main
 			PROPERTY getP()I
 				Property: class.metadata.property.setterValueParameter
 					K1
-						<set-?>: kotlin/Int
+						@AnnParam <set-?>: kotlin/Int
 					K2
-						value: kotlin/Int
+						@AnnParam value: kotlin/Int
 			PROPERTY getY()I
 				Property: class.metadata.property.getterModifiers
 					K1

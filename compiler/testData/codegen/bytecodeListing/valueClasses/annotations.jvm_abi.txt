@@ -49,7 +49,7 @@ MODULE main
 					K1
 						---
 					K2
-						value: A?
+						@Ann @Ann value: A?
 	CLASS AnnotationsKt.class
 		PACKAGE METADATA
 			PROPERTY getT(LC;)LA;

@@ -60,6 +60,7 @@ package test;
 
 @RootAnnotation()
 /**
+ * @RootAnnotation
  * public final class test/C : kotlin/Any {
  *
  *   // signature: <init>()V

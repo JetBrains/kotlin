@@ -120,6 +120,7 @@ package app;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
 /**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.FIELD])
  * public final annotation class app/BindField : kotlin/Annotation {
  *
  *   // signature: <init>(I)V
@@ -264,80 +265,102 @@ package app;
  *   public constructor(param1: kotlin/Int (* = ... *), param2: kotlin/Int (* = ... *))
  *
  *   // signature: foo()V
+ *   @app/Bind(id = 100)
  *   public final fun foo(): kotlin/Unit
  *
  *   // signature: foo2()V
+ *   @app/Bind(id = 100)
  *   public final fun foo2(): kotlin/Unit
  *
  *   // signature: foo3()V
+ *   @app/Bind(id = 100)
  *   public final fun foo3(): kotlin/Unit
  *
  *   // signature: foo4()V
+ *   @app/Bind(id = 100)
  *   public final fun foo4(): kotlin/Unit
  *
  *   // signature: foo5()V
+ *   @app/Bind(id = 100)
+ *   @app/Anno(a1 = false, a2 = 1.toByte(), a3 = 2, a4 = 3.toShort(), a5 = 4L, a6 = '5', a7 = 6.0f, a8 = 7.0, a9 = "A")
  *   public final fun foo5(): kotlin/Unit
  *
  *   // signature: multi0()V
+ *   @app/MultiValue(ids = [])
  *   public final fun multi0(): kotlin/Unit
  *
  *   // signature: multi1()V
+ *   @app/MultiValue(ids = [200])
  *   public final fun multi1(): kotlin/Unit
  *
  *   // signature: multi2()V
+ *   @app/MultiValue(ids = [200, 2])
  *   public final fun multi2(): kotlin/Unit
  *
  *   // signature: multi3()V
+ *   @app/MultiValue(ids = [200, 2])
  *   public final fun multi3(): kotlin/Unit
  *
  *   // signature: multi4()V
+ *   @app/MultiValueString(ids = ["A"])
  *   public final fun multi4(): kotlin/Unit
  *
  *   // signature: multi5()V
+ *   @app/MultiValueByte(ids = [1.toByte()])
  *   public final fun multi5(): kotlin/Unit
  *
  *   // signature: multiJava1()V
+ *   @lib/OnClick(value = [200])
  *   public final fun multiJava1(): kotlin/Unit
  *
  *   // signature: multiJava2()V
+ *   @lib/OnClick(value = [200, 100])
  *   public final fun multiJava2(): kotlin/Unit
  *
  *   // signature: plainIntConstant()V
+ *   @app/Bind(id = 200)
  *   public final fun plainIntConstant(): kotlin/Unit
  *
  *   // field: a:I
  *   // getter: getA()I
  *   // synthetic method for annotations: getA$annotations()V
+ *   @app/Bind(id = 100)
  *   public final val a: kotlin/Int
  *     public final get
  *
  *   // field: b:I
  *   // getter: getB()I
  *   // synthetic method for annotations: getB$annotations()V
+ *   @app/Bind(id = 100)
  *   public final val b: kotlin/Int
  *     public final get
  *
  *   // field: c:I
  *   // getter: getC()I
  *   // synthetic method for annotations: getC$annotations()V
+ *   @app/Bind(id = 100)
  *   public final val c: kotlin/Int
  *     public final get
  *
  *   // field: d:I
  *   // getter: getD()I
  *   // synthetic method for annotations: getD$annotations()V
+ *   @app/Bind(id = 100)
  *   public final val d: kotlin/Int
  *     public final get
  *
  *   // field: e:I
  *   // getter: getE()I
  *   // synthetic method for annotations: getE$annotations()V
+ *   @app/Bind(id = 100)
+ *   @app/Anno(a1 = false, a2 = 1.toByte(), a3 = 2, a4 = 3.toShort(), a5 = 4L, a6 = '5', a7 = 6.0f, a8 = 7.0, a9 = "A")
  *   public final val e: kotlin/Int
  *     public final get
  *
  *   // field: f:I
  *   // getter: getF()I
  *   // synthetic method for annotations: getF$annotations()V
+ *   @app/Bind(id = 200)
  *   public final val f: kotlin/Int
  *     public final get
  *

@@ -1,5 +1,6 @@
 // A.class
 // ------------------------------------------
+@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
 public final annotation class A : kotlin/Annotation {
 
   // signature: <init>(ZCBSIFJDLkotlin/UInt;Lkotlin/UByte;Lkotlin/UShort;Lkotlin/ULong;Lkotlin/UInt;Lkotlin/UByte;Lkotlin/UShort;Lkotlin/ULong;[Z[C[B[S[I[F[J[DLjava/lang/String;Lkotlin/annotation/AnnotationTarget;Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;LB;Lkotlin/Array;Lkotlin/Array;Lkotlin/Array;Lkotlin/Array;)V
@@ -169,6 +170,7 @@ public final class C : kotlin/Any {
 }
 // JvmNamed.class
 // ------------------------------------------
+@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
 public final annotation class JvmNamed : kotlin/Annotation {
 
   // signature: <init>(Ljava/lang/String;)V
@@ -176,6 +178,7 @@ public final annotation class JvmNamed : kotlin/Annotation {
 
   // getter: uglyJvmName()Ljava/lang/String;
   public final val value: kotlin/String
+    @kotlin/jvm/JvmName(name = "uglyJvmName")
     public final /* non-default */ get
 
   // module name: test-module

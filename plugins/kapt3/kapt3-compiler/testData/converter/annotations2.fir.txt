@@ -3,10 +3,12 @@ package test;
 @Anno(value = "anno-class")
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
+ * @test/Anno(value = "anno-class")
  * public final annotation class test/Anno : kotlin/Annotation {
  *
  *   // signature: <init>(Ljava/lang/String;)V
- *   public constructor(value: kotlin/String)
+ *   @test/Anno(value = "anno-constructor")
+ *   public constructor(@test/Anno(value = "anno-value") value: kotlin/String)
  *
  *   // getter: value()Ljava/lang/String;
  *   public final val value: kotlin/String
@@ -29,10 +31,12 @@ package test;
  * package {
  *
  *   // signature: topLevelFun(Ljava/lang/String;)V
+ *   @test/Anno(value = "top-level-fun")
  *   public final fun kotlin/String.topLevelFun(): kotlin/Unit
  *
  *   // getter: getTopLevelVal(I)Ljava/lang/String;
  *   // synthetic method for annotations: getTopLevelVal$annotations(I)V
+ *   @test/Anno(value = "top-level-val")
  *   public final val kotlin/Int.topLevelVal: kotlin/String
  *     public final (* non-default *) get
  *
@@ -67,10 +71,12 @@ package test;
 
 @Anno(value = "enum")
 /**
+ * @test/Anno(value = "enum")
  * public final enum class test/Enum : kotlin/Enum<test/Enum> {
  *
  *   // signature: <init>(Ljava/lang/String;II)V
- *   private constructor(x: kotlin/Int)
+ *   @test/Anno(value = "enum-constructor")
+ *   private constructor(@test/Anno(value = "x") x: kotlin/Int)
  *
  *   // field: x:I
  *   // getter: getX()I
@@ -115,16 +121,20 @@ package test;
 
 @Anno(value = "clazz")
 /**
+ * @test/Anno(value = "clazz")
  * public abstract class test/Test : kotlin/Any {
  *
  *   // signature: <init>(Ljava/lang/String;)V
- *   protected constructor(v: kotlin/String)
+ *   @test/Anno(value = "test-constructor")
+ *   protected constructor(@test/Anno(value = "v-param") v: kotlin/String)
  *
  *   // signature: abstractMethod()Ljava/lang/String;
+ *   @test/Anno(value = "abstract-method")
  *   public abstract fun abstractMethod(): kotlin/String
  *
  *   // getter: getAbstractVal()Ljava/lang/String;
  *   // synthetic method for annotations: getAbstractVal$annotations()V
+ *   @test/Anno(value = "abstract-val")
  *   public abstract val abstractVal: kotlin/String
  *     public abstract get
  *
@@ -132,9 +142,12 @@ package test;
  *   // getter: getV()Ljava/lang/String;
  *   // setter: setV(Ljava/lang/String;)V
  *   // synthetic method for annotations: getV$annotations()V
+ *   @test/Anno(value = "v-property")
  *   public final var v: kotlin/String
+ *     @test/Anno(value = "v-get")
  *     public final (* non-default *) get
- *     public final (* non-default *) set(value: kotlin/String)
+ *     @test/Anno(value = "v-set")
+ *     public final (* non-default *) set(@test/Anno(value = "v-setparam") value: kotlin/String)
  *
  *   // module name: main
  * }

@@ -21,7 +21,7 @@ MODULE main
 						private final
 				Property: class.metadata.property.setterValueParameter
 					K1
-						<set-?>: kotlin/String
+						@Ann <set-?>: kotlin/String
 					K2
 						---
 			PROPERTY x4
@@ -32,7 +32,7 @@ MODULE main
 						private final
 				Property: class.metadata.property.setterValueParameter
 					K1
-						<set-?>: kotlin/String
+						@Ann @AnnRepeat <set-?>: kotlin/String
 					K2
 						---
 			PROPERTY y0
@@ -72,6 +72,6 @@ MODULE main
 			PROPERTY getX2()Ljava/lang/String;
 				Property: class.metadata.property.setterValueParameter
 					K1
-						<set-?>: kotlin/String
+						@Ann <set-?>: kotlin/String
 					K2
-						value: kotlin/String
+						@Ann value: kotlin/String

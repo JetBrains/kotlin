@@ -4,6 +4,7 @@ package org.jetbrains;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(value = {})
 /**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
  * public final annotation class org/jetbrains/A : kotlin/Annotation {
  *
  *   // signature: <init>()V

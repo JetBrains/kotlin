@@ -384,7 +384,7 @@ public enum Color {
  *   // field: value:Ljava/lang/String;
  *   // getter: getValue()Ljava/lang/String;
  *   // synthetic method for annotations: getValue$annotations()V
- *   @lib/Anno(value = "1")
+ *   @lib/Anno(value = "1", construct = [])
  *   @lib/Anno(value = "2", construct = ["A", "B"])
  *   @lib/Anno(value = "3", construct = ["C"])
  *   public final val value: kotlin/String

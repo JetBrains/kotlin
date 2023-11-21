@@ -20,11 +20,13 @@ public abstract @interface A {
  *
  *   // field: hidden:I
  *   // synthetic method for annotations: getHidden$annotations()V
+ *   @A
  *   private final val hidden: kotlin/Int (* = ... *)
  *     private final get
  *
  *   // field: value:Ljava/lang/String;
  *   // synthetic method for annotations: getValue$annotations()V
+ *   @A
  *   internal final const val value: kotlin/String (* = ... *)
  *     internal final get
  *

@@ -24,6 +24,8 @@ public abstract @interface Anno {
  *   // field: a:Ljava/lang/String;
  *   // getter: getA()Ljava/lang/String;
  *   // synthetic method for annotations: getA$annotations()V
+ *   @PropertyAnno
+ *   @Anno
  *   public final val a: kotlin/String
  *     public final get
  *
@@ -63,6 +65,7 @@ public final class Bar {
  *
  *   // field: a:Ljava/lang/String;
  *   // synthetic method for annotations: getA$annotations()V
+ *   @Anno
  *   public final val a: kotlin/String
  *     public final get
  *
@@ -93,6 +96,7 @@ public final class Baz {
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
 /**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.FIELD])
  * public final annotation class FieldAnno : kotlin/Annotation {
  *
  *   // signature: <init>()V
@@ -112,11 +116,12 @@ public abstract @interface FieldAnno {
  * public final class Foo : kotlin/Any {
  *
  *   // signature: <init>(Ljava/lang/String;)V
- *   public constructor(a: kotlin/String)
+ *   public constructor(@ParameterAnno @Anno a: kotlin/String)
  *
  *   // field: a:Ljava/lang/String;
  *   // getter: getA()Ljava/lang/String;
  *   // synthetic method for annotations: getA$annotations()V
+ *   @PropertyAnno
  *   public final val a: kotlin/String
  *     public final get
  *
@@ -154,6 +159,7 @@ public final class Foo {
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.PARAMETER})
 /**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.VALUE_PARAMETER])
  * public final annotation class ParameterAnno : kotlin/Annotation {
  *
  *   // signature: <init>()V
@@ -173,6 +179,7 @@ public abstract @interface ParameterAnno {
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(value = {})
 /**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.PROPERTY])
  * public final annotation class PropertyAnno : kotlin/Annotation {
  *
  *   // signature: <init>()V

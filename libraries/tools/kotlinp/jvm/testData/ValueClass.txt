@@ -1,5 +1,6 @@
 // A.class
 // ------------------------------------------
+@kotlin/jvm/JvmInline
 public final value class A : kotlin/Any {
 
   // signature: constructor-impl(Ljava/lang/Integer;)Ljava/lang/Integer;
@@ -26,6 +27,7 @@ public final value class A : kotlin/Any {
 }
 // B.class
 // ------------------------------------------
+@kotlin/jvm/JvmInline
 public final value class B : kotlin/Any {
 
   // signature: constructor-impl(Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function1;
@@ -52,6 +54,7 @@ public final value class B : kotlin/Any {
 }
 // Z.class
 // ------------------------------------------
+@kotlin/jvm/JvmInline
 public final value class Z : kotlin/Any {
 
   // signature: constructor-impl(Ljava/lang/String;)Ljava/lang/String;

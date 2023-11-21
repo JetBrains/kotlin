@@ -2,6 +2,7 @@
  * public final class State : kotlin/Any {
  *
  *   // signature: <init>(IJLjava/lang/String;)V
+ *   @kotlin/jvm/JvmOverloads
  *   public constructor(someInt: kotlin/Int, someLong: kotlin/Long, someString: kotlin/String (* = ... *))
  *
  *   // field: someInt:I
@@ -61,6 +62,7 @@ public final class State {
  * public final class State2 : kotlin/Any {
  *
  *   // signature: <init>(IJLjava/lang/String;)V
+ *   @kotlin/jvm/JvmOverloads
  *   public constructor(someInt: kotlin/Int, someLong: kotlin/Long (* = ... *), someString: kotlin/String (* = ... *))
  *
  *   // signature: methodWithoutArgs()V
@@ -70,6 +72,7 @@ public final class State {
  *   public final fun someMethod(str: kotlin/String): kotlin/Unit
  *
  *   // signature: test(IJLjava/lang/String;)I
+ *   @kotlin/jvm/JvmOverloads
  *   public final fun test(someInt: kotlin/Int, someLong: kotlin/Long (* = ... *), someString: kotlin/String (* = ... *)): kotlin/Int
  *
  *   // field: someInt:I
