@@ -137,6 +137,9 @@ func testNumbers() throws {
     ValuesKt.ensureEqualBooleans(actual: KotlinBoolean(value: true), expected: true)
     ValuesKt.ensureEqualBooleans(actual: false, expected: false)
 
+    ValuesKt.ensureEqualBooleansAsAny(actual: true, expected: true)
+    ValuesKt.ensureEqualBooleansAsAny(actual: false, expected: false)
+
     ValuesKt.ensureEqualBytes(actual: KotlinByte(value: 42), expected: 42)
     ValuesKt.ensureEqualBytes(actual: -11, expected: -11)
 

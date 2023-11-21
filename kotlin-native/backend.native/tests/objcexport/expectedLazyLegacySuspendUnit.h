@@ -3214,6 +3214,7 @@ __attribute__((swift_name("ValuesKt")))
 + (id<KtTransform>)createTransformDecimalStringToInt __attribute__((swift_name("createTransformDecimalStringToInt()")));
 + (void)emptyFun __attribute__((swift_name("emptyFun()")));
 + (void)ensureEqualBooleansActual:(KtBoolean * _Nullable)actual expected:(BOOL)expected __attribute__((swift_name("ensureEqualBooleans(actual:expected:)")));
++ (void)ensureEqualBooleansAsAnyActual:(id _Nullable)actual expected:(BOOL)expected __attribute__((swift_name("ensureEqualBooleansAsAny(actual:expected:)")));
 + (void)ensureEqualBytesActual:(KtByte * _Nullable)actual expected:(int8_t)expected __attribute__((swift_name("ensureEqualBytes(actual:expected:)")));
 + (void)ensureEqualDoublesActual:(KtDouble * _Nullable)actual expected:(double)expected __attribute__((swift_name("ensureEqualDoubles(actual:expected:)")));
 + (void)ensureEqualFloatsActual:(KtFloat * _Nullable)actual expected:(float)expected __attribute__((swift_name("ensureEqualFloats(actual:expected:)")));

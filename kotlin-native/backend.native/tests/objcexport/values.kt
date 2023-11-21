@@ -58,12 +58,18 @@ fun box(uLongValue: ULong) = uLongValue.toNullable()
 fun box(floatValue: Float) = floatValue.toNullable()
 fun box(doubleValue: Double) = doubleValue.toNullable()
 
-private inline fun <reified T> ensureEquals(actual: T?, expected: T) {
-    if (actual !is T) error(T::class)
-    if (actual != expected) error(T::class)
+private fun ensureEquals(actual: Any?, expected: Any, expectedClass: KClass<*>) {
+    check(actual != null)
+    if (actual::class != expectedClass) error("expected ::class $expectedClass, got ${actual::class}")
+    if (actual != expected) error("for $expectedClass expected $expected, got $actual")
+}
+
+private inline fun <reified T : Any> ensureEquals(actual: T?, expected: T) {
+    ensureEquals(actual, expected, T::class)
 }
 
 fun ensureEqualBooleans(actual: Boolean?, expected: Boolean) = ensureEquals(actual, expected)
+fun ensureEqualBooleansAsAny(actual: Any?, expected: Boolean) = ensureEquals(actual as Boolean?, expected)
 fun ensureEqualBytes(actual: Byte?, expected: Byte) = ensureEquals(actual, expected)
 fun ensureEqualShorts(actual: Short?, expected: Short) = ensureEquals(actual, expected)
 fun ensureEqualInts(actual: Int?, expected: Int) = ensureEquals(actual, expected)
