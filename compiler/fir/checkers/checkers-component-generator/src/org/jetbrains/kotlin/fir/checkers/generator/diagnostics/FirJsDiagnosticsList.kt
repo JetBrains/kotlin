@@ -115,7 +115,6 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
     }
 
     val EXPORT by object : DiagnosticGroup("Export") {
-        val NESTED_JS_EXPORT by error<KtElement>()
         val WRONG_EXPORTED_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("kind")
         }

@@ -30,6 +30,10 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
         val WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER by error<KtElement>()
     }
 
+    val EXPORT by object : DiagnosticGroup("Export") {
+        val NESTED_JS_EXPORT by error<KtElement>()
+    }
+
     val JSCODE by object : DiagnosticGroup("JsCode") {
         val JSCODE_ARGUMENT_NON_CONST_EXPRESSION by error<KtElement>()
     }
