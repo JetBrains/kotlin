@@ -239,6 +239,12 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
         }
 
         @Test
+        @TestMetadata("privateInterface.kt")
+        public void testPrivateInterface() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/privateInterface.kt");
+        }
+
+        @Test
         @TestMetadata("qualifiedSuperCalls.kt")
         public void testQualifiedSuperCalls() throws Exception {
             runTest("compiler/testData/ir/irText/classes/qualifiedSuperCalls.kt");
