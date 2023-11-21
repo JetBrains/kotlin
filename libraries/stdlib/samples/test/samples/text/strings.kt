@@ -507,4 +507,42 @@ class Strings {
 
         assertPrints(mixedColor, "brown&blue")
     }
+
+    @Sample
+    fun formatStatic() {
+        // format negative number in parentheses
+        val negativeNumberInParentheses = String.format("%(d means %1\$d", -31416)
+        assertPrints(negativeNumberInParentheses, "(31416) means -31416")
+    }
+
+    @Sample
+    fun formatExtension() {
+        // format negative number in parentheses
+        val negativeNumberInParentheses = "%(d means %1\$d".format(-31416)
+        assertPrints(negativeNumberInParentheses, "(31416) means -31416")
+    }
+
+    @Sample
+    fun formatWithLocaleStatic() {
+        // format with German conventions
+        val withGermanThousandsSeparator = String.format(Locale.GERMANY, "%,d", 12345)
+        assertPrints(withGermanThousandsSeparator, "12.345")
+
+        // format with US conventions
+        val withUSThousandsSeparator = String.format(Locale.US, "%,d", 12345)
+        assertPrints(withUSThousandsSeparator, "12,345")
+    }
+
+    @Sample
+    fun formatWithLocaleExtension() {
+        // format with German conventions
+        val withGermanThousandsSeparator = "%,d".format(Locale.GERMANY, 12345)
+        assertPrints(withGermanThousandsSeparator, "12.345")
+        // 12.345
+
+        // format with US conventions
+        val withUSThousandsSeparator = "%,d".format(Locale.US, 12345)
+        assertPrints(withUSThousandsSeparator, "12,345")
+    }
+
 }
