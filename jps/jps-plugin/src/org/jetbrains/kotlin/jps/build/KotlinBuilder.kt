@@ -299,9 +299,13 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         outputConsumer: OutputConsumer
     ): ExitCode {
         LOG.info("====================")
+        LOG.info(">>>" + reportService::class.qualifiedName.toString())
+        LOG.info(">>>" + System.getProperty("kotlin.build.report.file.output_dir"))
+
         reportService.moduleBuildStarted(chunk)
         LOG.info("+++++++++++++++++++")
         LOG.info("is impl?" + (reportService is JpsStatisticsReportServiceImpl).toString())
+        reportService::class.qualifiedName
         if (chunk.isDummy(context))
             return NOTHING_DONE
 
