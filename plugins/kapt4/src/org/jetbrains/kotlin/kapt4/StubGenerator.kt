@@ -13,10 +13,12 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
@@ -47,14 +49,16 @@ import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 internal fun generateStubs(
-    files: List<KtFile>,
+    module: KtSourceModule,
+    files: List<PsiFile>,
     options: KaptOptions,
     onError: (messages: String) -> Unit,
-    analysisSession: KtAnalysisSession,
     overriddenMetadataVersion: BinaryVersion? = null,
     metadataRenderer: (Printer.(Metadata) -> Unit)? = null
 ): Map<KtLightClass, KaptStub?> =
-    StubGenerator(files, options, onError, analysisSession, metadataRenderer, overriddenMetadataVersion).generateStubs()
+    analyze(module) {
+        StubGenerator(files.filterIsInstance<KtFile>(), options, onError, metadataRenderer, overriddenMetadataVersion).generateStubs()
+    }
 
 class KaptStub(val source: String, val kaptMetadata: ByteArray) {
     fun writeMetadata(forSource: File) {
@@ -63,11 +67,11 @@ class KaptStub(val source: String, val kaptMetadata: ByteArray) {
     }
 }
 
+context(KtAnalysisSession)
 private class StubGenerator(
     private val files: List<KtFile>,
     options: KaptOptions,
     private val onError: (String) -> Unit,
-    private val analysisSession: KtAnalysisSession,
     private val metadataRenderer: (Printer.(Metadata) -> Unit)? = null,
     private val overriddenMetadataVersion: BinaryVersion? = null,
 ) {
@@ -160,14 +164,12 @@ private class StubGenerator(
 
                 if (!acceptableByName) continue
 
-                val importedSymbols = with(analysisSession) {
-                    val importedReference = importDirective.importedReference
-                        ?.getCalleeExpressionIfAny()
-                        ?.references
-                        ?.firstOrNull() as? KtReference
-                    importedReference?.resolveToSymbols().orEmpty()
-                }
 
+                val importedReference = importDirective.importedReference
+                    ?.getCalleeExpressionIfAny()
+                    ?.references
+                    ?.firstOrNull() as? KtReference
+                val importedSymbols = importedReference?.resolveToSymbols().orEmpty()
                 val isAllUnderClassifierImport = importDirective.isAllUnder && importedSymbols.any { it is KtClassOrObjectSymbol }
                 val isCallableImport = !importDirective.isAllUnder && importedSymbols.any { it is KtCallableSymbol }
                 val isEnumEntryImport = !importDirective.isAllUnder && importedSymbols.any { it is KtEnumEntrySymbol }

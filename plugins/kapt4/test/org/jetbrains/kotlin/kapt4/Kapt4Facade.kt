@@ -11,7 +11,6 @@ import kotlinx.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.kapt3.test.KaptMessageCollectorProvider
 import org.jetbrains.kotlin.kapt3.test.kaptOptionsProvider
 import org.jetbrains.kotlin.kotlinp.Kotlinp
 import org.jetbrains.kotlin.kotlinp.KotlinpSettings
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.Printer
@@ -80,23 +78,20 @@ private fun run(
         @Suppress("DEPRECATION")
         buildKtModuleProviderByCompilerConfiguration(configuration)
     }
-    val (module, psiFiles) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
-
-    return KtAnalysisSessionProvider.getInstance(module.project).analyze(module) {
-        val context = KaptContext(
-            options,
-            withJdk = false,
-            WriterBackedKaptLogger(isVerbose = false),
-        )
-        val onError = { message: String ->
-            if (context.options[KaptFlag.STRICT]) {
-                context.reportKaptError(*message.split("\n").toTypedArray())
-            } else {
-                context.logger.warn(message)
-            }
+    val (module, files) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
+    val context = KaptContext(
+        options,
+        withJdk = false,
+        WriterBackedKaptLogger(isVerbose = false),
+    )
+    val onError = { message: String ->
+        if (context.options[KaptFlag.STRICT]) {
+            context.reportKaptError(*message.split("\n").toTypedArray())
+        } else {
+            context.logger.warn(message)
         }
-        context to generateStubs(psiFiles.filterIsInstance<KtFile>(), options, onError,this@analyze, metadataRenderer = { renderMetadata(it) })
     }
+    return context to generateStubs(module, files, options, onError, metadataRenderer = { renderMetadata(it) })
 }
 
 internal data class Kapt4ContextBinaryArtifact(

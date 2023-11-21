@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.kapt4
 
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.kapt3.base.util.info
 import org.jetbrains.kotlin.kapt3.measureTimeMillis
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
@@ -73,7 +72,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                 registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
             }
 
-        val (module, psiFiles) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
+        val (module, files) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
 
         optionsBuilder.apply {
             projectBaseDir = projectBaseDir ?: module.project.basePath?.let(::File)
@@ -91,16 +90,15 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
         return try {
             if (options.mode.generateStubs) {
-                KtAnalysisSessionProvider.getInstance(module.project).analyze(module) {
-                    generateAndSaveStubs(
-                        psiFiles.filterIsInstance<KtFile>(),
-                        options,
-                        logger,
-                        configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES),
-                        this,
-                        configuration[CommonConfigurationKeys.METADATA_VERSION]
-                    )
-                }
+                generateAndSaveStubs(
+                    module,
+                    files,
+                    options,
+                    logger,
+                    configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES),
+                    configuration[CommonConfigurationKeys.METADATA_VERSION]
+                )
+
             }
             if (options.mode.runAnnotationProcessing) {
                 KaptContext(
@@ -120,11 +118,11 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     }
 
     private fun generateAndSaveStubs(
-        files: List<KtFile>,
+        module: KtSourceModule,
+        files: List<PsiFile>,
         options: KaptOptions,
         logger: MessageCollectorBackedKaptLogger,
         reportOutputFiles: Boolean,
-        analysisSession: KtAnalysisSession,
         overriddenMetadataVersion: BinaryVersion?
     ) {
         fun onError(message: String) {
@@ -135,7 +133,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             }
         }
         val (stubGenerationTime, classesToStubs) = measureTimeMillis {
-            generateStubs(files, options, ::onError, analysisSession, overriddenMetadataVersion)
+            generateStubs(module, files, options, ::onError, overriddenMetadataVersion)
         }
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }
