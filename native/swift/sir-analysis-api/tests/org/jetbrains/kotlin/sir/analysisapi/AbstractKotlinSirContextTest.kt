@@ -12,8 +12,11 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirForeignFunction
 import org.jetbrains.kotlin.sir.SirModule
+import org.jetbrains.kotlin.sir.builder.SirModuleBuilder
+import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -46,16 +49,18 @@ abstract class AbstractKotlinSirContextTestBase : AbstractAnalysisApiBasedTest()
         val ktFiles = moduleStructure.modules
             .flatMap { testServices.ktModuleProvider.getModuleFiles(it).filterIsInstance<KtFile>() }
 
-        val module = SirModule()
-        val sirFactory = SirGenerator()
-        ktFiles.forEach { file ->
-            module.declarations += sirFactory.build(file)
-        }
+        val module = buildModule() {
+            val sirFactory = SirGenerator()
+            ktFiles.forEach { file ->
+                declarations += sirFactory.build(file)
+            }
+        }.build()
+
         val actual = buildString {
             module.declarations
                 .filterIsInstance<SirForeignFunction>()
                 .forEach {
-                    appendLine("${it.fqName}")
+                    appendLine("${it.origin.path}")
                 }
         }
 
