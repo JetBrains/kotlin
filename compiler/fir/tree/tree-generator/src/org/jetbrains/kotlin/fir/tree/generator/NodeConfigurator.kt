@@ -468,6 +468,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         field.configure {
             +symbol("FirFieldSymbol")
+            generateBooleanFields("hasConstantInitializer")
         }
 
         anonymousInitializer.configure {

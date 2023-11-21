@@ -560,6 +560,10 @@ abstract class FirJavaFacade(
                     javaField.initializerValue?.createConstantIfAny(session)
                 }
 
+                lazyHasConstantInitializer = lazy {
+                    javaField.hasConstantNotNullInitializer
+                }
+
                 if (!javaField.isStatic) {
                     dispatchReceiverType = dispatchReceiver
                 }

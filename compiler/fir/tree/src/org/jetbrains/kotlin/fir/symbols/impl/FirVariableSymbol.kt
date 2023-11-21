@@ -96,6 +96,9 @@ open class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(
     val hasInitializer: Boolean
         get() = fir.initializer != null
 
+    val hasConstantInitializer: Boolean
+        get() = fir.hasConstantInitializer
+
     val isVal: Boolean
         get() = fir.isVal
 

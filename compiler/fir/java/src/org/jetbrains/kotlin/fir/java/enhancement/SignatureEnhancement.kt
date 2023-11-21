@@ -142,6 +142,7 @@ class FirSignatureEnhancement(
                     status = firElement.status
                     if (firElement is FirJavaField) {
                         lazyInitializer = firElement.lazyInitializer
+                        lazyHasConstantInitializer = firElement.lazyHasConstantInitializer
                     } else {
                         initializer = firElement.initializer
                     }

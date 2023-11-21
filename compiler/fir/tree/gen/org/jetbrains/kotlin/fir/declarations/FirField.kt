@@ -49,6 +49,7 @@ abstract class FirField : FirVariable(), FirControlFlowGraphOwner {
     abstract override val annotations: List<FirAnnotation>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirFieldSymbol
+    abstract val hasConstantInitializer: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitField(this, data)

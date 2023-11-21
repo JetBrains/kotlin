@@ -314,6 +314,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "!isVar"
                 withGetter = true
             }
+            default("hasConstantInitializer") {
+                value = "status.isConst"
+                withGetter = true
+            }
             publicImplementation()
 
             defaultNull("receiverParameter", "delegate", "getter", "setter", withGetter = true)

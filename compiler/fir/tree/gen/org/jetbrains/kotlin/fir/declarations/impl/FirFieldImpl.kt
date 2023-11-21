@@ -60,6 +60,8 @@ class FirFieldImpl @FirImplementationDetail constructor(
     override val setter: FirPropertyAccessor?
         get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
+    override val hasConstantInitializer: Boolean
+        get() = status.isConst
 
     init {
         symbol.bind(this)

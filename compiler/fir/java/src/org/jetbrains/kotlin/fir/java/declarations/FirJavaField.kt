@@ -43,10 +43,14 @@ class FirJavaField @FirImplementationDetail constructor(
     annotationBuilder: () -> List<FirAnnotation>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     lazyInitializer: Lazy<FirExpression?>,
+    lazyHasConstantInitializer: Lazy<Boolean>,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val attributes: FirDeclarationAttributes,
 ) : FirField() {
     internal var lazyInitializer: Lazy<FirExpression?> = lazyInitializer
+        private set
+
+    internal var lazyHasConstantInitializer: Lazy<Boolean> = lazyHasConstantInitializer
         private set
 
     init {
@@ -67,6 +71,9 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override val initializer: FirExpression?
         get() = lazyInitializer.value
+
+    override val hasConstantInitializer: Boolean
+        get() = lazyHasConstantInitializer.value
 
     override val deprecationsProvider: DeprecationsProvider by lazy {
         annotations.getDeprecationsProviderFromAnnotations(moduleData.session, fromJava = true)
@@ -181,6 +188,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     var isFromSource: Boolean by Delegates.notNull()
     lateinit var annotationBuilder: () -> List<FirAnnotation>
     var lazyInitializer: Lazy<FirExpression?>? = null
+    lateinit var lazyHasConstantInitializer: Lazy<Boolean>
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
@@ -199,6 +207,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             annotationBuilder,
             typeParameters,
             lazyInitializer ?: lazyOf(initializer),
+            lazyHasConstantInitializer,
             dispatchReceiverType,
             attributes,
         )
