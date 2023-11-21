@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.DataClassResolver
@@ -93,6 +94,19 @@ internal abstract class LLFirTargetResolver(
                 }
 
                 property?.lazyResolveToPhase(resolverPhase)
+            }
+
+            // copy method shares the return type of generated properties as the return type
+            // of corresponding value parameter and annotations from them
+            DataClassResolver.isCopy(function.name) -> {
+                for (declaration in containingClass(function).declarations) {
+                    val property = declaration as? FirProperty ?: continue
+                    if (property.fromPrimaryConstructor == true) {
+                        property.lazyResolveToPhase(resolverPhase)
+                    } else {
+                        break // all generated properties are sequential, so we can stop if we encounter another property
+                    }
+                }
             }
         }
     }
