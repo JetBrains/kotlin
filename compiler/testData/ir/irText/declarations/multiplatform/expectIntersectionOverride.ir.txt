@@ -1,4 +1,3 @@
-Module: <common>
 FILE fqName:<root> fileName:/common.kt
   CLASS INTERFACE name:I1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I1
@@ -42,43 +41,6 @@ FILE fqName:<root> fileName:/common.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:C modality:FINAL visibility:public [expect] superTypes:[<root>.I1; <root>.I2]
-    annotations:
-      Suppress(names = ['ABSTRACT_MEMBER_NOT_IMPLEMENTED'])
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
-    CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary,expect]
-    FUN FAKE_OVERRIDE name:f visibility:public modality:ABSTRACT <> ($this:<root>.I1) returnType:kotlin.String [expect,fake_override]
-      overridden:
-        public abstract fun f (): kotlin.String declared in <root>.I1
-        public abstract fun f (): kotlin.String declared in <root>.I2
-      $this: VALUE_PARAMETER name:<this> type:<root>.I1
-    PROPERTY FAKE_OVERRIDE name:p visibility:public modality:ABSTRACT [expect,fake_override,val]
-      overridden:
-        public abstract p: kotlin.Int
-        public abstract p: kotlin.Int
-      FUN FAKE_OVERRIDE name:<get-p> visibility:public modality:ABSTRACT <> ($this:<root>.I1) returnType:kotlin.Int [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:p visibility:public modality:ABSTRACT [expect,fake_override,val]
-        overridden:
-          public abstract fun <get-p> (): kotlin.Int declared in <root>.I1
-          public abstract fun <get-p> (): kotlin.Int declared in <root>.I2
-        $this: VALUE_PARAMETER name:<this> type:<root>.I1
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [expect,fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I1
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I2
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [expect,fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.I1
-        public open fun hashCode (): kotlin.Int declared in <root>.I2
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [expect,fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in <root>.I1
-        public open fun toString (): kotlin.String declared in <root>.I2
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-Module: platform
 FILE fqName:<root> fileName:/platform.kt
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I1; <root>.I2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C

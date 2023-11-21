@@ -1,4 +1,3 @@
-// MODULE: <common>
 // FILE: common.kt
 
 interface I1 {
@@ -17,13 +16,6 @@ interface I2 {
 
 }
 
-@Suppress(names = ["ABSTRACT_MEMBER_NOT_IMPLEMENTED"])
-expect class C : I1, I2 {
-  expect constructor() /* primary */
-
-}
-
-// MODULE: platform
 // FILE: platform.kt
 
 class C : I1, I2 {
@@ -42,4 +34,3 @@ class C : I1, I2 {
     override get
 
 }
-
