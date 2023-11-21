@@ -94,6 +94,7 @@ class JpsStatisticsReportServiceImpl(
     private val httpService = httpReportSettings?.let { HttpReportService(it.url, it.user, it.password) }
 
     override fun moduleBuildStarted(chunk: ModuleChunk) {
+        log.info(">>>moduleBuildStarted")
         val moduleName = chunk.name
         val jpsReporter = JpsBuilderMetricReporterImpl(chunk, BuildMetricsReporterImpl())
         if (buildMetrics.putIfAbsent(moduleName, jpsReporter) != jpsReporter) {
@@ -104,11 +105,14 @@ class JpsStatisticsReportServiceImpl(
     }
 
     override fun getMetricReporter(chunk: ModuleChunk): JpsBuilderMetricReporter? {
+        log.info(">>>getMetricReporter")
         val moduleName = chunk.name
         return getMetricReporter(moduleName)
     }
 
     private fun getMetricReporter(moduleName: String): JpsBuilderMetricReporter? {
+        log.info(">>>getMetricReporter2")
+
         val metricReporter = buildMetrics[moduleName]
         if (metricReporter == null) {
             //At some point log should be changed to exception
@@ -119,6 +123,8 @@ class JpsStatisticsReportServiceImpl(
     }
 
     override fun moduleBuildFinished(chunk: ModuleChunk, context: CompileContext) {
+        log.info(">>>moduleBuildFinished")
+
         val moduleName = chunk.name
         val metrics = buildMetrics.remove(moduleName)
         if (metrics == null) {
@@ -131,6 +137,8 @@ class JpsStatisticsReportServiceImpl(
     }
 
     override fun buildFinish(context: CompileContext) {
+        log.info(">>>buildFinish")
+
         val compileStatisticsData = finishedModuleBuildMetrics.map { it.flush(context) }
         httpService?.sendData(compileStatisticsData, loggerAdapter)
         fileReportSettings?.also {

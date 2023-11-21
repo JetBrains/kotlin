@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageManager
 import org.jetbrains.kotlin.jps.model.kotlinKind
 import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
 import org.jetbrains.kotlin.jps.statistic.JpsStatisticsReportService
+import org.jetbrains.kotlin.jps.statistic.JpsStatisticsReportServiceImpl
 import org.jetbrains.kotlin.jps.targets.KotlinJvmModuleBuildTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -297,7 +298,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         outputConsumer: OutputConsumer
     ): ExitCode {
+        LOG.info("====================")
         reportService.moduleBuildStarted(chunk)
+        LOG.info("+++++++++++++++++++")
+        LOG.info("is impl?" + (reportService is JpsStatisticsReportServiceImpl).toString())
         if (chunk.isDummy(context))
             return NOTHING_DONE
 
