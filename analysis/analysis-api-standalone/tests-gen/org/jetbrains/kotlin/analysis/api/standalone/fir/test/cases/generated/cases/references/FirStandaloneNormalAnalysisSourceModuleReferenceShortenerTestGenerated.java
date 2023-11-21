@@ -626,6 +626,42 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
         }
 
         @Test
+        @TestMetadata("classAndObjectHaveConflictingNestedClasses_inside.kt")
+        public void testClassAndObjectHaveConflictingNestedClasses_inside() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classAndObjectHaveConflictingNestedClasses_inside.kt");
+        }
+
+        @Test
+        @TestMetadata("classAndObjectHaveConflictingNestedClasses_inside_companion.kt")
+        public void testClassAndObjectHaveConflictingNestedClasses_inside_companion() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classAndObjectHaveConflictingNestedClasses_inside_companion.kt");
+        }
+
+        @Test
+        @TestMetadata("classAndObjectHaveConflictingNestedClasses_inside_namedCompanion.kt")
+        public void testClassAndObjectHaveConflictingNestedClasses_inside_namedCompanion() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classAndObjectHaveConflictingNestedClasses_inside_namedCompanion.kt");
+        }
+
+        @Test
+        @TestMetadata("classAndObjectHaveConflictingNestedClasses_outside.kt")
+        public void testClassAndObjectHaveConflictingNestedClasses_outside() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classAndObjectHaveConflictingNestedClasses_outside.kt");
+        }
+
+        @Test
+        @TestMetadata("classAndObjectHaveConflictingNestedClasses_outside_companion.kt")
+        public void testClassAndObjectHaveConflictingNestedClasses_outside_companion() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classAndObjectHaveConflictingNestedClasses_outside_companion.kt");
+        }
+
+        @Test
+        @TestMetadata("classAndObjectHaveConflictingNestedClasses_outside_namedCompanion.kt")
+        public void testClassAndObjectHaveConflictingNestedClasses_outside_namedCompanion() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classAndObjectHaveConflictingNestedClasses_outside_namedCompanion.kt");
+        }
+
+        @Test
         @TestMetadata("nestedClassFromSupertypes1.kt")
         public void testNestedClassFromSupertypes1() throws Exception {
             runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/nestedClassFromSupertypes1.kt");
