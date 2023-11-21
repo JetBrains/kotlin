@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
@@ -195,10 +196,18 @@ class PostponedArgumentsAnalyzer(
             //    }
             //  Things get even weirder if T has an upper bound incompatible with Unit.
             // Not calling `addSubsystemFromExpression` for builder-inference is crucial
-            c.addSubsystemFromExpression(it)
+            val haveSubsystem = c.addSubsystemFromExpression(it)
             if (isLastExpression &&
                 (lambdaExpectedTypeIsUnit || lambda.atom.shouldReturnUnit(returnArguments))
-            ) return@forEach
+            ) {
+                if (haveSubsystem) {
+                    builder.addSubtypeConstraintIfCompatible(
+                        it.resolvedType, returnTypeRef.type,
+                        ConeLambdaArgumentConstraintPosition(lambda.atom)
+                    )
+                }
+                return@forEach
+            }
 
             hasExpressionInReturnArguments = true
             if (!builder.hasContradiction) {

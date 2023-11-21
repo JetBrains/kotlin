@@ -203,26 +203,39 @@ class CandidateFactory private constructor(
     }
 }
 
-fun processAllSubsystemsFromExpression(statement: FirStatement, processor: (ConstraintStorage) -> Unit) {
-    when (statement) {
+fun processAllSubsystemsFromExpression(statement: FirStatement, processor: (ConstraintStorage) -> Unit): Boolean {
+    return when (statement) {
         is FirQualifiedAccessExpression,
         is FirWhenExpression,
         is FirTryExpression,
         is FirCheckNotNullCall,
         is FirElvisExpression,
         -> {
-            val candidate = (statement as FirResolvable).candidate() ?: return
+            val candidate = (statement as FirResolvable).candidate() ?: return false
             processor(candidate.system.asReadOnlyStorage())
+            true
         }
 
         is FirSafeCallExpression -> processAllSubsystemsFromExpression(statement.selector, processor)
         is FirWrappedArgumentExpression -> processAllSubsystemsFromExpression(statement.expression, processor)
-        is FirBlock -> statement.returnExpressions().forEach { processAllSubsystemsFromExpression(it, processor) }
+        is FirBlock -> {
+            var wasAny = false
+
+            // Might be `.any {` call, but we should process all the items
+            statement.returnExpressions().forEach {
+                if (processAllSubsystemsFromExpression(it, processor)) {
+                    wasAny = true
+                }
+            }
+
+            wasAny
+        }
+        else -> false
     }
 }
 
-fun PostponedArgumentsAnalyzerContext.addSubsystemFromExpression(statement: FirStatement) {
-    processAllSubsystemsFromExpression(statement, this::addOtherSystem)
+fun PostponedArgumentsAnalyzerContext.addSubsystemFromExpression(statement: FirStatement): Boolean {
+    return processAllSubsystemsFromExpression(statement, this::addOtherSystem)
 }
 
 internal fun FirResolvable.candidate(): Candidate? {
