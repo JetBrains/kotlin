@@ -46,8 +46,6 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitRegularClass(regularClass: FirRegularClass) = visitClass(regularClass)
 
-    override fun visitScript(script: FirScript) = visitDeclaration(script)
-
     override fun visitCodeFragment(codeFragment: FirCodeFragment) = visitDeclaration(codeFragment)
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression) = visitExpression(anonymousFunctionExpression)

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -38,6 +39,7 @@ internal class FirScriptImpl(
     override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val resultPropertyName: Name?,
 ) : FirScript() {
+    override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {
         symbol.bind(this)
@@ -46,6 +48,7 @@ internal class FirScriptImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
+        controlFlowGraphReference?.accept(visitor, data)
         statements.forEach { it.accept(visitor, data) }
         parameters.forEach { it.accept(visitor, data) }
         contextReceivers.forEach { it.accept(visitor, data) }
@@ -53,6 +56,7 @@ internal class FirScriptImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirScriptImpl {
         transformAnnotations(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformStatements(transformer, data)
         parameters.transformInplace(transformer, data)
         contextReceivers.transformInplace(transformer, data)
@@ -71,6 +75,10 @@ internal class FirScriptImpl(
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
+    }
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+        controlFlowGraphReference = newControlFlowGraphReference
     }
 
     override fun replaceStatements(newStatements: List<FirStatement>) {

@@ -59,9 +59,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitRegularClass(regularClass: FirRegularClass, data: D): R =
         visitClass(regularClass, data)
 
-    override fun visitScript(script: FirScript, data: D): R =
-        visitDeclaration(script, data)
-
     override fun visitCodeFragment(codeFragment: FirCodeFragment, data: D): R =
         visitDeclaration(codeFragment, data)
 
