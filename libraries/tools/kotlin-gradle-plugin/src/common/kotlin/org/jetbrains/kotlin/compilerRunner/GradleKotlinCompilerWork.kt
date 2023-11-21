@@ -250,10 +250,11 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             // TODO: implement a proper logic to avoid remote calls in such cases
             try {
                 metrics.measure(GradleBuildTime.CLEAR_JAR_CACHE) {
-                    daemon.clearJarCache()
+                    // releasing compile session implies clearing the jar cache
+                    daemon.releaseCompileSession(sessionId)
                 }
             } catch (e: RemoteException) {
-                log.warn("Unable to clear jar cache after compilation, maybe daemon is already down: $e")
+                log.warn("Unable to release compile session, maybe daemon is already down: $e")
             }
         }
         log.logFinish(KotlinCompilerExecutionStrategy.DAEMON)
