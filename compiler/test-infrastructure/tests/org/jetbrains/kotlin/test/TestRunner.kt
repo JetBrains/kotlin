@@ -138,7 +138,9 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
 
         testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
-            preprocessor.prepareSealedClassInheritors(moduleStructure)
+            withAssertionCatching(WrappedException::FromPreAnalysisHandler) {
+                preprocessor.prepareSealedClassInheritors(moduleStructure)
+            }
         }
 
         for (module in modules) {
