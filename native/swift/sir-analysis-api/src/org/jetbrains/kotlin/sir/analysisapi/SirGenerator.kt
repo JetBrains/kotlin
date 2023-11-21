@@ -11,8 +11,12 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
+import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirForeignFunction
+import org.jetbrains.kotlin.sir.SirVisibility
+import org.jetbrains.kotlin.sir.builder.SirForeignFunctionBuilder
+import org.jetbrains.kotlin.sir.builder.buildForeignFunction
 
 /**
  * A root interface for classes that produce Swift IR elements.
@@ -36,7 +40,11 @@ class SirGenerator : SirFactory {
                 ?.fqName
                 ?.pathSegments()
                 ?.toListString()
-                ?.let { names -> SirForeignFunction(fqName = names) }
+                ?.let { names -> buildForeignFunction {
+                        origin = SirOrigin(path = names)
+                        visibility = SirVisibility.PUBLIC
+                    }
+                }
                 ?.let { res.add(it) }
         }
     }
