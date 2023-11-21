@@ -68,7 +68,7 @@ inline fun buildScript(init: FirScriptBuilder.() -> Unit): FirScript {
 @OptIn(ExperimentalContracts::class)
 inline fun buildScriptCopy(original: FirScript, init: FirScriptBuilder.() -> Unit): FirScript {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirScriptBuilder()
     copyBuilder.source = original.source

@@ -308,7 +308,7 @@ private fun SmartPrinter.printDslBuildCopyFunction(
     withIndent {
         println("contract {")
         withIndent {
-            println("callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)")
+            println("callsInPlace(init, InvocationKind.EXACTLY_ONCE)")
         }
         println("}")
         println("val copyBuilder = $builderType()")

@@ -83,7 +83,7 @@ inline fun buildThisReceiverExpression(init: FirThisReceiverExpressionBuilder.()
 @OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
 inline fun buildThisReceiverExpressionCopy(original: FirThisReceiverExpression, init: FirThisReceiverExpressionBuilder.() -> Unit): FirThisReceiverExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirThisReceiverExpressionBuilder()
     copyBuilder.coneTypeOrNull = original.coneTypeOrNull

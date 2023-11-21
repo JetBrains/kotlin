@@ -89,7 +89,7 @@ inline fun buildPropertyAccessor(init: FirPropertyAccessorBuilder.() -> Unit): F
 @OptIn(ExperimentalContracts::class)
 inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPropertyAccessorBuilder.() -> Unit): FirPropertyAccessor {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirPropertyAccessorBuilder()
     copyBuilder.source = original.source

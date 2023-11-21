@@ -80,7 +80,7 @@ inline fun buildRegularClass(init: FirRegularClassBuilder.() -> Unit): FirRegula
 @OptIn(ExperimentalContracts::class)
 inline fun buildRegularClassCopy(original: FirRegularClass, init: FirRegularClassBuilder.() -> Unit): FirRegularClass {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirRegularClassBuilder()
     copyBuilder.source = original.source

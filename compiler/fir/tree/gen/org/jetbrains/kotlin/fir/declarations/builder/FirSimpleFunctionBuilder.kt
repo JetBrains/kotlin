@@ -87,7 +87,7 @@ inline fun buildSimpleFunction(init: FirSimpleFunctionBuilder.() -> Unit): FirSi
 @OptIn(ExperimentalContracts::class)
 inline fun buildSimpleFunctionCopy(original: FirSimpleFunction, init: FirSimpleFunctionBuilder.() -> Unit): FirSimpleFunction {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirSimpleFunctionBuilder()
     copyBuilder.source = original.source

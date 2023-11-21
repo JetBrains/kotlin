@@ -59,7 +59,7 @@ inline fun buildCodeFragment(init: FirCodeFragmentBuilder.() -> Unit): FirCodeFr
 @OptIn(ExperimentalContracts::class)
 inline fun buildCodeFragmentCopy(original: FirCodeFragment, init: FirCodeFragmentBuilder.() -> Unit): FirCodeFragment {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirCodeFragmentBuilder()
     copyBuilder.source = original.source

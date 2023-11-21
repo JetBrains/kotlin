@@ -64,7 +64,7 @@ inline fun buildAnnotation(init: FirAnnotationBuilder.() -> Unit): FirAnnotation
 @OptIn(ExperimentalContracts::class)
 inline fun buildAnnotationCopy(original: FirAnnotation, init: FirAnnotationBuilder.() -> Unit): FirAnnotation {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirAnnotationBuilder()
     copyBuilder.source = original.source

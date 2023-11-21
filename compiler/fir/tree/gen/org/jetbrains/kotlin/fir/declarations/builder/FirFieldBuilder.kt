@@ -113,7 +113,7 @@ inline fun buildField(init: FirFieldBuilder.() -> Unit): FirField {
 @OptIn(ExperimentalContracts::class)
 inline fun buildFieldCopy(original: FirField, init: FirFieldBuilder.() -> Unit): FirField {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirFieldBuilder()
     copyBuilder.source = original.source

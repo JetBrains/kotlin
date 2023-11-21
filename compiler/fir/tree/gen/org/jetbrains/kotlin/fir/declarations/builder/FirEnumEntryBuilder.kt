@@ -81,7 +81,7 @@ inline fun buildEnumEntry(init: FirEnumEntryBuilder.() -> Unit): FirEnumEntry {
 @OptIn(ExperimentalContracts::class)
 inline fun buildEnumEntryCopy(original: FirEnumEntry, init: FirEnumEntryBuilder.() -> Unit): FirEnumEntry {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirEnumEntryBuilder()
     copyBuilder.source = original.source
