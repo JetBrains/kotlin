@@ -7,11 +7,11 @@ object Definitions {
 
   }
 
-  const val KT_CONSTANT: @FlexibleNullability String?
+  const val KT_CONSTANT: String
     field = "constant"
     get
 
-  val ktValue: @FlexibleNullability String?
+  val ktValue: String
     field = #CONSTANT
     get
 
