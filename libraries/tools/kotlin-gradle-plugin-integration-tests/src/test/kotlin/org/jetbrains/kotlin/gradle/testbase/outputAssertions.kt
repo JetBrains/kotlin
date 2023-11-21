@@ -158,9 +158,12 @@ fun BuildResult.assertOutputContainsExactlyTimes(
  * Assert build contains no warnings.
  */
 fun BuildResult.assertNoBuildWarnings(
-    expectedWarnings: Set<String> = emptySet(),
+    additionalExpectedWarnings: Set<String> = emptySet(),
 ) {
-    val cleanedOutput = expectedWarnings.fold(output) { acc, s ->
+    val expectedWarnings = setOf(
+        "w: [InternalKotlinGradlePluginPropertiesUsed | WARNING] ATTENTION! This build uses the following Kotlin Gradle Plugin properties:"
+    )
+    val cleanedOutput = (expectedWarnings + additionalExpectedWarnings).fold(output) { acc, s ->
         acc.replace(s, "")
     }
     val warnings = cleanedOutput
@@ -176,7 +179,6 @@ fun BuildResult.assertNoBuildWarnings(
 }
 
 val expectedK2KaptWarnings = setOf(
-    "w: [InternalKotlinGradlePluginPropertiesUsed | WARNING] ATTENTION! This build uses the following Kotlin Gradle Plugin properties:",
     "w: Kapt currently doesn't support language version 2.0+. Falling back to 1.9."
 )
 

@@ -69,10 +69,6 @@ class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
 }
 
 abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
-        logLevel = LogLevel.DEBUG
-    )
-
     @DisplayName("Compilation via Kotlin daemon")
     @GradleTest
     fun testDaemon(gradleVersion: GradleVersion) {
@@ -113,7 +109,9 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 "build",
                 "-Pkotlin.daemon.jvmargs=-Xmxqwerty",
             ) {
-                assertOutputContains("Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off.")
+                assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
+                assertOutputContains("Failed to compile with Kotlin daemon.")
+                assertOutputContains("Fallback strategy (compiling without Kotlin daemon) is turned off.")
             }
         }
     }
@@ -146,7 +144,9 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 "build",
                 "-Pkotlin.daemon.jvmargs=-Xmxqwerty",
             ) {
-                assertOutputContains("Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off.")
+                assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
+                assertOutputContains("Failed to compile with Kotlin daemon.")
+                assertOutputContains("Fallback strategy (compiling without Kotlin daemon) is turned off.")
             }
         }
     }
@@ -212,7 +212,12 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                     executionStrategy
                 } else {
                     null
-                }
+                },
+                logLevel = if (!testFallbackStrategy && executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
+                    LogLevel.DEBUG // used daemon JVM options are reported only to the DEBUG logs
+                } else {
+                    defaultBuildOptions.logLevel
+                },
             )
         ) {
             setupProject(this)
@@ -232,6 +237,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 assertNoBuildWarnings()
 
                 if (testFallbackStrategy) {
+                    assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
                     assertOutputContains("Using fallback strategy: Compile without Kotlin daemon")
                 } else if (executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
                     // 256m is the default value for Gradle 5.0+

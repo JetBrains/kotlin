@@ -238,7 +238,7 @@ internal val KotlinCompilerExecutionStrategy.asFinishLogMessage: String
     get() = "Finished executing kotlin compiler using $this strategy"
 
 internal fun KotlinLogger.logFinish(strategy: KotlinCompilerExecutionStrategy) {
-    debug(strategy.asFinishLogMessage)
+    info(strategy.asFinishLogMessage)
 }
 
 internal fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode {

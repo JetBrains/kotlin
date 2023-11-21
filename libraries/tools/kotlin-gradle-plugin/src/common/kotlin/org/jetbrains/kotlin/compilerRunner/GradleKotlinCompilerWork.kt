@@ -162,10 +162,17 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                     severity = CompilerMessageSeverity.EXCEPTION,
                     message = "Daemon compilation failed: ${e.message}\n${e.stackTraceToString()}"
                 )
+                val recommendation = """
+                    Try ./gradlew --stop if this issue persists
+                    If it does not look related to your configuration, please file an issue with logs to https://kotl.in/issue
+                """.trimIndent()
                 if (!config.compilerExecutionSettings.useDaemonFallbackStrategy) {
                     throw RuntimeException(
-                        "Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off. " +
-                                "Try ./gradlew --stop if this issue persists.",
+                        """
+                        |Failed to compile with Kotlin daemon.
+                        |Fallback strategy (compiling without Kotlin daemon) is turned off.
+                        |$recommendation
+                        """.trimMargin(),
                         e
                     )
                 }
@@ -174,7 +181,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                     """
                     |Failed to compile with Kotlin daemon: $failDetails
                     |Using fallback strategy: Compile without Kotlin daemon
-                    |Try ./gradlew --stop if this issue persists.
+                    |$recommendation
                     """.trimMargin()
                 )
             }

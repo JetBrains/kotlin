@@ -103,6 +103,7 @@ object KotlinCompilerClient {
         sessionAliveFlagFile: File? = null,
     ): CompileServiceSession? {
         val ignoredDaemonSessionFiles = mutableSetOf<File>()
+        var daemonStartupAttemptsCount = 0
         return connectLoop(reportingTargets, autostart) { isLastAttempt ->
 
             fun CompileService.tryToLeaseSession(): CompileServiceSession? {
@@ -112,8 +113,23 @@ object KotlinCompilerClient {
 
                 if (!leaseSession) return CompileServiceSession(this, CompileService.NO_SESSION)
 
-                return leaseCompileSession(sessionAliveFlagFile?.absolutePath).takeUnless { it is CompileService.CallResult.Dying }?.let {
-                    CompileServiceSession(this, it.get())
+                return when (val leaseSessionResult = leaseCompileSession(sessionAliveFlagFile?.absolutePath)) {
+                    is CompileService.CallResult.Dying -> {
+                        reportingTargets.report(DaemonReportCategory.DEBUG, "the daemon is already dying, skipping it")
+                        null
+                    }
+                    is CompileService.CallResult.Good -> {
+                        val sessionId = leaseSessionResult.get()
+                        reportingTargets.report(DaemonReportCategory.DEBUG, "successfully leased a compile session (id = $sessionId)")
+                        CompileServiceSession(this, sessionId)
+                    }
+                    else -> {
+                        reportingTargets.report(DaemonReportCategory.DEBUG, "got an expected result on attempt to lease a compile session")
+                        // the call to get() below shall lead to an exception throwing
+                        // if it does happen, it indicates real problems,
+                        // so no special handling is required, and it's ok to fail-fast
+                        CompileServiceSession(this, leaseSessionResult.get())
+                    }
                 }
             }
 
@@ -133,8 +149,9 @@ object KotlinCompilerClient {
                 }
                 is DaemonSearchResult.NotFound -> {
                     if (!isLastAttempt && autostart) {
-                        if (startDaemon(compilerId, result.requiredJvmOptions, daemonOptions, reportingTargets)) {
-                            reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
+                        reportingTargets.report(DaemonReportCategory.DEBUG, "trying to start a new compiler daemon")
+                        if (startDaemon(compilerId, result.requiredJvmOptions, daemonOptions, reportingTargets, daemonStartupAttemptsCount++)) {
+                            reportingTargets.report(DaemonReportCategory.DEBUG, "new compiler daemon started, trying to find it")
                         }
                     }
                     null
@@ -375,15 +392,17 @@ object KotlinCompilerClient {
 
                 if (res != null) return res
 
-                if (err != null) {
+                val errorDetails = err?.let { ", error: ${it.stackTraceToString()}" } ?: ""
+                if (attempts >= DAEMON_CONNECT_CYCLE_ATTEMPTS || !autostart) {
                     reportingTargets.report(
-                        DaemonReportCategory.INFO,
-                        (if (attempts >= DAEMON_CONNECT_CYCLE_ATTEMPTS || !autostart) "no more retries on: " else "retrying($attempts) on: ")
-                                + err.toString()
+                        DaemonReportCategory.EXCEPTION,
+                        "Failed connecting to the daemon in $attempts retries$errorDetails"
                     )
+                } else {
+                    reportingTargets.report(DaemonReportCategory.INFO, "#$attempts retrying connecting to the daemon $errorDetails")
                 }
 
-                if (attempts++ > DAEMON_CONNECT_CYCLE_ATTEMPTS || !autostart) {
+                if (++attempts > DAEMON_CONNECT_CYCLE_ATTEMPTS || !autostart) {
                     return null
                 }
             }
@@ -436,6 +455,7 @@ object KotlinCompilerClient {
         daemonJVMOptions: DaemonJVMOptions,
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets,
+        startupAttempt: Int,
     ): Boolean {
         val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
         val serverHostname = CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.value
@@ -459,7 +479,7 @@ object KotlinCompilerClient {
                 COMPILER_DAEMON_CLASS_FQN +
                 daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                 compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
-        reportingTargets.report(DaemonReportCategory.DEBUG, "starting the daemon as: " + args.joinToString(" "))
+        reportingTargets.report(DaemonReportCategory.INFO, "starting the daemon as: " + args.joinToString(" "))
         val processBuilder = ProcessBuilder(args)
         processBuilder.redirectErrorStream(true)
         val workingDir = File(daemonOptions.runFilesPath).apply { mkdirs() }
@@ -470,6 +490,8 @@ object KotlinCompilerClient {
         val isEchoRead = Semaphore(1)
         isEchoRead.acquire()
 
+        val lastDaemonCliOutputs = LastDaemonCliOutputs()
+
         val stdoutThread =
             thread {
                 try {
@@ -477,6 +499,7 @@ object KotlinCompilerClient {
                         .reader()
                         .forEachLine {
                             if (Thread.currentThread().isInterrupted) return@forEachLine
+                            lastDaemonCliOutputs.add(it)
                             if (it == COMPILE_DAEMON_IS_READY_MESSAGE) {
                                 reportingTargets.report(
                                     DaemonReportCategory.DEBUG,
@@ -515,8 +538,8 @@ object KotlinCompilerClient {
                 return when {
                     !isProcessAlive(daemon) -> {
                         reportingTargets.report(
-                            DaemonReportCategory.INFO,
-                            "Daemon terminated unexpectedly with error code: ${daemon.exitValue()}"
+                            DaemonReportCategory.EXCEPTION,
+                            "The daemon has terminated unexpectedly on startup attempt #${startupAttempt + 1} with error code: ${daemon.exitValue()}. ${lastDaemonCliOutputs.getAsSingleString()}"
                         )
                         false
                     }

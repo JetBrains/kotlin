@@ -95,7 +95,7 @@ object KotlinCompilerRunnerUtils {
         if (connection == null || isDebugEnabled) {
             for (message in daemonReportMessages) {
                 val severity = when (message.category) {
-                    DaemonReportCategory.DEBUG -> CompilerMessageSeverity.INFO
+                    DaemonReportCategory.DEBUG -> CompilerMessageSeverity.LOGGING
                     DaemonReportCategory.INFO -> CompilerMessageSeverity.INFO
                     DaemonReportCategory.EXCEPTION -> CompilerMessageSeverity.EXCEPTION
                 }
