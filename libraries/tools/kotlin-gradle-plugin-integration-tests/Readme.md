@@ -116,10 +116,10 @@ add a new assertion, add as a reviewer someone from Kotlin build tools team.
 
 ##### Additional test helpers
 
-- Whenever you need to test combination of different JDKs and Gradle versions - you could use `@GradleWithJdkTest` instead of `@GradleTest`. 
+- Whenever you need to test combinations of different JDKs and Gradle versions - you could use `@GradleWithJdkTest` instead of `@GradleTest`. 
 Then test method will receive requires JDKs as a second parameter:
 ```kotlin
-@JdkVersions(version = [JavaVersion.VERSION_11, JavaVersion.VERSION_17])
+@JdkVersions(version = [JavaVersion.VERSION_11, JavaVersion.VERSION_21])
 @GradleWithJdkTest
 fun someTest(
     gradleVersion: GradleVersion, 

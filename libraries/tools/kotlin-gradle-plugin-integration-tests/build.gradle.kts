@@ -408,10 +408,7 @@ tasks.withType<Test> {
     }
 
     val jdk8Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
-    val jdk9Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_9_0)
-    val jdk10Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_10_0)
     val jdk11Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_11_0)
-    val jdk16Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_16_0)
     val jdk17Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
     val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
@@ -420,10 +417,7 @@ tasks.withType<Test> {
     // names should follow "jdk\\d+Home" regex where number is a major JDK version
     doFirst {
         systemProperty("jdk8Home", jdk8Provider.get())
-        systemProperty("jdk9Home", jdk9Provider.get())
-        systemProperty("jdk10Home", jdk10Provider.get())
         systemProperty("jdk11Home", jdk11Provider.get())
-        systemProperty("jdk16Home", jdk16Provider.get())
         systemProperty("jdk17Home", jdk17Provider.get())
         systemProperty("jdk21Home", jdk21Provider.get())
         if (mavenLocalRepo != null) {

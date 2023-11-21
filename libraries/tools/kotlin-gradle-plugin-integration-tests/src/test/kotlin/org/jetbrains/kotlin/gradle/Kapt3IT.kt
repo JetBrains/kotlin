@@ -232,7 +232,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @DisplayName("Kapt is working with newer JDKs")
-    @JdkVersions(versions = [JavaVersion.VERSION_1_10, JavaVersion.VERSION_11, JavaVersion.VERSION_16, JavaVersion.VERSION_17])
+    @JdkVersions(versions = [JavaVersion.VERSION_11, JavaVersion.VERSION_17, JavaVersion.VERSION_21])
     @GradleWithJdkTest
     fun doTestSimpleWithCustomJdk(
         gradleVersion: GradleVersion,
@@ -260,38 +260,8 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
-    // TODO: Remove as JDK 21 is supported on Java Toolchains
-    @DisplayName("Kapt is working with JDK 21")
-    @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_3)
-    @EnableOnJdk21
-    fun doTestSimpleWithJdk21(
-        gradleVersion: GradleVersion
-    ) {
-        project(
-            "simple".withPrefix,
-            gradleVersion,
-        ) {
-            //language=Groovy
-            buildGradle.appendText(
-                """
-                |
-                |kotlin {
-                |    jvmToolchain(21)
-                |}
-                """.trimMargin()
-            )
-
-            build("assemble") {
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin")
-                // Check added because of https://youtrack.jetbrains.com/issue/KT-33056.
-                assertOutputDoesNotContain("javaslang.match.PatternsProcessor")
-            }
-        }
-    }
-
     @DisplayName("KT-48402: Kapt worker classpath is using JRE classes from toolchain")
-    @JdkVersions(versions = [JavaVersion.VERSION_16])
+    @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
     fun kaptClasspathJreToolchain(
         gradleVersion: GradleVersion,
