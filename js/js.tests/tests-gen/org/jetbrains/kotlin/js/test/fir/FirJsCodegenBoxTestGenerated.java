@@ -27066,6 +27066,24 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("PrivatePropertyOfComplexGenericFunctionType.kt")
+        public void testPrivatePropertyOfComplexGenericFunctionType() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/PrivatePropertyOfComplexGenericFunctionType.kt");
+        }
+
+        @Test
+        @TestMetadata("PrivatePropertyOfGenericContravariantFunctionType.kt")
+        public void testPrivatePropertyOfGenericContravariantFunctionType() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/PrivatePropertyOfGenericContravariantFunctionType.kt");
+        }
+
+        @Test
+        @TestMetadata("PrivatePropertyOfGenericCovariantFunctionType.kt")
+        public void testPrivatePropertyOfGenericCovariantFunctionType() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/PrivatePropertyOfGenericCovariantFunctionType.kt");
+        }
+
+        @Test
         @TestMetadata("privatePropertyWithoutBackingField.kt")
         public void testPrivatePropertyWithoutBackingField() throws Exception {
             runTest("compiler/testData/codegen/box/properties/privatePropertyWithoutBackingField.kt");

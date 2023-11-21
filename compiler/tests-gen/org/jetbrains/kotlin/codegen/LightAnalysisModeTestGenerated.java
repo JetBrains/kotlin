@@ -32528,6 +32528,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/properties/privatePropertyInConstructor.kt");
         }
 
+        @TestMetadata("PrivatePropertyOfComplexGenericFunctionType.kt")
+        public void testPrivatePropertyOfComplexGenericFunctionType() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/PrivatePropertyOfComplexGenericFunctionType.kt");
+        }
+
+        @TestMetadata("PrivatePropertyOfGenericContravariantFunctionType.kt")
+        public void testPrivatePropertyOfGenericContravariantFunctionType() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/PrivatePropertyOfGenericContravariantFunctionType.kt");
+        }
+
+        @TestMetadata("PrivatePropertyOfGenericCovariantFunctionType.kt")
+        public void testPrivatePropertyOfGenericCovariantFunctionType() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/PrivatePropertyOfGenericCovariantFunctionType.kt");
+        }
+
         @TestMetadata("privatePropertyWithoutBackingField.kt")
         public void testPrivatePropertyWithoutBackingField() throws Exception {
             runTest("compiler/testData/codegen/box/properties/privatePropertyWithoutBackingField.kt");
