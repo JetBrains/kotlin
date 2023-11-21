@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.CompileService
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -36,7 +35,6 @@ class LastSessionDaemonTest : BaseDaemonSessionTest() {
         assertEquals(0, exitCode)
     }
 
-    @Disabled("KT-55322")
     @DisplayName("can lease a session when the daemon in the LastSession state") // either by starting a new daemon or returning it to the Alive state
     @Test
     fun canLeaseNewSession() {

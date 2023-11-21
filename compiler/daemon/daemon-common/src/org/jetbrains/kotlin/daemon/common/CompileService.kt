@@ -39,7 +39,7 @@ interface CompileService : Remote {
     }
 
     companion object {
-        val NO_SESSION: Int = 0
+        const val NO_SESSION: Int = 0
     }
 
     sealed class CallResult<out R> : Serializable {
