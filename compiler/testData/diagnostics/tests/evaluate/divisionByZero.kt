@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
+const val a = 0
 val a1 = 0
 val a2 = <!DIVISION_BY_ZERO!>1 / 0<!>
 val a3 = <!DIVISION_BY_ZERO!>1 / a1<!>
@@ -17,5 +18,7 @@ val a12 = <!DIVISION_BY_ZERO!>1L / 0<!>
 
 val b1: Byte = <!DIVISION_BY_ZERO, TYPE_MISMATCH!>1 / 0<!>
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, DIVISION_BY_ZERO!>1 / 0<!>) val b2 = 1
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, DIVISION_BY_ZERO!>1 / a1<!>) val b3 = 1
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, DIVISION_BY_ZERO!>1 / a<!>) val b4 = 1
 
 annotation class Ann(val i : Int)
