@@ -21,12 +21,10 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirJsCodeConstantArgumentChecker : FirFunctionCallChecker() {
-    private val jsCodeCallableId = CallableId(FqName("kotlin.js"), Name.identifier("js"))
+    private val jsCodeCallableId = WebCommonStandardClassIds.Callables.Js
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.calleeReference.toResolvedCallableSymbol()?.callableId != jsCodeCallableId) {

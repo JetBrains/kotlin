@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.name.WasmStandardClassIds
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmExportAnnotationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -29,7 +30,7 @@ object FirWasmExportAnnotationChecker : FirBasicDeclarationChecker() {
             reporter.reportOn(annotation.source, FirWasmErrors.NESTED_WASM_EXPORT, context)
         }
 
-        if (declaration.annotations.hasAnnotation(WasmStandardClassIds.Annotations.JsExport, context.session)) {
+        if (declaration.annotations.hasAnnotation(WebCommonStandardClassIds.Annotations.JsExport, context.session)) {
             reporter.reportOn(declaration.source, FirWasmErrors.JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION, context)
         }
 

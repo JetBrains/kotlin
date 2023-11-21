@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.WasmStandardClassIds
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmExternalChecker : FirWebCommonExternalChecker() {
     override fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
@@ -47,7 +47,7 @@ object FirWasmExternalChecker : FirWebCommonExternalChecker() {
     }
 
     override fun isDefinedExternallyCallableId(callableId: CallableId): Boolean =
-        callableId == WasmStandardClassIds.Callables.JsDefinedExternally
+        callableId == WebCommonStandardClassIds.Callables.JsDefinedExternally
 
     override fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean =
         false

@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.name.WasmStandardClassIds
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmDefinedExternallyCallChecker : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         val symbol = expression.calleeReference?.toResolvedCallableSymbol() ?: return
 
-        if (symbol.callableId != WasmStandardClassIds.Callables.JsDefinedExternally) {
+        if (symbol.callableId != WebCommonStandardClassIds.Callables.JsDefinedExternally) {
             return
         }
 

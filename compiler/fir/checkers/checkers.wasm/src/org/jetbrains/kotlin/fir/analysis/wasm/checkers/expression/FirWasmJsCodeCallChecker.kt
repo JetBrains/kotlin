@@ -18,13 +18,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
-import org.jetbrains.kotlin.name.WasmStandardClassIds
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmJsCodeCallChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
 
-        if (symbol.callableId != WasmStandardClassIds.Callables.Js) {
+        if (symbol.callableId != WebCommonStandardClassIds.Callables.Js) {
             return
         }
 

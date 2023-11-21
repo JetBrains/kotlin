@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.name.WasmStandardClassIds
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 fun isJsExportedDeclaration(declaration: FirDeclaration, session: FirSession): Boolean {
     if (declaration !is FirSimpleFunction)
@@ -21,9 +21,9 @@ fun isJsExportedDeclaration(declaration: FirDeclaration, session: FirSession): B
     if (declaration.visibility != Visibilities.Public)
         return false
 
-    if (declaration.hasAnnotation(WasmStandardClassIds.Annotations.JsExport, session))
+    if (declaration.hasAnnotation(WebCommonStandardClassIds.Annotations.JsExport, session))
         return true
 
     val containerFile = session.firProvider.getFirCallableContainerFile(declaration.symbol)
-    return containerFile != null && containerFile.hasAnnotation(WasmStandardClassIds.Annotations.JsExport, session)
+    return containerFile != null && containerFile.hasAnnotation(WebCommonStandardClassIds.Annotations.JsExport, session)
 }

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.name.WasmStandardClassIds
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 fun FirSimpleFunction.hasValidJsCodeBody(): Boolean =
     body?.isValidJsCodeBody() == true
@@ -44,5 +44,5 @@ private fun FirExpression.isJsCodeCall(): Boolean {
     val symbol = calleeReference.toResolvedCallableSymbol()
         ?: return false
 
-    return symbol.callableId == WasmStandardClassIds.Callables.Js
+    return symbol.callableId == WebCommonStandardClassIds.Callables.Js
 }
