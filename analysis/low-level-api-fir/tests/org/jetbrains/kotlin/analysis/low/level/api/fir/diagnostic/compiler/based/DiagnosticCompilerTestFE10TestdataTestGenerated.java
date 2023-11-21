@@ -27208,6 +27208,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("ConflictingOverloadsFunsDifferentReturnInClass.kt")
+                public void testConflictingOverloadsFunsDifferentReturnInClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/overload/noConflictingOverloadsWithDeprecatedHidden/ConflictingOverloadsFunsDifferentReturnInClass.kt");
+                }
+
+                @Test
+                @TestMetadata("ConflictingOverloadsIdenticalFunsInClass.kt")
+                public void testConflictingOverloadsIdenticalFunsInClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/overload/noConflictingOverloadsWithDeprecatedHidden/ConflictingOverloadsIdenticalFunsInClass.kt");
+                }
+
+                @Test
                 @TestMetadata("ConflictingOverloadsIdenticalValsInClass.kt")
                 public void testConflictingOverloadsIdenticalValsInClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/overload/noConflictingOverloadsWithDeprecatedHidden/ConflictingOverloadsIdenticalValsInClass.kt");
