@@ -8,10 +8,13 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.test.api.analysis.TestAnalysisContext
 import org.jetbrains.dokka.analysis.test.api.analysis.TestAnalysisServices
 import org.jetbrains.dokka.analysis.test.api.analysis.TestProjectAnalyzer
+import org.jetbrains.dokka.analysis.test.api.analysis.defaultAnalysisLogger
 import org.jetbrains.dokka.analysis.test.api.configuration.BaseTestDokkaConfigurationBuilder
 import org.jetbrains.dokka.analysis.test.api.configuration.TestDokkaConfiguration
+import org.jetbrains.dokka.analysis.test.api.util.CollectingDokkaConsoleLogger
 import org.jetbrains.dokka.analysis.test.api.util.withTempDirectory
 import org.jetbrains.dokka.model.DModule
+import org.jetbrains.dokka.utilities.DokkaLogger
 
 /**
  * Represents a virtual test project (as if it's user-defined) that will be used to run Dokka.
@@ -66,8 +69,11 @@ interface TestProject {
  *
  * val module: DModule = testProject.parse()
  * ```
+ *
+ * @param logger logger to be used for running Dokka and tests. Custom loggers like [CollectingDokkaConsoleLogger]
+ *               can be useful in verifying the behavior.
  */
-fun TestProject.parse(): DModule = TestProjectAnalyzer.parse(this)
+fun TestProject.parse(logger: DokkaLogger = defaultAnalysisLogger): DModule = TestProjectAnalyzer.parse(this, logger)
 
 /**
  * Runs Dokka on the given [TestProject] and provides not only the resulting documentable model,
@@ -88,10 +94,16 @@ fun TestProject.parse(): DModule = TestProjectAnalyzer.parse(this)
  *     val allPackageDocs: SourceSetDependent<DocumentationNode> = moduleAndPackageDocumentationReader.read(pckg)
  * }
  * ```
+ *
+ * @param logger logger to be used for running Dokka and tests. Custom loggers like [CollectingDokkaConsoleLogger]
+ *               can be useful in verifying the behavior.
  */
-fun TestProject.useServices(block: TestAnalysisServices.(context: TestAnalysisContext) -> Unit) {
+fun TestProject.useServices(
+    logger: DokkaLogger = defaultAnalysisLogger,
+    block: TestAnalysisServices.(context: TestAnalysisContext) -> Unit
+) {
     withTempDirectory { tempDirectory ->
-        val (services, context) = TestProjectAnalyzer.analyze(this, tempDirectory)
+        val (services, context) = TestProjectAnalyzer.analyze(this, tempDirectory, logger)
         services.block(context)
     }
 }
