@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.de
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
@@ -86,8 +87,13 @@ public enum class ShortenStrategy {
         }
 
         public val defaultCallableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy = { symbol ->
-            if (symbol is KtEnumEntrySymbol) DO_NOT_SHORTEN
-            else SHORTEN_AND_IMPORT
+            if (symbol is KtEnumEntrySymbol) {
+                DO_NOT_SHORTEN
+            } else if (symbol is KtConstructorSymbol && symbol.containingClassIdIfNonLocal?.isNestedClass == true) {
+                SHORTEN_IF_ALREADY_IMPORTED
+            } else {
+                SHORTEN_AND_IMPORT
+            }
         }
     }
 }
