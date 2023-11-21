@@ -325,30 +325,54 @@ public actual inline fun String.toCharArray(
 }
 
 /**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
+ * Uses this string as a format string and returns a string obtained
+ * by substituting format specifiers in the format string with the provided arguments,
  * using the default locale.
+ *
+ * See [java.util.Formatter] class documentation
+ * for the syntax of format specifiers for the format string.
+ *
+ * @sample samples.text.Strings.formatExtension
  */
 @kotlin.internal.InlineOnly
 public inline fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
 
 /**
- * Uses the provided [format] as a format string and returns a string obtained by substituting the specified arguments,
+ * Uses the provided [format] as a format string and returns a string obtained
+ * by substituting format specifiers in the format string with the provided arguments,
  * using the default locale.
+ *
+ * See [java.util.Formatter] class documentation
+ * for the syntax of format specifiers for the format string.
+ *
+ * @sample samples.text.Strings.formatStatic
  */
 @kotlin.internal.InlineOnly
 public inline fun String.Companion.format(format: String, vararg args: Any?): String = java.lang.String.format(format, *args)
 
 /**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
+ * Uses this string as a format string and returns a string obtained
+ * by substituting format specifiers in the format string with the provided arguments,
  * using the specified locale. If [locale] is `null` then no localization is applied.
+ *
+ * See [java.util.Formatter] class documentation
+ * for the syntax of format specifiers for the format string.
+ *
+ * @sample samples.text.Strings.formatWithLocaleExtension
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun String.format(locale: Locale?, vararg args: Any?): String = java.lang.String.format(locale, this, *args)
 
 /**
- * Uses the provided [format] as a format string and returns a string obtained by substituting the specified arguments,
+ * Uses the provided [format] as a format string and returns a string obtained
+ * by substituting format specifiers in the format string with the provided arguments,
  * using the specified locale. If [locale] is `null` then no localization is applied.
+ *
+ * See [java.util.Formatter] class documentation
+ * for the syntax of format specifiers for the format string.
+ *
+ * @sample samples.text.Strings.formatWithLocaleStatic
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
