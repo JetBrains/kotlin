@@ -69,7 +69,7 @@ private fun compileAndPrintAllFiles(
         when (outputFile.extension) {
             "kotlin_module" -> {
                 val moduleFile = kotlinp.readModuleFile(outputFile)!!
-                val transformedWithNodes = KotlinModuleMetadata.read(transformModuleFileWithNodes(moduleFile))
+                val transformedWithNodes = KotlinModuleMetadata.read(moduleFile.write())
 
                 for ((sb, moduleFileToRender) in listOf(
                     main to moduleFile, afterNodes to transformedWithNodes
@@ -128,7 +128,3 @@ private fun StringBuilder.appendFileName(file: File) {
     appendLine("// ${file.invariantSeparatorsPath}")
     appendLine("// ------------------------------------------")
 }
-
-@OptIn(UnstableMetadataApi::class)
-private fun transformModuleFileWithNodes(moduleFile: KotlinModuleMetadata): ByteArray =
-    KotlinModuleMetadata.write(moduleFile.kmModule)

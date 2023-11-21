@@ -5,15 +5,20 @@
 
 package kotlinx.metadata.jvm.internal
 
+import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.KmLambda
 import kotlinx.metadata.KmPackage
 import kotlinx.metadata.internal.toKmClass
 import kotlinx.metadata.internal.toKmLambda
 import kotlinx.metadata.internal.toKmPackage
+import kotlinx.metadata.jvm.KmModule
+import kotlinx.metadata.jvm.KmPackageParts
 import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.UnstableMetadataApi
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 
 internal object JvmReadUtils {
     internal fun readKmClass(annotationData: Metadata): KmClass {
@@ -50,7 +55,29 @@ internal object JvmReadUtils {
         }
     }
 
-    internal fun checkMetadataVersionForRead(annotationData: Metadata, lenient: Boolean) {
+    @UnstableMetadataApi
+    internal fun readModuleMetadataImpl(data: ModuleMapping): KmModule {
+        val v = KmModule()
+        for ((fqName, parts) in data.packageFqName2Parts) {
+            val (fileFacades, multiFileClassParts) = parts.parts.partition { parts.getMultifileFacadeName(it) == null }
+            v.packageParts[fqName] = KmPackageParts(
+                fileFacades.toMutableList(),
+                multiFileClassParts.associateWith { parts.getMultifileFacadeName(it)!! }.toMutableMap()
+            )
+        }
+
+        for (annotation in data.moduleData.annotations) {
+            @Suppress("DEPRECATION_ERROR")
+            v.annotations.add(KmAnnotation(annotation, emptyMap()))
+        }
+
+        for (classProto in data.moduleData.optionalAnnotations) {
+            v.optionalAnnotationClasses.add(classProto.toKmClass(data.moduleData.nameResolver))
+        }
+        return v
+    }
+
+    private fun checkMetadataVersionForRead(annotationData: Metadata, lenient: Boolean) {
         if (annotationData.metadataVersion.isEmpty())
             throw IllegalArgumentException("Provided Metadata instance does not have metadataVersion in it and therefore is malformed and cannot be read.")
         val jvmMetadataVersion = JvmMetadataVersion(

@@ -1638,11 +1638,15 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$Unknown$Companion {
 
 public final class kotlinx/metadata/jvm/KotlinModuleMetadata {
 	public static final field Companion Lkotlinx/metadata/jvm/KotlinModuleMetadata$Companion;
-	public synthetic fun <init> ([BLkotlinx/metadata/internal/metadata/jvm/deserialization/ModuleMapping;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lkotlinx/metadata/jvm/KmModule;Lkotlinx/metadata/jvm/JvmMetadataVersion;)V
 	public final fun accept (Lkotlinx/metadata/jvm/KmModuleVisitor;)V
 	public final fun getKmModule ()Lkotlinx/metadata/jvm/KmModule;
+	public final fun getVersion ()Lkotlinx/metadata/jvm/JvmMetadataVersion;
 	public static final fun read ([B)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
+	public final fun setKmModule (Lkotlinx/metadata/jvm/KmModule;)V
+	public final fun setVersion (Lkotlinx/metadata/jvm/JvmMetadataVersion;)V
 	public final fun toKmModule ()Lkotlinx/metadata/jvm/KmModule;
+	public final fun write ()[B
 	public static final fun write (Lkotlinx/metadata/jvm/KmModule;)[B
 	public static final fun write (Lkotlinx/metadata/jvm/KmModule;Lkotlinx/metadata/jvm/JvmMetadataVersion;)[B
 }

@@ -4,27 +4,24 @@
  */
 
 @file:Suppress(
-    "MemberVisibilityCanBePrivate",
-    "DEPRECATION", // For KmModule.annotations — remove reading when deprecation is raised to error
-    "DEPRECATION_ERROR", // deprecated .accept implementation
-    "INVISIBLE_MEMBER", // InconsistentKotlinMetadataException
-    "INVISIBLE_REFERENCE",
+    "DEPRECATION", // COMPATIBLE_METADATA_VERSION
+    "DEPRECATION_ERROR", // KmModule.annotations
     "UNUSED_PARAMETER" // For deprecated Writer.write
 )
 
 package kotlinx.metadata.jvm
 
 import kotlinx.metadata.*
-import kotlinx.metadata.internal.toKmClass
 import kotlinx.metadata.jvm.KotlinClassMetadata.Companion.COMPATIBLE_METADATA_VERSION
+import kotlinx.metadata.jvm.internal.JvmReadUtils.readModuleMetadataImpl
 import kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatible
 import kotlinx.metadata.jvm.internal.wrapIntoMetadataExceptionWhenNeeded
 import kotlinx.metadata.jvm.internal.wrapWriteIntoIAE
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion as CompilerMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion as CompilerMetadataVersion
 
 /**
  * Represents the parsed metadata of a Kotlin JVM module file.
@@ -34,22 +31,21 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
  *
  * `.kotlin_module` file is produced per Kotlin compilation, and contains auxiliary information, such as a map of all single- and multi-file facades ([KmModule.packageParts]),
  *  `@OptionalExpectation` declarations ([KmModule.optionalAnnotationClasses]), and module annotations ([KmModule.annotations).
- *
- * @property bytes the byte array representing the contents of a `.kotlin_module` file
  */
 @UnstableMetadataApi
-public class KotlinModuleMetadata private constructor(
-    private val bytes: ByteArray,
-    private val data: ModuleMapping,
-) {
-
+public class KotlinModuleMetadata public constructor(
     /**
-     * Returns the [KmModule] representation of this metadata.
+     * [KmModule] representation of this metadata.
      *
      * Returns the same (mutable) [KmModule] instance every time.
      */
-    public val kmModule: KmModule = readImpl()
+    public var kmModule: KmModule,
 
+    /**
+     * Version of this metadata.
+     */
+    public var version: JvmMetadataVersion,
+) {
     /**
      * Visits metadata of this module with a new [KmModule] instance and returns that instance.
      */
@@ -60,6 +56,49 @@ public class KotlinModuleMetadata private constructor(
     )
     public fun toKmModule(): KmModule = KmModule().apply { kmModule.accept(this) }
 
+    /**
+     * Encodes and writes this metadata of the Kotlin module file.
+     *
+     * This method encodes all available data, including [version].
+     *
+     * @throws IllegalArgumentException if [kmModule] is not correct and cannot be written or if [version] is not supported for writing.
+     */
+    public fun write(): ByteArray {
+        val b = JvmModuleProtoBuf.Module.newBuilder()
+        kmModule.packageParts.forEach { (fqName, packageParts) ->
+            PackageParts(fqName).apply {
+                for (fileFacade in packageParts.fileFacades) {
+                    addPart(fileFacade, null)
+                }
+                for ((multiFileClassPart, multiFileFacade) in packageParts.multiFileClassParts) {
+                    addPart(multiFileClassPart, multiFileFacade)
+                }
+
+                addTo(b)
+            }
+        }
+
+        // visitAnnotation
+        /*
+        // TODO: move StringTableImpl to module 'metadata' and support module annotations here
+        b.addAnnotation(ProtoBuf.Annotation.newBuilder().apply {
+            id = annotation.className.name // <-- use StringTableImpl here
+        })
+        */
+
+        // visitOptionalAnnotationClass
+        /*
+        return object : ClassWriter(TODO() /* use StringTableImpl here */) {
+            override fun visitEnd() {
+                b.addOptionalAnnotationClass(t)
+            }
+        }
+        */
+
+        // The only flag present in module metadata is STRICT_SEMANTICS, and it seems fine to ignore it and set 0 here.
+        return b.build().serializeToByteArray(CompilerMetadataVersion(version.toIntArray(), false), 0)
+    }
+
 
     /**
      * A [KmModuleVisitor] that generates the metadata of a Kotlin JVM module file.
@@ -69,40 +108,6 @@ public class KotlinModuleMetadata private constructor(
         level = DeprecationLevel.ERROR
     )
     public class Writer {
-        private val b = JvmModuleProtoBuf.Module.newBuilder()
-
-        private fun writeModule(kmModule: KmModule) {
-            kmModule.packageParts.forEach { (fqName, packageParts) ->
-                PackageParts(fqName).apply {
-                    for (fileFacade in packageParts.fileFacades) {
-                        addPart(fileFacade, null)
-                    }
-                    for ((multiFileClassPart, multiFileFacade) in packageParts.multiFileClassParts) {
-                        addPart(multiFileClassPart, multiFileFacade)
-                    }
-
-                    addTo(b)
-                }
-            }
-
-            // visitAnnotation
-            /*
-            // TODO: move StringTableImpl to module 'metadata' and support module annotations here
-            b.addAnnotation(ProtoBuf.Annotation.newBuilder().apply {
-                id = annotation.className.name // <-- use StringTableImpl here
-            })
-            */
-
-            // visitOptionalAnnotationClass
-            /*
-            return object : ClassWriter(TODO() /* use StringTableImpl here */) {
-                override fun visitEnd() {
-                    b.addOptionalAnnotationClass(t)
-                }
-            }
-            */
-        }
-
         /**
          * Returns the metadata of the module file that was written with this writer.
          *
@@ -126,26 +131,6 @@ public class KotlinModuleMetadata private constructor(
     @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(v: KmModuleVisitor): Unit = kmModule.accept(v)
 
-    private fun readImpl(): KmModule {
-        val v = KmModule()
-        for ((fqName, parts) in data.packageFqName2Parts) {
-            val (fileFacades, multiFileClassParts) = parts.parts.partition { parts.getMultifileFacadeName(it) == null }
-            v.packageParts[fqName] = KmPackageParts(
-                fileFacades.toMutableList(),
-                multiFileClassParts.associateWith { parts.getMultifileFacadeName(it)!! }.toMutableMap()
-            )
-        }
-
-        for (annotation in data.moduleData.annotations) {
-            v.annotations.add(KmAnnotation(annotation, emptyMap()))
-        }
-
-        for (classProto in data.moduleData.optionalAnnotations) {
-            v.optionalAnnotationClasses.add(classProto.toKmClass(data.moduleData.nameResolver))
-        }
-        return v
-    }
-
     /**
      * Collection of methods for reading and writing [KotlinModuleMetadata].
      */
@@ -161,12 +146,16 @@ public class KotlinModuleMetadata private constructor(
         @UnstableMetadataApi
         public fun read(bytes: ByteArray): KotlinModuleMetadata {
             return wrapIntoMetadataExceptionWhenNeeded {
-                val result = dataFromBytes(bytes)
+                val result = ModuleMapping.loadModuleMapping(
+                    bytes, "KotlinModuleMetadata", skipMetadataVersionCheck = false,
+                    isJvmPackageNameSupported = true
+                ) { throwIfNotCompatible(it, lenient = false /* TODO */) }
                 when (result) {
                     ModuleMapping.EMPTY, ModuleMapping.CORRUPTED ->
-                        throw InconsistentKotlinMetadataException("Data is not the content of a .kotlin_module file, or it has been corrupted.")
+                        throw IllegalArgumentException("Data is not the content of a .kotlin_module file, or it has been corrupted.")
                 }
-                KotlinModuleMetadata(bytes, result)
+                val module = readModuleMetadataImpl(result)
+                KotlinModuleMetadata(module, JvmMetadataVersion(result.version.toArray()))
             }
         }
 
@@ -179,18 +168,11 @@ public class KotlinModuleMetadata private constructor(
          * @throws IllegalArgumentException if [kmModule] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
          */
         @UnstableMetadataApi
+        @Deprecated("Use a KotlinModuleMetadata instance and its write() member function", level = DeprecationLevel.WARNING)
         @JvmStatic
         @JvmOverloads
         public fun write(kmModule: KmModule, metadataVersion: JvmMetadataVersion = JvmMetadataVersion.CURRENT): ByteArray = wrapWriteIntoIAE {
-            val w = Writer().also { it.writeModule(kmModule) }
-            return w.b.build().serializeToByteArray(CompilerMetadataVersion(metadataVersion.toIntArray(), false), 0)
-        }
-
-        private fun dataFromBytes(bytes: ByteArray): ModuleMapping {
-            return ModuleMapping.loadModuleMapping(
-                bytes, "KotlinModuleMetadata", skipMetadataVersionCheck = false,
-                isJvmPackageNameSupported = true
-            ) { throwIfNotCompatible(it, lenient = false /* TODO */) }
+            return KotlinModuleMetadata(kmModule, metadataVersion).write()
         }
     }
 }

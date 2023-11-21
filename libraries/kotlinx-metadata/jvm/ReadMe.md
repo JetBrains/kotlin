@@ -202,11 +202,11 @@ The only difference is that the source for the reader (and the result of the wri
 ```kotlin
 // Read the module metadata
 val bytes = File("META-INF/main.kotlin_module").readBytes()
-val metadata = KotlinModuleMetadata.read(bytes)
-val module = metadata.kmModule
+val moduleMetadata = KotlinModuleMetadata.read(bytes)
+val module = moduleMetadata.kmModule
 ...
 
 // Write the module metadata
-val bytes = KotlinModuleMetadata.write(module)
+val bytes = moduleMetadata.write()
 File("META-INF/main.kotlin_module").writeBytes(bytes)
 ```

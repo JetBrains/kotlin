@@ -44,7 +44,7 @@ class Kotlinp(private val settings: KotlinpSettings) {
 
     @OptIn(UnstableMetadataApi::class)
     internal fun readModuleFile(file: File): KotlinModuleMetadata? =
-        KotlinModuleMetadata.read(file.readBytes())
+        runCatching { KotlinModuleMetadata.read(file.readBytes()) }.getOrNull()
 }
 
 data class KotlinpSettings(
