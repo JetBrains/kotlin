@@ -34,6 +34,7 @@ abstract class AbstractNativeCInteropExecutableTest : AbstractNativeSimpleTest()
                 listOf(
                     "-compiler-option", "-I$testDataDir",
                     "-Xcompile-source", mFile.absolutePath,
+                    "-Xsource-compiler-option", "-fobjc-arc",
                     "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)=",
                 )
             )
