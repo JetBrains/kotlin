@@ -16656,6 +16656,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("considerContractsOfIncompleteCalls.kt")
+                public void testConsiderContractsOfIncompleteCalls() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/considerContractsOfIncompleteCalls.kt");
+                }
+
+                @Test
                 @TestMetadata("equalityChecksOnIntegerTypes.kt")
                 public void testEqualityChecksOnIntegerTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/equalityChecksOnIntegerTypes.kt");
