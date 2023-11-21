@@ -12519,6 +12519,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("annotationWithWrongArgInDanglingModifierList.kt")
+            public void testAnnotationWithWrongArgInDanglingModifierList() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/exceptions/annotationWithWrongArgInDanglingModifierList.kt");
+            }
+
+            @Test
             @TestMetadata("expectedSomeTypesOnBranchForWhenExpressionOfErroneousType.kt")
             public void testExpectedSomeTypesOnBranchForWhenExpressionOfErroneousType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/exceptions/expectedSomeTypesOnBranchForWhenExpressionOfErroneousType.kt");
