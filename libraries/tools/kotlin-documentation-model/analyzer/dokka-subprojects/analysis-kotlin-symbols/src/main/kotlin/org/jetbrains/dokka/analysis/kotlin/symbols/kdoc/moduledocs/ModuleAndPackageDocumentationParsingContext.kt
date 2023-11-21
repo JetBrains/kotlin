@@ -10,7 +10,7 @@ import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.logUnresolvedLink
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.KotlinAnalysis
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.moduledocs.ModuleAndPackageDocumentation.Classifier.Module
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.moduledocs.ModuleAndPackageDocumentation.Classifier.Package
-import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.resolveKDocTextLink
+import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.resolveKDocTextLinkDRI
 import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.utilities.DokkaLogger
@@ -47,7 +47,7 @@ internal fun ModuleAndPackageDocumentationParsingContext(
         MarkdownParser(
             externalDri = { link ->
                 analyze(sourceModule) {
-                    resolveKDocTextLink(
+                    resolveKDocTextLinkDRI(
                         link,
                         contextPsi
                     ).ifUnresolved {

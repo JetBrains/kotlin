@@ -44,7 +44,7 @@ class KotlinJvmTestSourceSetBuilder : BaseTestDokkaSourceSetBuilder() {
         return TestDokkaSourceSet(
             analysisPlatform = Platform.jvm,
             displayName = "KotlinJvmSourceSet",
-            sourceSetID = DokkaSourceSetID(scopeId = "project", sourceSetName = "kotlin"),
+            sourceSetID = KotlinJvmTestProject.DEFAULT_SOURCE_SET_ID,
             dependentSourceSets = setOf(),
             sourceRoots = additionalSourceRoots + setOf(KotlinJvmTestProject.DEFAULT_SOURCE_ROOT),
             classpath = additionalClasspath + setOf(getKotlinJvmStdlibJarPath()),

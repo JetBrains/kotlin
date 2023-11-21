@@ -4,17 +4,21 @@
 
 package org.jetbrains.dokka.analysis.kotlin
 
+import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironmentCreator
+import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironment
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
+import org.jetbrains.dokka.plugability.ExtensionPoint
 import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
 
 public class KotlinAnalysisPlugin : DokkaPlugin() {
 
-    /*
-     * This is where stable public API will go.
+    /**
+     * An extension for analyzing Kotlin sample functions used in the `@sample` KDoc tag.
      *
-     * No stable public API for now.
+     * @see SampleAnalysisEnvironment for more details
      */
+    public val sampleAnalysisEnvironmentCreator: ExtensionPoint<SampleAnalysisEnvironmentCreator> by extensionPoint()
 
     @OptIn(DokkaPluginApiPreview::class)
     override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement = PluginApiPreviewAcknowledgement
