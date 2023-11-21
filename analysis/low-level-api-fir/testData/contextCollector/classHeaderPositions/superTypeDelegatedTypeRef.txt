@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeDelegatedTypeRef.kt
         }
 
     }
-    public final [ResolvedTo(STATUS)] class Child : R|test/Base|, R|test/MyInterface| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Child : R|test/Base|, R|test/MyInterface| {
         private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|test/MyInterface| = R|test/Base.Nested.Nested|()
 
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Child| {

@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeDelegatedExpression.kt
         }
 
     }
-    public final [ResolvedTo(STATUS)] class Child : R|test/Base|, R|test/MyInterface| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Child : R|test/Base|, R|test/MyInterface| {
         public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] constructorParam: R|test/MyInterface|): R|test/Child| {
             super<R|test/Base|>()
         }
