@@ -1494,25 +1494,7 @@ open class PsiRawFirBuilder(
                                 context.className,
                                 createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
                                 createParameterTypeRefWithSourceKind = { property, newKind ->
-                                    // just making a shallow copy isn't enough type ref may be a function type ref
-                                    // and contain value parameters inside
-
-                                    val returnTypeRef = property.returnTypeRef
-
-                                    when (returnTypeRef) {
-                                        is FirErrorTypeRef -> {
-                                            buildErrorTypeRefCopy(returnTypeRef) {
-                                                source = returnTypeRef.source?.fakeElement(newKind)
-                                            }
-                                        }
-                                        else -> {
-                                            withDefaultSourceElementKind(newKind) {
-                                                (returnTypeRef.psi as KtTypeReference?).toFirOrImplicitType()
-                                            }
-                                        }
-                                    }
-
-
+                                    property.returnTypeRef.copyWithNewSourceKind(newKind)
                                 },
                                 addValueParameterAnnotations = { addAnnotationsFrom(it as KtParameter, isFromPrimaryConstructor = true) },
                             ).generate()
