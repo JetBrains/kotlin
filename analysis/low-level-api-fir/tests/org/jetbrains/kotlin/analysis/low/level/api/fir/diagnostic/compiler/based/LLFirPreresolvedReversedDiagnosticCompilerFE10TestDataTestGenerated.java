@@ -23216,6 +23216,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("fromJavaWithNonConstInitializer.kt")
+                public void testFromJavaWithNonConstInitializer() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/fromJavaWithNonConstInitializer.kt");
+                }
+
+                @Test
                 @TestMetadata("ifConstVal_after.kt")
                 public void testIfConstVal_after() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal_after.kt");

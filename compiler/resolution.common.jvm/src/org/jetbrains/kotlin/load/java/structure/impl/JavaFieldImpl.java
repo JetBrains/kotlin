@@ -18,9 +18,6 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.PsiEnumConstant;
 import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiVariable;
-import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
@@ -28,11 +25,12 @@ import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource;
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
 
+import static org.jetbrains.kotlin.util.ConstUtils.isCompileTimeConstant;
+
 public class JavaFieldImpl extends JavaMemberImpl<PsiField> implements JavaField {
     public JavaFieldImpl(@NotNull JavaElementPsiSource<PsiField> psiFieldSource) {
         super(psiFieldSource);
     }
-
 
     @SuppressWarnings("unused") // used in KSP
     public JavaFieldImpl(PsiField psiField) {
@@ -59,7 +57,7 @@ public class JavaFieldImpl extends JavaMemberImpl<PsiField> implements JavaField
     @Override
     public boolean getHasConstantNotNullInitializer() {
         // PsiUtil.isCompileTimeConstant returns false for null-initialized fields,
-        // see com.intellij.psi.util.IsConstantExpressionVisitor.visitLiteralExpression()
-        return PsiUtil.isCompileTimeConstant((PsiVariable) getPsi());
+        // see IsConstantExpressionVisitor.visitLiteralExpression()
+        return isCompileTimeConstant(getPsi());
     }
 }

@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
+import org.jetbrains.kotlin.load.java.structure.impl.NotEvaluatedConstAware
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
@@ -189,7 +190,7 @@ class FirJavaElementFinder(
     private fun buildFieldStubForConst(firProperty: FirProperty, classStub: PsiClassStubImpl<ClsClassImpl>) {
         if (!firProperty.isConst) return
 
-        val psiField = object : StubBase<PsiField>(classStub, JavaStubElementTypes.FIELD), PsiFieldStub {
+        val psiField = object : StubBase<PsiField>(classStub, JavaStubElementTypes.FIELD), PsiFieldStub, NotEvaluatedConstAware {
             private val lazyInitializerText by lazy { propertyEvaluator?.invoke(firProperty) }
 
             override fun getName(): String = firProperty.name.identifier
@@ -208,6 +209,10 @@ class FirJavaElementFinder(
             override fun isDeprecated(): Boolean = false
 
             override fun isEnumConstant(): Boolean = false
+
+            override fun isNotYetComputed(): Boolean {
+                return propertyEvaluator == null
+            }
         }
 
         PsiModifierListStubImpl(psiField, ModifierFlags.PUBLIC_MASK + ModifierFlags.FINAL_MASK + ModifierFlags.STATIC_MASK)

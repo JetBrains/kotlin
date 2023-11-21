@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Test.java
 public class Test {
     public static int i1 = 1;

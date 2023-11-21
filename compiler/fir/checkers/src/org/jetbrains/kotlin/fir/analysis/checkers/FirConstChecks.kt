@@ -128,7 +128,7 @@ internal fun checkConstantArguments(
             //DO NOTHING
         }
         expressionSymbol is FirFieldSymbol -> {
-            if (!expressionSymbol.isStatic || expressionSymbol.modality != Modality.FINAL) {
+            if (!expressionSymbol.isStatic || expressionSymbol.modality != Modality.FINAL || !expressionSymbol.hasConstantInitializer) {
                 return ConstantArgumentKind.NOT_CONST
             }
         }
