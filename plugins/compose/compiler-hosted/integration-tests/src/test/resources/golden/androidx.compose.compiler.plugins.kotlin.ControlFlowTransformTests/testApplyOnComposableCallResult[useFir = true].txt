@@ -28,11 +28,15 @@ fun <T> provided(value: T, %composer: Composer?, %changed: Int): State<T> {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0 = remember({
+  val tmp0 = %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+  val tmp1_group = %composer.cache(false) {
     mutableStateOf(
       value = value
     )
-  }, %composer, 0).apply {
+  }
+  %composer.endReplaceableGroup()
+  tmp1_group.apply {
     %this%apply.value = value
   }
   if (isTraceInProgress()) {

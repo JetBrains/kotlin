@@ -26,7 +26,9 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    remember({
+    %composer.startReplaceableGroup(<>)
+    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    val tmp0_group = %composer.cache(false) {
       composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
         sourceInformation(%composer, "C<Text(s...>:Test.kt")
         if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
@@ -41,7 +43,9 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
           %composer.skipToGroupEnd()
         }
       }
-    }, %composer, 0)(%composer, 6)
+    }
+    %composer.endReplaceableGroup()
+    tmp0_group(%composer, 6)
     %composer.cache(false) {
       composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
         sourceInformation(%composer, "C<Text(s...>:Test.kt")
@@ -58,7 +62,7 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
         }
       }
     }
-    (%composer, 6)
+    (%composer, 0)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

@@ -737,6 +737,18 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 @Composable fun Wrapper(block: @Composable () -> Unit) {}
             """,
     )
+
+    @Test
+    fun testRememberExpressionMeta() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun Test(param: String) {
+                val a = remember { param }
+                Test(a)
+            }
+        """,
+    )
 }
 
 class RememberIntrinsicTransformTestsStrongSkipping(

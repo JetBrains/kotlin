@@ -14,6 +14,8 @@ object ComposeWritableSlices {
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_STATIC_FUNCTION_EXPRESSION: WritableSlice<IrExpression, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val IS_STATIC_EXPRESSION: WritableSlice<IrExpression, Boolean> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_COMPOSABLE_SINGLETON: WritableSlice<IrAttributeContainer, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_COMPOSABLE_SINGLETON_CLASS: WritableSlice<IrAttributeContainer, Boolean> =
