@@ -23,7 +23,6 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
     FunctionBodySkippingTransformTestsBase(useFir) {
 
     override fun CompilerConfiguration.updateConfiguration() {
-        put(ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY, false)
         put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, true)
     }
 

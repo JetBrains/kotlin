@@ -34,58 +34,112 @@ fun ArrayConstructorTest(n: Int, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     Array(n) { it: Int ->
-      val tmp0_return = remember({
-        it
-      }, %composer, 0)
-      tmp0_return
+      val tmp1_return = <block>{
+        %composer.startReplaceableGroup(<>)
+        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it
+        }
+        %composer.endReplaceableGroup()
+        tmp0_group
+      }
+      tmp1_return
     }
     ByteArray(n) { it: Int ->
-      val tmp0_return = remember({
-        it.toByte()
-      }, %composer, 0)
-      tmp0_return
+      val tmp1_return = <block>{
+        %composer.startReplaceableGroup(<>)
+        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toByte()
+        }
+        %composer.endReplaceableGroup()
+        tmp0_group
+      }
+      tmp1_return
     }
     CharArray(n) { it: Int ->
-      val tmp0_return = remember({
-        it.toChar()
-      }, %composer, 0)
-      tmp0_return
+      val tmp1_return = <block>{
+        %composer.startReplaceableGroup(<>)
+        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toChar()
+        }
+        %composer.endReplaceableGroup()
+        tmp0_group
+      }
+      tmp1_return
     }
     ShortArray(n) { it: Int ->
-      val tmp0_return = remember({
-        it.toShort()
-      }, %composer, 0)
-      tmp0_return
+      val tmp1_return = <block>{
+        %composer.startReplaceableGroup(<>)
+        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toShort()
+        }
+        %composer.endReplaceableGroup()
+        tmp0_group
+      }
+      tmp1_return
     }
     IntArray(n) { it: Int ->
-      val tmp0_return = remember({
-        it
-      }, %composer, 0)
-      tmp0_return
+      val tmp1_return = <block>{
+        %composer.startReplaceableGroup(<>)
+        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it
+        }
+        %composer.endReplaceableGroup()
+        tmp0_group
+      }
+      tmp1_return
     }
     LongArray(n) { it: Int ->
-      val tmp0_return = remember({
-        it.toLong()
-      }, %composer, 0)
-      tmp0_return
+      val tmp1_return = <block>{
+        %composer.startReplaceableGroup(<>)
+        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toLong()
+        }
+        %composer.endReplaceableGroup()
+        tmp0_group
+      }
+      tmp1_return
     }
     FloatArray(n) { it: Int ->
-      val tmp0_return = remember({
-        it.toFloat()
-      }, %composer, 0)
-      tmp0_return
+      val tmp1_return = <block>{
+        %composer.startReplaceableGroup(<>)
+        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toFloat()
+        }
+        %composer.endReplaceableGroup()
+        tmp0_group
+      }
+      tmp1_return
     }
     DoubleArray(n) { it: Int ->
-      val tmp0_return = remember({
-        it.toDouble()
-      }, %composer, 0)
-      tmp0_return
+      val tmp1_return = <block>{
+        %composer.startReplaceableGroup(<>)
+        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toDouble()
+        }
+        %composer.endReplaceableGroup()
+        tmp0_group
+      }
+      tmp1_return
     }
     BooleanArray(n) { it: Int ->
-      val tmp0_return = remember({
-        false
-      }, %composer, 0)
-      tmp0_return
+      val tmp1_return = <block>{
+        %composer.startReplaceableGroup(<>)
+        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          false
+        }
+        %composer.endReplaceableGroup()
+        tmp0_group
+      }
+      tmp1_return
     }
     if (isTraceInProgress()) {
       traceEventEnd()

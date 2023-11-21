@@ -22,14 +22,18 @@ fun Test(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: 
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<rememb...>,<SomeCo...>,<rememb...>:Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
-    %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changed(a)) 0b0100 else 0b0010
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
   }
   if (%changed and 0b01110000 == 0) {
     %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(b)) 0b00100000 else 0b00010000
   }
-  if (%changed and 0b001110000000 == 0) {
-    %dirty = %dirty or if (%default and 0b0100 == 0 && %composer.changed(c)) 0b000100000000 else 0b10000000
+  if (%default and 0b0100 != 0) {
+    %dirty = %dirty or 0b000110000000
+  } else if (%changed and 0b001110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
   }
   if (%dirty and 0b001011011011 != 0b10010010 || !%composer.skipping) {
     %composer.startDefaults()
@@ -44,7 +48,6 @@ fun Test(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: 
           %composer.endReplaceableGroup()
           tmp0_group
         }
-        %dirty = %dirty and 0b1110.inv()
       }
       if (%default and 0b0010 != 0) {
         b = SomeComposable(%composer, 0)
@@ -60,18 +63,11 @@ fun Test(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: 
           %composer.endReplaceableGroup()
           tmp1_group
         }
-        %dirty = %dirty and 0b001110000000.inv()
       }
     } else {
       %composer.skipToGroupEnd()
-      if (%default and 0b0001 != 0) {
-        %dirty = %dirty and 0b1110.inv()
-      }
       if (%default and 0b0010 != 0) {
         %dirty = %dirty and 0b01110000.inv()
-      }
-      if (%default and 0b0100 != 0) {
-        %dirty = %dirty and 0b001110000000.inv()
       }
     }
     %composer.endDefaults()

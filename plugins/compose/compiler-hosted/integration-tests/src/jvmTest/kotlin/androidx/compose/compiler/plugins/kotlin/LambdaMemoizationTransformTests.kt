@@ -417,7 +417,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
 
     @Test
     fun testNonComposableFunctionReferenceWithStableExtensionReceiverMemoization() =
-        verifyComposeIrTransform(
+        verifyGoldenComposeIrTransform(
             extra = """
             class Stable
             fun Stable.foo() {}
@@ -433,39 +433,12 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 val x = remember { Stable() }
                 val shouldMemoize = x::foo
             }
-        """,
-            expectedTransformed = """
-            @NonRestartableComposable
-            @Composable
-            fun Example(%composer: Composer?, %changed: Int) {
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example)<rememb...>:Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              val x = remember({
-                Stable()
-              }, %composer, 0)
-              val shouldMemoize = <block>{
-                val tmp0 = x
-                %composer.startReplaceableGroup(<>)
-                val tmpCache = %composer.cache(%composer.changed(tmp0)) {
-                  tmp0::foo
-                }
-                %composer.endReplaceableGroup()
-                tmpCache
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endReplaceableGroup()
-            }
         """
         )
 
     @Test
     fun testNonComposableFunctionReferenceWithUnstableExtensionReceiverMemoization() =
-        verifyComposeIrTransform(
+        verifyGoldenComposeIrTransform(
             extra = """
             class Unstable {
                 var value: Int = 0
@@ -482,25 +455,6 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             fun Example() {
                 val x = remember { Unstable() }
                 val shouldNotMemoize = x::foo
-            }
-        """,
-            expectedTransformed = """
-            @NonRestartableComposable
-            @Composable
-            fun Example(%composer: Composer?, %changed: Int) {
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Example)<rememb...>:Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              val x = remember({
-                Unstable()
-              }, %composer, 0)
-              val shouldNotMemoize = x::foo
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endReplaceableGroup()
             }
         """
         )
@@ -559,7 +513,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
 
     @Test
     fun testNonComposableFunctionReferenceWithNoArgumentsMemoization() {
-        verifyComposeIrTransform(
+        verifyGoldenComposeIrTransform(
             source = """
                 import androidx.compose.runtime.Composable
                 import androidx.compose.runtime.remember
@@ -571,43 +525,6 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                     val x = remember { Stable() }
                     val shouldMemoize = x::qux
                 }
-            """,
-            expectedTransformed = """
-                @StabilityInferred(parameters = 1)
-                class Stable {
-                  fun qux() { }
-                  static val %stable: Int = 0
-                }
-                @Composable
-                fun Something(%composer: Composer?, %changed: Int) {
-                  %composer = %composer.startRestartGroup(<>)
-                  sourceInformation(%composer, "C(Something)<rememb...>:Test.kt")
-                  if (%changed != 0 || !%composer.skipping) {
-                    if (isTraceInProgress()) {
-                      traceEventStart(<>, %changed, -1, <>)
-                    }
-                    val x = remember({
-                      Stable()
-                    }, %composer, 0)
-                    val shouldMemoize = <block>{
-                      val tmp0 = x
-                      %composer.startReplaceableGroup(<>)
-                      val tmpCache = %composer.cache(%composer.changed(tmp0)) {
-                        tmp0::qux
-                      }
-                      %composer.endReplaceableGroup()
-                      tmpCache
-                    }
-                    if (isTraceInProgress()) {
-                      traceEventEnd()
-                    }
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                    Something(%composer, updateChangedFlags(%changed or 0b0001))
-                  }
-                }
             """
         )
     }
@@ -615,7 +532,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
     // Validate fix for b/302680514.
     @Test
     fun testNonComposableFunctionReferenceWithArgumentsMemoization() {
-        verifyComposeIrTransform(
+        verifyGoldenComposeIrTransform(
             source = """
                 import androidx.compose.runtime.Composable
                 import androidx.compose.runtime.remember
@@ -627,43 +544,6 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                     val x = remember { Stable() }
                     val shouldMemoize = x::qux
                 }
-            """,
-            expectedTransformed = """
-                @StabilityInferred(parameters = 1)
-                class Stable {
-                  fun qux(arg1: Any) { }
-                  static val %stable: Int = 0
-                }
-                @Composable
-                fun Something(%composer: Composer?, %changed: Int) {
-                  %composer = %composer.startRestartGroup(<>)
-                  sourceInformation(%composer, "C(Something)<rememb...>:Test.kt")
-                  if (%changed != 0 || !%composer.skipping) {
-                    if (isTraceInProgress()) {
-                      traceEventStart(<>, %changed, -1, <>)
-                    }
-                    val x = remember({
-                      Stable()
-                    }, %composer, 0)
-                    val shouldMemoize = <block>{
-                      val tmp0 = x
-                      %composer.startReplaceableGroup(<>)
-                      val tmpCache = %composer.cache(%composer.changed(tmp0)) {
-                        tmp0::qux
-                      }
-                      %composer.endReplaceableGroup()
-                      tmpCache
-                    }
-                    if (isTraceInProgress()) {
-                      traceEventEnd()
-                    }
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                    Something(%composer, updateChangedFlags(%changed or 0b0001))
-                  }
-                }
             """
         )
     }
@@ -671,7 +551,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
     // Reference to function with context receivers does not currently support memoization.
     @Test
     fun testNonComposableFunctionReferenceWithStableContextReceiverNotMemoized() {
-        verifyComposeIrTransform(
+        verifyGoldenComposeIrTransform(
             source = """
                 import androidx.compose.runtime.Composable
                 import androidx.compose.runtime.remember
@@ -686,39 +566,6 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 fun Something() {
                     val x = remember { Stable() }
                     val shouldNotMemoize = x::qux
-                }
-            """,
-            expectedTransformed = """
-                @StabilityInferred(parameters = 1)
-                class StableReceiver {
-                  static val %stable: Int = 0
-                }
-                @StabilityInferred(parameters = 1)
-                class Stable {
-                  fun qux(%context_receiver_0: StableReceiver) { }
-                  static val %stable: Int = 0
-                }
-                @Composable
-                fun Something(%composer: Composer?, %changed: Int) {
-                  %composer = %composer.startRestartGroup(<>)
-                  sourceInformation(%composer, "C(Something)<rememb...>:Test.kt")
-                  if (%changed != 0 || !%composer.skipping) {
-                    if (isTraceInProgress()) {
-                      traceEventStart(<>, %changed, -1, <>)
-                    }
-                    val x = remember({
-                      Stable()
-                    }, %composer, 0)
-                    val shouldNotMemoize = x::qux
-                    if (isTraceInProgress()) {
-                      traceEventEnd()
-                    }
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                    Something(%composer, updateChangedFlags(%changed or 0b0001))
-                  }
                 }
             """
         )
@@ -784,6 +631,24 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                     println(param)
                 }
                 val x = rcvr::method
+            }
+        """
+    )
+
+    @Test
+    fun testMemoizingFunctionInIf() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Something(param: (() -> String)?) {
+                Something(
+                    if (param != null) {
+                        { param() }
+                    } else {
+                        null
+                    }
+                )
             }
         """
     )
