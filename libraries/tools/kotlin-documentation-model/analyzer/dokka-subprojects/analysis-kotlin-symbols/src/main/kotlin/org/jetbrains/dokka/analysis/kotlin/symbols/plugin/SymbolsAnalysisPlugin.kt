@@ -9,6 +9,7 @@ import com.intellij.psi.PsiAnnotation
 import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.analysis.java.BreakingAbstractionKotlinLightMethodChecker
 import org.jetbrains.dokka.analysis.java.JavaAnalysisPlugin
+import org.jetbrains.dokka.analysis.kotlin.KotlinAnalysisPlugin
 import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.java.KotlinInheritDocTagContentProvider
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.java.DescriptorKotlinDocCommentCreator
@@ -117,8 +118,8 @@ public class SymbolsAnalysisPlugin : DokkaPlugin() {
         plugin<InternalKotlinAnalysisPlugin>().externalDocumentablesProvider providing ::SymbolExternalDocumentablesProvider
     }
 
-    internal val kotlinSampleProviderFactory by extending {
-        plugin<InternalKotlinAnalysisPlugin>().sampleProviderFactory providing ::KotlinSampleProviderFactory
+    internal val symbolSampleAnalysisEnvironmentCreator  by extending {
+        plugin<KotlinAnalysisPlugin>().sampleAnalysisEnvironmentCreator providing ::SymbolSampleAnalysisEnvironmentCreator
     }
 
     @OptIn(DokkaPluginApiPreview::class)

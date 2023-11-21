@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.analysis.test.api.jvm.kotlin
 
+import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.analysis.test.api.TestData
 import org.jetbrains.dokka.analysis.test.api.TestDataFile
 import org.jetbrains.dokka.analysis.test.api.TestProject
@@ -85,8 +86,9 @@ class KotlinJvmTestProject : TestProject, KtFileCreator, MdFileCreator, KotlinSa
                 ")"
     }
 
-    internal companion object {
-        internal const val DEFAULT_SOURCE_ROOT = "/src/main/kotlin"
+    companion object {
+        const val DEFAULT_SOURCE_ROOT = "/src/main/kotlin"
+        val DEFAULT_SOURCE_SET_ID = DokkaSourceSetID(scopeId = "project", sourceSetName = "kotlin")
     }
 }
 

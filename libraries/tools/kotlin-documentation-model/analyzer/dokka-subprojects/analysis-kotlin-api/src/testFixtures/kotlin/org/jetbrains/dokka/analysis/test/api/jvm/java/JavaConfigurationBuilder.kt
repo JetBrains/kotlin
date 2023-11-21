@@ -49,7 +49,7 @@ class JavaTestSourceSetBuilder : BaseTestDokkaSourceSetBuilder() {
         return TestDokkaSourceSet(
             analysisPlatform = Platform.jvm,
             displayName = "JavaJvmSourceSet",
-            sourceSetID = DokkaSourceSetID(scopeId = "project", sourceSetName = "java"),
+            sourceSetID = JavaTestProject.DEFAULT_SOURCE_SET_ID,
             dependentSourceSets = setOf(),
             sourceRoots = additionalSourceRoots + setOf(JavaTestProject.DEFAULT_SOURCE_ROOT),
             classpath = additionalClasspath, // TODO [beresnev] is kotlin jvm stdlib needed here?

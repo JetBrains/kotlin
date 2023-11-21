@@ -6,7 +6,7 @@ package org.jetbrains.dokka.analysis.test.api.analysis
 
 import org.jetbrains.dokka.analysis.kotlin.KotlinAnalysisPlugin
 import org.jetbrains.dokka.analysis.kotlin.internal.ModuleAndPackageDocumentationReader
-import org.jetbrains.dokka.analysis.kotlin.internal.SampleProviderFactory
+import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironmentCreator
 
 /**
  * Services exposed in [KotlinAnalysisPlugin] that are ready to be used.
@@ -15,6 +15,6 @@ import org.jetbrains.dokka.analysis.kotlin.internal.SampleProviderFactory
  * It is analogous to calling `context.plugin<KotlinAnalysisPlugin>().querySingle { serviceName }`.
  */
 class TestAnalysisServices(
-    val sampleProviderFactory: SampleProviderFactory,
+    val sampleAnalysisEnvironmentCreator: SampleAnalysisEnvironmentCreator,
     val moduleAndPackageDocumentationReader: ModuleAndPackageDocumentationReader
 )

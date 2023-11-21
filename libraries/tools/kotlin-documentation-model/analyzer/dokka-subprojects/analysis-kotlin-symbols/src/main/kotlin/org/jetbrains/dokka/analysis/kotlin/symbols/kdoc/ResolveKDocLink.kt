@@ -9,6 +9,7 @@ import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromSymbol
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
@@ -34,7 +35,23 @@ internal inline fun DRI?.ifUnresolved(action: () -> Unit): DRI? = this ?: run {
  *
  * @return [DRI] or null if the [link] is unresolved
  */
-internal fun KtAnalysisSession.resolveKDocTextLink(link: String, context: PsiElement? = null): DRI? {
+internal fun KtAnalysisSession.resolveKDocTextLinkDRI(link: String, context: PsiElement? = null): DRI? {
+    val kDocLink = createKDocLink(link, context)
+    return kDocLink?.let { resolveKDocLinkDRI(it) }
+}
+
+/**
+ * If the [link] is ambiguous, i.e. leads to more than one declaration,
+ * it returns deterministically any declaration.
+ *
+ * @return [KtSymbol] or null if the [link] is unresolved
+ */
+internal fun KtAnalysisSession.resolveKDocTextLinkSymbol(link: String, context: PsiElement? = null): KtSymbol? {
+    val kDocLink = createKDocLink(link, context)
+    return kDocLink?.let { resolveToSymbol(it) }
+}
+
+private fun KtAnalysisSession.createKDocLink(link: String, context: PsiElement? = null): KDocLink? {
     val psiFactory = context?.let { KtPsiFactory.contextual(it) } ?: KtPsiFactory(this.useSiteModule.project)
     val kDoc = psiFactory.createComment(
         """
@@ -43,8 +60,8 @@ internal fun KtAnalysisSession.resolveKDocTextLink(link: String, context: PsiEle
     */
  """.trimIndent()
     ) as? KDoc
-    val kDocLink = kDoc?.getDefaultSection()?.children?.filterIsInstance<KDocLink>()?.singleOrNull()
-    return kDocLink?.let { resolveKDocLink(it) }
+
+    return kDoc?.getDefaultSection()?.children?.filterIsInstance<KDocLink>()?.singleOrNull()
 }
 
 /**
@@ -53,9 +70,13 @@ internal fun KtAnalysisSession.resolveKDocTextLink(link: String, context: PsiEle
  *
  * @return [DRI] or null if the [link] is unresolved
  */
-internal fun KtAnalysisSession.resolveKDocLink(link: KDocLink): DRI? {
-    val lastNameSegment = link.children.filterIsInstance<KDocName>().lastOrNull()
-    val linkedSymbol = lastNameSegment?.mainReference?.resolveToSymbols()?.firstOrNull()
+internal fun KtAnalysisSession.resolveKDocLinkDRI(link: KDocLink): DRI? {
+    val linkedSymbol = resolveToSymbol(link)
     return if (linkedSymbol == null) null
     else getDRIFromSymbol(linkedSymbol)
+}
+
+private fun KtAnalysisSession.resolveToSymbol(kDocLink: KDocLink): KtSymbol? {
+    val lastNameSegment = kDocLink.children.filterIsInstance<KDocName>().lastOrNull()
+    return lastNameSegment?.mainReference?.resolveToSymbols()?.firstOrNull()
 }
