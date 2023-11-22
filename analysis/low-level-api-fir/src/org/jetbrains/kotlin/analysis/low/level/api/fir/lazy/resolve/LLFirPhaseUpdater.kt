@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isElementWhichShouldBeResolvedAsPartOfScript
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal object LLFirPhaseUpdater {
@@ -37,9 +36,9 @@ internal object LLFirPhaseUpdater {
                 is FirAnonymousInitializer -> target.body?.accept(PhaseUpdatingTransformer, newPhase)
                 is FirScript -> {
                     target.parameters.forEach { it.accept(PhaseUpdatingTransformer, newPhase) }
-                    for (statement in target.declarations) {
-                        if (!statement.isScriptStatement) continue
-                        statement.accept(PhaseUpdatingTransformer, newPhase)
+                    for (declaration in target.declarations) {
+                        if (!declaration.isElementWhichShouldBeResolvedAsPartOfScript) continue
+                        declaration.accept(PhaseUpdatingTransformer, newPhase)
                     }
                 }
 
@@ -84,7 +83,7 @@ private object PhaseUpdatingTransformer : FirVisitor<Unit, FirResolvePhase>() {
         if (element is FirElementWithResolveState) {
             if (element.resolvePhase >= data &&
                 element !is FirDefaultPropertyAccessor &&
-                !(element is FirStatement && element.isScriptDependentDeclaration)
+                !(element is FirDeclaration && element.isScriptDependentDeclaration)
             ) return
 
             @OptIn(ResolveStateAccess::class)

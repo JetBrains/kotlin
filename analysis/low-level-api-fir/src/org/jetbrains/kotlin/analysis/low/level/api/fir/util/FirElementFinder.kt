@@ -97,7 +97,7 @@ internal object FirElementFinder {
                     }
 
                     subDeclaration is FirScript -> {
-                        val scriptDeclarations = subDeclaration.declarations.asSequence().filterIsInstance<FirDeclaration>()
+                        val scriptDeclarations = subDeclaration.declarations.asSequence().filterNot { it is FirAnonymousInitializer }
                         if (find(scriptDeclarations.asIterable(), classIdPathIndex)) {
                             return true
                         }

@@ -27,7 +27,7 @@ internal class KtFirScriptParameterSymbolPointer(
             scriptPointer.restoreSymbol()?.firSymbol?.fir as? FirScript
         } ?: return null
 
-        val parameter = script.parameters.find { it.name == parameterName } as? FirProperty ?: return null
+        val parameter = script.parameters.find { it.name == parameterName } ?: return null
         return analysisSession.firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(parameter.symbol)
     }
 

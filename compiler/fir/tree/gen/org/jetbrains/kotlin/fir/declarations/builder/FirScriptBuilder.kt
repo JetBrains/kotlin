@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirScriptImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.name.Name
 
@@ -32,9 +31,9 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var name: Name
-    val declarations: MutableList<FirStatement> = mutableListOf()
+    val declarations: MutableList<FirDeclaration> = mutableListOf()
     lateinit var symbol: FirScriptSymbol
-    val parameters: MutableList<FirVariable> = mutableListOf()
+    val parameters: MutableList<FirProperty> = mutableListOf()
     val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     var resultPropertyName: Name? = null
 
@@ -47,7 +46,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
             origin,
             attributes,
             name,
-            declarations.toMutableOrEmpty(),
+            declarations,
             symbol,
             parameters,
             contextReceivers.toMutableOrEmpty(),

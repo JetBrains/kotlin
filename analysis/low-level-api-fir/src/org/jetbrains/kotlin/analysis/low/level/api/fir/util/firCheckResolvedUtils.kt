@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -108,11 +109,16 @@ internal fun checkBodyIsResolved(function: FirFunction) {
 }
 
 internal fun checkStatementsAreResolved(script: FirScript) {
-    for (statement in script.declarations) {
-        if (statement.isScriptStatement && statement is FirExpression) {
-            checkExpressionTypeIsResolved(statement.coneTypeOrNull, "script statement", script) {
-                withFirEntry("expression", statement)
-            }
+    fun checkExpression(expression: FirExpression) {
+        checkExpressionTypeIsResolved(expression.coneTypeOrNull, "script statement", script) {
+            withFirEntry("expression", expression)
+        }
+    }
+    for (declaration in script.declarations) {
+        if (declaration.isScriptDependentDeclaration) {
+            (declaration as? FirProperty)?.initializer?.let(::checkExpression)
+        } else if (declaration is FirAnonymousInitializer) {
+            declaration.body?.statements?.filterIsInstance<FirExpression>()?.forEach(::checkExpression)
         }
     }
 }

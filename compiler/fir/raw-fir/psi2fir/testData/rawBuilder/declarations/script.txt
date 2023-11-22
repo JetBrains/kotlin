@@ -37,28 +37,43 @@ FILE: script.kts
             ^build2 Builder#().apply#(action#)
         }
 
-        build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(123)
-            local final? class A : R|kotlin/Any| {
-                public? [ContainingClassKey=A] constructor(): R|<local>/A| {
-                    super<R|kotlin/Any|>()
+        init {
+            build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                version# = String(123)
+                local final? class A : R|kotlin/Any| {
+                    public? [ContainingClassKey=A] constructor(): R|<local>/A| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public? final? fun doo(): R|kotlin/Unit| {
+                    }
+
                 }
 
-                public? final? fun doo(): R|kotlin/Unit| {
-                }
-
+                execute#()
             }
-
-            execute#()
+            )
         }
-        )
-        +=(version#, IntegerLiteral(123))
+
+        init {
+            +=(version#, IntegerLiteral(123))
+        }
+
         public? final? val builder: <implicit> = build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             version# = String(321)
         }
         )
             public? get(): <implicit>
 
-        println#()
-        builder#.version# = String()
-        builder#.execute#()
+        init {
+            println#()
+        }
+
+        init {
+            builder#.version# = String()
+        }
+
+        init {
+            builder#.execute#()
+        }
+

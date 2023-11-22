@@ -518,19 +518,19 @@ class Fir2IrConverter(
                 addDeclarationToParentIfNeeded(irScript)
                 declarationStorage.withScope(irScript.symbol) {
                     irScript.parent = parent
-                    for (scriptStatement in declaration.declarations) {
-                        when (scriptStatement) {
+                    for (scriptDeclaration in declaration.declarations) {
+                        when (scriptDeclaration) {
                             is FirRegularClass -> {
-                                registerClassAndNestedClasses(scriptStatement, irScript)
-                                processClassAndNestedClassHeaders(scriptStatement)
+                                registerClassAndNestedClasses(scriptDeclaration, irScript)
+                                processClassAndNestedClassHeaders(scriptDeclaration)
                             }
-                            is FirTypeAlias -> classifierStorage.createAndCacheIrTypeAlias(scriptStatement, irScript)
+                            is FirTypeAlias -> classifierStorage.createAndCacheIrTypeAlias(scriptDeclaration, irScript)
                             else -> {}
                         }
                     }
-                    for (scriptStatement in declaration.declarations) {
-                        if (scriptStatement is FirDeclaration) {
-                            processMemberDeclaration(scriptStatement, containingClass = null, irScript, delegateFieldToPropertyMap = null)
+                    for (scriptDeclaration in declaration.declarations) {
+                        if (scriptDeclaration !is FirAnonymousInitializer) {
+                            processMemberDeclaration(scriptDeclaration, containingClass = null, irScript, delegateFieldToPropertyMap = null)
                         }
                     }
                 }

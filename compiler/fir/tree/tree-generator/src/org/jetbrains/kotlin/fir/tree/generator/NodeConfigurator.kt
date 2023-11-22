@@ -494,10 +494,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         script.configure {
             +name
-            +FieldList("declarations", statement, withReplace = true, useMutableOrEmpty = true).withTransform()
+            +declarations.withTransform().withReplace()
             +symbol("FirScriptSymbol")
-            +fieldList("parameters", variable, withReplace = false)
-            +fieldList(contextReceiver, useMutableOrEmpty = true)
+            +fieldList("parameters", property).withTransform()
+            +fieldList(contextReceiver, useMutableOrEmpty = true).withTransform()
             +field("resultPropertyName", nameType, nullable = true)
         }
 

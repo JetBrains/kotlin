@@ -10,11 +10,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isElementWhichShouldBeResolvedAsPartOfScript
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
@@ -88,9 +87,9 @@ internal abstract class LLFirAbstractBodyTargetResolver(
             script.transformDeclarations(
                 transformer = object : FirTransformer<Any?>() {
                     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
-                        if (element !is FirStatement || !element.isScriptStatement) return element
+                        if (element !is FirDeclaration || !element.isElementWhichShouldBeResolvedAsPartOfScript) return element
 
-                        transformer.firResolveContextCollector?.addStatementContext(element, transformer.context)
+                        transformer.firResolveContextCollector?.addDeclarationContext(element, transformer.context)
                         return element.transformSingle(transformer, ResolutionMode.ContextIndependent)
                     }
                 },

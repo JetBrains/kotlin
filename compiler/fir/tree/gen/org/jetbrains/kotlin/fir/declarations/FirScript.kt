@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -30,9 +29,9 @@ abstract class FirScript : FirDeclaration(), FirControlFlowGraphOwner {
     abstract override val attributes: FirDeclarationAttributes
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val name: Name
-    abstract val declarations: List<FirStatement>
+    abstract val declarations: List<FirDeclaration>
     abstract override val symbol: FirScriptSymbol
-    abstract val parameters: List<FirVariable>
+    abstract val parameters: List<FirProperty>
     abstract val contextReceivers: List<FirContextReceiver>
     abstract val resultPropertyName: Name?
 
@@ -47,9 +46,13 @@ abstract class FirScript : FirDeclaration(), FirControlFlowGraphOwner {
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
-    abstract fun replaceDeclarations(newDeclarations: List<FirStatement>)
+    abstract fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirScript
 
     abstract fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirScript
+
+    abstract fun <D> transformParameters(transformer: FirTransformer<D>, data: D): FirScript
+
+    abstract fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirScript
 }
