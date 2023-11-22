@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.js.config
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
+
 enum class WasmTarget {
     JS,
     WASI;
@@ -17,3 +19,6 @@ enum class WasmTarget {
         }
     }
 }
+
+val CompilerConfiguration.wasmTarget: WasmTarget
+    get() = get(JSConfigurationKeys.WASM_TARGET, /* defaultValue = */ WasmTarget.JS)

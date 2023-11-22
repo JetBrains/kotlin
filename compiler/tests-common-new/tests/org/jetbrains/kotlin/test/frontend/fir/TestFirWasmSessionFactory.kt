@@ -57,7 +57,7 @@ object TestFirWasmSessionFactory {
 
     fun createModuleBasedSession(
         mainModuleData: FirModuleData, sessionProvider: FirProjectSessionProvider, extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings, lookupTracker: LookupTracker?,
+        languageVersionSettings: LanguageVersionSettings, wasmTarget: WasmTarget, lookupTracker: LookupTracker?,
         registerExtraComponents: ((FirSession) -> Unit),
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
@@ -66,6 +66,7 @@ object TestFirWasmSessionFactory {
             sessionProvider,
             extensionRegistrars,
             languageVersionSettings,
+            wasmTarget,
             lookupTracker,
             icData = null,
             registerExtraComponents,

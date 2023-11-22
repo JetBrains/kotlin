@@ -13,12 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression.FirWasmReified
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsCodeConstantArgumentChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsQualifierChecker
 
-object WasmExpressionCheckers : ExpressionCheckers() {
-    override val annotationCallCheckers: Set<FirAnnotationCallChecker>
-        get() = setOf(
-            FirJsQualifierChecker,
-        )
-
+object WasmBaseExpressionCheckers : ExpressionCheckers() {
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
             FirWasmDefinedExternallyCallChecker,
@@ -27,8 +22,19 @@ object WasmExpressionCheckers : ExpressionCheckers() {
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>
         get() = setOf(
+            FirWasmReifiedExternalChecker
+        )
+}
+
+object WasmJsExpressionCheckers : ExpressionCheckers() {
+    override val annotationCallCheckers: Set<FirAnnotationCallChecker>
+        get() = setOf(
+            FirJsQualifierChecker,
+        )
+
+    override val functionCallCheckers: Set<FirFunctionCallChecker>
+        get() = setOf(
             FirJsCodeConstantArgumentChecker,
             FirWasmJsCodeCallChecker,
-            FirWasmReifiedExternalChecker
         )
 }

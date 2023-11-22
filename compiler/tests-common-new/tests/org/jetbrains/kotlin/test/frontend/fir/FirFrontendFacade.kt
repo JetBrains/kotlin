@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.WasmTarget
+import org.jetbrains.kotlin.js.config.wasmTarget
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -398,6 +399,7 @@ open class FirFrontendFacade(
                     sessionProvider,
                     extensionRegistrars,
                     languageVersionSettings,
+                    testServices.compilerConfigurationProvider.getCompilerConfiguration(module).wasmTarget,
                     null,
                     registerExtraComponents = ::registerExtraComponents,
                     sessionConfigurator,

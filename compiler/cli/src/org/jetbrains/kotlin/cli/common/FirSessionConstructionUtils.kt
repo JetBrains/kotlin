@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.WasmTarget
+import org.jetbrains.kotlin.js.config.wasmTarget
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
@@ -261,6 +262,7 @@ fun <F> prepareWasmSessions(
             sessionProvider,
             extensionRegistrars,
             configuration.languageVersionSettings,
+            configuration.wasmTarget,
             lookupTracker,
             icData = icData,
             registerExtraComponents = {},

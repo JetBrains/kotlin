@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsExportAnnotationChecker
 
-object WasmDeclarationCheckers : DeclarationCheckers() {
+object WasmBaseDeclarationCheckers : DeclarationCheckers() {
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
             FirWasmExternalInheritanceChecker,
@@ -17,13 +17,26 @@ object WasmDeclarationCheckers : DeclarationCheckers() {
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
-            FirWasmJsInteropTypesChecker,
             FirWasmImportAnnotationChecker,
             FirWasmExportAnnotationChecker,
             FirWasmExternalChecker,
+        )
+}
+
+object WasmJsDeclarationCheckers : DeclarationCheckers() {
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
+        get() = setOf(
+            FirWasmJsInteropTypesChecker,
             FirWasmJsFunAnnotationChecker,
             FirJsExportAnnotationChecker,
             FirWasmJsModuleChecker,
             FirWasmExternalFileChecker,
+        )
+}
+
+object WasmWasiDeclarationCheckers : DeclarationCheckers() {
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
+        get() = setOf(
+            FirWasmWasiExternalDeclarationChecker,
         )
 }

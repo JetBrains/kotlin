@@ -65,4 +65,9 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
             parameter<ConeKotlinType>("type")
         }
     }
+
+    val WASI by object : DiagnosticGroup("WASI") {
+        val WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION by error<KtElement>()
+        val WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT by error<KtElement>()
+    }
 }

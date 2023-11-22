@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.wasm.test.*
 import org.jetbrains.kotlin.wasm.test.diagnostics.AbstractDiagnosticsWasmTest
 import org.jetbrains.kotlin.wasm.test.diagnostics.AbstractDiagnosticsFirWasmTest
+import org.jetbrains.kotlin.wasm.test.diagnostics.AbstractDiagnosticsFirWasmWasiTest
+import org.jetbrains.kotlin.wasm.test.diagnostics.AbstractDiagnosticsWasmWasiTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -35,6 +37,14 @@ fun main(args: Array<String>) {
 
             testClass<AbstractDiagnosticsFirWasmTest> {
                 model("diagnostics/wasmTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+
+            testClass<AbstractDiagnosticsWasmWasiTest> {
+                model("diagnostics/wasmWasiTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+
+            testClass<AbstractDiagnosticsFirWasmWasiTest> {
+                model("diagnostics/wasmWasiTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
 

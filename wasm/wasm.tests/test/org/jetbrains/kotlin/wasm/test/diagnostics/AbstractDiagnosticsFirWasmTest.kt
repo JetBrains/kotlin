@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.diagnostics
 
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
@@ -16,13 +17,19 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractFirWasmDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
+abstract class AbstractFirWasmDiagnosticTestBase(
+    val parser: FirParser,
+    private val wasmEnvironmentConfigurator: Constructor<AbstractEnvironmentConfigurator>,
+) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -37,7 +44,7 @@ abstract class AbstractFirWasmDiagnosticTestBase(val parser: FirParser) : Abstra
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::WasmEnvironmentConfiguratorJs,
+            wasmEnvironmentConfigurator,
         )
 
         useAdditionalSourceProviders(
@@ -61,4 +68,5 @@ abstract class AbstractFirWasmDiagnosticTestBase(val parser: FirParser) : Abstra
     }
 }
 
-abstract class AbstractDiagnosticsFirWasmTest : AbstractFirWasmDiagnosticTestBase(FirParser.Psi)
+abstract class AbstractDiagnosticsFirWasmTest : AbstractFirWasmDiagnosticTestBase(FirParser.Psi, ::WasmEnvironmentConfiguratorJs)
+abstract class AbstractDiagnosticsFirWasmWasiTest : AbstractFirWasmDiagnosticTestBase(FirParser.Psi, ::WasmEnvironmentConfiguratorWasi)

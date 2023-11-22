@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFuncti
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 
@@ -27,6 +28,7 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        wasmTarget: WasmTarget,
         lookupTracker: LookupTracker?,
         icData: KlibIcData? = null,
         registerExtraComponents: ((FirSession) -> Unit) = {},
@@ -45,7 +47,7 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
                 it.registerDefaultComponents()
                 registerExtraComponents(it)
             },
-            registerExtraCheckers = { it.registerWasmCheckers() },
+            registerExtraCheckers = { it.registerWasmCheckers(wasmTarget) },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(

@@ -48,6 +48,10 @@ object FirWasmErrors {
     val WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
+    // WASI
+    val WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION by error0<KtElement>()
+    val WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT by error0<KtElement>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirWasmErrorsDefaultMessages)
     }

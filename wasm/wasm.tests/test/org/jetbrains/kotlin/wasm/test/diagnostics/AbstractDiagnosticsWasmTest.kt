@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.diagnostics
 
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.classicFrontendStep
@@ -15,14 +16,18 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaIn
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
+import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractDiagnosticsWasmTest : AbstractKotlinCompilerTest() {
+abstract class AbstractDiagnosticsWasmTestBase(
+    private val wasmEnvironmentConfigurator: Constructor<AbstractEnvironmentConfigurator>,
+) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
@@ -38,7 +43,7 @@ abstract class AbstractDiagnosticsWasmTest : AbstractKotlinCompilerTest() {
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::WasmEnvironmentConfiguratorJs,
+            wasmEnvironmentConfigurator,
         )
 
         useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
@@ -56,3 +61,7 @@ abstract class AbstractDiagnosticsWasmTest : AbstractKotlinCompilerTest() {
         }
     }
 }
+
+abstract class AbstractDiagnosticsWasmTest : AbstractDiagnosticsWasmTestBase(::WasmEnvironmentConfiguratorJs)
+abstract class AbstractDiagnosticsWasmWasiTest : AbstractDiagnosticsWasmTestBase(::WasmEnvironmentConfiguratorWasi)
+
