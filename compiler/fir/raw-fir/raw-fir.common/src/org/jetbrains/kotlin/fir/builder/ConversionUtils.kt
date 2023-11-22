@@ -612,8 +612,19 @@ fun FirQualifiedAccessExpression.createSafeCall(receiver: FirExpression, source:
         }
         this.source = receiver.source?.fakeElement(KtFakeSourceElementKind.CheckedSafeCallSubject)
     }
-
-    replaceExplicitReceiver(checkedSafeCallSubject)
+    // If an `invoke` function from a functional type expects a
+    // receiver, it's still defined as the first value parameter.
+    // A construction like `1.(fun Int.() = 1)()` means we're calling
+    // `Function1<Int, Unit>.invoke(Int)`.
+    if (this is FirImplicitInvokeCall) {
+        val newArguments = buildArgumentList {
+            arguments.add(checkedSafeCallSubject)
+            arguments.addAll(this@createSafeCall.arguments)
+        }
+        replaceArgumentList(newArguments)
+    } else {
+        replaceExplicitReceiver(checkedSafeCallSubject)
+    }
     return buildSafeCallExpression {
         this.receiver = receiver
         @OptIn(FirContractViolation::class)

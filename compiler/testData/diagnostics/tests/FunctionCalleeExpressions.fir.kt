@@ -81,6 +81,6 @@ fun test() {
     val i : Int? = null
     i.<!UNSAFE_IMPLICIT_INVOKE_CALL!>(fun Int.() = 1)<!>();
     <!INAPPLICABLE_CANDIDATE!>{}<!><Int>()
-    1<!UNNECESSARY_SAFE_CALL!>?.<!>(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)()
+    1<!UNNECESSARY_SAFE_CALL!>?.<!>(fun Int.() = 1)()
     1.<!NO_RECEIVER_ALLOWED!>{}<!>()
 }
