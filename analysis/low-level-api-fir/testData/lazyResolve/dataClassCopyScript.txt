@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataClassCopyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
+        public? final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class DataClass : R|kotlin/Any| {
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -82,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataClassCopyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
+        public? final? data [ResolvedTo(COMPANION_GENERATION)] class DataClass : R|kotlin/Any| {
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=DataClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataClassCopyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=DataClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -212,7 +212,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-dataClassCopyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -238,7 +238,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-dataClassCopyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=DataClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -264,7 +264,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-dataClassCopyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -290,7 +290,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-dataClassCopyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 LAZY_super<R|kotlin/Any|>
             }

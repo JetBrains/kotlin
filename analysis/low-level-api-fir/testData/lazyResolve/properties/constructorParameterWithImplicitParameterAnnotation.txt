@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] get(): Int
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Sub : R|kotlin/Any| {
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Sub : R|kotlin/Any| {
         public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Sub] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/Sub.prop] @ParameterAnnotation[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] get(): Int
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Sub : R|kotlin/Any| {
+    public? final? [ResolvedTo(COMPANION_GENERATION)] class Sub : R|kotlin/Any| {
         public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Sub] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/Sub.prop] @ParameterAnnotation[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -177,7 +177,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] get(): Int
 
     }
-    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Sub : R|kotlin/Any| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Sub] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -201,7 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] get(): Int
 
     }
-    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(CONTRACTS)] class Sub : R|kotlin/Any| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] get(): Int
 
     }
-    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Sub : R|kotlin/Any| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Sub] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -249,7 +249,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
             public [ResolvedTo(STATUS)] [ContainingClassKey=ParameterAnnotation] get(): R|kotlin/Int|
 
     }
-    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Sub : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](i = R|/konstant|) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
             public [ResolvedTo(STATUS)] [ContainingClassKey=ParameterAnnotation] get(): R|kotlin/Int|
 
     }
-    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Sub : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](i = R|/konstant|) prop: R|kotlin/Int|): R|Sub| {
             super<R|kotlin/Any|>()
         }

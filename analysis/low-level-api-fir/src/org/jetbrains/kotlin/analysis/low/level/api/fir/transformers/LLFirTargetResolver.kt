@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -86,7 +87,8 @@ internal abstract class LLFirTargetResolver(
             }
 
             // delegate field shares the return type with the containing class
-            target is FirField && target.origin == FirDeclarationOrigin.Synthetic.DelegateField -> {
+            // constructor shares types inside delegation call with the containing class
+            target is FirField && target.origin == FirDeclarationOrigin.Synthetic.DelegateField || target is FirConstructor -> {
                 containingClass(target).lazyResolveToPhase(resolverPhase)
             }
         }

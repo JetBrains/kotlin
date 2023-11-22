@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallFromSingleSecondaryCo
         }
 
     }
-    public final [ResolvedTo(STATUS)] class B : R|A| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class B : R|A| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|B| {
             super<R|A|>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 R|/foo|(R|<local>/i|)

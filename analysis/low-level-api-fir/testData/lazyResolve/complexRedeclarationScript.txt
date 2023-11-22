@@ -301,7 +301,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class I : P {
+            public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class I : P {
                 public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<P>
                 }
@@ -406,7 +406,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class I : P {
+            public? final? [ResolvedTo(COMPANION_GENERATION)] class I : P {
                 public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<P>
                 }
@@ -826,7 +826,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] class I : R|P| {
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class I : R|P| {
                 public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
@@ -931,7 +931,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] class I : R|P| {
+            public final [ResolvedTo(CONTRACTS)] class I : R|P| {
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
@@ -1036,7 +1036,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] class I : R|P| {
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class I : R|P| {
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
@@ -1141,7 +1141,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] class I : R|P| {
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class I : R|P| {
                 public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
@@ -1246,7 +1246,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] class I : R|P| {
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class I : R|P| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor(): R|B.I| {
                     super<R|P|>()
                 }
@@ -1388,3 +1388,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] complexRedeclarationScript.kts
             }
 
         }
+

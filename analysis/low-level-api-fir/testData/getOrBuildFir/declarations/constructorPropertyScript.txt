@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorPropertyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-constructorPropertyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Abc : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Abc : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Abc] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Abc.i] i: R|kotlin/Int| = Int(4)): R|Abc| {
                 super<R|kotlin/Any|>()
             }

@@ -7,7 +7,7 @@ R|/A.prop|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall3.kt
-    public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class A : R|kotlin/Any| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] init: R|A.() -> kotlin/Unit|): R|A| {
             LAZY_super<R|kotlin/Any|>
         }

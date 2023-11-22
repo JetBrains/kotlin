@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
+        public? final? [ResolvedTo(COMPANION_GENERATION)] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Problem : R|kotlin/Any| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(CONTRACTS)] class Problem : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Problem : R|kotlin/Any| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -164,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Problem : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Problem : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
@@ -205,3 +205,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructorScript.kts
             }
 
         }
+

@@ -25,8 +25,8 @@ FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromSuperType.kt
         }
 
     }
-    public final [ResolvedTo(STATUS)] class Outer<[ResolvedTo(STATUS)] MyParam> : R|test/Base<MyParam>| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(STATUS)] MyParam>(): R|test/Outer<MyParam>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Outer<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam> : R|test/Base<MyParam>| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam>(): R|test/Outer<MyParam>| {
             super<R|test/Base<MyParam>|>()
         }
 

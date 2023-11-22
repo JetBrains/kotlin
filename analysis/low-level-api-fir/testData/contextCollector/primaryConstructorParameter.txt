@@ -19,7 +19,7 @@ Tower Data Context:
                 Type: Foo
 
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter.kt
-    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|kotlin/Long| = LAZY_EXPRESSION): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }

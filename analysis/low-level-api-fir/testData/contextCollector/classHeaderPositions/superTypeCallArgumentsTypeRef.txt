@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallArgumentsTypeRef.kt
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> materialize(): R|T| {
         ^materialize TODO#()
     }
-    public final [ResolvedTo(STATUS)] class Child : R|test/Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Child : R|test/Base| {
         public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] primaryConstructorParameter: R|test/Base.Nested|): R|test/Child| {
             super<R|test/Base|>(R|test/materialize|<R|test/Base.Nested|>())
         }

@@ -24,16 +24,16 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
         public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val outer: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>|): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>|

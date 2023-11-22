@@ -31,13 +31,13 @@ Tower Data Context:
                 FirTypeParameterSymbol T : <ERROR TYPE REF: Symbol not found for MyParam>
 
 FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromNested_typeBound.kt
-    public final [ResolvedTo(STATUS)] class Outer<[ResolvedTo(STATUS)] MyParam> : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(STATUS)] MyParam>(): R|test/Outer<MyParam>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Outer<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam>(): R|test/Outer<MyParam>| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(STATUS)] class Nested<[ResolvedTo(STATUS)] T : <ERROR TYPE REF: Symbol not found for MyParam>> : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(STATUS)] T : <ERROR TYPE REF: Symbol not found for MyParam>>(): R|test/Outer.Nested<T>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Nested<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : <ERROR TYPE REF: Symbol not found for MyParam>> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : <ERROR TYPE REF: Symbol not found for MyParam>>(): R|test/Outer.Nested<T>| {
                 super<R|kotlin/Any|>()
             }
 

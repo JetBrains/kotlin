@@ -24,12 +24,12 @@ Tower Data Context:
                 FirValueParameterSymbol name: R|kotlin/String| = String(name)
 
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter_initializerExpression.kt
-    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class Base : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Base| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(STATUS)] class Nested : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Nested : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Base.Nested| {
                 super<R|kotlin/Any|>()
             }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter_initializerExpression.kt
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(STATUS)] class Child : R|test/Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Child : R|test/Base| {
         public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/String| = String(name)): R|test/Child| {
             super<R|test/Base|>()
         }

@@ -7,7 +7,7 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] constructorProperty.kt
-    public final [ResolvedTo(STATUS)] class Abc : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Abc : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Abc] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Abc.i] i: R|kotlin/Int| = Int(4)): R|Abc| {
             super<R|kotlin/Any|>()
         }

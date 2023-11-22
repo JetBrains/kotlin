@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorValueParameterScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-secondaryConstructorValueParameterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class X : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }

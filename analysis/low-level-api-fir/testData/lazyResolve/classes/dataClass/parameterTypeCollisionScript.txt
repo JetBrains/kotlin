@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
         }
 
-        public? final? data [ResolvedTo(RAW_FIR)] class MyDataClass : R|kotlin/Any| {
+        public? final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyDataClass : R|kotlin/Any| {
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: MyClass): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
         }
 
-        public? final? data [ResolvedTo(RAW_FIR)] class MyDataClass : R|kotlin/Any| {
+        public? final? data [ResolvedTo(COMPANION_GENERATION)] class MyDataClass : R|kotlin/Any| {
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: MyClass): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
         }
 
-        public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyDataClass : R|kotlin/Any| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
         }
 
-        public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] class MyDataClass : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -326,7 +326,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
         }
 
-        public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyDataClass : R|kotlin/Any| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -361,7 +361,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
         }
 
-        public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyDataClass : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -396,7 +396,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionScript.kts
 
         }
 
-        public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyDataClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|one/two/MyDataClass.MyClass|): R|one/two/MyDataClass| {
                 super<R|kotlin/Any|>()
             }
@@ -451,3 +451,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] parameterTypeCollisionScript.kts
             public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] prop: R|one/two/MyDataClass.MyClass| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
         }
+

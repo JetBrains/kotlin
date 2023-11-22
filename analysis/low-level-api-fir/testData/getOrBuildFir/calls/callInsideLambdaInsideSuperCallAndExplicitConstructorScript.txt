@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallAndExplicitConstructo
 
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|B| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|B| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|B|>(Int(1), [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     R|/foo|()

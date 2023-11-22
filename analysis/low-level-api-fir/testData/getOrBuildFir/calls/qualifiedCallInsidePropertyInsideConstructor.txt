@@ -7,7 +7,7 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsidePropertyInsideConstructor.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.i] i: R|() -> kotlin/Unit| = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
                 ^foo <Unresolved name: B>#.<Unresolved name: prop>#.R|kotlin/toString|()

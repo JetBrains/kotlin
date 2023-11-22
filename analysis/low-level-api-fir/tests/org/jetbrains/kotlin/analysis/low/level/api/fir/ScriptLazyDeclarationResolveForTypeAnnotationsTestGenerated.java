@@ -114,6 +114,12 @@ public class ScriptLazyDeclarationResolveForTypeAnnotationsTestGenerated extends
         public void testReferenceWithConstructorScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/constructor/referenceWithConstructorScript.kts");
         }
+
+        @Test
+        @TestMetadata("secondaryConstructorScript.kts")
+        public void testSecondaryConstructorScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/constructor/secondaryConstructorScript.kts");
+        }
     }
 
     @Nested

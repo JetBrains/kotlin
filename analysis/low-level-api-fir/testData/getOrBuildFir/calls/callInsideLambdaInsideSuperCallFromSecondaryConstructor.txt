@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallFromSecondaryConstruc
         }
 
     }
-    public final [ResolvedTo(STATUS)] class B : R|A| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class B : R|A| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|B| {
             LAZY_super<<implicit>>
         }

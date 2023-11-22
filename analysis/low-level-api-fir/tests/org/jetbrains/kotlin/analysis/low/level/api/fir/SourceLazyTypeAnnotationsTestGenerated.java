@@ -138,6 +138,12 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
         public void testReferenceWithConstructor() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/constructor/referenceWithConstructor.kt");
         }
+
+        @Test
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/constructor/secondaryConstructor.kt");
+        }
     }
 
     @Nested

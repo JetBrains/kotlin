@@ -7,7 +7,7 @@ this<R|A|>(Int(1))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] constructorDelegationThisCall.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
             LAZY_super<R|kotlin/Any|>
         }

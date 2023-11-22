@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallArgumentsExpression.kt
         }
 
     }
-    public final [ResolvedTo(STATUS)] class Child : R|test/Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Child : R|test/Base| {
         public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] primaryConstructorParameter: R|test/Base.Nested|): R|test/Child| {
             super<R|test/Base|>(R|<local>/primaryConstructorParameter|)
         }

@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
         }
 
-        public? final? data [ResolvedTo(RAW_FIR)] class MyDataClass : R|kotlin/Any| {
+        public? final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyDataClass : R|kotlin/Any| {
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -213,7 +213,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
         }
 
-        public? final? data [ResolvedTo(RAW_FIR)] class MyDataClass : R|kotlin/Any| {
+        public? final? data [ResolvedTo(COMPANION_GENERATION)] class MyDataClass : R|kotlin/Any| {
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -465,7 +465,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
         }
 
-        public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyDataClass : R|kotlin/Any| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(IntegerLiteral(0).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(IntegerLiteral(3).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>>|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -528,7 +528,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
         }
 
-        public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] class MyDataClass : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(IntegerLiteral(0).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(IntegerLiteral(3).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>>|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -591,7 +591,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
         }
 
-        public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyDataClass : R|kotlin/Any| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(IntegerLiteral(0).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(IntegerLiteral(3).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>>|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -654,7 +654,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
         }
 
-        public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyDataClass : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -717,7 +717,7 @@ FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
 
         }
 
-        public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyDataClass : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -815,3 +815,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] component1TypeCollisionAndAnnotationsScript.kts
             public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] prop1: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop1|, [ResolvedTo(BODY_RESOLVE)] prop2: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop2|): R|one/two/MyDataClass|
 
         }
+

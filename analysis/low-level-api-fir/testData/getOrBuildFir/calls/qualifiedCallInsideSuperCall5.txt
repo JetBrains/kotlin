@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall5.kt
         }
 
     }
-    public final [ResolvedTo(STATUS)] class G : R|A| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class G : R|A| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=G] error_constructor(): R|G| {
             LAZY_super<R|A|>
         }

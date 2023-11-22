@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kts
         public final [ResolvedTo(BODY_RESOLVE)] val before_Val: R|kotlin/Int| = Int(10)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(STATUS)] class Before_OtherClass : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Before_OtherClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Before_OtherClass| {
                 super<R|kotlin/Any|>()
             }

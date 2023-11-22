@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class MyClass : Base<Base<Int>> {
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : Base<Base<Int>> {
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<Base<Int>>>
             }
@@ -95,7 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class MyClass : Base<Base<Int>> {
+        public? final? [ResolvedTo(COMPANION_GENERATION)] class MyClass : Base<Base<Int>> {
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<Base<Int>>>
             }
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<R|second/Base<second/Base<kotlin/Int>>|>
             }
@@ -235,7 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(CONTRACTS)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<R|second/Base<second/Base<kotlin/Int>>|>
             }
@@ -263,7 +263,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<R|second/Base<second/Base<kotlin/Int>>|>
             }
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<R|second/Base<second/Base<kotlin/Int>>|>
             }
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 super<R|second/Base<second/Base<kotlin/Int>>|>()
             }
