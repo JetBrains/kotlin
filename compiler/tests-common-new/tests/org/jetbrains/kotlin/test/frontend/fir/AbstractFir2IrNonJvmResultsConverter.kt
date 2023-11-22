@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.libraryProvider
-import org.jetbrains.kotlin.utils.metadataVersion
 
 abstract class AbstractFir2IrNonJvmResultsConverter(
     testServices: TestServices
@@ -82,7 +81,7 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
             inlineConstTracker = null,
             expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
             allowNonCachedDeclarations = false,
-            useIrFakeOverrideBuilder = module.shouldUseIrFakeOverrideBuilderInConvertToIr()
+            useIrFakeOverrideBuilder = module.shouldUseIrFakeOverrideBuilder()
         )
     }
 

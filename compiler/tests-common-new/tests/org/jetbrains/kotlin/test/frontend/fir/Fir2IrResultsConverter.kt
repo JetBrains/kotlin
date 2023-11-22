@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -17,13 +16,8 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-/**
- * In multi-platform projects this option is passed to IrActualizer instead
- * @see [IrActualizerAndPluginsFacade]
- */
-fun TestModule.shouldUseIrFakeOverrideBuilderInConvertToIr(): Boolean {
-    return CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in directives &&
-            !languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+fun TestModule.shouldUseIrFakeOverrideBuilder(): Boolean {
+    return CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in directives
 }
 
 class Fir2IrResultsConverter(

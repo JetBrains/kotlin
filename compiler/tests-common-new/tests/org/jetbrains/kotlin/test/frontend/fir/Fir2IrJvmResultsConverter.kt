@@ -99,7 +99,7 @@ class Fir2IrJvmResultsConverter(
             inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
             expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
             allowNonCachedDeclarations = false,
-            useIrFakeOverrideBuilder = module.shouldUseIrFakeOverrideBuilderInConvertToIr(),
+            useIrFakeOverrideBuilder = module.shouldUseIrFakeOverrideBuilder(),
         )
 
         val fir2irResult = inputArtifact.toFirResult().convertToIrAndActualize(
