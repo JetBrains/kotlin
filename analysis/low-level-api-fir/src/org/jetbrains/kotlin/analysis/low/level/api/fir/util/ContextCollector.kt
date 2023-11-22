@@ -332,6 +332,14 @@ private class ContextCollectorVisitor(
         }
     }
 
+    override fun visitCodeFragment(codeFragment: FirCodeFragment) {
+        codeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
+        context.withCodeFragment(codeFragment, holder) {
+            super.visitCodeFragment(codeFragment)
+        }
+    }
+
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
         dumpContext(annotationCall, ContextKind.SELF)
 
