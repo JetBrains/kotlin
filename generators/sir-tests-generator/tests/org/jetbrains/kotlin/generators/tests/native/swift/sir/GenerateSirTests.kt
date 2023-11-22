@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tests.native.swift.sir
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.sir.analysisapi.AbstractKotlinSirContextTest
 import org.jetbrains.kotlin.sir.bridge.AbstractKotlinSirBridgeTest
+import org.jetbrains.kotlin.swift.frontend.AbstractSwiftExportFrontendTest
 
 
 fun main() {
@@ -31,6 +32,16 @@ fun main() {
                 suiteTestClassName = "SirCompilerBridgeTestGenerated"
             ) {
                 model("", extension = null, recursive = false)
+            }
+        }
+        testGroup(
+            "native/swift/swift-export-frontend/tests-gen",
+            "native/swift/swift-export-frontend/testData"
+        ) {
+            testClass<AbstractSwiftExportFrontendTest>(
+                suiteTestClassName = "SwiftExportFrontendTest"
+            ) {
+                model("", pattern = "^([^_](.+)).kt$", recursive = false)
             }
         }
     }

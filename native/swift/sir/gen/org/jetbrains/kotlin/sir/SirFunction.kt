@@ -21,6 +21,7 @@ abstract class SirFunction : SirElementBase(), SirCallable {
     abstract val name: String
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType
+    abstract var body: SirFunctionBody?
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =
         visitor.visitFunction(this, data)

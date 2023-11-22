@@ -37,9 +37,16 @@ object SirAsSwiftSourcesPrinter : SirVisitor<Boolean, StringBuilder>() {
         append(")")
         append(" -> ")
         ParameterPrinter.visitType(function.returnType, this)
-        append(" { fatalError() }")
+        appendLine(" {")
+        appendLine("  ${printBody(function.body)}")
+        appendLine("}")
         true
     }
+}
+
+private fun printBody(body: SirFunctionBody?): String {
+    if (body == null) return "fatalError()"
+    return "return ${body.generateCallSite()}"
 }
 
 private object ParameterPrinter : SirVisitor<Boolean, StringBuilder>() {

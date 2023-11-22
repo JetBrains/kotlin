@@ -401,6 +401,7 @@ include ":native:swift:sir",
         ":native:swift:sir-printer",
         ":native:swift:sir-analysis-api",
         ":native:swift:sir-compiler-bridge",
+        ":native:swift:swift-export-frontend",
         ":generators:sir-tests-generator"
 
 void intellij(String imlPath) {
