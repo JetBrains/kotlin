@@ -97,7 +97,7 @@ class BirTypeSubstitutor(
     override fun isEmptySubstitution(): Boolean = substitution.isEmpty()
 }
 
-class BirCapturedTypeSubstitutor(
+internal class BirCapturedTypeSubstitutor(
     typeParameters: List<BirTypeParameterSymbol>,
     typeArguments: List<BirTypeArgument>,
     capturedTypes: List<BirCapturedType?>,

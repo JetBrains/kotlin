@@ -17,10 +17,6 @@ import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
  * however this could lead to a situation where we forget to set return type sometimes. This would result in crashes at unexpected moments,
  * especially in Kotlin/JS where function return types are not present in the resulting binary files.
  */
-object BirUninitializedType : BirType() {
+data object BirUninitializedType : BirType() {
     override val annotations: List<BirConstructorCall> = emptyList()
-
-    override fun equals(other: Any?): Boolean = this === other
-
-    override fun hashCode(): Int = System.identityHashCode(this)
 }

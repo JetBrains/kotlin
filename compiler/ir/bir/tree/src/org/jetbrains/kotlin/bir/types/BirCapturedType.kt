@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.bir.types
 import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.symbols.BirClassifierSymbol
+import org.jetbrains.kotlin.bir.util.render
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -21,10 +22,6 @@ class BirCapturedType(
     projection: BirTypeArgument,
     typeParameter: BirTypeParameter
 ) : BirSimpleType(null), CapturedTypeMarker {
-
-    override val variance: Variance
-        get() = TODO("Not yet implemented")
-
     val constructor: Constructor = Constructor(projection, typeParameter)
 
     override val classifier: BirClassifierSymbol get() = error("Captured Type does not have a classifier")
@@ -33,24 +30,18 @@ class BirCapturedType(
     override val nullability: SimpleTypeNullability get() = SimpleTypeNullability.DEFINITELY_NOT_NULL
     override val annotations: List<BirConstructorCall> get() = emptyList()
 
-    override fun equals(other: Any?): Boolean {
-        return other is BirCapturedType
-                && captureStatus == other.captureStatus
-                && lowerType == other.lowerType
-                && constructor === other.constructor
-    }
+    override fun equals(other: Any?): Boolean = this === other
 
-    override fun hashCode(): Int {
-        return (captureStatus.hashCode() * 31 + (lowerType?.hashCode() ?: 0)) * 31 + constructor.hashCode()
-    }
+    override fun hashCode(): Int = System.identityHashCode(this)
+
+    override fun toString(): String = "IrCapturedType(${constructor.argument.render()}"
 
     data class Constructor(val argument: BirTypeArgument, val typeParameter: BirTypeParameter) : CapturedTypeConstructorMarker {
-        private var _superTypes: List<BirType> = emptyList()
-
-        val superTypes: List<BirType> get() = _superTypes
+        var superTypes: List<BirType> = emptyList()
+            private set
 
         fun initSuperTypes(superTypes: List<BirType>) {
-            _superTypes = superTypes
+            this.superTypes = superTypes
         }
     }
 }

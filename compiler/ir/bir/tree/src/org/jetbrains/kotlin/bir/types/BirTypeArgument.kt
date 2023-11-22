@@ -19,11 +19,7 @@ sealed interface BirTypeArgument : TypeArgumentMarker {
     override fun hashCode(): Int
 }
 
-object BirStarProjection : BirTypeArgument {
-    override fun equals(other: Any?): Boolean = this === other
-
-    override fun hashCode(): Int = System.identityHashCode(this)
-}
+data object BirStarProjection : BirTypeArgument
 
 interface BirTypeProjection : BirTypeArgument {
     val variance: Variance
