@@ -268,6 +268,7 @@ val kotlinJpsPluginMavenDependencies = listOf(
     ":kotlin-util-klib-metadata",
     ":native:kotlin-native-utils",
     ":compiler:build-tools:kotlin-build-tools-api",
+    ":kotlin-gradle-plugins-bom",
 ).also { extra["kotlinJpsPluginMavenDependencies"] = it }
 
 extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"] = listOf(
