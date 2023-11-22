@@ -20,15 +20,15 @@ class BirCapturedType(
     val captureStatus: CaptureStatus,
     val lowerType: BirType?,
     projection: BirTypeArgument,
-    typeParameter: BirTypeParameter
+    typeParameter: BirTypeParameter,
+    override val nullability: SimpleTypeNullability,
+    override val annotations: List<BirConstructorCall>,
+    override val abbreviation: BirTypeAbbreviation?,
 ) : BirSimpleType(null), CapturedTypeMarker {
     val constructor: Constructor = Constructor(projection, typeParameter)
 
     override val classifier: BirClassifierSymbol get() = error("Captured Type does not have a classifier")
     override val arguments: List<BirTypeArgument> get() = emptyList()
-    override val abbreviation: BirTypeAbbreviation? get() = null
-    override val nullability: SimpleTypeNullability get() = SimpleTypeNullability.DEFINITELY_NOT_NULL
-    override val annotations: List<BirConstructorCall> get() = emptyList()
 
     override fun equals(other: Any?): Boolean = this === other
 

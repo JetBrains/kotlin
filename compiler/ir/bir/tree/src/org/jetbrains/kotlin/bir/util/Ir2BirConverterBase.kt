@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSymbolBase
@@ -288,6 +289,9 @@ abstract class Ir2BirConverterBase() {
             irType.lowerType?.let { remapType(it) },
             remapTypeArgument(irType.constructor.argument),
             remapElement(irType.constructor.typeParameter) as BirTypeParameter,
+            irType.nullability,
+            irType.annotations.map { remapElement(it) as BirConstructorCall },
+            irType.abbreviation?.let { remapTypeAbbreviation(it)},
         )
     }
 
