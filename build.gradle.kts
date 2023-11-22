@@ -376,7 +376,7 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":compiler:build-tools:kotlin-build-statistics",
 )
 
-extra["kotlinJpsPluginMavenDependencies"] = listOf(
+val kotlinJpsPluginMavenDependencies = listOf(
     ":kotlin-daemon-client",
     ":kotlin-build-common",
     ":kotlin-util-io",
@@ -384,7 +384,7 @@ extra["kotlinJpsPluginMavenDependencies"] = listOf(
     ":kotlin-util-klib-metadata",
     ":native:kotlin-native-utils",
     ":compiler:build-tools:kotlin-build-tools-api",
-)
+).also { extra["kotlinJpsPluginMavenDependencies"] = it }
 
 extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"] = listOf(
     commonDependency("org.jetbrains.kotlin:kotlin-reflect")
@@ -448,7 +448,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":kotlin-reflect",
     ":kotlin-main-kts",
     ":kotlin-dom-api-compat"
-)
+) + kotlinJpsPluginMavenDependencies
 
 val coreLibProjects by extra {
     listOfNotNull(
