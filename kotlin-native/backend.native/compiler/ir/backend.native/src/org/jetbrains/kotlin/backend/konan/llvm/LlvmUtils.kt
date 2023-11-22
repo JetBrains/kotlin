@@ -117,11 +117,6 @@ internal val RuntimeAware.kNothingFakeValue: LLVMValueRef
 
 internal fun pointerType(pointeeType: LLVMTypeRef) = LLVMPointerType(pointeeType, 0)!!
 
-internal fun ContextUtils.numParameters(functionType: LLVMTypeRef) : Int {
-    // Note that type is usually function pointer, so we have to dereference it.
-    return LLVMCountParamTypes(LLVMGetElementType(functionType))
-}
-
 fun extractConstUnsignedInt(value: LLVMValueRef): Long {
     assert(LLVMIsConstant(value) != 0)
     return LLVMConstIntGetZExtValue(value)
