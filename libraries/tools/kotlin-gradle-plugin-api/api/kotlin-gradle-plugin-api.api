@@ -12,6 +12,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode : java/lang/
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode$Companion;
 	public static final field RUNTIME_DIAGNOSTIC_EXCEPTION Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode;
 	public static final field RUNTIME_DIAGNOSTIC_LOG Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode;
+	public static final fun fromMode (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode;
 	public final fun getMode ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/JsDiagnosticMode;
@@ -25,6 +26,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JsMainFunctionExecutionMode :
 	public static final field CALL Lorg/jetbrains/kotlin/gradle/dsl/JsMainFunctionExecutionMode;
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/JsMainFunctionExecutionMode$Companion;
 	public static final field NO_CALL Lorg/jetbrains/kotlin/gradle/dsl/JsMainFunctionExecutionMode;
+	public static final fun fromMode (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsMainFunctionExecutionMode;
 	public final fun getMode ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsMainFunctionExecutionMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/JsMainFunctionExecutionMode;
@@ -41,6 +43,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JsModuleKind : java/lang/Enum
 	public static final field MODULE_ES Lorg/jetbrains/kotlin/gradle/dsl/JsModuleKind;
 	public static final field MODULE_PLAIN Lorg/jetbrains/kotlin/gradle/dsl/JsModuleKind;
 	public static final field MODULE_UMD Lorg/jetbrains/kotlin/gradle/dsl/JsModuleKind;
+	public static final fun fromKind (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsModuleKind;
 	public final fun getKind ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsModuleKind;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/JsModuleKind;
@@ -55,6 +58,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JsSourceMapEmbedMode : java/l
 	public static final field SOURCE_MAP_SOURCE_CONTENT_ALWAYS Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapEmbedMode;
 	public static final field SOURCE_MAP_SOURCE_CONTENT_INLINING Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapEmbedMode;
 	public static final field SOURCE_MAP_SOURCE_CONTENT_NEVER Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapEmbedMode;
+	public static final fun fromMode (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapEmbedMode;
 	public final fun getMode ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapEmbedMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapEmbedMode;
@@ -69,6 +73,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy : java
 	public static final field SOURCE_MAP_NAMES_POLICY_FQ_NAMES Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
 	public static final field SOURCE_MAP_NAMES_POLICY_NO Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
 	public static final field SOURCE_MAP_NAMES_POLICY_SIMPLE_NAMES Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
+	public static final fun fromPolicy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
 	public final fun getPolicy ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
@@ -94,6 +99,8 @@ public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 	public static final field JVM_20 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_21 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
+	public static final fun fromTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
+	public static final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public final fun getTarget ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
@@ -560,6 +567,8 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion : java/lang/Enu
 	public static final field KOTLIN_1_9 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final field KOTLIN_2_0 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final field KOTLIN_2_1 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
+	public static final fun fromVersion (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
+	public static final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public final fun getVersion ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;

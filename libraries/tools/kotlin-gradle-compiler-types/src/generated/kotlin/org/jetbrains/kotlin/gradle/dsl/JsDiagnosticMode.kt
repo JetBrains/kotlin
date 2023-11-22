@@ -11,6 +11,7 @@ enum class JsDiagnosticMode(val mode: String) {
     ;
 
     companion object {
+        @JvmStatic
         fun fromMode(mode: String): JsDiagnosticMode =
             JsDiagnosticMode.values().firstOrNull { it.mode == mode }
                 ?: throw IllegalArgumentException("Unknown JS diagnostic mode: $mode")

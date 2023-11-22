@@ -25,10 +25,12 @@ internal fun generateJvmTarget(
             println()
             println("companion object {")
             withIndent {
+                println("@JvmStatic")
                 println("fun fromTarget(target: String): JvmTarget =")
                 println("    JvmTarget.values().firstOrNull { it.target == target }")
                 println("        ?: throw IllegalArgumentException(\"Unknown Kotlin JVM target: ${'$'}target\")")
                 println()
+                println("@JvmStatic")
                 println("val DEFAULT = ${JvmTarget.DEFAULT.name}")
             }
             println("}")

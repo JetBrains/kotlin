@@ -12,6 +12,7 @@ enum class JsSourceMapEmbedMode(val mode: String) {
     ;
 
     companion object {
+        @JvmStatic
         fun fromMode(mode: String): JsSourceMapEmbedMode =
             JsSourceMapEmbedMode.values().firstOrNull { it.mode == mode }
                 ?: throw IllegalArgumentException("Unknown JS source map embed mode: $mode")

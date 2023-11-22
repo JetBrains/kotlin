@@ -21,10 +21,12 @@ enum class KotlinVersion(val version: String) {
     ;
 
     companion object {
+        @JvmStatic
         fun fromVersion(version: String): KotlinVersion =
             KotlinVersion.values().firstOrNull { it.version == version }
                 ?: throw IllegalArgumentException("Unknown Kotlin version: $version")
 
+        @JvmStatic
         val DEFAULT = KOTLIN_2_0
     }
 }

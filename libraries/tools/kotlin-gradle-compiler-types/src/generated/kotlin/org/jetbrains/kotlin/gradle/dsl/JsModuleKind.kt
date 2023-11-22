@@ -14,6 +14,7 @@ enum class JsModuleKind(val kind: String) {
     ;
 
     companion object {
+        @JvmStatic
         fun fromKind(kind: String): JsModuleKind =
             JsModuleKind.values().firstOrNull { it.kind == kind }
                 ?: throw IllegalArgumentException("Unknown JS module kind: $kind")

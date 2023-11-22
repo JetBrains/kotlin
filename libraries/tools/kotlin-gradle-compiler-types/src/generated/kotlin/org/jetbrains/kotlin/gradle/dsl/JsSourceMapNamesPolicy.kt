@@ -12,6 +12,7 @@ enum class JsSourceMapNamesPolicy(val policy: String) {
     ;
 
     companion object {
+        @JvmStatic
         fun fromPolicy(policy: String): JsSourceMapNamesPolicy =
             JsSourceMapNamesPolicy.values().firstOrNull { it.policy == policy }
                 ?: throw IllegalArgumentException("Unknown JS source map names policy: $policy")

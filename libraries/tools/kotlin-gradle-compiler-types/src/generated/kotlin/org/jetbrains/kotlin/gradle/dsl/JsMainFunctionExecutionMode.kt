@@ -11,6 +11,7 @@ enum class JsMainFunctionExecutionMode(val mode: String) {
     ;
 
     companion object {
+        @JvmStatic
         fun fromMode(mode: String): JsMainFunctionExecutionMode =
             JsMainFunctionExecutionMode.values().firstOrNull { it.mode == mode }
                 ?: throw IllegalArgumentException("Unknown main function execution mode: $mode")
