@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
 // ISSUE: KT-48806
 
 // KT-61141: throws kotlin.RuntimeException instead of java.lang.RuntimeException,  and catches kotlin.Exception instead of java.lang.Exception

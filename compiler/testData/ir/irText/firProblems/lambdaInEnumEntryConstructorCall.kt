@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR JS_IR_ES6 NATIVE
+// IGNORE_BACKEND: JS_IR NATIVE
 // ^ KT-61141: absent enum fake_overrides: finalize, getDeclaringClass, clone
 
 class Wrapper(var baseUrl: String)
