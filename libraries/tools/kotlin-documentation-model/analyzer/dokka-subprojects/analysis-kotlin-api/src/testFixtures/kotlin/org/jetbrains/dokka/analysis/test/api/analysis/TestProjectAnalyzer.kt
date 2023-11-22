@@ -228,6 +228,7 @@ internal object TestProjectAnalyzer {
         val internalAnalysisPlugin = context.plugin<InternalKotlinAnalysisPlugin>()
         return TestAnalysisServices(
             sampleAnalysisEnvironmentCreator = publicAnalysisPlugin.querySingle { sampleAnalysisEnvironmentCreator },
+            externalDocumentableProvider = publicAnalysisPlugin.querySingle { externalDocumentableProvider },
             moduleAndPackageDocumentationReader = internalAnalysisPlugin.querySingle {
                 moduleAndPackageDocumentationReader
             }

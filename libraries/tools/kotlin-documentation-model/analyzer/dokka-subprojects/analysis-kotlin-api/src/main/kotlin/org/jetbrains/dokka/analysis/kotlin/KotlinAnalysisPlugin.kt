@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.analysis.kotlin
 
+import org.jetbrains.dokka.analysis.kotlin.documentable.ExternalDocumentableProvider
 import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironmentCreator
 import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironment
 import org.jetbrains.dokka.plugability.DokkaPlugin
@@ -19,6 +20,14 @@ public class KotlinAnalysisPlugin : DokkaPlugin() {
      * @see SampleAnalysisEnvironment for more details
      */
     public val sampleAnalysisEnvironmentCreator: ExtensionPoint<SampleAnalysisEnvironmentCreator> by extensionPoint()
+
+    /**
+     * An extension that helps to find external documentables that are not provided by Dokka by default,
+     * such as documentables that come from external dependencies.
+     *
+     * @see ExternalDocumentableProvider for more details
+     */
+    public val externalDocumentableProvider: ExtensionPoint<ExternalDocumentableProvider> by extensionPoint()
 
     @OptIn(DokkaPluginApiPreview::class)
     override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement = PluginApiPreviewAcknowledgement
