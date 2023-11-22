@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.diagnostics.*
 
 internal class LLFirDiagnosticReporter : DiagnosticReporter() {
     private val pendingDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
-    val committedDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
+    private val _committedDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
+
+    val committedDiagnostics get() = _committedDiagnostics.ifEmpty { emptyMap() }
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic == null) return
@@ -35,7 +37,7 @@ internal class LLFirDiagnosticReporter : DiagnosticReporter() {
     override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {
         val commitEverything = context == null
         for ((diagnosticElement, pendingList) in pendingDiagnostics) {
-            val committedList = committedDiagnostics.getOrPut(diagnosticElement) { mutableListOf() }
+            val committedList = _committedDiagnostics.getOrPut(diagnosticElement) { mutableListOf() }
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {
                 val diagnostic = iterator.next()
