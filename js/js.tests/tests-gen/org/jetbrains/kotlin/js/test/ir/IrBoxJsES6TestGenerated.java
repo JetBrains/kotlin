@@ -1739,6 +1739,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("dynamicArraySetWithLambda.kt")
+        public void testDynamicArraySetWithLambda() throws Exception {
+            runTest("js/js.translator/testData/box/dynamic/dynamicArraySetWithLambda.kt");
+        }
+
+        @Test
         @TestMetadata("equals.kt")
         public void testEquals() throws Exception {
             runTest("js/js.translator/testData/box/dynamic/equals.kt");

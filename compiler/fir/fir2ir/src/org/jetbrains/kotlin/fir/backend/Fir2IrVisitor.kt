@@ -557,7 +557,7 @@ class Fir2IrVisitor(
             functionCall.calleeReference.name == OperatorNameConventions.SET &&
             functionCall.calleeReference.source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference
         ) {
-            return convertToIrArrayAccessDynamicCall(functionCall)
+            return convertToIrArraySetDynamicCall(functionCall)
         }
         return convertToIrCall(functionCall, dynamicOperator = null)
     }
@@ -578,25 +578,24 @@ class Fir2IrVisitor(
         )
     }
 
-    private fun convertToIrArrayAccessDynamicCall(functionCall: FirFunctionCall): IrExpression {
-        val explicitReceiverExpression = convertToIrCall(
-            functionCall, dynamicOperator = IrDynamicOperator.ARRAY_ACCESS
-        )
-        if (explicitReceiverExpression is IrDynamicOperatorExpression) {
-            explicitReceiverExpression.arguments.removeLast()
+    private fun convertToIrArraySetDynamicCall(functionCall: FirFunctionCall): IrExpression {
+        // `functionCall` has the form of `myDynamic.set(key1, key2, ..., newValue)`.
+        // The resulting IR expects something like `myDynamic.ARRAY_ACCESS(key1, key2, ...).EQ(newValue)`.
+        // Instead of constructing a `FirFunctionCall` for `get()` (the true `ARRAY_ACCESS`), and a new
+        // call for `set()` (`EQ`), let's convert the whole thing as `ARRAY_ACCESS`, including
+        // `newValue`, and then manually move it to a newly constructed EQ call.
+        val arraySetAsGenericDynamicAccess = convertToIrCall(functionCall, IrDynamicOperator.ARRAY_ACCESS) as? IrDynamicOperatorExpression
+            ?: error("Converting dynamic array access should have resulted in IrDynamicOperatorExpression")
+        val arraySetNewValue = arraySetAsGenericDynamicAccess.arguments.removeLast()
+        return IrDynamicOperatorExpressionImpl(
+            arraySetAsGenericDynamicAccess.startOffset,
+            arraySetAsGenericDynamicAccess.endOffset,
+            arraySetAsGenericDynamicAccess.type,
+            IrDynamicOperator.EQ,
+        ).apply {
+            receiver = arraySetAsGenericDynamicAccess
+            arguments.add(arraySetNewValue)
         }
-        val result = callGenerator.convertToIrCall(
-            functionCall, functionCall.resolvedType, explicitReceiverExpression,
-            dynamicOperator = IrDynamicOperator.EQ
-        )
-        if (result is IrDynamicOperatorExpression) {
-            val arguments = result.arguments
-            arguments[0] = arguments[arguments.lastIndex]
-            while (arguments.size > 1) {
-                arguments.removeLast()
-            }
-        }
-        return result
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Any?): IrExpression = whileAnalysing(session, functionCall) {
