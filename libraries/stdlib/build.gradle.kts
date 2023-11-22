@@ -780,9 +780,9 @@ tasks {
     }
 
     // Fail issues: KT-60508
-//    withType<Kotlin2JsCompile>().configureEach {
-//        compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_2_0)
-//    }
+    withType<Kotlin2JsCompile>().configureEach {
+        compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_2_0)
+    }
 
     // :kotlin-stdlib:compileKotlinWasmJs
     // :kotlin-stdlib:compileKotlinWasmWasi
