@@ -139,7 +139,9 @@ open class FirDeclarationsResolveTransformer(
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty = whileAnalysing(session, property) {
         require(property !is FirSyntheticProperty) { "Synthetic properties should not be processed by body transformers" }
 
-        if (property.isLocal) {
+        // script top level destructuring declaration container variables should be treated as properties here
+        // to avoid CFG/DFA complications
+        if (property.isLocal && property.origin != FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer) {
             prepareSignatureForBodyResolve(property)
             property.transformStatus(this, property.resolveStatus().mode())
             property.getter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
@@ -551,7 +553,10 @@ open class FirDeclarationsResolveTransformer(
             .transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
 
         context.storeVariable(variable, session)
-        dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
+        if (variable.origin != FirDeclarationOrigin.ScriptCustomization.Parameter) {
+            // script parameters should not be added to CFG to avoid graph building compilations
+            dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
+        }
         return variable
     }
 
@@ -685,17 +690,23 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-    fun withScript(script: FirScript, action: () -> FirScript): FirScript {
-        dataFlowAnalyzer.enterScript(script)
+    open fun withScript(script: FirScript, action: () -> FirScript): FirScript {
         val result = context.withScript(script, components) {
+            // see todo in withFile
+            dataFlowAnalyzer.enterScript(script, buildGraph = transformer.buildCfgForScripts)
             action()
         }
-        dataFlowAnalyzer.exitScript() // TODO: FirScript should be a FirControlFlowGraphOwner, KT-59683
+        val controlFlowGraph = dataFlowAnalyzer.exitScript()
+        if (controlFlowGraph != null) {
+            result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+        }
         return result
     }
 
-    override fun transformScript(script: FirScript, data: ResolutionMode): FirScript = withScript(script) {
-        transformDeclarationContent(script, data) as FirScript
+    override fun transformScript(script: FirScript, data: ResolutionMode): FirScript = whileAnalysing(session, script) {
+        withScript(script) {
+            transformDeclarationContent(script, data) as FirScript
+        }
     }
 
     override fun transformCodeFragment(codeFragment: FirCodeFragment, data: ResolutionMode): FirCodeFragment {
@@ -740,6 +751,7 @@ open class FirDeclarationsResolveTransformer(
         val result = context.withFile(file, components) {
             // TODO Must be done within 'withFile' as the context - any the analyzer - is cleared as the first step.
             //  yuk. maybe the clear shouldn't happen for `enterFile`? or at maybe separately?
+            // also check whether it is applicable in withScript`
             dataFlowAnalyzer.enterFile(file, buildGraph = transformer.buildCfgForFiles)
 
             action()

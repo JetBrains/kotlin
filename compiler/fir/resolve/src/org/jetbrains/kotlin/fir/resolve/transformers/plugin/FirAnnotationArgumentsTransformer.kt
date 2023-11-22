@@ -202,6 +202,12 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
         }
     }
 
+    override fun withScript(script: FirScript, action: () -> FirScript): FirScript {
+        return context.withScript(script, components) {
+            action()
+        }
+    }
+
     override fun transformAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
         data: ResolutionMode

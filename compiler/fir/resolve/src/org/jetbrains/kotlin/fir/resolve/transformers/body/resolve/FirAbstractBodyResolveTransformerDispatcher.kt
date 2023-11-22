@@ -32,6 +32,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
 ) : FirAbstractBodyResolveTransformer(phase) {
 
     open val preserveCFGForClasses: Boolean get() = !implicitTypeOnly
+    open val buildCfgForScripts: Boolean get() = !implicitTypeOnly
     open val buildCfgForFiles: Boolean get() = !implicitTypeOnly
 
     final override val context: BodyResolveContext =

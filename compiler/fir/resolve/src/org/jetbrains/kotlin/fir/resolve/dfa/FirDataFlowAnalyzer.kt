@@ -251,14 +251,14 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Scripts ------------------------------------------
 
-    fun enterScript(script: FirScript) {
-        graphBuilder.enterScript(script).mergeIncomingFlow()
+    fun enterScript(script: FirScript, buildGraph: Boolean) {
+        graphBuilder.enterScript(script, buildGraph)?.mergeIncomingFlow()
     }
 
-    fun exitScript(): ControlFlowGraph {
+    fun exitScript(): ControlFlowGraph? {
         val (node, graph) = graphBuilder.exitScript()
-        node.mergeIncomingFlow()
-        graph.completePostponedNodes()
+        node?.mergeIncomingFlow()
+        graph?.completePostponedNodes()
         return graph
     }
 

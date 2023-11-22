@@ -341,7 +341,12 @@ class AnonymousObjectExpressionExitNode(owner: ControlFlowGraph, override val fi
 
 // ----------------------------------- Scripts ------------------------------------------
 
-class ScriptEnterNode(owner: ControlFlowGraph, override val fir: FirScript, level: Int) : CFGNode<FirScript>(owner, level), GraphEnterNodeMarker {
+class ScriptEnterNode(owner: ControlFlowGraph, override val fir: FirScript, level: Int)
+    : CFGNodeWithSubgraphs<FirScript>(owner, level), GraphEnterNodeMarker
+{
+    @set:CfgInternals
+    override lateinit var subGraphs: List<ControlFlowGraph>
+
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitScriptEnterNode(this, data)
     }

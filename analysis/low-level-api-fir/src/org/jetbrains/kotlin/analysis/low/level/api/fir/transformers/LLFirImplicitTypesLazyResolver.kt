@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
@@ -140,6 +143,7 @@ internal class LLFirImplicitBodyTargetResolver(
         returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
     ) {
         override val preserveCFGForClasses: Boolean get() = false
+        override val buildCfgForScripts: Boolean get() = false
         override val buildCfgForFiles: Boolean get() = false
         override fun transformForeignAnnotationCall(symbol: FirBasedSymbol<*>, annotationCall: FirAnnotationCall): FirAnnotationCall {
             llImplicitBodyResolveComputationSession.postponeForeignAnnotationResolution(symbol)
@@ -202,7 +206,16 @@ internal class LLFirImplicitBodyTargetResolver(
 
     override fun rawResolve(target: FirElementWithResolveState) {
         when {
-            target is FirScript -> resolveScript(target)
+            target is FirScript -> {
+                transformer.declarationsTransformer.withScript(target) {
+                    target.forEachDependentDeclaration {
+                        it.transformSingle(transformer, ResolutionMode.ContextIndependent)
+                    }
+
+                    target
+                }
+            }
+
             target is FirCallableDeclaration && target.attributes.callableCopySubstitutionForTypeUpdater != null -> {
                 transformer.returnTypeCalculator.callableCopyTypeCalculator.computeReturnType(target)
                 Unit

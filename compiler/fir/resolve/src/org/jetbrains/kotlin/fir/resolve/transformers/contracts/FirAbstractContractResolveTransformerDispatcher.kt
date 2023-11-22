@@ -96,10 +96,6 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         }
 
 
-        override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
-            return script
-        }
-
         override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
             if (
                 property.getter?.hasContractToResolve != true && property.setter?.hasContractToResolve != true ||
@@ -281,6 +277,16 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             return context.withRegularClass(regularClass, components) {
                 action()
             }
+        }
+
+        override fun withScript(script: FirScript, action: () -> FirScript): FirScript {
+            return context.withScript(script, components) {
+                action()
+            }
+        }
+
+        override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
+            return script
         }
 
         override fun transformAnonymousObject(
