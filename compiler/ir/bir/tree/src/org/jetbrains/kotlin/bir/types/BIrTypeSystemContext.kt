@@ -21,8 +21,12 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
+import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -234,9 +238,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
      *
      * See https://kotlinlang.org/spec/type-system.html#type-capturing
      */
-
     override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
-        // TODO: is that correct?
         require(type is BirSimpleType)
 
         if (type is BirCapturedType) return null
@@ -244,47 +246,36 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
         val classifier = type.classifier as? BirClassSymbol ?: return null
         val typeArguments = type.arguments
 
-        val element = classifier.ownerIfBound ?: return null
+        if (!classifier.isBound) return null
 
-        val typeParameters = extractTypeParameters(element)
-
+        val typeParameters = extractTypeParameters(classifier.owner)
         require(typeArguments.size == typeParameters.size)
 
         if (typeArguments.all { it is BirTypeProjection && it.variance == Variance.INVARIANT }) return type
 
-        val capturedTypes = ArrayList<BirCapturedType?>(typeArguments.size)
-
-        for (index in typeArguments.indices) {
-            val parameter = typeParameters[index]
-            val argument = typeArguments[index]
-
+        val capturedTypes = typeArguments.mapIndexed { index, argument ->
             if (argument is BirTypeProjection && argument.variance == Variance.INVARIANT) {
-                capturedTypes.add(null)
+                null
             } else {
                 val lowerType = if (argument is BirTypeProjection && argument.variance == Variance.IN_VARIANCE) {
                     argument.type
                 } else null
 
-                capturedTypes.add(BirCapturedType(status, lowerType, argument, parameter))
+                BirCapturedType(status, lowerType, argument, typeParameters[index])
             }
         }
 
-        val newArguments = ArrayList<BirTypeArgument>(typeArguments.size)
+        val typeSubstitutor = BirCapturedTypeSubstitutor(typeParameters, typeArguments, capturedTypes, birBuiltIns)
 
-        val typeSubstitutor =
-            BirCapturedTypeSubstitutor(typeParameters.memoryOptimizedMap { it.owner }, typeArguments, capturedTypes, birBuiltIns)
-
-        for (index in typeArguments.indices) {
-            val oldArgument = typeArguments[index]
-            val parameter = typeParameters[index]
+        val newArguments = typeArguments.mapIndexed { index, oldArgument ->
             val capturedType = capturedTypes[index]
 
             if (capturedType == null) {
                 assert(oldArgument is BirTypeProjection && oldArgument.variance == Variance.INVARIANT)
-                newArguments.add(oldArgument)
+                oldArgument
             } else {
                 val capturedSuperTypes = mutableListOf<BirType>()
-                parameter.superTypes.mapTo(capturedSuperTypes) {
+                typeParameters[index].superTypes.mapTo(capturedSuperTypes) {
                     typeSubstitutor.substitute(it)
                 }
 
@@ -294,7 +285,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
 
                 capturedType.constructor.initSuperTypes(capturedSuperTypes)
 
-                newArguments.add(makeTypeProjection(capturedType, Variance.INVARIANT))
+                makeTypeProjection(capturedType, Variance.INVARIANT)
             }
         }
 

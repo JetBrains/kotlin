@@ -42,12 +42,12 @@ abstract class BirSimpleType(kotlinType: KotlinType?) : BirTypeBase(kotlinType),
     abstract val nullability: SimpleTypeNullability
     abstract val arguments: List<BirTypeArgument>
     abstract val abbreviation: BirTypeAbbreviation?
+
+    override val variance: Variance
+        get() = Variance.INVARIANT
 }
 
 abstract class BirAbstractSimpleType(kotlinType: KotlinType?) : BirSimpleType(kotlinType) {
-    override val variance: Variance
-        get() = Variance.INVARIANT
-
     abstract override val classifier: BirClassifierSymbol
     abstract override val nullability: SimpleTypeNullability
     abstract override val arguments: List<BirTypeArgument>
