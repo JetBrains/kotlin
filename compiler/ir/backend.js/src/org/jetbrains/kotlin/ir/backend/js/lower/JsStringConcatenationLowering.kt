@@ -26,17 +26,27 @@ class JsStringConcatenationLowering(val context: CommonBackendContext) : FileLow
 }
 
 private class JsStringConcatenationTransformer(val context: CommonBackendContext) : IrElementTransformerVoid() {
-
     private val IrType.shouldExplicitlyConvertToString: Boolean
         get() {
-            // If the type is Long or a supertype of Long, we want to call toString() on values of that type.
-            // See KT-39891
             if (this !is IrSimpleType) return false
+            /**
+             * The type may have a valueOf() function, meaning that in string concatenation,
+             * the toString() function will be ignored, and the valueOf() function will be called instead.
+             * Therefore, we have to wrap all types except those where we are sure that they don't have the valueOf() function.
+             *
+             * Note, that we do not check for the existence of the valueOf() function
+             * in the class because it would complicate incremental compilation.
+             *
+             * Ignore [Long] and all its supertypes ([Any], [Comparable], [Number]) since [Long] has the valueOf() method.
+             * Ignore [Char] since it requires an explicit conversion to string.
+             */
             return when (classifier.signature) {
-                IdSignatureValues.any, IdSignatureValues.comparable, IdSignatureValues.number,
-                IdSignatureValues._long, IdSignatureValues._char
-                -> true
-                else -> false
+                IdSignatureValues._boolean, IdSignatureValues.string, IdSignatureValues.array,
+                IdSignatureValues._byte, IdSignatureValues._short, IdSignatureValues._int,
+                IdSignatureValues.uByte, IdSignatureValues.uShort, IdSignatureValues.uInt, IdSignatureValues.uLong,
+                IdSignatureValues._float, IdSignatureValues._double,
+                -> false
+                else -> true
             }
         }
 

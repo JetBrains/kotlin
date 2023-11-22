@@ -66,7 +66,7 @@ fun box(): String {
     if (testUtils.isLegacyBackend()) {
         assertEquals("[...];1,2,3;[...];", pullLog(), "genericValueToString")
     } else {
-        assertEquals("[...];1,2,3;1,2,3;", pullLog(), "genericValueToString")
+        assertEquals("[...];[...];[...];", pullLog(), "genericValueToString")
     }
 
     anyValueToString(a)
