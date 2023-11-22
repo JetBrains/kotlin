@@ -10,5 +10,6 @@ const val SCRIPT_RECEIVER_NAME_PREFIX = "\$script_receiver"
 
 enum class FirScriptCustomizationKind {
     DEFAULT,
-    RESULT_PROPERTY
+    RESULT_PROPERTY,
+    PARAMETER
 }

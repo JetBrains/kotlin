@@ -34,6 +34,7 @@ sealed class FirDeclarationOrigin(
         object TypeAliasConstructor : Synthetic()
         object FakeFunction : Synthetic()
         object ForwardDeclaration : Synthetic()
+        object ScriptTopLevelDestructuringDeclarationContainer : Synthetic()
     }
     object DynamicScope : FirDeclarationOrigin()
     object SamConstructor : FirDeclarationOrigin()
@@ -51,6 +52,7 @@ sealed class FirDeclarationOrigin(
     sealed class ScriptCustomization(val kind: FirScriptCustomizationKind) : FirDeclarationOrigin() {
         object Default : ScriptCustomization(FirScriptCustomizationKind.DEFAULT)
         object ResultProperty : ScriptCustomization(FirScriptCustomizationKind.RESULT_PROPERTY)
+        object Parameter : ScriptCustomization(FirScriptCustomizationKind.PARAMETER)
     }
     class Plugin(val key: GeneratedDeclarationKey) : FirDeclarationOrigin(displayName = "Plugin[$key]", generated = true)
 

@@ -87,12 +87,13 @@ internal fun generateTemporaryVariable(
     name: Name,
     initializer: FirExpression,
     typeRef: FirTypeRef? = null,
+    origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
     extractAnnotationsTo: (KtAnnotated.(FirAnnotationContainerBuilder) -> Unit),
 ): FirVariable =
     buildProperty {
         this.source = source
         this.moduleData = moduleData
-        origin = FirDeclarationOrigin.Source
+        this.origin = origin
         returnTypeRef = typeRef ?: FirImplicitTypeRefImplWithoutSource
         this.name = name
         this.initializer = initializer
@@ -108,6 +109,7 @@ internal fun generateTemporaryVariable(
     source: KtSourceElement?,
     specialName: String,
     initializer: FirExpression,
+    origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
     extractAnnotationsTo: (KtAnnotated.(FirAnnotationContainerBuilder) -> Unit),
 ): FirVariable =
     generateTemporaryVariable(
@@ -115,7 +117,8 @@ internal fun generateTemporaryVariable(
         source,
         Name.special("<$specialName>"),
         initializer,
-        null,
+        typeRef = null,
+        origin,
         extractAnnotationsTo,
     )
 
