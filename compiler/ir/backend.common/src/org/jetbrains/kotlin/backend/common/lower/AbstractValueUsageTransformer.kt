@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * TODO: consider making this visitor non-recursive to make it more general.
  */
 abstract class AbstractValueUsageTransformer(
-    protected val irBuiltIns: IrBuiltIns
+    protected val irBuiltIns: IrBuiltIns,
+    private val replaceTypesInsideInlinedFunctionBlock: Boolean = false
 ) : IrElementTransformerVoid() {
 
     protected open fun IrExpression.useAs(type: IrType): IrExpression = this
@@ -120,7 +121,7 @@ abstract class AbstractValueUsageTransformer(
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-        if (expression is IrInlinedFunctionBlock) {
+        if (!replaceTypesInsideInlinedFunctionBlock && expression is IrInlinedFunctionBlock) {
             expression.transformChildrenVoid(this)
             return expression
         }

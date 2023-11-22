@@ -526,8 +526,7 @@ private val innerClassConstructorCallsLoweringPhase = makeBodyLoweringPhase(
 private val suspendFunctionsLoweringPhase = makeBodyLoweringPhase(
     ::JsSuspendFunctionsLowering,
     name = "SuspendFunctionsLowering",
-    description = "Transform suspend functions into CoroutineImpl instance and build state machine",
-    prerequisite = setOf(returnableBlockLoweringPhase)
+    description = "Transform suspend functions into CoroutineImpl instance and build state machine"
 )
 
 private val addContinuationToNonLocalSuspendFunctionsLoweringPhase = makeDeclarationTransformerPhase(
@@ -739,7 +738,7 @@ private val inlineClassUsageLoweringPhase = makeBodyLoweringPhase(
 )
 
 private val autoboxingTransformerPhase = makeBodyLoweringPhase(
-    ::AutoboxingTransformer,
+    { AutoboxingTransformer(it, replaceTypesInsideInlinedFunctionBlock = true) },
     name = "AutoboxingTransformer",
     description = "Insert box/unbox intrinsics"
 )
@@ -922,7 +921,6 @@ val loweringList = listOf<Lowering>(
     enumUsageLoweringPhase,
     externalEnumUsageLoweringPhase,
     enumEntryRemovalLoweringPhase,
-    returnableBlockLoweringPhase,
     suspendFunctionsLoweringPhase,
     propertyReferenceLoweringPhase,
     interopCallableReferenceLoweringPhase,
@@ -930,6 +928,7 @@ val loweringList = listOf<Lowering>(
     addContinuationToNonLocalSuspendFunctionsLoweringPhase,
     addContinuationToLocalSuspendFunctionsLoweringPhase,
     addContinuationToFunctionCallsLoweringPhase,
+    returnableBlockLoweringPhase,
     rangeContainsLoweringPhase,
     forLoopsLoweringPhase,
     primitiveCompanionLoweringPhase,
