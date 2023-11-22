@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 
-class CompilationToolException(val reason: String) : Exception()
+class CompilationToolException(val reason: String) : Exception() {
+    override fun toString() = "CompilationToolException: $reason"
+}
 
 internal sealed interface TestCompilationResult<A : TestCompilationArtifact> {
     sealed interface ImmediateResult<A : TestCompilationArtifact> : TestCompilationResult<A> {
