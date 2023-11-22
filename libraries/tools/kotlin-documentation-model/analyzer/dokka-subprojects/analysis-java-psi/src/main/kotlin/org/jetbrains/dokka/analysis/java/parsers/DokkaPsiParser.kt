@@ -236,6 +236,18 @@ internal class DokkaPsiParser(
             val implementedInterfacesExtra =
                 ImplementedInterfaces(ancestry.allImplementedInterfaces().toSourceSetDependent())
 
+            // used only for class and enum
+            val innerModifierExtra = when {
+                // top level java classes - no `inner`
+                psi.containingClass == null -> null
+                // java `static class` = kotlin `class`
+                psi.hasModifier(JvmModifier.STATIC) -> null
+                // java `class` = kotlin `inner class`
+                else -> setOf(
+                    ExtraModifiers.KotlinOnlyModifiers.Inner
+                ).toSourceSetDependent().toAdditionalModifiers()
+            }
+
             when {
                 isAnnotationType ->
                     DAnnotation(
@@ -295,6 +307,7 @@ internal class DokkaPsiParser(
                     isExpectActual = false,
                     extra = PropertyContainer.withAll(
                         implementedInterfacesExtra,
+                        innerModifierExtra,
                         annotations.toList().toListOfAnnotations().toSourceSetDependent()
                             .toAnnotations()
                     )
@@ -341,6 +354,7 @@ internal class DokkaPsiParser(
                     isExpectActual = false,
                     extra = PropertyContainer.withAll(
                         implementedInterfacesExtra,
+                        innerModifierExtra,
                         annotations.toList().toListOfAnnotations().toSourceSetDependent()
                             .toAnnotations(),
                         ancestry.exceptionInSupertypesOrNull()
