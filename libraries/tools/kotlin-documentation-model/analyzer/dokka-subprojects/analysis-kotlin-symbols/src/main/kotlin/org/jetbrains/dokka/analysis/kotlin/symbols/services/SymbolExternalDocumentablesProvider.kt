@@ -5,6 +5,9 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.services
 
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
+import org.jetbrains.dokka.Platform
+import org.jetbrains.dokka.analysis.java.JavaAnalysisPlugin
+import org.jetbrains.dokka.analysis.java.parsers.JavadocParser
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.DokkaSymbolVisitor
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getClassIdFromDRI
@@ -17,6 +20,7 @@ import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.dokka.analysis.kotlin.internal.ExternalDocumentablesProvider
+import org.jetbrains.dokka.plugability.query
 
 internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : ExternalDocumentablesProvider {
     private val kotlinAnalysis = context.plugin<SymbolsAnalysisPlugin>().querySingle { kotlinAnalysis }
@@ -26,7 +30,14 @@ internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : 
 
         return analyze(kotlinAnalysis.getModule(sourceSet)) {
             val symbol = getClassOrObjectSymbolByClassId(classId) as? KtNamedClassOrObjectSymbol?: return@analyze null
-            val translator = DokkaSymbolVisitor(sourceSet, sourceSet.displayName, kotlinAnalysis, logger = context.logger)
+            val javadocParser =
+                if (sourceSet.analysisPlatform == Platform.jvm)
+                    JavadocParser(
+                        docCommentParsers = context.plugin<JavaAnalysisPlugin>().query { docCommentParsers },
+                        docCommentFinder = context.plugin<JavaAnalysisPlugin>().docCommentFinder
+                    )
+                else null
+            val translator = DokkaSymbolVisitor(sourceSet, sourceSet.displayName, kotlinAnalysis, logger = context.logger, javadocParser)
 
             val parentDRI = symbol.getContainingSymbol()?.let { getDRIFromSymbol(it) } ?: /* top level */ DRI(dri.packageName)
             with(translator) {
