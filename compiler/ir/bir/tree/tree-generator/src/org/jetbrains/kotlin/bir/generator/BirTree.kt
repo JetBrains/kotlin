@@ -309,6 +309,8 @@ object BirTree : AbstractTreeBuilder() {
         +field("isPrimary", boolean)
     }
     val enumEntry: ElementConfig by element(Declaration) {
+        typeKind = TypeKind.Interface
+
         parent(declaration)
         parent(declarationWithName)
 
