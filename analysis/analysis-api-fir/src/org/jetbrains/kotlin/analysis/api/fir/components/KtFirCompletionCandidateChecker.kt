@@ -16,18 +16,19 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.ResolutionParameters
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.SingleCandidateResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.SingleCandidateResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.receiverType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtLoopExpression
 import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtStatementExpression
@@ -60,7 +61,7 @@ internal class KtFirCompletionCandidateChecker(
         val file = originalFile.getOrBuildFirFile(firResolveSession)
         val explicitReceiverExpression = possibleExplicitReceiver?.getMatchingFirExpressionForCallReceiver()
         val resolver = SingleCandidateResolver(firResolveSession.useSiteFirSession, file)
-        val implicitReceivers = getImplicitReceivers(originalFile, nameExpression)
+        val implicitReceivers = getImplicitReceivers(nameExpression)
         for (implicitReceiverValue in implicitReceivers) {
             val resolutionParameters = ResolutionParameters(
                 singleCandidateResolutionMode = SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION,
@@ -87,12 +88,19 @@ internal class KtFirCompletionCandidateChecker(
         return KtExtensionApplicabilityResult.NonApplicable(token)
     }
 
-    private fun getImplicitReceivers(
-        originalFile: KtFile,
-        fakeNameExpression: KtSimpleNameExpression
-    ): Sequence<ImplicitReceiverValue<*>?> {
-        val towerDataContext = analysisSession.firResolveSession.getTowerContextProvider(originalFile)
-            .getClosestAvailableParentContext(fakeNameExpression)
+    private fun getImplicitReceivers(fakeNameExpression: KtSimpleNameExpression): Sequence<ImplicitReceiverValue<*>?> {
+        val fakeFile = fakeNameExpression.containingKtFile
+        val fakeFirFile = fakeFile.getOrBuildFirFile(firResolveSession)
+
+        val sessionHolder = run {
+            val firSession = firResolveSession.useSiteFirSession
+            val scopeSession = firResolveSession.getScopeSessionFor(firSession)
+            SessionHolderImpl(firSession, scopeSession)
+        }
+
+        val elementContext = ContextCollector.process(fakeFirFile, sessionHolder, fakeNameExpression, bodyElement = null)
+
+        val towerDataContext = elementContext?.towerDataContext
             ?: errorWithAttachment("Cannot find enclosing declaration for ${fakeNameExpression::class}") {
                 withPsiEntry("fakeNameExpression", fakeNameExpression)
             }
