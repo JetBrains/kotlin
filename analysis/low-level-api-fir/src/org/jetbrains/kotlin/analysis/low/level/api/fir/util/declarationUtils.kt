@@ -90,11 +90,11 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
 }
 
 @KtAnalysisApiInternals
-fun PsiElement.collectContainingDeclarationsIfNonLocal(session: LLFirResolveSession): List<FirDeclaration>? {
-    val ktFile = containingFile as? KtFile ?: return null
-    val ktDeclaration = getNonLocalContainingOrThisDeclaration { !it.canBePartOfParentDeclaration } ?: return null
-    val firFile = session.getOrBuildFirFile(ktFile)
-    return FirElementFinder.findPathToDeclarationWithTarget(firFile, ktDeclaration)
+fun collectUseSiteContainers(element: PsiElement, resolveSession: LLFirResolveSession): List<FirDeclaration>? {
+    val containingDeclaration = element.getNonLocalContainingOrThisDeclaration { !it.canBePartOfParentDeclaration } ?: return null
+    val containingFile = containingDeclaration.containingKtFile
+    val firFile = resolveSession.getOrBuildFirFile(containingFile)
+    return FirElementFinder.findPathToDeclarationWithTarget(firFile, containingDeclaration)
 }
 
 internal fun KtElement.findSourceByTraversingWholeTree(
