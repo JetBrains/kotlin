@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.isSingleFieldValueClass
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -489,7 +488,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
                 )
                 checkSerializerNullability(propertyType, customSerializerType, source, reporter)
             } else {
-                checkType(propertyType, source, reporter)
+                checkType(typeRef, source, reporter)
                 checkGenericArrayType(propertyType, source, reporter)
             }
         }
@@ -506,13 +505,15 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    private fun checkTypeArguments(type: ConeKotlinType, source: KtSourceElement?, reporter: DiagnosticReporter) {
-        for (typeArgument in type.typeArguments) {
-            checkType(
-                typeArgument.type?.fullyExpandedType(session) ?: continue,
-                source,
-                reporter
-            )
+    private fun checkTypeArguments(
+        typeRef: FirTypeRef,
+        fallbackSource: KtSourceElement?,
+        reporter: DiagnosticReporter
+    ) {
+        val argsRefs = extractArgumentsTypeRefAndSource(typeRef) ?: return
+        for (typeArgument in argsRefs) {
+            val argTypeRef = typeArgument.typeRef ?: continue
+            checkType(argTypeRef, typeArgument.source ?: fallbackSource, reporter)
         }
     }
 
@@ -526,11 +527,12 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         get() = isSingleFieldValueClass(session) && !isPrimitiveOrNullablePrimitive
 
     context(CheckerContext)
-    private fun checkType(type: ConeKotlinType, source: KtSourceElement?, reporter: DiagnosticReporter) {
+    private fun checkType(typeRef: FirTypeRef, typeSource: KtSourceElement?, reporter: DiagnosticReporter) {
+        val type = typeRef.coneType.fullyExpandedType(session)
         if (type.lowerBoundIfFlexible().isTypeParameter) return // type parameters always have serializer stored in class' field
         if (type.isUnsupportedInlineType && !canSupportInlineClasses()) {
             reporter.reportOn(
-                source,
+                typeRef.source ?: typeSource,
                 FirSerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
                 RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
                 session.versionReader.runtimeVersions?.implementationVersion.toString()
@@ -541,15 +543,15 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         if (serializer != null) {
             val classSymbol = type.toRegularClassSymbol(session) ?: return
             type.serializableWith?.fullyExpandedType(session)?.let { serializerType ->
-                checkCustomSerializerMatch(classSymbol, source, type, serializerType, reporter)
-                checkCustomSerializerIsNotLocal(source, classSymbol, serializerType, reporter)
-                checkSerializerNullability(type, serializerType, source, reporter)
+                checkCustomSerializerMatch(classSymbol, typeSource, type, serializerType, reporter)
+                checkCustomSerializerIsNotLocal(typeSource, classSymbol, serializerType, reporter)
+                checkSerializerNullability(type, serializerType, typeSource, reporter)
             }
-            checkTypeArguments(type, source, reporter)
+            checkTypeArguments(typeRef, typeSource, reporter)
         } else {
             if (type.toRegularClassSymbol(session)?.isEnumClass != true) {
                 // enums are always serializable
-                reporter.reportOn(source, FirSerializationErrors.SERIALIZER_NOT_FOUND, type)
+                reporter.reportOn(typeSource, FirSerializationErrors.SERIALIZER_NOT_FOUND, type)
             }
         }
     }
@@ -566,7 +568,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
 
         val declarationTypeClassId = declarationType.classId
         if (declarationTypeClassId == null || declarationTypeClassId != serializerForType.classId) {
-            // TODO: report on specific type argument (KT-53861)
             reporter.reportOn(
                 source ?: containingClassSymbol.serializableOrMetaAnnotationSource,
                 FirSerializationErrors.SERIALIZER_TYPE_INCOMPATIBLE,
@@ -576,6 +577,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             )
         }
     }
+
     context(CheckerContext)
     private fun checkCustomSerializerNotAbstract(
         containingClassSymbol: FirClassSymbol<*>,

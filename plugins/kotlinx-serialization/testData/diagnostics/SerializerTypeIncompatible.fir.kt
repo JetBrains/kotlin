@@ -21,7 +21,10 @@ class Biz(val i: Int)
 class Foo(@Serializable(with = BazSerializer::class) val i: <!SERIALIZER_TYPE_INCOMPATIBLE!>Bar<!>)
 
 @Serializable
-class Foo2(val li: <!SERIALIZER_TYPE_INCOMPATIBLE!>List<@Serializable(with = BazSerializer::class) Bar><!>)
+class Foo2(val li: List<<!SERIALIZER_TYPE_INCOMPATIBLE!>@Serializable(with = BazSerializer::class) Bar<!>>)
+
+@Serializable
+class Foo25(val i: <!SERIALIZER_TYPE_INCOMPATIBLE!>@Serializable(with = BazSerializer::class) Bar<!>)
 
 @Serializable
 class Foo3(@Serializable(with = BazSerializer::class) val i: Baz)

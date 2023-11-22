@@ -24,6 +24,9 @@ class Foo(@Serializable(with = BazSerializer::class) val i: <!SERIALIZER_TYPE_IN
 class Foo2(val li: List<@Serializable(with = BazSerializer::class) <!SERIALIZER_TYPE_INCOMPATIBLE!>Bar<!>>)
 
 @Serializable
+class Foo25(val i: @Serializable(with = BazSerializer::class) <!SERIALIZER_TYPE_INCOMPATIBLE!>Bar<!>)
+
+@Serializable
 class Foo3(@Serializable(with = BazSerializer::class) val i: Baz)
 
 @Serializable
