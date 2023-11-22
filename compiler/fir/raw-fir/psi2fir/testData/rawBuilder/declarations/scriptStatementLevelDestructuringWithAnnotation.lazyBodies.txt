@@ -1,0 +1,15 @@
+FILE: scriptStatementLevelDestructuringWithAnnotation.kts
+    SCRIPT: <script-scriptStatementLevelDestructuringWithAnnotation.kts>
+
+        when () {
+            Boolean(true) ->  {
+                @DestrAnno(LAZY_EXPRESSION) lval <destruct>: <implicit> = IntegerLiteral(0).to#(IntegerLiteral(1))
+                @LeftAnno(LAZY_EXPRESSION) lval a: <implicit> = R|<local>/<destruct>|.component1#()
+                @RightAnno(LAZY_EXPRESSION) lval b: <implicit> = R|<local>/<destruct>|.component2#()
+                @Destr2Anno(LAZY_EXPRESSION) lval <destruct>: <implicit> = IntegerLiteral(2).to#(IntegerLiteral(3))
+                @SecondLeftAnno(LAZY_EXPRESSION) lval c: <implicit> = R|<local>/<destruct>|.component1#()
+                @SecondRightAnno(LAZY_EXPRESSION) lval d: <implicit> = R|<local>/<destruct>|.component2#()
+            }
+        }
+
+        public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

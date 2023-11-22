@@ -1,0 +1,16 @@
+FILE: anonymousObjectWithAnnotation.kt
+    public? final? val prop: <implicit> = @Anno(String(object annotation)) object : @SuperType(String(super type)) List<@SuperType(String(nested super type)) Collection<@SuperType(String(nested nested super type)) Int>> {
+        private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            super<@SuperType(String(super type)) List<@SuperType(String(nested super type)) Collection<@SuperType(String(nested nested super type)) Int>>>()
+        }
+
+        @Anno(String(init)) init {
+            @Expression(String(expr)) foo#().let#(<L> = let@fun <implicit>.<anonymous>(it: @Anno(String(lambda param type)) Int): <implicit> <inline=Unknown>  {
+                ^@let Unit
+            }
+            )
+        }
+
+    }
+
+        public? get(): <implicit>

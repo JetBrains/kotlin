@@ -1,0 +1,34 @@
+FILE: delegatesWithAnnotations.kt
+    @Anno(<strcat>(String(x annotation ), x#)) public? final? val x: Intby lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        IntegerLiteral(1).plus#(IntegerLiteral(2))
+    }
+    )
+        public? get(): <implicit> {
+            ^ D|/x|.getValue#(Null(null), ::R|/x|)
+        }
+    @Anno(<strcat>(String(delegate annotation ), x#)) field:@PROPERTY_DELEGATE_FIELD:Anno(<strcat>(String(delegate: delegate annotation ), x#)) public? final? val delegate: <implicit> = object : ReadWriteProperty<@Anno(<strcat>(String(ReadWriteProperty first type argument ), x#)) Any?, @Anno(<strcat>(String(ReadWriteProperty second type argument ), x#)) Int> {
+        private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            super<<implicit>>()
+        }
+
+        @Anno(<strcat>(String(getValue ), x#)) public? open? override fun getValue(thisRef: Any?, property: KProperty<*>): @Anno(<strcat>(String(getValue return type ), x#)) Int {
+            ^getValue IntegerLiteral(1)
+        }
+
+        @Anno(<strcat>(String(setValue ), x#)) public? open? override fun setValue(thisRef: Any?, property: KProperty<*>, value: @Anno(<strcat>(String(setValue value parameter type ), x#)) Int): R|kotlin/Unit| {
+        }
+
+    }
+
+        public? get(): <implicit>
+    @Anno(<strcat>(String(value annotation ), x#)) field:@PROPERTY_DELEGATE_FIELD:Anno(<strcat>(String(delegate: value annotation ), x#)) public? final? val value: <implicit>by delegate#
+        @PROPERTY_GETTER:Anno(<strcat>(String(get: value annotation ), x#)) public? get(): <implicit> {
+            ^ D|/value|.getValue#(Null(null), ::R|/value|)
+        }
+    @Anno(<strcat>(String(variable annotation ), x#)) field:@PROPERTY_DELEGATE_FIELD:Anno(<strcat>(String(delegate: value annotation ), x#)) public? final? var variable: <implicit>by delegate#
+        @PROPERTY_GETTER:Anno(<strcat>(String(get: value annotation ), x#)) public? get(): <implicit> {
+            ^ D|/variable|.getValue#(Null(null), ::R|/variable|)
+        }
+        @PROPERTY_SETTER:Anno(<strcat>(String(set: value annotation ), x#)) public? set(@SETTER_PARAMETER:Anno(<strcat>(String(setparam: value annotation ), x#)) <set-?>: <implicit>): R|kotlin/Unit| {
+            ^ D|/variable|.setValue#(Null(null), ::R|/variable|, R|<local>/variable|)
+        }

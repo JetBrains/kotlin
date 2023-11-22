@@ -1,0 +1,15 @@
+FILE: scriptLevelDestructuringWithAnnotation.kts
+    SCRIPT: <script-scriptLevelDestructuringWithAnnotation.kts>
+
+        @DestrAnno(<strcat>(String(destr 1 ), prop#)) [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = IntegerLiteral(0).to#(IntegerLiteral(1))
+        @LeftAnno(<strcat>(String(a ), prop#)) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a: <implicit> = R|<local>/<destruct>|.component1#()
+
+
+        @RightAnno(<strcat>(String(b ), prop#)) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val b: <implicit> = R|<local>/<destruct>|.component2#()
+
+
+        @Destr2Anno(<strcat>(String(destr 1 ), prop#)) [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = IntegerLiteral(2).to#(IntegerLiteral(3))
+        @SecondLeftAnno(<strcat>(String(c ), prop#)) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val c: <implicit> = R|<local>/<destruct>|.component1#()
+
+
+        @SecondRightAnno(<strcat>(String(d ), prop#)) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = R|<local>/<destruct>|.component2#()

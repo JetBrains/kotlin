@@ -52,6 +52,18 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("annotationOnSuperType.kt")
+        public void testAnnotationOnSuperType() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnSuperType.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationOnSuperTypeCall.kt")
+        public void testAnnotationOnSuperTypeCall() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnSuperTypeCall.kt");
+        }
+
+        @Test
         @TestMetadata("annotationsOnNullableParenthesizedTypes.kt")
         public void testAnnotationsOnNullableParenthesizedTypes() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnNullableParenthesizedTypes.kt");
@@ -61,6 +73,18 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         @TestMetadata("annotationsOnParenthesizedTypes.kt")
         public void testAnnotationsOnParenthesizedTypes() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnParenthesizedTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("anonymousObjectWithAnnotation.kt")
+        public void testAnonymousObjectWithAnnotation() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/anonymousObjectWithAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("classLevelDestructuringWithAnnotation.kt")
+        public void testClassLevelDestructuringWithAnnotation() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/classLevelDestructuringWithAnnotation.kt");
         }
 
         @Test
@@ -88,6 +112,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("constructorWithLocalDeclarations.kt")
+        public void testConstructorWithLocalDeclarations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorWithLocalDeclarations.kt");
+        }
+
+        @Test
         @TestMetadata("contextReceivers.kt")
         public void testContextReceivers() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contextReceivers.kt");
@@ -106,9 +136,33 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("danglingConstrants.kt")
+        public void testDanglingConstrants() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingConstrants.kt");
+        }
+
+        @Test
+        @TestMetadata("dataClassWithAnnotations.kt")
+        public void testDataClassWithAnnotations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/dataClassWithAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("delegatedFieldNestedName.kt")
+        public void testDelegatedFieldNestedName() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/delegatedFieldNestedName.kt");
+        }
+
+        @Test
         @TestMetadata("delegates.kt")
         public void testDelegates() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/delegates.kt");
+        }
+
+        @Test
+        @TestMetadata("delegatesWithAnnotations.kt")
+        public void testDelegatesWithAnnotations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/delegatesWithAnnotations.kt");
         }
 
         @Test
@@ -121,6 +175,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         @TestMetadata("emptyAnonymousObject.kt")
         public void testEmptyAnonymousObject() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/emptyAnonymousObject.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntryWithAnnotations.kt")
+        public void testEnumEntryWithAnnotations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/enumEntryWithAnnotations.kt");
         }
 
         @Test
@@ -184,6 +244,18 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("fileAnnotations.kt")
+        public void testFileAnnotations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/fileAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("fileAnnotationsWithoutPackage.kt")
+        public void testFileAnnotationsWithoutPackage() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/fileAnnotationsWithoutPackage.kt");
+        }
+
+        @Test
         @TestMetadata("functionTypes.kt")
         public void testFunctionTypes() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/functionTypes.kt");
@@ -214,6 +286,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("initWithLocalDeclarations.kt")
+        public void testInitWithLocalDeclarations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/initWithLocalDeclarations.kt");
+        }
+
+        @Test
         @TestMetadata("invalidDestructing.kt")
         public void testInvalidDestructing() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidDestructing.kt");
@@ -232,9 +310,27 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("localAnnotations.kt")
+        public void testLocalAnnotations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("localDeclarationsInEnumEntry.kt")
         public void testLocalDeclarationsInEnumEntry() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localDeclarationsInEnumEntry.kt");
+        }
+
+        @Test
+        @TestMetadata("localImplicitType.kt")
+        public void testLocalImplicitType() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localImplicitType.kt");
+        }
+
+        @Test
+        @TestMetadata("multiDeclarations.kt")
+        public void testMultiDeclarations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/multiDeclarations.kt");
         }
 
         @Test
@@ -274,6 +370,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/secondaryConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("simpleClass.kt")
         public void testSimpleClass() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/simpleClass.kt");
@@ -301,6 +403,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         @TestMetadata("suspendFunctionTypes.kt")
         public void testSuspendFunctionTypes() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/suspendFunctionTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevelDestructuringWithAnnotation.kt")
+        public void testTopLevelDestructuringWithAnnotation() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/topLevelDestructuringWithAnnotation.kt");
         }
 
         @Test

@@ -1,0 +1,2 @@
+FILE: localAnnotations.kt
+    public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
