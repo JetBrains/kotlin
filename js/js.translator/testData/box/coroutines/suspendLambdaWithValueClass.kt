@@ -13,7 +13,9 @@ fun builder(c: suspend () -> Unit) {
     })
 }
 
-fun box(): String {
+infix fun ULong.ror(shift: Int): ULong = this shr shift
+
+fun testUlong(): String {
     val a: suspend () -> Unit = {
         mapOf(
             0x0000000000000000UL to 0x0000000000000000UL
@@ -40,4 +42,24 @@ fun box(): String {
     return "OK"
 }
 
-infix fun ULong.ror(shift: Int): ULong = this shr shift
+value class UserValueClass(val raw: String)
+
+fun testUseValueClass(): String {
+    var result = "NOT OK"
+    builder {
+        val test = UserValueClass("test")
+        val map = listOf(test).groupBy { it }.mapValues { "OK" }
+        result = map[test] ?: "Cannot find value"
+    }
+    return result
+}
+
+fun box(): String {
+    if (testUlong() != "OK") {
+        return "Fail testUlong()"
+    }
+    if (testUseValueClass() != "OK") {
+        return "Fail testUseValueClass()"
+    }
+    return "OK"
+}
