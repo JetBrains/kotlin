@@ -39,3 +39,30 @@ internal fun <T> withTempDirectory(logger: DokkaLogger? = null, block: (tempDire
         logger?.debug("Deleted temporary directory $tempDir")
     }
 }
+
+/**
+ * Finds a resource by [resourcePath], and returns its absolute path.
+ *
+ * A resource is usually a file found in the `resources` directory of the project.
+ *
+ * For example, if you have a file `project/src/main/resources/jars/kotlinx-cli-jvm-0.3.6.jar`,
+ * you should be able to get it by calling this function as
+ * `getResourceAbsolutePath("jars/kotlinx-cli-jvm-0.3.6.jar")`.
+ *
+ * @throws IllegalArgumentException if the resource cannot be found or does not exist
+ * @return an absolute path to the resource, such as `/home/user/projects/dokka/../MyFile.md`
+ */
+fun getResourceAbsolutePath(resourcePath: String): String {
+    val resourceFile = getResourceFile(resourcePath)
+    require(resourceFile.exists()) {
+        "Resource file does not exist: $resourcePath"
+    }
+    return resourceFile.absolutePath
+}
+
+private fun getResourceFile(resourcePath: String): File {
+    val resource = object {}.javaClass.classLoader.getResource(resourcePath)?.file
+        ?: throw IllegalArgumentException("Resource not found: $resourcePath")
+
+    return File(resource)
+}
