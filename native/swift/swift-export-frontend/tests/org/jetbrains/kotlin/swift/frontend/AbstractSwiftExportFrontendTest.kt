@@ -47,5 +47,7 @@ abstract class AbstractSwiftExportFrontendTest : AbstractAnalysisApiBasedTest() 
         val result = frontend.run(ktFiles)
 
         testServices.assertions.assertEqualsToTestDataFileSibling(result.swiftSource.joinToString("\n"), extension = ".swift")
+        testServices.assertions.assertEqualsToTestDataFileSibling(result.header.joinToString("\n"), extension = ".h")
+        testServices.assertions.assertEqualsToTestDataFileSibling(result.kotlinSource.joinToString("\n"), extension = ".bridge")
     }
 }

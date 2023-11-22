@@ -1,0 +1,7 @@
+import kotlin.native.internal.ExportForCppRuntime
+
+@ExportForCppRuntime("foo_0")
+public fun foo_0(): Boolean {
+    val result = foo()
+    return result
+}
