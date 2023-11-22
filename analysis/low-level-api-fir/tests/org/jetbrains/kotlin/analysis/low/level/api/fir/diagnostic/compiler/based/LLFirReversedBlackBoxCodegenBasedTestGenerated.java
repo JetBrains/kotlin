@@ -20193,6 +20193,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         }
 
         @Test
+        @TestMetadata("primitiveDoubleJavaKotlinIntersection.kt")
+        public void testPrimitiveDoubleJavaKotlinIntersection() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/primitiveDoubleJavaKotlinIntersection.kt");
+        }
+
+        @Test
         @TestMetadata("publicMethodCallViaPackagePrivateCommon.kt")
         public void testPublicMethodCallViaPackagePrivateCommon() throws Exception {
             runTest("compiler/testData/codegen/box/fir/publicMethodCallViaPackagePrivateCommon.kt");

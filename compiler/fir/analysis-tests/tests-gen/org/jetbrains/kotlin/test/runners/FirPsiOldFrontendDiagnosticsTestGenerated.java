@@ -21945,6 +21945,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("intersectionWithJavaVoidNothing.kt")
+            public void testIntersectionWithJavaVoidNothing() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/intersectionWithJavaVoidNothing.kt");
+            }
+
+            @Test
             @TestMetadata("invisiblePackagePrivateInheritedMember.kt")
             public void testInvisiblePackagePrivateInheritedMember() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/invisiblePackagePrivateInheritedMember.kt");
@@ -22697,6 +22703,54 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 @TestMetadata("specializedMap.kt")
                 public void testSpecializedMap() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/specializedMap.kt");
+                }
+
+                @Test
+                @TestMetadata("triangleWithFlexibleType.kt")
+                public void testTriangleWithFlexibleType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/triangleWithFlexibleType.kt");
+                }
+
+                @Test
+                @TestMetadata("triangleWithFlexibleTypeAndSubstitution.kt")
+                public void testTriangleWithFlexibleTypeAndSubstitution() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/triangleWithFlexibleTypeAndSubstitution.kt");
+                }
+
+                @Test
+                @TestMetadata("triangleWithFlexibleTypeAndSubstitution2.kt")
+                public void testTriangleWithFlexibleTypeAndSubstitution2() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/triangleWithFlexibleTypeAndSubstitution2.kt");
+                }
+
+                @Test
+                @TestMetadata("triangleWithFlexibleTypeAndSubstitution3.kt")
+                public void testTriangleWithFlexibleTypeAndSubstitution3() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/triangleWithFlexibleTypeAndSubstitution3.kt");
+                }
+
+                @Test
+                @TestMetadata("triangleWithFlexibleTypeAndSubstitution4.kt")
+                public void testTriangleWithFlexibleTypeAndSubstitution4() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/triangleWithFlexibleTypeAndSubstitution4.kt");
+                }
+
+                @Test
+                @TestMetadata("triangleWithFlexibleTypeAndSubstitution5.kt")
+                public void testTriangleWithFlexibleTypeAndSubstitution5() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/triangleWithFlexibleTypeAndSubstitution5.kt");
+                }
+
+                @Test
+                @TestMetadata("triangleWithNotNullType.kt")
+                public void testTriangleWithNotNullType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/triangleWithNotNullType.kt");
+                }
+
+                @Test
+                @TestMetadata("triangleWithNullableType.kt")
+                public void testTriangleWithNullableType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/triangleWithNullableType.kt");
                 }
             }
 

@@ -1,0 +1,15 @@
+FILE: main.kt
+    public abstract interface B : R|kotlin/Any| {
+        public open fun foo(x: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class C : R|A|, R|B| {
+        public constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/C.C|().R|/B.foo|(Int(42))
+    }
