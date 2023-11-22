@@ -11,7 +11,7 @@ class Outer {
     }
 
     fun <T> bar() {
-        <!TYPE_PARAMETER_AS_REIFIED!>T::class<!>
+        T::class
         val x: T? = null
         val y: T? = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>T()<!>
     }
@@ -21,8 +21,8 @@ class Owner<T> {
     class T
 
     fun baz() {
-        <!TYPE_PARAMETER_AS_REIFIED!>T::class<!>
+        T::class
         val x: T? = null
-        val y: T? = T()
+        val y: T? = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>T()<!>
     }
 }

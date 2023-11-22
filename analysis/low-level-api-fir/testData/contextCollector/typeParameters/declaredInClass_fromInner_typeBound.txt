@@ -12,13 +12,13 @@ Tower Data Context:
     Element 5
         Scope: FirExplicitSimpleImportingScope
     Element 6
-        Scope: FirMemberTypeParameterScope
-            Classifiers:
-                FirTypeParameterSymbol MyParam
-    Element 7
         Scope: FirNestedClassifierScopeImpl
             Classifiers:
                 FirRegularClassSymbol public final inner class Inner<T : R|MyParam|, Outer(MyParam)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol MyParam
     Element 8
         Implicit receiver:
             FirRegularClassSymbol public final class Outer<MyParam> : R|kotlin/Any|

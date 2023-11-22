@@ -62,15 +62,15 @@ FILE: memberTypeParameterVsNestedClassReference.fir.kt
         public final val k: R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>| = ::R|/OuterClassWithClass.OuterParam.OuterParam|
             public get(): R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>|
 
-        public final val l: <ERROR TYPE REF: Unresolved reference: foo> = R|?|::<Unresolved reference: foo>#
-            public get(): <ERROR TYPE REF: Unresolved reference: foo>
+        public final val l: R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>| = Q|OuterClassWithClass.OuterParam|::R|/OuterClassWithClass.OuterParam.foo|
+            public get(): R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>|
 
         public final val m: R|kotlin/reflect/KFunction0<kotlin/Unit>| = R|/OuterClassWithClass.OuterParam.OuterParam|()::R|/OuterClassWithClass.OuterParam.foo|
             public get(): R|kotlin/reflect/KFunction0<kotlin/Unit>|
 
         public final fun foo(): R|kotlin/Unit| {
             lval k: R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>| = ::R|/OuterClassWithClass.OuterParam.OuterParam|
-            lval l: <ERROR TYPE REF: Unresolved reference: foo> = R|?|::<Unresolved reference: foo>#
+            lval l: R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>| = Q|OuterClassWithClass.OuterParam|::R|/OuterClassWithClass.OuterParam.foo|
             lval m: R|kotlin/reflect/KFunction0<kotlin/Unit>| = R|/OuterClassWithClass.OuterParam.OuterParam|()::R|/OuterClassWithClass.OuterParam.foo|
         }
 
@@ -82,15 +82,15 @@ FILE: memberTypeParameterVsNestedClassReference.fir.kt
             public final val k: R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>| = ::R|/OuterClassWithClass.OuterParam.OuterParam|
                 public get(): R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>|
 
-            public final val l: <ERROR TYPE REF: Unresolved reference: foo> = R|?|::<Unresolved reference: foo>#
-                public get(): <ERROR TYPE REF: Unresolved reference: foo>
+            public final val l: R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>| = Q|OuterClassWithClass.OuterParam|::R|/OuterClassWithClass.OuterParam.foo|
+                public get(): R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>|
 
             public final val m: R|kotlin/reflect/KFunction0<kotlin/Unit>| = R|/OuterClassWithClass.OuterParam.OuterParam|()::R|/OuterClassWithClass.OuterParam.foo|
                 public get(): R|kotlin/reflect/KFunction0<kotlin/Unit>|
 
             init {
                 lval k: R|kotlin/reflect/KFunction0<OuterClassWithClass.OuterParam>| = ::R|/OuterClassWithClass.OuterParam.OuterParam|
-                lval l: <ERROR TYPE REF: Unresolved reference: foo> = R|?|::<Unresolved reference: foo>#
+                lval l: R|kotlin/reflect/KFunction1<OuterClassWithClass.OuterParam, kotlin/Unit>| = Q|OuterClassWithClass.OuterParam|::R|/OuterClassWithClass.OuterParam.foo|
                 lval m: R|kotlin/reflect/KFunction0<kotlin/Unit>| = R|/OuterClassWithClass.OuterParam.OuterParam|()::R|/OuterClassWithClass.OuterParam.foo|
             }
 

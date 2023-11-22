@@ -608,7 +608,13 @@ fun createConeDiagnosticForCandidateWithError(
         }
         CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate))
         CandidateApplicability.K2_NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate)
-        else -> ConeInapplicableCandidateError(applicability, candidate)
+        else -> {
+            if (TypeParameterAsExpression in candidate.diagnostics) {
+                ConeTypeParameterInQualifiedAccess(candidate.symbol as FirTypeParameterSymbol)
+            } else {
+                ConeInapplicableCandidateError(applicability, candidate)
+            }
+        }
     }
 }
 

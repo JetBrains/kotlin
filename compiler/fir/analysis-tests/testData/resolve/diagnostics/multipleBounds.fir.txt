@@ -53,8 +53,8 @@ FILE: multipleBounds.kt
         }
 
         public final fun test(t: R|T|): R|kotlin/Unit| {
-            R|?|.<Unresolved name: foo>#()
-            R|?|.<Unresolved name: bar>#()
+            R|?<Type parameter T in qualified access>#|.<Unresolved name: foo>#()
+            R|?<Type parameter T in qualified access>#|.<Unresolved name: bar>#()
             R|<local>/t|.R|Jet87/A.foo|()
             R|<local>/t|.R|Jet87/B.bar|()
         }
@@ -96,8 +96,8 @@ FILE: multipleBounds.kt
 
     }
     public final fun <T : R|Jet87/A|, R|Jet87/B|> test2(t: R|T|): R|kotlin/Unit| {
-        R|?|.<Unresolved name: foo>#()
-        R|?|.<Unresolved name: bar>#()
+        R|?<Type parameter T in qualified access>#|.<Unresolved name: foo>#()
+        R|?<Type parameter T in qualified access>#|.<Unresolved name: bar>#()
         R|<local>/t|.R|Jet87/A.foo|()
         R|<local>/t|.R|Jet87/B.bar|()
     }

@@ -362,6 +362,9 @@ private fun mapInapplicableCandidateError(
                 qualifiedAccessSource
             )
 
+            // Reported later
+            is TypeParameterAsExpression -> null
+
             else -> genericDiagnostic
         }
     }.distinct()

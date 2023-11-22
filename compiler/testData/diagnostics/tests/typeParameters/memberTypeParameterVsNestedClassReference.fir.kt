@@ -31,23 +31,23 @@ class OuterClassWithClass<OuterParam> {
     }
 
     val k = ::OuterParam
-    val l = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>OuterParam::<!UNRESOLVED_REFERENCE!>foo<!><!>
+    val l = OuterParam::foo
     val m = OuterParam()::foo
 
     fun foo() {
         val k = ::OuterParam
-        val l = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>OuterParam::<!UNRESOLVED_REFERENCE!>foo<!><!>
+        val l = OuterParam::foo
         val m = OuterParam()::foo
     }
 
     inner class Inner<NestedParam : OuterParam>(t: NestedParam) {
         val k = ::OuterParam
-        val l = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>OuterParam::<!UNRESOLVED_REFERENCE!>foo<!><!>
+        val l = OuterParam::foo
         val m = OuterParam()::foo
 
         init {
             val k = ::OuterParam
-            val l = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>OuterParam::<!UNRESOLVED_REFERENCE!>foo<!><!>
+            val l = OuterParam::foo
             val m = OuterParam()::foo
         }
     }

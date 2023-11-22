@@ -12,13 +12,13 @@ FILE: memberTypeParameterVsNestedClass2.fir.kt
         }
 
         public final inline fun <reified T> foo(): R|kotlin/Unit| {
-            <getClass>(R|T|)
+            <getClass>(Q|Outer.T|)
             lval x: R|T?| = Null(null)
             lval y: R|T?| = R|/Outer.T.T<CS errors: /Outer.T.T>#|()
         }
 
         public final fun <T> bar(): R|kotlin/Unit| {
-            <getClass>(R|?|)
+            <getClass>(Q|Outer.T|)
             lval x: R|T?| = Null(null)
             lval y: R|T?| = R|/Outer.T.T<CS errors: /Outer.T.T>#|()
         }
@@ -37,9 +37,9 @@ FILE: memberTypeParameterVsNestedClass2.fir.kt
         }
 
         public final fun baz(): R|kotlin/Unit| {
-            <getClass>(R|?|)
-            lval x: R|Owner.T?| = Null(null)
-            lval y: R|Owner.T?| = R|/Owner.T.T|()
+            <getClass>(Q|Owner.T|)
+            lval x: R|T?| = Null(null)
+            lval y: R|T?| = R|/Owner.T.T<CS errors: /Owner.T.T>#|()
         }
 
     }

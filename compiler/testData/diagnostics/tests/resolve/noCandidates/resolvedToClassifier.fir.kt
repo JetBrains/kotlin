@@ -15,7 +15,7 @@ fun test() {
 
 fun <T> bar() {
     val typeParameter_as_val = <!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>
-    val typeParameter_as_fun = <!UNRESOLVED_REFERENCE!>T<!>()
+    val typeParameter_as_fun = <!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>()
 
     baz(<!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>)
     baz("$<!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>")

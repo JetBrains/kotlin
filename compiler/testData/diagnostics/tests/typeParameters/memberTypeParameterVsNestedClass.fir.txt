@@ -12,8 +12,8 @@ FILE: memberTypeParameterVsNestedClass.fir.kt
         }
 
         public final fun <NestedParam : R|OuterParam|> foo(t: R|NestedParam|): R|kotlin/Unit| {
-            lval k: R|OuterClass.OuterParam| = R|<local>/t|
-            lval l: R|OuterClass.OuterParam| = R|/OuterClass.OuterParam.OuterParam|()
+            lval k: R|OuterParam| = R|<local>/t|
+            lval l: R|OuterParam| = R|/OuterClass.OuterParam.OuterParam<CS errors: /OuterClass.OuterParam.OuterParam>#|()
         }
 
         public final inner class Inner<NestedParam : R|OuterParam|, Outer(OuterParam)> : R|kotlin/Any| {
@@ -28,8 +28,8 @@ FILE: memberTypeParameterVsNestedClass.fir.kt
                 public get(): R|OuterParam|
 
             init {
-                lval m: R|OuterClass.OuterParam| = R|<local>/t|
-                lval n: R|OuterClass.OuterParam| = R|/OuterClass.OuterParam.OuterParam|()
+                lval m: R|OuterParam| = R|<local>/t|
+                lval n: R|OuterParam| = R|/OuterClass.OuterParam.OuterParam<CS errors: /OuterClass.OuterParam.OuterParam>#|()
             }
 
         }

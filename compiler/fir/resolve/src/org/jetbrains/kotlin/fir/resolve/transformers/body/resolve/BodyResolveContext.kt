@@ -471,10 +471,11 @@ class BodyResolveContext(
         // Otherwise, reuse staticsAndCompanion.
         val forConstructorHeader = if (typeParameterScope != null) {
             towerDataContext
-                .addNonLocalScope(typeParameterScope)
                 .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
                 .run { towerElementsForClass.companionReceiver?.let { addReceiver(null, it) } ?: this }
                 .addNonLocalScopesIfNotNull(towerElementsForClass.companionStaticScope, towerElementsForClass.staticScope)
+                // Note: scopes here are in reverse order, so type parameter scope is the most prioritized
+                .addNonLocalScope(typeParameterScope)
         } else {
             staticsAndCompanion
         }

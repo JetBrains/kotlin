@@ -91,11 +91,11 @@ FILE: companionPropertyAndTypeParameter.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val some: <ERROR TYPE REF: Type parameter test in qualified access> = R|?|
+        public final val some: <ERROR TYPE REF: Type parameter test in qualified access> = R|?<Type parameter test in qualified access>#|
             public get(): <ERROR TYPE REF: Type parameter test in qualified access>
 
         public final fun f(): R|kotlin/Unit| {
-            lval some: <ERROR TYPE REF: Type parameter test in qualified access> = R|?|
+            lval some: <ERROR TYPE REF: Type parameter test in qualified access> = R|?<Type parameter test in qualified access>#|
         }
 
     }
