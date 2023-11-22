@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.bind
 import org.jetbrains.kotlin.generators.tree.printer.generateTree
 import org.jetbrains.kotlin.ir.generator.model.markLeaves
 import org.jetbrains.kotlin.ir.generator.print.*
+import org.jetbrains.kotlin.utils.bind
 import java.io.File
 
 const val BASE_PACKAGE = "org.jetbrains.kotlin.ir"

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.utils.bind
 
 sealed class TestStepBuilder<InputArtifact, OutputArtifact>
         where InputArtifact : ResultingArtifact<InputArtifact>,

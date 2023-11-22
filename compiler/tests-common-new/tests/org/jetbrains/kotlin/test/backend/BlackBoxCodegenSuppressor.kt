@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.backend
 
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.WrappedException
-import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.extractIgnoredDirectiveForTargetBackend
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.utils.bind
 
 class BlackBoxCodegenSuppressor(
     testServices: TestServices,

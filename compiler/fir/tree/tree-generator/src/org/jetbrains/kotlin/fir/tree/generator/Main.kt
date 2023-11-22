@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.tree.generator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.printer.*
 import org.jetbrains.kotlin.generators.tree.Model
-import org.jetbrains.kotlin.generators.tree.bind
 import org.jetbrains.kotlin.generators.tree.printer.generateTree
+import org.jetbrains.kotlin.utils.bind
 import java.io.File
 
 internal const val BASE_PACKAGE = "org.jetbrains.kotlin.fir"
