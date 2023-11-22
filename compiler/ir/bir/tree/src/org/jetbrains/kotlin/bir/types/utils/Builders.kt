@@ -21,7 +21,6 @@ class BirSimpleTypeBuilder {
     var arguments: List<BirTypeArgument> = emptyList()
     var annotations: List<BirConstructorCall> = emptyList()
     var abbreviation: BirTypeAbbreviation? = null
-    var variance = Variance.INVARIANT
 }
 
 fun BirSimpleType.toBuilder() =
@@ -44,7 +43,7 @@ fun BirSimpleTypeBuilder.buildSimpleType() =
         abbreviation
     )
 
-fun BirSimpleTypeBuilder.buildTypeProjection() =
+fun BirSimpleTypeBuilder.buildTypeProjection(variance: Variance) =
     if (variance == Variance.INVARIANT)
         buildSimpleType()
     else
