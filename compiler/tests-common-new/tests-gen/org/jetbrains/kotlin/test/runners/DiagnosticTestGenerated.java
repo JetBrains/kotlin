@@ -37477,6 +37477,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("memberTypeParameterVsNestedClass.kt")
+            public void testMemberTypeParameterVsNestedClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/memberTypeParameterVsNestedClass.kt");
+            }
+
+            @Test
             @TestMetadata("misplacedConstraints.kt")
             public void testMisplacedConstraints() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/misplacedConstraints.kt");
