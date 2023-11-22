@@ -15,6 +15,12 @@ import org.jetbrains.kotlin.util.PrivateForInline
 @Suppress("ClassName", "unused")
 @OptIn(PrivateForInline::class)
 object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
+    val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
+        val JS_MODULE_PROHIBITED_ON_VAR by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_MODULE_PROHIBITED_ON_NON_EXTERNAL by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val NESTED_JS_MODULE_PROHIBITED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+    }
+
     val EXTERNALS by object : DiagnosticGroup("Externals") {
         val NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("superType")

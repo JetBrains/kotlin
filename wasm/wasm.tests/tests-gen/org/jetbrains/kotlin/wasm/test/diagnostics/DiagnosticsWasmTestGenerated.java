@@ -130,6 +130,34 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop/module")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Module {
+            @Test
+            public void testAllFilesPresentInModule() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/jsInterop/module"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("jsVarProhibited.kt")
+            public void testJsVarProhibited() throws Exception {
+                runTest("compiler/testData/diagnostics/wasmTests/jsInterop/module/jsVarProhibited.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedProhibited.kt")
+            public void testNestedProhibited() throws Exception {
+                runTest("compiler/testData/diagnostics/wasmTests/jsInterop/module/nestedProhibited.kt");
+            }
+
+            @Test
+            @TestMetadata("prohibitedOnNonNative.kt")
+            public void testProhibitedOnNonNative() throws Exception {
+                runTest("compiler/testData/diagnostics/wasmTests/jsInterop/module/prohibitedOnNonNative.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop/rtti")
         @TestDataPath("$PROJECT_ROOT")
         public class Rtti {
