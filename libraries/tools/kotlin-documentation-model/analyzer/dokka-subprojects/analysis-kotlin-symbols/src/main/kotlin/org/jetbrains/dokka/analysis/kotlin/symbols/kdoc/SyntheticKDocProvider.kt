@@ -54,7 +54,7 @@ internal fun KtAnalysisSession.getGeneratedKDocDocumentationFrom(symbol: KtSymbo
 private fun KtAnalysisSession.loadTemplate(filePath: String): DocumentationNode? {
     val kdoc = loadContent(filePath) ?: return null
     val externalDriProvider = { link: String ->
-        resolveKDocTextLinkDRI(link)
+        resolveKDocTextLinkToDRI(link)
     }
 
     val parser = MarkdownParser(externalDriProvider, filePath)

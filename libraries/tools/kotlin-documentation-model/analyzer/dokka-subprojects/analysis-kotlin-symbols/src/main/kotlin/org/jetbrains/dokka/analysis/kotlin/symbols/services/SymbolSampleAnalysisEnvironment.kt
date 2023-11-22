@@ -11,7 +11,7 @@ import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironment
 import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironmentCreator
 import org.jetbrains.dokka.analysis.kotlin.sample.SampleSnippet
-import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.resolveKDocTextLinkSymbol
+import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.resolveKDocTextLinkToSymbol
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.KotlinAnalysis
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SamplesKotlinAnalysis
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
@@ -83,7 +83,7 @@ private class SymbolSampleAnalysisEnvironment(
             ?: projectKotlinAnalysis.getModule(sourceSet)
 
         return analyze(ktSourceModule) {
-            resolveKDocTextLinkSymbol(fqLink)
+            resolveKDocTextLinkToSymbol(fqLink)
                 ?.sourcePsiSafe()
         }
     }
