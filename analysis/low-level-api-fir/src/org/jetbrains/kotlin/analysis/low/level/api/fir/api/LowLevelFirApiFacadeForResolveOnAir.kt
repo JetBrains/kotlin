@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionDepend
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerDataContextAllElementsCollector
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirReplacement
@@ -59,7 +59,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
     private fun PsiElement.onAirGetNonLocalContainingOrThisDeclaration(): KtElement? {
         return getNonLocalContainingOrThisDeclarationCodeFragmentAware { declaration ->
-            declaration.isApplicableForOnAirResolve() && !declaration.canBePartOfParentDeclaration
+            declaration.isApplicableForOnAirResolve() && declaration.isAutonomousDeclaration
         }
     }
 
