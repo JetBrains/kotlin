@@ -27,8 +27,6 @@ public class InternalKotlinAnalysisPlugin : DokkaPlugin() {
 
     public val inheritanceBuilder: ExtensionPoint<InheritanceBuilder> by extensionPoint()
 
-    public val externalDocumentablesProvider: ExtensionPoint<ExternalDocumentablesProvider> by extensionPoint()
-
     public val documentableSourceLanguageParser: ExtensionPoint<DocumentableSourceLanguageParser> by extensionPoint()
 
     @OptIn(DokkaPluginApiPreview::class)
