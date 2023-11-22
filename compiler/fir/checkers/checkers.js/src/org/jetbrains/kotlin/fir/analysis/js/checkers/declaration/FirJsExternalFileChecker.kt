@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object FirJsExternalFileChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        val closestNonLocal = context.closestNonLocalWith(declaration)?.symbol ?: return
+        val closestNonLocal = declaration.symbol // context.closestNonLocalWith(declaration)?.symbol ?: return
 
         if (closestNonLocal.isNativeObject(context) || !context.isTopLevel) {
             return
