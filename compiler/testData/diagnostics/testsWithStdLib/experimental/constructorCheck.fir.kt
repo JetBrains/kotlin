@@ -15,6 +15,11 @@ class Other(val x: Int) {
     constructor(y: Long, some: Some? = null): this(some?.x ?: y.toInt())
 }
 
+enum class Enumeration @Marker constructor() {
+    ENTRY<!OPT_IN_USAGE_ERROR!><!>(),
+    ENTRY2;
+}
+
 fun foo(some: <!OPT_IN_USAGE_ERROR!>Some<!>? = null) {}
 
 fun test() {
