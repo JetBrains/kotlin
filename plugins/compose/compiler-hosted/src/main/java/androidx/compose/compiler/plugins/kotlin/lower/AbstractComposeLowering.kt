@@ -1204,7 +1204,7 @@ abstract class AbstractComposeLowering(
         currentComposer: IrExpression,
         value: IrExpression,
         inferredStable: Boolean,
-        strongSkippingEnabled: Boolean
+        compareInstanceForUnstableValues: Boolean
     ): IrExpression {
         // compose has a unique opportunity to avoid inline class boxing for changed calls, since
         // we know that the only thing that we are detecting here is "changed or not", we can
@@ -1222,7 +1222,7 @@ abstract class AbstractComposeLowering(
         val primitiveDescriptor = type.toPrimitiveType()
             .let { changedPrimitiveFunctions[it] }
 
-        return if (!strongSkippingEnabled) {
+        return if (!compareInstanceForUnstableValues) {
             val descriptor = primitiveDescriptor
                 ?: if (type.isFunction()) changedInstanceFunction else changedFunction
             irMethodCall(currentComposer, descriptor).also {
