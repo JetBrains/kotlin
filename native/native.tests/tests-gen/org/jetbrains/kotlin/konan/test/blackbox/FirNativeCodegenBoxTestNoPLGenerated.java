@@ -39394,6 +39394,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                 runTest("compiler/testData/codegen/box/sam/kt59858.kt");
             }
 
+            @Test
+            @TestMetadata("kt63564.kt")
+            public void testKt63564() throws Exception {
+                runTest("compiler/testData/codegen/box/sam/kt63564.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/sam/adapters")
             @TestDataPath("$PROJECT_ROOT")

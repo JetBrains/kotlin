@@ -49814,6 +49814,12 @@ public class FirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTestGenerated
         }
 
         @Test
+        @TestMetadata("kt63564.kt")
+        public void testKt63564() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt63564.kt");
+        }
+
+        @Test
         @TestMetadata("noConversionFromSamToSam.kt")
         public void testNoConversionFromSamToSam() throws Exception {
             runTest("compiler/testData/codegen/box/sam/noConversionFromSamToSam.kt");
