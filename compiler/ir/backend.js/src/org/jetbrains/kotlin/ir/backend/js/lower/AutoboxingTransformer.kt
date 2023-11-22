@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.ir.util.render
 
 // Copied and adapted from Kotlin/Native
 
-abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) : AbstractValueUsageTransformer(context.irBuiltIns),
+abstract class AbstractValueUsageLowering(
+    val context: JsCommonBackendContext,
+    replaceTypesInsideInlinedFunctionBlock: Boolean = false
+) : AbstractValueUsageTransformer(context.irBuiltIns, replaceTypesInsideInlinedFunctionBlock),
     BodyLoweringPass {
 
     val icUtils = context.inlineClassesUtils
@@ -120,7 +123,8 @@ abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) :
         )
 }
 
-class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsageLowering(context) {
+class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesInsideInlinedFunctionBlock: Boolean = false) :
+    AbstractValueUsageLowering(context, replaceTypesInsideInlinedFunctionBlock) {
     private var processingReturnStack = mutableListOf<IrReturn>()
 
     private fun IrExpression.useReturnableExpressionAsType(expectedType: IrType): IrExpression {
