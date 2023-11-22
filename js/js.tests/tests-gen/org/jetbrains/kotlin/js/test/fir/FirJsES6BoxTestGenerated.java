@@ -69,6 +69,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
         }
 
         @Test
+        @TestMetadata("stringTemplateWithValueOf.kt")
+        public void testStringTemplateWithValueOf() throws Exception {
+            runTest("js/js.translator/testData/box/builtins/stringTemplateWithValueOf.kt");
+        }
+
+        @Test
         @TestMetadata("superCallsToAnyMethods.kt")
         public void testSuperCallsToAnyMethods() throws Exception {
             runTest("js/js.translator/testData/box/builtins/superCallsToAnyMethods.kt");
