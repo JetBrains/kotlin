@@ -31,6 +31,7 @@ import p.*
 
 fun test(a: A) {
     a.m1()
+    a.<!UNRESOLVED_REFERENCE!>m2<!>()
 
     M1().a.m1()
 
