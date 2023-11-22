@@ -192,9 +192,7 @@ abstract class Bir2IrConverterBase(
             birType.nullability,
             birType.arguments.map { remapTypeArgument(it) },
             birType.annotations.map { remapElement(it) as IrConstructorCall },
-            birType.abbreviation?.let { abbreviation ->
-                remapTypeAbbreviation(abbreviation)
-            },
+            birType.abbreviation?.let { remapTypeAbbreviation(it)},
         )
     }
 
@@ -213,6 +211,9 @@ abstract class Bir2IrConverterBase(
             birType.lowerType?.let { remapType(it) },
             remapTypeArgument(birType.constructor.argument),
             remapElement(birType.constructor.typeParameter) as IrTypeParameter,
+            birType.nullability,
+            birType.annotations.map { remapElement(it) as IrConstructorCall },
+            birType.abbreviation?.let { remapTypeAbbreviation(it)},
         )
     }
 
