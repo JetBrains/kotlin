@@ -13,6 +13,8 @@ class SirBuiltinDeclarationOrigin : SirDeclarationOrigin
 
 interface SirFunctionOrigin : SirDeclarationOrigin
 
+class DummyFunctionOrigin : SirFunctionOrigin
+
 interface KotlinSirOrigin : SirOrigin
 
 interface KotlinDeclarationSirOrigin : SirOrigin {

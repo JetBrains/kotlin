@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.sir.visitors.SirTransformer
 import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
 internal class SirEnumImpl(
-    override val origin: SirOrigin,
+    override val origin: SirDeclarationOrigin,
     override val visibility: SirVisibility,
     override val name: String,
     override val declarations: MutableList<SirDeclaration>,

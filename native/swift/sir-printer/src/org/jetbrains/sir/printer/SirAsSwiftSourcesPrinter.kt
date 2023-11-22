@@ -6,8 +6,13 @@
 package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
-object SirAsSwiftSourcesPrinter : SirVisitor<StringBuilder, Boolean> {
+object SirAsSwiftSourcesPrinter : SirVisitor<Boolean, StringBuilder>() {
+
+    override fun visitElement(element: SirElement, data: StringBuilder): Boolean {
+        return false
+    }
 
     fun print(element: SirElement): String = buildString {
         element.accept(this@SirAsSwiftSourcesPrinter, this)
@@ -24,43 +29,43 @@ object SirAsSwiftSourcesPrinter : SirVisitor<StringBuilder, Boolean> {
         true
     }
 
-    override fun visitSwiftFunction(function: SirFunction, data: StringBuilder) = with(data) {
+    override fun visitFunction(function: SirFunction, data: StringBuilder) = with(data) {
         append("public func ")
         append(function.name)
         append("(")
-        ParameterPrinter.visitSwiftFunction(function, this)
+        function.accept(ParameterPrinter, data)
         append(")")
         append(" -> ")
         ParameterPrinter.visitType(function.returnType, this)
         append(" { fatalError() }")
         true
     }
-
-    override fun visitType(type: SirType, data: StringBuilder) = false // we do not support new types currently
-
-    override fun visitParameter(param: SirParameter, data: StringBuilder) = false // we do not support top level properties currently
-    override fun visitForeignFunction(function: SirForeignFunction, data: StringBuilder) = false // we do not write Foreign nodes
 }
 
-private object ParameterPrinter : SirVisitor<StringBuilder, Boolean> {
-    override fun visitParameter(param: SirParameter, data: StringBuilder) = with(data) {
-        append(param.name.prependIndent())
+private object ParameterPrinter : SirVisitor<Boolean, StringBuilder>() {
+    fun visitParameter(param: SirParameter, data: StringBuilder) = with(data) {
+        append(param.argumentName?.prependIndent())
         append(": ")
-        param.type.accept(this@ParameterPrinter, this)
+        visitType(param.type, data)
         true
     }
 
-    override fun visitType(type: SirType, data: StringBuilder) = with(data) {
-        append(type.name)
+    fun visitType(type: SirType, data: StringBuilder) = with(data) {
+        require(type is SirNominalType)
+        append(type.declaration.name)
         true
     }
 
-    override fun visitSwiftFunction(function: SirFunction, data: StringBuilder) = with(data) {
+    override fun visitElement(element: SirElement, data: StringBuilder): Boolean {
+        return false
+    }
+
+    override fun visitFunction(function: SirFunction, data: StringBuilder) = with(data) {
         if (function.parameters.isNotEmpty()) {
             appendLine()
         }
         function.parameters.forEach {
-            it.accept(this@ParameterPrinter, this)
+            visitParameter(it, data)
             if (function.parameters.last() != it) {
                 append(",")
             }
@@ -68,7 +73,4 @@ private object ParameterPrinter : SirVisitor<StringBuilder, Boolean> {
         }
         true
     }
-
-    override fun visitModule(module: SirModule, data: StringBuilder) = false
-    override fun visitForeignFunction(function: SirForeignFunction, data: StringBuilder) = false
 }

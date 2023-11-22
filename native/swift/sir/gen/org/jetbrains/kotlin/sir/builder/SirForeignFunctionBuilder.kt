@@ -10,16 +10,13 @@
 
 package org.jetbrains.kotlin.sir.builder
 
+import org.jetbrains.kotlin.sir.*
 import kotlin.contracts.*
-import org.jetbrains.kotlin.sir.SirOrigin
-import org.jetbrains.kotlin.sir.SirBuilderDsl
-import org.jetbrains.kotlin.sir.SirForeignFunction
-import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.impl.SirForeignFunctionImpl
 
 @SirBuilderDsl
 class SirForeignFunctionBuilder {
-    lateinit var origin: SirOrigin
+    lateinit var origin: SirFunctionOrigin
     lateinit var visibility: SirVisibility
 
     fun build(): SirForeignFunction {

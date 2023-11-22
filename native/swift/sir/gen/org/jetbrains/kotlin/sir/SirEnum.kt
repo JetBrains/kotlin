@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.enum]
  */
 abstract class SirEnum : SirDeclarationContainer(), SirNamedTypeDeclaration {
-    abstract override val origin: SirOrigin
+    abstract override val origin: SirDeclarationOrigin
     abstract override val visibility: SirVisibility
     abstract override var parent: SirDeclarationParent
     abstract override val name: String

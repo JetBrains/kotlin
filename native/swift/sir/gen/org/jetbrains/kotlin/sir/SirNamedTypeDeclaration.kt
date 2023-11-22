@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.namedTypeDeclaration]
  */
 sealed interface SirNamedTypeDeclaration : SirDeclarationWithName {
-    override val origin: SirOrigin
+    override val origin: SirDeclarationOrigin
     override val visibility: SirVisibility
     override var parent: SirDeclarationParent
     override val name: String
@@ -35,7 +35,7 @@ sealed class BuiltinSirTypeDeclaration(
     override val name: String,
     swiftModule: SirModule,
 ) : SirNamedTypeDeclaration {
-    override val origin: SirOrigin = SirBuiltinDeclarationOrigin()
+    override val origin: SirDeclarationOrigin = SirBuiltinDeclarationOrigin()
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override var parent: SirDeclarationParent = swiftModule
 
