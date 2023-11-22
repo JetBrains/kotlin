@@ -1,3 +1,83 @@
+## 1.9.21
+
+### Compiler
+
+- [`KT-62885`](https://youtrack.jetbrains.com/issue/KT-62885) Introduce a language feature entry for expect actual classes for easier configuration of MPP projects
+- [`KT-63081`](https://youtrack.jetbrains.com/issue/KT-63081) Optimize new native caches: CachedLibraries.computeVersionedCacheDirectory()
+
+### Docs & Examples
+
+- [`KT-55619`](https://youtrack.jetbrains.com/issue/KT-55619) Document `String.format` function
+
+### IDE. Gradle Integration
+
+- [`KT-62877`](https://youtrack.jetbrains.com/issue/KT-62877) Artifact files collecting for project configuration was finished. Resolution for configuration configuration  X will be skipped
+
+### IDE. Gradle. Script
+
+- [`KT-60813`](https://youtrack.jetbrains.com/issue/KT-60813) Scripts: NoSuchMethodError: 'void org.slf4j.Logger.error(java.lang.String, java.lang.Object)' when dependency uses Slf4j API
+
+### JavaScript
+
+- [`KT-60785`](https://youtrack.jetbrains.com/issue/KT-60785) KJS: Destructured value class in suspend function fails with Uncaught TypeError: can't convert to primitive type error
+- [`KT-63207`](https://youtrack.jetbrains.com/issue/KT-63207) KMP / JS: "TypeError: <mangled_name> is not a function" with 1.9.20
+- [`KT-62778`](https://youtrack.jetbrains.com/issue/KT-62778) package.json "main" field has .js extension when the result files have .mjs extension
+- [`KT-61795`](https://youtrack.jetbrains.com/issue/KT-61795) KJS: Incremental Cache is not invalidated if `useEsClasses` compiler argument was changed
+- [`KT-61957`](https://youtrack.jetbrains.com/issue/KT-61957) KJS: "Uncaught ReferenceError: entries is not defined" caused by enum class with `@JsExport` and Enum.entries call
+- [`KT-62444`](https://youtrack.jetbrains.com/issue/KT-62444) KJS with commonJS modules should re-export in 1.9.20
+- [`KT-63184`](https://youtrack.jetbrains.com/issue/KT-63184) KJS / Serialization: JsExport on serializable interface creates erroneous TypeScript
+- [`KT-62190`](https://youtrack.jetbrains.com/issue/KT-62190) KJS: "IllegalStateException: Expect to have either super call or partial linkage stub inside constructor" caused by Compose and useEsModules()
+- [`KT-58685`](https://youtrack.jetbrains.com/issue/KT-58685) KJS: "IllegalStateException: Not locked" cused by "unlock" called twice
+
+### Klibs
+
+- [`KT-62515`](https://youtrack.jetbrains.com/issue/KT-62515) Interop klib of concurrent version is not accepted when building dependent project: "The library versions don't match"
+
+### Tools. CLI
+
+- [`KT-63139`](https://youtrack.jetbrains.com/issue/KT-63139) Incorrect kotlin implementation version (1.9.255-SNAPSHOT) in metadata info
+
+### Tools. Gradle
+
+- [`KT-63499`](https://youtrack.jetbrains.com/issue/KT-63499) Gradle: Source sets conventions are still registered
+
+### Tools. Gradle. JS
+
+- [`KT-59523`](https://youtrack.jetbrains.com/issue/KT-59523) MPP / KJS: ESM modules uses incorrect file extension on package.json (.mjs)
+
+### Tools. Gradle. Kapt
+
+- [`KT-63366`](https://youtrack.jetbrains.com/issue/KT-63366) Kapt processing fails with custom source sets
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-32608`](https://youtrack.jetbrains.com/issue/KT-32608) Create JUnit-XML result file in multiplatform gradle build
+- [`KT-63315`](https://youtrack.jetbrains.com/issue/KT-63315) Wasm gradle plugin DSL is invalid for parameterless wasmWasi method
+- [`KT-63338`](https://youtrack.jetbrains.com/issue/KT-63338) [KMP] metadata task fails to find cinterop classes from dependency projects
+- [`KT-63044`](https://youtrack.jetbrains.com/issue/KT-63044) KGP: Multiplatform - 8.4 configuration cache support
+- [`KT-63011`](https://youtrack.jetbrains.com/issue/KT-63011) Apple Framework Artifacts is not connected to KotlinNativeTask
+- [`KT-62601`](https://youtrack.jetbrains.com/issue/KT-62601) AS/IntelliJ exception after updating a KMP project with a macos target to Kotlin 1.9.20-RC
+
+### Tools. Incremental Compile
+
+- [`KT-61590`](https://youtrack.jetbrains.com/issue/KT-61590) K2/KMP: Expect actual matching is breaking on the incremental compilation
+
+### Tools. JPS
+
+- [`KT-63594`](https://youtrack.jetbrains.com/issue/KT-63594) ClassCastException in JPS statistics
+- [`KT-63651`](https://youtrack.jetbrains.com/issue/KT-63651) Fix NPE in Kotlin JPS after enabling graph implementation of JPS
+
+### Tools. Kapt
+
+- [`KT-57389`](https://youtrack.jetbrains.com/issue/KT-57389) KAPT3 uses a Javac API for JCImport which will break in JDK 21
+- [`KT-60507`](https://youtrack.jetbrains.com/issue/KT-60507) Kapt: "IllegalAccessError: superclass access check failed" using java 21 toolchain
+
+### Tools. Scripts
+
+- [`KT-54819`](https://youtrack.jetbrains.com/issue/KT-54819) Scripts: Not able to use slf4j in .main.kts
+- [`KT-61727`](https://youtrack.jetbrains.com/issue/KT-61727) Scripts: Maven artifacts resolution is slow
+
+
 ## 1.9.20
 
 ### Analysis. API
