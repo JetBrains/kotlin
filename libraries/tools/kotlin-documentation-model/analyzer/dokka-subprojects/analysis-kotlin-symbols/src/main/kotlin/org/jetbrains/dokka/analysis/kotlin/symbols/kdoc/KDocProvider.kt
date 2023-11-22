@@ -64,7 +64,7 @@ internal fun KtAnalysisSession.getKDocDocumentationFrom(symbol: KtSymbol, logger
 
     parseFromKDocTag(
         kDocTag = kDocContent.contentTag,
-        externalDri = { link -> resolveKDocLinkDRI(link).ifUnresolved { logger.logUnresolvedLink(link.getLinkText(), kdocLocation) } },
+        externalDri = { link -> resolveKDocLinkToDRI(link).ifUnresolved { logger.logUnresolvedLink(link.getLinkText(), kdocLocation) } },
         kdocLocation = kdocLocation
     )
 }
