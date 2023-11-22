@@ -26,7 +26,7 @@ fun makeTypeProjection(type: BirType, variance: Variance): BirTypeProjection =
     when {
         type is BirCapturedType -> BirTypeProjectionImpl(type, variance)
         type is BirTypeProjection && type.variance == variance -> type
-        type is BirSimpleType -> type.toBuilder().apply { this.variance = variance }.buildTypeProjection()
+        type is BirSimpleType -> type.toBuilder().buildTypeProjection(variance)
         type is BirDynamicType -> BirDynamicType(null, type.annotations, variance)
         type is BirErrorType -> BirErrorType(null, type.annotations, variance)
         type is BirTypeProjection -> BirTypeProjectionImpl(type.type, variance)
