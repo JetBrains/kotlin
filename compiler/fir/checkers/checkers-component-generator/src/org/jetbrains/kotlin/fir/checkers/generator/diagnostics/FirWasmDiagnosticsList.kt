@@ -33,6 +33,9 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
             parameter<String>("place")
             parameter<ConeKotlinType>("type")
         }
+        val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("type")
+        }
     }
 
     val JS_FUN by object : DiagnosticGroup("JsFun") {

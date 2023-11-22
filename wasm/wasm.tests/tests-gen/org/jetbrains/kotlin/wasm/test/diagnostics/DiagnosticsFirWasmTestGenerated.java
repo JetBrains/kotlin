@@ -139,6 +139,12 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
             }
 
             @Test
+            @TestMetadata("jsModuleNonExternal.kt")
+            public void testJsModuleNonExternal() throws Exception {
+                runTest("compiler/testData/diagnostics/wasmTests/jsInterop/module/jsModuleNonExternal.kt");
+            }
+
+            @Test
             @TestMetadata("jsVarProhibited.kt")
             public void testJsVarProhibited() throws Exception {
                 runTest("compiler/testData/diagnostics/wasmTests/jsInterop/module/jsVarProhibited.kt");
@@ -154,6 +160,22 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
             @TestMetadata("prohibitedOnNonNative.kt")
             public void testProhibitedOnNonNative() throws Exception {
                 runTest("compiler/testData/diagnostics/wasmTests/jsInterop/module/prohibitedOnNonNative.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop/qualifier")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Qualifier {
+            @Test
+            public void testAllFilesPresentInQualifier() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/jsInterop/qualifier"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("jsQualifierNonExternal.kt")
+            public void testJsQualifierNonExternal() throws Exception {
+                runTest("compiler/testData/diagnostics/wasmTests/jsInterop/qualifier/jsQualifierNonExternal.kt");
             }
         }
 

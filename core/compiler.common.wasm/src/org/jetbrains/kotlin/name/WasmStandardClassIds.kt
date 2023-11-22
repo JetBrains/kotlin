@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.name
 
 import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
 
 object WasmStandardClassIds {
     val BASE_WASM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("wasm"))
@@ -19,6 +21,9 @@ object WasmStandardClassIds {
 
         @JvmField
         val JsFun = "JsFun".baseId()
+
+        @JvmField
+        val annotationsRequiringExternal = setOf(JsModule, JsQualifier)
     }
 }
 
