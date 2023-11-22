@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.symbols.BirClassifierSymbol
 import org.jetbrains.kotlin.bir.symbols.BirTypeAliasSymbol
 import org.jetbrains.kotlin.bir.types.*
+import org.jetbrains.kotlin.bir.util.render
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.compactIfPossible
+import org.jetbrains.kotlin.types.model.CaptureStatus
 
 class BirSimpleTypeBuilder {
     var kotlinType: KotlinType? = null
@@ -21,11 +23,22 @@ class BirSimpleTypeBuilder {
     var arguments: List<BirTypeArgument> = emptyList()
     var annotations: List<BirConstructorCall> = emptyList()
     var abbreviation: BirTypeAbbreviation? = null
+
+    var captureStatus: CaptureStatus? = null
+    var capturedLowerType: BirType? = null
+    var capturedTypeConstructor: BirCapturedType.Constructor? = null
 }
 
 fun BirSimpleType.toBuilder() =
     BirSimpleTypeBuilder().also { b ->
         b.kotlinType = originalKotlinType
+        if (this is BirCapturedType) {
+            b.captureStatus = captureStatus
+            b.capturedLowerType = lowerType
+            b.capturedTypeConstructor = constructor
+        } else {
+            b.classifier = classifier
+        }
         b.classifier = classifier
         b.nullability = nullability
         b.arguments = arguments
@@ -33,15 +46,38 @@ fun BirSimpleType.toBuilder() =
         b.abbreviation = abbreviation
     }
 
-fun BirSimpleTypeBuilder.buildSimpleType() =
-    BirSimpleTypeImpl(
-        kotlinType,
-        classifier ?: throw AssertionError("Classifier not provided"),
-        nullability,
-        arguments.compactIfPossible(),
-        annotations.compactIfPossible(),
-        abbreviation
-    )
+fun BirSimpleTypeBuilder.buildSimpleType(): BirSimpleType =
+    if (classifier == null) {
+        check(captureStatus != null && capturedTypeConstructor != null) {
+            "Neither classifier nor captured type constructor is provided"
+        }
+        check(arguments.isEmpty()) {
+            "Arguments should be empty when creating a captured type: ${capturedTypeConstructor?.argument?.render()}"
+        }
+        BirCapturedType(
+            captureStatus!!,
+            capturedLowerType,
+            capturedTypeConstructor!!.argument,
+            capturedTypeConstructor!!.typeParameter,
+            nullability,
+            annotations.compactIfPossible(),
+            abbreviation,
+        ).apply {
+            constructor.initSuperTypes(capturedTypeConstructor!!.superTypes)
+        }
+    } else {
+        check(captureStatus == null && capturedTypeConstructor == null) {
+            "Both classifier and captured type constructor are provided"
+        }
+        BirSimpleTypeImpl(
+            kotlinType,
+            classifier ?: throw AssertionError("Classifier not provided"),
+            nullability,
+            arguments.compactIfPossible(),
+            annotations.compactIfPossible(),
+            abbreviation
+        )
+    }
 
 fun BirSimpleTypeBuilder.buildTypeProjection(variance: Variance) =
     if (variance == Variance.INVARIANT)

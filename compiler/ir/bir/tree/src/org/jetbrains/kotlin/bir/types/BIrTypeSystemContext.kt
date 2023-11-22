@@ -261,7 +261,9 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
                     argument.type
                 } else null
 
-                BirCapturedType(status, lowerType, argument, typeParameters[index])
+                BirCapturedType(
+                    status, lowerType, argument, typeParameters[index], SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), null
+                )
             }
         }
 
