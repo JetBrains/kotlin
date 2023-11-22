@@ -5,6 +5,7 @@
 package org.jetbrains.dokka.analysis.test.api.analysis
 
 import org.jetbrains.dokka.analysis.kotlin.KotlinAnalysisPlugin
+import org.jetbrains.dokka.analysis.kotlin.documentable.ExternalDocumentableProvider
 import org.jetbrains.dokka.analysis.kotlin.internal.ModuleAndPackageDocumentationReader
 import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironmentCreator
 
@@ -16,5 +17,6 @@ import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironmentCreat
  */
 class TestAnalysisServices(
     val sampleAnalysisEnvironmentCreator: SampleAnalysisEnvironmentCreator,
+    val externalDocumentableProvider: ExternalDocumentableProvider,
     val moduleAndPackageDocumentationReader: ModuleAndPackageDocumentationReader
 )

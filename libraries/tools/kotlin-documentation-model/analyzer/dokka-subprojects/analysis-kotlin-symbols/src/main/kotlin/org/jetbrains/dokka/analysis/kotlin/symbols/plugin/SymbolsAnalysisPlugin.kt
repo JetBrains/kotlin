@@ -114,8 +114,8 @@ public class SymbolsAnalysisPlugin : DokkaPlugin() {
          plugin<InternalKotlinAnalysisPlugin>().inheritanceBuilder providing ::SymbolInheritanceBuilder
      }
 
-    internal val symbolExternalDocumentablesProvider by extending {
-        plugin<InternalKotlinAnalysisPlugin>().externalDocumentablesProvider providing ::SymbolExternalDocumentablesProvider
+    internal val symbolExternalDocumentableProvider by extending {
+        plugin<KotlinAnalysisPlugin>().externalDocumentableProvider providing ::SymbolExternalDocumentablesProvider
     }
 
     internal val symbolSampleAnalysisEnvironmentCreator  by extending {

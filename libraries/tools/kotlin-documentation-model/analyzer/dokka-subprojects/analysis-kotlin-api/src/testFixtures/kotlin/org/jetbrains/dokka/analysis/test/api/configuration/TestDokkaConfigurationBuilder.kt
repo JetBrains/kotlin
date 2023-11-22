@@ -5,6 +5,7 @@
 package org.jetbrains.dokka.analysis.test.api.configuration
 
 import org.jetbrains.dokka.analysis.test.api.TestProject
+import org.jetbrains.dokka.analysis.test.api.util.getResourceAbsolutePath
 import org.jetbrains.dokka.analysis.test.api.util.AnalysisTestDslMarker
 
 /**
@@ -65,6 +66,8 @@ abstract class BaseTestDokkaSourceSetBuilder {
 
     /**
      * JARs **additional** to the default classpath.
+     *
+     * You can put test JARs inside `src/resources`, and then get it via [getResourceAbsolutePath].
      *
      * @see TestDokkaSourceSet.classpath
      */
