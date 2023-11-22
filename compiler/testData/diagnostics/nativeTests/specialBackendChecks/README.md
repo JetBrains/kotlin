@@ -57,8 +57,7 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t64.kt
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t8.kt
 /tmp/t8.kt:8:5: error: type kotlin.Function0<*>  of callback parameter 1 is not supported here: * as return type
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop/t9.kt
-/tmp/t41.kt:9:5: error: kotlinx.cinterop.staticCFunction must take an unbound, non-capturing function or lambda, but captures at:
-    /tmp/t41.kt:7:17: x
+/tmp/t9.kt:8:5: error: type kotlin.Function0<out kotlin.Int>  of callback parameter 1 is not supported here: out-variance of return type
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent/t48.kt
 /tmp/t48.kt:11:12: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
     /tmp/t48.kt:11:50
@@ -72,13 +71,13 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent/t51.kt
 /tmp/t51.kt:10:28: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
     /tmp/t51.kt:10:66
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t54.kt
-/tmp/t54.kt:2:44: error: no spread elements allowed here
+/tmp/t54.kt:4:44: error: no spread elements allowed here
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t55.kt
-/tmp/t55.kt:2:37: error: all elements of binary blob must be constants
+/tmp/t55.kt:4:37: error: all elements of binary blob must be constants
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t56.kt
-/tmp/t56.kt:2:29: error: incorrect value for binary data: 1000
+/tmp/t56.kt:4:29: error: incorrect value for binary data: 1000
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf/t57.kt
-/tmp/t57.kt:2:13: error: expected at least one element
+/tmp/t57.kt:4:13: error: expected at least one element
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/nativeRef/t52.kt
 /tmp/t52.kt:6:5: error: kotlin.native.ref.createCleaner must take an unbound, non-capturing function or lambda, but captures at:
     /tmp/t52.kt:6:33: x
@@ -94,7 +93,7 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t17.k
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t18.kt
 /tmp/t18.kt:8:19: error: super calls to Objective-C meta classes are not supported yet
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t2.kt
-/tmp/t2.kt:6:5: error: 'handleFailureInFunction' overrides nothing.
+/tmp/t2.kt:8:5: error: 'handleFailureInFunction' overrides nothing
     override fun handleFailureInFunction(functionName: String, file: String, lineNumber: NSInteger /* = Long */, description: String?, vararg args: Any?) { }
     ^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t20.kt
@@ -108,14 +107,14 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t23.k
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t24.kt
 /tmp/t24.kt:6:1: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t25.kt
-/tmp/t25.kt:7:5: error: can't override 'toString', override 'description' instead
+/tmp/t25.kt:7:14: error: can't override 'toString', override 'description' instead
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t26.kt
 /tmp/t26.kt:11:9: error: @kotlinx.cinterop.ObjCAction method must not have extension receiver
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t27.kt
 /tmp/t27.kt:11:13: error: unexpected @kotlinx.cinterop.ObjCAction method parameter type: kotlin.String
 Only Objective-C object types are supported here
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t28.kt
-/tmp/t28.kt:8:5: error: unexpected @kotlinx.cinterop.ObjCAction method return type: kotlin.Int
+/tmp/t28.kt:10:5: error: unexpected @kotlinx.cinterop.ObjCAction method return type: kotlin.Int
 Only 'Unit' is supported here
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t29.kt
 /tmp/t29.kt:9:5: error: @kotlinx.cinterop.ObjCOutlet property must be var
@@ -125,30 +124,30 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t31.k
 /tmp/t31.kt:8:5: error: unexpected @kotlinx.cinterop.ObjCOutlet type: kotlin.String
 Only Objective-C object types are supported here
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t32.kt
-/tmp/t32.kt:8:5: error: constructor with @kotlinx.cinterop.ObjCObjectBase.OverrideInit doesn't override any super class constructor.
+/tmp/t32.kt:10:5: error: constructor with @kotlinx.cinterop.ObjCObjectBase.OverrideInit doesn't override any super class constructor.
 It must completely match by parameter names and types.
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t33.kt
-/tmp/t33.kt:8:5: error: constructor with @kotlinx.cinterop.ObjCObjectBase.OverrideInit overrides initializer that is already overridden explicitly
+/tmp/t33.kt:10:5: error: constructor with @kotlinx.cinterop.ObjCObjectBase.OverrideInit overrides initializer that is already overridden explicitly
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t34.kt
-/tmp/t34.kt:8:5: error: only 0, 1 or 2 parameters are supported here
+/tmp/t34.kt:10:5: error: only 0, 1 or 2 parameters are supported here
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t35.kt
 /tmp/t35.kt:7:13: error: unable to call non-designated initializer as super constructor
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t4.kt
 /tmp/t4.kt:6:21: error: callable references to variadic Objective-C methods are not supported
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t5.kt
-/tmp/t5.kt:6:82: error: passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string
+/tmp/t5.kt:6:83: error: passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t6.kt
-/tmp/t6.kt:6:96: error: when calling variadic Objective-C methods spread operator is supported only for *arrayOf(...)
+/tmp/t6.kt:6:97: error: when calling variadic Objective-C methods spread operator is supported only for *arrayOf(...)
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t61.kt
-/tmp/t61.kt:4:5: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
+/tmp/t61.kt:5:5: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t62.kt
-/tmp/t62.kt:3:1: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
+/tmp/t62.kt:4:1: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t7.kt
-/tmp/t7.kt:6:40: error: when calling variadic C functions spread operator is supported only for *arrayOf(...)
+/tmp/t7.kt:6:41: error: when calling variadic C functions spread operator is supported only for *arrayOf(...)
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t3.kt
 /tmp/t3.kt:6:13: error: callable references to variadic C functions are not supported
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t36.kt
-/tmp/t36.kt:6:13: error: native interop types constructors must not be called directly
+/tmp/t36.kt:7:13: error: native interop types constructors must not be called directly
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/reflect/t58.kt
 /tmp/t58.kt:6:5: error: non-reified type parameters with recursive bounds are not supported yet: TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Comparable<T of <root>.foo>] reified:false
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/reflect/t59.kt
