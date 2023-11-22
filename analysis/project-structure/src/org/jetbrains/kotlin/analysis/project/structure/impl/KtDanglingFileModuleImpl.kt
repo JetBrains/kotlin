@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -18,7 +19,8 @@ import java.util.Objects
 
 public class KtDanglingFileModuleImpl(
     file: KtFile,
-    override val contextModule: KtModule
+    override val contextModule: KtModule,
+    override val resolutionMode: DanglingFileResolutionMode
 ) : KtDanglingFileModule {
     override val isCodeFragment: Boolean = file is KtCodeFragment
 
@@ -67,7 +69,9 @@ public class KtDanglingFileModuleImpl(
         if (other is KtDanglingFileModuleImpl) {
             val selfFile = this.fileRef.element
             val otherFile = other.fileRef.element
-            return selfFile != null && selfFile == otherFile && contextModule == other.contextModule
+            return selfFile != null && selfFile == otherFile
+                    && contextModule == other.contextModule
+                    && resolutionMode == other.resolutionMode
         }
 
         return false

@@ -231,6 +231,11 @@ public interface KtDanglingFileModule : KtModule {
     public val contextModule: KtModule
 
     /**
+     * A way of resolving references to non-local declarations in the dangling file.
+     */
+    public val resolutionMode: DanglingFileResolutionMode
+
+    /**
      * True if the [file] is a code fragment.
      * Useful to recognize code fragments when their PSI was collected.
      */

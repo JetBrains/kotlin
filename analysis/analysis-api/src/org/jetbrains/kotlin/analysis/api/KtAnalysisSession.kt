@@ -106,6 +106,7 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
      *
      * @see analyzeInDependedAnalysisSession
      */
+    @Deprecated("On-air analysis is obsolete. Use 'analyzeCopy()' instead")
     public abstract fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession
 
     internal val smartCastProvider: KtSmartCastProvider get() = smartCastProviderImpl

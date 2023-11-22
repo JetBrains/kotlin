@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.patchDesignationPathIfNeeded
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.utils.ifEmpty
 
 internal object FirElementFinder {
     fun findClassifierWithClassId(
@@ -129,12 +131,17 @@ internal object FirElementFinder {
         }
 
         find(firFile.declarations, classIdPathIndex = 0)
-        return result?.let {
-            FirDeclarationDesignation(
-                path = if (path.isEmpty()) emptyList() else path,
-                target = it,
-            )
+
+        if (result == null) {
+            return null
         }
+
+        // K1 doesn't perform smart-casts on 'result'
+        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+        return FirDeclarationDesignation(
+            path = patchDesignationPathIfNeeded(result!!, path).ifEmpty { emptyList() },
+            target = result!!,
+        )
     }
 
     inline fun <reified E : FirElement> findElementIn(

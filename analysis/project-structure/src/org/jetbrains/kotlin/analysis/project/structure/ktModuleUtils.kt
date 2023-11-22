@@ -64,3 +64,14 @@ public inline fun <reified M : KtModule> KtModule.allDirectDependenciesOfType():
  */
 public fun computeTransitiveDependsOnDependencies(directDependsOnDependencies: List<KtModule>): List<KtModule> =
     topologicalSort(directDependsOnDependencies) { this.directDependsOnDependencies }
+
+/**
+ * Specifies how references to non-local declarations in the dangling files should be resolved.
+ */
+public enum class DanglingFileResolutionMode {
+    /** Resolve first to declarations in the dangling file, and delegate to the original file or module only when needed. */
+    PREFER_SELF,
+
+    /** * Resolve only to declarations in the original file or module. Ignore all non-local declarations in the dangling file copy. */
+    IGNORE_SELF
+}

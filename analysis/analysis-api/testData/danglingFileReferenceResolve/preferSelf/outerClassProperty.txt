@@ -1,0 +1,2 @@
+Resolved to:
+0: (in Outer) val foo: kotlin.String [fake.kt]

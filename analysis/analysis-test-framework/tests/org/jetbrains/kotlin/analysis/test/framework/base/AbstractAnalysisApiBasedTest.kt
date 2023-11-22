@@ -11,7 +11,8 @@ import com.intellij.testFramework.TestDataFile
 import junit.framework.ComparisonFailure
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.analyzeInDependedAnalysisSession
+import org.jetbrains.kotlin.analysis.api.analyzeCopy
+import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
@@ -205,12 +206,10 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         return if (configurator.analyseInDependentSession) {
             val originalContainingFile = contextElement.containingKtFile
             val fileCopy = originalContainingFile.copy() as KtFile
-            val sameElementInCopy = PsiTreeUtil.findSameElementInCopy(contextElement, fileCopy)
-            analyzeInDependedAnalysisSession(
-                originalContainingFile,
-                sameElementInCopy,
-                action = { action(sameElementInCopy) }
-            )
+
+            analyzeCopy(fileCopy, DanglingFileResolutionMode.IGNORE_SELF) {
+                action(PsiTreeUtil.findSameElementInCopy<KtElement>(contextElement, fileCopy))
+            }
         } else {
             analyze(contextElement, action = { action(contextElement) })
         }
