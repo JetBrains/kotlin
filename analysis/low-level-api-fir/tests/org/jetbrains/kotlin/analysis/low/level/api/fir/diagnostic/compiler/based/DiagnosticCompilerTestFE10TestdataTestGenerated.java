@@ -43223,6 +43223,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("importStatement2.kt")
+            public void testImportStatement2() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/importStatement2.kt");
+            }
+
+            @Test
             @TestMetadata("incorrectTargetsForExperimentalAnnotation.kt")
             public void testIncorrectTargetsForExperimentalAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/incorrectTargetsForExperimentalAnnotation.kt");

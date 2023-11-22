@@ -41109,6 +41109,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("importStatement2.kt")
+            public void testImportStatement2() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/importStatement2.kt");
+            }
+
+            @Test
             @TestMetadata("incorrectTargetsForExperimentalAnnotation.kt")
             public void testIncorrectTargetsForExperimentalAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/incorrectTargetsForExperimentalAnnotation.kt");
