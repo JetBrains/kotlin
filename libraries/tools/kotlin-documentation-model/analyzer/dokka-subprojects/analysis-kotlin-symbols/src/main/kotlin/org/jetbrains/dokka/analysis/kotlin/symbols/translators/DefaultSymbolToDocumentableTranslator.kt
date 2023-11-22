@@ -8,6 +8,7 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.translators
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.*
 import com.intellij.psi.util.PsiLiteralUtil
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.java.JavaAnalysisPlugin
 import org.jetbrains.dokka.analysis.java.parsers.JavadocParser
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.getGeneratedKDocDocumentationFrom
@@ -65,7 +66,7 @@ internal class DefaultSymbolToDocumentableTranslator(context: DokkaContext) : As
             moduleName = context.configuration.moduleName,
             analysisContext = analysisContext,
             logger = context.logger,
-            javadocParser = javadocParser
+            javadocParser = if(sourceSet.analysisPlatform == Platform.jvm) javadocParser else null
         ).visitModule()
     }
 }
@@ -79,6 +80,8 @@ internal fun <T : Bound> T.wrapWithVariance(variance: org.jetbrains.kotlin.types
 
 /**
  * Maps [KtSymbol] to Documentable model [Documentable]
+ *
+ * @param javadocParser can be null for non JVM platform
  */
 internal class DokkaSymbolVisitor(
     private val sourceSet: DokkaConfiguration.DokkaSourceSet,
