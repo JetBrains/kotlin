@@ -512,7 +512,7 @@ private class MappingExtensions(
                     km.varargElementType = kmType
                     km.type = ClassifierStubType(
                             Classifier.topLevel("kotlin", "Array"),
-                            listOf(TypeArgumentStub(type))
+                            listOf(TypeArgumentStub(type, TypeArgument.Variance.OUT))
                     ).map()
                 } else {
                     km.type = kmType
