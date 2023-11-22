@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 
@@ -53,8 +56,8 @@ fun isValidTypeParameterFromOuterDeclaration(
             }
 
             if (currentDeclaration is FirCallableDeclaration) {
-                val containingClassId = currentDeclaration.symbol.callableId.classId ?: return true
-                return containsTypeParameter(session.symbolProvider.getClassLikeSymbolByClassId(containingClassId)?.fir)
+                val containingClassLookupTag = currentDeclaration.containingClassLookupTag() ?: return true
+                return containsTypeParameter(containingClassLookupTag.toSymbol(session)?.fir)
             } else if (currentDeclaration is FirClass) {
                 for (superTypeRef in currentDeclaration.superTypeRefs) {
                     val superClassFir = superTypeRef.firClassLike(session) ?: return true
