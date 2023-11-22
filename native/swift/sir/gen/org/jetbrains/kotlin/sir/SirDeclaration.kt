@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.declaration]
  */
 sealed interface SirDeclaration : SirElement {
-    val origin: SirOrigin
+    val origin: SirDeclarationOrigin
     val visibility: SirVisibility
     var parent: SirDeclarationParent
 

@@ -5,4 +5,26 @@
 
 package org.jetbrains.kotlin.sir
 
-data class SirOrigin(val path: List<String>)
+sealed interface SirOrigin
+
+interface SirDeclarationOrigin : SirOrigin
+
+class SirBuiltinDeclarationOrigin : SirDeclarationOrigin
+
+interface SirFunctionOrigin : SirDeclarationOrigin
+
+interface KotlinSirOrigin : SirOrigin
+
+interface KotlinDeclarationSirOrigin : SirOrigin {
+    val fqName: List<String>
+}
+
+interface KotlinFunctionSirOrigin : KotlinDeclarationSirOrigin, SirFunctionOrigin {
+    val returnType: SirType
+
+    val parameters: List<SirParameter>
+}
+
+interface SyntheticSirOrigin : SirOrigin
+
+interface SyntheticFunctionSirOrigin : SirFunctionOrigin

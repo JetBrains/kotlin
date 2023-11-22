@@ -54,13 +54,12 @@ abstract class AbstractKotlinSirContextTestBase : AbstractAnalysisApiBasedTest()
             ktFiles.forEach { file ->
                 declarations += sirFactory.build(file)
             }
-        }.build()
-
+        }
         val actual = buildString {
             module.declarations
                 .filterIsInstance<SirForeignFunction>()
                 .forEach {
-                    appendLine("${it.origin.path}")
+                    appendLine("${it.origin}")
                 }
         }
 

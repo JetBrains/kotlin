@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.sir.visitors.SirTransformer
 import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
 internal class SirFunctionImpl(
-    override val origin: SirOrigin,
+    override val origin: SirFunctionOrigin,
     override val visibility: SirVisibility,
     override val name: String,
     override val parameters: MutableList<SirParameter>,

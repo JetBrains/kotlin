@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.sir.analysisapi
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirForeignFunction
 import org.jetbrains.kotlin.sir.SirVisibility
+import org.jetbrains.kotlin.sir.analysisapi.origin.AASirFunctionOrigin
 import org.jetbrains.kotlin.sir.builder.SirForeignFunctionBuilder
 import org.jetbrains.kotlin.sir.builder.buildForeignFunction
 
@@ -32,22 +35,18 @@ class SirGenerator : SirFactory {
         return res.toList()
     }
 
+    context(KtAnalysisSession)
     private class Visitor(val res: MutableList<SirForeignFunction>) : KtTreeVisitorVoid() {
         override fun visitNamedFunction(function: KtNamedFunction) {
             super.visitNamedFunction(function)
-            function
-                .takeIf { function.isPublic }
-                ?.fqName
-                ?.pathSegments()
-                ?.toListString()
-                ?.let { names -> buildForeignFunction {
-                        origin = SirOrigin(path = names)
-                        visibility = SirVisibility.PUBLIC
-                    }
-                }
-                ?.let { res.add(it) }
+            if (!function.isPublic) return
+            val foreignFunction = buildForeignFunction {
+                origin = AASirFunctionOrigin(
+                    element = function
+                )
+                visibility = SirVisibility.PUBLIC
+            }
+            res += foreignFunction
         }
     }
 }
-
-private fun List<Name>.toListString() = map { it.asString() }

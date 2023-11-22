@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.sir.impl.SirFunctionImpl
 
 @SirBuilderDsl
 class SirFunctionBuilder {
-    lateinit var origin: SirOrigin
+    lateinit var origin: SirFunctionOrigin
     lateinit var visibility: SirVisibility
     lateinit var name: String
     val parameters: MutableList<SirParameter> = mutableListOf()
