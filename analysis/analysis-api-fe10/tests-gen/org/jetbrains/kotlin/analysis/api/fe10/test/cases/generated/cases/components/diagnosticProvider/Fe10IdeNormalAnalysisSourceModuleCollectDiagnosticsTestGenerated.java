@@ -53,6 +53,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
     }
 
     @Test
+    @TestMetadata("incompleteFor.kt")
+    public void testIncompleteFor() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/incompleteFor.kt");
+    }
+
+    @Test
     @TestMetadata("resolutionErrors.kt")
     public void testResolutionErrors() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/resolutionErrors.kt");

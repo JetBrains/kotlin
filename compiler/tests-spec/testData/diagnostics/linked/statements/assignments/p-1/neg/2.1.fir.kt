@@ -16,7 +16,7 @@
  * NOTE: right-hand side of an assignment must be expression
  */
 fun case1() {
-    val x = for (<!SYNTAX!><!>) { }
+    val x = <!ITERATOR_AMBIGUITY!>for (<!SYNTAX!><!>) { }<!>
     val y = for (x in 1..2) { }
 
     val a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>
@@ -29,7 +29,7 @@ fun case1() {
  * NOTE: right-hand side of an assignment must be expression
  */
 fun case2() {
-    var x = for (<!SYNTAX!><!>) { }
+    var x = <!ITERATOR_AMBIGUITY!>for (<!SYNTAX!><!>) { }<!>
     var y = for (x in 1..2) { }
 
     var a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>
@@ -49,7 +49,7 @@ fun case3() {
     var b :Any?
     var c :Any?
 
-    x = for (<!SYNTAX!><!>) { }
+    x = <!ITERATOR_AMBIGUITY!>for (<!SYNTAX!><!>) { }<!>
     y = for (x in 1..2) { }
 
     a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>
