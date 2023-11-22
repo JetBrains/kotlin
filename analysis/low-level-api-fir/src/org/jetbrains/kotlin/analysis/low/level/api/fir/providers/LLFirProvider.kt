@@ -33,9 +33,11 @@ internal class LLFirProvider(
     val session: LLFirSession,
     private val moduleComponents: LLFirModuleResolveComponents,
     canContainKotlinPackage: Boolean,
+    disregardSelfDeclarations: Boolean = false,
     declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,
 ) : FirProvider() {
-    override val symbolProvider: FirSymbolProvider = SymbolProvider()
+    override val symbolProvider: FirSymbolProvider =
+        if (disregardSelfDeclarations) LLEmptySymbolProvider(session) else SymbolProvider()
 
     private val providerHelper = LLFirProviderHelper(
         session,

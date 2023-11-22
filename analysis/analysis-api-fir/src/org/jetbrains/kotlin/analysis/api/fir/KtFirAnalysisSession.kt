@@ -135,7 +135,7 @@ private constructor(
 
     override val substitutorProviderImpl: KtSubstitutorProvider = KtFirSubstitutorProvider(this)
 
-    @Suppress("AnalysisApiMissingLifetimeCheck")
+    @Suppress("AnalysisApiMissingLifetimeCheck", "OVERRIDE_DEPRECATION")
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         check(mode == AnalysisSessionMode.REGULAR) {
             "Cannot create context-dependent copy of KtAnalysis session from a context dependent one"

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModulePr
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -74,12 +75,11 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
             testServices.assertions.fail { "No references at caret found" }
         }
 
-        val resolvedTo =
-            analyseForTest(ktReferences.first().element) {
-                val symbols = ktReferences.flatMap { it.resolveToSymbols() }
-                checkReferenceResultForValidity(ktReferences, mainModule, testServices, symbols)
-                renderResolvedTo(symbols, renderingOptions) { getAdditionalSymbolInfo(it) }
-            }
+        val resolvedTo = analyzeReferenceElement(ktReferences.first().element, mainModule) {
+            val symbols = ktReferences.flatMap { it.resolveToSymbols() }
+            checkReferenceResultForValidity(ktReferences, mainModule, testServices, symbols)
+            renderResolvedTo(symbols, renderingOptions) { getAdditionalSymbolInfo(it) }
+        }
 
         if (Directives.UNRESOLVED_REFERENCE in mainModule.directives) {
             return
@@ -87,6 +87,10 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
 
         val actual = "Resolved to:\n$resolvedTo"
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+    }
+
+    protected open fun <R> analyzeReferenceElement(element: KtElement, mainModule: TestModule, action: KtAnalysisSession.() -> R): R {
+        return analyseForTest(element) { action() }
     }
 
     open fun KtAnalysisSession.getAdditionalSymbolInfo(symbol: KtSymbol): String? = null

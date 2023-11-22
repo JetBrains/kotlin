@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtMod
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
@@ -29,9 +28,7 @@ class KtTestProjectStructureProvider(
 
     @OptIn(KtModuleStructureInternals::class)
     override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
-        // Unwrap context-dependent file copies coming from dependent sessions
-        val containingFile = element.containingFile.originalFile
-
+        val containingFile = element.containingFile
         val virtualFile = containingFile.virtualFile
 
         if (virtualFile != null) {

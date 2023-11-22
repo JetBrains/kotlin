@@ -80,6 +80,7 @@ class KtFe10AnalysisSession(
     override val substitutorProviderImpl: KtSubstitutorProvider
         get() = throw NotSupportedForK1Exception()
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession =
         KtFe10AnalysisSession(originalKtFile.project, elementToReanalyze, token)
 }

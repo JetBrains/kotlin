@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -584,7 +585,10 @@ private fun calculateLazyBodiesForField(designation: FirDesignation) {
     val field = designation.target as FirField
     require(field.initializer is FirLazyExpression)
 
-    val newField = revive<FirField>(designation, designation.path.last().psi)
+    // 'designation.path.last()' cannot be used here, as for dangling files designation target may be in a different file
+    val psi = designation.target.psi?.getStrictParentOfType<KtClassOrObject>()
+
+    val newField = revive<FirField>(designation, psi)
     field.replaceInitializer(newField.initializer)
 }
 

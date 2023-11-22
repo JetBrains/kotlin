@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
@@ -250,3 +251,20 @@ val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
 
 val PsiElement.parentsCodeFragmentAware: Sequence<PsiElement>
     get() = parentsWithSelfCodeFragmentAware.drop(1)
+
+internal fun <T : PsiElement> T.unwrapCopy(containingFile: PsiFile = this.containingFile): T? {
+    val originalFile = containingFile.originalFile.takeIf { it !== containingFile }
+        ?: (containingFile as? KtFile)?.analysisContext?.containingFile
+        ?: return null
+
+    return try {
+        PsiTreeUtil.findSameElementInCopy(this, originalFile)
+    } catch (_: IllegalStateException) {
+        // File copy has a different file structure
+        null
+    }
+}
+
+internal fun <T : PsiElement> T.unwrapCopyOrSelf(containingFile: PsiFile = this.containingFile): T {
+    return unwrapCopy(containingFile) ?: this
+}

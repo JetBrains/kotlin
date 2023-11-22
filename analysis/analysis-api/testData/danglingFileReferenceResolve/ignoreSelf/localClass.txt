@@ -1,0 +1,2 @@
+Resolved to:
+0: (in <local>: Foo.foo.Local) constructor() [fake.kt]
