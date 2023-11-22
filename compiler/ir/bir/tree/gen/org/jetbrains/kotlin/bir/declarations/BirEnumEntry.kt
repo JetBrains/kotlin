@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.symbols.BirEnumEntrySymbol
@@ -21,14 +20,13 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.enumEntry]
  */
-abstract class BirEnumEntry : BirImplElementBase(), BirDeclaration, BirDeclarationWithName,
-        BirEnumEntrySymbol {
+interface BirEnumEntry : BirDeclaration, BirDeclarationWithName, BirEnumEntrySymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ClassDescriptor?
+    override val descriptor: ClassDescriptor?
 
-    abstract var initializerExpression: BirExpressionBody?
+    var initializerExpression: BirExpressionBody?
 
-    abstract var correspondingClass: BirClass?
+    var correspondingClass: BirClass?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)

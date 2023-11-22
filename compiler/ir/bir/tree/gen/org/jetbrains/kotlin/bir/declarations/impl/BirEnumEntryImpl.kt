@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.BirImplChildElementList
+import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirClass
@@ -33,7 +34,7 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     name: Name,
     initializerExpression: BirExpressionBody?,
     correspondingClass: BirClass?,
-) : BirEnumEntry() {
+) : BirImplElementBase(), BirEnumEntry {
     override val owner: BirEnumEntryImpl
         get() = this
 
