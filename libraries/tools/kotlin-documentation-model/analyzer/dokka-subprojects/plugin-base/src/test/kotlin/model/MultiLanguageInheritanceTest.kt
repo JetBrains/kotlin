@@ -4,6 +4,7 @@
 
 package model
 
+import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
@@ -24,6 +25,48 @@ class MultiLanguageInheritanceTest : BaseAbstractTest() {
                 sourceRoots = listOf("src/main/kotlin")
             }
         }
+    }
+
+    @Test
+    fun `should not try to find javadoc for non JVM source set`() {
+        // Bug #3209 is actual for Dokka K1
+        // Technical note: `KtPropertyAccessor`, i.e. `<get-withHintType>`,  is not KtCallableDeclaration so `findKDoc` returns null
+        // Meanwhile, `getJavaDocs()` for KtPropertyAccessor tries to unexpectedly parse the KDoc documentation of property, i.e. `withHintType`
+
+        val nonJvmConfiguration = dokkaConfiguration {
+            suppressObviousFunctions = false
+            sourceSets {
+                sourceSet {
+                    analysisPlatform = Platform.common.key
+                    sourceRoots = listOf("src/main/kotlin")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/sample/Parent.kt
+            |package sample
+            |
+            |/**
+            | * Sample description from parent
+            | */
+            |interface Parent {
+            |    /**
+            |    * Sample description from parent
+            |    */  
+            |    val withHintType: String
+            |}
+            |
+            |/src/main/kotlin/sample/Child.kt
+            |package sample
+            |public class Child : Parent {
+            |   override val withHintType: String 
+            |    get() = ""
+            |}
+            """.trimIndent(),
+            nonJvmConfiguration
+        ) { }
     }
 
     @Test
