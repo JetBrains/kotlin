@@ -12,50 +12,59 @@ digraph ComplexScript_kts {
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter function foo [3]" style="filled" fillcolor=red];
+        2 [label="Enter class <script-ComplexScript.kts> [2]" style="filled" fillcolor=red];
         subgraph cluster_2 {
             color=blue
-            3 [label="Enter block [3]"];
-            4 [label="Const: Int(1) [3]"];
-            5 [label="Jump: ^foo Int(1) [3]"];
-            6 [label="Stub [3]" style="filled" fillcolor=gray];
-            7 [label="Exit block [3]" style="filled" fillcolor=gray];
+            3 [label="Enter property [3]" style="filled" fillcolor=red];
+            4 [label="Const: Int(2) [3]"];
+            5 [label="Exit property [3]" style="filled" fillcolor=red];
         }
-        8 [label="Exit function foo [3]" style="filled" fillcolor=red];
+        subgraph cluster_3 {
+            color=blue
+            6 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_4 {
+                color=blue
+                7 [label="Function call arguments enter [3]"];
+                8 [label="Access variable R|/y| [3]"];
+                9 [label="Function call arguments exit [3]"];
+            }
+            10 [label="Function call: R|/foo|(...) [3]" style="filled" fillcolor=yellow];
+            11 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        12 [label="Exit class <script-ComplexScript.kts> [2]" style="filled" fillcolor=red];
     }
-    2 -> {3};
+    2 -> {3} [color=green];
+    2 -> {12} [style=dotted];
+    2 -> {3 6} [style=dashed];
     3 -> {4};
     4 -> {5};
-    5 -> {8};
-    5 -> {6} [style=dotted];
-    6 -> {7} [style=dotted];
-    7 -> {8} [style=dotted];
-
-    subgraph cluster_3 {
-        color=red
-        9 [label="Enter property [3]" style="filled" fillcolor=red];
-        10 [label="Const: Int(2) [3]"];
-        11 [label="Exit property [3]" style="filled" fillcolor=red];
-    }
+    5 -> {6} [color=green];
+    6 -> {7};
+    7 -> {8};
+    8 -> {9};
     9 -> {10};
     10 -> {11};
+    11 -> {12} [color=green];
 
-    subgraph cluster_4 {
+    subgraph cluster_5 {
         color=red
-        12 [label="Enter property [3]" style="filled" fillcolor=red];
-        subgraph cluster_5 {
+        13 [label="Enter function foo [3]" style="filled" fillcolor=red];
+        subgraph cluster_6 {
             color=blue
-            13 [label="Function call arguments enter [3]"];
-            14 [label="Access variable R|/y| [3]"];
-            15 [label="Function call arguments exit [3]"];
+            14 [label="Enter block [3]"];
+            15 [label="Const: Int(1) [3]"];
+            16 [label="Jump: ^foo Int(1) [3]"];
+            17 [label="Stub [3]" style="filled" fillcolor=gray];
+            18 [label="Exit block [3]" style="filled" fillcolor=gray];
         }
-        16 [label="Function call: R|/foo|(...) [3]" style="filled" fillcolor=yellow];
-        17 [label="Exit property [3]" style="filled" fillcolor=red];
+        19 [label="Exit function foo [3]" style="filled" fillcolor=red];
     }
-    12 -> {13};
     13 -> {14};
     14 -> {15};
     15 -> {16};
-    16 -> {17};
+    16 -> {19};
+    16 -> {17} [style=dotted];
+    17 -> {18} [style=dotted];
+    18 -> {19} [style=dotted];
 
 }
