@@ -10,8 +10,8 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceByTraversingWholeTree
@@ -85,7 +85,7 @@ internal class FileStructure private constructor(
 
     private fun getStructureKtElement(element: KtElement): KtDeclaration? {
         val container = element.getNonLocalContainingOrThisDeclaration {
-            !it.canBePartOfParentDeclaration
+            it.isAutonomousDeclaration
         }
 
         val resultedContainer = when {

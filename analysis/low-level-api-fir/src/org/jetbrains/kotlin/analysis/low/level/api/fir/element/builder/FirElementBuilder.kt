@@ -261,7 +261,11 @@ private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): 
 internal val KtTypeParameter.containingDeclaration: KtDeclaration?
     get() = (parent as? KtTypeParameterList)?.parent as? KtDeclaration
 
-internal val KtDeclaration.canBePartOfParentDeclaration: Boolean get() = this is KtPropertyAccessor || this is KtParameter || this is KtTypeParameter
+internal val KtDeclaration.isAutonomousDeclaration: Boolean
+    get() = when (this) {
+        is KtPropertyAccessor, is KtParameter, is KtTypeParameter -> false
+        else -> true
+    }
 
 internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
     return getNonLocalContainingDeclaration(parentsWithSelf, predicate)
@@ -310,7 +314,7 @@ internal fun getNonLocalContainingDeclaration(
                     }
                 }
                 is KtDeclaration -> {
-                    if (parent.canBePartOfParentDeclaration) {
+                    if (!parent.isAutonomousDeclaration) {
                         if (predicate(parent)) {
                             propose(parent)
                         }

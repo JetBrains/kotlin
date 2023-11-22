@@ -10,9 +10,9 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.fir.declarations.*
@@ -91,7 +91,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
 
 @KtAnalysisApiInternals
 fun collectUseSiteContainers(element: PsiElement, resolveSession: LLFirResolveSession): List<FirDeclaration>? {
-    val containingDeclaration = element.getNonLocalContainingOrThisDeclaration { !it.canBePartOfParentDeclaration } ?: return null
+    val containingDeclaration = element.getNonLocalContainingOrThisDeclaration { it.isAutonomousDeclaration } ?: return null
     val containingFile = containingDeclaration.containingKtFile
     val firFile = resolveSession.getOrBuildFirFile(containingFile)
     return FirElementFinder.findPathToDeclarationWithTarget(firFile, containingDeclaration)
