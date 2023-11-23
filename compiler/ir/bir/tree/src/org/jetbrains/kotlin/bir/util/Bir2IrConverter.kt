@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Bir2IrConverter(
     dynamicPropertyManager: BirElementDynamicPropertyManager,
-    remapedIr2BirElements: Map<BirElement, IrSymbol>,
+    remappedIr2BirElements: Map<BirElement, IrSymbol>,
     private val irBuiltIns: IrBuiltIns,
     compiledBir: BirForest,
     expectedTreeSize: Int = 0,
-) : Bir2IrConverterBase(remapedIr2BirElements, compiledBir) {
+) : Bir2IrConverterBase(remappedIr2BirElements, compiledBir) {
     private val modules = createElementMap<IrModuleFragment, BirModuleFragment>(1)
     private val classes = createElementMap<IrClass, BirClass>((expectedTreeSize * 0.004).toInt())
     private val scripts = createElementMap<IrScript, BirScript>()
