@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
-import org.jetbrains.kotlin.ir.overrides.FakeOverrideRebuilder
 import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -129,8 +128,6 @@ class Fir2IrConverter(
             @OptIn(LeakedDeclarationCaches::class)
             declarationStorage.fillUnboundSymbols()
         }
-
-        evaluateConstants(irModuleFragment, components)
     }
 
     fun bindFakeOverridesOrPostpone(declarations: List<IrDeclaration>) {
@@ -618,7 +615,8 @@ class Fir2IrConverter(
     }
 
     companion object {
-        private fun evaluateConstants(irModuleFragment: IrModuleFragment, components: Fir2IrComponents) {
+        // TODO: move to compiler/fir/entrypoint/src/org/jetbrains/kotlin/fir/pipeline/convertToIr.kt (KT-64201)
+        fun evaluateConstants(irModuleFragment: IrModuleFragment, components: Fir2IrComponents) {
             val fir2IrConfiguration = components.configuration
             val firModuleDescriptor = irModuleFragment.descriptor as? FirModuleDescriptor
             val targetPlatform = firModuleDescriptor?.platform
@@ -744,11 +742,6 @@ class Fir2IrConverter(
                 irModuleFragment,
                 components.fir2IrVisitor
             )
-
-            if (fir2IrConfiguration.useIrFakeOverrideBuilder) {
-                val rebuilder = FakeOverrideRebuilder(commonMemberStorage.symbolTable, components.fakeOverrideBuilder)
-                rebuilder.rebuildFakeOverrides(irModuleFragment)
-            }
 
             return Fir2IrResult(irModuleFragment, components, moduleDescriptor)
         }

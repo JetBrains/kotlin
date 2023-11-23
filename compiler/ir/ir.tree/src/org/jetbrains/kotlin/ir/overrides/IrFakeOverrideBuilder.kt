@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.ir.overrides
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -16,6 +18,9 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
@@ -514,4 +519,28 @@ fun IrDeclaration.isOverridableMemberOrAccessor(): Boolean = when (this) {
     is IrSimpleFunction -> isOverridableFunction()
     is IrProperty -> isOverridableProperty()
     else -> false
+}
+
+fun IrFakeOverrideBuilder.buildForAll(modules: List<IrModuleFragment>) {
+    val builtFakeOverridesClasses = mutableSetOf<IrClass>()
+    fun buildFakeOverrides(clazz: IrClass) {
+        if (clazz is IrLazyDeclarationBase) return
+        if (!builtFakeOverridesClasses.add(clazz)) return
+        for (c in clazz.superTypes) {
+            c.getClass()?.let { buildFakeOverrides(it) }
+        }
+        buildFakeOverridesForClass(clazz, false)
+    }
+    class ClassVisitor : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+        override fun visitClass(declaration: IrClass) {
+            buildFakeOverrides(declaration)
+            declaration.acceptChildrenVoid(this)
+        }
+    }
+    for (module in modules) {
+        module.acceptVoid(ClassVisitor())
+    }
 }

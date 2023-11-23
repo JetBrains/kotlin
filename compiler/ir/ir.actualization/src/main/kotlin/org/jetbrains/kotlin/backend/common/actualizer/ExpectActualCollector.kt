@@ -49,17 +49,15 @@ internal class ExpectActualCollector(
     private val diagnosticsReporter: IrDiagnosticReporter,
     private val expectActualTracker: ExpectActualTracker?,
 ) {
-    data class Result(val expectToActualMap: MutableMap<IrSymbol, IrSymbol>, val classActualizationInfo: ClassActualizationInfo)
 
-    fun collect(): Result {
+    fun collect(actualDeclarations: ClassActualizationInfo): MutableMap<IrSymbol, IrSymbol> {
         val result = mutableMapOf<IrSymbol, IrSymbol>()
         // Collect and link classes at first to make it possible to expand type aliases on the members linking
-        val actualDeclarations = collectActualDeclarations()
         matchAllExpectDeclarations(result, actualDeclarations)
-        return Result(result, actualDeclarations)
+        return result
     }
 
-    private fun collectActualDeclarations(): ClassActualizationInfo {
+    fun collectClassActualizationInfo(): ClassActualizationInfo {
         val expectTopLevelClasses = ExpectTopLevelClassesCollector.collect(dependentFragments)
         val fragmentsWithActuals = dependentFragments.drop(1) + mainFragment
         return ActualDeclarationsCollector.collectActualsFromFragments(fragmentsWithActuals, expectTopLevelClasses)

@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-62535
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: common.kt
