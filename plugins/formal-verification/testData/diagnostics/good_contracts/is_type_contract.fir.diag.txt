@@ -16,16 +16,16 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Int)
 
 
-/is_type_contract.kt:(322,330): info: Generated Viper text for isString:
+/is_type_contract.kt:(509,517): info: Generated Viper text for isString:
 field pkg$kotlin$class_String$member_length: Int
 
-method global$fun_isString$fun_take$T_Any$return$T_Boolean(this: dom$Any)
+method global$fun_isString$fun_take$T_Any$return$T_Boolean(local$obj: dom$Any)
   returns (ret$0: Bool)
   ensures ret$0 == true ==>
-    dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$kotlin$global$class_String())
+    dom$Type$isSubtype((dom$TypeOf$typeOf(local$obj): dom$Type), dom$Type$pkg$kotlin$global$class_String())
 {
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$Any())
-  ret$0 := dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$pkg$kotlin$global$class_String())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$obj): dom$Type), dom$Type$Any())
+  ret$0 := dom$Type$isSubtype((dom$TypeOf$typeOf(local$obj): dom$Type), dom$Type$pkg$kotlin$global$class_String())
   goto label$ret$0
   label label$ret$0
 }
@@ -34,7 +34,7 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Int)
 
 
-/is_type_contract.kt:(491,508): info: Generated Viper text for subtypeTransitive:
+/is_type_contract.kt:(675,692): info: Generated Viper text for subtypeTransitive:
 method global$fun_subtypeTransitive$fun_take$T_Unit$return$T_Unit(local$x: dom$Unit)
   returns (ret$0: dom$Unit)
   ensures true ==>
@@ -43,7 +43,7 @@ method global$fun_subtypeTransitive$fun_take$T_Unit$return$T_Unit(local$x: dom$U
   label label$ret$0
 }
 
-/is_type_contract.kt:(686,707): info: Generated Viper text for constructorReturnType:
+/is_type_contract.kt:(870,891): info: Generated Viper text for constructorReturnType:
 field class_Foo$member_bar: Ref
 
 method class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
@@ -63,7 +63,7 @@ method global$fun_constructorReturnType$fun_take$$return$T_Boolean()
   label label$ret$0
 }
 
-/is_type_contract.kt:(832,848): info: Generated Viper text for subtypeSuperType:
+/is_type_contract.kt:(1016,1032): info: Generated Viper text for subtypeSuperType:
 field class_Foo$member_bar: Ref
 
 method global$fun_subtypeSuperType$fun_take$T_class_global$class_Bar$return$T_Unit(local$bar: Ref)
@@ -77,7 +77,7 @@ method global$fun_subtypeSuperType$fun_take$T_class_global$class_Bar$return$T_Un
   label label$ret$0
 }
 
-/is_type_contract.kt:(965,976): info: Generated Viper text for typeOfField:
+/is_type_contract.kt:(1149,1160): info: Generated Viper text for typeOfField:
 field class_Foo$member_bar: Ref
 
 method global$fun_typeOfField$fun_take$T_class_global$class_Foo$return$T_Boolean(local$foo: Ref)

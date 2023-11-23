@@ -60,8 +60,8 @@ class DomainFunc(
             trafos.toSilver()
         )
 
-    operator fun invoke(vararg args: Exp, pos: Position = Position.NoPosition): Exp.DomainFuncApp =
-        Exp.DomainFuncApp(this, args.toList(), typeArgs.associateWith { it }, pos)
+    operator fun invoke(vararg args: Exp, pos: Position = Position.NoPosition, info: Info = Info.NoInfo): Exp.DomainFuncApp =
+        Exp.DomainFuncApp(this, args.toList(), typeArgs.associateWith { it }, pos, info)
 }
 
 class DomainAxiom(

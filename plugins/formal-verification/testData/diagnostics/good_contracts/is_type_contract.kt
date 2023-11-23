@@ -11,12 +11,14 @@ fun <!VIPER_TEXT!>isString<!>(x: Any?): Boolean {
     return x is String
 }
 
+// Note: this function was originally modelled as an extension on the [Any] type.
+// For the moment, since we do not support extension functions, we use an object of type [Any] as parameter.
 @OptIn(ExperimentalContracts::class)
-fun Any.<!VIPER_TEXT!>isString<!>(): Boolean {
+fun <!VIPER_TEXT!>isString<!>(obj: Any): Boolean {
     contract {
-        returns(true) implies (this@isString is String)
+        returns(true) implies (obj is String)
     }
-    return this is String
+    return obj is String
 }
 
 @OptIn(ExperimentalContracts::class)

@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.formver.calleeSymbol
 import org.jetbrains.kotlin.formver.effects
-import org.jetbrains.kotlin.formver.embeddings.FunctionTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.SourceRole
+import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.NamedFunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.expression.*
 
@@ -59,8 +57,8 @@ class ContractDescriptionConversionVisitor(
         booleanConstantDescriptor: KtBooleanConstantReference<ConeKotlinType, ConeDiagnostic>,
         data: ContractVisitorContext,
     ): ExpEmbedding = when (booleanConstantDescriptor) {
-        ConeContractConstantValues.TRUE -> BooleanLit(true)
-        ConeContractConstantValues.FALSE -> BooleanLit(false)
+        ConeContractConstantValues.TRUE -> BooleanLit(true, SourceRole.Condition.Constant(true))
+        ConeContractConstantValues.FALSE -> BooleanLit(false, SourceRole.Condition.Constant(false))
         else -> throw IllegalArgumentException("Unexpected boolean constant: $booleanConstantDescriptor")
     }
 
@@ -69,16 +67,16 @@ class ContractDescriptionConversionVisitor(
         data: ContractVisitorContext,
     ): ExpEmbedding {
         return when (returnsEffect.value) {
-            ConeContractConstantValues.WILDCARD -> BooleanLit(true, SourceRole.ReturnsEffect)
+            ConeContractConstantValues.WILDCARD -> BooleanLit(true, SourceRole.ReturnsEffect.Wildcard)
             /* NOTE: in a function that has a non-nullable return type, the compiler will not complain if there is an effect like
              * returnsNotNull(). So it is necessary to take care of these cases in order to avoid comparison between non-nullable
              * values and null. In a function that has a non-nullable return type, returnsNotNull() is mapped to true and returns(null)
              * is mapped to false
              */
-            ConeContractConstantValues.NULL -> data.returnVariable.nullCmp(false, SourceRole.ReturnsNullEffect)
-            ConeContractConstantValues.NOT_NULL -> data.returnVariable.nullCmp(true, SourceRole.ReturnsNotNullEffect)
-            ConeContractConstantValues.TRUE -> EqCmp(data.returnVariable, BooleanLit(true), SourceRole.ReturnsTrueEffect)
-            ConeContractConstantValues.FALSE -> EqCmp(data.returnVariable, BooleanLit(false), SourceRole.ReturnsFalseEffect)
+            ConeContractConstantValues.NULL -> data.returnVariable.nullCmp(false, SourceRole.ReturnsEffect.Null(negated = false))
+            ConeContractConstantValues.NOT_NULL -> data.returnVariable.nullCmp(true, SourceRole.ReturnsEffect.Null(negated = true))
+            ConeContractConstantValues.TRUE -> EqCmp(data.returnVariable, BooleanLit(true), SourceRole.ReturnsEffect.Bool(true))
+            ConeContractConstantValues.FALSE -> EqCmp(data.returnVariable, BooleanLit(false), SourceRole.ReturnsEffect.Bool(false))
             else -> throw IllegalArgumentException("Unexpected constant: ${returnsEffect.value}")
         }
     }
@@ -97,7 +95,8 @@ class ContractDescriptionConversionVisitor(
          * values and null. Let x be a non-nullable variable, then x == null is mapped to false and x != null is mapped to true
          */
         val param = isNullPredicate.arg.embeddedVar()
-        return param.nullCmp(isNullPredicate.isNegated, null)
+        val role = SourceRole.Condition.IsNull(isNullPredicate.arg.getTargetParameter(data), isNullPredicate.isNegated)
+        return param.nullCmp(isNullPredicate.isNegated, role)
     }
 
     override fun visitLogicalBinaryOperationContractExpression(
@@ -106,9 +105,11 @@ class ContractDescriptionConversionVisitor(
     ): ExpEmbedding {
         val left = binaryLogicExpression.left.accept(this, data)
         val right = binaryLogicExpression.right.accept(this, data)
+        val lhsRole = left.sourceRole as SourceRole.Condition
+        val rhsRole = right.sourceRole as SourceRole.Condition
         return when (binaryLogicExpression.kind) {
-            LogicOperationKind.AND -> And(left, right)
-            LogicOperationKind.OR -> Or(left, right)
+            LogicOperationKind.AND -> And(left, right, SourceRole.Condition.Conjunction(lhsRole, rhsRole))
+            LogicOperationKind.OR -> Or(left, right, SourceRole.Condition.Disjunction(lhsRole, rhsRole))
         }
     }
 
@@ -117,7 +118,7 @@ class ContractDescriptionConversionVisitor(
         data: ContractVisitorContext,
     ): ExpEmbedding {
         val arg = logicalNot.arg.accept(this, data)
-        return Not(arg)
+        return Not(arg, SourceRole.Condition.Negation(arg.sourceRole as SourceRole.Condition))
     }
 
     override fun visitConditionalEffectDeclaration(
@@ -126,7 +127,9 @@ class ContractDescriptionConversionVisitor(
     ): ExpEmbedding {
         val effect = conditionalEffect.effect.accept(this, data)
         val cond = conditionalEffect.condition.accept(this, data)
-        return Implies(effect, cond)
+        // The effect's source role it is guaranteed to be not null. The same goes for the condition's source role.
+        val role = SourceRole.ConditionalEffect(effect.sourceRole as SourceRole.ReturnsEffect, cond.sourceRole as SourceRole.Condition)
+        return Implies(effect, cond, role)
     }
 
     override fun visitCallsEffectDeclaration(
@@ -174,8 +177,13 @@ class ContractDescriptionConversionVisitor(
         data: ContractVisitorContext,
     ): ExpEmbedding {
         val argVar = isInstancePredicate.arg.embeddedVar()
-        val subtypeRel = Is(argVar, ctx.embedType(isInstancePredicate.type))
-        return if (isInstancePredicate.isNegated) Not(subtypeRel) else subtypeRel
+        val argSymbol = isInstancePredicate.arg.getTargetParameter(data)
+        val role = SourceRole.Condition.IsType(argSymbol, isInstancePredicate.type, isInstancePredicate.isNegated)
+        return if (isInstancePredicate.isNegated) {
+            Not(Is(argVar, ctx.embedType(isInstancePredicate.type)), role)
+        } else {
+            Is(argVar, ctx.embedType(isInstancePredicate.type), role)
+        }
     }
 
     /**
@@ -195,11 +203,10 @@ class ContractDescriptionConversionVisitor(
     private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedVar(): VariableEmbedding =
         embeddedVarByIndex(parameterIndex)
 
-    private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.getTargetParameter(data: ContractVisitorContext): FirBasedSymbol<*> {
-        return resolveByIndex(
+    private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.getTargetParameter(data: ContractVisitorContext): FirBasedSymbol<*> =
+        resolveByIndex(
             parameterIndex,
             { data.functionContractOwner.receiverParameter!!.calleeSymbol }) { data.functionContractOwner.valueParameterSymbols[it] }
-    }
 
     private fun embeddedVarByIndex(ix: Int): VariableEmbedding = resolveByIndex(ix, { signature.receiver!! }) { signature.params[it] }
 
@@ -211,5 +218,3 @@ class ContractDescriptionConversionVisitor(
             else -> BooleanLit(isNegated, sourceRole)
         }
 }
-
-

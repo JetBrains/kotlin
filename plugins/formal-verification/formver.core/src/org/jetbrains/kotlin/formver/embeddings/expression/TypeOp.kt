@@ -17,11 +17,17 @@ import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 
-data class Is(override val inner: ExpEmbedding, val comparisonType: TypeEmbedding) : UnaryDirectResultExpEmbedding {
+data class Is(override val inner: ExpEmbedding, val comparisonType: TypeEmbedding, override val sourceRole: SourceRole? = null) :
+    UnaryDirectResultExpEmbedding {
     override val type = BooleanTypeEmbedding
 
     override fun toViper(ctx: LinearizationContext) =
-        TypeDomain.isSubtype(TypeOfDomain.typeOf(inner.toViper(ctx)), comparisonType.runtimeType, pos = ctx.source.asPosition)
+        TypeDomain.isSubtype(
+            TypeOfDomain.typeOf(inner.toViper(ctx)),
+            comparisonType.runtimeType,
+            pos = ctx.source.asPosition,
+            info = sourceRole.asInfo
+        )
 
     override val debugExtraSubtrees: List<TreeView>
         get() = listOf(comparisonType.debugTreeView.withDesignation("type"))

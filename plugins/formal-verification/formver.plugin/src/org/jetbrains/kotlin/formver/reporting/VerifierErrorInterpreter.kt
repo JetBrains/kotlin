@@ -29,14 +29,8 @@ class VerifierErrorInterpreter {
         context: CheckerContext,
     ) {
         when (val role = error.getInfoOrNull<SourceRole>()) {
-            is SourceRole.ReturnsTrueEffect ->
-                reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, "false", context)
-            is SourceRole.ReturnsFalseEffect ->
-                reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, "true", context)
-            is SourceRole.ReturnsNullEffect ->
-                reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, "non-null", context)
-            is SourceRole.ReturnsNotNullEffect ->
-                reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, "null", context)
+            is SourceRole.ReturnsEffect ->
+                reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, role.asUserFriendlyMessage, context)
             is SourceRole.CallsInPlaceEffect ->
                 reportOn(source, PluginErrors.INVALID_INVOCATION_TYPE, role.paramSymbol, role.kind.asUserFriendlyMessage, context)
             is SourceRole.ParamFunctionLeakageCheck -> with(role) {
@@ -96,6 +90,13 @@ class VerifierErrorInterpreter {
             EventOccurrencesRange.EXACTLY_ONCE -> "exactly once"
             EventOccurrencesRange.AT_LEAST_ONCE -> "at least once"
             EventOccurrencesRange.MORE_THAN_ONCE -> "more than once"
+            else -> TODO("Unreachable")
+        }
+
+    private val SourceRole.ReturnsEffect.asUserFriendlyMessage: String
+        get() = when (this) {
+            is SourceRole.ReturnsEffect.Bool -> if (bool) "false" else "true"
+            is SourceRole.ReturnsEffect.Null -> if (negated) "null" else "non-null"
             else -> TODO("Unreachable")
         }
 }
