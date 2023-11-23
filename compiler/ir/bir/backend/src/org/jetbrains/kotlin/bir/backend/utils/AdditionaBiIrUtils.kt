@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.bir.util.constructedClass
 
 context(BirBackendContext)
 fun BirClass?.isArrayOrPrimitiveArray(): Boolean =
-    /*this == birBuiltIns.arrayClass*/
-    this?.name?.asString() == "Array"
+    this == birBuiltIns.arrayClass
             || this in birBuiltIns.primitiveArraysToPrimitiveTypes
 
 // Constructors can't be marked as inline in metadata, hence this check.
