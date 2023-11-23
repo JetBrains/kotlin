@@ -12,7 +12,6 @@ import kotlinx.metadata.jvm.KotlinClassHeader;
 import kotlinx.metadata.jvm.KotlinClassMetadata;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import static org.junit.Assert.*;
@@ -34,7 +33,7 @@ public class JavaUsageTest {
         KotlinClassMetadata clazz1 = ((KotlinClassMetadata) Objects.requireNonNull(KotlinClassMetadata.readStrict(m)));
         Metadata written = clazz1.write();
         //noinspection KotlinInternalInJava
-        assertArrayEquals(written.mv(), JvmMetadataVersion.CURRENT.toIntArray());
+        assertArrayEquals(written.mv(), JvmMetadataVersion.LATEST_STABLE_SUPPORTED.toIntArray());
         assertEquals(50, written.xi());
     }
 }

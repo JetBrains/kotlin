@@ -1311,8 +1311,8 @@ public final class kotlinx/metadata/jvm/JvmMetadataUtil {
 }
 
 public final class kotlinx/metadata/jvm/JvmMetadataVersion : java/lang/Comparable {
-	public static final field CURRENT Lkotlinx/metadata/jvm/JvmMetadataVersion;
 	public static final field Companion Lkotlinx/metadata/jvm/JvmMetadataVersion$Companion;
+	public static final field LATEST_STABLE_SUPPORTED Lkotlinx/metadata/jvm/JvmMetadataVersion;
 	public fun <init> (II)V
 	public fun <init> (III)V
 	public synthetic fun compareTo (Ljava/lang/Object;)I

@@ -602,7 +602,7 @@ public sealed class KotlinClassMetadata {
         @Deprecated("This declaration is intended for binary compatibility only", level = DeprecationLevel.HIDDEN)
         internal companion object {
             @JvmField // For binary compatibility with previous `data object Unknown`
-            public val INSTANCE: Unknown = Unknown(Metadata(kind = 99, metadataVersion = JvmMetadataVersion.CURRENT.toIntArray()), true)
+            public val INSTANCE: Unknown = Unknown(Metadata(kind = 99, metadataVersion = JvmMetadataVersion.LATEST_STABLE_SUPPORTED.toIntArray()), true)
         }
     }
 
@@ -780,14 +780,14 @@ public sealed class KotlinClassMetadata {
          * [annotationData] may be obtained reflectively, constructed manually or with helper [kotlinx.metadata.jvm.Metadata] function,
          * or equivalent [KotlinClassHeader] can be used.
          *
-         * This method can read only supported metadata versions (see [JvmMetadataVersion.CURRENT] for definition).
+         * This method can read only supported metadata versions (see [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] for definition).
          * It will throw an exception if the metadata version is greater than what kotlinx-metadata-jvm understands.
          * It is suitable when your tooling cannot tolerate reading potentially incomplete or incorrect information due to version differences.
          * It is also the only method that allows metadata transformation and `KotlinClassMetadata.write` subsequent calls.
          *
          * @throws IllegalArgumentException if the metadata version is unsupported or if metadata is corrupted
          *
-         * @see JvmMetadataVersion.CURRENT
+         * @see JvmMetadataVersion.LATEST_STABLE_SUPPORTED
          */
         @JvmStatic
         public fun readStrict(annotationData: Metadata): KotlinClassMetadata = readMetadataImpl(annotationData, lenient = false)
@@ -800,14 +800,14 @@ public sealed class KotlinClassMetadata {
          * or equivalent [KotlinClassHeader] can be used.
          *
          * This method makes best effort to read unsupported metadata versions.
-         * If metadata version is greater than [JvmMetadataVersion.CURRENT] + 1, this method still attempts to read it and may ignore parts of the metadata it does not understand.
+         * If metadata version is greater than [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] + 1, this method still attempts to read it and may ignore parts of the metadata it does not understand.
          * Keep in mind that this method will still throw an exception if metadata is changed in an unpredictable way.
          * Because obtained metadata can be incomplete, its [KotlinClassMetadata.write] method will throw an exception.
          * This method still cannot read metadata produced by pre-1.0 compilers.
          *
          * @throws IllegalArgumentException if the metadata version is that of Kotlin 1.0 or metadata format has been changed in an unpredictable way and reading of incompatible metadata is not possible
          *
-         * @see JvmMetadataVersion.CURRENT
+         * @see JvmMetadataVersion.LATEST_STABLE_SUPPORTED
          */
         @JvmStatic
         public fun readLenient(annotationData: Metadata): KotlinClassMetadata = readMetadataImpl(annotationData, lenient = true)
@@ -869,8 +869,8 @@ public sealed class KotlinClassMetadata {
          * The latest stable metadata version supported by this version of the library.
          * The library can read in strict mode Kotlin metadata produced by Kotlin compilers from 1.0 up to and including this version + 1 minor.
          *
-         * In other words, metadata version is supported if it is greater or equal than 1.1, and less or equal than [COMPATIBLE_METADATA_VERSION] + 1 minor version.
-         * Note that metadata version is 1.1 for Kotlin < 1.4, and is equal to the language version starting from Kotlin 1.4.
+         * In other words, a metadata version is supported if it is greater or equal than 1.1, and less or equal than [COMPATIBLE_METADATA_VERSION] + 1 minor version.
+         * Note that a metadata version is 1.1 for Kotlin < 1.4, and is equal to the language version starting from Kotlin 1.4.
          *
          * For example, if the latest supported stable Kotlin version is 1.7.0, kotlinx-metadata-jvm can read binaries produced by Kotlin compilers from 1.0
          * to 1.8.* inclusively. In this case, this property will have the value `[1, 7, 0]`.
@@ -878,7 +878,7 @@ public sealed class KotlinClassMetadata {
          * @see Metadata.metadataVersion
          */
         @JvmField
-        @Deprecated("Use JvmMetadataVersion.CURRENT instead", ReplaceWith("JvmMetadataVersion.CURRENT"), DeprecationLevel.WARNING)
+        @Deprecated("Use JvmMetadataVersion.LATEST_STABLE_SUPPORTED instead", ReplaceWith("JvmMetadataVersion.LATEST_STABLE_SUPPORTED"), DeprecationLevel.WARNING)
         public val COMPATIBLE_METADATA_VERSION: IntArray = CompilerMetadataVersion.INSTANCE.toArray().copyOf()
 
     }

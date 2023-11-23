@@ -171,7 +171,7 @@ public class KotlinModuleMetadata public constructor(
         @Deprecated("Use a KotlinModuleMetadata instance and its write() member function", level = DeprecationLevel.WARNING)
         @JvmStatic
         @JvmOverloads
-        public fun write(kmModule: KmModule, metadataVersion: JvmMetadataVersion = JvmMetadataVersion.CURRENT): ByteArray = wrapWriteIntoIAE {
+        public fun write(kmModule: KmModule, metadataVersion: JvmMetadataVersion = JvmMetadataVersion.LATEST_STABLE_SUPPORTED): ByteArray = wrapWriteIntoIAE {
             return KotlinModuleMetadata(kmModule, metadataVersion).write()
         }
     }

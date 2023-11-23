@@ -144,12 +144,12 @@ val klass = KmClass().apply {
 ```
 
 Then, you can put a resulting `KmClass`/`KmPackage`/`KmLambda` into an appropriate container and write it.
-Pay attention to the metadata version. Usually, `JvmMetadataVersion.CURRENT` is a good choice, but you may want to write a specific version you obtained from existing Kotlin classfiles in your project.
+Pay attention to the metadata version. Usually, `JvmMetadataVersion.LATEST_STABLE_SUPPORTED` is a good choice, but you may want to write a specific version you obtained from existing Kotlin classfiles in your project.
 You also have to set up the `flags`. For description of all the available flags, see [Metadata.extraInt](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-metadata/extra-int.html).
 `0` (no flags) may be a good choice, but in case you already have some ground truth files in your project, you may want to copy flags from them.
 
 ```kotlin
-val classMetadata = KotlinClassMetadata.Class(klass, JvmMetadataVersion.CURRENT, 0)
+val classMetadata = KotlinClassMetadata.Class(klass, JvmMetadataVersion.LATEST_STABLE_SUPPORTED, 0)
 val newAnnotation: Metadata = classMetadata.write()
 // Write annotation directly or use annotation.kind, annotation.data1, annotation.data2, etc.
 ```
@@ -169,26 +169,26 @@ It's also the only method that allows metadata transformation and `KotlinClassMe
 
 `readLenient()`: This method allows you to read the metadata leniently. 
 If the metadata version is higher than what kotlinx-metadata-jvm can interpret, it may ignore parts of the metadata it doesn't understand.
-It’s more suitable when your tooling needs to read metadata of possibly newer Kotlin versions and can handle incomplete data, because it is interested only in part of it (e.g. visibility of declarations)
+It’s more suitable when your tooling needs to read metadata of possibly newer Kotlin versions and can handle incomplete data, because it is interested only in part of it (e.g. visibility of declarations).
 Keep in mind that this method will still throw an exception if metadata is changed in an unpredictable way.
 **Metadata read in lenient mode can not be written back.**
 
 ### Detailed explanation
 
 Kotlin compiler and its features evolve over time, and so does its metadata format. Metadata format version is equal to the Kotlin compiler version.
-Naturally, evolving metadata format usually involves adding new fields for new Kotlin language features. Therefore, 
-some problems may occur when you're reading new metadata with an older version of Kotlin compiler or kotlinx-metadata-jvm library.
+Naturally, evolving the metadata format may result in various changes, from adding new information to changing metadata format entirely for the new Kotlin language features.
+Therefore, some problems may occur when you're reading new metadata with an older version of Kotlin compiler or kotlinx-metadata-jvm library.
 
 By default, the Kotlin/JVM compiler (and similar, kotlinx-metadata-jvm library) has [forward compatibility](https://kotlinlang.org/docs/kotlin-evolution.html#evolving-the-binary-format) for versions not higher than current + 1.
 It means that Kotlin compiler 2.1 can read metadata from Kotlin compiler 2.2, but not 2.3. The same is true for `KotlinClassMetadata.readStrict()`
-method: it will throw an exception if you try to read metadata with version higher than `COMPATIBLE_METADATA_VERSION` + 1.
-Such restriction comes from the fact that higher metadata versions (e.g. 2.3) might have some unknown fields that we skip during reading; therefore, if we write 
-transformed metadata back, missing some fields may result in corrupted metadata that is no longer valid for version 2.3.
+method: it will throw an exception if you try to read metadata with version higher than `JvmMetadataVersion.LATEST_STABLE_SUPPORTED` + 1.
+Such restriction comes from the fact that higher metadata versions (e.g. 2.3) might have some unexpected format that can be read incorrectly; therefore, if we write 
+transformed metadata back, this can result in corrupted metadata that is no longer valid for version 2.3.
 
 However, there are a lot of use cases for metadata introspection alone, without further transformations — for example, [binary-compatibility-validator](https://github.com/Kotlin/binary-compatibility-validator) which is interested only in visibility and modality of declarations.
 For such use cases it seems overly restrictive to prohibit reading newer metadata versions (and therefore, requiring authors to do frequent updates of kotlinx-metadata-jvm dependency),
-so there is a relaxed version of the reading method: `KotlinClassMetadata.readLenient()`. It is a best-effort reading method that will potentially skip unknown data,
-but still provide some access to metadata. Keep in mind that this method has limitations:
+so there is a relaxed version of the reading method: `KotlinClassMetadata.readLenient()`. It is a best-effort reading method that will try to build metadata based on the format we currently know,
+and provide some access to it. Keep in mind that this method has limitations:
 
 1. Metadata returned by this method can not be written back, because we are not sure if it is still valid format for newer versions. It is intended for introspection alone.
 2. We cannot guarantee that metadata is not changed in the other unpredictable ways in the future. `readLenient()` tries its best, but still can throw a decoding exception or even return incorrect result.

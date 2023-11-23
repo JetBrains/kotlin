@@ -63,7 +63,7 @@ class MetadataSmokeTest {
             }
         }
 
-        val annotationData = KotlinClassMetadata.Class(klass, JvmMetadataVersion.CURRENT, 0).write()
+        val annotationData = KotlinClassMetadata.Class(klass, JvmMetadataVersion.LATEST_STABLE_SUPPORTED, 0).write()
 
         // Then, produce the bytecode of a .class file with ASM
 

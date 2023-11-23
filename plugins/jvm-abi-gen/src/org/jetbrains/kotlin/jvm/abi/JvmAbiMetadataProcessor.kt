@@ -47,7 +47,7 @@ fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisito
             // TODO: maybe jvm-abi-gen should throw this exception by default, and not only in tests.
             if (System.getProperty("idea.is.unit.test").toBoolean()) {
                 val actual = "${metadataVersion[0]}.${metadataVersion[1]}"
-                val expected = JvmMetadataVersion.CURRENT.toString()
+                val expected = JvmMetadataVersion.LATEST_STABLE_SUPPORTED.toString()
                 throw AssertionError(
                     "jvm-abi-gen can't process class file with the new metadata version because the version of kotlinx-metadata-jvm " +
                             "it depends on is too old.\n" +

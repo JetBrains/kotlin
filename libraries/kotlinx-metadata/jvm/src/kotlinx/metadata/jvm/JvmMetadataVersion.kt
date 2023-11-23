@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion as C
  * Note that the metadata version is 1.1 for Kotlin compilers from 1.0 until 1.4, and is 1.0 or less for pre-1.0 compilers.
  * Metadata with versions less than 1.1 is considered incompatible and cannot be read or written.
  *
- * The library can read in strict mode only compatible versions of metadata. For definition of compatible version, see documentation for [CURRENT] property.
+ * The library can read in strict mode only compatible versions of metadata. For definition of a compatible version, see documentation for [LATEST_STABLE_SUPPORTED] property.
  *
  * @property major Major component of version
  * @property minor Minor component of version
@@ -76,7 +76,7 @@ public class JvmMetadataVersion(public val major: Int, public val minor: Int, pu
     }
 
     /**
-     * Checks if the current JvmMetadataVersion object is equal to another object.
+     * Checks if this JvmMetadataVersion object is equal to [other] JvmMetadataVersion object.
      *
      * Instances of JvmMetadataVersion are equal if they have the same major, minor, and patch components.
      */
@@ -101,7 +101,7 @@ public class JvmMetadataVersion(public val major: Int, public val minor: Int, pu
          * The latest stable metadata version supported by this version of the library.
          * The library can read in strict mode Kotlin metadata produced by Kotlin compilers from 1.0 up to and including this version + 1 minor.
          *
-         * In other words, the metadata version is supported if it is greater or equal than 1.1, and less or equal than [CURRENT] + 1 minor version.
+         * In other words, the metadata version is supported if it is greater or equal than 1.1, and less or equal than [LATEST_STABLE_SUPPORTED] + 1 minor version.
          * Note that the metadata version is 1.1 for Kotlin from 1.0 until 1.4, and is equal to the language version starting from Kotlin 1.4.
          *
          * For example, if the latest supported stable Kotlin version is 1.7.0, kotlinx-metadata-jvm can read in strict mode binaries produced by Kotlin compilers from 1.0
@@ -111,6 +111,6 @@ public class JvmMetadataVersion(public val major: Int, public val minor: Int, pu
          * @see KotlinClassMetadata.readStrict
          */
         @JvmField
-        public val CURRENT: JvmMetadataVersion = JvmMetadataVersion(CompilerMetadataVersion.INSTANCE.toArray())
+        public val LATEST_STABLE_SUPPORTED: JvmMetadataVersion = JvmMetadataVersion(CompilerMetadataVersion.INSTANCE.toArray())
     }
 }
