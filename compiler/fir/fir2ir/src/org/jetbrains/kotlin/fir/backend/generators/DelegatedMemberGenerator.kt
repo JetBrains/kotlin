@@ -121,7 +121,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
                     ?: return@processAllFunctions
 
             val delegateToSymbol = findDelegateToSymbol(
-                unwrapped.unwrapSubstitutionOverrides().symbol,
+                unwrapped.symbol,
                 delegateToScope::processFunctionsByName,
                 delegateToScope::processOverriddenFunctions
             ) ?: return@processAllFunctions
@@ -145,7 +145,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
                     ?: return@processAllProperties
 
             val delegateToSymbol = findDelegateToSymbol(
-                unwrapped.unwrapSubstitutionOverrides().symbol,
+                unwrapped.symbol,
                 { name, processor ->
                     delegateToScope.processPropertiesByName(name) {
                         if (it !is FirPropertySymbol) return@processPropertiesByName
@@ -167,29 +167,32 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
     }
 
     private inline fun <reified S : FirCallableSymbol<*>> findDelegateToSymbol(
-        unwrappedSymbol: S,
+        symbol: S,
         processCallables: (name: Name, processor: (S) -> Unit) -> Unit,
         crossinline processOverridden: (base: S, processor: (S) -> ProcessorAction) -> ProcessorAction
     ): S? {
+        val unwrappedSymbol = symbol.unwrapUseSiteSubstitutionOverrides()
         var result: S? = null
         // The purpose of this code is to find member in delegate-to scope
         // which matches or overrides unwrappedSymbol (which is in turn taken from subclass scope).
         processCallables(unwrappedSymbol.name) { candidateSymbol ->
             if (result != null) return@processCallables
-            if (candidateSymbol === unwrappedSymbol) {
-                result = candidateSymbol
+            val unwrappedCandidateSymbol = candidateSymbol.unwrapUseSiteSubstitutionOverrides()
+            if (unwrappedCandidateSymbol === unwrappedSymbol) {
+                result = unwrappedCandidateSymbol
                 return@processCallables
             }
-            processOverridden(candidateSymbol) {
-                if (it === unwrappedSymbol) {
-                    result = candidateSymbol
+            processOverridden(candidateSymbol) { overriddenSymbol ->
+                val unwrappedOverriddenSymbol = overriddenSymbol.unwrapUseSiteSubstitutionOverrides()
+                if (unwrappedOverriddenSymbol === unwrappedSymbol) {
+                    result = unwrappedCandidateSymbol
                     ProcessorAction.STOP
                 } else {
                     ProcessorAction.NEXT
                 }
             }
         }
-        return result?.unwrapSubstitutionOverrides()
+        return result
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)

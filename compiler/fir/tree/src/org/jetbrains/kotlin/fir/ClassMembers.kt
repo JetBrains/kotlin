@@ -146,6 +146,10 @@ inline fun <reified D : FirCallableDeclaration> D.unwrapUseSiteSubstitutionOverr
     } while (true)
 }
 
+inline fun <reified S : FirCallableSymbol<*>> S.unwrapUseSiteSubstitutionOverrides(): S {
+    return fir.unwrapUseSiteSubstitutionOverrides().symbol as S
+}
+
 inline fun <reified S : FirCallableSymbol<*>> S.unwrapFakeOverrides(): S = fir.unwrapFakeOverrides().symbol as S
 
 inline fun <reified S : FirCallableSymbol<*>> S.unwrapSubstitutionOverrides(): S = fir.unwrapSubstitutionOverrides().symbol as S
