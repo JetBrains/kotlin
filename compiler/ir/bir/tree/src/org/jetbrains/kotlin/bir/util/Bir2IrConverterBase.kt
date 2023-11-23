@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -49,7 +50,8 @@ abstract class Bir2IrConverterBase(
     private val remapedIr2BirElements: Map<BirElement, IrSymbol>,
     private val compiledBir: BirForest,
 ) {
-    var elementConvertedCallbacck: ((BirElement, IrElement) -> Unit)? = null
+    var elementConvertedCallback: ((BirElement, IrElement) -> Unit)? = null
+    var reuseOnlyExternalElements = false
 
     protected fun <Ir : IrElement, Bir : BirElement> createElementMap(expectedMaxSize: Int = 8): MutableMap<Bir, Ir> =
         IdentityHashMap<Bir, Ir>(expectedMaxSize)
@@ -83,7 +85,7 @@ abstract class Bir2IrConverterBase(
     ): SE {
         val new = copy()
         lateInitialize(new)
-        elementConvertedCallbacck?.invoke(old, new)
+        elementConvertedCallback?.invoke(old, new)
         return new
     }
 
@@ -99,11 +101,12 @@ abstract class Bir2IrConverterBase(
         }
 
         @Suppress("UNCHECKED_CAST")
-        val new = remapedIr2BirElements[old]?.owner as SE?
+        val new = (!reuseOnlyExternalElements || (old as BirElementBase).getContainingForest() !== compiledBir)
+            .ifTrue { remapedIr2BirElements[old]?.owner as SE? }
             ?: copy()
         map[old] = new
         lateInitialize(new)
-        elementConvertedCallbacck?.invoke(old, new)
+        elementConvertedCallback?.invoke(old, new)
         return new
     }
 
@@ -192,7 +195,7 @@ abstract class Bir2IrConverterBase(
             birType.nullability,
             birType.arguments.map { remapTypeArgument(it) },
             birType.annotations.map { remapElement(it) as IrConstructorCall },
-            birType.abbreviation?.let { remapTypeAbbreviation(it)},
+            birType.abbreviation?.let { remapTypeAbbreviation(it) },
         )
     }
 
@@ -213,7 +216,7 @@ abstract class Bir2IrConverterBase(
             remapElement(birType.constructor.typeParameter) as IrTypeParameter,
             birType.nullability,
             birType.annotations.map { remapElement(it) as IrConstructorCall },
-            birType.abbreviation?.let { remapTypeAbbreviation(it)},
+            birType.abbreviation?.let { remapTypeAbbreviation(it) },
         )
     }
 

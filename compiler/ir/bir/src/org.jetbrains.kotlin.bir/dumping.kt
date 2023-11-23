@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.bir
 
-import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.util.Bir2IrConverter
@@ -22,16 +21,25 @@ private val irDumpOptions = DumpIrTreeOptions(printFlagsInDeclarationReferences 
 private val dumpBir = false
 private val dumpIr = false
 
-fun dumpOriginalIrPhase(context: JvmBackendContext, input: IrModuleFragment, phase: AnyNamedPhase) {
+fun dumpOriginalIrPhase(context: JvmBackendContext, input: IrModuleFragment, phaseName: String, isBefore: Boolean) {
     if (!dumpIr) return
 
+    var name = phaseName
     context.phaseConfig.dumpToDirectory?.let { dumpDir ->
-        if (phase.name !in allBirPhases.flatMap { it.second }) {
-            return
+        if (isBefore) {
+            if (phaseName == allBirPhases.firstNotNullOfOrNull { it.second.firstOrNull() }) {
+                name = "Initial"
+            } else {
+                return
+            }
+        } else {
+            if (phaseName !in allBirPhases.flatMap { it.second }) {
+                return
+            }
         }
 
         val text = input.dump(irDumpOptions)
-        val path = Path(dumpDir) / "ir" / "${phase.name}.txt"
+        val path = Path(dumpDir) / "ir" / "${name}.txt"
         path.createParentDirectories()
         path.writeText(text)
     }
@@ -40,14 +48,17 @@ fun dumpOriginalIrPhase(context: JvmBackendContext, input: IrModuleFragment, pha
 fun dumpBirPhase(
     context: JvmBackendContext,
     input: BirCompilationBundle,
-    phase: BirLoweringPhase,
+    phase: BirLoweringPhase?,
+    phaseName: String?,
 ) {
     if (!dumpBir) return
 
     context.phaseConfig.dumpToDirectory?.let { dumpDir ->
-        val i = input.backendContext.loweringPhases.indexOf(phase)
-        val irPhases = allBirPhases[i].second
-        val irPhaseName = irPhases.lastOrNull() ?: return
+        val irPhases = phase?.let {
+            val i = input.backendContext.loweringPhases.indexOf(phase)
+            allBirPhases[i].second
+        }
+        val irPhaseName = phaseName ?: irPhases?.lastOrNull() ?: return
 
         val compiledBir = input.birModule.getContainingForest()!!
         val bir2IrConverter = Bir2IrConverter(
@@ -57,6 +68,7 @@ fun dumpBirPhase(
             compiledBir,
             input.estimatedIrTreeSize
         )
+        bir2IrConverter.reuseOnlyExternalElements = true
 
         val irModule = bir2IrConverter.remapElement<IrModuleFragment>(input.birModule)
         irModule.patchDeclarationParents()
