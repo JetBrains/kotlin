@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -80,6 +81,7 @@ class JavaOverrideChecker internal constructor(
         substitutor: ConeSubstitutor,
         forceBoxCandidateType: Boolean,
         forceBoxBaseType: Boolean,
+        dontComparePrimitivity: Boolean,
     ): Boolean {
         val candidateType = candidateTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
         val baseType = baseTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
@@ -87,7 +89,8 @@ class JavaOverrideChecker internal constructor(
         val candidateTypeIsPrimitive = !forceBoxCandidateType && candidateType.isPrimitiveInJava(isReturnType = false)
         val baseTypeIsPrimitive = !forceBoxBaseType && baseType.isPrimitiveInJava(isReturnType = false)
 
-        return candidateTypeIsPrimitive == baseTypeIsPrimitive && isEqualTypes(candidateType, baseType, substitutor)
+        return (dontComparePrimitivity || candidateTypeIsPrimitive == baseTypeIsPrimitive) &&
+                isEqualTypes(candidateType, baseType, substitutor)
     }
 
     // In most cases checking erasure of value parameters should be enough, but in some cases there might be semi-valid Java hierarchies
@@ -234,19 +237,7 @@ class JavaOverrideChecker internal constructor(
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
 
-        // NB: overrideCandidate is from Java and has no receiver
-        val receiverTypeRef = baseDeclaration.receiverParameter?.typeRef
-        val baseParameterTypes = listOfNotNull(receiverTypeRef) + baseDeclaration.valueParameters.map { it.returnTypeRef }
-
-        if (overrideCandidate.valueParameters.size != baseParameterTypes.size) return false
-        val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration)
-
-        val forceBoxOverrideParameterType = forceSingleValueParameterBoxing(overrideCandidate)
-        val forceBoxBaseParameterType = forceSingleValueParameterBoxing(baseDeclaration)
-
-        if (!overrideCandidate.valueParameters.zip(baseParameterTypes).all { (paramFromJava, baseType) ->
-                isEqualTypes(paramFromJava.returnTypeRef, baseType, substitutor, forceBoxOverrideParameterType, forceBoxBaseParameterType)
-            }) {
+        if (!overrideCandidate.hasSameValueParameterTypes(baseDeclaration)) {
             return false
         }
 
@@ -266,6 +257,43 @@ class JavaOverrideChecker internal constructor(
         return true
     }
 
+    private fun FirSimpleFunction.hasSameValueParameterTypes(other: FirSimpleFunction): Boolean {
+        // NB: 'this' is counted as a Java method that cannot have a receiver
+        val otherValueParameterTypes = other.collectValueParameterTypes()
+        val valueParameterTypes = valueParameters.map { it.returnTypeRef }
+        if (valueParameterTypes.size != otherValueParameterTypes.size) return false
+
+        val substitutor = buildTypeParametersSubstitutorIfCompatible(this, other)
+        val forceBoxValueParameterType = forceSingleValueParameterBoxing(this)
+        val forceBoxOtherValueParameterType = forceSingleValueParameterBoxing(other)
+        val otherUnwrappedValueParameterTypes = other.unwrapFakeOverrides().collectValueParameterTypes()
+        val unwrappedValueParameterTypes = unwrapFakeOverrides().valueParameters.map { it.returnTypeRef }
+
+        for (i in valueParameterTypes.indices) {
+            if (!isEqualTypes(
+                    candidateTypeRef = valueParameterTypes[i],
+                    baseTypeRef = otherValueParameterTypes[i],
+                    substitutor = substitutor,
+                    forceBoxCandidateType = forceBoxValueParameterType,
+                    forceBoxBaseType = forceBoxOtherValueParameterType,
+                    // This very hacky place is needed to match K1 logic
+                    // See triangleWithFlexibleTypeAndSubstitution4.kt and neighbor tests
+                    // The idea: normally in Java primitive type does not match non-primitive one
+                    // However, if *both* types were constructed as generic substitutions,
+                    // this check can (and should) be omitted
+                    dontComparePrimitivity = otherUnwrappedValueParameterTypes.getOrNull(i)?.isTypeParameterDependent() == true &&
+                            unwrappedValueParameterTypes.getOrNull(i)?.isTypeParameterDependent() == true,
+                )
+            ) return false
+        }
+        return true
+    }
+
+    private fun FirSimpleFunction.collectValueParameterTypes(): List<FirTypeRef> {
+        val receiverTypeRef = receiverParameter?.typeRef
+        return listOfNotNull(receiverTypeRef) + valueParameters.map { it.returnTypeRef }
+    }
+
     override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean {
         if (baseDeclaration.modality == Modality.FINAL) return false
 
@@ -282,7 +310,8 @@ class JavaOverrideChecker internal constructor(
                     if (overrideCandidate.valueParameters.size != 1) return false
                     return isEqualTypes(
                         receiverTypeRef, overrideCandidate.valueParameters.single().returnTypeRef, ConeSubstitutor.Empty,
-                        forceBoxCandidateType = false, forceBoxBaseType = false
+                        forceBoxCandidateType = false, forceBoxBaseType = false,
+                        dontComparePrimitivity = false,
                     )
                 }
             }
@@ -293,7 +322,8 @@ class JavaOverrideChecker internal constructor(
                     overrideReceiverTypeRef == null -> false
                     else -> isEqualTypes(
                         receiverTypeRef, overrideReceiverTypeRef, ConeSubstitutor.Empty,
-                        forceBoxCandidateType = false, forceBoxBaseType = false
+                        forceBoxCandidateType = false, forceBoxBaseType = false,
+                        dontComparePrimitivity = false,
                     )
                 }
             }

@@ -15,20 +15,38 @@ import org.jetbrains.kotlin.fir.scopes.PlatformSpecificOverridabilityRules
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
 class JavaOverridabilityRules(session: FirSession) : PlatformSpecificOverridabilityRules {
+    // Note: return types (considerReturnTypeKinds) look not important when attempting intersection
+    // From the other side, they can break relevant tests like intersectionWithJavaVoidNothing.kt
+    // The similar case exists in bootstrap (see IrSimpleBuiltinOperatorDescriptorImpl)
     private val javaOverrideChecker =
-        JavaOverrideChecker(session, JavaTypeParameterStack.EMPTY, baseScopes = null, considerReturnTypeKinds = true)
+        JavaOverrideChecker(session, JavaTypeParameterStack.EMPTY, baseScopes = null, considerReturnTypeKinds = false)
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean? {
-        if (!overrideCandidate.isFromJava() || !baseDeclaration.isFromJava()) return null
-
-        return javaOverrideChecker.isOverriddenFunction(overrideCandidate, baseDeclaration)
+        return if (shouldApplyJavaChecker(overrideCandidate, baseDeclaration)) {
+            // takeIf is questionable here (JavaOverrideChecker can forbid overriding, but it cannot allow it on own behalf)
+            // Known influenced tests: supertypeDifferentParameterNullability.kt became partially green without it
+            javaOverrideChecker.isOverriddenFunction(overrideCandidate, baseDeclaration).takeIf { !it }
+        } else {
+            null
+        }
     }
 
     override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean? {
-        if (!overrideCandidate.isFromJava() || !baseDeclaration.isFromJava()) return null
-
-        return javaOverrideChecker.isOverriddenProperty(overrideCandidate, baseDeclaration)
+        return if (shouldApplyJavaChecker(overrideCandidate, baseDeclaration)) {
+            javaOverrideChecker.isOverriddenProperty(overrideCandidate, baseDeclaration)
+        } else {
+            null
+        }
     }
 
-    private fun FirCallableDeclaration.isFromJava(): Boolean = unwrapFakeOverrides().origin == FirDeclarationOrigin.Enhancement
+    private fun shouldApplyJavaChecker(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirCallableDeclaration): Boolean {
+        return when {
+            // One candidate with Java original is enough to apply Java checker,
+            // otherwise e.g. primitive type comparisons do not work
+            overrideCandidate.isOriginallyFromJava() || baseDeclaration.isOriginallyFromJava() -> true
+            else -> false
+        }
+    }
+
+    private fun FirCallableDeclaration.isOriginallyFromJava(): Boolean = unwrapFakeOverrides().origin == FirDeclarationOrigin.Enhancement
 }

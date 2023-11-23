@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirIntersectionScopeOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.firOverrideChecker
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -24,6 +25,11 @@ class FirClassUseSiteMemberScope(
     klass.symbol.toLookupTag(),
     session,
     session.firOverrideChecker,
+    // The checker here is used for matching supertype intersections
+    // If we came here from platform (e.g. Native), we use a platform override checker
+    // JavaClassUseSiteMemberScope also uses its own JavaOverrideChecker here
+    // Otherwise we should use a special intersection checker (similar one is used in FirTypeIntersectionScope)
+    session.firOverrideChecker.takeIf { it !is FirStandardOverrideChecker } ?: FirIntersectionScopeOverrideChecker(session),
     superTypeScopes,
     klass.defaultType(),
     declaredMemberScope

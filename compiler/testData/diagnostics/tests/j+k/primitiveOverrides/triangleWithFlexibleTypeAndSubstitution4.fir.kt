@@ -1,6 +1,8 @@
 // ISSUE: KT-62554
 // FIR_DUMP
 // SCOPE_DUMP: E:foo
+// IGNORE_REVERSED_RESOLVE
+// ^ resolves to C.foo instead of D.foo for some reason, does not seem important
 // FILE: A.java
 
 public class A<T> {

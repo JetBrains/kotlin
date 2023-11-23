@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
 // IGNORE_LIGHT_ANALYSIS
 // (Unresolved reference: B supertype in C declaration)
 // ISSUE: KT-63242

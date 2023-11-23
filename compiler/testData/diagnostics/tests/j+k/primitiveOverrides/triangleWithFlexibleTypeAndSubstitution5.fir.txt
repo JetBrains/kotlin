@@ -14,5 +14,5 @@ FILE: main.kt
 
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/E.E|().R|/D.foo|(Int(42))
+        R|/E.E|().R|SubstitutionOverride</D.foo: R|kotlin/String|>|(Int(42))
     }

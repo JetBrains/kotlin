@@ -58,6 +58,7 @@ class JavaClassUseSiteMemberScope(
     klass.symbol.toLookupTag(),
     session,
     JavaOverrideChecker(session, klass.javaTypeParameterStack, superTypeScopes, considerReturnTypeKinds = true),
+    overrideCheckerForIntersection = null,
     superTypeScopes,
     klass.defaultType(),
     declaredMemberScope

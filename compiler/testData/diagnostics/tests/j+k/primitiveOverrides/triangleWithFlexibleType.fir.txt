@@ -11,5 +11,5 @@ FILE: main.kt
 
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/C.C|().R|/A.foo|(Int(42))
+        R|/C.C|().R|/B.foo|(Int(42))
     }
