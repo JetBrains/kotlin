@@ -1,6 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR NATIVE
-// ^ KT-61141: absent enum fake_overrides: finalize (K1), getDeclaringClass (K1), clone (K2)
 
 enum class TestEnum1 {
     TEST1, TEST2

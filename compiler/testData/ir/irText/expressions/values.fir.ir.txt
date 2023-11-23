@@ -18,10 +18,6 @@ FILE fqName:<root> fileName:/values.kt
       FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.Enum>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
-    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.Enum>) returnType:kotlin.Any [fake_override]
-      overridden:
-        protected final fun clone (): kotlin.Any declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Enum>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Enum>, other:<root>.Enum) returnType:kotlin.Int [fake_override,operator]
       overridden:
         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
@@ -58,14 +54,6 @@ FILE fqName:<root> fileName:/values.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Enum>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Enum>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.Enum?>? [fake_override]
-      overridden:
-        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Enum>
-    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.Enum>) returnType:kotlin.Unit [fake_override]
-      overridden:
-        protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Enum>
   CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     CONSTRUCTOR visibility:private <> () returnType:<root>.A [primary]

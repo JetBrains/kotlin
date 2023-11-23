@@ -22,12 +22,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.interpreter.intrinsicConstEvaluationAnnotation
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
@@ -186,10 +184,6 @@ class IrMangledNameAndSignatureDumpHandler(
                     (symbol.descriptor as? PropertyDescriptor)?.isJavaField == true ||
                     parent.let { it is IrDeclaration && it.potentiallyHasDifferentMangledNamesDependingOnBackend }
 
-        private fun IrSimpleFunction.isHiddenEnumMethod() = allOverridden(includeSelf = true).any {
-            it.dispatchReceiverParameter?.type?.classOrNull == irBuiltIns.enumClass && it.name in HIDDEN_ENUM_METHOD_NAMES
-        }
-
         private val signatureComposer = PublicIdSignatureComputer(irMangler)
 
         private fun Printer.printCheckMarkerForNewDeclaration() {
@@ -313,10 +307,14 @@ class IrMangledNameAndSignatureDumpHandler(
             // Don't print certain fake overrides coming from Java classes
             if (element is IrSimpleFunction &&
                 element.isFakeOverride &&
-                (element.isStatic || element.hasPlatformDependent() || element.isHiddenEnumMethod())
+                (element.isStatic || element.hasPlatformDependent())
             ) {
                 return false
             }
+
+            // Don't print declarations that are not printed in all IR text tests.
+            if (IrTextDumpHandler.isHiddenDeclaration(element, irBuiltIns))
+                return false
 
             printer.printSignatureAndMangledName(element)
 
@@ -358,8 +356,6 @@ private val EXCLUDED_ANNOTATIONS = setOf(
     JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,
     intrinsicConstEvaluationAnnotation,
 )
-
-private val HIDDEN_ENUM_METHOD_NAMES = setOf(Name.identifier("finalize"), Name.identifier("getDeclaringClass"))
 
 private data class ComputedSignature(
     val computedBy: ComputedBy,

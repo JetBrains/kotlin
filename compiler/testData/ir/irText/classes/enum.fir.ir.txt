@@ -21,10 +21,6 @@ FILE fqName:<root> fileName:/enum.kt
       FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum1>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
-    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum1>) returnType:kotlin.Any [fake_override]
-      overridden:
-        protected final fun clone (): kotlin.Any declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum1>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum1>, other:<root>.TestEnum1) returnType:kotlin.Int [fake_override,operator]
       overridden:
         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
@@ -61,14 +57,6 @@ FILE fqName:<root> fileName:/enum.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum1>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum1>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum1?>? [fake_override]
-      overridden:
-        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum1>
-    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum1>) returnType:kotlin.Unit [fake_override]
-      overridden:
-        protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum1>
   CLASS ENUM_CLASS name:TestEnum2 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum2>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum2
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.TestEnum2 [primary]
@@ -109,10 +97,6 @@ FILE fqName:<root> fileName:/enum.kt
       FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum2>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
-    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum2>) returnType:kotlin.Any [fake_override]
-      overridden:
-        protected final fun clone (): kotlin.Any declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum2>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum2>, other:<root>.TestEnum2) returnType:kotlin.Int [fake_override,operator]
       overridden:
         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
@@ -149,14 +133,6 @@ FILE fqName:<root> fileName:/enum.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum2>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum2>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum2?>? [fake_override]
-      overridden:
-        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum2>
-    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum2>) returnType:kotlin.Unit [fake_override]
-      overridden:
-        protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum2>
   CLASS ENUM_CLASS name:TestEnum3 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.TestEnum3>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum3
     CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum3 [primary]
@@ -180,10 +156,6 @@ FILE fqName:<root> fileName:/enum.kt
           BLOCK_BODY
             CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value="Hello, world!"
-        FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum3>) returnType:kotlin.Any [fake_override]
-          overridden:
-            protected final fun clone (): kotlin.Any declared in <root>.TestEnum3
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum3>
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum3>, other:<root>.TestEnum3) returnType:kotlin.Int [fake_override,operator]
           overridden:
             public final fun compareTo (other: <root>.TestEnum3): kotlin.Int declared in <root>.TestEnum3
@@ -220,14 +192,6 @@ FILE fqName:<root> fileName:/enum.kt
             overridden:
               public final fun <get-ordinal> (): kotlin.Int declared in <root>.TestEnum3
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum3>
-        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum3>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum3?>? [fake_override]
-          overridden:
-            public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum3?>? declared in <root>.TestEnum3
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum3>
-        FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum3>) returnType:kotlin.Unit [fake_override]
-          overridden:
-            protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in <root>.TestEnum3
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum3>
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.TestEnum3) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum3
     FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum3>
@@ -239,10 +203,6 @@ FILE fqName:<root> fileName:/enum.kt
       FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum3>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
-    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum3>) returnType:kotlin.Any [fake_override]
-      overridden:
-        protected final fun clone (): kotlin.Any declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum3>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum3>, other:<root>.TestEnum3) returnType:kotlin.Int [fake_override,operator]
       overridden:
         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
@@ -279,14 +239,6 @@ FILE fqName:<root> fileName:/enum.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum3>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum3>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum3?>? [fake_override]
-      overridden:
-        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum3>
-    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum3>) returnType:kotlin.Unit [fake_override]
-      overridden:
-        protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum3>
   CLASS ENUM_CLASS name:TestEnum4 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.TestEnum4>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum4
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.TestEnum4 [primary]
@@ -331,10 +283,6 @@ FILE fqName:<root> fileName:/enum.kt
             overridden:
               public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum4
             $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4
-        FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>) returnType:kotlin.Any [fake_override]
-          overridden:
-            protected final fun clone (): kotlin.Any declared in <root>.TestEnum4
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>, other:<root>.TestEnum4) returnType:kotlin.Int [fake_override,operator]
           overridden:
             public final fun compareTo (other: <root>.TestEnum4): kotlin.Int declared in <root>.TestEnum4
@@ -371,14 +319,6 @@ FILE fqName:<root> fileName:/enum.kt
             overridden:
               public final fun <get-ordinal> (): kotlin.Int declared in <root>.TestEnum4
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
-        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum4?>? [fake_override]
-          overridden:
-            public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum4?>? declared in <root>.TestEnum4
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
-        FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>) returnType:kotlin.Unit [fake_override]
-          overridden:
-            protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in <root>.TestEnum4
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
     ENUM_ENTRY name:TEST2
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.TestEnum4.TEST2'
@@ -419,10 +359,6 @@ FILE fqName:<root> fileName:/enum.kt
             overridden:
               public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum4
             $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4
-        FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>) returnType:kotlin.Any [fake_override]
-          overridden:
-            protected final fun clone (): kotlin.Any declared in <root>.TestEnum4
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>, other:<root>.TestEnum4) returnType:kotlin.Int [fake_override,operator]
           overridden:
             public final fun compareTo (other: <root>.TestEnum4): kotlin.Int declared in <root>.TestEnum4
@@ -459,14 +395,6 @@ FILE fqName:<root> fileName:/enum.kt
             overridden:
               public final fun <get-ordinal> (): kotlin.Int declared in <root>.TestEnum4
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
-        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum4?>? [fake_override]
-          overridden:
-            public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum4?>? declared in <root>.TestEnum4
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
-        FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>) returnType:kotlin.Unit [fake_override]
-          overridden:
-            protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in <root>.TestEnum4
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.TestEnum4) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4
     FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum4>
@@ -478,10 +406,6 @@ FILE fqName:<root> fileName:/enum.kt
       FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum4>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
-    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>) returnType:kotlin.Any [fake_override]
-      overridden:
-        protected final fun clone (): kotlin.Any declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>, other:<root>.TestEnum4) returnType:kotlin.Int [fake_override,operator]
       overridden:
         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
@@ -518,14 +442,6 @@ FILE fqName:<root> fileName:/enum.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum4?>? [fake_override]
-      overridden:
-        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
-    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum4>) returnType:kotlin.Unit [fake_override]
-      overridden:
-        protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
   CLASS ENUM_CLASS name:TestEnum5 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum5>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum5
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.TestEnum5 [primary]
@@ -566,10 +482,6 @@ FILE fqName:<root> fileName:/enum.kt
       FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum5>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
-    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum5>) returnType:kotlin.Any [fake_override]
-      overridden:
-        protected final fun clone (): kotlin.Any declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum5>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum5>, other:<root>.TestEnum5) returnType:kotlin.Int [fake_override,operator]
       overridden:
         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
@@ -606,14 +518,6 @@ FILE fqName:<root> fileName:/enum.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum5>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum5>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum5?>? [fake_override]
-      overridden:
-        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum5>
-    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum5>) returnType:kotlin.Unit [fake_override]
-      overridden:
-        protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum5>
   FUN name:f visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun f (): kotlin.Int declared in <root>'
@@ -668,10 +572,6 @@ FILE fqName:<root> fileName:/enum.kt
       FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum6>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
-    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>) returnType:kotlin.Any [fake_override]
-      overridden:
-        protected final fun clone (): kotlin.Any declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>, other:<root>.TestEnum6) returnType:kotlin.Int [fake_override,operator]
       overridden:
         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
@@ -708,11 +608,3 @@ FILE fqName:<root> fileName:/enum.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum6?>? [fake_override]
-      overridden:
-        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
-    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>) returnType:kotlin.Unit [fake_override]
-      overridden:
-        protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>

@@ -49,10 +49,6 @@ FILE fqName:<root> fileName:/C.kt
       FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.E>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
-    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.E>) returnType:kotlin.Any [fake_override]
-      overridden:
-        protected final fun clone (): kotlin.Any declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.E>, other:<root>.E) returnType:kotlin.Int [fake_override,operator]
       overridden:
         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
@@ -89,14 +85,6 @@ FILE fqName:<root> fileName:/C.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.E>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.E?>? [fake_override]
-      overridden:
-        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
-    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.E>) returnType:kotlin.Unit [fake_override]
-      overridden:
-        protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
   CLASS ANNOTATION_CLASS name:Annos modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Annos
     CONSTRUCTOR visibility:public <> (value:kotlin.Array<<root>.Anno>) returnType:<root>.Annos [primary]

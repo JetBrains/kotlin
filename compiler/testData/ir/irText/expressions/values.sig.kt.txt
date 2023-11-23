@@ -72,23 +72,13 @@ enum class Enum : Enum<Enum> {
   fun values(): Array<Enum>
 
   // CHECK JVM_IR:
-  //   Mangled name: Enum#clone(){}kotlin.Any
-  //   Public signature: /Enum.clone|-6903128697527593263[0]
-  //   Public signature debug description: clone(){}kotlin.Any
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: Enum#compareTo(Enum){}
-  //   Public signature: /Enum.compareTo|-4443884423672358900[0]
-  //   Public signature debug description: compareTo(Enum){}
-  protected /* fake */ override fun clone(): Any
-
-  // CHECK JVM_IR:
   //   Mangled name: Enum#compareTo(Enum){}kotlin.Int
   //   Public signature: /Enum.compareTo|5116290257178107514[0]
   //   Public signature debug description: compareTo(Enum){}kotlin.Int
   // CHECK JS_IR NATIVE:
-  //   Mangled name: Enum#equals(kotlin.Any?){}
-  //   Public signature: /Enum.equals|4638265728071529943[0]
-  //   Public signature debug description: equals(kotlin.Any?){}
+  //   Mangled name: Enum#compareTo(Enum){}
+  //   Public signature: /Enum.compareTo|-4443884423672358900[0]
+  //   Public signature debug description: compareTo(Enum){}
   /* fake */ override operator fun compareTo(other: Enum): Int
 
   // CHECK JVM_IR:
@@ -96,9 +86,9 @@ enum class Enum : Enum<Enum> {
   //   Public signature: /Enum.equals|722809408929142791[0]
   //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
   // CHECK JS_IR NATIVE:
-  //   Mangled name: Enum#hashCode(){}
-  //   Public signature: /Enum.hashCode|3409210261493131192[0]
-  //   Public signature debug description: hashCode(){}
+  //   Mangled name: Enum#equals(kotlin.Any?){}
+  //   Public signature: /Enum.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
   /* fake */ override operator fun equals(other: Any?): Boolean
 
   // CHECK JVM_IR:
@@ -106,9 +96,9 @@ enum class Enum : Enum<Enum> {
   //   Public signature: /Enum.hashCode|-8048879360829830756[0]
   //   Public signature debug description: hashCode(){}kotlin.Int
   // CHECK JS_IR NATIVE:
-  //   Mangled name: Enum#toString(){}
-  //   Public signature: /Enum.toString|-1522858123163872138[0]
-  //   Public signature debug description: toString(){}
+  //   Mangled name: Enum#hashCode(){}
+  //   Public signature: /Enum.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
   /* fake */ override fun hashCode(): Int
 
   // CHECK JVM_IR:
@@ -116,9 +106,9 @@ enum class Enum : Enum<Enum> {
   //   Public signature: /Enum.toString|6958853723545266802[0]
   //   Public signature debug description: toString(){}kotlin.String
   // CHECK JS_IR NATIVE:
-  //   Mangled name: Enum#static{}entries
-  //   Public signature: /Enum.entries|-5134227801081826149[0]
-  //   Public signature debug description: #static{}entries
+  //   Mangled name: Enum#toString(){}
+  //   Public signature: /Enum.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
   /* fake */ override fun toString(): String
 
   // CHECK:
@@ -131,9 +121,9 @@ enum class Enum : Enum<Enum> {
     //   Public signature: /Enum.entries.<get-entries>|-2213733217881289366[0]
     //   Public signature debug description: <get-entries>#static(){}kotlin.enums.EnumEntries<Enum>
     // CHECK JS_IR NATIVE:
-    //   Mangled name: Enum{}name
-    //   Public signature: /Enum.name|4231860309499509769[0]
-    //   Public signature debug description: {}name
+    //   Mangled name: Enum#<get-entries>#static(){}
+    //   Public signature: /Enum.entries.<get-entries>|-6068527377476727729[0]
+    //   Public signature debug description: <get-entries>#static(){}
     get(): EnumEntries<Enum>
 
   // CHECK:
@@ -146,9 +136,9 @@ enum class Enum : Enum<Enum> {
     //   Public signature: /Enum.name.<get-name>|-8006111524522882650[0]
     //   Public signature debug description: <get-name>(){}kotlin.String
     // CHECK JS_IR NATIVE:
-    //   Mangled name: Enum{}ordinal
-    //   Public signature: /Enum.ordinal|1912745122988592376[0]
-    //   Public signature debug description: {}ordinal
+    //   Mangled name: Enum#<get-name>(){}
+    //   Public signature: /Enum.name.<get-name>|5879344792307730109[0]
+    //   Public signature debug description: <get-name>(){}
     /* fake */ override get(): String
 
   // CHECK:
@@ -161,8 +151,9 @@ enum class Enum : Enum<Enum> {
     //   Public signature: /Enum.ordinal.<get-ordinal>|-6902664390061762634[0]
     //   Public signature debug description: <get-ordinal>(){}kotlin.Int
     // CHECK JS_IR NATIVE:
-    //   Mangled name: A
-    //   Public signature: /A|null[0]
+    //   Mangled name: Enum#<get-ordinal>(){}
+    //   Public signature: /Enum.ordinal.<get-ordinal>|8409904226035914023[0]
+    //   Public signature debug description: <get-ordinal>(){}
     /* fake */ override get(): Int
 
 }
@@ -184,9 +175,9 @@ object A {
 //   Public signature: /test1|2327660247328941000[0]
 //   Public signature debug description: test1(){}Enum
 // CHECK JS_IR NATIVE:
-//   Mangled name: #test2(){}
-//   Public signature: /test2|4279114864133353152[0]
-//   Public signature debug description: test2(){}
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
 fun test1(): Enum
 
 // CHECK JVM_IR:
@@ -194,9 +185,9 @@ fun test1(): Enum
 //   Public signature: /test2|-3343341839692584744[0]
 //   Public signature debug description: test2(){}A
 // CHECK JS_IR NATIVE:
-//   Mangled name: #test3(){}
-//   Public signature: /test3|-3759735065270951803[0]
-//   Public signature debug description: test3(){}
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
 fun test2(): A
 
 // CHECK JVM_IR:
@@ -204,14 +195,18 @@ fun test2(): A
 //   Public signature: /test3|-1546181855196587449[0]
 //   Public signature debug description: test3(){}kotlin.Int
 // CHECK JS_IR NATIVE:
-//   Mangled name: #test4(){}
-//   Public signature: /test4|5588455914500386239[0]
-//   Public signature debug description: test4(){}
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
+//   Public signature debug description: test3(){}
 fun test3(): Int
 
 // CHECK JVM_IR:
 //   Mangled name: #test4(){}Z.Companion
 //   Public signature: /test4|5728287137046346436[0]
 //   Public signature debug description: test4(){}Z.Companion
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4(){}
+//   Public signature: /test4|5588455914500386239[0]
+//   Public signature debug description: test4(){}
 fun test4(): Companion
 

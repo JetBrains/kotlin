@@ -30,12 +30,6 @@ enum class MyEnum : Enum<MyEnum> {
   fun values(): Array<MyEnum>
 
   // CHECK JVM_IR:
-  //   Mangled name: MyEnum#clone(){}kotlin.Any
-  //   Public signature: /MyEnum.clone|-6903128697527593263[0]
-  //   Public signature debug description: clone(){}kotlin.Any
-  protected /* fake */ override fun clone(): Any
-
-  // CHECK JVM_IR:
   //   Mangled name: MyEnum#compareTo(MyEnum){}kotlin.Int
   //   Public signature: /MyEnum.compareTo|2015858924903177055[0]
   //   Public signature debug description: compareTo(MyEnum){}kotlin.Int

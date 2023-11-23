@@ -1,8 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-
-// KT-61141: absent enum fake_overrides: finalize, getDeclaringClass, clone
-// IGNORE_BACKEND: NATIVE
-
 annotation class TestAnn(val x: String)
 
 @TestAnn("class")

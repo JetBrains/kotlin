@@ -48,10 +48,11 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property stableOrder Print declarations in a sorted order
  * @property verboseErrorTypes Whether to dump the value of [IrErrorType.kotlinType] for [IrErrorType] nodes
  * @property printFacadeClassInFqNames Whether printed fully-qualified names of top-level declarations should include the name of
- * the file facade class (see [IrDeclarationOrigin.FILE_CLASS])
- * @property printFlagsInDeclarationReferences If `false`, flags like `fake_override`, `inline` etc. are not printed in rendered declaration
- * references.
+ *   the file facade class (see [IrDeclarationOrigin.FILE_CLASS]) TODO: use [isHiddenDeclaration] instead.
+ * @property printFlagsInDeclarationReferences If `false`, flags like `fake_override`, `inline` etc. are not printed in rendered
+ *   declaration references.
  * @property printSignatures Whether to print signatures for nodes that have public signatures
+ * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
@@ -63,6 +64,7 @@ data class DumpIrTreeOptions(
     val printTypeAbbreviations: Boolean = true,
     val printModuleName: Boolean = true,
     val printFilePath: Boolean = true,
+    val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
 )
 
 private fun IrFile.shouldSkipDump(): Boolean {
@@ -112,6 +114,8 @@ class DumpIrTreeVisitor(
 
     private fun List<IrDeclaration>.ordered(): List<IrDeclaration> = if (options.stableOrder) stableOrdered() else this
 
+    private fun IrDeclaration.isHidden(): Boolean = options.isHiddenDeclaration(this)
+
     override fun visitElement(element: IrElement, data: String) {
         element.dumpLabeledElementWith(data) {
             if (element is IrAnnotationContainer) {
@@ -141,6 +145,7 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitClass(declaration: IrClass, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
@@ -151,6 +156,7 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.typeParameters.dumpElements()
@@ -158,12 +164,14 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
         }
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
@@ -196,6 +204,7 @@ class DumpIrTreeVisitor(
         )
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.typeParameters.dumpElements()
@@ -206,6 +215,7 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitProperty(declaration: IrProperty, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.overriddenSymbols.dumpItems("overridden") { it.dump() }
@@ -216,6 +226,7 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitField(declaration: IrField, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.initializer?.accept(this, "")
@@ -234,6 +245,7 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.initializerExpression?.accept(this, "init")
