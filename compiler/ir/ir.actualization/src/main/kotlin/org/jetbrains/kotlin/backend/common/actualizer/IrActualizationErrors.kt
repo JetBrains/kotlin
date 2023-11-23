@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.util.RenderIrElementVisitorForDiagnosticText
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
@@ -80,13 +80,20 @@ internal object IrActualizationDiagnosticRenderers {
     }
     val EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY =
         Renderer { incompatibilityType: ExpectActualAnnotationsIncompatibilityType<IrConstructorCall> ->
-            val expectAnnotationFqName = incompatibilityType.expectAnnotation.type.classFqName ?: "<unknown>"
+            val expectAnnotation = ANNOTATION.render(incompatibilityType.expectAnnotation)
             val reason = when (incompatibilityType) {
                 is ExpectActualAnnotationsIncompatibilityType.MissingOnActual -> "is missing on actual declaration"
-                is ExpectActualAnnotationsIncompatibilityType.DifferentOnActual -> "has different arguments on actual declaration"
+                is ExpectActualAnnotationsIncompatibilityType.DifferentOnActual -> {
+                    val actualAnnotation = ANNOTATION.render(incompatibilityType.actualAnnotation)
+                    "has different arguments on actual declaration: `$actualAnnotation`"
+                }
             }
-            "Annotation `$expectAnnotationFqName` $reason"
+            "Annotation `$expectAnnotation` $reason"
         }
+
+    private val ANNOTATION = Renderer<IrConstructorCall> {
+        "@" + RenderIrElementVisitorForDiagnosticText.renderAsAnnotation(it)
+    }
 
     @JvmField
     val MODULE_WITH_PLATFORM = Renderer<ModuleDescriptor> { module ->

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 fun IrElement.render(options: DumpIrTreeOptions = DumpIrTreeOptions()) =
     accept(RenderIrElementVisitor(options), null)
 
-class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTreeOptions()) :
+open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTreeOptions()) :
     IrElementVisitor<String, Nothing?> {
 
     private val variableNameData = VariableNameData(options.normalizeNames)
