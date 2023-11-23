@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
-import org.jetbrains.kotlin.bir.backend.jvm.GlobalJvmBirDynamicProperties
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.jvm.JvmCachedDeclarations
 import org.jetbrains.kotlin.bir.backend.lower.*
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
 import org.jetbrains.kotlin.bir.util.Bir2IrConverter
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.bir.util.countAllElementsInTree
-import org.jetbrains.kotlin.bir.get
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -57,8 +55,8 @@ val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhase, List<
 )
 
 private val excludedPhases = setOf<String>(
-    //"Bir2Ir",
-    "Terminate",
+    "Bir2Ir",
+    //"Terminate",
 
     // This phase removes annotation constructors, but they are still being used,
     // which causes an exception in BIR. It works in IR because removed constructors
@@ -96,7 +94,7 @@ fun lowerWithBir(
         birPhases as List<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>
     )
 
-    val allExcludedPhases = excludedPhases + allBirPhases.flatMap { it.second }
+    val allExcludedPhases = excludedPhases //+ allBirPhases.flatMap { it.second }
 
     val compoundPhase = newPhases.reduce { result, phase -> result then phase }
     val phaseConfig = PhaseConfigBuilder(compoundPhase).apply {
@@ -130,8 +128,15 @@ private fun reconstructPhases(
                 .map { it.second as AbstractNamedCompilerPhase<JvmBackendContext, IrFile, IrFile> }
                 .toMutableList()
 
+            val annotationPhase = filePhases.find { it.name == "Annotation" }!!
+            filePhases.remove(annotationPhase)
             filePhases.add(
-                filePhases.indexOfFirst { (it as AnyNamedPhase).name == "DirectInvokes" } + 1,
+                filePhases.indexOfFirst { it.name == "DirectInvokes" } + 1,
+                annotationPhase
+            )
+
+            filePhases.add(
+                filePhases.indexOfFirst { it.name == "FunctionReference" },
                 terminateProcessPhase as AbstractNamedCompilerPhase<JvmBackendContext, IrFile, IrFile>
             )
 
@@ -148,12 +153,13 @@ private fun reconstructPhases(
                     topPhase.runBefore(phaseConfig, phaserState, context, input)
                     context.inVerbosePhase = phaseConfig.isVerbose(topPhase)
 
+                    dumpOriginalIrPhase(context, input, topPhase.name, true)
                     invokePhaseMeasuringTime(profile, topPhase.name) {
                         topPhase.phaseBody(phaseConfig, phaserState, context, input)
                     }
+                    dumpOriginalIrPhase(context, input, topPhase.name, false)
 
                     topPhase.runAfter(phaseConfig, phaserState, context, input, input)
-                    dumpOriginalIrPhase(context, input, topPhase)
                     return input
                 }
             }
@@ -183,6 +189,7 @@ class CustomPerFileAggregateLoweringPhase(
                 }
                 context.inVerbosePhase = phaseConfig.isVerbose(filePhase)
 
+                dumpOriginalIrPhase(context, input, filePhase.name, true)
                 invokePhaseMeasuringTime(
                     profile,
                     (filePhase as? AbstractNamedCompilerPhase<*, *, *>)?.name ?: filePhase.javaClass.simpleName
@@ -191,6 +198,7 @@ class CustomPerFileAggregateLoweringPhase(
                         filePhase.phaseBody(phaseConfig, filePhaserState, context, irFile)
                     }
                 }
+                dumpOriginalIrPhase(context, input, filePhase.name, false)
 
                 for (irFile in input.files) {
                     filePhase.runAfter(phaseConfig, filePhaserState, context, irFile, irFile)
@@ -198,8 +206,6 @@ class CustomPerFileAggregateLoweringPhase(
 
                 phaserState.alreadyDone.add(filePhase)
                 phaserState.phaseCount++
-
-                dumpOriginalIrPhase(context, input, filePhase)
             } else {
                 for (irFile in input.files) {
                     filePhase.outputIfNotEnabled(phaseConfig, filePhaserState, context, irFile)
@@ -324,13 +330,14 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
             //Thread.sleep(100)
         }
 
+        dumpBirPhase(context, input, null, "Initial")
         for (phase in input.backendContext.loweringPhases) {
             val phaseName = phase.javaClass.simpleName
             invokePhaseMeasuringTime(profile, "!BIR - $phaseName") {
                 phase(input.birModule)
             }
 
-            dumpBirPhase(context, input, phase)
+            dumpBirPhase(context, input, phase, null)
         }
 
         return input
@@ -352,9 +359,10 @@ private class ConvertBirToIrPhase(name: String, description: String) :
 
         val localClassType = dynamicPropertyManager.acquireProperty(BirJvmInventNamesForLocalClassesLowering.LocalClassType)
         val fieldForObjectInstanceToken = dynamicPropertyManager.acquireProperty(JvmCachedDeclarations.FieldForObjectInstance)
-        val interfaceCompanionFieldDeclaration = dynamicPropertyManager.acquireProperty(JvmCachedDeclarations.InterfaceCompanionFieldDeclaration)
+        val interfaceCompanionFieldDeclaration =
+            dynamicPropertyManager.acquireProperty(JvmCachedDeclarations.InterfaceCompanionFieldDeclaration)
         val fieldForObjectInstanceParentToken = dynamicPropertyManager.acquireProperty(JvmCachedDeclarations.FieldForObjectInstanceParent)
-        bir2IrConverter.elementConvertedCallbacck = { old, new ->
+        bir2IrConverter.elementConvertedCallback = { old, new ->
             if (old is BirAttributeContainer) {
                 old[localClassType]?.let {
                     context.putLocalClassType(new as IrAttributeContainer, it)
