@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Inv<T>
 
 fun <Y: X, X : Inv<out String>> foo(x: X, y: Y) {

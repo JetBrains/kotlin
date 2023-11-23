@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.collectUpperBounds
+import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors

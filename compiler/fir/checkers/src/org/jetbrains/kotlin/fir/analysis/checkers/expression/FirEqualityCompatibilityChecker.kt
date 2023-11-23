@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.collectUpperBounds
+import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass

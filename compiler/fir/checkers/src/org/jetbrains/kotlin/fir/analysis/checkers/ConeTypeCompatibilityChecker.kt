@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.languageVersionSettings

@@ -668,11 +668,9 @@ internal fun captureFromTypeParameterUpperBoundIfNeeded(
 ): ConeKotlinType {
     val expectedTypeClassId = expectedType.upperBoundIfFlexible().classId ?: return argumentType
     val simplifiedArgumentType = argumentType.lowerBoundIfFlexible() as? ConeTypeParameterType ?: return argumentType
-    val typeParameter = simplifiedArgumentType.lookupTag.typeParameterSymbol.fir
-
     val context = session.typeContext
 
-    val chosenSupertype = typeParameter.symbol.resolvedBounds.map { it.coneType }
+    val chosenSupertype = simplifiedArgumentType.collectUpperBounds()
         .singleOrNull { it.hasSupertypeWithGivenClassId(expectedTypeClassId, context) } ?: return argumentType
 
     val capturedType = context.captureFromExpression(chosenSupertype) ?: return argumentType
