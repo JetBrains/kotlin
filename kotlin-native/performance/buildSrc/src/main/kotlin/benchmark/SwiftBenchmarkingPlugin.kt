@@ -140,7 +140,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
             addAll(args)
         }.toTypedArray().runCommand(
             timeoutAmount = 240,
-            env = mapOf("DYLD_FALLBACK_FRAMEWORK_PATH" to configs.absoluteTargetToolchain + "/ExtraFrameworks"),
+            env = mapOf("DYLD_FALLBACK_FRAMEWORK_PATH" to File(configs.absoluteTargetToolchain).parent + "/ExtraFrameworks"),
         )
 
         println(
