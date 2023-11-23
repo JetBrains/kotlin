@@ -1167,6 +1167,7 @@ class Ir2BirConverter(
             is IrProperty -> BirLazyProperty(old, this)
             is IrField -> BirLazyField(old, this)
             is IrEnumEntry -> BirLazyEnumEntry(old, this)
+            is IrTypeAlias -> BirLazyTypeAlias(old, this)
             else -> null
         } as Bir?
     }

@@ -40,7 +40,7 @@ import kotlin.time.measureTimedValue
 val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhase, List<String>>>(
     ::BirJvmNameLowering to listOf(),
     ::BirJvmStaticInObjectLowering to listOf("JvmStaticInObject"),
-    ::BirRepeatedAnnotationLowering to listOf("RepeatedAnnotation"),
+    /*::BirRepeatedAnnotationLowering to listOf("RepeatedAnnotation"),
     ::BirTypeAliasAnnotationMethodsLowering to listOf("TypeAliasAnnotationMethodsLowering"),
     ::BirProvisionalFunctionExpressionLowering to listOf("FunctionExpression"),
     ::BirJvmOverloadsAnnotationLowering to listOf("JvmOverloadsAnnotation"),
@@ -51,12 +51,12 @@ val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhase, List<
     ::BirJvmInventNamesForLocalClassesLowering to listOf("InventNamesForLocalClasses"),
     ::BirInlineCallableReferenceToLambdaLowering to listOf("InlineCallableReferenceToLambdaPhase"),
     ::BirDirectInvokeLowering to listOf("DirectInvokes"),
-    ::BirAnnotationLowering to listOf("Annotation"),
+    ::BirAnnotationLowering to listOf("Annotation"),*/
 )
 
 private val excludedPhases = setOf<String>(
-    "Bir2Ir",
-    //"Terminate",
+    //"Bir2Ir",
+    "Terminate",
 
     // This phase removes annotation constructors, but they are still being used,
     // which causes an exception in BIR. It works in IR because removed constructors
@@ -94,7 +94,7 @@ fun lowerWithBir(
         birPhases as List<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>
     )
 
-    val allExcludedPhases = excludedPhases //+ allBirPhases.flatMap { it.second }
+    val allExcludedPhases = excludedPhases + allBirPhases.flatMap { it.second }
 
     val compoundPhase = newPhases.reduce { result, phase -> result then phase }
     val phaseConfig = PhaseConfigBuilder(compoundPhase).apply {
