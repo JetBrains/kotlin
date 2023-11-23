@@ -170,4 +170,5 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     if (context.config.optimizationsEnabled) {
         runPhase(OptimizeTLSDataLoadsPhase)
     }
+//    LLVMDumpModule(this@runBitcodePostProcessing.context.llvmModule)
 }

@@ -142,6 +142,7 @@ internal class KonanSymbols(
     val filterExceptions = topLevelClass(RuntimeNames.filterExceptions)
     val exportForCppRuntime = topLevelClass(RuntimeNames.exportForCppRuntime)
     val typedIntrinsic = topLevelClass(RuntimeNames.typedIntrinsicAnnotation)
+    val noBoundsCheckRequired = topLevelClass(RuntimeNames.noBoundsCheckRequired)
 
     val objCMethodImp = interopClass(InteropFqNames.objCMethodImpName)
 
@@ -306,6 +307,8 @@ internal class KonanSymbols(
     val throwIllegalArgumentExceptionWithMessage = internalFunction("ThrowIllegalArgumentExceptionWithMessage")
 
 
+    val abstractList = irBuiltIns.findClass(Name.identifier("AbstractList"), "kotlin", "collections")!!
+
     override val throwUninitializedPropertyAccessException = internalFunction("ThrowUninitializedPropertyAccessException")
 
     override val stringBuilder = irBuiltIns.findClass(Name.identifier("StringBuilder"),"kotlin", "text")!!
@@ -358,6 +361,8 @@ internal class KonanSymbols(
 
     val println = irBuiltIns.findFunctions(Name.identifier("println"), "kotlin", "io")
             .single { lookup.getValueParametersCount(it) == 1 && lookup.isValueParameterClass(it, 0, string) }
+
+    val noBoundsCheck = irBuiltIns.findFunctions(Name.identifier("noBoundsCheck")).single()
 
     override val getContinuation = internalFunction("getContinuation")
 

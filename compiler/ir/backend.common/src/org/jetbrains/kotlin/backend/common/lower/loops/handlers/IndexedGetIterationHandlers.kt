@@ -106,6 +106,23 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
         }
 }
 
+/** Builds a [HeaderInfo] for arrays. */
+internal class ArrayListIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = true) {
+    override fun matchIterable(expression: IrExpression) =
+        expression.type.classOrNull?.hasEqualFqName(FqName("kotlin.collections.ArrayList")) == true
+
+    override val IrType.sizePropertyGetter
+        get() = getClass()!!.getPropertyGetter("size")!!.owner
+
+    override val IrType.getFunction
+        get() = getClass()!!.functions.single {
+            //it.name == OperatorNameConventions.GET &&
+            it.name.asString() == "getWithoutBoundCheck" &&
+                    it.valueParameters.size == 1 &&
+                    it.valueParameters[0].type.isInt()
+        }
+}
+
 /**
  * Builds a [HeaderInfo] for iteration over characters in a [CharSequence].
  *

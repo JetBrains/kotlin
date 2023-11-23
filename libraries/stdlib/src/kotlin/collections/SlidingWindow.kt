@@ -74,8 +74,15 @@ internal class MovingSubList<out E>(private val list: List<E>) : AbstractList<E>
     override fun get(index: Int): E {
         checkElementIndex(index, _size)
 
-        return list[fromIndex + index]
+        return noBoundsCheck { list[fromIndex + index] }
+//        return noBoundsCheckRequired(list[fromIndex + index])
+//        return (@NoBoundsCheckRequired list[fromIndex + index])
     }
+
+//    @Suppress("unused")
+//    fun getWithoutBoundsCheck(index: Int): E {
+//        return (@NoBoundsCheckRequired list[fromIndex + index])
+//    }
 
     override val size: Int get() = _size
 }
@@ -103,8 +110,16 @@ private class RingBuffer<T>(private val buffer: Array<Any?>, filledSize: Int) : 
     override fun get(index: Int): T {
         checkElementIndex(index, size)
         @Suppress("UNCHECKED_CAST")
-        return buffer[startIndex.forward(index)] as T
+        return noBoundsCheck { buffer[startIndex.forward(index)] } as T
+//        return noBoundsCheckRequired(buffer[startIndex.forward(index)]) as T
+//        return (@NoBoundsCheckRequired buffer[startIndex.forward(index)]) as T
     }
+
+//    @Suppress("unused")
+//    fun getWithoutBoundsCheck(index: Int): T {
+//        @Suppress("UNCHECKED_CAST")
+//        return (@NoBoundsCheckRequired buffer[startIndex.forward(index)]) as T
+//    }
 
     fun isFull() = size == capacity
 

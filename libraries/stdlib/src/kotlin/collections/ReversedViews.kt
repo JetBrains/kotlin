@@ -11,6 +11,8 @@ package kotlin.collections
 private open class ReversedListReadOnly<out T>(private val delegate: List<T>) : AbstractList<T>() {
     override val size: Int get() = delegate.size
     override fun get(index: Int): T = delegate[reverseElementIndex(index)]
+//    @Suppress("unused")
+//    fun getWithoutBoundsCheck(index: Int): T = @NoBoundsCheckRequired delegate[reverseElementIndex(index)]
 
     override fun iterator(): Iterator<T> = listIterator(0)
     override fun listIterator(): ListIterator<T> = listIterator(0)
@@ -29,6 +31,8 @@ private open class ReversedListReadOnly<out T>(private val delegate: List<T>) : 
 private class ReversedList<T>(private val delegate: MutableList<T>) : AbstractMutableList<T>() {
     override val size: Int get() = delegate.size
     override fun get(index: Int): T = delegate[reverseElementIndex(index)]
+//    @Suppress("unused")
+//    fun getWithoutBoundsCheck(index: Int): T = @NoBoundsCheckRequired delegate[reverseElementIndex(index)]
 
     override fun clear() = delegate.clear()
     override fun removeAt(index: Int): T = delegate.removeAt(reverseElementIndex(index))

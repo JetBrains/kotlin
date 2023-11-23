@@ -19,11 +19,10 @@ import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
+import org.jetbrains.kotlin.backend.konan.ir.ListAccessorsWithoutBoundsCheckLowering
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.ImportCachesAbiTransformer
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
@@ -33,15 +32,39 @@ import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.ir.types.isInt
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * Run whole IR lowering pipeline over [irModuleFragment].
  */
 internal fun PhaseEngine<NativeGenerationState>.runAllLowerings(irModuleFragment: IrModuleFragment) {
+//    irModuleFragment.acceptChildrenVoid(object : IrElementVisitorVoid {
+//        override fun visitElement(element: IrElement) {
+//            element.acceptChildrenVoid(this)
+//        }
+//
+//        override fun visitClass(declaration: IrClass) {
+//            declaration.acceptChildrenVoid(this)
+//            if (declaration.packageFqName?.asString()?.startsWith("kotlin") == true
+//                    && declaration.defaultType.isSubtypeOfClass(context.context.ir.symbols.list)) {
+//                println("ZZZ: ${declaration.packageFqName} ${declaration.fileOrNull?.path}\n   ${declaration.render()}")
+//            }
+//        }
+//    })
+
     val lowerings = getAllLowerings()
     irModuleFragment.files.forEach { file ->
         context.fileLowerState = FileLowerState()
@@ -49,6 +72,37 @@ internal fun PhaseEngine<NativeGenerationState>.runAllLowerings(irModuleFragment
             runPhase(lowering, loweredFile)
         }
     }
+
+//    irModuleFragment.acceptChildrenVoid(object : IrElementVisitorVoid {
+//        override fun visitElement(element: IrElement) {
+//            element.acceptChildrenVoid(this)
+//        }
+//
+//        override fun visitFunction(declaration: IrFunction) {
+//            if (declaration.name.asString() == "getWithoutBoundCheck" && declaration.parentClassOrNull?.name?.asString() == "ArrayList") {
+//                declaration.transformChildrenVoid(object : IrElementTransformerVoid() {
+//                    override fun visitCall(expression: IrCall): IrExpression {
+//                        expression.transformChildrenVoid(this)
+//
+//                        val callee = expression.symbol.owner
+//                        if (callee.name == OperatorNameConventions.GET) {
+//                            val getWithoutBoundCheck = callee.parentAsClass.functions.single {
+//                                it.name == context.context.ir.symbols.getWithoutBoundCheckName &&
+//                                        it.valueParameters.size == 1 &&
+//                                        it.valueParameters[0].type.isInt()
+//                            }
+//                            return context.context.createIrBuilder(declaration.symbol).irCall(getWithoutBoundCheck).apply {
+//                                dispatchReceiver = expression.dispatchReceiver
+//                                putValueArgument(0, expression.getValueArgument(0))
+//                            }
+//                        }
+//
+//                        return expression
+//                    }
+//                })
+//            }
+//        }
+//    })
 }
 
 internal val functionsWithoutBoundCheck = createSimpleNamedCompilerPhase<Context, Unit>(
@@ -392,6 +446,14 @@ private val typeOperatorPhase = createFileLoweringPhase(
         prerequisite = setOf(coroutinesPhase)
 )
 
+private val listAccessorsWithoutBoundsCheckPhase = createFileLoweringPhase(
+        { context, irFile ->
+            ListAccessorsWithoutBoundsCheckLowering(context).runOnFilePostfix(irFile)
+        },
+        name = "ListAccessorsWithoutBoundsCheck",
+        description = "Returns insertion for Unit functions",
+)
+
 private val bridgesPhase = createFileLoweringPhase(
         { context, irFile ->
             BridgesBuilding(context).runOnFilePostfix(irFile)
@@ -399,7 +461,7 @@ private val bridgesPhase = createFileLoweringPhase(
         },
         name = "Bridges",
         description = "Bridges building",
-        prerequisite = setOf(coroutinesPhase)
+        prerequisite = setOf(coroutinesPhase, listAccessorsWithoutBoundsCheckPhase)
 )
 
 private val autoboxPhase = createFileLoweringPhase(
@@ -554,6 +616,7 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         objectClassesPhase,
         staticInitializersPhase,
         builtinOperatorPhase,
+        listAccessorsWithoutBoundsCheckPhase,
         bridgesPhase,
         exportInternalAbiPhase.takeIf { context.config.produce.isCache },
         useInternalAbiPhase,

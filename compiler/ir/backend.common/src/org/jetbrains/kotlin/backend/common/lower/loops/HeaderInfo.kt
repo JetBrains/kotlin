@@ -319,7 +319,8 @@ internal class DefaultHeaderInfoBuilder(context: CommonBackendContext, scopeOwne
         ArrayIterationHandler(context),
         DefaultProgressionHandler(context),
         StringIterationHandler(context),
-        CharSequenceIterationHandler(context)
+        CharSequenceIterationHandler(context),
+        //ArrayListIterationHandler(context)
     )
 }
 

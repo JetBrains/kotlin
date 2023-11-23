@@ -5,6 +5,8 @@
 
 package kotlin.collections
 
+// TODO: getWithoutBoundsCheck
+
 /**
  * Resizable-array implementation of the deque data structure.
  *

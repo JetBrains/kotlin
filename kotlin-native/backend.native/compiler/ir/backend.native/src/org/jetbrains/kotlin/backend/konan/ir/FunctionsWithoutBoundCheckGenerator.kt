@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
+import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.getOrPut
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
@@ -13,16 +18,161 @@ import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.addMember
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+
+internal class ListAccessorsWithoutBoundsCheckLowering(val context: KonanBackendContext) : ClassLoweringPass {
+    private val irBuiltIns = context.irBuiltIns
+    private val symbols = context.ir.symbols
+    private val irFactory = context.irFactory
+
+    private fun IrFunction.isGet() =
+            name == OperatorNameConventions.GET && valueParameters.singleOrNull()?.type == irBuiltIns.intType
+
+    private fun IrClass.getGet() = functions.single { it.isGet() }
+
+    private val noBoundsCheck = symbols.noBoundsCheck.owner
+    private val abstractList = symbols.abstractList.owner
+    private val list = symbols.list.owner
+    private val listGet = list.getGet()
+
+    private fun IrClass.getGetWithoutBoundsCheck(): IrSimpleFunction = context.mapping.listGetWithoutBoundsCheck.getOrPut(this) {
+        val get = getGet()
+        irFactory.buildFun {
+            name = KonanNameConventions.getWithoutBoundCheck
+            modality = get.modality
+            returnType = get.returnType
+            isFakeOverride = get.isFakeOverride
+        }.apply {
+            parent = this@getGetWithoutBoundsCheck
+            createDispatchReceiverParameter()
+            addValueParameter {
+                name = Name.identifier("index")
+                type = irBuiltIns.intType
+            }
+
+            overriddenSymbols = get.overriddenSymbols
+                    .filter { it != listGet.symbol }
+                    .map { it.owner.parentAsClass.getGetWithoutBoundsCheck().symbol }
+        }
+    }
+
+    private val abstractListGetWithoutBoundsCheck = abstractList.getGetWithoutBoundsCheck()
+    private val checkElementIndex = abstractList.companionObject()!!.functions.single {
+        it.name.asString() == "checkElementIndex"
+                && it.valueParameters.size == 2
+                && it.valueParameters.all { parameter -> parameter.type == irBuiltIns.intType }
+    }
+
+    override fun lower(irClass: IrClass) {
+        if (irClass == abstractList) {
+            irClass.declarations.add(irClass.declarations.indexOf(irClass.getGet()) + 1, abstractListGetWithoutBoundsCheck)
+        } else if (abstractList in irClass.getAllSuperclasses()) {
+            val get = irClass.getGet()
+            val getWithoutBoundsCheck = irClass.getGetWithoutBoundsCheck()
+            irClass.declarations.add(irClass.declarations.indexOf(get) + 1, getWithoutBoundsCheck)
+            if (getWithoutBoundsCheck.isFakeOverride) return
+
+            getWithoutBoundsCheck.body = context.createIrBuilder(getWithoutBoundsCheck.symbol).run {
+                if (irClass.packageFqName?.asString()?.startsWith("kotlin.") == true)
+                    transformGetBody(get, getWithoutBoundsCheck)
+                else {
+                    // Unknown AbstractList inheritor: just conservatively delegate to get.
+                    irBlockBody {
+                        +irReturn(
+                                irCall(get).apply {
+                                    dispatchReceiver = irGet(getWithoutBoundsCheck.dispatchReceiverParameter!!)
+                                    putValueArgument(0, irGet(getWithoutBoundsCheck.valueParameters[0]))
+                                }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun DeclarationIrBuilder.transformGetBody(get: IrFunction, getWithoutBoundsCheck: IrFunction): IrBody? {
+        val body = get.body?.deepCopyWithVariables()
+        body?.transformChildren(object : IrElementTransformer<Boolean> {
+            override fun visitReturn(expression: IrReturn, data: Boolean): IrExpression {
+                if (expression.returnTargetSymbol != get.symbol)
+                    return super.visitReturn(expression, data)
+
+                expression.transformChildren(this, data)
+
+                return if (data)
+                    at(expression).irReturn(expression.value)
+                else {
+                    val value = expression.value
+                    val returnableBlockSymbol = IrReturnableBlockSymbolImpl()
+                    val noBoundsCheckInlinedBlock = IrInlinedFunctionBlockImpl(
+                            startOffset = value.startOffset,
+                            endOffset = value.endOffset,
+                            type = value.type,
+                            // This call has no arguments, which is fine since it's not used in K/N.
+                            inlineCall = irCall(noBoundsCheck.symbol, noBoundsCheck.returnType, listOf(value.type)),
+                            inlinedElement = noBoundsCheck,
+                            origin = null,
+                            statements = listOf(
+                                    IrReturnImpl(
+                                            value.startOffset, value.endOffset,
+                                            irBuiltIns.nothingType,
+                                            returnableBlockSymbol,
+                                            value
+                                    )
+                            )
+                    )
+                    at(expression).irReturn(
+                            IrReturnableBlockImpl(
+                                    startOffset = value.startOffset,
+                                    endOffset = value.endOffset,
+                                    type = value.type,
+                                    symbol = returnableBlockSymbol,
+                                    origin = null,
+                                    statements = listOf(noBoundsCheckInlinedBlock)
+                            )
+                    )
+                }
+            }
+
+            override fun visitGetValue(expression: IrGetValue, data: Boolean): IrExpression {
+                expression.transformChildren(this, data)
+
+                return when (val value = expression.symbol.owner) {
+                    get.dispatchReceiverParameter -> at(expression).irGet(getWithoutBoundsCheck.dispatchReceiverParameter!!)
+                    is IrValueParameter -> at(expression).irGet(getWithoutBoundsCheck.valueParameters[value.index])
+                    else -> expression
+                }
+            }
+
+            override fun visitBlock(expression: IrBlock, data: Boolean) =
+                    super.visitBlock(expression, data || (expression as? IrReturnableBlock)?.inlineFunction == noBoundsCheck)
+
+            override fun visitCall(expression: IrCall, data: Boolean) = when (expression.symbol) {
+                // Skip bounds check.
+                checkElementIndex.symbol -> IrCompositeImpl(expression.startOffset, expression.endOffset, irBuiltIns.unitType)
+                else -> super.visitCall(expression, data)
+            }
+        }, data = false)
+
+        return body
+    }
+}
 
 // Generate additional functions for array set and get operators without bounds checking.
 internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendContext) {

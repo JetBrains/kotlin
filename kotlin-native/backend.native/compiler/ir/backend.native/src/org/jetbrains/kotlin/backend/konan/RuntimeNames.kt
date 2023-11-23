@@ -28,4 +28,5 @@ object RuntimeNames {
     val associatedObjectKey = FqName("kotlin.reflect.AssociatedObjectKey")
     val typedIntrinsicAnnotation = FqName("kotlin.native.internal.TypedIntrinsic")
     val cleaner = FqName("kotlin.native.ref.Cleaner")
+    val noBoundsCheckRequired = FqName("kotlin.NoBoundsCheckRequired")
 }

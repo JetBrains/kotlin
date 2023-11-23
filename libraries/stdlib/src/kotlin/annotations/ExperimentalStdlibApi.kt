@@ -32,3 +32,13 @@ import kotlin.annotation.AnnotationTarget.*
 @MustBeDocumented
 @SinceKotlin("1.3")
 public annotation class ExperimentalStdlibApi
+
+@Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class NoBoundsCheckRequired
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun <T> noBoundsCheckRequired(x: T) = x
+
+@PublishedApi
+internal inline fun <R> noBoundsCheck(block: () -> R): R = block()
