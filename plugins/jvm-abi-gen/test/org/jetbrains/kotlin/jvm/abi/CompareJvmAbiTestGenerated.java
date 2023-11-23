@@ -55,6 +55,26 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/constant/");
     }
 
+    @TestMetadata("debugInfoLineNumberTable")
+    public void testDebugInfoLineNumberTable() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/debugInfoLineNumberTable/");
+    }
+
+    @TestMetadata("debugInfoLocalVariableTable")
+    public void testDebugInfoLocalVariableTable() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/debugInfoLocalVariableTable/");
+    }
+
+    @TestMetadata("debugInfoSourceDebugExtension")
+    public void testDebugInfoSourceDebugExtension() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/debugInfoSourceDebugExtension/");
+    }
+
+    @TestMetadata("debugInfoSourceFile")
+    public void testDebugInfoSourceFile() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/debugInfoSourceFile/");
+    }
+
     @TestMetadata("declarationOrderInline")
     public void testDeclarationOrderInline() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInline/");
@@ -103,6 +123,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
     @TestMetadata("privateTypealias")
     public void testPrivateTypealias() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/privateTypealias/");
+    }
+
+    @TestMetadata("removeDebugInfo")
+    public void testRemoveDebugInfo() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/removeDebugInfo/");
     }
 
     @TestMetadata("returnType")

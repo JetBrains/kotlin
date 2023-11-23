@@ -75,9 +75,12 @@ abstract class BaseJvmAbiTest : TestCase() {
             freeArgs = listOf(compilation.srcDir.canonicalPath)
             classpath = (abiDependencies + kotlinJvmStdlib).joinToString(File.pathSeparator) { it.canonicalPath }
             pluginClasspaths = arrayOf(abiPluginJar.canonicalPath)
-            pluginOptions = arrayOf(
+            pluginOptions = listOfNotNull(
                 abiOption(JvmAbiCommandLineProcessor.OUTPUT_PATH_OPTION.optionName, compilation.abiDir.canonicalPath),
-            )
+                abiOption(JvmAbiCommandLineProcessor.REMOVE_DEBUG_INFO_OPTION.optionName, true.toString()).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_DEBUG_INFO") != null
+                }
+            ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
             noSourceDebugExtension = InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
 

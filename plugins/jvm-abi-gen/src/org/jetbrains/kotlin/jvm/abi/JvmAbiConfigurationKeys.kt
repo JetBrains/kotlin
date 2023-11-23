@@ -10,4 +10,6 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 object JvmAbiConfigurationKeys {
     val OUTPUT_PATH: CompilerConfigurationKey<String> =
         CompilerConfigurationKey.create(JvmAbiCommandLineProcessor.OUTPUT_PATH_OPTION.description)
+    val REMOVE_DEBUG_INFO: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create(JvmAbiCommandLineProcessor.REMOVE_DEBUG_INFO_OPTION.description)
 }

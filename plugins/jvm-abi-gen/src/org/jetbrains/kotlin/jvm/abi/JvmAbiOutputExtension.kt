@@ -24,11 +24,12 @@ class JvmAbiOutputExtension(
     private val outputPath: File,
     private val abiClassInfos: Map<String, AbiClassInfo>,
     private val messageCollector: MessageCollector,
+    private val removeDebugInfo: Boolean,
 ) : ClassFileFactoryFinalizerExtension {
     override fun finalizeClassFactory(factory: ClassFileFactory) {
         // We need to wait until the end to produce any output in order to strip classes
         // from the InnerClasses attributes.
-        val outputFiles = AbiOutputFiles(abiClassInfos, factory)
+        val outputFiles = AbiOutputFiles(abiClassInfos, factory, removeDebugInfo)
         if (outputPath.extension == "jar") {
             // We don't include the runtime or main class in interface jars and always reset time stamps.
             CompileEnvironmentUtil.writeToJar(
@@ -47,8 +48,11 @@ class JvmAbiOutputExtension(
 
     private class InnerClassInfo(val name: String, val outerName: String?, val innerName: String?, val access: Int)
 
-    private class AbiOutputFiles(val abiClassInfos: Map<String, AbiClassInfo>, val outputFiles: OutputFileCollection) :
-        OutputFileCollection {
+    private class AbiOutputFiles(
+        val abiClassInfos: Map<String, AbiClassInfo>,
+        val outputFiles: OutputFileCollection,
+        val removeDebugInfo: Boolean,
+    ) : OutputFileCollection {
         override fun get(relativePath: String): OutputFile? {
             error("AbiOutputFiles does not implement `get`.")
         }
@@ -104,9 +108,23 @@ class JvmAbiOutputExtension(
                                     ?: return null
 
                                 val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
+                                if (info == AbiMethodInfo.KEEP || access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) != 0) {
+                                    return object : MethodVisitor(Opcodes.API_VERSION, visitor) {
+                                        override fun visitLineNumber(line: Int, start: Label?) {
+                                            if (!removeDebugInfo) {
+                                                super.visitLineNumber(line, start)
+                                            }
+                                        }
 
-                                if (info == AbiMethodInfo.KEEP || access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) != 0)
-                                    return visitor
+                                        override fun visitLocalVariable(
+                                            name: String?, descriptor: String?, signature: String?, start: Label?, end: Label?, index: Int,
+                                        ) {
+                                            if (!removeDebugInfo) {
+                                                super.visitLocalVariable(name, descriptor, signature, start, end, index)
+                                            }
+                                        }
+                                    }
+                                }
 
                                 return object : MethodVisitor(Opcodes.API_VERSION, visitor) {
                                     override fun visitCode() {
@@ -123,13 +141,15 @@ class JvmAbiOutputExtension(
                                 }
                             }
 
-                            // Strip source debug extensions if there are no inline functions.
                             override fun visitSource(source: String?, debug: String?) {
-                                // TODO Normalize and strip unused line numbers from SourceDebugExtensions
-                                if (methodInfo.values.any { it == AbiMethodInfo.KEEP })
-                                    super.visitSource(source, debug)
-                                else
-                                    super.visitSource(source, null)
+                                when {
+                                    removeDebugInfo -> super.visitSource(null, null)
+                                    methodInfo.values.none { it == AbiMethodInfo.KEEP } -> {
+                                        // Strip SourceDebugExtension attribute if there are no inline functions.
+                                        super.visitSource(source, null)
+                                    }
+                                    else -> super.visitSource(source, debug)
+                                }
                             }
 
                             // Remove inner classes which are not present in the abi jar.
@@ -139,11 +159,15 @@ class JvmAbiOutputExtension(
                                 innerClassInfos[name] = InnerClassInfo(name, outerName, innerName, access)
                             }
 
-                            // Strip private declarations from the Kotlin Metadata annotation.
-                            override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
+                            override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor? {
+                                // Strip @SourceDebugExtension annotation if we're removing debug info.
+                                if (removeDebugInfo && descriptor == JvmAnnotationNames.SOURCE_DEBUG_EXTENSION_DESC)
+                                    return null
+
                                 val delegate = super.visitAnnotation(descriptor, visible)
                                 if (descriptor != JvmAnnotationNames.METADATA_DESC)
                                     return delegate
+                                // Strip private declarations from the Kotlin Metadata annotation.
                                 return abiMetadataProcessor(delegate)
                             }
 
