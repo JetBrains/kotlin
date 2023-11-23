@@ -44,7 +44,12 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         ) {
             checkSuspendModifierForm(expression, reference, symbol, context, reporter)
         }
-        if (reference is FirResolvedCallableReference) return
+
+        if (reference is FirResolvedCallableReference) {
+            checkCallableReference(expression, symbol, reporter, context)
+            return
+        }
+
         when (symbol) {
             is FirNamedFunctionSymbol -> if (!symbol.isSuspend) return
             is FirPropertySymbol -> if (symbol.callableId != StandardClassIds.Callables.coroutineContext) return
@@ -259,6 +264,17 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
             extensionReceiver,
             calledDeclarationSymbol.resolvedReceiverTypeRef?.coneType,
         )
+    }
+
+    private fun checkCallableReference(
+        expression: FirQualifiedAccessExpression,
+        symbol: FirCallableSymbol<*>,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        if (symbol.callableId == StandardClassIds.Callables.coroutineContext) {
+            reporter.reportOn(expression.calleeReference.source, FirErrors.UNSUPPORTED, "Callable reference to suspend property", context)
+        }
     }
 }
 
