@@ -12,7 +12,7 @@ FILE: memberTypeParameterVsNestedClass2.fir.kt
         }
 
         public final inline fun <reified T> foo(): R|kotlin/Unit| {
-            <getClass>(Q|Outer.T|)
+            <getClass>(R|T|)
             lval x: R|T?| = Null(null)
             lval y: R|T?| = R|/Outer.T.T<CS errors: /Outer.T.T>#|()
         }

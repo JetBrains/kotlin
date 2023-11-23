@@ -143,8 +143,10 @@ class FirCallResolver(
     ): List<OverloadCandidate> {
         val collector = AllCandidatesCollector(components, components.resolutionStageRunner)
         val origin = (qualifiedAccess as? FirFunctionCall)?.origin ?: FirFunctionCallOrigin.Regular
-        val result =
-            collectCandidates(qualifiedAccess, name, forceCallKind = null, origin, containingDeclarations, resolutionContext, collector)
+        val result = collectCandidates(
+            qualifiedAccess, name, forceCallKind = null, isUsedAsGetClassReceiver = false,
+            origin, containingDeclarations, resolutionContext, collector
+        )
         return collector.allCandidates.map { OverloadCandidate(it, isInBestCandidates = it in result.candidates) }
     }
 
@@ -152,6 +154,7 @@ class FirCallResolver(
         qualifiedAccess: FirQualifiedAccessExpression,
         name: Name,
         forceCallKind: CallKind? = null,
+        isUsedAsGetClassReceiver: Boolean = false,
         origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
         containingDeclarations: List<FirDeclaration> = transformer.components.containingDeclarations,
         resolutionContext: ResolutionContext = transformer.resolutionContext,
@@ -169,6 +172,7 @@ class FirCallResolver(
             explicitReceiver,
             argumentList,
             isImplicitInvoke = qualifiedAccess is FirImplicitInvokeCall,
+            isUsedAsGetClassReceiver = isUsedAsGetClassReceiver,
             typeArguments,
             session,
             components.file,
@@ -222,25 +226,17 @@ class FirCallResolver(
     fun resolveVariableAccessAndSelectCandidate(
         qualifiedAccess: FirQualifiedAccessExpression,
         isUsedAsReceiver: Boolean,
+        isUsedAsGetClassReceiver: Boolean,
         callSite: FirElement,
     ): FirStatement {
-        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver, callSite) { true }
-    }
-
-    fun resolveOnlyEnumOrQualifierAccessAndSelectCandidate(
-        qualifiedAccess: FirQualifiedAccessExpression,
-        isUsedAsReceiver: Boolean,
-    ): FirStatement {
-        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver) accept@{ candidates ->
-            val symbol = candidates.singleOrNull()?.symbol ?: return@accept false
-            symbol is FirEnumEntrySymbol || symbol is FirRegularClassSymbol
-        }
+        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver, isUsedAsGetClassReceiver, callSite) { true }
     }
 
     private fun resolveVariableAccessAndSelectCandidateImpl(
         qualifiedAccess: FirQualifiedAccessExpression,
         isUsedAsReceiver: Boolean,
-        callSite: FirElement = qualifiedAccess,
+        isUsedAsGetClassReceiver: Boolean,
+        callSite: FirElement,
         acceptCandidates: (Collection<Candidate>) -> Boolean,
     ): FirStatement {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
@@ -250,7 +246,7 @@ class FirCallResolver(
         val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
 
         val basicResult by lazy(LazyThreadSafetyMode.NONE) {
-            collectCandidates(qualifiedAccess, callee.name, callSite = callSite)
+            collectCandidates(qualifiedAccess, callee.name, isUsedAsGetClassReceiver = isUsedAsGetClassReceiver, callSite = callSite)
         }
 
         // Even if it's not receiver, it makes sense to continue qualifier if resolution is unsuccessful
@@ -487,6 +483,7 @@ class FirCallResolver(
             explicitReceiver = null,
             delegatedConstructorCall.argumentList,
             isImplicitInvoke = false,
+            isUsedAsGetClassReceiver = false,
             typeArguments = typeArguments,
             session,
             components.file,
@@ -622,6 +619,7 @@ class FirCallResolver(
         explicitReceiver = null,
         annotation.argumentList,
         isImplicitInvoke = false,
+        isUsedAsGetClassReceiver = false,
         typeArguments = annotation.typeArguments,
         session,
         components.file,
@@ -695,6 +693,7 @@ class FirCallResolver(
             callableReferenceAccess.explicitReceiver,
             FirEmptyArgumentList,
             isImplicitInvoke = false,
+            isUsedAsGetClassReceiver = false,
             emptyList(),
             session,
             components.file,

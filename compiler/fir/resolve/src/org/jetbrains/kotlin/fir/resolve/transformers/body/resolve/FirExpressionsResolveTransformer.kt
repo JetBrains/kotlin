@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -91,13 +90,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
     ): FirStatement = whileAnalysing(session, qualifiedAccessExpression) {
-        transformQualifiedAccessExpression(qualifiedAccessExpression, data, isUsedAsReceiver = false)
+        transformQualifiedAccessExpression(qualifiedAccessExpression, data, isUsedAsReceiver = false, isUsedAsGetClassReceiver = false)
     }
 
     fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
         isUsedAsReceiver: Boolean,
+        isUsedAsGetClassReceiver: Boolean,
     ): FirStatement {
         if (qualifiedAccessExpression.isResolved && qualifiedAccessExpression.calleeReference !is FirSimpleNamedReference) {
             return qualifiedAccessExpression
@@ -152,6 +152,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 val transformedCallee = resolveQualifiedAccessAndSelectCandidate(
                     qualifiedAccessExpression,
                     isUsedAsReceiver,
+                    isUsedAsGetClassReceiver,
                     // Set the correct call site. For assignment LHSs, it's the assignment, otherwise it's the qualified access itself.
                     callSite = when (data) {
                         is ResolutionMode.AssignmentLValue -> data.variableAssignment
@@ -202,7 +203,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (explicitReceiver is FirPropertyAccessExpression) {
             qualifiedAccessExpression.replaceExplicitReceiver(
                 transformQualifiedAccessExpression(
-                    explicitReceiver, ResolutionMode.ReceiverResolution, isUsedAsReceiver = true
+                    explicitReceiver, ResolutionMode.ReceiverResolution, isUsedAsReceiver = true, isUsedAsGetClassReceiver = false
                 ) as FirExpression
             )
             return qualifiedAccessExpression
@@ -221,9 +222,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     protected open fun resolveQualifiedAccessAndSelectCandidate(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         isUsedAsReceiver: Boolean,
+        isUsedAsGetClassReceiver: Boolean,
         callSite: FirElement,
     ): FirStatement {
-        return callResolver.resolveVariableAccessAndSelectCandidate(qualifiedAccessExpression, isUsedAsReceiver, callSite)
+        return callResolver.resolveVariableAccessAndSelectCandidate(
+            qualifiedAccessExpression, isUsedAsReceiver, isUsedAsGetClassReceiver, callSite
+        )
     }
 
     fun transformSuperReceiver(
@@ -1055,7 +1059,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val transformedLHS = when (explicitReceiver) {
             is FirPropertyAccessExpression ->
                 transformQualifiedAccessExpression(
-                    explicitReceiver, ResolutionMode.ContextIndependent, isUsedAsReceiver = true
+                    explicitReceiver, ResolutionMode.ContextIndependent, isUsedAsReceiver = true, isUsedAsGetClassReceiver = false
                 ) as FirExpression
             else ->
                 explicitReceiver?.transformSingle(this, ResolutionMode.ContextIndependent)
@@ -1096,7 +1100,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val argument = getClassCall.argument
             val replacedArgument: FirExpression =
                 if (argument is FirPropertyAccessExpression)
-                    transformQualifiedAccessExpression(argument, dataForLhs, isUsedAsReceiver = true) as FirExpression
+                    transformQualifiedAccessExpression(
+                        argument, dataForLhs, isUsedAsReceiver = true, isUsedAsGetClassReceiver = true
+                    ) as FirExpression
                 else
                     argument.transform(this, dataForLhs)
 

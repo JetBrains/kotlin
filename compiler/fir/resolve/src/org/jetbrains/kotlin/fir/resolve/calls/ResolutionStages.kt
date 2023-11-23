@@ -783,7 +783,8 @@ internal object ConstraintSystemForks : ResolutionStage() {
 
 internal object TypeParameterAsCallable : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        if (candidate.symbol is FirTypeParameterSymbol) {
+        val symbol = candidate.symbol
+        if (symbol is FirTypeParameterSymbol && !(callInfo.isUsedAsGetClassReceiver && symbol.isReified)) {
             sink.yieldDiagnostic(TypeParameterAsExpression)
         }
     }

@@ -28,6 +28,7 @@ data class CallInfo(
     override val explicitReceiver: FirExpression?,
     override val argumentList: FirArgumentList,
     override val isImplicitInvoke: Boolean,
+    val isUsedAsGetClassReceiver: Boolean,
 
     val typeArguments: List<FirTypeProjection>,
     val session: FirSession,
