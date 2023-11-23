@@ -260,7 +260,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
 
         if (owner.name == SerialEntityNames.SERIALIZER_CLASS_NAME && owner.typeParameterSymbols.isNotEmpty()) {
             result += createConstructor(owner, SerializationPluginKey) {
-                visibility = Visibilities.Private
+                visibility = Visibilities.Public
                 owner.typeParameterSymbols.forEachIndexed { i, typeParam ->
                     valueParameter(
                         name = Name.identifier("${SerialEntityNames.typeArgPrefix}$i"),

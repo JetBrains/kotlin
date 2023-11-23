@@ -38,7 +38,7 @@ FILE: classWithGenericParameters.kt
                 super<R|kotlin/Any|>()
             }
 
-            private constructor<T, V>(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|GenericBox.$serializer<T, V>|
+            public constructor<T, V>(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|GenericBox.$serializer<T, V>|
 
         }
 

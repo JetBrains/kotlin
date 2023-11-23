@@ -5,9 +5,7 @@ public final class Box$$serializer : java/lang/Object, kotlinx/serialization/int
 
     private void <init>()
 
-    private void <init>(kotlinx.serialization.KSerializer typeSerial0)
-
-    public void <init>(kotlinx.serialization.KSerializer typeSerial0, kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+    public void <init>(kotlinx.serialization.KSerializer typeSerial0)
 
     public final kotlinx.serialization.KSerializer[] childSerializers()
 

@@ -214,6 +214,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
         }
 
         @Test
+        @TestMetadata("sealedClassMultifile.kt")
+        public void testSealedClassMultifile() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/sealedClassMultifile.kt");
+        }
+
+        @Test
         @TestMetadata("sealedInterfaces.kt")
         public void testSealedInterfaces() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/sealedInterfaces.kt");
