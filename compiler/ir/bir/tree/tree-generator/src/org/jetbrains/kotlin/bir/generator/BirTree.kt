@@ -435,6 +435,8 @@ object BirTree : AbstractTreeBuilder() {
         +listField("overriddenSymbols", SymbolTypes.simpleFunction, mutability = Var)
     }
     val typeAlias: ElementConfig by element(Declaration) {
+        typeKind = TypeKind.Interface
+
         parent(declaration)
         parent(declarationWithName)
         parent(declarationWithVisibility)
