@@ -28,9 +28,16 @@ internal open class KotlinJsIrLinkConfig(
 
             task.dependsOn(compilation.compileTaskProvider)
             task.dependsOn(compilation.output.classesDirs)
+            // We still support Gradle 6.8 in tests
+            // Gradle 6.8 has a bug with verifying of not getting provider before Task execution
             task.entryModule.fileProvider(
                 task.project.providers.provider {
-                    compilation.output.classesDirs.elements.get().single().asFile
+                    val elements = compilation.output.classesDirs.elements.get()
+                    elements.singleOrNull()?.asFile
+                        ?: throw IllegalStateException(
+                            "Only one output fo compilation expected," +
+                                    "but actual: ${elements.joinToString(prefix = "[", postfix = "]") { it.toString() }}"
+                        )
                 }
             ).disallowChanges()
             task.rootCacheDirectory.set(project.layout.buildDirectory.map { it.dir("klib/cache/js/${binary.name}") })
