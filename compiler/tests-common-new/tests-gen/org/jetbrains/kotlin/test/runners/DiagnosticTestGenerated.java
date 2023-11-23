@@ -16644,6 +16644,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("builderPassedAsNamedArgument.kt")
+                public void testBuilderPassedAsNamedArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/builderPassedAsNamedArgument.kt");
+                }
+
+                @Test
                 @TestMetadata("callableReferenceInsideInvokeCall.kt")
                 public void testCallableReferenceInsideInvokeCall() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/callableReferenceInsideInvokeCall.kt");

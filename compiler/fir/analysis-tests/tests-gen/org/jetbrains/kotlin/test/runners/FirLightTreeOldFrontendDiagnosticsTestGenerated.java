@@ -16638,6 +16638,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("builderPassedAsNamedArgument.kt")
+                public void testBuilderPassedAsNamedArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/builderPassedAsNamedArgument.kt");
+                }
+
+                @Test
                 @TestMetadata("callableReferenceInsideInvokeCall.kt")
                 public void testCallableReferenceInsideInvokeCall() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/callableReferenceInsideInvokeCall.kt");
