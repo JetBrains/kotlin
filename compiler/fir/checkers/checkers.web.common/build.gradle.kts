@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:fir:checkers"))
-    api(project(":core:compiler.common.wasm"))
+    implementation(project(":core:compiler.common.web"))
 
     /*
      * We can't remove this dependency until we use

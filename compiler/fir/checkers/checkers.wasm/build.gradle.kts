@@ -8,7 +8,8 @@ plugins {
 dependencies {
     api(project(":compiler:fir:checkers"))
     api(project(":compiler:fir:checkers:checkers.web.common"))
-    api(project(":core:compiler.common.wasm"))
+    implementation(project(":core:compiler.common.wasm"))
+    implementation(project(":core:compiler.common.web"))
 
     // Needed for JS identifier utils
     implementation(project(":js:js.ast"))
