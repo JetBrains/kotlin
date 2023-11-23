@@ -63,7 +63,7 @@ fun main(arg: Any, condition: Boolean) {
     val value3 = myBuilder {
         accept("")
         a = <!ASSIGNMENT_TYPE_MISMATCH!>45<!>
-        bar(::<!UNRESOLVED_REFERENCE!>a<!>)
+        bar(::<!INAPPLICABLE_CANDIDATE!>a<!>)
     }
 
     fun baz(t: Int) {}
