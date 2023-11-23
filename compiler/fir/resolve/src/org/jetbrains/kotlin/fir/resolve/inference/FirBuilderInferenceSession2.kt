@@ -193,7 +193,7 @@ class FirBuilderInferenceSession2(
 
         if (dispatchReceiver?.resolvedType?.containsNotFixedTypeVariables() == true) return true
         if (givenExtensionReceiverOptions.any { it.resolvedType.containsNotFixedTypeVariables() }) return true
-        if (callInfo.arguments.any { it in qualifiedAccessesToProcess }) return true
+        if (callInfo.arguments.any { it.isArgumentAmongPostponedQualifiedAccess() }) return true
         if (callInfo.isDelegateExpression) return true
         // For assignments
         if ((callInfo.resolutionMode as? ResolutionMode.WithExpectedType)?.expectedTypeRef?.type?.containsNotFixedTypeVariables() == true) {
@@ -203,6 +203,11 @@ class FirBuilderInferenceSession2(
         if (callInfo.callKind == CallKind.SyntheticSelect) return true
 
         return false
+    }
+
+    private fun FirExpression.isArgumentAmongPostponedQualifiedAccess(): Boolean {
+        if (this is FirNamedArgumentExpression) return expression.isArgumentAmongPostponedQualifiedAccess()
+        return this in qualifiedAccessesToProcess
     }
 
     private fun ConeKotlinType.containsNotFixedTypeVariables(): Boolean =
