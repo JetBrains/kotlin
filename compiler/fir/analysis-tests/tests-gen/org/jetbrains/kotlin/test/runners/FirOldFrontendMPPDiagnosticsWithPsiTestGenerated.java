@@ -422,6 +422,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("typeResolutionOfNestedClassActualizedViaTypealias.kt")
+    public void testTypeResolutionOfNestedClassActualizedViaTypealias() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/typeResolutionOfNestedClassActualizedViaTypealias.kt");
+    }
+
+    @Test
     @TestMetadata("varSetterVisibility.kt")
     public void testVarSetterVisibility() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/varSetterVisibility.kt");
