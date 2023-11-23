@@ -61,17 +61,17 @@ internal abstract class LLFirTargetResolver(
     }
 
     /**
-     * @see resolveDependencyTarget
+     * @see resolveDependencies
      */
     open val skipDependencyTargetResolutionStep: Boolean get() = false
 
     /**
-     * Requests the resolution for dependency targets to avoid race in the case of FIR instance sharing.
+     * Requests the resolution for dependencies to avoid race in the case of FIR instance sharing.
      * Will be executed before resolution without a lock.
      *
      * @see skipDependencyTargetResolutionStep
      */
-    private fun resolveDependencyTarget(target: FirElementWithResolveState) {
+    private fun resolveDependencies(target: FirElementWithResolveState) {
         if (skipDependencyTargetResolutionStep || target is FirFileAnnotationsContainer) return
         resolveTarget.firFile.annotationsContainer?.lazyResolveToPhase(resolverPhase)
 
@@ -160,7 +160,7 @@ internal abstract class LLFirTargetResolver(
     }
 
     protected fun performResolve(target: FirElementWithResolveState) {
-        resolveDependencyTarget(target)
+        resolveDependencies(target)
 
         if (doResolveWithoutLock(target)) return
         performCustomResolveUnderLock(target) {
