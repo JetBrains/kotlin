@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.symbols.BirTypeAliasSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
@@ -20,14 +19,14 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeAlias]
  */
-abstract class BirTypeAlias : BirImplElementBase(), BirDeclaration, BirDeclarationWithName,
+interface BirTypeAlias : BirDeclaration, BirDeclarationWithName,
         BirDeclarationWithVisibility, BirTypeParametersContainer, BirTypeAliasSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: TypeAliasDescriptor?
+    override val descriptor: TypeAliasDescriptor?
 
-    abstract var isActual: Boolean
+    var isActual: Boolean
 
-    abstract var expandedType: BirType
+    var expandedType: BirType
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.BirImplChildElementList
+import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirTypeAlias
 import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
@@ -34,7 +35,7 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     visibility: DescriptorVisibility,
     isActual: Boolean,
     expandedType: BirType,
-) : BirTypeAlias() {
+) : BirImplElementBase(), BirTypeAlias {
     override val owner: BirTypeAliasImpl
         get() = this
 
