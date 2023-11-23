@@ -28461,12 +28461,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
-            @TestMetadata("companionPropertyAndTypeParameter.kt")
-            public void testCompanionPropertyAndTypeParameter() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/resolve/companionPropertyAndTypeParameter.kt");
-            }
-
-            @Test
             @TestMetadata("constructorVsCompanion.kt")
             public void testConstructorVsCompanion() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/constructorVsCompanion.kt");
@@ -35249,6 +35243,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("companionPropertyAndTypeParameter.kt")
+            public void testCompanionPropertyAndTypeParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/companionPropertyAndTypeParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("companionPropertyAndTypeParameter2.kt")
+            public void testCompanionPropertyAndTypeParameter2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/companionPropertyAndTypeParameter2.kt");
+            }
+
+            @Test
             @TestMetadata("deprecatedSyntax.kt")
             public void testDeprecatedSyntax() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/deprecatedSyntax.kt");
@@ -35354,6 +35360,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             @TestMetadata("memberTypeParameterVsNestedClass.kt")
             public void testMemberTypeParameterVsNestedClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/memberTypeParameterVsNestedClass.kt");
+            }
+
+            @Test
+            @TestMetadata("memberTypeParameterVsNestedClass2.kt")
+            public void testMemberTypeParameterVsNestedClass2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/memberTypeParameterVsNestedClass2.kt");
+            }
+
+            @Test
+            @TestMetadata("memberTypeParameterVsNestedClassReference.kt")
+            public void testMemberTypeParameterVsNestedClassReference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/memberTypeParameterVsNestedClassReference.kt");
             }
 
             @Test

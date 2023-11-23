@@ -1,4 +1,6 @@
 // FIR_IDENTICAL
+// ISSUE: KT-58028
+// FIR_DUMP
 // DIAGNOSTICS: -UNUSED_VARIABLE
 
 open class Base(any: Any) {

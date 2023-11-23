@@ -1,0 +1,31 @@
+FILE: companionPropertyAndTypeParameter2.fir.kt
+    public final class Owner<test> : R|kotlin/Any| {
+        public constructor<test>(): R|Owner<test>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val test: R|kotlin/Int| = Int(12)
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final inner class I<test, Outer(test)> : R|kotlin/Any| {
+            public Owner<test>.constructor<test>(): R|Owner.I<test, test>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val some: <ERROR TYPE REF: Type parameter test in qualified access> = R|?|
+                public get(): <ERROR TYPE REF: Type parameter test in qualified access>
+
+            public final fun foo(): R|kotlin/Unit| {
+                lval some: <ERROR TYPE REF: Type parameter test in qualified access> = R|?|
+            }
+
+        }
+
+    }
