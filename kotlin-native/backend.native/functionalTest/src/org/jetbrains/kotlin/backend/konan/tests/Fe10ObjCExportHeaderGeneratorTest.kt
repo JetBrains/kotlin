@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.tests
 
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportHeaderGenerator
 import org.jetbrains.kotlin.backend.konan.testUtils.AbstractFE10ObjCExportHeaderGeneratorTest
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * ## Test Scope

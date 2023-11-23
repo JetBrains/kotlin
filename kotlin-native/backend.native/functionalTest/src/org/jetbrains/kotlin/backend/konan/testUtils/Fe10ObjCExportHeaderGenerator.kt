@@ -53,8 +53,6 @@ object Fe10ObjCExportHeaderGenerator : AbstractObjCExportHeaderGeneratorTest.Obj
     }
 
     private fun createObjCExportHeaderGenerator(disposable: Disposable, root: File): ObjCExportHeaderGenerator {
-        val compilerConfiguration = createCompilerConfiguration()
-
         val mapper = ObjCExportMapper(
             unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT
         )
@@ -69,106 +67,22 @@ object Fe10ObjCExportHeaderGenerator : AbstractObjCExportHeaderGeneratorTest.Obj
                 override fun getAdditionalPrefix(module: ModuleDescriptor): String? = null
                 override val objcGenerics: Boolean = true
             }
-
         )
 
-        val environment: KotlinCoreEnvironment = KotlinCoreEnvironment.createForTests(
-            parentDisposable = disposable,
-            initialConfiguration = compilerConfiguration,
-            extensionConfigs = EnvironmentConfigFiles.METADATA_CONFIG_FILES
-        )
-
+        val environment: KotlinCoreEnvironment = createKotlinCoreEnvironment(disposable)
         val phaseContext = BasicPhaseContext(
-            KonanConfig(environment.project, compilerConfiguration)
+            KonanConfig(environment.project, environment.configuration)
         )
 
         val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
 
         return ObjCExportHeaderGeneratorImpl(
             context = phaseContext,
-            moduleDescriptors = listOf(getModuleDescriptor(environment, kotlinFiles)),
+            moduleDescriptors = listOf(createModuleDescriptor(environment, kotlinFiles)),
             mapper = mapper,
             namer = namer,
             problemCollector = ObjCExportProblemCollector.SILENT,
             objcGenerics = true
         )
     }
-
-    private fun getModuleDescriptor(
-        environment: KotlinCoreEnvironment, kotlinFiles: List<File>
-    ): ModuleDescriptor {
-        val psiFactory = KtPsiFactory(environment.project)
-        val kotlinPsiFiles = kotlinFiles.map { file -> psiFactory.createFile(file.name, KtTestUtil.doLoadFile(file)) }
-
-        val analysisResult = CommonResolverForModuleFactory.analyzeFiles(
-            files = kotlinPsiFiles,
-            moduleName = Name.special("<test_module>"),
-            dependOnBuiltIns = true,
-            languageVersionSettings = environment.configuration.languageVersionSettings,
-            targetPlatform = CommonPlatforms.defaultCommonPlatform,
-            targetEnvironment = CompilerEnvironment,
-            dependenciesContainer = DependenciesContainerImpl,
-        ) { content ->
-            environment.createPackagePartProvider(content.moduleContentScope)
-        }
-
-        return analysisResult.moduleDescriptor
-    }
-
-
-    private object DependenciesContainerImpl : CommonDependenciesContainer {
-        override val moduleInfos: List<ModuleInfo> get() = listOf(DefaultBuiltInsModuleInfo, KotlinNativeStdlibModuleInfo)
-        override val friendModuleInfos: List<ModuleInfo> get() = emptyList()
-        override val refinesModuleInfos: List<ModuleInfo> get() = emptyList()
-        override fun registerDependencyForAllModules(moduleInfo: ModuleInfo, descriptorForModule: ModuleDescriptorImpl) = Unit
-        override fun packageFragmentProviderForModuleInfo(moduleInfo: ModuleInfo): PackageFragmentProvider? = null
-
-        private val stdlibModuleDescriptor = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptor(
-            library = resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File("$konanHomePath/klib/common/stdlib")),
-            languageVersionSettings = createLanguageVersionSettings(),
-            builtIns = DefaultBuiltIns.Instance,
-            storageManager = LockBasedStorageManager.NO_LOCKS,
-            packageAccessHandler = null
-        ).also { it.setDependencies(it) }
-
-        override fun moduleDescriptorForModuleInfo(moduleInfo: ModuleInfo): ModuleDescriptor {
-            if (moduleInfo == DefaultBuiltInsModuleInfo) return DefaultBuiltIns.Instance.builtInsModule
-            if (moduleInfo == KotlinNativeStdlibModuleInfo) return stdlibModuleDescriptor
-            error("Unknown module info $moduleInfo")
-        }
-    }
-
-    private object DefaultBuiltInsModuleInfo : ModuleInfo {
-        override val name get() = DefaultBuiltIns.Instance.builtInsModule.name
-        override fun dependencies() = listOf(this)
-        override fun dependencyOnBuiltIns() = ModuleInfo.DependencyOnBuiltIns.LAST
-        override val platform get() = NativePlatforms.unspecifiedNativePlatform
-        override val analyzerServices get() = NativePlatformAnalyzerServices
-    }
-
-    private object KotlinNativeStdlibModuleInfo : ModuleInfo {
-        override val analyzerServices: PlatformDependentAnalyzerServices = NativePlatformAnalyzerServices
-        override val name: Name = Name.special("<stdlib>")
-        override val platform: TargetPlatform = NativePlatforms.unspecifiedNativePlatform
-        override fun dependencies(): List<ModuleInfo> = listOf(this)
-    }
-
-    private fun createCompilerConfiguration(): CompilerConfiguration {
-        val configuration = KotlinTestUtils.newConfiguration()
-        configuration.put(KONAN_HOME, konanHomePath)
-        configuration.put(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG, createFlexiblePhaseConfig(K2NativeCompilerArguments()))
-        configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, createLanguageVersionSettings())
-        configuration.put(KonanConfigKeys.PRODUCE, CompilerOutputKind.FRAMEWORK)
-        configuration.put(KonanConfigKeys.AUTO_CACHEABLE_FROM, emptyList())
-        configuration.put(KonanConfigKeys.CACHE_DIRECTORIES, emptyList())
-        configuration.put(KonanConfigKeys.CACHED_LIBRARIES, emptyMap())
-        configuration.put(KonanConfigKeys.FRAMEWORK_IMPORT_HEADERS, emptyList())
-        configuration.put(KonanConfigKeys.EXPORT_KDOC, true)
-        return configuration
-    }
-
-    private fun createLanguageVersionSettings() = LanguageVersionSettingsImpl(
-        languageVersion = LanguageVersion.LATEST_STABLE,
-        apiVersion = ApiVersion.LATEST_STABLE
-    )
 }

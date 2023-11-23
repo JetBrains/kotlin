@@ -189,6 +189,9 @@ dependencies {
     cli_bcApiElements sourceSets.cli_bc.output
 
     testImplementation(project(path: ":compiler:tests-common", configuration: "tests-jar"))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 classes.dependsOn 'compilerClasses', 'cli_bcClasses'
@@ -254,9 +257,10 @@ RepoArtifacts.javadocJar(project)
 Configure 'test' task
  */
 
-TasksKt.projectTest(project)
+TasksKt.projectTest(project, JUnitMode.JUnit5)
 tasks {
     test {
+        useJUnitPlatform()
         dependsOn ':kotlin-native:dist'
         systemProperty("org.jetbrains.kotlin.native.home", distDir.canonicalPath)
         workingDir(rootProject.projectDir)
