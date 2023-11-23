@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
@@ -63,6 +61,14 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         } else {
             if (!checkNonLocalReturnUsage(enclosingSuspendFunction, context)) {
                 reporter.reportOn(expression.source, FirErrors.NON_LOCAL_SUSPENSION_POINT, context)
+            }
+            if (isInScopeForDefaultParameterValues(enclosingSuspendFunction, context)) {
+                reporter.reportOn(
+                    expression.source,
+                    FirErrors.UNSUPPORTED,
+                    "suspend function calls in a context of default parameter value",
+                    context
+                )
             }
             if (!checkRestrictsSuspension(expression, enclosingSuspendFunction, symbol, context)) {
                 reporter.reportOn(expression.source, FirErrors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL, context)
@@ -137,6 +143,18 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
                     false
             }
         } as? FirFunction
+    }
+
+    private fun isInScopeForDefaultParameterValues(enclosingSuspendFunction: FirFunction, context: CheckerContext): Boolean {
+        val valueParameters = enclosingSuspendFunction.valueParameters
+        for (declaration in context.containingDeclarations.asReversed()) {
+            when {
+                declaration is FirValueParameter && declaration in valueParameters && declaration.defaultValue != null -> return true
+                declaration is FirAnonymousFunction && declaration.inlineStatus == InlineStatus.Inline -> continue
+                declaration is FirFunction && !declaration.isInline -> return false
+            }
+        }
+        return false
     }
 
     private fun checkNonLocalReturnUsage(enclosingSuspendFunction: FirFunction, context: CheckerContext): Boolean {
