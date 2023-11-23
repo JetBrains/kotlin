@@ -1,0 +1,6 @@
+D:
+  [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|E4| from Use site scope of /D [id: 0]
+    [Source]: public abstract override fun foo(): R|E2| from Use site scope of /B [id: 1]
+      [SubstitutionOverride(DeclarationSite)]: public abstract fun foo(): R|E2| from Substitution scope for [Use site scope of /A] for type B<E2> [id: 2]
+        [Source]: public abstract fun foo(): R|E1| from Use site scope of /A [id: 3]
+
