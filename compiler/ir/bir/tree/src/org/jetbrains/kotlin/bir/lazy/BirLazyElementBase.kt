@@ -12,41 +12,39 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
-import kotlin.concurrent.Volatile
 
 abstract class BirLazyElementBase(
     internal val converter: Ir2BirConverter,
 ) : BirElementBase(), BirDeclaration {
     internal abstract val originalIrElement: IrDeclaration
 
-    @Volatile
-    private var parentInitialized = false
+    // This is the actual element parent of this element, in case
+    // it has one. It may differ from the _parent property in case
+    // when we know the parent, but the parent has not (yet)
+    // accepted us as one of their children. Then we may still be
+    // structurally not bound, or bound directly to a forest.
+    private var parentElement: BirElementBase? = null
 
     final override val parent: BirElementBase
         get() {
-            if (parentInitialized) return _parent as BirElementBase
             synchronized(this) {
-                if (!parentInitialized) {
-                    _parent = converter.remapElement<BirElementBase>(originalIrElement.parent)
-                    parentInitialized = true
-                }
-
-                return _parent as BirElementBase
+                return parentElement ?: converter.remapElement<BirElementBase>(originalIrElement.parent)
+                    .also { parentElement = it }
             }
         }
 
     final override fun setParentWithInvalidation(new: BirElementParent?) {
-        require(!parentInitialized)
+        assert(_parent !is BirElementBase)
         _parent = new!!
         if (new is BirElementBase) {
-            parentInitialized = true
+            parentElement = new
         }
     }
 
     internal fun initChild(new: BirElementBase?) {
         if (new != null) {
             new._parent = this
-            (new as? BirLazyElementBase)?.parentInitialized = true
+            (new as? BirLazyElementBase)?.parentElement = this
             root?.elementAttached(new)
         }
     }
