@@ -37,9 +37,6 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     lateinit var frameworks: MutableList<Framework>
 
     @Input
-    var fullBitcode: Boolean = false
-
-    @Input
     var codesign: Boolean = true
 
     @Input
@@ -53,7 +50,6 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
      *
      * @param name is the framework name,
      * @param sources framework sources,
-     * @param bitcode bitcode embedding in the framework,
      * @param isStatic determines that framework is static
      * @param artifact the name of the resulting artifact,
      * @param library list of library dependency names,
@@ -62,7 +58,6 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     class Framework(
             val name: String,
             var sources: List<String> = emptyList(),
-            var bitcode: Boolean = false,
             var isStatic: Boolean = false,
             var artifact: String = name,
             var libraries: List<String> = emptyList(),
@@ -176,7 +171,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         } else {
             emptyList()
         }
-        compileSwift(project, project.testTarget, sources, options + simulatorHack + swiftExtraOpts, Paths.get(executable), fullBitcode)
+        compileSwift(project, project.testTarget, sources, options + simulatorHack + swiftExtraOpts, Paths.get(executable))
     }
 
     @TaskAction

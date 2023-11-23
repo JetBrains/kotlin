@@ -286,7 +286,7 @@ fun Task.dependsOnKonanBuildingTask(artifact: String, target: KonanTarget) {
 @JvmOverloads
 fun compileSwift(
     project: Project, target: KonanTarget, sources: List<String>, options: List<String>,
-    output: Path, fullBitcode: Boolean = false
+    output: Path
 ) {
     val platform = project.platformManager.platform(target)
     assert(platform.configurables is AppleConfigurables)
@@ -300,8 +300,7 @@ fun compileSwift(
     val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
 
     val args = listOf("-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget) +
-            options + "-o" + output.toString() + sources +
-            if (fullBitcode) listOf("-embed-bitcode", "-Xlinker", "-bitcode_verify") else listOf("-embed-bitcode-marker")
+            options + "-o" + output.toString() + sources
 
     val (stdOut, stdErr, exitCode) = runProcess(
             executor = localExecutor(project), executable = compiler, args = args,

@@ -4999,7 +4999,6 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
                             UtilsKt.dependsOnKonanBuildingTask(task, library, target)
                         }
 
-                        extraOpts fr.bitcode ? "-Xembed-bitcode" : "-Xembed-bitcode-marker"
                         if (fr.isStatic) extraOpts "-Xstatic-framework"
                         extraOpts fr.opts
                         extraOpts project.globalTestArgs
@@ -5096,7 +5095,6 @@ Task objcExportTest(
             sources = ['objcexport']
             libraries = [libraryName, noEnumEntriesLibraryName]
             artifact = 'Kt'
-            bitcode = !isStaticFramework
             isStatic = isStaticFramework
             if (needLazyHeaderCheck) {
                 opts += "-Xemit-lazy-objc-header=$lazyHeader"
@@ -5187,9 +5185,7 @@ if (isAppleTarget(project)) {
     frameworkTest("testStdlibFramework") {
         framework('Stdlib') {
             sources = ['framework/stdlib']
-            bitcode = true
         }
-        if (cacheTesting == null) fullBitcode = true
         swiftSources = ['framework/stdlib/']
     }
 
@@ -5198,11 +5194,9 @@ if (isAppleTarget(project)) {
     } else frameworkTest("testMultipleFrameworks") {
         framework('First') {
             sources = ['framework/multiple/framework1', 'framework/multiple/shared']
-            bitcode = true
         }
         framework('Second') {
             sources = ['framework/multiple/framework2', 'framework/multiple/shared']
-            bitcode = true
         }
         swiftSources = ['framework/multiple']
     }
@@ -5217,14 +5211,12 @@ if (isAppleTarget(project)) {
         framework('FirstStatic') {
             artifact = 'First'
             sources = ['framework/multiple/framework1', 'framework/multiple/shared']
-            bitcode = true
             isStatic = true
             opts = ['-Xstatic-framework', "-Xpre-link-caches=enable"]
         }
         framework('SecondStatic') {
             artifact = 'Second'
             sources = ['framework/multiple/framework2', 'framework/multiple/shared']
-            bitcode = true
             isStatic = true
             opts = ['-Xstatic-framework', "-Xpre-link-caches=enable"]
         }
