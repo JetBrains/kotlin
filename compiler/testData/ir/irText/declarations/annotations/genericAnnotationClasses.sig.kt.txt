@@ -180,6 +180,5 @@ class CC {
 //   Mangled name: ann.I
 //   Public signature: ann/I|null[0]
 interface I<T : Any?> {
-
 }
 

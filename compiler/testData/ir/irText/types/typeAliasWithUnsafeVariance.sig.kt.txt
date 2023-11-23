@@ -22,6 +22,7 @@ data class Tag<out RenderingT : Any?> {
   //   Public signature: /Tag.<init>|5347267751589030160[0]
   //   Public signature debug description: <init>(kotlin.Function1<1:0,kotlin.Unit>){}
   constructor(action: Function1<RenderingT, Unit>) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Tag#component1(){}kotlin.Function1<1:0,kotlin.Unit>
   //   Public signature: /Tag.component1|8111540572719988721[0]

@@ -71,7 +71,6 @@ class E {
 //   Mangled name: A
 //   Public signature: /A|null[0]
 interface A {
-
   // CHECK:
   //   Mangled name: A{}x
   //   Public signature: /A.x|-8060530855978347579[0]

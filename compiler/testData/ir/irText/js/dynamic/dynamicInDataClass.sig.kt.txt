@@ -29,6 +29,7 @@ data class Some {
   //   Public signature: /Some.<init>|-5225459408480290556[0]
   //   Public signature debug description: <init>(kotlin.String;<dynamic>){}
   constructor(a: String, b: dynamic) /* primary */
+
   // CHECK JS_IR NATIVE:
   //   Mangled name: Some#component1(){}
   //   Public signature: /Some.component1|162597135895221648[0]

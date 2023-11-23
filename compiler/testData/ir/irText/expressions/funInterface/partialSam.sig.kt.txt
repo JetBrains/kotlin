@@ -54,7 +54,6 @@ class J {
 //   Mangled name: Fn
 //   Public signature: /Fn|null[0]
 fun interface Fn<T : Any?, R : Any?> {
-
   // CHECK JVM_IR:
   //   Mangled name: Fn#run(kotlin.String;kotlin.Int;1:0){}1:1
   //   Public signature: /Fn.run|6229634511602909233[0]

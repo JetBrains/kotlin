@@ -45,7 +45,6 @@ data class Some<T : Any?> {
 }
 
 interface MyList<T : Any?> : List<Some<T>> {
-
 }
 
 open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {

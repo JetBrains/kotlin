@@ -2,7 +2,6 @@
 //   Mangled name: Base
 //   Public signature: /Base|null[0]
 interface Base {
-
   // CHECK:
   //   Mangled name: Base#foo(){}
   //   Public signature: /Base.foo|-1041209573719867811[0]

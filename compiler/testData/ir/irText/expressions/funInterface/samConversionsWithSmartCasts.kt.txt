@@ -83,7 +83,6 @@ fun <T> test7b(a: T) where T : Function1<Int, Unit>, T : Function0<Unit> {
 }
 
 interface Unrelated {
-
 }
 
 fun <T> test7c(a: T) where T : Unrelated, T : Function0<Unit> {

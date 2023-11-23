@@ -31,6 +31,7 @@ enum class TestEnumClass : Enum<TestEnumClass> {
   //   Public signature: /TestEnumClass.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   private constructor() /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: TestEnumClass#valueOf#static(kotlin.String){}TestEnumClass
   //   Public signature: /TestEnumClass.valueOf|3258702714702284561[0]
@@ -142,7 +143,6 @@ enum class TestEnumClass : Enum<TestEnumClass> {
 //   Mangled name: TestInterface
 //   Public signature: /TestInterface|null[0]
 interface TestInterface {
-
 }
 
 // CHECK:

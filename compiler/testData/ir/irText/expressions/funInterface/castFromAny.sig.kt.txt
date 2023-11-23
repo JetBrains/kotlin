@@ -2,7 +2,6 @@
 //   Mangled name: KRunnable
 //   Public signature: /KRunnable|null[0]
 fun interface KRunnable {
-
   // CHECK:
   //   Mangled name: KRunnable#invoke(){}
   //   Public signature: /KRunnable.invoke|-4663091332620260873[0]

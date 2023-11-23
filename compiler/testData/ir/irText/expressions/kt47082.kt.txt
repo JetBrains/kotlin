@@ -3,15 +3,12 @@ fun <E : Any?> produce(block: @ExtensionFunctionType Function1<Derived<E>, Unit>
 }
 
 interface Derived<in E : Any?> : Base<E> {
-
 }
 
 interface Base<in E : Any?> {
-
 }
 
 interface Receiver<out E : Any?> {
-
 }
 
 fun <E : Any?, C : Base<E>> Receiver<E>.toChannel(destination: C): C {

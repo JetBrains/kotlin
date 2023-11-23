@@ -18,7 +18,6 @@ enum class MyEnum : Enum<MyEnum> {
 
 }
 
-@OptIn(markerClass = [ExperimentalStdlibApi::class])
 fun box(): EnumEntries<MyEnum> {
   return <get-entries>()
 }

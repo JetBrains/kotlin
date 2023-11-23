@@ -24,7 +24,6 @@ class AnnotationLoader {
 //   Mangled name: Visitor
 //   Public signature: /Visitor|null[0]
 interface Visitor {
-
   // CHECK:
   //   Mangled name: Visitor#visit(){}
   //   Public signature: /Visitor.visit|-7531698844362190050[0]

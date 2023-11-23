@@ -109,7 +109,6 @@ open class ChannelCoroutine<E : Any?> {
 }
 
 interface CoroutineScope {
-
 }
 
 interface Flow<out T : Any?> {
@@ -123,7 +122,6 @@ interface FlowCollector<in T : Any?> {
 }
 
 interface ReceiveChannel<out E : Any?> {
-
 }
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])

@@ -26,14 +26,12 @@ open class C : A<C>, Foo {
 //   Mangled name: A
 //   Public signature: /A|null[0]
 interface A<out T : Any?> {
-
 }
 
 // CHECK:
 //   Mangled name: Foo
 //   Public signature: /Foo|null[0]
 interface Foo {
-
 }
 
 // CHECK JVM_IR:

@@ -2,7 +2,6 @@
 //   Mangled name: A
 //   Public signature: /A|null[0]
 interface A {
-
   // CHECK JVM_IR:
   //   Mangled name: A#a(){}kotlin.Int
   //   Public signature: /A.a|5993980063692763883[0]
@@ -19,7 +18,6 @@ interface A {
 //   Mangled name: B
 //   Public signature: /B|null[0]
 interface B {
-
   // CHECK JVM_IR:
   //   Mangled name: B#b(){}kotlin.Int
   //   Public signature: /B.b|-6472101675379091489[0]

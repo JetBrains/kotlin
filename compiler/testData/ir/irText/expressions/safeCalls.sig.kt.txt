@@ -34,7 +34,6 @@ class Ref {
 //   Mangled name: IHost
 //   Public signature: /IHost|null[0]
 interface IHost {
-
   // CHECK JVM_IR:
   //   Mangled name: IHost#extLength@kotlin.String(){}kotlin.Int
   //   Public signature: /IHost.extLength|-6119453020131348069[0]

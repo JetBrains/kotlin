@@ -142,6 +142,7 @@ data class Test1 {
   //   Public signature: /Test1.<init>|-2901047261480922149[0]
   //   Public signature debug description: <init>(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}
   constructor(stringArray: Array<String>, charArray: CharArray, booleanArray: BooleanArray, byteArray: ByteArray, shortArray: ShortArray, intArray: IntArray, longArray: LongArray, floatArray: FloatArray, doubleArray: DoubleArray) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Test1#component1(){}kotlin.Array<kotlin.String>
   //   Public signature: /Test1.component1|2673462985803256369[0]
@@ -298,6 +299,7 @@ data class Test2<T : Any?> {
   //   Public signature: /Test2.<init>|-6569388914691766420[0]
   //   Public signature debug description: <init>(kotlin.Array<1:0>){}
   constructor(genericArray: Array<T>) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Test2#component1(){}kotlin.Array<1:0>
   //   Public signature: /Test2.component1|-8550302254215159930[0]
@@ -374,6 +376,7 @@ data class Test3 {
   //   Public signature: /Test3.<init>|2034455610636948474[0]
   //   Public signature debug description: <init>(kotlin.Array<kotlin.Any>?){}
   constructor(anyArrayN: Array<Any>?) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Test3#component1(){}kotlin.Array<kotlin.Any>?
   //   Public signature: /Test3.component1|3443609172722853741[0]

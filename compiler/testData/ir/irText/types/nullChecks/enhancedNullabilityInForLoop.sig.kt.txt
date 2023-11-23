@@ -29,6 +29,7 @@ data class P {
   //   Public signature: /P.<init>|-7691762014320324121[0]
   //   Public signature debug description: <init>(kotlin.Int;kotlin.Int){}
   constructor(x: Int, y: Int) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: P#component1(){}kotlin.Int
   //   Public signature: /P.component1|-8217597213800111288[0]
@@ -71,7 +72,6 @@ data class P {
 //   Mangled name: K
 //   Public signature: /K|null[0]
 interface K {
-
   // CHECK JVM_IR:
   //   Mangled name: K#arrayOfNotNull(){}kotlin.Array<P>
   //   Public signature: /K.arrayOfNotNull|-3412104294529727261[0]

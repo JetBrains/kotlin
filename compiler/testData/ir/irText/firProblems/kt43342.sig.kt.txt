@@ -22,6 +22,7 @@ open class ControlFlowInfo<K : Any?, V : Any?> : Map<K, V> {
   //   Public signature: /ControlFlowInfo.<init>|2293537713863886898[0]
   //   Public signature debug description: <init>(kotlin.collections.Map<1:0,1:1>){}
   constructor(map: Map<K, V>) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: ControlFlowInfo#containsKey(1:0){}kotlin.Boolean
   //   Public signature: /ControlFlowInfo.containsKey|-2697616884574929105[0]
@@ -133,6 +134,7 @@ class StringFlowInfo : ControlFlowInfo<String, String> {
   //   Public signature: /StringFlowInfo.<init>|4094084879849523083[0]
   //   Public signature debug description: <init>(kotlin.collections.Map<kotlin.String,kotlin.String>){}
   constructor(map: Map<String, String>) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: StringFlowInfo#containsKey(kotlin.String){}kotlin.Boolean
   //   Public signature: /StringFlowInfo.containsKey|8275396622473115435[0]

@@ -2,7 +2,6 @@
 //   Mangled name: IA
 //   Public signature: /IA|null[0]
 interface IA {
-
   // CHECK JVM_IR:
   //   Mangled name: IA#get(kotlin.String){}kotlin.Int
   //   Public signature: /IA.get|8115151130332405730[0]
@@ -19,7 +18,6 @@ interface IA {
 //   Mangled name: IB
 //   Public signature: /IB|null[0]
 interface IB {
-
   // CHECK:
   //   Mangled name: IB#set@IA(kotlin.String;kotlin.Int){}
   //   Public signature: /IB.set|-3878244067281394744[0]

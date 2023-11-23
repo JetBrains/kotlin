@@ -19,6 +19,7 @@ data class MyRec : Record {
   //   Public signature: /MyRec.<init>|1280618353163213788[0]
   //   Public signature debug description: <init>(kotlin.String){}
   constructor(name: String) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: MyRec#component1(){}kotlin.String
   //   Public signature: /MyRec.component1|-7481405593404337796[0]

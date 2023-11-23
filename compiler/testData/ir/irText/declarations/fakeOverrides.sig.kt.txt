@@ -53,7 +53,6 @@ class Test1 : CFoo<String>, IBar, IFooStr {
 //   Mangled name: IBar
 //   Public signature: /IBar|null[0]
 interface IBar {
-
   // CHECK:
   //   Mangled name: IBar{}bar
   //   Public signature: /IBar.bar|-7864284097863469857[0]
@@ -75,7 +74,6 @@ interface IBar {
 //   Mangled name: IFooStr
 //   Public signature: /IFooStr|null[0]
 interface IFooStr {
-
   // CHECK:
   //   Mangled name: IFooStr#foo(kotlin.String){}
   //   Public signature: /IFooStr.foo|1351044947738582195[0]

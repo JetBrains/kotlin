@@ -44,6 +44,7 @@ class C : A {
   //   Public signature: /C.<init>|-3166999336802030902[0]
   //   Public signature debug description: <init>(A){}
   constructor(x: A) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: C#f(kotlin.String){}kotlin.String
   //   Public signature: /C.f|-2199490409267413998[0]
@@ -60,7 +61,6 @@ class C : A {
 //   Mangled name: A
 //   Public signature: /A|null[0]
 interface A {
-
   // CHECK JVM_IR:
   //   Mangled name: A#f(kotlin.String){}kotlin.String
   //   Public signature: /A.f|-2199490409267413998[0]

@@ -122,6 +122,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/enumClassModality.kt");
         }
 
+        @TestMetadata("enumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/enumEntries.kt");
+        }
+
         @TestMetadata("enumWithMultipleCtors.kt")
         public void testEnumWithMultipleCtors() throws Exception {
             runTest("compiler/testData/ir/irText/classes/enumWithMultipleCtors.kt");

@@ -1,5 +1,4 @@
 interface IA {
-
 }
 
 interface IB {

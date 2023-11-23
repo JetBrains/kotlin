@@ -7,6 +7,7 @@ class C {
   //   Public signature: /C.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor()
+
   // CHECK:
   //   Mangled name: C#<init>(kotlin.Int){}
   //   Public signature: /C.<init>|-5182794243525578284[0]

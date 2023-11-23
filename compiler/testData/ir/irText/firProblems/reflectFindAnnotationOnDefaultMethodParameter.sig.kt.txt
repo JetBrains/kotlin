@@ -14,7 +14,6 @@ open annotation class Ann : Annotation {
 //   Mangled name: I
 //   Public signature: /I|null[0]
 interface I {
-
   // CHECK:
   //   Mangled name: I#m(kotlin.String){}
   //   Public signature: /I.m|934693771674457301[0]

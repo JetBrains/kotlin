@@ -39,6 +39,7 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
   //   Public signature: /ConfigurationParameter.<init>|-5590500836156829531[0]
   //   Public signature debug description: <init>(kotlin.Function2<kotlin.String,Wrapper,kotlin.Unit>){}
   private constructor(apply: Function2<String, Wrapper, Unit>)
+
   // CHECK:
   //   Mangled name: ConfigurationParameter.BASE_URL
   //   Public signature: /ConfigurationParameter.BASE_URL|null[0]

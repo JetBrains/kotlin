@@ -59,6 +59,7 @@ value class IC<TT : Any?> {
   //   Public signature: /IC.<init>|-2549303465575104617[0]
   //   Public signature debug description: <init>(C<1:0>){}
   constructor(c: C<TT>) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: IC#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /IC.equals|722809408929142791[0]

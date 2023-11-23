@@ -108,7 +108,6 @@ class Test<S : Any?> {
 //   Mangled name: FIn
 //   Public signature: /FIn|null[0]
 fun interface FIn<in T : Any?> {
-
   // CHECK:
   //   Mangled name: FIn#f(1:0){}
   //   Public signature: /FIn.f|5824974961856025845[0]
@@ -121,7 +120,6 @@ fun interface FIn<in T : Any?> {
 //   Mangled name: I1
 //   Public signature: /I1|null[0]
 interface I1<in T : Any?> {
-
   // CHECK:
   //   Mangled name: I1{}l
   //   Public signature: /I1.l|3307215303229595169[0]
@@ -143,7 +141,6 @@ interface I1<in T : Any?> {
 //   Mangled name: I2
 //   Public signature: /I2|null[0]
 interface I2<in T : Any?> {
-
   // CHECK:
   //   Mangled name: I2{}sam
   //   Public signature: /I2.sam|8824598858531533052[0]

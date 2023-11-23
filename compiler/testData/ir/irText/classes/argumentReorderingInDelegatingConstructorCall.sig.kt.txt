@@ -91,6 +91,7 @@ class Test2 : Base {
   //   Public signature: /Test2.<init>|-7691762014320324121[0]
   //   Public signature debug description: <init>(kotlin.Int;kotlin.Int){}
   constructor(xx: Int, yy: Int)
+
   // CHECK:
   //   Mangled name: Test2#<init>(kotlin.Int;kotlin.Int;kotlin.Any){}
   //   Public signature: /Test2.<init>|-2775945437722696135[0]

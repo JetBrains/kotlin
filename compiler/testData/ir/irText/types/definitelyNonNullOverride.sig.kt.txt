@@ -43,6 +43,7 @@ class D<T : Any?> : B<(T & Any)> {
   //   Public signature: /D.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
+
   // CHECK:
   //   Mangled name: D#bar(1:0){}
   //   Public signature: /D.bar|-7393952686038474037[0]

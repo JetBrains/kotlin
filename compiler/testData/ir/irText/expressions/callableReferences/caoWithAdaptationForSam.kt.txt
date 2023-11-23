@@ -4,7 +4,6 @@ fun interface IFoo {
 }
 
 fun interface IFoo2 : IFoo {
-
 }
 
 object A {

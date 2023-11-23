@@ -143,7 +143,6 @@ class Value<T : Any?, IT : IR<T>> {
 //   Mangled name: IDelegate1
 //   Public signature: /IDelegate1|null[0]
 interface IDelegate1<T1 : Any?, R1 : Any?> {
-
   // CHECK JVM_IR:
   //   Mangled name: IDelegate1#getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
   //   Public signature: /IDelegate1.getValue|-902248562118213940[0]
@@ -160,7 +159,6 @@ interface IDelegate1<T1 : Any?, R1 : Any?> {
 //   Mangled name: IDelegate2
 //   Public signature: /IDelegate2|null[0]
 interface IDelegate2<T2 : Any?, R2 : Any?> {
-
   // CHECK JVM_IR:
   //   Mangled name: IDelegate2#getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
   //   Public signature: /IDelegate2.getValue|-902248562118213940[0]
@@ -177,7 +175,6 @@ interface IDelegate2<T2 : Any?, R2 : Any?> {
 //   Mangled name: IR
 //   Public signature: /IR|null[0]
 interface IR<R : Any?> {
-
   // CHECK JVM_IR:
   //   Mangled name: IR#foo(){}1:0
   //   Public signature: /IR.foo|-5478580208809996038[0]

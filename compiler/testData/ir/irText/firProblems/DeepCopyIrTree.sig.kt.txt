@@ -45,28 +45,24 @@ class DeepCopyIrTreeWithSymbols {
 //   Mangled name: IrDeclaration
 //   Public signature: /IrDeclaration|null[0]
 interface IrDeclaration {
-
 }
 
 // CHECK:
 //   Mangled name: IrDeclarationParent
 //   Public signature: /IrDeclarationParent|null[0]
 interface IrDeclarationParent {
-
 }
 
 // CHECK:
 //   Mangled name: IrType
 //   Public signature: /IrType|null[0]
 interface IrType {
-
 }
 
 // CHECK:
 //   Mangled name: IrTypeParameter
 //   Public signature: /IrTypeParameter|null[0]
 interface IrTypeParameter : IrDeclaration {
-
   // CHECK:
   //   Mangled name: IrTypeParameter{}superTypes
   //   Public signature: /IrTypeParameter.superTypes|4746750561425700979[0]
@@ -88,7 +84,6 @@ interface IrTypeParameter : IrDeclaration {
 //   Mangled name: IrTypeParametersContainer
 //   Public signature: /IrTypeParametersContainer|null[0]
 interface IrTypeParametersContainer : IrDeclaration, IrDeclarationParent {
-
   // CHECK:
   //   Mangled name: IrTypeParametersContainer{}typeParameters
   //   Public signature: /IrTypeParametersContainer.typeParameters|551746886075737521[0]
@@ -115,7 +110,6 @@ interface IrTypeParametersContainer : IrDeclaration, IrDeclarationParent {
 //   Mangled name: TypeRemapper
 //   Public signature: /TypeRemapper|null[0]
 interface TypeRemapper {
-
   // CHECK:
   //   Mangled name: TypeRemapper#enterScope(IrTypeParametersContainer){}
   //   Public signature: /TypeRemapper.enterScope|1651098445614641728[0]

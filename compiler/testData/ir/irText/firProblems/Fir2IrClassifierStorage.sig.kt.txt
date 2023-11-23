@@ -148,7 +148,6 @@ class FirSession {
 //   Mangled name: Fir2IrComponents
 //   Public signature: /Fir2IrComponents|null[0]
 interface Fir2IrComponents {
-
   // CHECK:
   //   Mangled name: Fir2IrComponents{}classifierStorage
   //   Public signature: /Fir2IrComponents.classifierStorage|-9190759179670631614[0]

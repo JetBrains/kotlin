@@ -68,21 +68,18 @@ abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>>
 //   Mangled name: ComponentContainer
 //   Public signature: /ComponentContainer|null[0]
 interface ComponentContainer {
-
 }
 
 // CHECK:
 //   Mangled name: ComponentDescriptor
 //   Public signature: /ComponentDescriptor|null[0]
 interface ComponentDescriptor {
-
 }
 
 // CHECK:
 //   Mangled name: PlatformSpecificExtension
 //   Public signature: /PlatformSpecificExtension|null[0]
 interface PlatformSpecificExtension<S : PlatformSpecificExtension<S>> {
-
 }
 
 // CHECK:

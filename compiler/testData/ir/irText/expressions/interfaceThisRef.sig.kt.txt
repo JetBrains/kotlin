@@ -2,7 +2,6 @@
 //   Mangled name: IFoo
 //   Public signature: /IFoo|null[0]
 interface IFoo {
-
   // CHECK:
   //   Mangled name: IFoo#bar(){}
   //   Public signature: /IFoo.bar|496682602797471549[0]

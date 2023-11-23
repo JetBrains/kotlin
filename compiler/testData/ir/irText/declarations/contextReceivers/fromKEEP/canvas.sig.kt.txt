@@ -24,7 +24,6 @@ class Circle : Shape {
 //   Mangled name: Canvas
 //   Public signature: /Canvas|null[0]
 interface Canvas {
-
   // CHECK:
   //   Mangled name: Canvas{}suffix
   //   Public signature: /Canvas.suffix|-3301965527200666288[0]
@@ -46,7 +45,6 @@ interface Canvas {
 //   Mangled name: Shape
 //   Public signature: /Shape|null[0]
 interface Shape {
-
   // CHECK JVM_IR:
   //   Mangled name: Shape#draw!Canvas(){}kotlin.String
   //   Public signature: /Shape.draw|-6733499063990640842[0]

@@ -27,7 +27,6 @@ open annotation class Test2<T1 : Any, T2 : Any?> : Annotation {
 }
 
 interface I<T : Any?> {
-
 }
 
 open annotation class Test3<T1 : Any?, T2 : I<T1>> : Annotation {

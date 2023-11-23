@@ -38,7 +38,6 @@ class B : I, J {
 //   Mangled name: I
 //   Public signature: /I|null[0]
 interface I : K {
-
   // CHECK:
   //   Mangled name: I#ff(){}
   //   Public signature: /I.ff|-487791955964352654[0]
@@ -51,14 +50,12 @@ interface I : K {
 //   Mangled name: J
 //   Public signature: /J|null[0]
 interface J : K {
-
 }
 
 // CHECK:
 //   Mangled name: K
 //   Public signature: /K|null[0]
 interface K {
-
 }
 
 // CHECK:

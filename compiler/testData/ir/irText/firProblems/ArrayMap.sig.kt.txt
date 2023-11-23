@@ -144,6 +144,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     //   Public signature: /ArrayMapImpl.Entry.<init>|437318787564761214[0]
     //   Public signature debug description: <init>(kotlin.Int;1:0){}
     constructor(key: Int, value: T) /* primary */
+
     // CHECK JVM_IR:
     //   Mangled name: ArrayMapImpl.Entry#component1(){}kotlin.Int
     //   Public signature: /ArrayMapImpl.Entry.component1|-8217597213800111288[0]
@@ -253,6 +254,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   //   Public signature: /ArrayMapImpl.<init>|-940489726603364367[0]
   //   Public signature debug description: <init>(kotlin.Array<kotlin.Any?>){}
   private constructor(data: Array<Any?>) /* primary */
+
   // CHECK:
   //   Mangled name: ArrayMapImpl#<init>(){}
   //   Public signature: /ArrayMapImpl.<init>|-5645683436151566731[0]

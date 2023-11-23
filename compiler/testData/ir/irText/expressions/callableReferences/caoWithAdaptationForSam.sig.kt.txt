@@ -2,7 +2,6 @@
 //   Mangled name: IFoo
 //   Public signature: /IFoo|null[0]
 fun interface IFoo {
-
   // CHECK:
   //   Mangled name: IFoo#foo(kotlin.Int){}
   //   Public signature: /IFoo.foo|-104159190164110731[0]
@@ -15,7 +14,6 @@ fun interface IFoo {
 //   Mangled name: IFoo2
 //   Public signature: /IFoo2|null[0]
 fun interface IFoo2 : IFoo {
-
   // CHECK:
   //   Mangled name: IFoo2#foo(kotlin.Int){}
   //   Public signature: /IFoo2.foo|-104159190164110731[0]

@@ -2,7 +2,6 @@
 //   Mangled name: NestedGroupFragment
 //   Public signature: /NestedGroupFragment|null[0]
 interface NestedGroupFragment {
-
 }
 
 // CHECK JVM_IR:

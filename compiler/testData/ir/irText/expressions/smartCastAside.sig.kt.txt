@@ -2,7 +2,6 @@
 //   Mangled name: A
 //   Public signature: /A|null[0]
 interface A {
-
   // CHECK:
   //   Mangled name: A#foo(){}
   //   Public signature: /A.foo|-1041209573719867811[0]
@@ -15,7 +14,6 @@ interface A {
 //   Mangled name: B
 //   Public signature: /B|null[0]
 interface B : A {
-
   // CHECK:
   //   Mangled name: B#foo(){}
   //   Public signature: /B.foo|-1041209573719867811[0]
@@ -34,7 +32,6 @@ interface B : A {
 //   Mangled name: C
 //   Public signature: /C|null[0]
 interface C : A {
-
   // CHECK:
   //   Mangled name: C#foo(){}
   //   Public signature: /C.foo|-1041209573719867811[0]

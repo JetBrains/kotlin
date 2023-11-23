@@ -22,6 +22,7 @@ data class DataClass : Delegate, Derived {
   //   Public signature: /DataClass.<init>|7426992287025160657[0]
   //   Public signature debug description: <init>(Delegate){}
   constructor(delegate: Delegate) /* primary */
+
   // CHECK:
   //   Mangled name: DataClass#bar(){}
   //   Public signature: /DataClass.bar|496682602797471549[0]
@@ -84,14 +85,12 @@ data class DataClass : Delegate, Derived {
 //   Mangled name: Base
 //   Public signature: /Base|null[0]
 interface Base {
-
 }
 
 // CHECK:
 //   Mangled name: Delegate
 //   Public signature: /Delegate|null[0]
 interface Delegate : Base {
-
   // CHECK:
   //   Mangled name: Delegate#bar(){}
   //   Public signature: /Delegate.bar|496682602797471549[0]

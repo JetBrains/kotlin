@@ -152,7 +152,6 @@ class PersistentImplicitReceiverStack : ImplicitReceiverStack, Iterable<Implicit
 //   Mangled name: ReceiverValue
 //   Public signature: /ReceiverValue|null[0]
 interface ReceiverValue {
-
   // CHECK:
   //   Mangled name: ReceiverValue{}type
   //   Public signature: /ReceiverValue.type|-6051055617123801408[0]
@@ -174,14 +173,12 @@ interface ReceiverValue {
 //   Mangled name: Symbol
 //   Public signature: /Symbol|null[0]
 interface Symbol<E : SymbolOwner<E>> {
-
 }
 
 // CHECK:
 //   Mangled name: SymbolOwner
 //   Public signature: /SymbolOwner|null[0]
 interface SymbolOwner<E : SymbolOwner<E>> {
-
 }
 
 // CHECK:

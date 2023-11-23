@@ -41,7 +41,6 @@ class IdType : CPointed {
 //   Mangled name: CPointed
 //   Public signature: /CPointed|null[0]
 interface CPointed {
-
 }
 
 // CHECK:

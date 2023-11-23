@@ -1,9 +1,7 @@
 interface A<out T : Any?> {
-
 }
 
 interface Foo {
-
 }
 
 open class B : Foo, A<B> {

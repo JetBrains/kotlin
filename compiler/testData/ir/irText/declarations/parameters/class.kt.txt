@@ -1,6 +1,5 @@
 interface TestInterface<T : Any?> {
   interface TestNestedInterface<TT : Any?> {
-
   }
 
 }

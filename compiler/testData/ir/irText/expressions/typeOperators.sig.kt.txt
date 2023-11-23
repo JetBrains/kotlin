@@ -2,7 +2,6 @@
 //   Mangled name: IThing
 //   Public signature: /IThing|null[0]
 interface IThing {
-
 }
 
 // CHECK JVM_IR:

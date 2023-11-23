@@ -37,6 +37,7 @@ data class Pair<A : Any?, B : Any?> {
   //   Public signature: /Pair.<init>|3086114026882374588[0]
   //   Public signature debug description: <init>(1:0;1:1){}
   constructor(first: A, second: B) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Pair#component1(){}1:0
   //   Public signature: /Pair.component1|2393470133763651536[0]

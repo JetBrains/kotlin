@@ -2,7 +2,6 @@
 //   Mangled name: MyRunnable
 //   Public signature: /MyRunnable|null[0]
 fun interface MyRunnable {
-
   // CHECK:
   //   Mangled name: MyRunnable#run(){}
   //   Public signature: /MyRunnable.run|-991178076551934874[0]

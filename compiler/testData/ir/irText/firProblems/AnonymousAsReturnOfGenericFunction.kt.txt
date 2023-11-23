@@ -1,5 +1,4 @@
 interface NestedGroupFragment {
-
 }
 
 private fun addMavenOptionsGroupFragment(): <no name provided><Int> {

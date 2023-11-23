@@ -1,9 +1,7 @@
 interface I1 {
-
 }
 
 interface I2 {
-
 }
 
 operator fun I1.component1(): Int {

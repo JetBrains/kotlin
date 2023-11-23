@@ -24,6 +24,5 @@ abstract class C {
 //   Mangled name: Continuation
 //   Public signature: /Continuation|null[0]
 interface Continuation<in T : Any?> {
-
 }
 

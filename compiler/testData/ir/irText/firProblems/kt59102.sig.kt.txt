@@ -22,6 +22,7 @@ class XAlign {
   //   Public signature: /XAlign.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor()
+
   // CHECK:
   //   Mangled name: XAlign#<init>(kotlin.Long){}
   //   Public signature: /XAlign.<init>|5217973964116651322[0]

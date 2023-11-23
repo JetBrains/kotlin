@@ -29,7 +29,6 @@ open class BaseClass {
 //   Mangled name: I
 //   Public signature: /I|null[0]
 interface I<G : Any?> {
-
   // CHECK JVM_IR:
   //   Mangled name: I#fromInterface@0:0(){0§<kotlin.Any?>}0:0
   //   Public signature: /I.fromInterface|-4942486396992795009[0]

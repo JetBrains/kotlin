@@ -34,7 +34,6 @@ class IntCell {
 //   Mangled name: IReceiver
 //   Public signature: /IReceiver|null[0]
 interface IReceiver {
-
   // CHECK JVM_IR:
   //   Mangled name: IReceiver#hasNext@IntCell(){}kotlin.Boolean
   //   Public signature: /IReceiver.hasNext|8807543829800046753[0]

@@ -37,6 +37,7 @@ open data class ValidatedProperties {
   //   Public signature: /ValidatedProperties.<init>|9140439783797628932[0]
   //   Public signature debug description: <init>(kotlin.String;kotlin.String){}
   constructor(test1: String, test2: String) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: ValidatedProperties#component1(){}kotlin.String
   //   Public signature: /ValidatedProperties.component1|-7481405593404337796[0]

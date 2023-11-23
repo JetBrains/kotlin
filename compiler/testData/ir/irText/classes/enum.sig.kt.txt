@@ -7,6 +7,7 @@ enum class TestEnum1 : Enum<TestEnum1> {
   //   Public signature: /TestEnum1.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   private constructor() /* primary */
+
   // CHECK:
   //   Mangled name: TestEnum1.TEST1
   //   Public signature: /TestEnum1.TEST1|null[0]
@@ -148,6 +149,7 @@ enum class TestEnum2 : Enum<TestEnum2> {
   //   Public signature: /TestEnum2.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   private constructor(x: Int) /* primary */
+
   // CHECK:
   //   Mangled name: TestEnum2.TEST1
   //   Public signature: /TestEnum2.TEST1|null[0]
@@ -279,6 +281,7 @@ abstract enum class TestEnum3 : Enum<TestEnum3> {
   //   Public signature: /TestEnum3.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   private constructor() /* primary */
+
   // CHECK:
   //   Mangled name: TestEnum3.TEST
   //   Public signature: /TestEnum3.TEST|null[0]
@@ -293,6 +296,7 @@ abstract enum class TestEnum3 : Enum<TestEnum3> {
     //   Public signature: /TestEnum3.TEST.<EEC>.<init>|-5645683436151566731[0]
     //   Public signature debug description: <init>(){}
     private constructor() /* primary */
+
     // CHECK JVM_IR:
     //   Mangled name: TestEnum3.TEST#compareTo(TestEnum3){}kotlin.Int
     //   Public signature: /TestEnum3.TEST.<EEC>.compareTo|3758334100252612666[0]
@@ -508,6 +512,7 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
   //   Public signature: /TestEnum4.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   private constructor(x: Int) /* primary */
+
   // CHECK:
   //   Mangled name: TestEnum4.TEST1
   //   Public signature: /TestEnum4.TEST1|null[0]
@@ -522,6 +527,7 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
     //   Public signature: /TestEnum4.TEST1.<EEC>.<init>|-5645683436151566731[0]
     //   Public signature debug description: <init>(){}
     private constructor() /* primary */
+
     // CHECK JVM_IR:
     //   Mangled name: TestEnum4.TEST1#compareTo(TestEnum4){}kotlin.Int
     //   Public signature: /TestEnum4.TEST1.<EEC>.compareTo|-8388826051358644820[0]
@@ -644,6 +650,7 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
     //   Public signature: /TestEnum4.TEST2.<EEC>.<init>|-5645683436151566731[0]
     //   Public signature debug description: <init>(){}
     private constructor() /* primary */
+
     // CHECK JVM_IR:
     //   Mangled name: TestEnum4.TEST2#compareTo(TestEnum4){}kotlin.Int
     //   Public signature: /TestEnum4.TEST2.<EEC>.compareTo|-8388826051358644820[0]
@@ -874,6 +881,7 @@ enum class TestEnum5 : Enum<TestEnum5> {
   //   Public signature: /TestEnum5.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   private constructor(x: Int) /* primary */
+
   // CHECK:
   //   Mangled name: TestEnum5.TEST1
   //   Public signature: /TestEnum5.TEST1|null[0]
@@ -1035,6 +1043,7 @@ enum class TestEnum6 : Enum<TestEnum6> {
   //   Public signature: /TestEnum6.<init>|-7691762014320324121[0]
   //   Public signature debug description: <init>(kotlin.Int;kotlin.Int){}
   private constructor(x: Int, y: Int) /* primary */
+
   // CHECK:
   //   Mangled name: TestEnum6.TEST
   //   Public signature: /TestEnum6.TEST|null[0]

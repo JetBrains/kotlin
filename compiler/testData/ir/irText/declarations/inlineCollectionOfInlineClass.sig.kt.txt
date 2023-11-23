@@ -22,6 +22,7 @@ value class IT {
   //   Public signature: /IT.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   constructor(x: Int) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: IT#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /IT.equals|722809408929142791[0]
@@ -78,6 +79,7 @@ value class InlineMutableSet : MutableSet<IT> {
   //   Public signature: /InlineMutableSet.<init>|-3183535736515224569[0]
   //   Public signature debug description: <init>(kotlin.collections.MutableSet<IT>){}
   constructor(ms: MutableSet<IT>) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: InlineMutableSet#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /InlineMutableSet.equals|722809408929142791[0]

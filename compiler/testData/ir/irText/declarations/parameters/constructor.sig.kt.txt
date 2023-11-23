@@ -83,6 +83,7 @@ class Test2 {
     //   Public signature: /Test2.TestInner.<init>|-8731461708390519279[0]
     //   Public signature debug description: <init>(1:0){}
     constructor(z: Z) /* primary */
+
     // CHECK:
     //   Mangled name: Test2.TestInner#<init>(1:0;kotlin.Int){}
     //   Public signature: /Test2.TestInner.<init>|7281397193015694517[0]
@@ -165,6 +166,7 @@ class Test4<T : Any?> {
   //   Public signature: /Test4.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   constructor(x: Int) /* primary */
+
   // CHECK:
   //   Mangled name: Test4#<init>(kotlin.Int;kotlin.Int){}
   //   Public signature: /Test4.<init>|-7691762014320324121[0]

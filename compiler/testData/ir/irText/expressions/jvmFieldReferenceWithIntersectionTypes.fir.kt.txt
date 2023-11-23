@@ -1,5 +1,4 @@
 interface IFoo {
-
 }
 
 class Derived1 : JFieldOwner, IFoo {

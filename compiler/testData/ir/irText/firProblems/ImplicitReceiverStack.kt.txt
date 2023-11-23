@@ -1,9 +1,7 @@
 interface SymbolOwner<E : SymbolOwner<E>> {
-
 }
 
 interface Symbol<E : SymbolOwner<E>> {
-
 }
 
 interface ReceiverValue {

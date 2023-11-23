@@ -22,6 +22,7 @@ data class TestData {
   //   Public signature: /TestData.<init>|-7885966204384349687[0]
   //   Public signature debug description: <init>(kotlin.Nothing?){}
   constructor(nn: Nothing?) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: TestData#component1(){}kotlin.Nothing?
   //   Public signature: /TestData.component1|137173073680766068[0]
@@ -98,6 +99,7 @@ value class TestInline {
   //   Public signature: /TestInline.<init>|-7885966204384349687[0]
   //   Public signature debug description: <init>(kotlin.Nothing?){}
   constructor(nn: Nothing?) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: TestInline#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /TestInline.equals|722809408929142791[0]

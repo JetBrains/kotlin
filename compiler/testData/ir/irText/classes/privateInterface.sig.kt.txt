@@ -7,6 +7,7 @@ open class C1 : I {
   //   Public signature: /C1.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: C1#bazString(){}kotlin.String
   //   Public signature: /C1.bazString|4745561783571976677[0]
@@ -66,6 +67,7 @@ class C2 : C1 {
   //   Public signature: /C2.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: C2#barString(){}kotlin.String
   //   Public signature: /C2.barString|1448966844562545716[0]
@@ -120,7 +122,6 @@ class C2 : C1 {
 //   Mangled name: I
 //   Public signature: [ File '/privateInterface.kt' <- /I|null[0] ]
 private interface I {
-
   // CHECK JVM_IR:
   //   Mangled name: I#barString(){}kotlin.String
   //   Public signature: [ File '/privateInterface.kt' <- /I.barString|1448966844562545716[0] ]

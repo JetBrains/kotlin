@@ -34,7 +34,6 @@ open annotation class TypeParameterAnnBinary : Annotation {
 }
 
 interface Simple {
-
 }
 
 class SimpleClass {
@@ -47,7 +46,6 @@ class SimpleClass {
 }
 
 interface Generic<G : Any?> {
-
 }
 
 class GenericClass<G : Any?> {

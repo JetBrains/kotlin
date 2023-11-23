@@ -1,5 +1,4 @@
 interface In<in T : Any?> {
-
 }
 
 interface Inv<T : Any?> {

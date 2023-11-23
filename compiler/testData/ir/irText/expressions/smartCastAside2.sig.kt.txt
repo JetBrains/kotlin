@@ -20,7 +20,6 @@ abstract class Bar<T : Any> {
 //   Mangled name: Foo
 //   Public signature: /Foo|null[0]
 interface Foo<out T : Any?> {
-
   // CHECK:
   //   Mangled name: Foo#foo(){}
   //   Public signature: /Foo.foo|-1041209573719867811[0]

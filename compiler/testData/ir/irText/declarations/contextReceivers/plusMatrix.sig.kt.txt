@@ -14,7 +14,6 @@ class Matrix {
 //   Mangled name: NumberOperations
 //   Public signature: /NumberOperations|null[0]
 interface NumberOperations {
-
   // CHECK JVM_IR:
   //   Mangled name: NumberOperations#plus@kotlin.Number(kotlin.Number){}kotlin.Number
   //   Public signature: /NumberOperations.plus|-6518987633126930952[0]

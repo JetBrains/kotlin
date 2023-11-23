@@ -1,5 +1,4 @@
 interface IrType {
-
 }
 
 interface TypeRemapper {
@@ -19,7 +18,6 @@ interface IrTypeParametersContainer : IrDeclaration, IrDeclarationParent {
 }
 
 interface IrDeclaration {
-
 }
 
 interface IrTypeParameter : IrDeclaration {
@@ -29,7 +27,6 @@ interface IrTypeParameter : IrDeclaration {
 }
 
 interface IrDeclarationParent {
-
 }
 
 class DeepCopyIrTreeWithSymbols {

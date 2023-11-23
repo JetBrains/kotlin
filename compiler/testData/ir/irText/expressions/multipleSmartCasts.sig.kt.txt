@@ -2,7 +2,6 @@
 //   Mangled name: IC1
 //   Public signature: /IC1|null[0]
 interface IC1 {
-
   // CHECK JVM_IR:
   //   Mangled name: IC1#component1(){}kotlin.Int
   //   Public signature: /IC1.component1|-8217597213800111288[0]
@@ -19,7 +18,6 @@ interface IC1 {
 //   Mangled name: IC2
 //   Public signature: /IC2|null[0]
 interface IC2 {
-
   // CHECK JVM_IR:
   //   Mangled name: IC2#component2(){}kotlin.String
   //   Public signature: /IC2.component2|1228864375093914597[0]

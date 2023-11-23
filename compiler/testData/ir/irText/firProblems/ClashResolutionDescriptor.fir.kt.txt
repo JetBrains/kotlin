@@ -1,13 +1,10 @@
 interface ComponentContainer {
-
 }
 
 interface PlatformSpecificExtension<S : PlatformSpecificExtension<S>> {
-
 }
 
 interface ComponentDescriptor {
-
 }
 
 abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>> {

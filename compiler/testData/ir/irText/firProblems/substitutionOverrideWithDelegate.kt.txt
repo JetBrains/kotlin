@@ -34,7 +34,6 @@ open class DelegatedB : B<String> {
 }
 
 interface B<out T : Any?> : A {
-
 }
 
 class C<out T : Any?> : B<T> {

@@ -2,7 +2,6 @@
 //   Mangled name: Inv2
 //   Public signature: /Inv2|null[0]
 interface Inv2<A : Any?, B : Any?> {
-
 }
 
 // CHECK JVM_IR:

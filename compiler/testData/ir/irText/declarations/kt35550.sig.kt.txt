@@ -29,7 +29,6 @@ class A : I {
 //   Mangled name: I
 //   Public signature: /I|null[0]
 interface I {
-
   // CHECK:
   //   Mangled name: I@0:0{0§<kotlin.Any?>}id
   //   Public signature: /I.id|6409895071901545951[0]

@@ -33,7 +33,6 @@ interface Monoid<T : Any?> : Semigroup<T> {
 //   Mangled name: Semigroup
 //   Public signature: /Semigroup|null[0]
 interface Semigroup<T : Any?> {
-
   // CHECK JVM_IR:
   //   Mangled name: Semigroup#combine@1:0(1:0){}1:0
   //   Public signature: /Semigroup.combine|-3517256775590682507[0]

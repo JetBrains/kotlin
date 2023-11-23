@@ -2,7 +2,6 @@
 //   Mangled name: B
 //   Public signature: /B|null[0]
 interface B<T1 : Any?> : A<T1> {
-
   // CHECK JVM_IR:
   //   Mangled name: B#bar(1:0){}1:0
   //   Public signature: /B.bar|-3264834230504995152[0]

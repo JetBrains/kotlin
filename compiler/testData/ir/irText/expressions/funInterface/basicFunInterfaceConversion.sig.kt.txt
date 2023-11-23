@@ -2,7 +2,6 @@
 //   Mangled name: Foo
 //   Public signature: /Foo|null[0]
 fun interface Foo {
-
   // CHECK JVM_IR:
   //   Mangled name: Foo#invoke(){}kotlin.String
   //   Public signature: /Foo.invoke|8861605044563078664[0]

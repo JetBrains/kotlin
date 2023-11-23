@@ -2,7 +2,6 @@
 //   Mangled name: Foo
 //   Public signature: /Foo|null[0]
 interface Foo<in T : Any?> {
-
   // CHECK:
   //   Mangled name: Foo#foo(1:0){}
   //   Public signature: /Foo.foo|-701456291278879981[0]

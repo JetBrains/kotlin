@@ -2,7 +2,6 @@
 //   Mangled name: C
 //   Public signature: /C|null[0]
 interface C {
-
   // CHECK:
   //   Mangled name: C{}test1
   //   Public signature: /C.test1|6005685442305498193[0]

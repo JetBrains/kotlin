@@ -607,9 +607,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             "fun ",
             declaration.name.asString(),
             printTypeParametersAndExtensionReceiver = true,
-            printSignatureAndBody = true
+            printSignatureAndBody = true,
+            printExtraTrailingNewLine = true,
         )
-        p.printlnWithNoIndent()
     }
 
     override fun visitConstructor(declaration: IrConstructor, data: IrDeclaration?) = wrap(declaration, data) {
@@ -647,6 +647,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             it.accept(this, declaration)
         }
         p.printlnWithNoIndent()
+        p.printlnWithNoIndent()
     }
 
     private fun IrSimpleFunction.printSimpleFunction(
@@ -654,7 +655,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         keyword: String,
         name: String,
         printTypeParametersAndExtensionReceiver: Boolean,
-        printSignatureAndBody: Boolean
+        printSignatureAndBody: Boolean,
+        printExtraTrailingNewLine: Boolean
     ) {
         /* TODO
             correspondingProperty
@@ -720,6 +722,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             if (!printSignatureAndBody || body == null || options.bodyPrintingStrategy != BodyPrintingStrategy.PRINT_BODIES) {
                 p.printlnWithNoIndent()
             }
+
+            if (printExtraTrailingNewLine)
+                p.printlnWithNoIndent()
         }
     }
 
@@ -876,6 +881,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             name = s,
             printTypeParametersAndExtensionReceiver = false,
             printSignatureAndBody = isDefaultAccessor,
+            printExtraTrailingNewLine = false,
         )
     }
 
@@ -1220,7 +1226,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             "fun ",
             expression.function.name.asString(),
             printTypeParametersAndExtensionReceiver = true,
-            printSignatureAndBody = true
+            printSignatureAndBody = true,
+            printExtraTrailingNewLine = false,
         )
     }
 

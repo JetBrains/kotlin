@@ -7,6 +7,7 @@ class A : Cloneable {
   //   Public signature: /A.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: A#clone(){}kotlin.Any
   //   Public signature: /A.clone|-6903128697527593263[0]
@@ -27,6 +28,7 @@ class C : I {
   //   Public signature: /C.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: C#clone(){}kotlin.Any
   //   Public signature: /C.clone|-6903128697527593263[0]

@@ -61,7 +61,6 @@ class Candidate {
 //   Mangled name: FirCallableMemberDeclaration
 //   Public signature: /FirCallableMemberDeclaration|null[0]
 interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : FirDeclaration, FirSymbolOwner<F> {
-
   // CHECK:
   //   Mangled name: FirCallableMemberDeclaration{}symbol
   //   Public signature: /FirCallableMemberDeclaration.symbol|-2022127689160258603[0]
@@ -83,14 +82,12 @@ interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : Fi
 //   Mangled name: FirDeclaration
 //   Public signature: /FirDeclaration|null[0]
 interface FirDeclaration {
-
 }
 
 // CHECK:
 //   Mangled name: FirSymbolOwner
 //   Public signature: /FirSymbolOwner|null[0]
 interface FirSymbolOwner<E> where E : FirDeclaration, E : FirSymbolOwner<E> {
-
   // CHECK:
   //   Mangled name: FirSymbolOwner{}symbol
   //   Public signature: /FirSymbolOwner.symbol|-2022127689160258603[0]

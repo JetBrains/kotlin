@@ -80,7 +80,6 @@ class C {
   //   Mangled name: C.NestedInterface
   //   Public signature: /C.NestedInterface|null[0]
   interface NestedInterface {
-
     // CHECK:
     //   Mangled name: C.NestedInterface#bar(){}
     //   Public signature: /C.NestedInterface.bar|496682602797471549[0]
@@ -112,6 +111,7 @@ class C {
   //   Public signature: /C.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor()
+
   // CHECK:
   //   Mangled name: C#<init>(kotlin.Int;kotlin.Int;kotlin.Int){}
   //   Public signature: /C.<init>|3555954663887180339[0]

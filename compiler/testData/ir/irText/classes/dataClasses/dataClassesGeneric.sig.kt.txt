@@ -22,6 +22,7 @@ data class Test1<T : Any?> {
   //   Public signature: /Test1.<init>|-8731461708390519279[0]
   //   Public signature debug description: <init>(1:0){}
   constructor(x: T) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Test1#component1(){}1:0
   //   Public signature: /Test1.component1|2393470133763651536[0]
@@ -98,6 +99,7 @@ data class Test2<T : Number> {
   //   Public signature: /Test2.<init>|-8731461708390519279[0]
   //   Public signature debug description: <init>(1:0){}
   constructor(x: T) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Test2#component1(){}1:0
   //   Public signature: /Test2.component1|2393470133763651536[0]
@@ -174,6 +176,7 @@ data class Test3<T : Any?> {
   //   Public signature: /Test3.<init>|-6703374673612964420[0]
   //   Public signature debug description: <init>(kotlin.collections.List<1:0>){}
   constructor(x: List<T>) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Test3#component1(){}kotlin.collections.List<1:0>
   //   Public signature: /Test3.component1|-4141154284195946749[0]
@@ -250,6 +253,7 @@ data class Test4 {
   //   Public signature: /Test4.<init>|-9211757031347255021[0]
   //   Public signature debug description: <init>(kotlin.collections.List<kotlin.String>){}
   constructor(x: List<String>) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Test4#component1(){}kotlin.collections.List<kotlin.String>
   //   Public signature: /Test4.component1|-4918334505452908017[0]

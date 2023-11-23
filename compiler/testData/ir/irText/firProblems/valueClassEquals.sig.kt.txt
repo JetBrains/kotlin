@@ -38,6 +38,7 @@ value class Z {
   //   Public signature: /Z.<init>|1280618353163213788[0]
   //   Public signature debug description: <init>(kotlin.String){}
   constructor(s: String) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Z#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Z.equals|722809408929142791[0]

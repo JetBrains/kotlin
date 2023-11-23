@@ -2,14 +2,12 @@
 //   Mangled name: IA
 //   Public signature: /IA|null[0]
 interface IA {
-
 }
 
 // CHECK:
 //   Mangled name: IB
 //   Public signature: /IB|null[0]
 interface IB {
-
   // CHECK JVM_IR:
   //   Mangled name: IB#compareTo@IA(IA){}kotlin.Int
   //   Public signature: /IB.compareTo|-7259969497814497426[0]

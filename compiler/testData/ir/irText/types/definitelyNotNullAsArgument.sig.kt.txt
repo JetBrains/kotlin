@@ -45,7 +45,6 @@ class C<TT : Any?> : I<(TT & Any)> {
 //   Mangled name: I
 //   Public signature: /I|null[0]
 interface I<T : Any?> {
-
   // CHECK:
   //   Mangled name: I#input(1:0){}
   //   Public signature: /I.input|-6221011490461630624[0]

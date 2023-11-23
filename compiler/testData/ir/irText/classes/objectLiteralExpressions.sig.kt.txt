@@ -72,7 +72,6 @@ class Outer {
 //   Mangled name: IFoo
 //   Public signature: /IFoo|null[0]
 interface IFoo {
-
   // CHECK:
   //   Mangled name: IFoo#foo(){}
   //   Public signature: /IFoo.foo|-1041209573719867811[0]

@@ -26,6 +26,7 @@ class Outer {
     //   Public signature: /Outer.Inner.<init>|-5645683436151566731[0]
     //   Public signature debug description: <init>(){}
     constructor()
+
     // CHECK:
     //   Mangled name: Outer.Inner#<init>(kotlin.Int){}
     //   Public signature: /Outer.Inner.<init>|-5182794243525578284[0]

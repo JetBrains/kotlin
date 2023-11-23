@@ -46,7 +46,6 @@ class Wrapper {
 //   Mangled name: Bar
 //   Public signature: /Bar|null[0]
 interface Bar {
-
   // CHECK:
   //   Mangled name: Bar{}foo
   //   Public signature: /Bar.foo|1688079488202778848[0]

@@ -27,6 +27,7 @@ data class MyContainer {
   //   Public signature: /MyContainer.<init>|1280618353163213788[0]
   //   Public signature debug description: <init>(kotlin.String){}
   constructor(s: String) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: MyContainer#component1(){}kotlin.String
   //   Public signature: /MyContainer.component1|-7481405593404337796[0]

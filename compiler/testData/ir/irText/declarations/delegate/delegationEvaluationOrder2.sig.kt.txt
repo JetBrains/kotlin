@@ -103,6 +103,7 @@ class Derived : DerivedBase, Base, Base2 {
   //   Public signature: foo/Derived.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: foo.Derived#bar(kotlin.String){}kotlin.String
   //   Public signature: foo/Derived.bar|2000415168157940991[0]
@@ -134,6 +135,7 @@ class Derived1 : DerivedBase, Base, Base2 {
   //   Public signature: foo/Derived1.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: foo.Derived1#bar(kotlin.String){}kotlin.String
   //   Public signature: foo/Derived1.bar|2000415168157940991[0]
@@ -165,6 +167,7 @@ class Derived2 : DerivedBase, Base, Base2 {
   //   Public signature: foo/Derived2.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: foo.Derived2#bar(kotlin.String){}kotlin.String
   //   Public signature: foo/Derived2.bar|2000415168157940991[0]
@@ -203,7 +206,6 @@ open class DerivedBase {
 //   Mangled name: foo.Base
 //   Public signature: foo/Base|null[0]
 interface Base {
-
   // CHECK JVM_IR:
   //   Mangled name: foo.Base#foo(kotlin.String){}kotlin.String
   //   Public signature: foo/Base.foo|-5534735991146511619[0]
@@ -220,7 +222,6 @@ interface Base {
 //   Mangled name: foo.Base2
 //   Public signature: foo/Base2|null[0]
 interface Base2 {
-
   // CHECK JVM_IR:
   //   Mangled name: foo.Base2#bar(kotlin.String){}kotlin.String
   //   Public signature: foo/Base2.bar|2000415168157940991[0]

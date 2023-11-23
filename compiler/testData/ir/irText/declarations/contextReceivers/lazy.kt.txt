@@ -1,5 +1,4 @@
 interface Lazy<T : Any?> {
-
 }
 
 fun test1($context_receiver_0: Lazy<Int>, $context_receiver_1: Lazy<CharSequence>) {

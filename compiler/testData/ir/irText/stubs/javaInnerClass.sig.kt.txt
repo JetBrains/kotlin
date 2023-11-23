@@ -18,6 +18,7 @@ class Test1 : J {
   //   Public signature: /Test1.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
+
   // CHECK:
   //   Mangled name: Test1#bar(){}
   //   Public signature: /Test1.bar|496682602797471549[0]

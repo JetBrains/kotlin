@@ -62,7 +62,6 @@ open class Mid : JFieldOwner {
 //   Mangled name: IFoo
 //   Public signature: /IFoo|null[0]
 interface IFoo {
-
 }
 
 // CHECK:

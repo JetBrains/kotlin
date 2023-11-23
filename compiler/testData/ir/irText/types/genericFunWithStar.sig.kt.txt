@@ -34,27 +34,23 @@ abstract class Box<T> : IBar, IFoo where T : IBar, T : IFoo {
 //   Mangled name: I
 //   Public signature: /I|null[0]
 interface I<G> where G : IBar, G : IFoo {
-
 }
 
 // CHECK:
 //   Mangled name: IBar
 //   Public signature: /IBar|null[0]
 interface IBar : IBase {
-
 }
 
 // CHECK:
 //   Mangled name: IBase
 //   Public signature: /IBase|null[0]
 interface IBase {
-
 }
 
 // CHECK:
 //   Mangled name: IFoo
 //   Public signature: /IFoo|null[0]
 interface IFoo : IBase {
-
 }
 

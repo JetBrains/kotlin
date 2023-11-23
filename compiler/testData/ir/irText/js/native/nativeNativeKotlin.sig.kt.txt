@@ -51,6 +51,7 @@ class C : B {
   //   Public signature: foo/C.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
+
   // CHECK JS_IR NATIVE:
   //   Mangled name: foo.C#bar(){}
   //   Public signature: foo/C.bar|496682602797471549[0]

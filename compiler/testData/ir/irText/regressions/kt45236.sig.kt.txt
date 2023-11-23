@@ -33,6 +33,7 @@ sealed class NetRequestStatus<out T : Any> {
     //   Public signature: /NetRequestStatus.Error.<init>|-1373568199086185373[0]
     //   Public signature debug description: <init>(kotlin.Throwable;1:0?){}
     constructor(error: Throwable, value: T?) /* primary */
+
     // CHECK JVM_IR:
     //   Mangled name: NetRequestStatus.Error#component1(){}kotlin.Throwable
     //   Public signature: /NetRequestStatus.Error.component1|2250146239720393392[0]

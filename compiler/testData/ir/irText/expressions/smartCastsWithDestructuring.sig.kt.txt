@@ -2,14 +2,12 @@
 //   Mangled name: I1
 //   Public signature: /I1|null[0]
 interface I1 {
-
 }
 
 // CHECK:
 //   Mangled name: I2
 //   Public signature: /I2|null[0]
 interface I2 {
-
 }
 
 // CHECK JVM_IR:

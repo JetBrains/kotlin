@@ -68,7 +68,6 @@ class Derived : Base, BaseI {
 //   Mangled name: BaseI
 //   Public signature: /BaseI|null[0]
 interface BaseI {
-
   // CHECK:
   //   Mangled name: BaseI#foo(){}
   //   Public signature: /BaseI.foo|-1041209573719867811[0]

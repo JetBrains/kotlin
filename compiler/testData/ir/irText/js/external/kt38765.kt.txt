@@ -2,6 +2,7 @@ package events
 
 open external class internal {
   external constructor() /* primary */
+
   open external class EventEmitterP : internal {
     external constructor() /* primary */
 
@@ -19,6 +20,7 @@ open external class internal {
 
   external enum class NestedExternalEnum : Enum<NestedExternalEnum> {
     private external constructor() /* primary */
+
     A = NestedExternalEnum()
 
     B = NestedExternalEnum()
@@ -33,7 +35,6 @@ open external class internal {
   }
 
   external interface NestedExternalInterface {
-
   }
 
 }

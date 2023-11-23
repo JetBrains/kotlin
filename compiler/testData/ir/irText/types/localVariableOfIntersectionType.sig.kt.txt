@@ -2,7 +2,6 @@
 //   Mangled name: IA
 //   Public signature: /IA|null[0]
 interface IA {
-
   // CHECK:
   //   Mangled name: IA#foo(){}
   //   Public signature: /IA.foo|-1041209573719867811[0]
@@ -15,7 +14,6 @@ interface IA {
 //   Mangled name: IB
 //   Public signature: /IB|null[0]
 interface IB {
-
   // CHECK:
   //   Mangled name: IB#bar(){}
   //   Public signature: /IB.bar|496682602797471549[0]
@@ -28,14 +26,12 @@ interface IB {
 //   Mangled name: In
 //   Public signature: /In|null[0]
 interface In<in T : Any?> {
-
 }
 
 // CHECK:
 //   Mangled name: Inv
 //   Public signature: /Inv|null[0]
 interface Inv<T : Any?> {
-
   // CHECK:
   //   Mangled name: Inv{}t
   //   Public signature: /Inv.t|-8767999791664836944[0]
@@ -57,7 +53,6 @@ interface Inv<T : Any?> {
 //   Mangled name: Z
 //   Public signature: /Z|null[0]
 interface Z {
-
   // CHECK JVM_IR:
   //   Mangled name: Z#create(In<0:0>;In<0:0>){0§<kotlin.Any?>}Inv<0:0>
   //   Public signature: /Z.create|7944253173603668399[0]

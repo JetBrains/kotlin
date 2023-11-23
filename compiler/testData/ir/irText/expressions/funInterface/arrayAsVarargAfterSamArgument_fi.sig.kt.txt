@@ -2,7 +2,6 @@
 //   Mangled name: IRunnable
 //   Public signature: /IRunnable|null[0]
 fun interface IRunnable {
-
   // CHECK:
   //   Mangled name: IRunnable#run(){}
   //   Public signature: /IRunnable.run|-991178076551934874[0]

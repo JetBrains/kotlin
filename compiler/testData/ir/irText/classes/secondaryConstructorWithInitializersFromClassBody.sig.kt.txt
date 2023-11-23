@@ -34,11 +34,13 @@ class TestInitBlock : Base {
   //   Public signature: /TestInitBlock.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor()
+
   // CHECK:
   //   Mangled name: TestInitBlock#<init>(kotlin.Int){}
   //   Public signature: /TestInitBlock.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   constructor(y: Int)
+
   // CHECK:
   //   Mangled name: TestInitBlock#<init>(kotlin.Any){}
   //   Public signature: /TestInitBlock.<init>|4518179880532599055[0]

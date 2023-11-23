@@ -22,6 +22,7 @@ enum class EE : Enum<EE> {
   //   Public signature: /EE.<init>|1280618353163213788[0]
   //   Public signature debug description: <init>(kotlin.String){}
   private constructor(myName: String) /* primary */
+
   // CHECK:
   //   Mangled name: EE.ENTRY
   //   Public signature: /EE.ENTRY|null[0]

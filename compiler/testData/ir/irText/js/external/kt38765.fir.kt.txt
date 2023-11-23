@@ -55,7 +55,7 @@ open external class internal {
   }
 
   interface NestedExternalInterface {
-
   }
 
 }
+

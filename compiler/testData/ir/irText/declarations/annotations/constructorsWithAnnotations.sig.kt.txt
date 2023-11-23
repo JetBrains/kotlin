@@ -35,6 +35,7 @@ class TestClass {
   //   Public signature debug description: <init>(){}
   @TestAnn(x = 1)
   constructor() /* primary */
+
   // CHECK:
   //   Mangled name: TestClass#<init>(kotlin.Int){}
   //   Public signature: /TestClass.<init>|-5182794243525578284[0]

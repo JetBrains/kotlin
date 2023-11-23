@@ -2,7 +2,6 @@
 //   Mangled name: Lazy
 //   Public signature: /Lazy|null[0]
 interface Lazy<T : Any?> {
-
 }
 
 // CHECK:

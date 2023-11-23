@@ -1,5 +1,4 @@
 interface Substitutable<out T : DeclarationDescriptorNonRoot> {
-
 }
 
 abstract class ResolutionPart {

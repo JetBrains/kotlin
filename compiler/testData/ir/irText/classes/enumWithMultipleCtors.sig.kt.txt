@@ -57,16 +57,19 @@ open enum class A : Enum<A> {
   //   Public signature: /A.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   private constructor()
+
   // CHECK:
   //   Mangled name: A#<init>(kotlin.String){}
   //   Public signature: /A.<init>|1280618353163213788[0]
   //   Public signature debug description: <init>(kotlin.String){}
   private constructor(arg: String)
+
   // CHECK:
   //   Mangled name: A#<init>(kotlin.Int){}
   //   Public signature: /A.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   private constructor(x: Int)
+
   // CHECK:
   //   Mangled name: A.X
   //   Public signature: /A.X|null[0]
@@ -86,6 +89,7 @@ open enum class A : Enum<A> {
     //   Public signature: /A.Y.<EEC>.<init>|-5645683436151566731[0]
     //   Public signature debug description: <init>(){}
     private constructor() /* primary */
+
     // CHECK JVM_IR:
     //   Mangled name: A.Y#compareTo(A){}kotlin.Int
     //   Public signature: /A.Y.<EEC>.compareTo|-315052537630360750[0]

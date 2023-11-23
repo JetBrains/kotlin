@@ -17,7 +17,6 @@ object Factory {
 }
 
 interface Base {
-
 }
 
 interface Delegate : Base {
@@ -26,7 +25,6 @@ interface Delegate : Base {
 }
 
 interface Derived : Delegate {
-
 }
 
 data class DataClass : Derived, Delegate {

@@ -50,6 +50,7 @@ data class LoginSuccessPacket {
   //   Public signature: /LoginSuccessPacket.<init>|-1666114669831529718[0]
   //   Public signature debug description: <init>(Uuid1){}
   constructor(id: @MySerializable(c = UuidSerializer::class) Uuid1) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: LoginSuccessPacket#component1(){}Uuid1
   //   Public signature: /LoginSuccessPacket.component1|-3428488995872773450[0]
@@ -118,7 +119,6 @@ class Uuid1 {
 //   Mangled name: MySerializer
 //   Public signature: /MySerializer|null[0]
 interface MySerializer<T : Any?> {
-
 }
 
 // CHECK:

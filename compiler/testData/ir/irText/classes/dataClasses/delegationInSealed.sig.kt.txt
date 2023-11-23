@@ -26,6 +26,7 @@ sealed class A : CharSequence {
     //   Public signature: /A.B.<init>|2804354480087813081[0]
     //   Public signature debug description: <init>(kotlin.CharSequence){}
     constructor(c: CharSequence) /* primary */
+
     // CHECK JVM_IR:
     //   Mangled name: A.B#get(kotlin.Int){}kotlin.Char
     //   Public signature: /A.B.get|6519934306502810002[0]

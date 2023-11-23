@@ -22,6 +22,7 @@ value class Test {
   //   Public signature: /Test.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   constructor(x: Int) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Test#equals(kotlin.Any?){}kotlin.Boolean
   //   Public signature: /Test.equals|722809408929142791[0]

@@ -22,6 +22,7 @@ data class A {
   //   Public signature: /A.<init>|-2423641970729475329[0]
   //   Public signature debug description: <init>(kotlin.Function2<A,kotlin.String,kotlin.Unit>){}
   constructor(runA: @ExtensionFunctionType Function2<A, String, Unit>) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: A#component1(){}kotlin.Function2<A,kotlin.String,kotlin.Unit>
   //   Public signature: /A.component1|793860828130635274[0]
@@ -98,6 +99,7 @@ data class B {
   //   Public signature: /B.<init>|4518179880532599055[0]
   //   Public signature debug description: <init>(kotlin.Any){}
   constructor(x: Any) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: B#component1(){}kotlin.Any
   //   Public signature: /B.component1|2325042746135573536[0]

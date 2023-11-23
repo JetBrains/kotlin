@@ -37,6 +37,7 @@ data class Test<T : Any?> {
   //   Public signature: /Test.<init>|-7411275398527089511[0]
   //   Public signature debug description: <init>(1:0;kotlin.String){}
   constructor(x: T, y: String) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Test#component1(){}1:0
   //   Public signature: /Test.component1|2393470133763651536[0]

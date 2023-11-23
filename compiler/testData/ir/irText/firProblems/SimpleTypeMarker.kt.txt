@@ -1,5 +1,4 @@
 interface SimpleTypeMarker {
-
 }
 
 class SimpleType : SimpleTypeMarker {

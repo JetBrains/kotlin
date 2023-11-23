@@ -22,11 +22,13 @@ enum class Test0 : Enum<Test0> {
   //   Public signature: /Test0.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   private constructor()
+
   // CHECK:
   //   Mangled name: Test0#<init>(kotlin.Int){}
   //   Public signature: /Test0.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   private constructor(x: Int) /* primary */
+
   // CHECK:
   //   Mangled name: Test0.ZERO
   //   Public signature: /Test0.ZERO|null[0]
@@ -163,11 +165,13 @@ enum class Test1 : Enum<Test1> {
   //   Public signature: /Test1.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   private constructor()
+
   // CHECK:
   //   Mangled name: Test1#<init>(kotlin.Int){}
   //   Public signature: /Test1.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   private constructor(x: Int) /* primary */
+
   // CHECK:
   //   Mangled name: Test1.ONE
   //   Public signature: /Test1.ONE|null[0]
@@ -309,11 +313,13 @@ abstract enum class Test2 : Enum<Test2> {
   //   Public signature: /Test2.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   private constructor()
+
   // CHECK:
   //   Mangled name: Test2#<init>(kotlin.Int){}
   //   Public signature: /Test2.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   private constructor(x: Int) /* primary */
+
   // CHECK:
   //   Mangled name: Test2.ONE
   //   Public signature: /Test2.ONE|null[0]
@@ -328,6 +334,7 @@ abstract enum class Test2 : Enum<Test2> {
     //   Public signature: /Test2.ONE.<EEC>.<init>|-5645683436151566731[0]
     //   Public signature debug description: <init>(){}
     private constructor() /* primary */
+
     // CHECK JVM_IR:
     //   Mangled name: Test2.ONE#compareTo(Test2){}kotlin.Int
     //   Public signature: /Test2.ONE.<EEC>.compareTo|-4058923296557042542[0]
@@ -435,6 +442,7 @@ abstract enum class Test2 : Enum<Test2> {
     //   Public signature: /Test2.ZERO.<EEC>.<init>|-5645683436151566731[0]
     //   Public signature debug description: <init>(){}
     private constructor() /* primary */
+
     // CHECK JVM_IR:
     //   Mangled name: Test2.ZERO#compareTo(Test2){}kotlin.Int
     //   Public signature: /Test2.ZERO.<EEC>.compareTo|-4058923296557042542[0]

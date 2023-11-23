@@ -46,14 +46,12 @@ class UserImpl {
 //   Mangled name: SimpleTypeMarker
 //   Public signature: /SimpleTypeMarker|null[0]
 interface SimpleTypeMarker {
-
 }
 
 // CHECK:
 //   Mangled name: User
 //   Public signature: /User|null[0]
 interface User {
-
   // CHECK JVM_IR:
   //   Mangled name: User#bar@SimpleTypeMarker(){}kotlin.String
   //   Public signature: /User.bar|9149645946452319977[0]

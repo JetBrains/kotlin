@@ -2,7 +2,6 @@
 //   Mangled name: KConsumer
 //   Public signature: /KConsumer|null[0]
 fun interface KConsumer<T : Any?> {
-
   // CHECK:
   //   Mangled name: KConsumer#accept(1:0){}
   //   Public signature: /KConsumer.accept|6106307687017385176[0]
@@ -15,7 +14,6 @@ fun interface KConsumer<T : Any?> {
 //   Mangled name: KRunnable
 //   Public signature: /KRunnable|null[0]
 fun interface KRunnable {
-
   // CHECK:
   //   Mangled name: KRunnable#run(){}
   //   Public signature: /KRunnable.run|-991178076551934874[0]
@@ -28,7 +26,6 @@ fun interface KRunnable {
 //   Mangled name: KSupplier
 //   Public signature: /KSupplier|null[0]
 fun interface KSupplier<T : Any?> {
-
   // CHECK JVM_IR:
   //   Mangled name: KSupplier#get(){}1:0
   //   Public signature: /KSupplier.get|-8285253024618084508[0]

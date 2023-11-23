@@ -42,6 +42,7 @@ data class Result {
   //   Public signature: /Result.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   constructor(i: Int) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Result#component1(){}kotlin.Int
   //   Public signature: /Result.component1|-8217597213800111288[0]

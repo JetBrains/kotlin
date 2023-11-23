@@ -25,7 +25,6 @@ abstract class AbstractFirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDec
 }
 
 interface FirDeclaration {
-
 }
 
 interface FirSymbolOwner<E> where E : FirSymbolOwner<E>, E : FirDeclaration {

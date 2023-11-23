@@ -2,7 +2,6 @@
 //   Mangled name: IFoo
 //   Public signature: /IFoo|null[0]
 interface IFoo {
-
   // CHECK:
   //   Mangled name: IFoo@A{}foo
   //   Public signature: /IFoo.foo|1214000299789500455[0]
@@ -24,7 +23,6 @@ interface IFoo {
 //   Mangled name: IInvoke
 //   Public signature: /IInvoke|null[0]
 interface IInvoke {
-
   // CHECK JVM_IR:
   //   Mangled name: IInvoke#invoke@B(){}kotlin.Int
   //   Public signature: /IInvoke.invoke|7560171197904259096[0]

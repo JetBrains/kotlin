@@ -50,21 +50,18 @@ class G2<T> where T : X, T : Z {
 //   Mangled name: A
 //   Public signature: /A|null[0]
 interface A : X, Z {
-
 }
 
 // CHECK:
 //   Mangled name: B
 //   Public signature: /B|null[0]
 interface B : X, Z {
-
 }
 
 // CHECK:
 //   Mangled name: IBar1
 //   Public signature: /IBar1|null[0]
 fun interface IBar1<T> where T : X, T : Z {
-
   // CHECK:
   //   Mangled name: IBar1#bar(1:0){}
   //   Public signature: /IBar1.bar|-7393952686038474037[0]
@@ -77,7 +74,6 @@ fun interface IBar1<T> where T : X, T : Z {
 //   Mangled name: IBar2
 //   Public signature: /IBar2|null[0]
 fun interface IBar2<T> where T : X, T : Z {
-
   // CHECK:
   //   Mangled name: IBar2#bar(1:0){}
   //   Public signature: /IBar2.bar|-7393952686038474037[0]
@@ -90,7 +86,6 @@ fun interface IBar2<T> where T : X, T : Z {
 //   Mangled name: IFoo
 //   Public signature: /IFoo|null[0]
 fun interface IFoo<T : X> {
-
   // CHECK:
   //   Mangled name: IFoo#foo(1:0){}
   //   Public signature: /IFoo.foo|-701456291278879981[0]
@@ -103,14 +98,12 @@ fun interface IFoo<T : X> {
 //   Mangled name: X
 //   Public signature: /X|null[0]
 interface X {
-
 }
 
 // CHECK:
 //   Mangled name: Z
 //   Public signature: /Z|null[0]
 interface Z {
-
 }
 
 // CHECK JVM_IR:

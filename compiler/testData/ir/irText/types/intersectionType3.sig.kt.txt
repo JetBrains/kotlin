@@ -2,49 +2,42 @@
 //   Mangled name: A
 //   Public signature: /A|null[0]
 interface A {
-
 }
 
 // CHECK:
 //   Mangled name: A1
 //   Public signature: /A1|null[0]
 interface A1 : A {
-
 }
 
 // CHECK:
 //   Mangled name: A2
 //   Public signature: /A2|null[0]
 interface A2 : A {
-
 }
 
 // CHECK:
 //   Mangled name: B
 //   Public signature: /B|null[0]
 interface B {
-
 }
 
 // CHECK:
 //   Mangled name: In
 //   Public signature: /In|null[0]
 interface In<in T : Any?> {
-
 }
 
 // CHECK:
 //   Mangled name: Z1
 //   Public signature: /Z1|null[0]
 interface Z1 : A, B {
-
 }
 
 // CHECK:
 //   Mangled name: Z2
 //   Public signature: /Z2|null[0]
 interface Z2 : A, B {
-
 }
 
 // CHECK:

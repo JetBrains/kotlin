@@ -1,5 +1,4 @@
 interface K {
-
 }
 
 interface I : K {
@@ -8,7 +7,6 @@ interface I : K {
 }
 
 interface J : K {
-
 }
 
 class A : I, J {

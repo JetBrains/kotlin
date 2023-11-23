@@ -4,35 +4,30 @@ package com.example
 //   Mangled name: com.example.Aa
 //   Public signature: com.example/Aa|null[0]
 interface Aa {
-
 }
 
 // CHECK:
 //   Mangled name: com.example.Ab
 //   Public signature: com.example/Ab|null[0]
 interface Ab<T : Ab<T>> : Aa {
-
 }
 
 // CHECK:
 //   Mangled name: com.example.Ba
 //   Public signature: com.example/Ba|null[0]
 interface Ba {
-
 }
 
 // CHECK:
 //   Mangled name: com.example.Bb
 //   Public signature: com.example/Bb|null[0]
 interface Bb<T : Bb<T>> : Ab<T>, Ba {
-
 }
 
 // CHECK:
 //   Mangled name: com.example.C
 //   Public signature: com.example/C|null[0]
 interface C : Ca, Cb {
-
   // CHECK:
   //   Mangled name: com.example.C{}b
   //   Public signature: com.example/C.b|772347207915745207[0]
@@ -54,7 +49,6 @@ interface C : Ca, Cb {
 //   Mangled name: com.example.Ca
 //   Public signature: com.example/Ca|null[0]
 interface Ca {
-
   // CHECK:
   //   Mangled name: com.example.Ca{}b
   //   Public signature: com.example/Ca.b|772347207915745207[0]
@@ -76,7 +70,6 @@ interface Ca {
 //   Mangled name: com.example.Cb
 //   Public signature: com.example/Cb|null[0]
 interface Cb {
-
   // CHECK:
   //   Mangled name: com.example.Cb{}b
   //   Public signature: com.example/Cb.b|772347207915745207[0]

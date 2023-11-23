@@ -128,7 +128,6 @@ class ExplicitOverride : IFoo {
 //   Mangled name: IFoo
 //   Public signature: /IFoo|null[0]
 interface IFoo {
-
   // CHECK:
   //   Mangled name: IFoo@kotlin.String{}extProp
   //   Public signature: /IFoo.extProp|9137761441129982647[0]

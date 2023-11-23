@@ -55,7 +55,6 @@ abstract class AbstractClass {
 //   Mangled name: Interface
 //   Public signature: /Interface|null[0]
 interface Interface {
-
   // CHECK:
   //   Mangled name: Interface#abstractFun(){}
   //   Public signature: /Interface.abstractFun|-8137574360252002020[0]

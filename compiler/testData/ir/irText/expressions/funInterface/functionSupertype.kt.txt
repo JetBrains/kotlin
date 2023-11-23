@@ -1,5 +1,4 @@
 fun interface Foo : Function0<Int> {
-
 }
 
 fun id(foo: Foo): Any {

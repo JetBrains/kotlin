@@ -37,6 +37,7 @@ enum class En : Enum<En> {
   //   Public signature: /En.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   private constructor() /* primary */
+
   // CHECK:
   //   Mangled name: En.X
   //   Public signature: /En.X|null[0]

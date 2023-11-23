@@ -1,5 +1,4 @@
 interface Continuation<in T : Any?> {
-
 }
 
 abstract class C {

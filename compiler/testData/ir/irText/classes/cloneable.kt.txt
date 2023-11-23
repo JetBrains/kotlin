@@ -8,7 +8,6 @@ class A : Cloneable {
 }
 
 interface I : Cloneable {
-
 }
 
 class C : I {

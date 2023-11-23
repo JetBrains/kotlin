@@ -20,7 +20,6 @@ abstract class AbstractSymbol<E> where E : Recursive<E>, E : Something {
 //   Mangled name: Recursive
 //   Public signature: /Recursive|null[0]
 interface Recursive<R> where R : Recursive<R>, R : Something {
-
   // CHECK:
   //   Mangled name: Recursive{}symbol
   //   Public signature: /Recursive.symbol|-2022127689160258603[0]
@@ -42,6 +41,5 @@ interface Recursive<R> where R : Recursive<R>, R : Something {
 //   Mangled name: Something
 //   Public signature: /Something|null[0]
 interface Something {
-
 }
 

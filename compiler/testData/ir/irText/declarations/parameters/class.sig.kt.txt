@@ -42,7 +42,6 @@ interface TestInterface<T : Any?> {
   //   Mangled name: TestInterface.TestNestedInterface
   //   Public signature: /TestInterface.TestNestedInterface|null[0]
   interface TestNestedInterface<TT : Any?> {
-
   }
 
 }

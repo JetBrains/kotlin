@@ -39,16 +39,19 @@ class A {
   //   Public signature: test/A.<init>|-5645683436151566731[0]
   //   Public signature debug description: <init>(){}
   constructor() /* primary */
+
   // CHECK:
   //   Mangled name: test.A#<init>(kotlin.Double){}
   //   Public signature: test/A.<init>|575075696928934302[0]
   //   Public signature debug description: <init>(kotlin.Double){}
   constructor(x: Double)
+
   // CHECK:
   //   Mangled name: test.A#<init>(kotlin.Int){}
   //   Public signature: test/A.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   constructor(x: Int)
+
   // CHECK:
   //   Mangled name: test.A#<init>(kotlin.String){}
   //   Public signature: test/A.<init>|1280618353163213788[0]

@@ -153,13 +153,11 @@ class TypeParameterAsBound<Y : Any?, @TypeParameterAnn T : @TypeAnn(name = "Y as
 //   Mangled name: Generic
 //   Public signature: /Generic|null[0]
 interface Generic<G : Any?> {
-
 }
 
 // CHECK:
 //   Mangled name: Simple
 //   Public signature: /Simple|null[0]
 interface Simple {
-
 }
 

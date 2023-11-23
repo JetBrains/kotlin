@@ -26,7 +26,6 @@ class Bar<T : Any?> {
 //   Mangled name: Foo
 //   Public signature: /Foo|null[0]
 interface Foo<T : Any?> {
-
 }
 
 // CHECK JVM_IR:

@@ -35,7 +35,6 @@ class CBoth : ILeft, IRight {
 //   Mangled name: ILeft
 //   Public signature: /ILeft|null[0]
 interface ILeft {
-
   // CHECK:
   //   Mangled name: ILeft#foo(){}
   //   Public signature: /ILeft.foo|-1041209573719867811[0]
@@ -63,7 +62,6 @@ interface ILeft {
 //   Mangled name: IRight
 //   Public signature: /IRight|null[0]
 interface IRight {
-
   // CHECK:
   //   Mangled name: IRight#foo(){}
   //   Public signature: /IRight.foo|-1041209573719867811[0]

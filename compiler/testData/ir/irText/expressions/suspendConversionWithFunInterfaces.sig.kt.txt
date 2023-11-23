@@ -2,7 +2,6 @@
 //   Mangled name: SuspendRunnable
 //   Public signature: /SuspendRunnable|null[0]
 fun interface SuspendRunnable {
-
   // CHECK:
   //   Mangled name: SuspendRunnable#invoke(){}
   //   Public signature: /SuspendRunnable.invoke|-4663091332620260873[0]

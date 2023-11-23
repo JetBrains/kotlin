@@ -27,6 +27,7 @@ data class Counter {
   //   Public signature: /Counter.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   constructor(i: Int) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: Counter#component1(){}kotlin.Int
   //   Public signature: /Counter.component1|-8217597213800111288[0]
@@ -103,6 +104,7 @@ data class CounterConfig {
   //   Public signature: /CounterConfig.<init>|-5182794243525578284[0]
   //   Public signature debug description: <init>(kotlin.Int){}
   constructor(max: Int) /* primary */
+
   // CHECK JVM_IR:
   //   Mangled name: CounterConfig#component1(){}kotlin.Int
   //   Public signature: /CounterConfig.component1|-8217597213800111288[0]
