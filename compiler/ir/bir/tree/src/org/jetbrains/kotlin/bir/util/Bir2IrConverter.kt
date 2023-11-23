@@ -152,7 +152,6 @@ class Bir2IrConverter(
         assert(endOffset == old.sourceSpan.end)
         origin = old.origin
         name = old.name
-        varargElementType = null
         isCrossinline = old.isCrossinline
         isNoinline = old.isNoinline
         isHidden = old.isHidden
