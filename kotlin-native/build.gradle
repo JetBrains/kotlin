@@ -17,7 +17,6 @@
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.CopySamples
-import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
 import org.jetbrains.kotlin.cpp.CppUsage
@@ -169,9 +168,8 @@ dependencies {
     distPack project(':kotlin-native:utilities:basic-utils')
     distPack project(':kotlin-native:klib')
     distPack project(path: ':kotlin-native:endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
-    commonSources project(path: ':kotlin-stdlib-common', configuration: 'sources')
-    commonSources project(path: ':kotlin-test:kotlin-test-common', configuration: 'sources')
-    commonSources project(path: ':kotlin-test:kotlin-test-annotations-common', configuration: 'sources')
+    commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
+    commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
     compilationDatabase project(":kotlin-native:common")
     compilationDatabase project(":kotlin-native:runtime")
     runtimeBitcode project(":kotlin-native:runtime")
@@ -199,30 +197,34 @@ tasks.named("build") {
     dependsOn 'dist', 'distPlatformLibs'
 }
 
-tasks.register("distCommonSources", CopyCommonSources) {
-    outputDir "$distDir/sources"
-    sourcePaths configurations.commonSources
-    zipSources true
-}
-
 tasks.register("distNativeSources", Zip) {
+    dependsOn(configurations.commonSources)
+    duplicatesStrategy = DuplicatesStrategy.FAIL
     destinationDirectory = file("$distDir/sources")
     archiveFileName = "kotlin-stdlib-native-sources.zip"
 
     includeEmptyDirs = false
     include('**/*.kt')
 
-    from(project(':kotlin-native:runtime').file('src/main/kotlin'))
-    from(project(":kotlin-stdlib-common").file('../native-wasm/src/'))
-    from(project(':kotlin-native:Interop:Runtime').file('src/main/kotlin'))
-    from(project(':kotlin-native:Interop:Runtime').file('src/native/kotlin'))
-    from(project(':kotlin-native:Interop:JsRuntime').file('src/main/kotlin')) {
-        into('kotlinx/wasm/jsinterop')
+    from {
+        configurations.commonSources
+                .collect { zipTree(it) }
+                .inject { t1, t2 -> t1 + t2 }
+    }
+    into('nativeWasmMain') {
+        from(project(":kotlin-stdlib").file('native-wasm/src/'))
+    }
+    into('nativeMain') {
+        from(project(':kotlin-native:runtime').file('src/main/kotlin'))
+        from(project(':kotlin-native:Interop:Runtime').file('src/main/kotlin'))
+        from(project(':kotlin-native:Interop:Runtime').file('src/native/kotlin'))
+        from(project(':kotlin-native:Interop:JsRuntime').file('src/main/kotlin')) {
+            into('kotlinx/wasm/jsinterop')
+        }
     }
 }
 
 tasks.register("distSources") {
-    dependsOn(distCommonSources)
     dependsOn(distNativeSources)
 }
 

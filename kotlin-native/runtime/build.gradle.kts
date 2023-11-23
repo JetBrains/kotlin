@@ -507,12 +507,12 @@ tasks.named("clean") {
 
 // region: Stdlib
 
-val commonStdlibSrcDirs = project(":kotlin-stdlib-common")
+val commonStdlibSrcDirs = project(":kotlin-stdlib")
         .files(
-                "src/kotlin",
-                "src/generated",
-                "../unsigned/src",
-                "../src"
+                "common/src/kotlin",
+                "common/src/generated",
+                "unsigned/src",
+                "src"
         ).files
 
 val interopRuntimeCommonSrcDir = project(":kotlin-native:Interop:Runtime").file("src/main/kotlin")
@@ -521,12 +521,12 @@ val interopSrcDirs = listOf(
         project(":kotlin-native:Interop:JsRuntime").file("src/main/kotlin")
 )
 
-val testAnnotationCommonSrcDir = project(":kotlin-test:kotlin-test-annotations-common").files("src/main/kotlin").files
-val testCommonSrcDir = project(":kotlin-test:kotlin-test-common").files("src/main/kotlin").files
+val testAnnotationCommonSrcDir = project(":kotlin-test").files("annotations-common/src/main/kotlin").files
+val testCommonSrcDir = project(":kotlin-test").files("common/src/main/kotlin").files
 
-val stdLibSrcDirs =  interopSrcDirs + listOf(
+val stdLibSrcDirs = interopSrcDirs + listOf(
         project.file("src/main/kotlin"),
-        project(":kotlin-stdlib-common").file("../native-wasm/src/")
+        project(":kotlin-stdlib").file("native-wasm/src/")
 )
 
 lateinit var stdlibBuildTask: TaskProvider<Task>
