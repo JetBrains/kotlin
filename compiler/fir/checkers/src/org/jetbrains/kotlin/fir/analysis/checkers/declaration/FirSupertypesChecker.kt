@@ -5,30 +5,33 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
+import com.intellij.psi.impl.source.tree.ElementType
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.getChildren
 
 object FirSupertypesChecker : FirClassChecker() {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -89,6 +92,7 @@ object FirSupertypesChecker : FirClassChecker() {
             }
 
             checkClassCannotBeExtendedDirectly(symbol, reporter, superTypeRef, context)
+            checkNamedFunctionTypeParameter(superTypeRef, context, reporter)
 
             if (coneType.typeArguments.isNotEmpty()) {
                 checkProjectionInImmediateArgumentToSupertype(coneType, superTypeRef, reporter, context)
@@ -107,7 +111,7 @@ object FirSupertypesChecker : FirClassChecker() {
     private fun checkAnnotationOnSuperclass(
         superTypeRef: FirTypeRef,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         for (annotation in superTypeRef.annotations) {
             if (annotation.useSiteTarget != null) {
@@ -120,7 +124,7 @@ object FirSupertypesChecker : FirClassChecker() {
         symbol: FirClassifierSymbol<*>?,
         reporter: DiagnosticReporter,
         superTypeRef: FirTypeRef,
-        context: CheckerContext
+        context: CheckerContext,
     ) {
         if (symbol is FirRegularClassSymbol && symbol.classId == StandardClassIds.Enum) {
             reporter.reportOn(superTypeRef.source, FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY, symbol, context)
@@ -131,7 +135,7 @@ object FirSupertypesChecker : FirClassChecker() {
         coneType: ConeKotlinType,
         superTypeRef: FirTypeRef,
         reporter: DiagnosticReporter,
-        context: CheckerContext
+        context: CheckerContext,
     ) {
         val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(superTypeRef) ?: return
         for ((index, typeArgument) in coneType.typeArguments.withIndex()) {
@@ -152,7 +156,7 @@ object FirSupertypesChecker : FirClassChecker() {
         reporter: DiagnosticReporter,
         superTypeRef: FirTypeRef,
         coneType: ConeKotlinType,
-        context: CheckerContext
+        context: CheckerContext,
     ) {
         if (symbol is FirRegularClassSymbol && symbol.classKind == ClassKind.INTERFACE) {
             for (typeArgument in fullyExpandedType.typeArguments) {
@@ -167,7 +171,7 @@ object FirSupertypesChecker : FirClassChecker() {
     private fun checkDelegationNotToInterface(
         declaration: FirClass,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         for (subDeclaration in declaration.declarations) {
             if (subDeclaration is FirField) {
@@ -180,4 +184,39 @@ object FirSupertypesChecker : FirClassChecker() {
             }
         }
     }
+
+    private fun checkNamedFunctionTypeParameter(
+        superTypeRef: FirTypeRef,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        val delegatedTypeRef = (superTypeRef as? FirResolvedTypeRef)?.delegatedTypeRef ?: return
+        if (delegatedTypeRef !is FirFunctionTypeRef) return
+        for (parameter in delegatedTypeRef.parameters) {
+            if (parameter.name != null) {
+                val source = parameter.findSourceForParameterName() ?: continue
+                reporter.reportOn(
+                    source,
+                    FirErrors.UNSUPPORTED,
+                    "named parameter in function type in supertype position",
+                    context
+                )
+            }
+        }
+    }
+
+    private fun FirFunctionTypeParameter.findSourceForParameterName(): KtSourceElement? {
+        val source = this.source ?: return null
+        val name = this.name ?: return null
+        val treeStructure = source.treeStructure
+        val nodes = source.lighterASTNode.getChildren(treeStructure)
+        val node = nodes.find { it.tokenType == KtTokens.IDENTIFIER && treeStructure.toString(it) == name.identifier } ?: return null
+
+        return node.toKtLightSourceElement(
+            treeStructure,
+            startOffset = node.startOffset,
+            endOffset = node.endOffset
+        )
+    }
+
 }
