@@ -6,25 +6,31 @@
 package org.jetbrains.kotlin.sir.passes
 
 import org.jetbrains.kotlin.sir.SirElement
+import org.jetbrains.kotlin.sir.SirForeignFunction
+import org.jetbrains.kotlin.sir.SirOrigin
+import org.jetbrains.kotlin.sir.SirVisibility
+import org.jetbrains.kotlin.sir.builder.buildForeignFunction
 import org.jetbrains.sir.passes.SirPass
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SirPassTests {
     @Test
     fun smoke() {
         val elementDescription = "mySirElement"
-        val mySirElement = object : SirElement {
-            override fun toString(): String {
-                return elementDescription
-            }
+        val mySirElement = buildForeignFunction {
+            origin = SirOrigin(listOf(elementDescription))
+            visibility = SirVisibility.PUBLIC
         }
-        val myPass = object : SirPass<String, Unit> {
-            override fun run(element: SirElement, data: Unit): String {
-                return element.toString()
+        val myPass = object : SirPass<List<String>?, Unit> {
+            override fun run(element: SirElement, data: Unit): List<String>? {
+                if (element is SirForeignFunction) {
+                    return element.origin.path
+                }
+                return null
             }
         }
         val result = myPass.run(mySirElement, Unit)
-        assertEquals(elementDescription, result)
+        assertEquals(elementDescription, result?.first())
     }
 }

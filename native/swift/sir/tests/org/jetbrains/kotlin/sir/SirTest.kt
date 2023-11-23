@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.sir
 
-import org.jetbrains.kotlin.sir.builder.SirEnumBuilder
 import org.jetbrains.kotlin.sir.builder.buildEnum
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class SirTest {

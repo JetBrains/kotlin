@@ -49,12 +49,12 @@ abstract class AbstractKotlinSirContextTestBase : AbstractAnalysisApiBasedTest()
         val ktFiles = moduleStructure.modules
             .flatMap { testServices.ktModuleProvider.getModuleFiles(it).filterIsInstance<KtFile>() }
 
-        val module = buildModule() {
+        val module = buildModule {
             val sirFactory = SirGenerator()
             ktFiles.forEach { file ->
                 declarations += sirFactory.build(file)
             }
-        }.build()
+        }
 
         val actual = buildString {
             module.declarations
