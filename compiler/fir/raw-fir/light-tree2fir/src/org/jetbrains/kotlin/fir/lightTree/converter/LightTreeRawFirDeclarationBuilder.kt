@@ -589,8 +589,8 @@ class LightTreeRawFirDeclarationBuilder(
                             zippedParameters,
                             context.packageFqName,
                             context.className,
-                            createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef },
-                            createParameterTypeRefWithSourceKind = { property, _ -> property.returnTypeRef },
+                            createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
+                            createParameterTypeRefWithSourceKind = { property, kind -> property.returnTypeRef.copyWithNewSourceKind(kind) },
                             addValueParameterAnnotations = { valueParam ->
                                 valueParam.forEachChildren {
                                     if (it.tokenType == MODIFIER_LIST) convertModifierList(it).annotations.filterTo(annotations) {
