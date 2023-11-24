@@ -10,7 +10,7 @@ fun main(arg: Any) {
     val value = myBuilder {
         doSmthng("one ")
         run { a; this }.<!UNRESOLVED_REFERENCE!>a<!> = 10
-        a += 1
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>a<!> += 1
         this.a = <!ASSIGNMENT_TYPE_MISMATCH!>57<!>
         this.<!ILLEGAL_SELECTOR, VARIABLE_EXPECTED!>(a)<!> = 57
         a = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>

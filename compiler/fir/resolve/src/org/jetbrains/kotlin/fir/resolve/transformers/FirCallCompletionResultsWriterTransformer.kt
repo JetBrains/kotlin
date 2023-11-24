@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -108,6 +109,8 @@ class FirCallCompletionResultsWriterTransformer(
     ): T {
         val subCandidate = calleeReference.candidate
 
+        val additionalDiagnostic = checkExplicitReceiver(calleeReference.candidate)
+
         subCandidate.updateSubstitutedMemberIfReceiverContainsTypeVariable()
 
         val declaration = subCandidate.symbol.fir
@@ -154,8 +157,8 @@ class FirCallCompletionResultsWriterTransformer(
             extensionReceiver = extensionReceiver?.transformSingle(updaterForThisReferences, null)
         }
 
-        (qualifiedAccessExpression as? FirQualifiedAccessExpression)?.apply {
-            replaceCalleeReference(calleeReference.toResolvedReference())
+        qualifiedAccessExpression.apply {
+            replaceCalleeReference(calleeReference.toResolvedReference(additionalDiagnostic))
             replaceDispatchReceiver(dispatchReceiver)
             replaceExtensionReceiver(extensionReceiver)
         }
@@ -558,8 +561,12 @@ class FirCallCompletionResultsWriterTransformer(
             context.file.source
         )
 
-        val resolvedReference = when (calleeReference) {
-            is FirErrorReferenceWithCandidate -> calleeReference.toErrorReference(calleeReference.diagnostic)
+
+        val additionalDiagnostic = checkExplicitReceiver(subCandidate)
+
+        val resolvedReference = when {
+            calleeReference is FirErrorReferenceWithCandidate -> calleeReference.toErrorReference(calleeReference.diagnostic)
+            additionalDiagnostic != null -> calleeReference.toErrorReference(additionalDiagnostic)
             else -> buildResolvedCallableReference {
                 source = calleeReference.source
                 name = calleeReference.name
@@ -1012,7 +1019,7 @@ class FirCallCompletionResultsWriterTransformer(
         candidate.system.errors.any { it is InferredEmptyIntersection }
                 || candidate.diagnostics.any { it is InferenceError && it.constraintError is InferredEmptyIntersection }
 
-    private fun FirNamedReferenceWithCandidate.toResolvedReference(): FirNamedReference {
+    private fun FirNamedReferenceWithCandidate.toResolvedReference(additionalDiagnostic: ConeDiagnostic? = null): FirNamedReference {
         val errorDiagnostic = when {
             this is FirErrorReferenceWithCandidate -> this.diagnostic
             !candidate.currentApplicability.isSuccess -> ConeInapplicableCandidateError(candidate.currentApplicability, candidate)
@@ -1026,7 +1033,7 @@ class FirCallCompletionResultsWriterTransformer(
             // NB: these additional errors might not lead to marking candidate unsuccessful because it may be a warning in FE 1.0
             // We consider those warnings as errors in FIR
             hasAdditionalResolutionErrors() -> ConeConstraintSystemHasContradiction(candidate)
-            else -> null
+            else -> additionalDiagnostic
         }
 
         return when (errorDiagnostic) {
@@ -1037,6 +1044,12 @@ class FirCallCompletionResultsWriterTransformer(
             }
 
             else -> toErrorReference(errorDiagnostic)
+        }
+    }
+
+    private fun checkExplicitReceiver(candidate: Candidate): ConeDiagnostic? {
+        return candidate.diagnostics.firstIsInstanceOrNull<TypeVariableAsExplicitReceiver>()?.let {
+            ConeUsingTypeVariableAsExplicitReceiver(it.explicitReceiver, it.typeParameter)
         }
     }
 }

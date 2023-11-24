@@ -20,51 +20,51 @@ fun test() {
     val ret1 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
-        get()?.hashCode()
-        get()?.equals(1)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.equals(1)
         // there is `String?.equals` extension
         get()<!UNSAFE_CALL!>.<!>equals("")
     }
     val ret2 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
-        get()?.hashCode()
-        get()?.equals(1)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.equals(1)
         val x = get()
-        x?.hashCode()
-        x?.equals(1)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>?.equals(1)
         x<!UNSAFE_CALL!>.<!>equals("")
     }
     val ret3 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
-        get()?.hashCode()
-        get()?.equals(1)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.equals(1)
         val x = get()
-        x?.hashCode()
-        x?.equals(1)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>?.equals(1)
 
         if (get() == null) {}
         if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>get() === null<!>) {}
 
         if (x != null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
-            x.equals("")
-            x.hashCode()
-            x.toString()
-            x.test()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
-            x.test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.equals("")
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.hashCode()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.toString()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test2()
         }
 
         ""
@@ -160,47 +160,47 @@ fun test() {
     val ret41 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
-        get()?.hashCode()
-        get()?.equals(1)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.equals(1)
         val x = get()
-        x?.hashCode()
-        x?.equals(1)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>?.equals(1)
 
         if (get() == null) {}
         if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>get() === null<!>) {}
 
         if (x == null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
         }
 
-        if (<!SENSELESS_COMPARISON!>x == null<!>) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
+        if (x == null) {
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
         }
 
-        if (<!SENSELESS_COMPARISON!>x == null<!>) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+        if (x == null) {
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>test2()
         }
 
-        if (<!SENSELESS_COMPARISON!>x == null<!>) {
+        if (x == null) {
             x.test2()
         }
 
-        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x === null<!>) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === null<!>) {
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
         }
 
-        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x === null<!>) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
+        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === null<!>) {
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
         }
 
-        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x === null<!>) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === null<!>) {
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>test2()
         }
 
-        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x === null<!>) {
+        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === null<!>) {
             x.test2()
         }
 
@@ -290,22 +290,22 @@ fun test() {
     val ret51 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
-        get()?.hashCode()
-        get()?.equals(1)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.equals(1)
         val x = get()
-        x?.hashCode()
-        x?.equals(1)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>?.equals(1)
 
         if (get() == null) {}
         if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>get() === null<!>) {}
 
         if (x == null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>test2()
             x.test2()
         }
 
