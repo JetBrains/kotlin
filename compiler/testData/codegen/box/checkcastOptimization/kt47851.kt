@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE, WASM
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6, NATIVE, WASM
 // FIR status: result.getMethod OK in FE1.0, unresolved in FIR
 
 class C(val value: String) {

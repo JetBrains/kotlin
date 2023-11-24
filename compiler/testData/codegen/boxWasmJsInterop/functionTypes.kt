@@ -1,5 +1,5 @@
 // Char issues
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
 // MODULE: main
 // FILE: externals.js

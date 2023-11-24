@@ -1,6 +1,6 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6, NATIVE
 // FIR status: KotlinNothingValueException from create()
 
 fun <T : A> create(modelClass: Class<T>): T {
