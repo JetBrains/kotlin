@@ -101,7 +101,6 @@ class VariableFixationFinder(
         !notFixedTypeVariables.contains(variable) || dependencyProvider.isVariableRelatedToTopLevelType(variable) ||
                 variableHasUnprocessedConstraintsInForks(variable) ->
             TypeVariableFixationReadiness.FORBIDDEN
-        dependencyProvider.isShallowlyRelatedToOuterType(variable) -> TypeVariableFixationReadiness.SHALLOW_OUTER_TYPE_VARIABLE_DEPENDENCY
         isTypeInferenceForSelfTypesSupported && areAllProperConstraintsSelfTypeBased(variable) ->
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
@@ -182,7 +181,7 @@ class VariableFixationFinder(
 
         return when (getTypeVariableReadiness(candidate, dependencyProvider)) {
             TypeVariableFixationReadiness.FORBIDDEN -> null
-            TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT, TypeVariableFixationReadiness.SHALLOW_OUTER_TYPE_VARIABLE_DEPENDENCY -> VariableForFixation(candidate, false)
+            TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> VariableForFixation(candidate, false)
             TypeVariableFixationReadiness.DEEP_OUTER_TYPE_VARIABLE_DEPENDENCY ->
                 VariableForFixation(candidate, hasProperConstraint = isRelevantToInputType)
             TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS ->
@@ -216,7 +215,7 @@ class VariableFixationFinder(
                 && !c.isNullabilityConstraint
 
     private fun Context.isProperType(type: KotlinTypeMarker): Boolean =
-        isProperTypeForFixation(type) { t -> !t.contains { isNotFixedRelevantVariable(it) } }
+        isProperTypeForFixation(type, { it in notFixedTypeVariables }) { t -> !t.contains { isNotFixedRelevantVariable(it) } }
 
     private fun Context.isNotFixedRelevantVariable(it: KotlinTypeMarker): Boolean {
         val key = it.typeConstructor()
@@ -263,8 +262,15 @@ class VariableFixationFinder(
     }
 }
 
-inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(type: KotlinTypeMarker, isProper: (KotlinTypeMarker) -> Boolean) =
-    isProper(type) && extractProjectionsForAllCapturedTypes(type).all(isProper)
+inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(
+    type: KotlinTypeMarker,
+    isNotFixedTypeVariable: (TypeConstructorMarker) -> Boolean,
+    isProper: (KotlinTypeMarker) -> Boolean
+): Boolean {
+    if (isNotFixedTypeVariable(type.typeConstructor())) return false
+
+    return isProper(type) && extractProjectionsForAllCapturedTypes(type).all(isProper)
+}
 
 fun TypeSystemInferenceExtensionContext.extractProjectionsForAllCapturedTypes(baseType: KotlinTypeMarker): Set<KotlinTypeMarker> {
     if (baseType.isFlexible()) {
