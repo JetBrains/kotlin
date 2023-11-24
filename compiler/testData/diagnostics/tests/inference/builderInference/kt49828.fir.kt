@@ -76,7 +76,7 @@ fun main() {
     val list6 = buildList {
         add("one")
 
-        get(0).bar()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get(0)<!>.bar()
     }
     val list7 = buildList {
         add("one")

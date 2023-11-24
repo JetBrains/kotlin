@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
@@ -99,17 +100,6 @@ class FirDelegatedPropertyInferenceSession(
     private fun <T> T.isProvideDelegate() where T : FirResolvable, T : FirStatement =
         isAnyOfDelegateOperators() && (this as FirResolvable).candidate()?.callInfo?.name == OperatorNameConventions.PROVIDE_DELEGATE
 
-    private fun <T> T.isAnyOfDelegateOperators(): Boolean where T : FirResolvable {
-        if (this is FirPropertyAccessExpression) {
-            val originalCall = this.candidate()?.callInfo?.callSite as? FirFunctionCall ?: return false
-            return originalCall.isAnyOfDelegateOperators()
-        }
-
-        if (this !is FirFunctionCall || origin != FirFunctionCallOrigin.Operator) return false
-        val name = calleeReference.name
-        return name == OperatorNameConventions.PROVIDE_DELEGATE || name == OperatorNameConventions.GET_VALUE || name == OperatorNameConventions.SET_VALUE
-    }
-
     override fun outerCSForCandidate(candidate: Candidate): ConstraintStorage? =
         resolutionContext.bodyResolveContext.outerConstraintStorage.takeIf { it !== ConstraintStorage.Empty }
 
@@ -194,4 +184,15 @@ class FirDelegatedPropertyInferenceSession(
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
 
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
+}
+
+fun FirElement.isAnyOfDelegateOperators(): Boolean {
+    if (this is FirPropertyAccessExpression) {
+        val originalCall = this.candidate()?.callInfo?.callSite as? FirFunctionCall ?: return false
+        return originalCall.isAnyOfDelegateOperators()
+    }
+
+    if (this !is FirFunctionCall || origin != FirFunctionCallOrigin.Operator) return false
+    val name = calleeReference.name
+    return name == OperatorNameConventions.PROVIDE_DELEGATE || name == OperatorNameConventions.GET_VALUE || name == OperatorNameConventions.SET_VALUE
 }
