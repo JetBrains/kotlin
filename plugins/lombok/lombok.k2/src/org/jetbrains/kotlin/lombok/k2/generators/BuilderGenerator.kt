@@ -348,7 +348,6 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
             isOverride = false
             isInner = this@buildJavaConstructor.isInner
         }
-        this.visibility = visibility
         isPrimary = false
         returnTypeRef = buildResolvedTypeRef {
             type = outerClassSymbol.defaultType()

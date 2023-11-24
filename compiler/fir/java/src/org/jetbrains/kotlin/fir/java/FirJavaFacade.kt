@@ -480,7 +480,6 @@ abstract class FirJavaFacade(
                     Modality.FINAL,
                     EffectiveVisibility.Public
                 )
-                visibility = Visibilities.Public
                 isPrimary = true
                 returnTypeRef = classType.toFirResolvedTypeRef()
                 dispatchReceiverType = null
@@ -662,7 +661,6 @@ abstract class FirJavaFacade(
                 isInner = isThisInner
                 hasStableParameterNames = false
             }
-            this.visibility = visibility
             // TODO get rid of dependency on PSI KT-63046
             isPrimary = javaConstructor == null || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
             returnTypeRef = buildResolvedTypeRef {
@@ -698,12 +696,12 @@ abstract class FirJavaFacade(
             this.moduleData = moduleData
             isFromSource = javaClass.isFromSource
             symbol = FirConstructorSymbol(constructorId)
-            status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
+            val visibility = if (classKind == ClassKind.ENUM_CLASS) Visibilities.Private else Visibilities.Public
+            status = FirResolvedDeclarationStatusImpl(visibility, Modality.FINAL, EffectiveVisibility.Public)
             returnTypeRef = buildResolvedTypeRef {
                 type = ownerClassBuilder.buildSelfTypeRef()
             }
             valueParametersForAnnotationConstructor?.forEach { _, firValueParameter -> valueParameters += firValueParameter }
-            visibility = if (classKind == ClassKind.ENUM_CLASS) Visibilities.Private else Visibilities.Public
             isInner = false
             isPrimary = true
             annotationBuilder = { emptyList() }

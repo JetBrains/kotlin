@@ -11,7 +11,7 @@ public final enum class AnnotatedEnumEntry : R|kotlin/Enum<test/AnnotatedEnumEnt
     public final static val entries: R|kotlin/enums/EnumEntries<test/AnnotatedEnumEntry>|
         public get(): R|kotlin/enums/EnumEntries<test/AnnotatedEnumEntry>|
 
-    public constructor(): R|test/AnnotatedEnumEntry|
+    private constructor(): R|test/AnnotatedEnumEntry|
 
     public final annotation class Anno : R|kotlin/Annotation| {
         public constructor(value: R|kotlin/String|): R|test/AnnotatedEnumEntry.Anno|

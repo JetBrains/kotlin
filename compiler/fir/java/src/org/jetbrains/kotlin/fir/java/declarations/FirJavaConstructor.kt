@@ -172,7 +172,6 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
 @FirBuilderDsl
 class FirJavaConstructorBuilder : FirConstructorBuilder() {
-    lateinit var visibility: Visibility
     var isInner: Boolean by Delegates.notNull()
     var isPrimary: Boolean by Delegates.notNull()
     var isFromSource: Boolean by Delegates.notNull()
