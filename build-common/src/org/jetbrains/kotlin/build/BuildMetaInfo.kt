@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.build
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.incremental.storage.RelativeFileToPathConverter
 
-abstract class BuildMetaInfo(val converter: RelativeFileToPathConverter?) {
+abstract class BuildMetaInfo {
     enum class CustomKeys {
         LANGUAGE_VERSION_STRING, IS_EAP, METADATA_VERSION_STRING, PLUGIN_CLASSPATHS, API_VERSION_STRING
     }
@@ -78,7 +77,7 @@ abstract class BuildMetaInfo(val converter: RelativeFileToPathConverter?) {
         val apiVersionString = args.apiVersion ?: languageVersionSting
         resultMap[CustomKeys.API_VERSION_STRING.name] = apiVersionString
 
-        val pluginClasspath = PluginClasspath(args.pluginClasspaths, converter).serialize()
+        val pluginClasspath = PluginClasspath(args.pluginClasspaths).serialize()
         resultMap[CustomKeys.PLUGIN_CLASSPATHS.name] = pluginClasspath
 
         return resultMap
