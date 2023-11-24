@@ -252,6 +252,23 @@ tasks {
     val assemble by existing {
         dependsOn(jvmJarTasks)
     }
+
+    val jvmTestTasks = jvmTestFrameworks.map { framework ->
+        register("jvm${framework}Test", Test::class) {
+            group = "verification"
+            val compilation = kotlin.jvm().compilations["${framework}Test"]
+            classpath = compilation.runtimeDependencyFiles + compilation.output.allOutputs
+            testClassesDirs = compilation.output.classesDirs
+            when (framework) {
+                JvmTestFramework.JUnit -> useJUnit()
+                JvmTestFramework.JUnit5 -> useJUnitPlatform()
+                JvmTestFramework.TestNG -> useTestNG()
+            }
+        }
+    }
+    val allTests by existing {
+        dependsOn(jvmTestTasks)
+    }
 }
 
 configurations {
