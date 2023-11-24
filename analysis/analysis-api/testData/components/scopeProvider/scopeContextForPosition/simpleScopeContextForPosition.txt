@@ -19,13 +19,7 @@ implicit receivers:
   owner symbol: KtFirNamedClassOrObjectSymbol
 
 scopes:
-  LocalScope, index = 0
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0
-
-  TypeScope, index = 1
+  TypeScope, index = 0
     packages: 0
     classifiers: 0
     callables: 4
@@ -188,19 +182,19 @@ scopes:
         valueParameters: []
         visibility: Public
 
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
   LocalScope, index = 2
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  LocalScope, index = 3
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0
-
-  TypeScope, index = 4
+  TypeScope, index = 3
     packages: 0
     classifiers: 0
     callables: 4
@@ -363,13 +357,13 @@ scopes:
         valueParameters: []
         visibility: Public
 
-  LocalScope, index = 5
+  LocalScope, index = 4
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  LocalScope, index = 6
+  LocalScope, index = 5
     packages: 0
     classifiers: 0
     callables: 1
@@ -390,7 +384,7 @@ scopes:
         typeParameters: []
     constructors: 0
 
-  LocalScope, index = 7
+  LocalScope, index = 6
     packages: 0
     classifiers: 0
     callables: 1
@@ -416,7 +410,7 @@ scopes:
         typeParameters: []
     constructors: 0
 
-  LocalScope, index = 8
+  LocalScope, index = 7
     packages: 0
     classifiers: 0
     callables: 2
@@ -466,7 +460,7 @@ scopes:
         visibility: Local
     constructors: 0
 
-  LocalScope, index = 9
+  LocalScope, index = 8
     packages: 0
     classifiers: 0
     callables: 1
@@ -492,7 +486,7 @@ scopes:
         typeParameters: []
     constructors: 0
 
-  TypeParameterScope, index = 10
+  TypeParameterScope, index = 9
     packages: 0
     classifiers: 1
       KtTypeParameterSymbol:
@@ -506,7 +500,7 @@ scopes:
     callables: 0
     constructors: 0
 
-  TypeScope, index = 11
+  TypeScope, index = 10
     packages: 0
     classifiers: 2
       KtNamedClassOrObjectSymbol:
@@ -742,7 +736,7 @@ scopes:
         valueParameters: []
         visibility: Public
 
-  StaticMemberScope, index = 12
+  StaticMemberScope, index = 11
     packages: 0
     classifiers: 1
       KtNamedClassOrObjectSymbol:
@@ -773,7 +767,7 @@ scopes:
     callables: 0
     constructors: 0
 
-  StaticMemberScope, index = 13
+  StaticMemberScope, index = 12
     packages: 0
     classifiers: 1
       KtNamedClassOrObjectSymbol:
@@ -804,13 +798,13 @@ scopes:
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 14
+  ExplicitSimpleImportingScope, index = 13
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 15
+  PackageMemberScope, index = 14
     packages: 6
       KtPackageSymbol:
         fqName: META-INF
@@ -1115,15 +1109,15 @@ scopes:
         visibility: Public
     constructors: 0
 
+  DefaultSimpleImportingScope, index = 15
+
   DefaultSimpleImportingScope, index = 16
 
-  DefaultSimpleImportingScope, index = 17
-
-  ExplicitStarImportingScope, index = 18
+  ExplicitStarImportingScope, index = 17
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 19
+  DefaultStarImportingScope, index = 18
 

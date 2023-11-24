@@ -25,13 +25,7 @@ scopes:
     callables: 0
     constructors: 0
 
-  LocalScope, index = 3
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0
-
-  TypeScope, index = 4
+  TypeScope, index = 3
     packages: 0
     classifiers: 0
     callables: 3
@@ -165,19 +159,19 @@ scopes:
         valueParameters: []
         visibility: Public
 
-  LocalScope, index = 5
+  LocalScope, index = 4
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 6
+  ExplicitSimpleImportingScope, index = 5
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 7
+  PackageMemberScope, index = 6
     packages: 6
       KtPackageSymbol:
         fqName: META-INF
@@ -267,15 +261,15 @@ scopes:
         visibility: Public
     constructors: 0
 
+  DefaultSimpleImportingScope, index = 7
+
   DefaultSimpleImportingScope, index = 8
 
-  DefaultSimpleImportingScope, index = 9
-
-  ExplicitStarImportingScope, index = 10
+  ExplicitStarImportingScope, index = 9
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 11
+  DefaultStarImportingScope, index = 10
 
