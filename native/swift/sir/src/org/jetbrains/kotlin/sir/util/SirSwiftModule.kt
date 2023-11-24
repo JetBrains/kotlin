@@ -21,20 +21,34 @@ object SirSwiftModule : SirModule() {
     override val declarations: List<SirDeclaration> by lazy {
         listOf(
             bool,
+
             int8,
             int16,
             int32,
             int64,
+
+            uint8,
+            uint16,
+            uint32,
+            uint64,
+
             double,
             float,
         )
     }
 
     val bool = primitive("Bool")
+
     val int8 = primitive("Int8")
     val int16 = primitive("Int16")
     val int32 = primitive("Int32")
     val int64 = primitive("Int64")
+
+    val uint8 = primitive("UInt8")
+    val uint16 = primitive("UInt16")
+    val uint32 = primitive("UInt32")
+    val uint64 = primitive("UInt64")
+
     val double = primitive("Double")
     val float = primitive("Float")
 

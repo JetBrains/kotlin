@@ -7,6 +7,8 @@ description = "SIR to Kotlin bindings generator"
 dependencies {
     compileOnly(kotlinStdlib())
 
+    api(project(":native:swift:sir"))
+
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
