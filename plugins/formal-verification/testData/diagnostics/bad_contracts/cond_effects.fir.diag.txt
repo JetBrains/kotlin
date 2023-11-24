@@ -1,4 +1,14 @@
-/cond_effects.kt:(121,137): info: Generated Viper text for mayReturnNonNull:
+/cond_effects.kt:(121,146): info: Generated Viper text for compoundConditionalEffect:
+method global$fun_compoundConditionalEffect$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
+  returns (ret$0: dom$Unit)
+  ensures true ==> local$b && false
+{
+  label label$ret$0
+}
+
+/cond_effects.kt:(190,220): warning: Cannot verify that if the function returns then (b && false).
+
+/cond_effects.kt:(271,287): info: Generated Viper text for mayReturnNonNull:
 method global$fun_mayReturnNonNull$fun_take$NT_Any$return$NT_Any(local$x: dom$Nullable[dom$Any])
   returns (ret$0: dom$Nullable[dom$Any])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
@@ -11,9 +21,9 @@ method global$fun_mayReturnNonNull$fun_take$NT_Any$return$NT_Any(local$x: dom$Nu
   label label$ret$0
 }
 
-/cond_effects.kt:(178,210): warning: Viper verification error: Postcondition of global$fun_mayReturnNonNull$fun_take$NT_Any$return$NT_Any might not hold. Assertion ret$0 == (dom$Nullable$null(): dom$Nullable[dom$Any]) ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int()) might not hold.
+/cond_effects.kt:(328,360): warning: Cannot verify that if a null value is returned then x is Int.
 
-/cond_effects.kt:(274,287): info: Generated Viper text for mayReturnNull:
+/cond_effects.kt:(424,437): info: Generated Viper text for mayReturnNull:
 method global$fun_mayReturnNull$fun_take$NT_Any$return$NT_Any(local$x: dom$Nullable[dom$Any])
   returns (ret$0: dom$Nullable[dom$Any])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
@@ -26,9 +36,9 @@ method global$fun_mayReturnNull$fun_take$NT_Any$return$NT_Any(local$x: dom$Nulla
   label label$ret$0
 }
 
-/cond_effects.kt:(328,363): warning: Viper verification error: Postcondition of global$fun_mayReturnNull$fun_take$NT_Any$return$NT_Any might not hold. Assertion ret$0 != (dom$Nullable$null(): dom$Nullable[dom$Any]) ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int()) might not hold.
+/cond_effects.kt:(478,513): warning: Cannot verify that if a non-null value is returned then x is Int.
 
-/cond_effects.kt:(573,591): info: Generated Viper text for isNullOrEmptyWrong:
+/cond_effects.kt:(723,741): info: Generated Viper text for isNullOrEmptyWrong:
 method global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_CharSequence$return$T_Boolean(local$seq: dom$Nullable[Ref])
   returns (ret$0: Bool)
   ensures ret$0 == false ==>
@@ -57,9 +67,9 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Int)
 
 
-/cond_effects.kt:(646,682): warning: Viper verification error: Postcondition of global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_CharSequence$return$T_Boolean might not hold. Assertion ret$0 == false ==> local$seq != (dom$Nullable$null(): dom$Nullable[Ref]) might not hold.
+/cond_effects.kt:(796,832): warning: Cannot verify that if a false value is returned then seq != null.
 
-/cond_effects.kt:(775,792): info: Generated Viper text for recursiveContract:
+/cond_effects.kt:(925,942): info: Generated Viper text for recursiveContract:
 field pkg$kotlin$class_String$member_length: Int
 
 method global$fun_recursiveContract$fun_take$T_Int$NT_Any$return$T_Boolean(local$n: Int,
@@ -82,4 +92,4 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Int)
 
 
-/cond_effects.kt:(844,879): warning: Viper verification error: Postcondition of global$fun_recursiveContract$fun_take$T_Int$NT_Any$return$T_Boolean might not hold. Assertion ret$0 == true ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$kotlin$global$class_String()) might not hold.
+/cond_effects.kt:(994,1029): warning: Cannot verify that if a true value is returned then x is String.

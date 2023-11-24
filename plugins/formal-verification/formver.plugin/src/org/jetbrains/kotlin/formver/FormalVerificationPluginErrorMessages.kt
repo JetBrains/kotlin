@@ -55,5 +55,11 @@ object FormalVerificationPluginErrorMessages : BaseDiagnosticRendererFactory() {
             "Function ''{0}'' may leak from its in-place contract.",
             FirDiagnosticRenderers.SYMBOL,
         )
+        put(
+            PluginErrors.CONDITIONAL_EFFECT_ERROR,
+            "Cannot verify that if {0} then {1}.",
+            CommonRenderers.STRING,
+            CommonRenderers.STRING
+        )
     }
 }

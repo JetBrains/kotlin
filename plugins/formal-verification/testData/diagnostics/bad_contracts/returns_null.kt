@@ -4,7 +4,7 @@ import kotlin.contracts.ExperimentalContracts
 @OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>returns_null_unverifiable<!>(x: Int?): Int? {
     contract {
-        <!VIPER_VERIFICATION_ERROR!>returns() implies false<!>
+        <!CONDITIONAL_EFFECT_ERROR!>returns() implies false<!>
     }
     return null
 }

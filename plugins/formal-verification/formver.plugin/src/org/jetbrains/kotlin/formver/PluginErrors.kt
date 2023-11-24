@@ -19,6 +19,7 @@ object PluginErrors {
     val UNEXPECTED_RETURNED_VALUE by warning1<PsiElement, String>()
     val INVALID_INVOCATION_TYPE by warning2<PsiElement, FirBasedSymbol<*>, String>()
     val LAMBDA_MAY_LEAK by warning1<PsiElement, FirBasedSymbol<*>>()
+    val CONDITIONAL_EFFECT_ERROR by warning2<PsiElement, String, String>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FormalVerificationPluginErrorMessages)

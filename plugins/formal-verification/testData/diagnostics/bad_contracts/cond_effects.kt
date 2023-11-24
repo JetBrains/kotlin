@@ -2,9 +2,16 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
+fun <!VIPER_TEXT!>compoundConditionalEffect<!>(b: Boolean): Unit {
+    contract {
+        <!CONDITIONAL_EFFECT_ERROR!>returns() implies (b && false)<!>
+    }
+}
+
+@OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>mayReturnNonNull<!>(x: Any?): Any? {
     contract {
-        <!VIPER_VERIFICATION_ERROR!>returns(null) implies (x is Int)<!>
+        <!CONDITIONAL_EFFECT_ERROR!>returns(null) implies (x is Int)<!>
     }
     return x
 }
@@ -12,7 +19,7 @@ fun <!VIPER_TEXT!>mayReturnNonNull<!>(x: Any?): Any? {
 @OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>mayReturnNull<!>(x: Any?): Any? {
     contract {
-        <!VIPER_VERIFICATION_ERROR!>returnsNotNull() implies (x is Int)<!>
+        <!CONDITIONAL_EFFECT_ERROR!>returnsNotNull() implies (x is Int)<!>
     }
     return x
 }
@@ -24,7 +31,7 @@ fun <!VIPER_TEXT!>mayReturnNull<!>(x: Any?): Any? {
 @OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>isNullOrEmptyWrong<!>(seq: CharSequence?): Boolean {
     contract {
-        <!VIPER_VERIFICATION_ERROR!>returns(false) implies (seq != null)<!>
+        <!CONDITIONAL_EFFECT_ERROR!>returns(false) implies (seq != null)<!>
     }
     return seq != null && seq.length != 0
 }
@@ -32,7 +39,7 @@ fun <!VIPER_TEXT!>isNullOrEmptyWrong<!>(seq: CharSequence?): Boolean {
 @OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>recursiveContract<!>(n: Int, x: Any?): Boolean {
     contract {
-        <!VIPER_VERIFICATION_ERROR!>returns(true) implies (x is String)<!>
+        <!CONDITIONAL_EFFECT_ERROR!>returns(true) implies (x is String)<!>
     }
     return if (n == 0) x is Int else recursiveContract(n - 1, x)
 }

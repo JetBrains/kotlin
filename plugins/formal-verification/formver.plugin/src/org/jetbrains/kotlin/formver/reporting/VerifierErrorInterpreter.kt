@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.formver.ErrorStyle
 import org.jetbrains.kotlin.formver.PluginErrors
 import org.jetbrains.kotlin.formver.embeddings.SourceRole
@@ -35,6 +39,10 @@ class VerifierErrorInterpreter {
                 reportOn(source, PluginErrors.INVALID_INVOCATION_TYPE, role.paramSymbol, role.kind.asUserFriendlyMessage, context)
             is SourceRole.ParamFunctionLeakageCheck -> with(role) {
                 reportOn(source, PluginErrors.LAMBDA_MAY_LEAK, error.reason.fetchLeakingFunction(), context)
+            }
+            is SourceRole.ConditionalEffect -> {
+                val (returnEffect, condition) = role
+                reportOn(source, PluginErrors.CONDITIONAL_EFFECT_ERROR, returnEffect.describe(), condition.describe(), context)
             }
             else -> reportVerificationErrorOriginalViper(source, error, context)
         }
@@ -99,4 +107,39 @@ class VerifierErrorInterpreter {
             is SourceRole.ReturnsEffect.Null -> if (negated) "null" else "non-null"
             else -> TODO("Unreachable")
         }
+
+    private fun SourceRole.ReturnsEffect.describe(): String = when (this) {
+        is SourceRole.ReturnsEffect.Bool, is SourceRole.ReturnsEffect.Null -> "a $this value is returned"
+        SourceRole.ReturnsEffect.Wildcard -> "the function returns"
+    }
+
+    private fun SourceRole.Condition.describe(): String = when (this) {
+        is SourceRole.FirSymbolHolder -> firSymbol.rendered
+        is SourceRole.Condition.Constant -> literal.toString()
+        is SourceRole.Condition.Negation -> "!${arg.describe()}"
+        is SourceRole.Condition.Conjunction -> "(${lhs.describe()} && ${rhs.describe()})"
+        is SourceRole.Condition.Disjunction -> "(${lhs.describe()} || ${rhs.describe()})"
+        is SourceRole.Condition.IsNull -> buildString {
+            append(targetVariable.rendered)
+            when (negated) {
+                true -> append(" != ")
+                false -> append(" == ")
+            }
+            append("null")
+        }
+        is SourceRole.Condition.IsType -> buildString {
+            append(targetVariable.rendered)
+            when (negated) {
+                true -> append(" !is ")
+                false -> append(" is ")
+            }
+            append(expectedType.rendered)
+        }
+    }
+
+    private val ConeKotlinType.rendered: String
+        get() = renderReadable()
+
+    private val FirBasedSymbol<*>.rendered: String
+        get() = FirDiagnosticRenderers.DECLARATION_NAME.render(this)
 }

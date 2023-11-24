@@ -25,4 +25,4 @@ method global$fun_getX$fun_take$T_Any$return$NT_Int(local$a: dom$Any)
   label label$ret$0
 }
 
-/as_type_contract.kt:(194,236): warning: Viper verification error: Postcondition of global$fun_getX$fun_take$T_Any$return$NT_Int might not hold. Assertion ret$0 != (dom$Nullable$null(): dom$Nullable[Int]) ==> !dom$Type$isSubtype((dom$TypeOf$typeOf(local$a): dom$Type), dom$Type$global$class_IntHolder()) might not hold.
+/as_type_contract.kt:(194,236): warning: Cannot verify that if a non-null value is returned then a !is IntHolder.

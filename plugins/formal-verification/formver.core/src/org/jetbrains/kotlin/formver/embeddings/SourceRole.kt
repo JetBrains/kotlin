@@ -29,8 +29,17 @@ sealed interface SourceRole {
 
     sealed interface ReturnsEffect : SourceRole {
         data object Wildcard : ReturnsEffect
-        data class Bool(val bool: Boolean) : ReturnsEffect
-        data class Null(val negated: Boolean) : ReturnsEffect
+        data class Bool(val bool: Boolean) : ReturnsEffect {
+            override fun toString(): String = bool.toString()
+        }
+
+        data class Null(val negated: Boolean) : ReturnsEffect {
+            override fun toString(): String = if (negated) {
+                "non-null"
+            } else {
+                "null"
+            }
+        }
     }
 
     sealed interface Condition : SourceRole {
@@ -42,7 +51,6 @@ sealed interface SourceRole {
         data class Negation(val arg: Condition) : Condition
     }
 }
-
 
 
 val SourceRole?.asInfo: Info

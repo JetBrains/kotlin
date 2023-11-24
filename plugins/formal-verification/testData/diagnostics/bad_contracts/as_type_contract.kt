@@ -6,7 +6,7 @@ class IntHolder(val x: Int)
 @OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>getX<!>(a: Any): Int? {
     contract {
-        <!VIPER_VERIFICATION_ERROR!>returnsNotNull() implies (a !is IntHolder)<!>
+        <!CONDITIONAL_EFFECT_ERROR!>returnsNotNull() implies (a !is IntHolder)<!>
     }
     return (a as? IntHolder)?.x
 }
