@@ -52,6 +52,11 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val allowTransitiveSupertypesActualization: Boolean
         get() = true
 
+    override val expectScopeSession: ScopeSession
+        // todo KT-63773 design a way for managing scope sessions for common scopes during matching.
+        //  Right now we create a new session every time
+        get() = ScopeSession()
+
     private fun DeclarationSymbolMarker.asSymbol(): FirBasedSymbol<*> = this as FirBasedSymbol<*>
     private fun CallableSymbolMarker.asSymbol(): FirCallableSymbol<*> = this as FirCallableSymbol<*>
     private fun FunctionSymbolMarker.asSymbol(): FirFunctionSymbol<*> = this as FirFunctionSymbol<*>
@@ -170,10 +175,7 @@ class FirExpectActualMatchingContextImpl private constructor(
 
         val scope = symbol.defaultType().scope(
             useSiteSession = session,
-            when (isActualDeclaration) {
-                true -> actualScopeSession
-                false -> ScopeSession()
-            },
+            if (isActualDeclaration) actualScopeSession else expectScopeSession,
             CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         ) ?: return emptyList()
@@ -199,7 +201,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         val symbol = asSymbol()
         val scope = symbol.defaultType().scope(
             useSiteSession = symbol.moduleData.session,
-            ScopeSession(),
+            expectScopeSession,
             CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         ) ?: return emptyList()

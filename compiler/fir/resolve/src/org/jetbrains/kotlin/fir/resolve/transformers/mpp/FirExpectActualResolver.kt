@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
@@ -42,10 +41,11 @@ object FirExpectActualResolver {
                             expectContainingClass = useSiteSession.dependenciesSymbolProvider.getClassLikeSymbolByClassId(classId)?.let {
                                 it.fullyExpandedClass(it.moduleData.session)
                             }
-                            actualContainingClass = getActualClass(useSiteSession, classId)
+                            actualContainingClass = useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)
+                                ?.fullyExpandedClass(useSiteSession)
 
                             when (actualSymbol) {
-                                is FirConstructorSymbol -> expectContainingClass?.getConstructors(ScopeSession())
+                                is FirConstructorSymbol -> expectContainingClass?.getConstructors(expectScopeSession)
                                 else -> expectContainingClass?.getMembersForExpectClass(actualSymbol.name)
                             }.orEmpty()
                         }
@@ -92,6 +92,3 @@ object FirExpectActualResolver {
         }
     }
 }
-
-private fun getActualClass(useSiteSession: FirSession, classId: ClassId): FirRegularClassSymbol? =
-    useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)?.fullyExpandedClass(useSiteSession)

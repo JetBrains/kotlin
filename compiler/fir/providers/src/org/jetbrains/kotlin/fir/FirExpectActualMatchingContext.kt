@@ -20,6 +20,7 @@ interface FirExpectActualMatchingContext : ExpectActualMatchingContext<FirBasedS
         session: FirSession = moduleData.session,
     ): Collection<FirConstructorSymbol>
 
+    val expectScopeSession: ScopeSession
     override fun RegularClassSymbolMarker.getMembersForExpectClass(name: Name): List<FirCallableSymbol<*>>
 }
 
