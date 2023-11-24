@@ -25501,6 +25501,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
 
+        @TestMetadata("abstractMethodsOfAny.kt")
+        public void testAbstractMethodsOfAny() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/abstractMethodsOfAny.kt");
+        }
+
         public void testAllFilesPresentInJavaInterop() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }

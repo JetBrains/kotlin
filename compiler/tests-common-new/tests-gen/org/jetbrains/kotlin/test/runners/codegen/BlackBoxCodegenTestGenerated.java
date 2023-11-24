@@ -28437,6 +28437,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestDataPath("$PROJECT_ROOT")
     public class JavaInterop {
         @Test
+        @TestMetadata("abstractMethodsOfAny.kt")
+        public void testAbstractMethodsOfAny() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/abstractMethodsOfAny.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInJavaInterop() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }

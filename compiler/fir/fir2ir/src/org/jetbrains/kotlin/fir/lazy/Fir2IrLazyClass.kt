@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -197,7 +196,6 @@ class Fir2IrLazyClass(
                         symbol.isSubstitutionOrIntersectionOverride -> {}
                         !shouldBuildStub(symbol.fir) -> {}
                         symbol.containingClassLookupTag() != ownerLookupTag -> {}
-                        symbol.isAbstractMethodOfAny() -> {}
                         else -> {
                             // Lazy declarations are created together with their symbol, so it's safe to take the owner here
                             @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -259,11 +257,6 @@ class Fir2IrLazyClass(
 
     override val isNewPlaceForBodyGeneration: Boolean
         get() = fir.isNewPlaceForBodyGeneration == true
-
-    private fun FirNamedFunctionSymbol.isAbstractMethodOfAny(): Boolean {
-        if (modality != Modality.ABSTRACT) return false
-        return isMethodOfAny
-    }
 
     private var irLoaded: Boolean? = null
 
