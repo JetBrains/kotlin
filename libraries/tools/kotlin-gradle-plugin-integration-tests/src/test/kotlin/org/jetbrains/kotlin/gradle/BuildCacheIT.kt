@@ -20,7 +20,12 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.capitalize
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
@@ -140,6 +145,33 @@ class BuildCacheIT : KGPBaseTest() {
                 buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
             ) {
                 assertTasksFromCache(":compileKotlin")
+            }
+        }
+    }
+
+    @DisplayName("Changing native toolchain location should not break build cache")
+    @GradleTest
+    fun testNativeToolchainWithBuildCache(gradleVersion: GradleVersion, @TempDir customNativeHomePath: Path) {
+        nativeProject("native-simple-project", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
+
+            val buildOptionsBeforeCaching = defaultBuildOptions.copy(
+                nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                    version = TestVersions.Kotlin.STABLE_RELEASE,
+                    distributionDownloadFromMaven = true
+                )
+            )
+            val nativeCompileTask = ":compileKotlin${HostManager.host.presetName.capitalize()}"
+            build(nativeCompileTask, buildOptions = buildOptionsBeforeCaching) {
+                assertTasksPackedToCache(nativeCompileTask)
+            }
+
+            val buildOptionsAfterCaching = buildOptionsBeforeCaching.copy(
+                konanDataDir = customNativeHomePath,
+            )
+
+            build("clean", nativeCompileTask, buildOptions = buildOptionsAfterCaching) {
+                assertTasksFromCache(nativeCompileTask)
             }
         }
     }

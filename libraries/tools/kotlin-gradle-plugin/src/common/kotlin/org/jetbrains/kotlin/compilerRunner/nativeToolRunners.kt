@@ -32,10 +32,10 @@ import java.util.*
 private val Project.jvmArgs
     get() = PropertiesProvider(this).nativeJvmArgs?.split("\\s+".toRegex()).orEmpty()
 
-internal val Project.konanHome: String
-    get() = PropertiesProvider(this).konanDataDir?.let { NativeCompilerDownloader(project).compilerDirectory.absolutePath }
-        ?: PropertiesProvider(this).nativeHome?.let { file(it).absolutePath }
-        ?: NativeCompilerDownloader(project).compilerDirectory.absolutePath
+internal val Project.konanHome: File
+    get() = (PropertiesProvider(this).konanDataDir?.let { NativeCompilerDownloader(project).compilerDirectory }
+        ?: PropertiesProvider(this).nativeHome?.let { file(it) }
+        ?: NativeCompilerDownloader(project).compilerDirectory).absoluteFile
 
 internal val Project.disableKonanDaemon: Boolean
     get() = PropertiesProvider(this).nativeDisableCompilerDaemon == true
@@ -46,6 +46,9 @@ internal val Project.konanVersion: String
 
 internal val Project.konanDataDir: String?
     get() = PropertiesProvider(this).konanDataDir
+
+internal val Project.kotlinNativeToolchainEnabled: Boolean
+    get() = PropertiesProvider(this).kotlinNativeToolchainEnabled && PropertiesProvider(this).nativeDownloadFromMaven
 
 internal fun Project.getKonanCacheKind(target: KonanTarget): NativeCacheKind {
     val commonCacheKind = PropertiesProvider(this).nativeCacheKind
@@ -71,9 +74,9 @@ internal fun Project.getKonanParallelThreads(): Int {
 
 private val Project.kotlinNativeCompilerJar: String
     get() = if (nativeUseEmbeddableCompilerJar)
-        "$konanHome/konan/lib/kotlin-native-compiler-embeddable.jar"
+        "${konanHome.absolutePath}/konan/lib/kotlin-native-compiler-embeddable.jar"
     else
-        "$konanHome/konan/lib/kotlin-native.jar"
+        "${konanHome.absolutePath}/konan/lib/kotlin-native.jar"
 
 internal abstract class KotlinNativeToolRunner(
     protected val toolName: String,
@@ -271,7 +274,7 @@ internal class KotlinNativeLibraryGenerationRunner(
     companion object {
         @Suppress("DEPRECATION") // TODO(Dmitrii Krasnov): after KT-52567 it will be possible to use GradleExecutionContext#fromTaskContext here
         fun fromProject(project: Project) = KotlinNativeLibraryGenerationRunner(
-            settings = Settings.of(project.konanHome, project.konanDataDir, project),
+            settings = Settings.of(project.konanHome.absolutePath, project.konanDataDir, project),
             executionContext = GradleExecutionContext.fromProject(project),
             metricsReporter = GradleBuildMetricsReporter()
         )

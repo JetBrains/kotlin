@@ -27,6 +27,15 @@ import kotlin.io.path.appendText
 )
 @DisplayName("Tests for K/N builds with native downloading and platform libs")
 @NativeGradlePluginTests
+@Deprecated(
+    message =
+    """
+    This is deprecated test class with regression checks for old downloading logic.
+    We support it during migration to kotlin native toolchain.
+    If you want to add test here, be sure that you have added similar test with `-Pkotlin.native.toolchain.enabled=true`.
+    """,
+    ReplaceWith("NativeDownloadAndPlatformLibsIT")
+)
 class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
 
     private val platformName: String = HostManager.platformName()
@@ -34,6 +43,8 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.withBundledKotlinNative().copy(
+            // Disabling toolchain feature for checking stable logic with downloading kotlin native
+            freeArgs = listOf("-Pkotlin.native.toolchain.enabled=false"),
             // For each test in this class, we need to provide an isolated .konan directory,
             // so we create it within each test project folder
             konanDataDir = workingDir.resolve(".konan")

@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
@@ -36,7 +37,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
     private fun setupNativeHomePrivateProperty() = with(project) {
         if (!hasProperty(KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY))
-            extensions.extraProperties.set(KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY, konanHome)
+            extensions.extraProperties.set(KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY, konanHome.absolutePath)
     }
 
     protected abstract fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<T>
@@ -44,7 +45,9 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
     protected abstract fun instantiateTarget(name: String): T
 
     override fun createTargetInternal(name: String): T {
-        project.setupNativeCompiler(konanTarget)
+        if (!project.kotlinNativeToolchainEnabled) {
+            project.setupNativeCompiler(konanTarget)
+        }
 
         val result = instantiateTarget(name).apply {
             targetName = name

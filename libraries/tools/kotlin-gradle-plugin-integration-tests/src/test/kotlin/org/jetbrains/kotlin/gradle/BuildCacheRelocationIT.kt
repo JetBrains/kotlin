@@ -20,8 +20,13 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.capitalize
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Path
 import kotlin.io.path.*
 
 @DisplayName("Build cache relocation")
@@ -204,9 +209,16 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("with native project")
     @GradleTest
     fun testRelocationNative(gradleVersion: GradleVersion) {
+        val buildOptionsBeforeCaching = defaultBuildOptions.copy(
+            nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                version = TestVersions.Kotlin.STABLE_RELEASE,
+                distributionDownloadFromMaven = true
+            )
+        )
         val (firstProject, secondProject) = prepareTestProjects(
             "native-build-cache",
-            gradleVersion
+            gradleVersion,
+            buildOptions = buildOptionsBeforeCaching
         ) {
             val localRepoUri = it.projectPath.resolve("repo").toUri()
             it.subProject("build-cache-app").buildGradleKts.append(
@@ -276,12 +288,12 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         buildJdk: File? = null,
         additionalConfiguration: (TestProject) -> Unit = {}
     ): Pair<TestProject, TestProject> {
-        val firstProject = project(projectName, gradleVersion, buildOptions, buildJdk = buildJdk) {
+        val firstProject = project(projectName, gradleVersion, buildOptions, buildJdk = buildJdk, forceOutput = true) {
             enableLocalBuildCache(localBuildCacheDir)
             additionalConfiguration(this)
         }
 
-        val secondProject = project(projectName, gradleVersion, buildOptions, buildJdk = buildJdk) {
+        val secondProject = project(projectName, gradleVersion, buildOptions, buildJdk = buildJdk, forceOutput = true) {
             enableLocalBuildCache(localBuildCacheDir)
             additionalConfiguration(this)
         }

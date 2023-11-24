@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap
 internal class PlatformLibrariesGenerator(val project: Project, val konanTarget: KonanTarget) {
 
     private val distribution =
-        customerDistribution(project.konanHome, konanDataDir = project.konanDataDir)
+        customerDistribution(project.konanHome.absolutePath, konanDataDir = project.konanDataDir)
 
     private val platformLibsDirectory =
         File(distribution.platformLibs(konanTarget)).absoluteFile
@@ -77,7 +77,7 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
         }
 
         val cacheDirectory = CacheBuilder.getRootCacheDirectory(
-            File(project.konanHome), konanTarget, true, konanCacheKind
+            project.konanHome, konanTarget, true, konanCacheKind
         )
         return presentDefs.toPlatformLibNames().all {
             cacheDirectory.resolve(CacheBuilder.getCacheFileName(it, konanCacheKind)).listFilesOrEmpty().isNotEmpty()
@@ -115,7 +115,7 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
             args.addArg("-cache-kind", konanCacheKind.produce!!)
             args.addArg(
                 "-cache-directory",
-                CacheBuilder.getRootCacheDirectory(File(konanHome), konanTarget, true, konanCacheKind).absolutePath
+                CacheBuilder.getRootCacheDirectory(konanHome, konanTarget, true, konanCacheKind).absolutePath
             )
             args.addArg("-cache-arg", "-g")
             val additionalCacheFlags = konanPropertiesService.additionalCacheFlags(konanTarget)

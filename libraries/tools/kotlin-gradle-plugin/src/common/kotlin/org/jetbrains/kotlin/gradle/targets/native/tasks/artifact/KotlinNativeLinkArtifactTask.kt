@@ -23,10 +23,8 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
-import org.jetbrains.kotlin.compilerRunner.konanDataDir
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
@@ -35,8 +33,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinToolTask
 import org.jetbrains.kotlin.gradle.utils.XcodeUtils
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -170,13 +170,30 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
-    @get:Internal
-    val konanDataDir: Provider<String?> = project.provider { project.konanDataDir }
+    @get:Nested
+    internal val kotlinNativeProvider: Provider<KotlinNativeProvider> = project.provider {
+        KotlinNativeProvider(project, konanTarget)
+    }
 
+    @Deprecated(
+        message = "This property as a konanHome will be squashed into one in future releases.",
+        replaceWith = ReplaceWith("kotlinNativeProvider.konanDataDir")
+    )
     @get:Internal
-    val konanHome: Provider<String> = project.provider { project.konanHome }
+    val konanDataDir: Provider<String?> = kotlinNativeProvider.flatMap { it.konanDataDir }
 
-    private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(konanHome.get(), konanDataDir.getOrNull(), project)
+    @Deprecated(
+        message = "This property as a konanDataDir will be squashed into one in future releases.",
+        replaceWith = ReplaceWith("kotlinNativeProvider.compilerDirectory")
+    )
+    @get:Internal
+    val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
+
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(
+        kotlinNativeProvider.get().bundleDirectory.getFile().absolutePath,
+        kotlinNativeProvider.get().konanDataDir.orNull,
+        project
+    )
 
     init {
         baseName.convention(project.name)

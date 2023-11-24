@@ -62,17 +62,20 @@ fun getOutputForTask(taskPath: String, output: String, logLevel: LogLevel = LogL
             LogLevel.DEBUG -> taskOutputRegexForDebugLog(taskPath)
             else -> throw throw IllegalStateException("Unsupported log lever for task output was given: $logLevel")
         })
-    .find(output)
-    ?.let { it.groupValues[1] }
-    ?: error(
-        """
-        Could not find output for task $taskPath.
-        =================
-        Build output is:
-        $output 
-        =================     
-        """.trimIndent()
-    )
+    .findAll(output)
+    .map { it.groupValues[1] }
+    .joinToString(System.lineSeparator())
+    .ifEmpty {
+        error(
+            """
+            Could not find output for task $taskPath.
+            =================
+            Build output is:
+            $output 
+            =================     
+            """.trimIndent()
+        )
+    }
 
 class CommandLineArguments(
     val args: List<String>,

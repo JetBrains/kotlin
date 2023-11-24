@@ -69,7 +69,7 @@ abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildSe
     companion object {
         fun registerIfAbsent(project: Project): Provider<KonanPropertiesBuildService> =
             project.gradle.sharedServices.registerIfAbsent(serviceName, KonanPropertiesBuildService::class.java) { service ->
-                service.parameters.konanHome.set(project.rootProject.konanHome)
+                service.parameters.konanHome.set(project.rootProject.konanHome.absolutePath)
             }.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesKonanPropertiesBuildService::class.java.name) {
                     project.tasks.withType<UsesKonanPropertiesBuildService>().configureEach { task ->

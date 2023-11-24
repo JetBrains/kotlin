@@ -20,9 +20,6 @@ internal val konanHome: File by lazy {
         .run {
             project.plugins.apply("kotlin-multiplatform")
 
-            // TODO(Dmitrii Krasnov): remove this, when KT-58303 is done
-            project.extraProperties.set("kotlin.native.distribution.downloadFromMaven","false")
-
             (project.kotlinExtension as KotlinMultiplatformExtension).apply {
                 macosX64()
                 macosArm64()

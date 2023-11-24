@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
-import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -34,7 +33,6 @@ import java.nio.file.Files
 
 class NativeCompilerDownloader(
     val project: Project,
-    private val compilerVersion: String = project.konanVersion,
 ) {
 
     companion object {
@@ -46,27 +44,36 @@ class NativeCompilerDownloader(
 
         internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
         internal const val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
-    }
 
-    val compilerDirectory: File
-        get() = DependencyDirectories
-            .getLocalKonanDir(project.konanDataDir)
-            .resolve(dependencyNameWithOsAndVersion)
+        internal fun getCompilerDependencyNotation(project: Project): Map<String, String> {
+            return mapOf(
+                "group" to KOTLIN_GROUP_ID,
+                "name" to getDependencyName(project),
+                "version" to getCompilerVersion(project),
+                "classifier" to simpleOsName,
+                "ext" to archiveExtension
+            )
+        }
 
-    private val logger: Logger
-        get() = project.logger
+        internal fun getCompilerDirectory(project: Project): File {
+            return DependencyDirectories
+                .getLocalKonanDir(project.konanDataDir)
+                .resolve(getDependencyNameWithOsAndVersion(project))
+        }
 
-    private val kotlinProperties get() = PropertiesProvider(project)
+        internal fun getDependencyNameWithOsAndVersion(project: Project): String {
+            return "${getDependencyName(project)}-$simpleOsName-${getCompilerVersion(project)}"
+        }
 
-    private val distributionType: NativeDistributionType
-        get() = NativeDistributionTypeProvider(project).getDistributionType()
 
-    private val simpleOsName: String
-        get() = HostManager.platformName()
+        private val simpleOsName = HostManager.platformName()
 
-    private val dependencyName: String
-        get() {
-            val dependencySuffix = distributionType.suffix
+        private fun getCompilerVersion(project: Project): String {
+            return project.konanVersion
+        }
+
+        private fun getDependencyName(project: Project): String {
+            val dependencySuffix = NativeDistributionTypeProvider(project).getDistributionType().suffix
             return if (dependencySuffix != null) {
                 "kotlin-native-$dependencySuffix"
             } else {
@@ -74,21 +81,31 @@ class NativeCompilerDownloader(
             }
         }
 
+        private val archiveExtension
+            get() = if (useZip) {
+                "zip"
+            } else {
+                "tar.gz"
+            }
+
+        private val useZip = HostManager.hostIsMingw
+
+    }
+
+    val compilerDirectory: File
+        get() = getCompilerDirectory(project)
+
+    private val logger: Logger
+        get() = project.logger
+
+    private val kotlinProperties get() = PropertiesProvider(project)
+
+
     private val dependencyNameWithOsAndVersion: String
-        get() = "$dependencyName-$simpleOsName-$compilerVersion"
+        get() = getDependencyNameWithOsAndVersion(project)
 
     private val dependencyFileName: String
         get() = "$dependencyNameWithOsAndVersion.$archiveExtension"
-
-    private val useZip
-        get() = HostManager.hostIsMingw
-
-    private val archiveExtension
-        get() = if (useZip) {
-            "zip"
-        } else {
-            "tar.gz"
-        }
 
     private fun archiveFileTree(archive: File): FileTree =
         if (useZip) {
@@ -114,11 +131,11 @@ class NativeCompilerDownloader(
     }
 
     private val repoUrl by lazy {
-        val maturity = KotlinToolingVersion(compilerVersion).maturity
+        val maturity = KotlinToolingVersion(getCompilerVersion(project)).maturity
         buildString {
             append("${kotlinProperties.nativeBaseDownloadUrl}/")
             append(if (maturity == KotlinToolingVersion.Maturity.DEV) "dev/" else "releases/")
-            append("$compilerVersion/")
+            append("${getCompilerVersion(project)}/")
             append(simpleOsName)
         }
     }
@@ -129,27 +146,19 @@ class NativeCompilerDownloader(
         } else null
 
         val compilerDependency = if (kotlinProperties.nativeDownloadFromMaven) {
-            project.dependencies.create(
-                mapOf(
-                    "group" to KOTLIN_GROUP_ID,
-                    "name" to dependencyName,
-                    "version" to compilerVersion,
-                    "classifier" to simpleOsName,
-                    "ext" to archiveExtension
-                )
-            )
+            project.dependencies.create(getCompilerDependencyNotation(project))
         } else {
             project.dependencies.create(
                 mapOf(
-                    "name" to "$dependencyName-$simpleOsName",
-                    "version" to compilerVersion,
+                    "name" to "${getDependencyName(project)}-$simpleOsName",
+                    "version" to getCompilerVersion(project),
                     "ext" to archiveExtension
                 )
             )
         }
 
         val configuration = project.configurations.detachedResolvable(compilerDependency)
-        logger.lifecycle("\nPlease wait while Kotlin/Native compiler $compilerVersion is being installed.")
+        logger.lifecycle("\nPlease wait while Kotlin/Native compiler ${getCompilerVersion(project)} is being installed.")
 
         if (!kotlinProperties.nativeDownloadFromMaven) {
             val dependencyUrl = "$repoUrl/$dependencyFileName"
@@ -162,6 +171,12 @@ class NativeCompilerDownloader(
             configuration.files.single()
         }
 
+        extractKotlinNativeFromArchive(archive)
+
+        if (repo != null) removeRepo(repo)
+    }
+
+    private fun extractKotlinNativeFromArchive(archive: File) {
         logger.kotlinInfo("Using Kotlin/Native compiler archive: ${archive.absolutePath}")
 
         logger.lifecycle("Unpack Kotlin/Native compiler to $compilerDirectory")
@@ -186,8 +201,6 @@ class NativeCompilerDownloader(
                 tmpDir.deleteRecursively()
             }
         }
-
-        if (repo != null) removeRepo(repo)
     }
 
     fun downloadIfNeeded() {
@@ -199,11 +212,12 @@ class NativeCompilerDownloader(
 
     private fun checkClassPath() {
         project.providers.of(NativeCompilerDownloaderClassPathChecker::class.java) {
-            it.parameters.classPath.setFrom(KotlinNativeToolRunner.Settings.of(project.konanHome, project.konanDataDir, project).classpath)
+            it.parameters.classPath.setFrom(KotlinNativeToolRunner.Settings.of(project.konanHome.absolutePath, project.konanDataDir, project).classpath)
         }.usedAtConfigurationTime(project.configurationTimePropertiesAccessor).get()
     }
 
-    internal abstract class NativeCompilerDownloaderClassPathChecker : ValueSource<Boolean, NativeCompilerDownloaderClassPathChecker.Params> {
+    internal abstract class NativeCompilerDownloaderClassPathChecker :
+        ValueSource<Boolean, NativeCompilerDownloaderClassPathChecker.Params> {
 
         interface Params : ValueSourceParameters {
             val classPath: ConfigurableFileCollection
@@ -216,6 +230,19 @@ class NativeCompilerDownloader(
     }
 }
 
+/**
+ * Sets up the Kotlin/Native compiler for the given project.
+ *
+ * @param konanTarget The target platform for the Kotlin/Native compiler.
+ */
+@Deprecated(
+    message = "This is old k/n downloading method that is used on configuration phase",
+    replaceWith = ReplaceWith(
+        "KotlinNativeInstaller",
+        "org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeInstaller"
+    ),
+    level = DeprecationLevel.WARNING
+)
 internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
     val isKonanHomeOverridden = kotlinPropertiesProvider.nativeHome != null
     if (!isKonanHomeOverridden) {
@@ -227,9 +254,9 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
         }
 
         downloader.downloadIfNeeded()
-        logger.info("Kotlin/Native distribution: $konanHome")
+        logger.info("Kotlin/Native distribution: ${konanHome.absolutePath}")
     } else {
-        logger.info("User-provided Kotlin/Native distribution: $konanHome")
+        logger.info("User-provided Kotlin/Native distribution: ${konanHome.absolutePath}")
     }
 
     val distributionType = NativeDistributionTypeProvider(project).getDistributionType()
