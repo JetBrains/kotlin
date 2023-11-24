@@ -13,7 +13,7 @@ fun test(d: dynamic) {
 
     }
     run {
-        d!!.<!UNRESOLVED_REFERENCE!>onAnyVar<!> = 1
+        d!!.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!> = 1
     }
 
     d.<!DEBUG_INFO_DYNAMIC!>onNullableAnyVar<!> = 1
@@ -22,7 +22,7 @@ fun test(d: dynamic) {
 
     d.<!DEBUG_INFO_DYNAMIC!>onDynamicVar<!> = 1
 
-    d?.<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>onDynamicVar<!> = 1
+    d?.<!DEBUG_INFO_DYNAMIC!>onDynamicVar<!> = 1
 
     (d as String).onStringVar
     (d as Any).onAnyVar
