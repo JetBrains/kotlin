@@ -22,9 +22,7 @@ class SirTest {
 
     private fun produceSwiftElement(): Any {
         return SirEnumBuilder().apply {
-            origin = Origin(path = listOf())
             name = "name"
-            visibility = SwiftVisibility.PUBLIC
         }.build()
     }
 }

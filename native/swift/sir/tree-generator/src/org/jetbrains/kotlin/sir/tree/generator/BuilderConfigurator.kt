@@ -13,5 +13,13 @@ class BuilderConfigurator(elements: List<Element>) : AbstractSwiftIrTreeBuilderC
     fun configure() = with(SwiftIrTree) {
         // Use builder configurator DSL for fine-tuning the builder generation logic.
         // See org.jetbrains.kotlin.fir.tree.generator.BuilderConfigurator for example usage
+
+        configureFieldInAllLeafBuilders("origin") {
+            default(it, "SirOrigin.Unknown")
+        }
+
+        configureFieldInAllLeafBuilders("visibility") {
+            default(it, "SirVisibility.PUBLIC")
+        }
     }
 }

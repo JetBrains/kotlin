@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.sir
 
-enum class SwiftVisibility {
+enum class SirVisibility {
     PRIVATE,
     FILEPRIVATE,
     INTERNAL,

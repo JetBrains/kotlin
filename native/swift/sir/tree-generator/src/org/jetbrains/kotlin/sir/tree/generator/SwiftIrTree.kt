@@ -21,6 +21,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val module by element {
         customParentInVisitor = rootElement
         parent(declarationContainer)
+        parent(named)
     }
 
     val declarationParent by sealedElement()
@@ -46,26 +47,28 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declaration)
     }
 
-    val declarationWithName by sealedElement {
-        parent(declaration)
-
+    val named by sealedElement {
         +field("name", string)
     }
 
-    val namedTypeDeclaration by sealedElement {
-        parent(declarationWithName)
+    val namedDeclaration by sealedElement {
+        customParentInVisitor = SwiftIrTree.declaration
+        parent(declaration)
+        parent(named)
     }
 
     val enum: Element by element {
-        customParentInVisitor = namedTypeDeclaration
-        parent(namedTypeDeclaration)
+        customParentInVisitor = namedDeclaration
+        parent(namedDeclaration)
         parent(declarationContainer)
 
-        +listField("cases", enumCase)
+        +listField("cases", enumCaseType)
     }
 
-    val enumCase: Element by element {
-        parent(declarationWithName)
+    val struct: Element by element {
+        customParentInVisitor = namedDeclaration
+        parent(namedDeclaration)
+        parent(declarationContainer)
     }
 
     val callable by sealedElement {
@@ -85,11 +88,5 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = callable
         parent(callable)
         parent(foreignDeclaration)
-
-        +field("source", type<Any>())
-    }
-
-    val expression by element {
-        customParentInVisitor = rootElement
     }
 }

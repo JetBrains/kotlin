@@ -5,4 +5,7 @@
 
 package org.jetbrains.kotlin.sir
 
-data class Origin(val path: List<String>)
+class SirEnumCase(
+    val name: String,
+    val parameters: List<SirParameter>
+)

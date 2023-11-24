@@ -9,11 +9,12 @@ import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.type
 
 val pureAbstractElementType = type(BASE_PACKAGE, "SirElementBase", TypeKind.Class)
-val swiftVisibilityType = type(BASE_PACKAGE, "SwiftVisibility", TypeKind.Class)
-val attributeType = type(BASE_PACKAGE, "Attribute", TypeKind.Class)
-val originType = type(BASE_PACKAGE, "Origin", TypeKind.Class)
+val swiftVisibilityType = type(BASE_PACKAGE, "SirVisibility", TypeKind.Class)
+val attributeType = type(BASE_PACKAGE, "SirAttribute", TypeKind.Class)
+val originType = type(BASE_PACKAGE, "SirOrigin", TypeKind.Class)
 val parameterType = type(BASE_PACKAGE, "SirParameter", TypeKind.Class)
 val typeType = type(BASE_PACKAGE, "SirType", TypeKind.Class)
+val enumCaseType = type(BASE_PACKAGE, "SirEnumCase", TypeKind.Class)
 
 private const val VISITORS_PACKAGE = "$BASE_PACKAGE.visitors"
 
