@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.create
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompilerJar
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -28,6 +30,8 @@ import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import kotlin.contracts.contract
+import kotlin.test.assertNotNull
 
 object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
@@ -40,6 +44,7 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
         builder.apply {
             useAdditionalServices(ServiceRegistrationData(CompiledLibraryProvider::class, ::CompiledLibraryProvider))
             useAdditionalService<KtModuleFactory> { KtLibrarySourceModuleFactory() }
+            useAdditionalService<TestModuleCompiler> { TestModuleCompilerJar() }
             useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
             usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
             useConfigurators(::JvmEnvironmentConfigurator)
@@ -66,6 +71,9 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
 private class KtLibrarySourceModuleFactory : KtModuleFactory {
     override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
         val (libraryJar, librarySourcesJar) = testServices.compiledLibraryProvider.compileToLibrary(testModule)
+
+        require(librarySourcesJar != null)
+
         return createKtLibrarySourceModule(
             libraryJar = libraryJar,
             librarySourcesJar = librarySourcesJar,

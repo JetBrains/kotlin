@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirT
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
@@ -34,6 +34,8 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
             useAdditionalService<KtModuleFactory> { KtLibraryBinaryModuleFactory() }
+            useAdditionalService<TestModuleCompiler> { TestModuleCompilerJar() }
+            useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
         }
     }
 
@@ -56,8 +58,8 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
 
 private class KtLibraryBinaryModuleFactory : KtModuleFactory {
     override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
-        val library = testServices.compiledLibraryProvider.compileToLibrary(testModule).jar
-        val decompiledFiles = LibraryUtils.getAllPsiFilesFromJar(library, project)
+        val library = testServices.compiledLibraryProvider.compileToLibrary(testModule).artifact
+        val decompiledFiles = testServices.testModuleDecompiler.getAllPsiFilesFromLibrary(library, project)
 
         return KtModuleWithFiles(
             KtLibraryModuleImpl(
