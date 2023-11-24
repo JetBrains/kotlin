@@ -36,17 +36,17 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoF
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class KonanPartialModuleDeserializer(
-    konanIrLinker: KonanIrLinker,
-    moduleDescriptor: ModuleDescriptor,
-    override val klib: KotlinLibrary,
-    private val stubGenerator: DeclarationStubGenerator,
-    private val cachedLibraries: CachedLibraries,
-    private val inlineFunctionFiles: MutableMap<IrExternalPackageFragment, IrFile>,
-    strategyResolver: (String) -> DeserializationStrategy,
-    private val cacheDeserializationStrategy: CacheDeserializationStrategy,
-    containsErrorCode: Boolean = false
+        konanIrLinker: KonanIrLinker,
+        moduleDescriptor: ModuleDescriptor,
+        override val klib: KotlinLibrary,
+        private val stubGenerator: DeclarationStubGenerator,
+        private val cachedLibraries: CachedLibraries,
+        private val inlineFunctionFiles: MutableMap<IrExternalPackageFragment, IrFile>,
+        strategyResolver: (String) -> DeserializationStrategy,
+        private val cacheDeserializationStrategy: CacheDeserializationStrategy,
+        containsErrorCode: Boolean = false
 ) : BasicIrModuleDeserializer(konanIrLinker, moduleDescriptor, klib,
-                              { fileName ->
+        { fileName ->
             if (cacheDeserializationStrategy.contains(fileName))
                 strategyResolver(fileName)
             else DeserializationStrategy.ON_DEMAND
@@ -165,10 +165,10 @@ internal class KonanPartialModuleDeserializer(
         } ?: INVALID_INDEX
 
         return SerializedInlineFunctionReference(
-            SerializedFileReference(fileDeserializationState.file),
-            functionSignature, protoFunction.base.body, irFunction.startOffset, irFunction.endOffset,
-            extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs.toIntArray(),
-            valueParameterSigs.toIntArray(), typeParameterSigs.toIntArray(), defaultValues.toIntArray()
+                SerializedFileReference(fileDeserializationState.file),
+                functionSignature, protoFunction.base.body, irFunction.startOffset, irFunction.endOffset,
+                extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs.toIntArray(),
+                valueParameterSigs.toIntArray(), typeParameterSigs.toIntArray(), defaultValues.toIntArray()
         )
     }
 
@@ -228,55 +228,55 @@ internal class KonanPartialModuleDeserializer(
         val outerThisIndex = fields.indexOfFirst { it.irField?.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS }
         val compatibleMode = CompatibilityMode(libraryAbiVersion).oldSignatures
         return SerializedClassFields(
-            SerializedFileReference(fileDeserializationState.file),
-            signature,
-            typeParameterSigs.toIntArray(),
-            outerThisIndex,
-            Array(fields.size) {
-                val field = fields[it]
-                val irField = field.irField ?: error("No IR for field ${field.name} of ${irClass.render()}")
-                if (it == outerThisIndex) {
-                    require(irClass.isInner) { "Expected an inner class: ${irClass.render()}" }
-                    require(protoClasses.size > 1) { "An inner class must have at least one outer class" }
-                    val outerProtoClass = protoClasses[protoClasses.size - 2]
-                    val nameAndType = BinaryNameAndType.decode(outerProtoClass.thisReceiver.nameType)
+                SerializedFileReference(fileDeserializationState.file),
+                signature,
+                typeParameterSigs.toIntArray(),
+                outerThisIndex,
+                Array(fields.size) {
+                    val field = fields[it]
+                    val irField = field.irField ?: error("No IR for field ${field.name} of ${irClass.render()}")
+                    if (it == outerThisIndex) {
+                        require(irClass.isInner) { "Expected an inner class: ${irClass.render()}" }
+                        require(protoClasses.size > 1) { "An inner class must have at least one outer class" }
+                        val outerProtoClass = protoClasses[protoClasses.size - 2]
+                        val nameAndType = BinaryNameAndType.decode(outerProtoClass.thisReceiver.nameType)
 
-                    SerializedClassFieldInfo(
-                        name = INVALID_INDEX,
-                        binaryType = INVALID_INDEX,
-                        nameAndType.typeIndex,
-                        flags = 0,
-                        field.alignment
-                    )
-                } else {
-                    val protoField = protoFieldsMap[field.name] ?: error("No proto for ${irField.render()}")
-                    val nameAndType = BinaryNameAndType.decode(protoField.nameType)
-                    var flags = 0
-                    if (field.isConst)
-                        flags = flags or SerializedClassFieldInfo.FLAG_IS_CONST
-                    val classifier = irField.type.classifierOrNull
-                        ?: error("Fields of type ${irField.type.render()} are not supported")
-                    val primitiveBinaryType = irField.type.computePrimitiveBinaryTypeOrNull()
+                        SerializedClassFieldInfo(
+                                name = INVALID_INDEX,
+                                binaryType = INVALID_INDEX,
+                                nameAndType.typeIndex,
+                                flags = 0,
+                                field.alignment
+                        )
+                    } else {
+                        val protoField = protoFieldsMap[field.name] ?: error("No proto for ${irField.render()}")
+                        val nameAndType = BinaryNameAndType.decode(protoField.nameType)
+                        var flags = 0
+                        if (field.isConst)
+                            flags = flags or SerializedClassFieldInfo.FLAG_IS_CONST
+                        val classifier = irField.type.classifierOrNull
+                                ?: error("Fields of type ${irField.type.render()} are not supported")
+                        val primitiveBinaryType = irField.type.computePrimitiveBinaryTypeOrNull()
 
-                    SerializedClassFieldInfo(
-                        nameAndType.nameIndex,
-                        primitiveBinaryType?.ordinal ?: INVALID_INDEX,
-                        if (with(KonanManglerIr) { (classifier as? IrClassSymbol)?.owner?.isExported(compatibleMode) } == false)
-                            INVALID_INDEX
-                        else nameAndType.typeIndex,
-                        flags,
-                        field.alignment
-                    )
-                }
-            })
+                        SerializedClassFieldInfo(
+                                nameAndType.nameIndex,
+                                primitiveBinaryType?.ordinal ?: INVALID_INDEX,
+                                if (with(KonanManglerIr) { (classifier as? IrClassSymbol)?.owner?.isExported(compatibleMode) } == false)
+                                    INVALID_INDEX
+                                else nameAndType.typeIndex,
+                                flags,
+                                field.alignment
+                        )
+                    }
+                })
     }
 
     fun buildEagerInitializedFile(irFile: IrFile) =
-        SerializedEagerInitializedFile(SerializedFileReference(irFile))
+            SerializedEagerInitializedFile(SerializedFileReference(irFile))
 
     private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
-        moduleDescriptor, KonanManglerDesc,
-        DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
+            moduleDescriptor, KonanManglerDesc,
+            DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
     )
 
     private val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
@@ -334,11 +334,11 @@ internal class KonanPartialModuleDeserializer(
         if (function.parents.any { (it as? IrFunction)?.isInline == true }) {
             // Already deserialized by the top-most inline function.
             return InlineFunctionOriginInfo(
-                function,
-                packageFragment as? IrFile
-                    ?: inlineFunctionFiles[packageFragment as IrExternalPackageFragment]
-                    ?: error("${function.render()} should've been deserialized along with its parent"),
-                function.startOffset, function.endOffset
+                    function,
+                    packageFragment as? IrFile
+                            ?: inlineFunctionFiles[packageFragment as IrExternalPackageFragment]
+                            ?: error("${function.render()} should've been deserialized along with its parent"),
+                    function.startOffset, function.endOffset
             )
         }
 
@@ -422,10 +422,10 @@ internal class KonanPartialModuleDeserializer(
         )
 
         return InlineFunctionOriginInfo(
-            function,
-            fileDeserializationState.file,
-            inlineFunctionReference.startOffset,
-            inlineFunctionReference.endOffset
+                function,
+                fileDeserializationState.file,
+                inlineFunctionReference.startOffset,
+                inlineFunctionReference.endOffset
         )
     }
 
@@ -476,7 +476,7 @@ internal class KonanPartialModuleDeserializer(
                 require(irClass.isInner) { "Expected an inner class: ${irClass.render()}" }
                 require(outerThisFieldInfo != null) { "For an inner class ${irClass.render()} there should be <outer this> field" }
                 outerThisFieldInfo.also {
-                    require(it.alignment == field.alignment) { "Mismatched align information for outer this"}
+                    require(it.alignment == field.alignment) { "Mismatched align information for outer this" }
                 }
             } else {
                 val name = fileDeserializationState.fileReader.string(field.name)
@@ -497,10 +497,10 @@ internal class KonanPartialModuleDeserializer(
                     }
                 }
                 ClassLayoutBuilder.FieldInfo(
-                    name, type,
-                    isConst = (field.flags and SerializedClassFieldInfo.FLAG_IS_CONST) != 0,
-                    irFieldSymbol = IrFieldSymbolImpl(),
-                    alignment = field.alignment,
+                        name, type,
+                        isConst = (field.flags and SerializedClassFieldInfo.FLAG_IS_CONST) != 0,
+                        irFieldSymbol = IrFieldSymbolImpl(),
+                        alignment = field.alignment,
                 )
             }
         }
