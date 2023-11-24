@@ -19,4 +19,6 @@ public final enum class StaticMembersInEnum : R|kotlin/Enum<test/StaticMembersIn
     public final static val entries: R|kotlin/enums/EnumEntries<test/StaticMembersInEnum>|
         public get(): R|kotlin/enums/EnumEntries<test/StaticMembersInEnum>|
 
+    public constructor(): R|test/StaticMembersInEnum|
+
 }

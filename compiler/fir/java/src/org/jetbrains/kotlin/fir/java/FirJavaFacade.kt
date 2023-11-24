@@ -361,11 +361,22 @@ abstract class FirJavaFacade(
                 )
                 generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName)
                 generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName)
+                if (javaClassDeclaredConstructors.isEmpty()) {
+                    declarations += buildSyntheticConstructorForJavaClass(
+                        javaClass,
+                        classKind,
+                        constructorId = constructorId,
+                        ownerClassBuilder = this,
+                        valueParametersForAnnotationConstructor = null,
+                        moduleData = moduleData,
+                    )
+                }
             }
             if (classIsAnnotation) {
                 declarations +=
-                    buildConstructorForAnnotationClass(
+                    buildSyntheticConstructorForJavaClass(
                         javaClass,
+                        classKind,
                         constructorId = constructorId,
                         ownerClassBuilder = this,
                         valueParametersForAnnotationConstructor = valueParametersForAnnotationConstructor,
@@ -674,11 +685,12 @@ abstract class FirJavaFacade(
         }
     }
 
-    private fun buildConstructorForAnnotationClass(
+    private fun buildSyntheticConstructorForJavaClass(
         javaClass: JavaClass,
+        classKind: ClassKind,
         constructorId: CallableId,
         ownerClassBuilder: FirJavaClassBuilder,
-        valueParametersForAnnotationConstructor: ValueParametersForAnnotationConstructor,
+        valueParametersForAnnotationConstructor: ValueParametersForAnnotationConstructor?,
         moduleData: FirModuleData,
     ): FirJavaConstructor {
         return buildJavaConstructor {
@@ -690,8 +702,8 @@ abstract class FirJavaFacade(
             returnTypeRef = buildResolvedTypeRef {
                 type = ownerClassBuilder.buildSelfTypeRef()
             }
-            valueParametersForAnnotationConstructor.forEach { _, firValueParameter -> valueParameters += firValueParameter }
-            visibility = Visibilities.Public
+            valueParametersForAnnotationConstructor?.forEach { _, firValueParameter -> valueParameters += firValueParameter }
+            visibility = if (classKind == ClassKind.ENUM_CLASS) Visibilities.Private else Visibilities.Public
             isInner = false
             isPrimary = true
             annotationBuilder = { emptyList() }
