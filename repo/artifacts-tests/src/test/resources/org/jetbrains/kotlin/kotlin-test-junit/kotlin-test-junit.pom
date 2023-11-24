@@ -11,7 +11,7 @@
   <artifactId>kotlin-test-junit</artifactId>
   <version>ArtifactsTest.version</version>
   <name>Kotlin Test Junit</name>
-  <description>Kotlin Test Support for junit</description>
+  <description>Kotlin Test library support for JUnit</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>

@@ -12,7 +12,7 @@
   <version>ArtifactsTest.version</version>
   <packaging>klib</packaging>
   <name>Kotlin Test Wasm Js</name>
-  <description>Kotlin Test for Wasm JS</description>
+  <description>Kotlin Test library for experimental WebAssembly JS platform</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>

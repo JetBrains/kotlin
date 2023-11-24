@@ -71,6 +71,9 @@ class MultiModuleMavenPublishingConfiguration() {
             fun configureVariantDetails(code: ConfigurationVariantDetails.() -> Unit) {
                 variantDetailsConfigurations += code
             }
+
+            var suppressPomMetadataWarnings: Boolean = false
+            fun suppressPomMetadataWarnings() { suppressPomMetadataWarnings = true }
         }
 
         val mavenPublicationConfigurations = mutableListOf<MavenPublication.() -> Unit>()
@@ -124,6 +127,9 @@ fun Project.configureMultiModuleMavenPublishing(code: MultiModuleMavenPublishing
             from(component)
             val module = publishingConfiguration.modules[componentName]!!
             module.mavenPublicationConfigurations.forEach { configure -> configure() }
+            module.variants.values.filter { it.suppressPomMetadataWarnings }.forEach {
+                suppressPomMetadataWarningsFor(it.name)
+            }
         }
     }
 }
@@ -145,7 +151,6 @@ fun Project.addVariant(component: AdhocComponentWithVariants, variant: MultiModu
     val configuration = configurations.getOrCreate(variant.configurationName)
     configuration.apply {
         isCanBeResolved = false
-        isCanBeConsumed = true
 
         variant.attributesConfigurations.forEach { configure -> attributes.configure() }
     }

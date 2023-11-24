@@ -1,10 +1,13 @@
 @file:Suppress("UNUSED_VARIABLE")
 
+import org.gradle.api.publish.internal.PublicationInternal
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-
+import plugins.configureDefaultPublishing
+import plugins.configureKotlinPomAttributes
+import plugins.publishing.*
 
 plugins {
     kotlin("multiplatform")
@@ -395,6 +398,121 @@ configurations {
                 metadataApiElements(artifactCoordinates)
                 nativeApiElements(artifactCoordinates)
             }
+        }
+    }
+}
+
+
+configureDefaultPublishing()
+
+fun emptyJavadocJar(appendix: String? = null): TaskProvider<Jar> =
+    tasks.register<Jar>("emptyJavadocJar${appendix.orEmpty().capitalize()}") {
+        archiveAppendix = appendix
+        archiveClassifier = "javadoc"
+    }
+
+publishing {
+    val artifactBaseName = base.archivesName.get()
+    configureMultiModuleMavenPublishing {
+        val rootModule = module("rootModule") {
+            mavenPublication {
+                artifactId = artifactBaseName
+                configureKotlinPomAttributes(project, "Kotlin Test Multiplatform library")
+                artifact(emptyJavadocJar())
+            }
+            variant("metadataApiElements") { suppressPomMetadataWarnings() }
+            variant("jvmApiElements")
+            variant("jvmRuntimeElements") {
+                configureVariantDetails { mapToMavenScope("runtime") }
+            }
+            variant("jvmSourcesElements")
+            variant("nativeApiElements") {
+                attributes {
+                    attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+                    attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named("non-jvm"))
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+                    attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+                }
+            }
+        }
+        val frameworkModules = jvmTestFrameworks.map { framework ->
+            module("${framework.lowercase()}Module") {
+                mavenPublication {
+                    artifactId = "$artifactBaseName-${framework.lowercase()}"
+                    configureKotlinPomAttributes(project, "Kotlin Test library support for ${framework}")
+                    artifact(emptyJavadocJar(framework.lowercase()))
+                }
+                variant("jvm${framework}ApiElements") { suppressPomMetadataWarnings() }
+                variant("jvm${framework}RuntimeElements") {
+                    suppressPomMetadataWarnings()
+                    configureVariantDetails { mapToMavenScope("runtime") }
+                }
+                variant("jvm${framework}SourcesElements") { suppressPomMetadataWarnings() }
+            }
+        }
+
+        val js = module("jsModule") {
+            mavenPublication {
+                artifactId = "$artifactBaseName-js"
+                configureKotlinPomAttributes(project, "Kotlin Test library for JS", packaging = "klib")
+            }
+            variant("jsApiElements")
+            variant("jsRuntimeElements")
+            variant("jsSourcesElements")
+        }
+
+        val wasmJs = module("wasmJsModule") {
+            mavenPublication {
+                artifactId = "$artifactBaseName-wasm-js"
+                configureKotlinPomAttributes(project, "Kotlin Test library for experimental WebAssembly JS platform", packaging = "klib")
+            }
+            variant("wasmJsApiElements")
+            variant("wasmJsRuntimeElements")
+            variant("wasmJsSourcesElements")
+        }
+        val wasmWasi = module("wasmWasiModule") {
+            mavenPublication {
+                artifactId = "$artifactBaseName-wasm-wasi"
+                configureKotlinPomAttributes(project, "Kotlin Test library for experimental WebAssembly WASI platform", packaging = "klib")
+            }
+            variant("wasmWasiApiElements")
+            variant("wasmWasiRuntimeElements")
+            variant("wasmWasiSourcesElements")
+        }
+
+        module("testCommonModule") {
+            mavenPublication {
+                artifactId = "$artifactBaseName-common"
+                configureKotlinPomAttributes(project, "Legacy artifact of Kotlin Test library. Use kotlin-test instead", packaging = "pom")
+                (this as PublicationInternal<*>).isAlias = true
+            }
+            variant("kotlinTestCommonElements")
+        }
+        module("testAnnotationsCommonModule") {
+            mavenPublication {
+                artifactId = "$artifactBaseName-annotations-common"
+                configureKotlinPomAttributes(project, "Legacy artifact of Kotlin Test library. Use kotlin-test instead", packaging = "pom")
+                (this as PublicationInternal<*>).isAlias = true
+            }
+            variant("kotlinTestAnnotationsCommonElements")
+        }
+
+        // Makes all variants from accompanying artifacts visible through `available-at`
+        rootModule.include(js, *frameworkModules.toTypedArray(), wasmJs, wasmWasi)
+    }
+
+    publications {
+        (listOf(
+            listOf("rootModule", "Main", "kotlin-test", "jvmRuntimeClasspath"),
+            listOf("jsModule", "Js", "kotlin-test-js", "jsRuntimeClasspath"),
+            listOf("wasmJsModule", "Wasm-Js", "kotlin-test-wasm-js", "wasmJsRuntimeClasspath"),
+            listOf("wasmWasiModule", "Wasm-Wasi", "kotlin-test-wasm-wasi", "wasmWasiRuntimeClasspath"),
+            listOf("testCommonModule", "Common", "kotlin-test-common", "kotlinTestCommonDependencies"),
+            listOf("testAnnotationsCommonModule", "AnnotationsCommon", "kotlin-test-annotations-common", "kotlinTestAnnotationsCommonDependencies"),
+        ) + jvmTestFrameworks.map { framework ->
+            listOf("${framework.lowercase()}Module", "$framework", "kotlin-test-${framework.lowercase()}", "jvm${framework}RuntimeDependencies")
+        }).forEach { (module, sbomTarget, sbomDocument, classpath) ->
+            configureSbom(sbomTarget, sbomDocument, setOf(classpath), named<MavenPublication>(module))
         }
     }
 }

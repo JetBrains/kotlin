@@ -12,7 +12,7 @@
   <version>ArtifactsTest.version</version>
   <packaging>klib</packaging>
   <name>Kotlin Test Js</name>
-  <description>Kotlin Test for JS</description>
+  <description>Kotlin Test library for JS</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>

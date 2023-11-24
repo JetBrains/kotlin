@@ -11,7 +11,7 @@
   <artifactId>kotlin-test-testng</artifactId>
   <version>ArtifactsTest.version</version>
   <name>Kotlin Test Testng</name>
-  <description>Kotlin Test Support for testng</description>
+  <description>Kotlin Test library support for TestNG</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
