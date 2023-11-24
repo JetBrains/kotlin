@@ -92,9 +92,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, "-Xdestroy-runtime-mode switch is deprecated and will be removed in a future release.")
         }
     }.let { DestroyRuntimeMode.ON_SHUTDOWN }
-    private val defaultGC get() = GC.PARALLEL_MARK_CONCURRENT_SWEEP
+    private val defaultGC get() = GC.CONCURRENT_MARK_AND_SWEEP
     val gc: GC get() = configuration.get(BinaryOptions.gc) ?: defaultGC
-    val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
+    val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.PANIC
     private val defaultDisableMmap get() = target.family == Family.MINGW
     val disableMmap: Boolean by lazy {
         when (configuration.get(BinaryOptions.disableMmap)) {
@@ -185,7 +185,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         } ?: arg
     }
 
-    private val defaultGcMarkSingleThreaded get() = target.family == Family.MINGW
+    private val defaultGcMarkSingleThreaded get() = target.family == Family.MINGW && gc == GC.PARALLEL_MARK_CONCURRENT_SWEEP
 
     val gcMarkSingleThreaded: Boolean by lazy {
         configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: defaultGcMarkSingleThreaded
@@ -200,6 +200,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             if (mutatorsCooperate == true) {
                 configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                         "Mutators cooperation is not supported during single threaded mark")
+            }
+            false
+        } else if (gc == GC.CONCURRENT_MARK_AND_SWEEP) {
+            if (mutatorsCooperate == true) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                        "Mutators cooperation is not yet supported in CMS GC")
             }
             false
         } else {

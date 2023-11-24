@@ -176,6 +176,7 @@ void Kotlin_Array_copyImpl(KConstRef thiz, KInt fromIndex,
       std::abs(fromIndex - toIndex) < count) {
     UpdateHeapRefsInsideOneArray(array, fromIndex, toIndex, count);
   } else {
+    // FIXME pretty inefficient write barriers here
     if (fromIndex >= toIndex) {
       for (int index = 0; index < count; index++) {
         UpdateHeapRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),

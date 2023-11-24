@@ -59,17 +59,17 @@ bool gc::GC::FinalizersThreadIsRunning() noexcept {
 
 // static
 ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {
-    gc::internal::processObjectInMark<gc::mark::ParallelMark::MarkTraits>(state, object);
+    gc::internal::processObjectInMark<gc::mark::ConcurrentMark::MarkTraits>(state, object);
 }
 
 // static
 ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
-    gc::internal::processArrayInMark<gc::mark::ParallelMark::MarkTraits>(state, array);
+    gc::internal::processArrayInMark<gc::mark::ConcurrentMark::MarkTraits>(state, array);
 }
 
 // static
 ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {
-    gc::internal::processFieldInMark<gc::mark::ParallelMark::MarkTraits>(state, field);
+    gc::internal::processFieldInMark<gc::mark::ConcurrentMark::MarkTraits>(state, field);
 }
 
 int64_t gc::GC::Schedule() noexcept {

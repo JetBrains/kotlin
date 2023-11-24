@@ -19,7 +19,7 @@
 #include "IntrusiveList.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "ObjectData.hpp"
-#include "ParallelMark.hpp"
+#include "ConcurrentMark.hpp"
 #include "ScopedThread.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
@@ -34,7 +34,11 @@ class ConcurrentMarkAndSweep : private Pinned {
 public:
     class ThreadData : private Pinned {
     public:
-        explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
+        explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData) noexcept
+            : gc_(gc)
+            , threadData_(threadData)
+            , barriers_() {}
+
         ~ThreadData() = default;
 
         void OnSuspendForGC() noexcept;
@@ -57,27 +61,24 @@ public:
         ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
         barriers::BarriersThreadData barriers_;
-        mark::ParallelMark::ThreadData mark_;
+        mark::ConcurrentMark::ThreadData mark_;
 
         std::atomic<bool> rootSetLocked_ = false;
         std::atomic<bool> published_ = false;
     };
 
-    ConcurrentMarkAndSweep(
-            alloc::Allocator& allocator, gcScheduler::GCScheduler& scheduler, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
+    ConcurrentMarkAndSweep(alloc::Allocator& allocator, gcScheduler::GCScheduler& scheduler,
+                           bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
     ~ConcurrentMarkAndSweep();
 
     void StartFinalizerThreadIfNeeded() noexcept;
     void StopFinalizerThreadIfRunning() noexcept;
     bool FinalizersThreadIsRunning() noexcept;
 
-    void reconfigure(std::size_t maxParallelism, bool mutatorsCooperate, size_t auxGCThreads) noexcept;
-
     GCStateHolder& state() noexcept { return state_; }
 
 private:
     void mainGCThreadBody();
-    void auxiliaryGCThreadBody();
     void PerformFullGC(int64_t epoch) noexcept;
 
     alloc::Allocator& allocator_;
@@ -86,7 +87,7 @@ private:
     GCStateHolder state_;
     FinalizerProcessor<alloc::FinalizerQueue, alloc::FinalizerQueueTraits> finalizerProcessor_;
 
-    mark::ParallelMark markDispatcher_;
+    mark::ConcurrentMark markDispatcher_;
     ScopedThread mainThread_;
     std::vector<ScopedThread> auxThreads_;
 };

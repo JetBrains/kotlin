@@ -18,7 +18,7 @@ class BarriersThreadData : private Pinned {
 public:
     void onThreadRegistration() noexcept;
     void onSafePoint() noexcept;
-    
+
     void startMarkingNewObjects(GCHandle gcHandle) noexcept;
     void stopMarkingNewObjects() noexcept;
     bool shouldMarkNewObjects() const noexcept;
