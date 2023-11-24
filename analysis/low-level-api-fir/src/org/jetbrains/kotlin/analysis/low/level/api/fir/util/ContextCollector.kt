@@ -441,7 +441,7 @@ private class ContextCollectorVisitor(
         onActiveBody {
             enumEntry.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-            context.forEnumEntry {
+            context.withEnumEntry(enumEntry) {
                 dumpContext(enumEntry, ContextKind.BODY)
 
                 onActive {

@@ -106,7 +106,7 @@ open class FirDeclarationsResolveTransformer(
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
         if (implicitTypeOnly || enumEntry.initializerResolved) return enumEntry
-        return context.forEnumEntry {
+        return context.withEnumEntry(enumEntry) {
             (enumEntry.transformChildren(this, data) as FirEnumEntry)
         }
     }

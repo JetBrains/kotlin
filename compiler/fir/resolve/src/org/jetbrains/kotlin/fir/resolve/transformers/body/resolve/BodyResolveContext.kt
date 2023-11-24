@@ -770,9 +770,12 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <T> forEnumEntry(
+    inline fun <T> withEnumEntry(
+        enumEntry: FirEnumEntry,
         f: () -> T
-    ): T = withTowerDataMode(FirTowerDataMode.ENUM_ENTRY, f)
+    ): T = withTowerDataMode(FirTowerDataMode.ENUM_ENTRY) {
+        withContainer(enumEntry, f)
+    }
 
     @OptIn(PrivateForInline::class)
     inline fun <T> forAnnotation(

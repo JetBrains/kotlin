@@ -294,7 +294,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
-        context.forEnumEntry {
+        context.withEnumEntry(enumEntry) {
             enumEntry
                 .transformAnnotations(transformer, data)
                 .transformReceiverParameter(transformer, data)
