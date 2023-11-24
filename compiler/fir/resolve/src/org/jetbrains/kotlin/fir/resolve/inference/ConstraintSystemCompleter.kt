@@ -185,8 +185,27 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                 completionMode, topLevelAtoms, topLevelType, postponedArguments
             )
 
+            if (completionMode == ConstraintSystemCompletionMode.PARTIAL_BI) {
+                for (argument in postponedArguments) {
+                    val variableForFixation = postponedArgumentsInputTypesResolver.findNextReadyVariableForParameterTypeIfNeeded(
+                        this,
+                        argument,
+                        postponedArguments,
+                        topLevelType,
+                        dependencyProvider,
+                    ) ?: continue
+
+                    assert(!variableForFixation.hasProperConstraint) {
+                        "At this stage there should be no remaining variables with proper constraints from input types"
+                    }
+
+                    val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
+                    processVariableWhenNotEnoughInformation(variableWithConstraints, topLevelAtoms)
+                }
+            }
+
             // Stage 9: force analysis of remaining not analyzed postponed arguments and rerun stages if there are
-            if (completionMode == ConstraintSystemCompletionMode.FULL) {
+            if (completionMode == ConstraintSystemCompletionMode.FULL || completionMode == ConstraintSystemCompletionMode.PARTIAL_BI) {
                 if (analyzeRemainingNotAnalyzedPostponedArgument(postponedArguments, analyze))
                     continue
             }
