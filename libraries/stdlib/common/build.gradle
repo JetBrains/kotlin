@@ -23,17 +23,10 @@ sourceSets {
         }
     }
     test {
-        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
-        kotlin {
-            srcDir commonTestSrcDir
-            srcDir 'test'
-        }
     }
 }
 
 dependencies {
-    testApi project(":kotlin-test:kotlin-test-common")
-    testApi project(":kotlin-test:kotlin-test-annotations-common")
 }
 
 compileKotlinCommon {

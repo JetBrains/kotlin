@@ -135,11 +135,7 @@ fun Project.configureKotlinCompilationOptions() {
         val projectsWithForced19LanguageVersion = coreLibProjects + listOf(
             ":kotlin-stdlib-jvm-minimal-for-test",
             ":kotlin-stdlib-js-ir-minimal-for-test",
-            ":kotlin-stdlib-wasm-js",
-            ":kotlin-stdlib-wasm-wasi",
             ":kotlin-dom-api-compat",
-            ":kotlin-test:kotlin-test-wasm-js",
-            ":kotlin-test:kotlin-test-wasm-wasi",
         )
 
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
