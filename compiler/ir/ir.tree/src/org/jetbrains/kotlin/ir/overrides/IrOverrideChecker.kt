@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.createIrTypeCheckerState
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeCheckerState
 
 class IrOverrideChecker(
     private val typeSystem: IrTypeSystemContext,
@@ -100,35 +101,47 @@ class IrOverrideChecker(
             superValueParameters.size != subValueParameters.size -> return incompatible("Value parameter number mismatch")
         }
 
-        // TODO: check the bounds. See OverridingUtil.areTypeParametersEquivalent()
-//        superTypeParameters.forEachIndexed { index, parameter ->
-//            if (!AbstractTypeChecker.areTypeParametersEquivalent(
-//                    typeCheckerContext as AbstractTypeCheckerContext,
-//                    subTypeParameters[index].type,
-//                    parameter.type
-//                )
-//            ) return OverrideCompatibilityInfo.incompatible("Type parameter bounds mismatch")
-//        }
-
         val typeCheckerState = createIrTypeCheckerState(
-            IrTypeSystemContextWithAdditionalAxioms(
-                typeSystem,
-                superTypeParameters,
-                subTypeParameters
-            )
+            IrTypeSystemContextWithAdditionalAxioms(typeSystem, superTypeParameters, subTypeParameters)
         )
 
-        superValueParameters.forEachIndexed { index, parameter ->
-            if (!AbstractTypeChecker.equalTypes(
-                    typeCheckerState,
-                    subValueParameters[index].type,
-                    parameter.type
-                )
-            ) return incompatible("Value parameter type mismatch")
+        for ((index, superTypeParameter) in superTypeParameters.withIndex()) {
+            if (!areTypeParametersEquivalent(superTypeParameter, subTypeParameters[index], typeCheckerState)) {
+                return incompatible("Type parameter bounds mismatch")
+            }
+        }
+
+        for ((index, superValueParameter) in superValueParameters.withIndex()) {
+            if (!AbstractTypeChecker.equalTypes(typeCheckerState, subValueParameters[index].type, superValueParameter.type)) {
+                return incompatible("Value parameter type mismatch")
+            }
         }
 
         return success()
     }
+
+    private fun areTypeParametersEquivalent(
+        superTypeParameter: IrTypeParameter,
+        subTypeParameter: IrTypeParameter,
+        typeCheckerState: TypeCheckerState,
+    ): Boolean {
+        val superBounds = superTypeParameter.superTypes
+        val subBounds = subTypeParameter.superTypes.toMutableList()
+        if (superBounds.size != subBounds.size) return false
+        outer@ for (superBound in superBounds) {
+            val it = subBounds.listIterator()
+            while (it.hasNext()) {
+                val subBound = it.next()
+                if (AbstractTypeChecker.equalTypes(typeCheckerState, superBound, subBound)) {
+                    it.remove()
+                    continue@outer
+                }
+            }
+            return false
+        }
+        return true
+    }
+
 
     private fun runExternalOverridabilityConditions(
         superMember: IrOverridableMember,

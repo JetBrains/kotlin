@@ -18342,6 +18342,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("functionsDifferInTypeParameterBounds.kt")
+        public void testFunctionsDifferInTypeParameterBounds() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/functionsDifferInTypeParameterBounds.kt");
+        }
+
+        @Test
+        @TestMetadata("functionsDifferInTypeParameterBounds2.kt")
+        public void testFunctionsDifferInTypeParameterBounds2() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/functionsDifferInTypeParameterBounds2.kt");
+        }
+
+        @Test
+        @TestMetadata("functionsDifferInTypeParameterBounds3.kt")
+        public void testFunctionsDifferInTypeParameterBounds3() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/functionsDifferInTypeParameterBounds3.kt");
+        }
+
+        @Test
         @TestMetadata("incorrectBytecodeWithEnhancedNullability.kt")
         public void testIncorrectBytecodeWithEnhancedNullability() throws Exception {
             runTest("compiler/testData/codegen/box/fir/incorrectBytecodeWithEnhancedNullability.kt");
