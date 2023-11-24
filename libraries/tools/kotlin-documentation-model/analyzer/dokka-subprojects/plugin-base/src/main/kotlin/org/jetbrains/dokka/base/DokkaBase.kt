@@ -131,7 +131,7 @@ public class DokkaBase : DokkaPlugin() {
 
     public val sinceKotlinTransformer: Extension<DocumentableTransformer, *, *> by extending {
         CoreExtensions.documentableTransformer providing ::SinceKotlinTransformer applyIf {
-            SinceKotlinTransformer.shouldDisplaySinceKotlin()
+            DokkaBaseInternalConfiguration.sinceKotlinRenderingEnabled
         } order {
             before(extensionsExtractor)
         }
@@ -159,7 +159,7 @@ public class DokkaBase : DokkaPlugin() {
 
     public val sinceKotlinTagContentProvider: Extension<CustomTagContentProvider, *, *> by extending {
         customTagContentProvider with SinceKotlinTagContentProvider applyIf {
-            SinceKotlinTransformer.shouldDisplaySinceKotlin()
+            DokkaBaseInternalConfiguration.sinceKotlinRenderingEnabled
         }
     }
 
