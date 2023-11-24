@@ -8,9 +8,9 @@
 
 package org.jetbrains.kotlin.sir.impl
 
-import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirDeclarationParent
 import org.jetbrains.kotlin.sir.SirForeignFunction
+import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.visitors.SirTransformer
 import org.jetbrains.kotlin.sir.visitors.SirVisitor

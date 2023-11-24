@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.sir.visitors.SirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.module]
  */
-abstract class SirModule : SirDeclarationContainer() {
+abstract class SirModule : SirDeclarationContainer(), SirNamed {
     abstract override val declarations: List<SirDeclaration>
+    abstract override val name: String
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =
         visitor.visitModule(this, data)

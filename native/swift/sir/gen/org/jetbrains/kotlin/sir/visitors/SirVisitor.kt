@@ -29,14 +29,14 @@ abstract class SirVisitor<out R, in D> {
     open fun visitForeignDeclaration(foreignDeclaration: SirForeignDeclaration, data: D): R =
         visitDeclaration(foreignDeclaration, data)
 
-    open fun visitDeclarationWithName(declarationWithName: SirDeclarationWithName, data: D): R =
-        visitDeclaration(declarationWithName, data)
-
-    open fun visitNamedTypeDeclaration(namedTypeDeclaration: SirNamedTypeDeclaration, data: D): R =
-        visitDeclarationWithName(namedTypeDeclaration, data)
+    open fun visitNamedDeclaration(namedDeclaration: SirNamedDeclaration, data: D): R =
+        visitDeclaration(namedDeclaration, data)
 
     open fun visitEnum(enum: SirEnum, data: D): R =
-        visitNamedTypeDeclaration(enum, data)
+        visitNamedDeclaration(enum, data)
+
+    open fun visitStruct(struct: SirStruct, data: D): R =
+        visitNamedDeclaration(struct, data)
 
     open fun visitCallable(callable: SirCallable, data: D): R =
         visitDeclaration(callable, data)

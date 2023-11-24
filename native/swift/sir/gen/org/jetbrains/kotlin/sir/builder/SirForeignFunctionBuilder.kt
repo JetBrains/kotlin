@@ -11,16 +11,16 @@
 package org.jetbrains.kotlin.sir.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirBuilderDsl
 import org.jetbrains.kotlin.sir.SirForeignFunction
+import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.impl.SirForeignFunctionImpl
 
 @SirBuilderDsl
 class SirForeignFunctionBuilder {
-    lateinit var origin: SirOrigin
-    lateinit var visibility: SirVisibility
+    var origin: SirOrigin = SirOrigin.Unknown
+    var visibility: SirVisibility = SirVisibility.PUBLIC
 
     fun build(): SirForeignFunction {
         return SirForeignFunctionImpl(
@@ -31,7 +31,7 @@ class SirForeignFunctionBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildForeignFunction(init: SirForeignFunctionBuilder.() -> Unit): SirForeignFunction {
+inline fun buildForeignFunction(init: SirForeignFunctionBuilder.() -> Unit = {}): SirForeignFunction {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

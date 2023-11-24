@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.sir.impl.SirEnumImpl
 
 @SirBuilderDsl
 class SirEnumBuilder {
-    lateinit var origin: SirOrigin
-    lateinit var visibility: SirVisibility
+    var origin: SirOrigin = SirOrigin.Unknown
+    var visibility: SirVisibility = SirVisibility.PUBLIC
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
     val cases: MutableList<SirEnumCase> = mutableListOf()
