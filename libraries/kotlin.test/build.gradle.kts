@@ -40,12 +40,36 @@ kotlin {
             }
             val main by getting
             val test by getting
+            configureJava9Compilation(
+                "kotlin.test",
+                listOf(main.output.allOutputs),
+                main.configurations.compileDependencyConfiguration,
+                project.sourceSets.create("jvmJava9") {
+                    java.srcDir("jvm/src/java9/java")
+                }.name,
+            )
             jvmTestFrameworks.forEach { framework ->
                 val frameworkMain = create("$framework") {
                     associateWith(main)
                 }
                 create("${framework}Test") {
                     associateWith(frameworkMain)
+                }
+                val frameworkJava9SourceSet = project.sourceSets.create("jvm${framework}Java9") {
+                    java.srcDir("${framework.lowercase()}/src/java9/java")
+                }
+                configureJava9Compilation(
+                    "kotlin.test.${framework.lowercase()}",
+                    listOf(frameworkMain.output.allOutputs),
+                    frameworkMain.configurations.compileDependencyConfiguration,
+                    frameworkJava9SourceSet.name,
+                )
+                val java9CompileOnly = configurations[frameworkJava9SourceSet.compileOnlyConfigurationName]
+                project.dependencies {
+                    java9CompileOnly(project)
+                    if (framework == JvmTestFramework.TestNG) {
+                        java9CompileOnly("org.testng:testng:7.0.0")
+                    }
                 }
             }
             test.associateWith(getByName("JUnit"))
