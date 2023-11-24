@@ -79,6 +79,7 @@ object TestModuleStructureFactory {
         return when {
             module.platform.isJvm() -> jvmStdlibAndJdkDependencies(testModule, project, testServices)
             module.platform.isJs() -> jsStdlibDependencies(project, testServices)
+            module.platform.isCommon() -> jvmStdlibAndJdkDependencies(testModule, project, testServices) // TODO: KT-63769
             else -> error("Unsupported platform ${module.platform} in this test")
         }
     }
