@@ -745,7 +745,7 @@ internal class DokkaSymbolVisitor(
                     functionSymbol.additionalExtras()?.toSourceSetDependent()?.toAdditionalModifiers(),
                     getDokkaAnnotationsFrom(functionSymbol)
                         ?.toSourceSetDependent()?.toAnnotations(),
-                    ObviousMember.takeIf { isObvious(functionSymbol) },
+                    ObviousMember.takeIf { isObvious(functionSymbol, inheritedFrom) },
                 )
             )
         }
@@ -868,14 +868,15 @@ internal class DokkaSymbolVisitor(
         else
             getKDocDocumentationFrom(symbol, logger) ?: javadocParser?.let { getJavaDocDocumentationFrom(symbol, it) }
 
-    private fun KtAnalysisSession.isObvious(functionSymbol: KtFunctionSymbol): Boolean {
+    private fun KtAnalysisSession.isObvious(functionSymbol: KtFunctionSymbol, inheritedFrom: DRI?): Boolean {
         return functionSymbol.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED && !hasGeneratedKDocDocumentation(functionSymbol) ||
-                !functionSymbol.isOverride && functionSymbol.callableIdIfNonLocal?.classId?.isObvious() == true
+                !functionSymbol.isOverride && inheritedFrom?.isObvious() == true
     }
 
-    private fun ClassId.isObvious(): Boolean = with(asString()) {
-        return this == "kotlin/Any" || this == "kotlin/Enum"
-                || this == "java.lang/Object" || this == "java.lang/Enum"
+    private fun DRI.isObvious(): Boolean = when (packageName) {
+        "kotlin" -> classNames == "Any" || classNames == "Enum"
+        "java.lang" -> classNames == "Object" || classNames == "Enum"
+        else -> false
     }
 
     private fun KtSymbol.getSource() = KtPsiDocumentableSource(psi).toSourceSetDependent()
