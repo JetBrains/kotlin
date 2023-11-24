@@ -12,7 +12,7 @@ fun test(d: dynamic) {
         d!!.<!DEBUG_INFO_DYNAMIC!>onAnyVal<!>
     }
     run {
-        d!!.<!UNRESOLVED_REFERENCE!>onAnyVal<!> = 1
+        d!!.<!DEBUG_INFO_DYNAMIC!>onAnyVal<!> = 1
     }
 
     d.<!DEBUG_INFO_DYNAMIC!>onNullableAnyVal<!> = 1

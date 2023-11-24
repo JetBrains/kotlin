@@ -14,7 +14,7 @@ fun test(d: dynamic) {
     d.<!DEBUG_INFO_DYNAMIC!>onString<!>()
 
     d.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
-    d?.<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>onDynamic<!>()
+    d?.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
 
     (d as String).onString()
     (d as Any).onAny()

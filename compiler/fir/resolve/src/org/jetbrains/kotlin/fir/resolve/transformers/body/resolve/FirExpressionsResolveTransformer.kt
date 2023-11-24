@@ -939,6 +939,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
     }
 
+    @OptIn(UnresolvedExpressionTypeAccess::class)
     override fun transformCheckNotNullCall(
         checkNotNullCall: FirCheckNotNullCall,
         data: ResolutionMode,
@@ -951,7 +952,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             return checkNotNullCall
         }
 
-        dataFlowAnalyzer.enterCheckNotNullCall()
+        if (checkNotNullCall.arguments.firstOrNull()?.coneTypeOrNull !is ConeDynamicType) {
+            dataFlowAnalyzer.enterCheckNotNullCall()
+        }
+
         checkNotNullCall
             .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
             .replaceArgumentList(checkNotNullCall.argumentList.transform(transformer, ResolutionMode.ContextDependent))
@@ -960,7 +964,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext), data
         )
 
-        dataFlowAnalyzer.exitCheckNotNullCall(result, data.forceFullCompletion)
+        if (checkNotNullCall.arguments.firstOrNull()?.coneTypeOrNull !is ConeDynamicType) {
+            dataFlowAnalyzer.exitCheckNotNullCall(result, data.forceFullCompletion)
+        }
+
         return result
     }
 
