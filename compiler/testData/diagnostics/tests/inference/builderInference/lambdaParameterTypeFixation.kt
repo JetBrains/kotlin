@@ -8,7 +8,7 @@ fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 fun foo() {
     val t = generate {
         yield("")
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(this, "") { it.<!UNRESOLVED_REFERENCE!>length<!> }
+        bar(this, "") { it.length }
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>t<!>

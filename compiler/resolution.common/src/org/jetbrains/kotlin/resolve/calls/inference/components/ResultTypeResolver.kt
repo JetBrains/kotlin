@@ -22,6 +22,7 @@ class ResultTypeResolver(
     private val languageVersionSettings: LanguageVersionSettings
 ) {
     interface Context : TypeSystemInferenceExtensionContext {
+        val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
         val outerSystemVariablesPrefixSize: Int
         fun isProperType(type: KotlinTypeMarker): Boolean
         fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker
@@ -351,7 +352,7 @@ class ResultTypeResolver(
     }
 
     private fun Context.isProperTypeForFixation(type: KotlinTypeMarker): Boolean =
-        isProperTypeForFixation(type) { isProperType(it) }
+        isProperTypeForFixation(type, { it in notFixedTypeVariables }) { isProperType(it) }
 
     private fun findResultIfThereIsEqualsConstraint(c: Context, variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? =
         with(c) {

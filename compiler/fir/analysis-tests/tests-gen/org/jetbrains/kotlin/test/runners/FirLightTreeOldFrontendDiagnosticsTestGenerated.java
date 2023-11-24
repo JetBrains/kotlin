@@ -16638,6 +16638,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("bothOuterAndProperConstraints.kt")
+                public void testBothOuterAndProperConstraints() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/bothOuterAndProperConstraints.kt");
+                }
+
+                @Test
                 @TestMetadata("builderPassedAsNamedArgument.kt")
                 public void testBuilderPassedAsNamedArgument() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/builderPassedAsNamedArgument.kt");
@@ -16677,6 +16683,24 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("errorOnStubReceiver.kt")
                 public void testErrorOnStubReceiver() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/errorOnStubReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter.kt")
+                public void testFixingTVForLambadaWithShallowDependencyToOuter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter.kt");
+                }
+
+                @Test
+                @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter2.kt")
+                public void testFixingTVForLambadaWithShallowDependencyToOuter2() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter2.kt");
+                }
+
+                @Test
+                @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter3.kt")
+                public void testFixingTVForLambadaWithShallowDependencyToOuter3() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter3.kt");
                 }
 
                 @Test
