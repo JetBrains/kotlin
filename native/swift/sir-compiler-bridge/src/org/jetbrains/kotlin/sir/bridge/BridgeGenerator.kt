@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.bridge
 
+import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.bridge.impl.BridgeGeneratorImpl
 import org.jetbrains.kotlin.sir.bridge.impl.CBridgePrinter
 import org.jetbrains.kotlin.sir.bridge.impl.KotlinBridgePrinter
@@ -12,36 +13,14 @@ import org.jetbrains.kotlin.sir.bridge.impl.KotlinBridgePrinter
 /**
  * Description of a Kotlin function for which we are creating the bridge.
  *
- * TODO: Replace with SIR once KT-63266 is merged.
- *
- * @param fqName Fully qualified name of the function we are bridging.
+ * @param function SIR function we are generating bridge for
  * @param bridgeName C name of the bridge
  */
 class BridgeRequest(
-    val fqName: List<String>,
+    val function: SirFunction,
     val bridgeName: String,
-    val parameters: List<Parameter>,
-    val returnType: Type,
-) {
-    class Parameter(
-        val name: String,
-        val type: Type,
-    )
-
-    sealed interface Type {
-        data object Boolean : Type
-
-        data object Byte : Type
-        data object Short : Type
-        data object Int : Type
-        data object Long : Type
-
-        data object UByte : Type
-        data object UShort : Type
-        data object UInt : Type
-        data object ULong : Type
-    }
-}
+    val fqName: List<String>,
+)
 
 /**
  * A C-like wrapper around some Kotlin function.

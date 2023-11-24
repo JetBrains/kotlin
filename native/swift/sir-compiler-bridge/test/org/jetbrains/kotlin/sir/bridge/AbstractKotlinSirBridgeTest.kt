@@ -6,6 +6,11 @@
 package org.jetbrains.kotlin.sir.bridge
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirParameter
+import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.builder.buildFunction
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -46,22 +51,22 @@ private fun parseRequestsFromTestDir(testDir: File): List<BridgeRequest> =
         ?.sortedBy { it.bridgeName }
         ?: emptyList()
 
-private fun parseType(typeName: String): BridgeRequest.Type {
+private fun parseType(typeName: String): SirType {
     return when (typeName.lowercase()) {
-        "boolean" -> BridgeRequest.Type.Boolean
+        "boolean" -> SirSwiftModule.bool
 
-        "byte" -> BridgeRequest.Type.Byte
-        "short" -> BridgeRequest.Type.Short
-        "int" -> BridgeRequest.Type.Int
-        "long" -> BridgeRequest.Type.Long
+        "byte" -> SirSwiftModule.int8
+        "short" -> SirSwiftModule.int16
+        "int" -> SirSwiftModule.int32
+        "long" -> SirSwiftModule.int64
 
-        "ubyte" -> BridgeRequest.Type.UByte
-        "ushort" -> BridgeRequest.Type.UShort
-        "uint" -> BridgeRequest.Type.UInt
-        "ulong" -> BridgeRequest.Type.ULong
+        "ubyte" -> SirSwiftModule.uint8
+        "ushort" -> SirSwiftModule.uint16
+        "uint" -> SirSwiftModule.uint32
+        "ulong" -> SirSwiftModule.uint64
 
         else -> error("Unknown type: $typeName")
-    }
+    }.let { SirNominalType(it) }
 }
 
 private fun readRequestFromFile(file: File): BridgeRequest {
@@ -75,11 +80,16 @@ private fun readRequestFromFile(file: File): BridgeRequest {
             parametersString.isNullOrEmpty() -> emptyList()
             else -> parametersString.split(Regex("\\s+"))
         }.map {
-            BridgeRequest.Parameter(
-                name = it.substringBefore(':'),
+            SirParameter(
+                argumentName = it.substringBefore(':'),
                 type = parseType(it.substringAfter(':'))
             )
         }
     }
-    return BridgeRequest(fqName, bridgeName, parameters, returnType)
+    val function = buildFunction {
+        this.name = fqName.last()
+        this.returnType = returnType
+        this.parameters += parameters
+    }
+    return BridgeRequest(function, bridgeName, fqName)
 }

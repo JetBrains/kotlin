@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.sir.bridge.impl
 
+import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirParameter
+import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.bridge.*
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 private const val exportAnnotationFqName = "kotlin.native.internal.ExportForCppRuntime"
 private const val stdintHeader = "stdint.h"
 
 internal class BridgeGeneratorImpl : BridgeGenerator {
     override fun generate(request: BridgeRequest): FunctionBridge {
-
-        val (kotlinReturnType, cReturnType) = bridgeType(request.returnType)
-        val parameterBridges = request.parameters.map { bridgeParameter(it) }
+        val (kotlinReturnType, cReturnType) = bridgeType(request.function.returnType)
+        val parameterBridges = request.function.parameters.map { bridgeParameter(it) }
 
         val cDeclaration = createCDeclaration(request.bridgeName, cReturnType, parameterBridges.map { it.c })
         val kotlinBridge = createKotlinBridge(request.bridgeName, request.fqName, kotlinReturnType, parameterBridges.map { it.kotlin })
@@ -29,7 +32,7 @@ private fun createKotlinBridge(
     bridgeName: String,
     functionFqName: List<String>,
     returnType: KotlinType,
-    parameterBridges: List<KotlinBridgeParameter>
+    parameterBridges: List<KotlinBridgeParameter>,
 ): List<String> {
     val declaration = createKotlinDeclarationSignature(bridgeName, returnType, parameterBridges)
     val annotation = "@${exportAnnotationFqName.substringAfterLast('.')}(\"${bridgeName}\")"
@@ -65,25 +68,28 @@ private fun createCDeclaration(bridgeName: String, returnType: CType, parameters
 }
 
 
-private fun bridgeType(type: BridgeRequest.Type): Pair<KotlinType, CType> {
-    return when (type) {
-        BridgeRequest.Type.Boolean -> (KotlinType.Boolean to CType.Bool)
+private fun bridgeType(type: SirType): Pair<KotlinType, CType> {
+    require(type is SirNominalType)
+    return when (type.type) {
+        SirSwiftModule.bool -> (KotlinType.Boolean to CType.Bool)
 
-        BridgeRequest.Type.Byte -> (KotlinType.Byte to CType.Int8)
-        BridgeRequest.Type.Int -> (KotlinType.Int to CType.Int32)
-        BridgeRequest.Type.Long -> (KotlinType.Long to CType.Int64)
-        BridgeRequest.Type.Short -> (KotlinType.Short to CType.Int16)
+        SirSwiftModule.int8 -> (KotlinType.Byte to CType.Int8)
+        SirSwiftModule.int32 -> (KotlinType.Int to CType.Int32)
+        SirSwiftModule.int64 -> (KotlinType.Long to CType.Int64)
+        SirSwiftModule.int16 -> (KotlinType.Short to CType.Int16)
 
-        BridgeRequest.Type.UByte -> (KotlinType.UByte to CType.UInt8)
-        BridgeRequest.Type.UInt -> (KotlinType.UInt to CType.UInt32)
-        BridgeRequest.Type.ULong -> (KotlinType.ULong to CType.UInt64)
-        BridgeRequest.Type.UShort -> (KotlinType.UShort to CType.UInt16)
+        SirSwiftModule.uint8 -> (KotlinType.UByte to CType.UInt8)
+        SirSwiftModule.uint32 -> (KotlinType.UInt to CType.UInt32)
+        SirSwiftModule.uint64 -> (KotlinType.ULong to CType.UInt64)
+        SirSwiftModule.uint16 -> (KotlinType.UShort to CType.UInt16)
+
+        else -> error("Unsupported type: ${type.type}")
     }
 }
 
-private fun bridgeParameter(request: BridgeRequest.Parameter): BridgeParameter {
-    val bridgeParameterName = createBridgeParameterName(request.name)
-    val (kotlinType, cType) = bridgeType(request.type)
+private fun bridgeParameter(parameter: SirParameter): BridgeParameter {
+    val bridgeParameterName = parameter.argumentName?.let(::createBridgeParameterName) ?: ""
+    val (kotlinType, cType) = bridgeType(parameter.type)
     return BridgeParameter(
         KotlinBridgeParameter(bridgeParameterName, kotlinType),
         CBridgeParameter(bridgeParameterName, cType)
