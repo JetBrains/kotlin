@@ -398,7 +398,7 @@ enum class DeserializationStrategy(
     val theWholeWorld: Boolean,
     val inlineBodies: Boolean
 ) {
-    ON_DEMAND(true, true, false, false, true),
+    ON_DEMAND(true, false, false, false, false),
     ONLY_REFERENCED(false, true, false, false, true),
     ALL(false, true, true, true, true),
     EXPLICITLY_EXPORTED(false, true, true, false, true),

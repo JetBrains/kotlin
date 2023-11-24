@@ -118,18 +118,16 @@ abstract class BasicIrModuleDeserializer(
 
         fileToDeserializerMap[file] = fileDeserializationState.fileDeserializer
 
-        if (!fileStrategy.onDemand) {
-            val topLevelDeclarations = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys
-            topLevelDeclarations.forEach {
-                moduleReversedFileIndex.putIfAbsent(it, fileDeserializationState) // TODO Why not simple put?
-            }
+        val topLevelDeclarations = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys
+        topLevelDeclarations.forEach {
+            moduleReversedFileIndex.putIfAbsent(it, fileDeserializationState) // TODO Why not simple put?
+        }
 
-            if (fileStrategy.theWholeWorld) {
-                fileDeserializationState.enqueueAllDeclarations()
-            }
-            if (fileStrategy.theWholeWorld || fileStrategy.explicitlyExported) {
-                moduleDeserializationState.enqueueFile(fileDeserializationState)
-            }
+        if (fileStrategy.theWholeWorld) {
+            fileDeserializationState.enqueueAllDeclarations()
+        }
+        if (fileStrategy.theWholeWorld || fileStrategy.explicitlyExported) {
+            moduleDeserializationState.enqueueFile(fileDeserializationState)
         }
 
         return fileDeserializationState
