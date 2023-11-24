@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -110,7 +110,7 @@ class PostponedArgumentsAnalyzer(
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
 
-        fun substitute(type: ConeKotlinType) = (currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType).independentInstance()
+        fun substitute(type: ConeKotlinType) = currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType
 
         val receiver = lambda.receiver?.let(::substitute)
         val contextReceivers = lambda.contextReceivers.map(::substitute)

@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -63,27 +60,6 @@ class CustomAnnotationTypeAttribute(
         get() = CustomAnnotationTypeAttribute::class
     override val keepInInferredDeclarationType: Boolean
         get() = true
-
-    /**
-     * Return an instance of the attribute that is not linked to any [containerSymbols].
-     * It is required to avoid concurrent modification of those annotations from the linked
-     * declaration and another call site (e.g., if a type was propagated to an anonymous function).
-     *
-     * See KT-60387 as an example of a possible concurrent problem.
-     */
-    fun independentInstance(): CustomAnnotationTypeAttribute = if (containerSymbols.isEmpty()) {
-        this
-    } else {
-        CustomAnnotationTypeAttribute(
-            annotations = annotations.map {
-                if (it is FirAnnotationCall) {
-                    buildAnnotationCallCopy(it) {}
-                } else {
-                    buildAnnotationCopy(it) {}
-                }
-            }
-        )
-    }
 }
 
 val ConeAttributes.custom: CustomAnnotationTypeAttribute? by ConeAttributes.attributeAccessor<CustomAnnotationTypeAttribute>()

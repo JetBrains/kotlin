@@ -226,8 +226,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(String(str))  kotlin/String?|
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(String(str))  kotlin/String?| {
+        public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(str))  kotlin/String?|
+            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(message = String(str))  kotlin/String?| {
                 ^ Null(null)
             }
 
@@ -256,8 +256,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(String(str))  kotlin/String?|
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(String(str))  kotlin/String?| {
+        public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(str))  kotlin/String?|
+            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(message = String(str))  kotlin/String?| {
                 ^ Null(null)
             }
 
@@ -286,8 +286,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(String(str))  kotlin/String?|
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(String(str))  kotlin/String?| {
+        public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(str))  kotlin/String?|
+            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(message = String(str))  kotlin/String?| {
                 ^ Null(null)
             }
 
@@ -328,3 +328,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] anonymousFunctionWithAnnotatedParameterOnImplic
                 }
                 ) } ?: String()
             }
+

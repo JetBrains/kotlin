@@ -294,8 +294,8 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(R|/privateConstant<HIDDEN: /privateConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(R|/internalConstant<HIDDEN: /internalConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(R|/regularConstant|)  kotlin/Int>>?|
-        public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(R|/privateConstant<HIDDEN: /privateConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(R|/internalConstant<HIDDEN: /internalConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(R|/regularConstant|)  kotlin/Int>>?| {
+    public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = R|/privateConstant<HIDDEN: /privateConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(message = R|/internalConstant<HIDDEN: /internalConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(message = R|/regularConstant|)  kotlin/Int>>?|
+        public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(message = R|/privateConstant<HIDDEN: /privateConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(message = R|/internalConstant<HIDDEN: /internalConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(message = R|/regularConstant|)  kotlin/Int>>?| {
             ^ Null(null)
         }
 

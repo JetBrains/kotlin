@@ -282,8 +282,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(String(outer))  kotlin/collections/List<@R|Anno|(String(middle))  kotlin/collections/List<@R|Anno|(String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(String(outer))  kotlin/collections/List<@R|Anno|(String(middle))  kotlin/collections/List<@R|Anno|(String(inner))  kotlin/Int>>?| {
+        public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
+            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
                 ^ Null(null)
             }
 
@@ -324,3 +324,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] anonymousFunctionWithAnnotatedParameterScript.k
                 }
                 ) } ?: String()
             }
+

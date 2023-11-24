@@ -32,7 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceWithAnnotation.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|@R|foo/Anno|(<strcat>(String(foo param type ), R|foo/constant|))  foo/Arg|): R|@R|foo/Anno|(<strcat>(String(foo return type ), R|foo/constant|))  foo/Arg|
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|@R|foo/Anno|(position = <strcat>(String(foo param type ), R|foo/constant|))  foo/Arg|): R|@R|foo/Anno|(position = <strcat>(String(foo return type ), R|foo/constant|))  foo/Arg|
 
     }
     public final [ResolvedTo(CONTRACTS)] fun testMe([ResolvedTo(CONTRACTS)] f: R|@R|foo/Anno|(<strcat>(String(testMe param type ), constant#))  foo/Foo|): R|kotlin/Unit| {

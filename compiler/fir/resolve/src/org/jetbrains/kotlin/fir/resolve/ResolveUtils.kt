@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -476,10 +476,9 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
         ?.coneTypeSafe<ConeKotlinType>()
         ?: nullableReceiverExpression.resolvedType
 
-    val expandedReceiverType = receiverType.fullyExpandedType(session)
-    val updatedReceiverType = expandedReceiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext).independentInstance()
-    replaceConeTypeOrNull(updatedReceiverType)
-    session.lookupTracker?.recordTypeResolveAsLookup(updatedReceiverType, source, file.source)
+    val expandedReceiverType = receiverType.fullyExpandedType(session).makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+    replaceConeTypeOrNull(expandedReceiverType)
+    session.lookupTracker?.recordTypeResolveAsLookup(expandedReceiverType, source, file.source)
 }
 
 fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
@@ -500,9 +499,8 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
         }
     }
 
-    val independentInstance = resultingType.independentInstance()
-    replaceConeTypeOrNull(independentInstance)
-    session.lookupTracker?.recordTypeResolveAsLookup(independentInstance, source, file.source)
+    replaceConeTypeOrNull(resultingType)
+    session.lookupTracker?.recordTypeResolveAsLookup(resultingType, source, file.source)
 }
 
 fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirRegularClassSymbol? {

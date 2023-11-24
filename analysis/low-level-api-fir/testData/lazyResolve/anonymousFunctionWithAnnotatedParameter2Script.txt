@@ -282,14 +282,14 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter2Script.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(String(outer))  kotlin/collections/List<@R|Anno|(String(middle))  kotlin/collections/List<@R|Anno|(String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(String(outer))  kotlin/collections/List<@R|Anno|(String(middle))  kotlin/collections/List<@R|Anno|(String(inner))  kotlin/Int>>?| {
+        public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
+            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
                 ^ Null(null)
             }
 
         public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|.R|kotlin/let|<R|@R|Anno|(String(outer))  kotlin/collections/List<@R|Anno|(String(middle))  kotlin/collections/List<@R|Anno|(String(inner))  kotlin/Int>>?|, R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ R|/nullablePropertyWithAnnotatedType|.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|, R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
                     ^ <strcat>(String( (), R|<local>/it|, String()))
                 }
                 )
@@ -324,3 +324,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] anonymousFunctionWithAnnotatedParameter2Script.
                 }
                 )
             }
+
