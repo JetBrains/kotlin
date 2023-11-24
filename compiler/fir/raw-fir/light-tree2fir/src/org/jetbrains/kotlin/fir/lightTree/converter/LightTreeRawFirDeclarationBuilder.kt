@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
@@ -893,11 +890,10 @@ class LightTreeRawFirDeclarationBuilder(
         isImplicitlyActual: Boolean = false,
         isKotlinAny: Boolean = false,
     ): PrimaryConstructor? {
-        fun ClassKind.isEnumRelated(): Boolean = this == ClassKind.ENUM_CLASS || this == ClassKind.ENUM_ENTRY
         val shouldGenerateImplicitConstructor =
             (classWrapper.isEnumEntry() || !classWrapper.hasSecondaryConstructor) &&
-            !classWrapper.isInterface() &&
-            (!containingClassIsExpectClass || classWrapper.classBuilder.classKind.isEnumRelated())
+                    !classWrapper.isInterface() &&
+                    (!containingClassIsExpectClass || classWrapper.classBuilder.classKind == ClassKind.ENUM_ENTRY)
         val isErrorConstructor = primaryConstructor == null && !shouldGenerateImplicitConstructor
         if (isErrorConstructor && classWrapper.delegatedSuperCalls.isEmpty()) {
             return null

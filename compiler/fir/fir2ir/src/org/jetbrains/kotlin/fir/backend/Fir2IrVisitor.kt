@@ -170,7 +170,7 @@ class Fir2IrVisitor(
                     )
                 }
             }
-        } else if (irParentEnumClass != null && initializer == null) {
+        } else if (irParentEnumClass != null && !irParentEnumClass.isExpect && initializer == null) {
             // a default-ish enum entry whose initializer would be a delegating constructor call
             // `irParentEnumClass` definitely is not a lazy class
             @OptIn(UnsafeDuringIrConstructionAPI::class)

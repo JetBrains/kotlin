@@ -1015,7 +1015,7 @@ open class PsiRawFirBuilder(
             // We are never here as part of enum entry
             val shouldGenerateImplicitPrimaryConstructor =
                 !hasSecondaryConstructors() &&
-                        !(containingClassIsExpectClass && classKind != ClassKind.ENUM_CLASS) &&
+                        !containingClassIsExpectClass &&
                         (this !is KtClass || !this.isInterface())
 
             val hasPrimaryConstructor = primaryConstructor != null || shouldGenerateImplicitPrimaryConstructor
