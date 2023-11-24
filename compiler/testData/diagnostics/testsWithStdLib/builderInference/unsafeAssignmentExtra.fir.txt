@@ -94,7 +94,7 @@ FILE: unsafeAssignmentExtra.fir.kt
         lval value3: R|Foo<T>| = R|/myBuilder|<R|TypeVariable(T)|>(<L> = myBuilder@fun R|Foo<TypeVariable(T)>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.accept: R|kotlin/Unit|>|(String())
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|TypeVariable(T)|>| = Int(45)
-            R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(::<Unresolved reference: a>#)
+            R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(::<Inapplicable(INAPPLICABLE): /Foo.a>#)
         }
         )
         local final fun baz(t: R|kotlin/Int|): R|kotlin/Unit| {

@@ -10,8 +10,8 @@ fun use(p: Any?) {}
 
 fun test1() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!> {
-        this.get(0).<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
-        use(this.get(0)::extension)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>this.get(0)<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
+        use(<!BUILDER_INFERENCE_STUB_RECEIVER!>this.get(0)<!>::extension)
         use(it::extension)
     }
 }
@@ -20,8 +20,8 @@ fun test1() {
 fun test2() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!> {
         val v = this.get(0)
-        v.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
-        use(v::extension)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
+        use(<!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>::extension)
         use(it::extension)
     }
 }
@@ -30,8 +30,8 @@ fun test3() {
     operator fun <T> T.getValue(thisRef: Any?, prop: Any?): T = this
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!> {
         val v by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>this.get(0)<!>
-        v.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
-        use(v::extension)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
+        use(<!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>::extension)
         use(it::extension)
     }
 }
@@ -43,8 +43,8 @@ fun test4() {
     operator fun <T> Box<T>.getValue(thisRef: Any?, prop: Any?): T = this.t
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!> {
         val v by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>this.get(0)<!>
-        v.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
-        use(v::extension)
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
+        use(<!BUILDER_INFERENCE_STUB_RECEIVER!>v<!>::extension)
         use(it::extension)
     }
 }
