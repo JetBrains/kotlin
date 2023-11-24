@@ -15,12 +15,18 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.scopes.callableCopySubstitutionForTypeUpdater
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.util.setMultimapOf
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
     override fun resolve(
@@ -40,7 +46,64 @@ internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePha
     }
 }
 
-internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComputationSession()
+internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComputationSession() {
+    /**
+     * The symbol on which foreign annotations will be postponed
+     *
+     * @see withAnchorForForeignAnnotations
+     * @see postponeForeignAnnotationResolution
+     */
+    private var anchorForForeignAnnotations: FirCallableSymbol<*>? = null
+
+    private inline fun <T> withAnchorForForeignAnnotations(symbol: FirCallableSymbol<*>, action: () -> T): T {
+        val previousSymbol = anchorForForeignAnnotations
+        return try {
+            anchorForForeignAnnotations = symbol
+            action()
+        } finally {
+            anchorForForeignAnnotations = previousSymbol
+        }
+    }
+
+    override fun <D : FirCallableDeclaration> executeTransformation(symbol: FirCallableSymbol<*>, transformation: () -> D): D {
+        // Do not store local declarations as we can postpone only non-local callables
+        return if (symbol.cannotResolveAnnotationsOnDemand()) {
+            transformation()
+        } else {
+            withAnchorForForeignAnnotations(symbol, transformation)
+        }
+    }
+
+    private val postponedSymbols = setMultimapOf<FirCallableSymbol<*>, FirBasedSymbol<*>>()
+
+    /**
+     * Postpone the resolution request to [symbol] until [annotation arguments][FirResolvePhase.ANNOTATION_ARGUMENTS] phase
+     * of the declaration which is used this foreign annotation.
+     *
+     * @see postponedSymbols
+     */
+    fun postponeForeignAnnotationResolution(symbol: FirBasedSymbol<*>) {
+        // We cannot resolve them on demand, so we shouldn't postpone them
+        if (symbol.cannotResolveAnnotationsOnDemand()) {
+            return
+        }
+
+        val currentSymbol = anchorForForeignAnnotations ?: errorWithAttachment("Unexpected state: the current symbol have to be here") {
+            withFirSymbolEntry("symbol to postpone", symbol)
+        }
+
+        postponedSymbols.put(currentSymbol, symbol)
+    }
+
+    /**
+     * @return all symbols postponed with [postponeForeignAnnotationResolution] for the [target] element
+     *
+     * @see postponeForeignAnnotationResolution
+     */
+    fun postponedSymbols(target: FirCallableDeclaration): Collection<FirBasedSymbol<*>> {
+        return postponedSymbols[target.symbol]
+    }
+}
 
 internal class LLFirImplicitBodyTargetResolver(
     target: LLFirResolveTarget,
@@ -68,6 +131,10 @@ internal class LLFirImplicitBodyTargetResolver(
     ) {
         override val preserveCFGForClasses: Boolean get() = false
         override val buildCfgForFiles: Boolean get() = false
+        override fun transformForeignAnnotationCall(symbol: FirBasedSymbol<*>, annotationCall: FirAnnotationCall): FirAnnotationCall {
+            llImplicitBodyResolveComputationSession.postponeForeignAnnotationResolution(symbol)
+            return annotationCall
+        }
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
@@ -109,6 +176,17 @@ internal class LLFirImplicitBodyTargetResolver(
                 // No implicit bodies here
             }
             else -> throwUnexpectedFirElementError(target)
+        }
+
+        if (target is FirDeclaration) {
+            target.forEachDeclarationWhichCanHavePostponedSymbols(::publishPostponedSymbols)
+        }
+    }
+
+    private fun publishPostponedSymbols(target: FirCallableDeclaration) {
+        val postponedSymbols = llImplicitBodyResolveComputationSession.postponedSymbols(target)
+        if (postponedSymbols.isNotEmpty()) {
+            target.postponedSymbolsForAnnotationResolution = postponedSymbols
         }
     }
 

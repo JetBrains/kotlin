@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|kotlin/Unit| = when () {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/Pair.Pair]] val $$result: R|kotlin/Unit| = when () {
             Boolean(true) ->  {
                 @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(RAW_FIR)] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
                 @R|util/Anno|[Types](str = <strcat>(String(a ), R|util/prop|)) [ResolvedTo(RAW_FIR)] lval a: R|@R|util/Anno|(<strcat>(String(a type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()

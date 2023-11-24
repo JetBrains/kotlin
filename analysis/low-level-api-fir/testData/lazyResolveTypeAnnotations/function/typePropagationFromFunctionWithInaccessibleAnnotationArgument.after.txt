@@ -23,6 +23,6 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
     }
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /withType]] fun implicitType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
         ^implicitType R|/withType|()
     }

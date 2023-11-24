@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderF
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractsDslNames
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isResolved
@@ -105,6 +106,20 @@ private class LLFirBodyTargetResolver(
     ) {
         override val preserveCFGForClasses: Boolean get() = false
         override val buildCfgForFiles: Boolean get() = false
+
+        /**
+         * It is safe to resolve foreign annotations on demand because the contract allows it
+         * ([annotation arguments][FirResolvePhase.ANNOTATION_ARGUMENTS] phase is less than [body][FirResolvePhase.BODY_RESOLVE] phase).
+         */
+        override fun transformForeignAnnotationCall(symbol: FirBasedSymbol<*>, annotationCall: FirAnnotationCall): FirAnnotationCall {
+            // It is possible that some members of local classes will propagate annotations between each other,
+            // so we should just skip them, as they will be resolved anyway
+            if (symbol.cannotResolveAnnotationsOnDemand()) return annotationCall
+
+            symbol.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+            checkAnnotationCallIsResolved(symbol, annotationCall)
+            return annotationCall
+        }
     }
 
     /**

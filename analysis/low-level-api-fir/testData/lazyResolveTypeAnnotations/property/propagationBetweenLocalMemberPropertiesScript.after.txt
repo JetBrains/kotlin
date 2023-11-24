@@ -170,4 +170,3 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesScript.kts
             }
 
         }
-

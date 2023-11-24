@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 abstract class FirAbstractBodyResolveTransformerDispatcher(
     session: FirSession,
@@ -106,7 +107,12 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ResolutionMode): FirTypeRef {
         if (data !is ResolutionMode.WithExpectedType)
             return implicitTypeRef
-        return data.expectedTypeRef
+
+        /**
+         * We should transform a provided type to process such references in [transformAnnotationCall] by [transformForeignAnnotationCall]
+         * because usually we do not run such transformations on replaced types explicitly
+         */
+        return data.expectedTypeRef.transformSingle(this, data)
     }
 
     // ------------------------------------- Expressions -------------------------------------

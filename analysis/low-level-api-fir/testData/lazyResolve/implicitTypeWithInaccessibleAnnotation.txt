@@ -252,7 +252,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType1(): R|@R|usage/Anno|(privateConstVal#)  kotlin/Int| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol usage/TopLevelObject.expectedType]] fun implicitType1(): R|@R|usage/Anno|(privateConstVal#)  kotlin/Int| {
         ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
     }
     public final [ResolvedTo(STATUS)] object TopLevelObject : R|kotlin/Any| {
@@ -274,16 +274,16 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=usage/Anno.s] s: R|kotlin/String|): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType1(): R|@R|usage/Anno|(privateConstVal#)  kotlin/Int| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType1(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
         ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
     }
     public final [ResolvedTo(STATUS)] object TopLevelObject : R|kotlin/Any| {
@@ -293,10 +293,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
         public final [ResolvedTo(STATUS)] fun expectedType2(): R|@R|usage/Anno|(privateConstVal#)  kotlin/Int| { LAZY_BLOCK }
 
-        private final const [ResolvedTo(STATUS)] val privateConstVal: <implicit> = LAZY_EXPRESSION
-            private [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelObject] get(): <implicit>
+        private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val privateConstVal: R|kotlin/String| = String(privateConstVal)
+            private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=TopLevelObject] get(): R|kotlin/String|
 
-        public final [ResolvedTo(CONTRACTS)] fun expectedType(): R|@R|usage/Anno|(privateConstVal#)  kotlin/Int| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expectedType(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
             ^expectedType IntegerLiteral(4)
         }
 
@@ -305,16 +305,16 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=usage/Anno.s] s: R|kotlin/String|): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType1(): R|@R|usage/Anno|(privateConstVal#)  kotlin/Int| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType1(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
         ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
     }
     public final [ResolvedTo(STATUS)] object TopLevelObject : R|kotlin/Any| {
@@ -324,10 +324,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
         public final [ResolvedTo(STATUS)] fun expectedType2(): R|@R|usage/Anno|(privateConstVal#)  kotlin/Int| { LAZY_BLOCK }
 
-        private final const [ResolvedTo(STATUS)] val privateConstVal: <implicit> = LAZY_EXPRESSION
-            private [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelObject] get(): <implicit>
+        private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val privateConstVal: R|kotlin/String| = String(privateConstVal)
+            private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=TopLevelObject] get(): R|kotlin/String|
 
-        public final [ResolvedTo(CONTRACTS)] fun expectedType(): R|@R|usage/Anno|(privateConstVal#)  kotlin/Int| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expectedType(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
             ^expectedType IntegerLiteral(4)
         }
 

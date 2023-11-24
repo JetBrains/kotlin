@@ -69,7 +69,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeUnavailable.kt
         }
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var implicitType: R|@R|lowlevel/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>|
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol lowlevel/Obj.explicitType]] var implicitType: R|@R|lowlevel/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|lowlevel/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>| {
             ^ Q|lowlevel/Obj|.R|lowlevel/Obj.explicitType|()
         }

@@ -44,5 +44,6 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedType.kts
             ^explicitType IntegerLiteral(0)
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| = R|foo/explicitType|()
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol foo/explicitType]] val $$result: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| = R|foo/explicitType|()
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>|
+

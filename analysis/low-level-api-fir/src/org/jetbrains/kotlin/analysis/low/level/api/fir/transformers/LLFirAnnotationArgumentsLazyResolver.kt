@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationArgumentsMappingIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationsAreResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -41,7 +43,38 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirAnnotationContainer) return
-        checkAnnotationArgumentsMappingIsResolved(target)
+        checkAnnotationsAreResolved(target)
+
+        when (target) {
+            is FirCallableDeclaration -> {
+                checkAnnotationsAreResolved(target, target.returnTypeRef)
+                val receiverParameter = target.receiverParameter
+                if (receiverParameter != null) {
+                    checkAnnotationsAreResolved(receiverParameter)
+                    checkAnnotationsAreResolved(target, receiverParameter.typeRef)
+                }
+
+                for (contextReceiver in target.contextReceivers) {
+                    checkAnnotationsAreResolved(target, contextReceiver.typeRef)
+                }
+            }
+
+            is FirTypeParameter -> {
+                for (bound in target.bounds) {
+                    checkAnnotationsAreResolved(target, bound)
+                }
+            }
+
+            is FirClass -> {
+                for (typeRef in target.superTypeRefs) {
+                    checkAnnotationsAreResolved(target, typeRef)
+                }
+            }
+
+            is FirTypeAlias -> {
+                checkAnnotationsAreResolved(target, target.expandedTypeRef)
+            }
+        }
     }
 }
 
@@ -57,6 +90,18 @@ private class LLFirAnnotationArgumentsTargetResolver(
     scopeSession,
     FirResolvePhase.ANNOTATION_ARGUMENTS,
 ) {
+    /**
+     * All foreign annotations have to be resolved before by [postponedSymbolsForAnnotationResolution] or [resolveDependencies]
+     * so there is no sense to override
+     * [transformForeignAnnotationCall][org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher.transformForeignAnnotationCall]
+     *
+     * We can add additional [checkAnnotationCallIsResolved][org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationCallIsResolved],
+     * but this also doesn't make sense
+     * because we anyway will check all annotations during [LLFirAnnotationArgumentsLazyResolver.phaseSpecificCheckIsResolved]
+     *
+     * @see postponedSymbolsForAnnotationResolution
+     * @see org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher.transformForeignAnnotationCall
+     */
     override val transformer = FirAnnotationArgumentsTransformer(
         session,
         scopeSession,
@@ -64,6 +109,27 @@ private class LLFirAnnotationArgumentsTargetResolver(
         returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
         firResolveContextCollector = firResolveContextCollector,
     )
+
+    override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
+        if (target !is FirDeclaration) return false
+
+        var processed = false
+        var symbolsToResolve: Collection<FirBasedSymbol<*>>? = null
+        withReadLock(target) {
+            processed = true
+            symbolsToResolve = buildList {
+                target.forEachDeclarationWhichCanHavePostponedSymbols {
+                    addAll(it.postponedSymbolsForAnnotationResolution.orEmpty())
+                }
+            }
+        }
+
+        // some other thread already resolved this element to this or upper phase
+        if (!processed) return true
+        symbolsToResolve?.forEach { it.lazyResolveToPhase(resolverPhase) }
+
+        return false
+    }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         resolveWithKeeper(
@@ -73,6 +139,16 @@ private class LLFirAnnotationArgumentsTargetResolver(
             prepareTarget = FirLazyBodiesCalculator::calculateAnnotations,
         ) {
             transformAnnotations(target)
+        }
+
+        if (target is FirDeclaration) {
+            /**
+             * All symbols from [postponedSymbolsForAnnotationResolution] already processed during [doResolveWithoutLock],
+             * so we have to clean up the attribute
+             */
+            target.forEachDeclarationWhichCanHavePostponedSymbols {
+                it.postponedSymbolsForAnnotationResolution = null
+            }
         }
     }
 

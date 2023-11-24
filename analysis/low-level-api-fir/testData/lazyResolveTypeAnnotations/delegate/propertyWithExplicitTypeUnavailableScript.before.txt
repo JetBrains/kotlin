@@ -85,10 +85,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var propertyToResolve: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var propertyToResolve: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|by R|/Delegate.Delegate|()
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
                 ^ D|/propertyToResolve|.R|/Delegate.getValue<Inapplicable(CONVENTION_ERROR): /Delegate.getValue>#|(Null(null), ::R|/propertyToResolve|)
             }
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue<Inapplicable(CONVENTION_ERROR): /Delegate.setValue>#|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
             }
+

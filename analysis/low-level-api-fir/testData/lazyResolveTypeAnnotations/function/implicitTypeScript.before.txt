@@ -32,6 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
             ^explicitType IntegerLiteral(0)
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|@R|lowlevel/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol lowlevel/explicitType]] fun implicitType(): R|@R|lowlevel/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>| {
             ^implicitType R|lowlevel/explicitType|()
         }
+

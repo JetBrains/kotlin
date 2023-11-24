@@ -16,7 +16,7 @@
 
 
 TARGET: public open override [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] val something: R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /expectType]] get(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
         ^getSomething R|/expectType|()
     }
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /expectType]] fun getSomething(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
             ^getSomething R|/expectType|()
         }
 

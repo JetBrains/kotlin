@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberPropertyImplicitBody.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
         ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol util/bar]] fun foo(): R|kotlin/Unit| {
         ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {

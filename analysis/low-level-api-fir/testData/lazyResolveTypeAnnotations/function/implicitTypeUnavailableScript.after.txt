@@ -39,6 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol lowlevel/Obj.explicitType]] fun implicitType(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int>>| {
             ^implicitType Q|lowlevel/Obj|.R|lowlevel/Obj.explicitType|()
         }
+

@@ -197,58 +197,58 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /withType]] fun implicitType(): R|@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>| {
         ^implicitType R|/withType|()
     }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] declaration.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.number] number: R|kotlin/Int|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val number: R|kotlin/Int| = R|<local>/number|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
-        private [ResolvedTo(RAW_FIR)] get(): <implicit>
-    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
-        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun withType(): R|@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>| {
+    private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val privateConstant: R|kotlin/Int| = Int(0)
+        private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    internal final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val internalConstant: R|kotlin/Int| = Int(1)
+        internal [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
         ^implicitType R|/withType|()
     }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] declaration.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.number] number: R|kotlin/Int|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val number: R|kotlin/Int| = R|<local>/number|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
-        private [ResolvedTo(RAW_FIR)] get(): <implicit>
-    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
-        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun withType(): R|@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>| {
+    private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val privateConstant: R|kotlin/Int| = Int(0)
+        private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    internal final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val internalConstant: R|kotlin/Int| = Int(1)
+        internal [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType(): R|@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
         ^implicitType R|/withType|()
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] usafe.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType(): R|@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
         ^implicitType R|/withType|()
     }

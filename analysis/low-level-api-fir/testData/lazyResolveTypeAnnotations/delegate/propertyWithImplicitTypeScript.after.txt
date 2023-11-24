@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeScript.kts
                 ^explicitType IntegerLiteral(1)
             }
 
-            public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getValue([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|))  kotlin/Int>>| {
+            public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.explicitType]] fun getValue([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|))  kotlin/Int>>| {
                 ^getValue this@R|/Delegate|.R|/Delegate.explicitType|()
             }
 
@@ -101,3 +101,4 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeScript.kts
             @PROPERTY_SETTER:R|Anno|[Types](position = <strcat>(String(set ), R|/prop|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](position = <strcat>(String(setparam ), R|/prop|)) <set-?>: R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue<Inapplicable(CONVENTION_ERROR): /Delegate.setValue>#|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
             }
+

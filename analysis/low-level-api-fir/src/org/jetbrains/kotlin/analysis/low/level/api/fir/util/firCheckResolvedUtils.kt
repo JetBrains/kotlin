@@ -7,28 +7,37 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
-import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.customAnnotations
+import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal inline fun checkTypeRefIsResolved(
     typeRef: FirTypeRef,
@@ -58,7 +67,7 @@ internal inline fun checkTypeRefIsResolved(
 internal inline fun checkExpressionTypeIsResolved(
     type: ConeKotlinType?,
     typeName: String,
-    owner: FirElementWithResolveState,
+    owner: FirElement,
     extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
     checkWithAttachment(
@@ -207,31 +216,78 @@ internal fun checkDeclarationStatusIsResolved(declaration: FirMemberDeclaration)
     }
 }
 
-internal fun <T> checkAnnotationArgumentsMappingIsResolved(
-    annotationContainer: T,
-) where T : FirAnnotationContainer, T : FirElementWithResolveState {
-    for (annotation in annotationContainer.annotations) {
-        if (annotation is FirAnnotationCall) {
-            checkWithAttachment(
-                condition = annotation.argumentList is FirResolvedArgumentList,
-                message = {
-                    buildString {
-                        append("Expected ${FirResolvedArgumentList::class.simpleName}")
-                        append(" for ${annotation::class.simpleName} of ${annotationContainer::class.simpleName}(${(annotationContainer as? FirDeclaration)?.origin})")
-                        append(" but ${annotation.argumentList::class.simpleName} found")
-                    }
-                }
-            ) {
-                withFirEntry("firAnnotation", annotation)
-                withFirEntry("firDeclaration", annotationContainer)
+internal fun checkAnnotationsAreResolved(owner: FirAnnotationContainer, typeRef: FirTypeRef) {
+    checkWithAttachment(typeRef is FirResolvedTypeRef, { "Unexpected type: ${typeRef::class.simpleName}" }) {
+        withFirEntry("owner", owner)
+        withFirEntry("type", typeRef)
+    }
+
+    typeRef.accept(AnnotationChecker, owner)
+}
+
+internal fun FirAbstractBodyResolveTransformerDispatcher.checkAnnotationCallIsResolved(
+    symbol: FirBasedSymbol<*>,
+    annotationCall: FirAnnotationCall,
+) {
+    val annotationContainer = context.containerIfAny ?: errorWithAttachment("Container cannot be found") {
+        withFirSymbolEntry("symbol", symbol)
+        withFirEntry("annotation", annotationCall)
+    }
+
+    checkAnnotationIsResolved(annotationCall, annotationContainer)
+}
+
+private object AnnotationChecker : FirVisitor<Unit, FirAnnotationContainer>() {
+    override fun visitAnnotation(annotation: FirAnnotation, data: FirAnnotationContainer) {
+        checkAnnotationIsResolved(annotation, data)
+    }
+
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirAnnotationContainer) {
+        checkAnnotationIsResolved(annotationCall, data)
+    }
+
+    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: FirAnnotationContainer) {
+        resolvedTypeRef.acceptChildren(this, data)
+
+        resolvedTypeRef.coneType.forEachType {
+            it.type.attributes.customAnnotations.forEach { typeArgumentAnnotation ->
+                typeArgumentAnnotation.accept(this, data)
             }
         }
+    }
 
-        for (argument in annotation.argumentMapping.mapping.values) {
-            checkExpressionTypeIsResolved(argument.coneTypeOrNull, "annotation argument", annotationContainer) {
-                withFirEntry("firAnnotation", annotation)
-                withFirEntry("firArgument", argument)
+    override fun visitElement(element: FirElement, data: FirAnnotationContainer) {
+        element.acceptChildren(this, data)
+    }
+}
+
+internal fun checkAnnotationsAreResolved(annotationContainer: FirAnnotationContainer) {
+    for (annotation in annotationContainer.annotations) {
+        checkAnnotationIsResolved(annotation, annotationContainer)
+    }
+}
+
+internal fun checkAnnotationIsResolved(annotation: FirAnnotation, annotationContainer: FirAnnotationContainer) {
+    if (annotation is FirAnnotationCall) {
+        checkWithAttachment(
+            condition = annotation.argumentList is FirResolvedArgumentList,
+            message = {
+                buildString {
+                    append("Expected ${FirResolvedArgumentList::class.simpleName}")
+                    append(" for ${annotation::class.simpleName} of ${annotationContainer::class.simpleName}(${(annotationContainer as? FirDeclaration)?.origin})")
+                    append(" but ${annotation.argumentList::class.simpleName} found")
+                }
             }
+        ) {
+            withFirEntry("firAnnotation", annotation)
+            withFirEntry("firDeclaration", annotationContainer)
+        }
+    }
+
+    for (argument in annotation.argumentMapping.mapping.values) {
+        checkExpressionTypeIsResolved(argument.coneTypeOrNull, "annotation argument", annotationContainer) {
+            withFirEntry("firAnnotation", annotation)
+            withFirEntry("firArgument", argument)
         }
     }
 }

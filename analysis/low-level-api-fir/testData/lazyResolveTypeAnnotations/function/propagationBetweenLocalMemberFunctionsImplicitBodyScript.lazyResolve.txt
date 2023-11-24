@@ -408,3 +408,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationBetweenLocalMemberFunctionsImplicitB
             }
             )
         }
+
