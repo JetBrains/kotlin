@@ -186,5 +186,10 @@ open class IrPluginContextImpl constructor(
         override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
             declaration.annotations += annotations
         }
+
+        override fun registerFunctionAsMetadataVisible(irFunction: IrSimpleFunction) {}
+
+        override fun registerConstructorAsMetadataVisible(irConstructor: IrConstructor) {}
+
     }
 }

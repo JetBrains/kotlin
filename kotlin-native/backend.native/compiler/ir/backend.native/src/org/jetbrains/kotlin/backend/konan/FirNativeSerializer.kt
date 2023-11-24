@@ -89,7 +89,7 @@ internal fun PhaseContext.firSerializerBase(
                         },
                         allowErrorTypes = false,
                         exportKDoc = shouldExportKDoc(),
-                        additionalMetadataProvider = fir2IrInput?.components?.annotationsFromPluginRegistrar?.createMetadataAnnotationsProvider()
+                        additionalMetadataProvider = fir2IrInput?.components?.annotationsFromPluginRegistrar?.createAdditionalMetadataProvider()
                 ),
                 configuration.languageVersionSettings,
                 produceHeaderKlib,

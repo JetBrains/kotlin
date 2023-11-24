@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
 abstract class IrGeneratedDeclarationsRegistrar {
@@ -14,4 +16,10 @@ abstract class IrGeneratedDeclarationsRegistrar {
     fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, vararg annotations: IrConstructorCall) {
         addMetadataVisibleAnnotationsToElement(declaration, annotations.toList())
     }
+
+    abstract fun registerFunctionAsMetadataVisible(irFunction: IrSimpleFunction)
+    abstract fun registerConstructorAsMetadataVisible(irConstructor: IrConstructor)
+
+    // TODO: KT-63881
+    // abstract fun registerPropertyAsMetadataVisible(irProperty: IrProperty)
 }

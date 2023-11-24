@@ -84,6 +84,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElem
                     }
                 )
             )
+            context.metadataDeclarationRegistrar.registerConstructorAsMetadataVisible(ctor)
         }
     }
 
