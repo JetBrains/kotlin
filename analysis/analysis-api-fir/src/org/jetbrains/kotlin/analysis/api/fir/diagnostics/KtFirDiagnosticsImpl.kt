@@ -1742,6 +1742,13 @@ internal class NestedClassAccessedViaInstanceReferenceImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.NestedClassAccessedViaInstanceReference
 
+internal class BuilderInferenceStubReceiverImpl(
+    override val parameterName: Name,
+    override val ownerName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.BuilderInferenceStubReceiver
+
 internal class OverloadResolutionAmbiguityImpl(
     override val candidates: List<KtSymbol>,
     firDiagnostic: KtPsiDiagnostic,

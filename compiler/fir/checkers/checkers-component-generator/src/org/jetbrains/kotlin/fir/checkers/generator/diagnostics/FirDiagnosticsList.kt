@@ -644,6 +644,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE by error<PsiElement> {
             parameter<FirClassLikeSymbol<*>>("symbol")
         }
+        val BUILDER_INFERENCE_STUB_RECEIVER by error<PsiElement>() {
+            parameter<Name>("parameterName")
+            parameter<Name>("ownerName")
+        }
     }
 
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {
