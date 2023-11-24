@@ -401,6 +401,7 @@ object FirErrors {
     val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION by warning0<KtExpression>()
     val INFERENCE_UNSUCCESSFUL_FORK by error1<PsiElement, String>()
     val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE by error1<PsiElement, FirClassLikeSymbol<*>>()
+    val BUILDER_INFERENCE_STUB_RECEIVER by error2<PsiElement, Name, Name>()
 
     // Ambiguity
     val OVERLOAD_RESOLUTION_AMBIGUITY by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
