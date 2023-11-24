@@ -36,6 +36,8 @@ val jvmTestFrameworks = JvmTestFramework.values().toList()
 
 kotlin {
 
+    explicitApi()
+
     jvm {
         compilations {
             all {
@@ -58,6 +60,11 @@ kotlin {
             jvmTestFrameworks.forEach { framework ->
                 val frameworkMain = create("$framework") {
                     associateWith(main)
+                    compileTaskProvider.configure {
+                        compilerOptions {
+                            freeCompilerArgs.add("-Xexplicit-api=strict")
+                        }
+                    }
                 }
                 create("${framework}Test") {
                     associateWith(frameworkMain)
