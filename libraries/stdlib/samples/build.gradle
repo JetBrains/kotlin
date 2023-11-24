@@ -2,7 +2,7 @@ apply plugin: 'kotlin'
 
 dependencies {
     api project(':kotlin-stdlib-jdk8')
-    testApi project(':kotlin-test:kotlin-test-junit')
+    testApi RepoDependencies.kotlinTest(project, "junit")
 }
 
 sourceSets {

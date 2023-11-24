@@ -61,6 +61,37 @@ fun Project.kotlinStdlib(suffix: String? = null, classifier: String? = null): An
         dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"), classifier)
 }
 
+/**
+ * Use this function to declare a dependency on kotlin-test project artifacts.
+ *
+ * It creates either a project dependency or a binary dependency on bootstrap artifacts when JPS build is imported.
+ *
+ * @param suffix Supported suffixes are:
+ * - `null` for the default project dependency, variant is resolved by attributes
+ * - `junit`, `junit5`, `testng` - jvm variants with annotation typealiases for different test frameworks,
+ * - `js` - js variant with assertions and annotations
+ * @param classifier Supported classifiers are: `null` for the runtime artifact, `sources` for the sources jar artifact
+ */
+@JvmOverloads
+fun Project.kotlinTest(suffix: String? = null, classifier: String? = null): Any {
+    return run {
+        val elementsType = when (classifier) {
+            null -> "Runtime"
+            "sources" -> "Sources"
+            else -> error("Unsupported kotlin-test classifier: $classifier")
+        }
+        val configuration = when (suffix?.lowercase()) {
+            null -> classifier?.let { "jvm${elementsType}Elements" }
+            "junit" -> "jvmJUnit${elementsType}Elements"
+            "junit5" -> "jvmJUnit5${elementsType}Elements"
+            "testng" -> "jvmTestNG${elementsType}Elements"
+            "js" -> "js${elementsType}Elements"
+            else -> error("Unsupported kotlin-test flavor: $suffix")
+        }
+        dependencies.project(":kotlin-test", configuration)
+    }
+}
+
 fun Project.kotlinBuiltins(): Any = kotlinBuiltins(forJvm = false)
 
 fun Project.kotlinBuiltins(forJvm: Boolean): Any =

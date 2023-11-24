@@ -26,7 +26,6 @@ sourceSets {
 
 dependencies {
     api project(':kotlin-stdlib')
-    testApi project(':kotlin-test:kotlin-test-junit')
 }
 
 jar {

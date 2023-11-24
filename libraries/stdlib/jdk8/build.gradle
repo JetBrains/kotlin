@@ -9,7 +9,6 @@ RepoArtifacts.javadocJar(project)
 dependencies {
     api project(':kotlin-stdlib')
     api project(':kotlin-stdlib-jdk7')
-    testApi project(':kotlin-test:kotlin-test-junit')
 }
 
 sourceSets {
@@ -37,7 +36,7 @@ dependencies {
     moduleTestApi project(':kotlin-stdlib')
     moduleTestApi project(':kotlin-stdlib-jdk7')
     moduleTestCompileOnly project
-    moduleTestApi project(':kotlin-test:kotlin-test-junit')
+    moduleTestApi RepoDependencies.kotlinTest(project, "junit")
     moduleTestApi "org.ow2.asm:asm:9.0"
 }
 
