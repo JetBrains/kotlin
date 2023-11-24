@@ -23708,6 +23708,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("actualTypealiasForNotExpectClass.kt")
+            public void testActualTypealiasForNotExpectClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasForNotExpectClass.kt");
+            }
+
+            @Test
             @TestMetadata("actualTypealiasToSpecialAnnotation.kt")
             public void testActualTypealiasToSpecialAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasToSpecialAnnotation.kt");
