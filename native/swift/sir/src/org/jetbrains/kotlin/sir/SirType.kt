@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.sir
 sealed interface SirType
 
 class SirNominalType(
-    val type: SirNamedTypeDeclaration,
+    val type: SirNamedDeclaration,
     val parent: SirNominalType? = null,
 ) : SirType
 

@@ -19,16 +19,18 @@ import org.jetbrains.kotlin.sir.impl.SirModuleImpl
 @SirBuilderDsl
 class SirModuleBuilder {
     val declarations: MutableList<SirDeclaration> = mutableListOf()
+    lateinit var name: String
 
     fun build(): SirModule {
         return SirModuleImpl(
             declarations,
+            name,
         )
     }
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildModule(init: SirModuleBuilder.() -> Unit = {}): SirModule {
+inline fun buildModule(init: SirModuleBuilder.() -> Unit): SirModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

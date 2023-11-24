@@ -12,31 +12,29 @@ package org.jetbrains.kotlin.sir.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.impl.SirFunctionImpl
+import org.jetbrains.kotlin.sir.impl.SirStructImpl
 
 @SirBuilderDsl
-class SirFunctionBuilder {
+class SirStructBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     lateinit var name: String
-    val parameters: MutableList<SirParameter> = mutableListOf()
-    lateinit var returnType: SirType
+    val declarations: MutableList<SirDeclaration> = mutableListOf()
 
-    fun build(): SirFunction {
-        return SirFunctionImpl(
+    fun build(): SirStruct {
+        return SirStructImpl(
             origin,
             visibility,
             name,
-            parameters,
-            returnType,
+            declarations,
         )
     }
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildFunction(init: SirFunctionBuilder.() -> Unit): SirFunction {
+inline fun buildStruct(init: SirStructBuilder.() -> Unit): SirStruct {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return SirFunctionBuilder().apply(init).build()
+    return SirStructBuilder().apply(init).build()
 }

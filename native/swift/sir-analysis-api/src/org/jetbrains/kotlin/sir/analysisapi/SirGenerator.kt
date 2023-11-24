@@ -41,7 +41,7 @@ class SirGenerator : SirFactory {
                 ?.pathSegments()
                 ?.toListString()
                 ?.let { names -> buildForeignFunction {
-                        origin = SirOrigin(path = names)
+                        origin = SirOrigin.KotlinEntity(names)
                         visibility = SirVisibility.PUBLIC
                     }
                 }

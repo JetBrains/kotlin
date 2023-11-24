@@ -12,18 +12,18 @@ import org.jetbrains.kotlin.sir.visitors.SirTransformer
 import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.declarationWithName]
+ * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.namedDeclaration]
  */
-sealed interface SirDeclarationWithName : SirDeclaration {
+sealed interface SirNamedDeclaration : SirDeclaration, SirNamed {
     override val origin: SirOrigin
     override val visibility: SirVisibility
     override var parent: SirDeclarationParent
-    val name: String
+    override val name: String
 
     override fun <R, D> accept(visitor: SirVisitor<R, D>, data: D): R =
-        visitor.visitDeclarationWithName(this, data)
+        visitor.visitNamedDeclaration(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : SirElement, D> transform(transformer: SirTransformer<D>, data: D): E =
-        transformer.transformDeclarationWithName(this, data) as E
+        transformer.transformNamedDeclaration(this, data) as E
 }

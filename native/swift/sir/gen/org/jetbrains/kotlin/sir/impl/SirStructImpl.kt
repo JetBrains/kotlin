@@ -8,16 +8,18 @@
 
 package org.jetbrains.kotlin.sir.impl
 
-import org.jetbrains.kotlin.sir.SirDeclaration
-import org.jetbrains.kotlin.sir.SirModule
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.transformInPlace
 import org.jetbrains.kotlin.sir.visitors.SirTransformer
 import org.jetbrains.kotlin.sir.visitors.SirVisitor
 
-internal class SirModuleImpl(
-    override val declarations: MutableList<SirDeclaration>,
+internal class SirStructImpl(
+    override val origin: SirOrigin,
+    override val visibility: SirVisibility,
     override val name: String,
-) : SirModule() {
+    override val declarations: MutableList<SirDeclaration>,
+) : SirStruct() {
+    override lateinit var parent: SirDeclarationParent
 
     override fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
