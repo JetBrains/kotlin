@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
@@ -141,6 +142,13 @@ class ConeConstraintSystemHasContradiction(
 ) : ConeDiagnosticWithSingleCandidate {
     override val reason: String get() = "CS errors: ${describeSymbol(candidateSymbol)}"
     override val candidateSymbol: FirBasedSymbol<*> get() = candidate.symbol
+}
+
+class ConeUsingTypeVariableAsExplicitReceiver(
+    val explicitReceiver: FirElement,
+    val typeParameter: FirTypeParameter,
+) : ConeDiagnostic {
+    override val reason: String get() = ""
 }
 
 class ConeAmbiguityError(

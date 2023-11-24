@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
@@ -149,3 +150,8 @@ object ResolutionResultOverridesOtherToPreserveCompatibility : ResolutionDiagnos
 object AdaptedCallableReferenceIsUsedWithReflection : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 
 object TypeParameterAsExpression : ResolutionDiagnostic(INAPPLICABLE)
+
+class TypeVariableAsExplicitReceiver(
+    val explicitReceiver: FirExpression,
+    val typeParameter: FirTypeParameter,
+) : ResolutionDiagnostic(RESOLVED)
