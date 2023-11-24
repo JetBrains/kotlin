@@ -1452,6 +1452,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val symbol: KtClassLikeSymbol
     }
 
+    interface BuilderInferenceStubReceiver : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = BuilderInferenceStubReceiver::class
+        val parameterName: Name
+        val ownerName: Name
+    }
+
     interface OverloadResolutionAmbiguity : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverloadResolutionAmbiguity::class
         val candidates: List<KtSymbol>
