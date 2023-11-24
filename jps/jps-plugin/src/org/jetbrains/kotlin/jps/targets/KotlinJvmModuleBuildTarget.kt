@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.*
-import org.jetbrains.kotlin.incremental.storage.RelativeFileToPathConverter
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.build.KotlinCompileContext
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
@@ -66,7 +65,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         get() = JVM_BUILD_META_INFO_FILE_NAME
 
     override val buildMetaInfo: JvmBuildMetaInfo
-        get() = JvmBuildMetaInfo(kotlinContext.fileToPathConverter as? RelativeFileToPathConverter)
+        get() = JvmBuildMetaInfo()
 
     override val targetId: TargetId
         get() {

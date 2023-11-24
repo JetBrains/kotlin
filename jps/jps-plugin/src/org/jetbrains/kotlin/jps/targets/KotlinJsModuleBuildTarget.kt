@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderFromCache
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
-import org.jetbrains.kotlin.incremental.storage.RelativeFileToPathConverter
 import org.jetbrains.kotlin.jps.build.KotlinCompileContext
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.build.ModuleBuildTarget
@@ -57,7 +56,7 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
         get() = JS_BUILD_META_INFO_FILE_NAME
 
     override val buildMetaInfo: JsBuildMetaInfo
-        get() = JsBuildMetaInfo(kotlinContext.fileToPathConverter as? RelativeFileToPathConverter)
+        get() = JsBuildMetaInfo()
 
     val isFirstBuild: Boolean
         get() {

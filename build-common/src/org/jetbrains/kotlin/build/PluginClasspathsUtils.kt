@@ -5,24 +5,23 @@
 
 package org.jetbrains.kotlin.build
 
-import org.jetbrains.kotlin.incremental.storage.RelativeFileToPathConverter
 import java.io.File
 import java.security.DigestInputStream
 import java.security.MessageDigest
 
-internal class PluginClasspath(private val classpath: Array<String>?, val converter: RelativeFileToPathConverter?) {
+internal class PluginClasspath(private val classpath: Array<String>?) {
     companion object {
         fun deserializeWithHashes(str: String): List<Pair<String, String>> =
             str.split(":")
                 .filter(String::isNotBlank)
-                .map { Pair(File(it.substringBeforeLast("-")).name, it.substringAfterLast("-")) }
+                .map { Pair(it.substringBeforeLast("-"), it.substringAfterLast("-")) }
     }
 
     fun serialize() = classpath?.mapNotNull { it ->
         val jar = File(it).takeIf { it.exists() } ?: return@mapNotNull null
-        val jarPath = converter?.toPath(jar) ?: jar.absolutePath
+        val jarName = jar.name
         val jarHash = jar.sha256()
-        "$jarPath-$jarHash"
+        "$jarName-$jarHash"
     }?.joinToString(":") ?: ""
 
     private fun File.sha256(): String {
