@@ -382,4 +382,19 @@ configurations {
             legacyConfigurationDeps(project)
         }
     }
+
+    val jvmMainApi by getting
+    val nativeApiElements by creating
+    for (artifactName in listOf("kotlin-test-common", "kotlin-test-annotations-common")) {
+        dependencies {
+            constraints {
+                val artifactCoordinates = "$group:$artifactName:$version"
+                // there is no dependency anymore from kotlin-test to kotlin-test-common and -annotations-common,
+                // but use this constraint to align it if another library brings it transitively
+                jvmMainApi(artifactCoordinates)
+                metadataApiElements(artifactCoordinates)
+                nativeApiElements(artifactCoordinates)
+            }
+        }
+    }
 }
