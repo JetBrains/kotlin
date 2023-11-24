@@ -16,14 +16,11 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeArgument
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExtensionFunctionType
@@ -99,6 +96,7 @@ class Fir2IrTypeConverter(
         annotations: List<FirAnnotation> = emptyList(),
         hasFlexibleNullability: Boolean = false,
         hasFlexibleMutability: Boolean = false,
+        hasFlexibleArrayElementVariance: Boolean = false,
         addRawTypeAnnotation: Boolean = false
     ): IrType {
         return when (this) {
@@ -129,6 +127,11 @@ class Fir2IrTypeConverter(
                 }
                 if (hasFlexibleMutability) {
                     builtIns.flexibleMutabilityAnnotationConstructorCall()?.let {
+                        typeAnnotations += it
+                    }
+                }
+                if (hasFlexibleArrayElementVariance) {
+                    builtIns.flexibleArrayElementVarianceAnnotationConstructorCall()?.let {
                         typeAnnotations += it
                     }
                 }
@@ -169,6 +172,7 @@ class Fir2IrTypeConverter(
                     annotations,
                     hasFlexibleNullability = lowerBound.nullability != upperBound.nullability,
                     hasFlexibleMutability = isMutabilityFlexible(),
+                    hasFlexibleArrayElementVariance = false,
                     addRawTypeAnnotation = true
                 )
             }
@@ -189,14 +193,16 @@ class Fir2IrTypeConverter(
                             typeOrigin,
                             annotations,
                             hasFlexibleNullability = lower.nullability != upper.nullability,
-                            hasFlexibleMutability = isMutabilityFlexible()
+                            hasFlexibleMutability = isMutabilityFlexible(),
+                            hasFlexibleArrayElementVariance = hasFlexibleArrayElementVariance(),
                         )
                 } else {
                     upperBound.toIrType(
                         typeOrigin,
                         annotations,
                         hasFlexibleNullability = lowerBound.nullability != upperBound.nullability,
-                        hasFlexibleMutability = isMutabilityFlexible()
+                        hasFlexibleMutability = isMutabilityFlexible(),
+                        hasFlexibleArrayElementVariance = false,
                     )
                 }
             }
@@ -230,6 +236,15 @@ class Fir2IrTypeConverter(
             is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> createErrorType()
         }
     }
+
+    private fun ConeFlexibleType.hasFlexibleArrayElementVariance(): Boolean =
+        lowerBound.let { lowerBound ->
+            lowerBound is ConeClassLikeType && lowerBound.lookupTag.classId == StandardClassIds.Array &&
+                    lowerBound.typeArguments.single().kind == ProjectionKind.INVARIANT
+        } && upperBound.let { upperBound ->
+            upperBound is ConeClassLikeType && upperBound.lookupTag.classId == StandardClassIds.Array &&
+                    upperBound.typeArguments.single().kind == ProjectionKind.OUT
+        }
 
     private fun ConeFlexibleType.isMutabilityFlexible(): Boolean {
         val lowerFqName = lowerBound.classId?.asSingleFqName() ?: return false

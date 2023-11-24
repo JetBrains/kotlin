@@ -25961,6 +25961,31 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/javaInterop/notFoundClasses.kt");
         }
 
+        @TestMetadata("overrideWithArrayParameterType.kt")
+        public void testOverrideWithArrayParameterType() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/overrideWithArrayParameterType.kt");
+        }
+
+        @TestMetadata("overrideWithArrayParameterType2.kt")
+        public void testOverrideWithArrayParameterType2() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/overrideWithArrayParameterType2.kt");
+        }
+
+        @TestMetadata("overrideWithArrayParameterTypeNotNull.kt")
+        public void testOverrideWithArrayParameterTypeNotNull() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/overrideWithArrayParameterTypeNotNull.kt");
+        }
+
+        @TestMetadata("overrideWithGenericArrayParameterType.kt")
+        public void testOverrideWithGenericArrayParameterType() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/overrideWithGenericArrayParameterType.kt");
+        }
+
+        @TestMetadata("overrideWithVarargParameterType.kt")
+        public void testOverrideWithVarargParameterType() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/overrideWithVarargParameterType.kt");
+        }
+
         @TestMetadata("protectedField.kt")
         public void testProtectedField() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/protectedField.kt");

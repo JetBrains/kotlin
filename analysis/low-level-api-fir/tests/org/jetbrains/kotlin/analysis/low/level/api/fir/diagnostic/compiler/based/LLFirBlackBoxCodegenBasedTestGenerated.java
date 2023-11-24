@@ -31061,6 +31061,36 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         }
 
         @Test
+        @TestMetadata("overrideWithArrayParameterType.kt")
+        public void testOverrideWithArrayParameterType() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/overrideWithArrayParameterType.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideWithArrayParameterType2.kt")
+        public void testOverrideWithArrayParameterType2() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/overrideWithArrayParameterType2.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideWithArrayParameterTypeNotNull.kt")
+        public void testOverrideWithArrayParameterTypeNotNull() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/overrideWithArrayParameterTypeNotNull.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideWithGenericArrayParameterType.kt")
+        public void testOverrideWithGenericArrayParameterType() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/overrideWithGenericArrayParameterType.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideWithVarargParameterType.kt")
+        public void testOverrideWithVarargParameterType() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/overrideWithVarargParameterType.kt");
+        }
+
+        @Test
         @TestMetadata("protectedField.kt")
         public void testProtectedField() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/protectedField.kt");

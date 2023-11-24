@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import com.intellij.rt.execution.junit.FileComparisonFailure
-import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
@@ -349,6 +348,7 @@ private val EXCLUDED_ANNOTATIONS = setOf(
     StandardNames.FqNames.parameterName,
     JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME,
     JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
+    JvmSymbols.FLEXIBLE_VARIANCE_ANNOTATION_FQ_NAME,
     JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME,
     StandardClassIds.Annotations.ContextFunctionTypeParams.asSingleFqName(),
     JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION,

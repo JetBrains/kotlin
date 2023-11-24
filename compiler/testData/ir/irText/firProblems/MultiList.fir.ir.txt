@@ -252,16 +252,16 @@ FILE fqName:<root> fileName:/MultiList.kt
         overridden:
           public open fun <get-size> (): kotlin.Int declared in java.util.ArrayList
         $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>) returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
       overridden:
-        public open fun toArray (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in java.util.ArrayList
+        public open fun toArray (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>, p0:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>? [fake_override]
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>, p0:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?) returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>? [fake_override]
       overridden:
-        public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>? declared in java.util.ArrayList
+        public open fun toArray <T> (p0: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>? declared in java.util.ArrayList
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?
+      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>, p0:@[EnhancedNullability] <root>.Some<T of <root>.SomeList>) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun add (p0: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
@@ -441,16 +441,16 @@ FILE fqName:<root> fileName:/MultiList.kt
         overridden:
           public open fun <get-size> (): kotlin.Int declared in <root>.SomeList
         $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<kotlin.String>>
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<kotlin.String>>) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<kotlin.String>>) returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
       overridden:
-        public open fun toArray (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in <root>.SomeList
+        public open fun toArray (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in <root>.SomeList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<kotlin.String>>
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:java.util.ArrayList<<root>.Some<kotlin.String>>, p0:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>? [fake_override]
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:java.util.ArrayList<<root>.Some<kotlin.String>>, p0:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>?) returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>? [fake_override]
       overridden:
-        public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>? declared in <root>.SomeList
+        public open fun toArray <T> (p0: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>? declared in <root>.SomeList
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>?
+      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>?
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<kotlin.String>>, p0:@[EnhancedNullability] <root>.Some<kotlin.String>) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun add (p0: @[EnhancedNullability] <root>.Some<T of <root>.SomeList>): kotlin.Boolean declared in <root>.SomeList

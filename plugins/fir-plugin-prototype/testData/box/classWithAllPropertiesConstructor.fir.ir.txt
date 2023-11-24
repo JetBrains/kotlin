@@ -227,7 +227,7 @@ FILE fqName:<root> fileName:/main.kt
       VAR name:derived type:@[FlexibleNullability] <root>.Derived? [val]
         CALL 'public open fun newInstance (vararg p0: @[FlexibleNullability] kotlin.Any?): @[FlexibleNullability] T of java.lang.reflect.Constructor? declared in java.lang.reflect.Constructor' type=@[FlexibleNullability] <root>.Derived? origin=null
           $this: GET_VAR 'val constructor: java.lang.reflect.Constructor<<root>.Derived> declared in <root>.box' type=java.lang.reflect.Constructor<<root>.Derived> origin=null
-          p0: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? varargElementType=@[FlexibleNullability] kotlin.Any?
+          p0: VARARG type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? varargElementType=@[FlexibleNullability] kotlin.Any?
             CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.A' type=<root>.A origin=null
               s: CONST String type=kotlin.String value="a"
             CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.B' type=<root>.B origin=null

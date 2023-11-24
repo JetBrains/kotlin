@@ -36,18 +36,18 @@ FILE fqName:<root> fileName:/reflectFindAnnotationOnDefaultMethodParameter.kt
             <T>: <root>.box.<no name provided>
             $receiver: GET_VAR 'val impl: <root>.box.<no name provided> declared in <root>.box' type=<root>.box.<no name provided> origin=null
           p0: CONST String type=kotlin.String value="m"
-          p1: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] java.lang.Class<*>?>? varargElementType=@[FlexibleNullability] java.lang.Class<*>?
+          p1: VARARG type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.Class<*>?>? varargElementType=@[FlexibleNullability] java.lang.Class<*>?
             CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<kotlin.String> origin=GET_PROPERTY
               <T>: kotlin.String
               $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.String>
       VAR name:parameter type:@[FlexibleNullability] java.lang.reflect.Parameter? [val]
         CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=@[FlexibleNullability] java.lang.reflect.Parameter? origin=null
-          $this: CALL 'public open fun getParameters (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Parameter?>? declared in java.lang.reflect.Method' type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Parameter?>? origin=GET_PROPERTY
+          $this: CALL 'public open fun getParameters (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Parameter?>? declared in java.lang.reflect.Method' type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Parameter?>? origin=GET_PROPERTY
             $this: GET_VAR 'val method: @[FlexibleNullability] java.lang.reflect.Method? declared in <root>.box' type=@[FlexibleNullability] java.lang.reflect.Method? origin=null
           index: CONST Int type=kotlin.Int value=0
       VAR name:size type:kotlin.Int [val]
         CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
-          $this: CALL 'public open fun getAnnotations (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? declared in java.lang.reflect.Parameter' type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? origin=GET_PROPERTY
+          $this: CALL 'public open fun getAnnotations (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? declared in java.lang.reflect.Parameter' type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? origin=GET_PROPERTY
             $this: GET_VAR 'val parameter: @[FlexibleNullability] java.lang.reflect.Parameter? declared in <root>.box' type=@[FlexibleNullability] java.lang.reflect.Parameter? origin=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH

@@ -88,8 +88,8 @@ FILE fqName:<root> fileName:/test.kt
           $receiver: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.map, R of kotlin.collections.map>): kotlin.collections.List<R of kotlin.collections.map> declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
             <T>: @[FlexibleNullability] kotlin.Annotation?
             <R>: kotlin.String
-            $receiver: TYPE_OP type=kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>
-              CALL 'public open fun getAnnotations (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? declared in java.lang.reflect.Field' type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? origin=GET_PROPERTY
+            $receiver: TYPE_OP type=@[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>
+              CALL 'public open fun getAnnotations (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? declared in java.lang.reflect.Field' type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? origin=GET_PROPERTY
                 $this: CALL 'public open fun getDeclaredField (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] java.lang.reflect.Field? declared in java.lang.Class' type=@[FlexibleNullability] java.lang.reflect.Field? origin=null
                   $this: CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.Foo> origin=GET_PROPERTY
                     <T>: <root>.Foo

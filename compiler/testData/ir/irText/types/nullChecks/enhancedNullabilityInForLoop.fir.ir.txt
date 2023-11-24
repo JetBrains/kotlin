@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR FOR_LOOP_ITERATOR name:tmp_3 type:kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> [val]
           CALL 'public final fun iterator (): kotlin.collections.Iterator<T of kotlin.Array> declared in kotlin.Array' type=kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> origin=FOR_LOOP_ITERATOR
-            $this: CALL 'public open fun arrayOfNotNull (): @[EnhancedNullability] kotlin.Array<out @[EnhancedNullability] <root>.P> declared in <root>.J' type=@[EnhancedNullability] kotlin.Array<out @[EnhancedNullability] <root>.P> origin=null
+            $this: CALL 'public open fun arrayOfNotNull (): @[EnhancedNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[EnhancedNullability] <root>.P> declared in <root>.J' type=@[EnhancedNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[EnhancedNullability] <root>.P> origin=null
               $this: GET_VAR 'j: <root>.J declared in <root>.testForInArrayUnused' type=<root>.J origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
           condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
@@ -93,7 +93,7 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR FOR_LOOP_ITERATOR name:tmp_5 type:kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> [val]
           CALL 'public final fun iterator (): kotlin.collections.Iterator<T of kotlin.Array> declared in kotlin.Array' type=kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> origin=FOR_LOOP_ITERATOR
-            $this: CALL 'public open fun arrayOfNotNull (): @[EnhancedNullability] kotlin.Array<out @[EnhancedNullability] <root>.P> declared in <root>.J' type=@[EnhancedNullability] kotlin.Array<out @[EnhancedNullability] <root>.P> origin=null
+            $this: CALL 'public open fun arrayOfNotNull (): @[EnhancedNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[EnhancedNullability] <root>.P> declared in <root>.J' type=@[EnhancedNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[EnhancedNullability] <root>.P> origin=null
               $this: GET_VAR 'j: <root>.J declared in <root>.testForInArrayUse' type=<root>.J origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
           condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT

@@ -1156,6 +1156,9 @@ class JvmSymbols(
 
         val RAW_TYPE_ANNOTATION_FQ_NAME: FqName =
             StandardClassIds.Annotations.RawTypeAnnotation.asSingleFqName()
+
+        val FLEXIBLE_VARIANCE_ANNOTATION_FQ_NAME: FqName =
+            StandardClassIds.Annotations.FlexibleArrayElementVariance.asSingleFqName()
     }
 }
 

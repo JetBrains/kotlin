@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmen
 import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleArrayElementVariance
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleMutability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.RawTypeAnnotation
@@ -43,6 +44,7 @@ class Fir2IrJvmSpecialAnnotationSymbolProvider : Fir2IrSpecialSymbolProvider() {
             FlexibleNullability -> id.toIrClass(kotlinInternalIrPackage).symbol
             FlexibleMutability -> id.toIrClass(kotlinInternalIrPackage).symbol
             RawTypeAnnotation -> id.toIrClass(kotlinInternalIrPackage).symbol
+            FlexibleArrayElementVariance -> id.toIrClass(kotlinInternalIrPackage).symbol
             else -> null
         }
 

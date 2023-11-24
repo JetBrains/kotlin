@@ -6,16 +6,20 @@
 package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols.Companion.FLEXIBLE_VARIANCE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.FlexibleTypeBoundsChecker
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 
 internal interface IrJvmFlexibleType : FlexibleTypeMarker {
@@ -23,13 +27,22 @@ internal interface IrJvmFlexibleType : FlexibleTypeMarker {
     val upperBound: IrSimpleType
 }
 
+/**
+ * @param arrayVariance used for representing array types loaded from Java.
+ *   Java type `X[]` is loaded in Kotlin as `Array<X!>..Array<out X!>?` (where flexible nullability is handled by [nullability]).
+ */
 private class IrJvmFlexibleTypeImpl(
     val irType: IrSimpleType,
     val builtIns: IrBuiltIns,
     val nullability: Boolean,
     val mutability: Boolean,
+    val arrayVariance: Boolean,
     val raw: Boolean,
 ) : IrJvmFlexibleType {
+    init {
+        check(!arrayVariance || !raw) { "Flexible variance is only possible for Array types, which cannot be raw: ${irType.render()}" }
+    }
+
     override val lowerBound: IrSimpleType
         get() = irType.buildSimpleType {
             if (this@IrJvmFlexibleTypeImpl.nullability) nullability = SimpleTypeNullability.NOT_SPECIFIED
@@ -52,7 +65,9 @@ private class IrJvmFlexibleTypeImpl(
                     else -> error("Mutability-flexible type with unknown classifier: ${irType.render()}, FQ name: $readonlyClassFqName")
                 }
             }
-
+            if (arrayVariance) {
+                arguments = listOf(makeTypeProjection(irType.getArrayElementType(), Variance.INVARIANT))
+            }
         }
 
     override val upperBound: IrSimpleType
@@ -74,10 +89,20 @@ private class IrJvmFlexibleTypeImpl(
                     else -> error("Mutability-flexible type with unknown classifier: ${irType.render()}, FQ name: $readonlyClassFqName")
                 }
             }
+            if (arrayVariance) {
+                arguments = listOf(makeTypeProjection(irType.getArrayElementType(), Variance.OUT_VARIANCE))
+            }
             if (raw) {
                 arguments = List(arguments.size) { IrStarProjectionImpl }
             }
             kotlinType = null
+        }
+
+    private fun IrSimpleType.getArrayElementType(): IrType =
+        when (val argument = arguments.singleOrNull()) {
+            is IrTypeProjection -> argument.type
+            is IrStarProjection -> error("Star projection is not possible for the argument of Array type: ${irType.render()}")
+            null -> error("Flexible variance is only possible for Array types: ${irType.render()}")
         }
 }
 
@@ -87,20 +112,25 @@ fun IrType.isWithFlexibleNullability(): Boolean =
 internal fun IrType.isWithFlexibleMutability(): Boolean =
     hasAnnotation(JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME)
 
+private fun IrType.isWithFlexibleVariance(): Boolean =
+    hasAnnotation(StandardClassIds.Annotations.FlexibleArrayElementVariance)
+
 internal fun IrType.asJvmFlexibleType(builtIns: IrBuiltIns): FlexibleTypeMarker? {
     if (this !is IrSimpleType || annotations.isEmpty()) return null
 
     val nullability = isWithFlexibleNullability()
     val mutability = isWithFlexibleMutability()
+    val flexibleVariance = isWithFlexibleVariance()
     val raw = isRawType()
-    if (!nullability && !mutability && !raw) return null
+    if (!nullability && !mutability && !flexibleVariance && !raw) return null
 
     val baseType = this.removeAnnotations { irCtorCall ->
         val fqName = irCtorCall.type.classFqName
         fqName == JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME ||
                 fqName == JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME ||
+                fqName == FLEXIBLE_VARIANCE_ANNOTATION_FQ_NAME ||
                 fqName == JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME
     } as IrSimpleType
 
-    return IrJvmFlexibleTypeImpl(baseType, builtIns, nullability, mutability, raw)
+    return IrJvmFlexibleTypeImpl(baseType, builtIns, nullability, mutability, flexibleVariance, raw)
 }

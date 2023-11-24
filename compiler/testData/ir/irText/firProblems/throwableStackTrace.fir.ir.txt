@@ -1,0 +1,8 @@
+FILE fqName:<root> fileName:/throwableStackTrace.kt
+  FUN name:foo visibility:public modality:FINAL <> (t:kotlin.Throwable) returnType:kotlin.Unit
+    VALUE_PARAMETER name:t index:0 type:kotlin.Throwable
+    BLOCK_BODY
+      CALL 'public open fun setStackTrace (p0: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.StackTraceElement?>?): kotlin.Unit declared in kotlin.Throwable' type=kotlin.Unit origin=EQ
+        $this: GET_VAR 't: kotlin.Throwable declared in <root>.foo' type=kotlin.Throwable origin=null
+        p0: CALL 'public open fun getStackTrace (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.StackTraceElement?>? declared in kotlin.Throwable' type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.StackTraceElement?>? origin=GET_PROPERTY
+          $this: GET_VAR 't: kotlin.Throwable declared in <root>.foo' type=kotlin.Throwable origin=null
