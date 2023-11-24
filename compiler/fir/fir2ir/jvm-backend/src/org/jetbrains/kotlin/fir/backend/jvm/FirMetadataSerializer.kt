@@ -98,7 +98,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
         session.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode),
         stringTable,
         constValueProvider = null,
-        additionalAnnotationsProvider = null
+        additionalMetadataProvider = null
     )
     return FirMetadataSerializer(
         globalSerializationBindings,

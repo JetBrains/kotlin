@@ -152,7 +152,7 @@ abstract class FirSerializerExtensionBase(
 
     private fun FirAnnotationContainer.allRequiredAnnotations(session: FirSession): List<FirAnnotation> {
         val nonSourceAnnotations = nonSourceAnnotations(session)
-        val additionalMetadataAnnotationsProvider = additionalAnnotationsProvider
+        val additionalMetadataAnnotationsProvider = additionalMetadataProvider
         return if (this is FirDeclaration && additionalMetadataAnnotationsProvider != null) {
             nonSourceAnnotations + additionalMetadataAnnotationsProvider.findGeneratedAnnotationsFor(this)
         } else {

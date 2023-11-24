@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 
-abstract class FirAdditionalMetadataAnnotationsProvider {
+abstract class FirAdditionalMetadataProvider {
     abstract fun findGeneratedAnnotationsFor(declaration: FirDeclaration): List<FirAnnotation>
     abstract fun hasGeneratedAnnotationsFor(declaration: FirDeclaration): Boolean
 }

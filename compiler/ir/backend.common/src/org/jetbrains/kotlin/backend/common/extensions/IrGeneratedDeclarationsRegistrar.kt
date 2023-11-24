@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.extensions
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-abstract class IrAnnotationsFromPluginRegistrar {
+abstract class IrGeneratedDeclarationsRegistrar {
     abstract fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>)
 
     fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, vararg annotations: IrConstructorCall) {

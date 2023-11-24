@@ -27,7 +27,7 @@ abstract class FirSerializerExtension {
     val annotationSerializer by lazy { FirAnnotationSerializer(session, stringTable, constValueProvider) }
 
     protected abstract val constValueProvider: ConstValueProvider?
-    protected abstract val additionalAnnotationsProvider: FirAdditionalMetadataAnnotationsProvider?
+    protected abstract val additionalMetadataProvider: FirAdditionalMetadataProvider?
 
     @OptIn(ConstValueProviderInternals::class)
     internal inline fun <T> processFile(firFile: FirFile, crossinline action: () -> T): T {
@@ -107,12 +107,12 @@ abstract class FirSerializerExtension {
     }
 
     fun hasAdditionalAnnotations(declaration: FirDeclaration): Boolean {
-        return additionalAnnotationsProvider?.hasGeneratedAnnotationsFor(declaration) ?: false
+        return additionalMetadataProvider?.hasGeneratedAnnotationsFor(declaration) ?: false
     }
 
     // TODO: add usages
     fun getAnnotationsGeneratedByPlugins(declaration: FirDeclaration): List<FirAnnotation> {
-        return additionalAnnotationsProvider?.findGeneratedAnnotationsFor(declaration) ?: emptyList()
+        return additionalMetadataProvider?.findGeneratedAnnotationsFor(declaration) ?: emptyList()
     }
 
     open fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {

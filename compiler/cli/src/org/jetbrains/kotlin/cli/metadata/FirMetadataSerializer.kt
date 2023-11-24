@@ -168,7 +168,7 @@ internal class FirMetadataSerializer(
                     FirKLibSerializerExtension(
                         session, metadataVersion, constValueProvider = null,
                         allowErrorTypes = false, exportKDoc = false,
-                        additionalAnnotationsProvider = null
+                        additionalMetadataProvider = null
                     ),
                     languageVersionSettings,
                 )

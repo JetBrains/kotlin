@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
@@ -53,8 +54,8 @@ open class IrPluginContextImpl constructor(
 
     override val symbolTable: ReferenceSymbolTable = st
 
-    final override val annotationsRegistrar: IrAnnotationsFromPluginRegistrar
-        get() = DummyIrAnnotationsFromPluginRegistrar
+    final override val metadataDeclarationRegistrar: IrGeneratedDeclarationsRegistrar
+        get() = DummyIrGeneratedDeclarationsRegistrar
 
     private fun resolveMemberScope(fqName: FqName): MemberScope? {
         val pkg = module.getPackage(fqName)
@@ -181,7 +182,7 @@ open class IrPluginContextImpl constructor(
         return symbol
     }
 
-    private object DummyIrAnnotationsFromPluginRegistrar : IrAnnotationsFromPluginRegistrar() {
+    private object DummyIrGeneratedDeclarationsRegistrar : IrGeneratedDeclarationsRegistrar() {
         override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
             declaration.annotations += annotations
         }

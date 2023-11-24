@@ -93,7 +93,7 @@ class SerializableCompanionIrGenerator(
 
         val annotationCall = IrConstructorCallImpl.fromSymbolOwner(irClass.startOffset, irClass.endOffset, annotationType, annotationCtor)
 
-        compilerContext.annotationsRegistrar.addMetadataVisibleAnnotationsToElement(irClass, annotationCall)
+        compilerContext.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(irClass, annotationCall)
     }
 
     private fun IrBuilderWithScope.patchSerializableClassWithMarkerAnnotation(serializer: IrClass) {

@@ -30,7 +30,7 @@ class FirKLibSerializerExtension(
     override val constValueProvider: ConstValueProvider?,
     private val allowErrorTypes: Boolean,
     private val exportKDoc: Boolean,
-    override val additionalAnnotationsProvider: FirAdditionalMetadataAnnotationsProvider?
+    override val additionalMetadataProvider: FirAdditionalMetadataProvider?
 ) : FirSerializerExtensionBase(KlibMetadataSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
 

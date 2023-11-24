@@ -302,7 +302,7 @@ private class Fir2KlibSerializer(
                 session, metadataVersion,
                 ConstValueProviderImpl(fir2IrActualizedResult.components),
                 allowErrorTypes = false, exportKDoc = false,
-                fir2IrActualizedResult.components.annotationsFromPluginRegistrar.createMetadataAnnotationsProvider()
+                fir2IrActualizedResult.components.annotationsFromPluginRegistrar.createAdditionalMetadataProvider()
             ),
             languageVersionSettings,
         )

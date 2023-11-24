@@ -72,7 +72,7 @@ class Fir2IrPluginContext(
     private val symbolProvider: FirSymbolProvider
         get() = components.session.symbolProvider
 
-    override val annotationsRegistrar: Fir2IrAnnotationsFromPluginRegistrar
+    override val metadataDeclarationRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar
         get() = components.annotationsFromPluginRegistrar
 
     override fun referenceClass(classId: ClassId): IrClassSymbol? {

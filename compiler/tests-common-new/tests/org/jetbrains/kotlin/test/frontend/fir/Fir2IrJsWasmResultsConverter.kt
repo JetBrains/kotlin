@@ -99,7 +99,7 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
                     components.session, metadataVersion,
                     ConstValueProviderImpl(components),
                     allowErrorTypes = false, exportKDoc = false,
-                    components.annotationsFromPluginRegistrar.createMetadataAnnotationsProvider()
+                    components.annotationsFromPluginRegistrar.createAdditionalMetadataProvider()
                 ),
                 languageVersionSettings,
             )

@@ -58,7 +58,7 @@ interface Fir2IrComponents {
     val extensions: Fir2IrExtensions
     val configuration: Fir2IrConfiguration
 
-    val annotationsFromPluginRegistrar: Fir2IrAnnotationsFromPluginRegistrar
+    val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar
 
     interface Manglers {
         val descriptorMangler: KotlinMangler.DescriptorMangler
