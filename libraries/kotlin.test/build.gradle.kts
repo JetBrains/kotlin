@@ -1,5 +1,6 @@
 @file:Suppress("UNUSED_VARIABLE")
-
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import org.gradle.api.publish.internal.PublicationInternal
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -513,6 +514,33 @@ publishing {
             listOf("${framework.lowercase()}Module", "$framework", "kotlin-test-${framework.lowercase()}", "jvm${framework}RuntimeDependencies")
         }).forEach { (module, sbomTarget, sbomDocument, classpath) ->
             configureSbom(sbomTarget, sbomDocument, setOf(classpath), named<MavenPublication>(module))
+        }
+    }
+}
+
+
+tasks.withType<GenerateModuleMetadata> {
+    val publication = publication.get() as MavenPublication
+    // alter capabilities of leaf JVM framework artifacts published by "available-at" coordinates
+    if (jvmTestFrameworks.map { it.lowercase() }.any { publication.artifactId.endsWith(it) }) {
+        fun capability(group: String, name: String, version: String) =
+            mapOf("group" to group, "name" to name, "version" to version)
+
+        val defaultCapability = publication.let { capability(it.groupId, it.artifactId, it.version) }
+        val implCapability = implCapability.split(":").let { (g, n, v) -> capability(g, n, v) }
+        val capabilities = listOf(defaultCapability, implCapability)
+
+        doLast {
+            val output = outputFile.get().asFile
+            val gson = GsonBuilder().setPrettyPrinting().create()
+            val moduleJson = output.bufferedReader().use { gson.fromJson(it, JsonObject::class.java) }
+            val variants = moduleJson.getAsJsonArray("variants")
+            variants.forEach { variant ->
+                variant as JsonObject
+                variant.remove("capabilities")
+                variant.add("capabilities", gson.toJsonTree(capabilities))
+            }
+            output.bufferedWriter().use { writer -> gson.toJson(moduleJson, writer) }
         }
     }
 }
