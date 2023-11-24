@@ -165,6 +165,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
         }
 
         @Test
+        @TestMetadata("SerializerTypeIncompatibleViaTypealias.kt")
+        public void testSerializerTypeIncompatibleViaTypealias() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializerTypeIncompatibleViaTypealias.kt");
+        }
+
+        @Test
         @TestMetadata("Transients.kt")
         public void testTransients() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/diagnostics/Transients.kt");

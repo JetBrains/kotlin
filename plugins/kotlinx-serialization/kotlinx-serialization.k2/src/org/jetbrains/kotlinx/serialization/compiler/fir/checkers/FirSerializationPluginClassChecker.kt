@@ -564,14 +564,14 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         serializerType: ConeKotlinType,
         reporter: DiagnosticReporter
     ) {
-        val serializerForType = serializerType.serializerForType(session) ?: return
+        val serializerForType = serializerType.serializerForType(session)?.fullyExpandedType(session) ?: return
 
         val declarationTypeClassId = declarationType.classId
         if (declarationTypeClassId == null || declarationTypeClassId != serializerForType.classId) {
             reporter.reportOn(
                 source ?: containingClassSymbol.serializableOrMetaAnnotationSource,
                 FirSerializationErrors.SERIALIZER_TYPE_INCOMPATIBLE,
-                containingClassSymbol.defaultType(),
+                declarationType,
                 serializerType,
                 serializerForType
             )
