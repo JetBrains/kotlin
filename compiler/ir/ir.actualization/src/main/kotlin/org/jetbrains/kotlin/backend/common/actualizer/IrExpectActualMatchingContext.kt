@@ -465,8 +465,9 @@ internal abstract class IrExpectActualMatchingContext(
         return !asIr().isFun
     }
 
-    override fun CallableSymbolMarker.isFakeOverride(containingExpectClass: RegularClassSymbolMarker?): Boolean =
-        asIr().isFakeOverride
+    override fun CallableSymbolMarker.isFakeOverride(containingExpectClass: RegularClassSymbolMarker?): Boolean {
+        return asIr().isFakeOverride
+    }
 
     override val CallableSymbolMarker.isDelegatedMember: Boolean
         get() = asIr().origin == IrDeclarationOrigin.DELEGATED_MEMBER
