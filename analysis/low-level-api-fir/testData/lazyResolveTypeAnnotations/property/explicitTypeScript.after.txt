@@ -28,7 +28,7 @@
 
 @R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
-  anchor -> [FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve]
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
@@ -83,3 +83,4 @@ FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
             @R|myPack/Anno|[Types](position = <strcat>(String(setter ), R|myPack/prop|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|myPack/Anno|[Types](position = <strcat>(String(setter parameter ), R|myPack/prop|)) value: R|@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ Unit#
             }
+

@@ -50,3 +50,4 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
             }
 
         }
+

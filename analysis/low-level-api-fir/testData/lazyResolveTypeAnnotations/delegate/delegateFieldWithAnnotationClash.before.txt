@@ -1,6 +1,6 @@
 @R|second/Anno|(constant#)  second/Base
   context -> FirFieldSymbol second/MyClass.$$delegate_0
-  anchor -> []
+  anchor -> [FirRegularClassSymbol second/MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {

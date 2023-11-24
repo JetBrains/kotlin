@@ -1,6 +1,6 @@
 @R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>
   context -> FirFieldSymbol second/MyClass.$$delegate_0
-  anchor -> []
+  anchor -> [FirRegularClassSymbol second/MyClass]
 
 @R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>
   context -> FirFieldSymbol second/MyClass.$$delegate_0
@@ -63,3 +63,4 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
             }
 
         }
+

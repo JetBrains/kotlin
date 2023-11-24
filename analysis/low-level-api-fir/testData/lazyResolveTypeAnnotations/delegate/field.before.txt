@@ -1,6 +1,6 @@
 @R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>
   context -> FirFieldSymbol one/Usage.$$delegate_0
-  anchor -> []
+  anchor -> [FirRegularClassSymbol one/Usage]
 
 @R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>
   context -> FirFieldSymbol one/Usage.$$delegate_0

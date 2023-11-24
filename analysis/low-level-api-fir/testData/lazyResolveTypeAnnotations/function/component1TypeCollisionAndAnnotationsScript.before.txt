@@ -1,14 +1,14 @@
 @R|one/two/Anno|(IntegerLiteral(0).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>
   context -> FirNamedFunctionSymbol one/two/MyDataClass.component1
-  anchor -> [FirNamedFunctionSymbol one/two/MyDataClass.component1]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>
   context -> FirNamedFunctionSymbol one/two/MyDataClass.component1
-  anchor -> [FirValueParameterSymbol <local>/prop1 from FirConstructorSymbol one/two/MyDataClass.MyDataClass]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int
   context -> FirNamedFunctionSymbol one/two/MyDataClass.component1
-  anchor -> [FirValueParameterSymbol <local>/prop1 from FirConstructorSymbol one/two/MyDataClass.MyDataClass]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 FILE: [ResolvedTo(IMPORTS)] component1TypeCollisionAndAnnotationsScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)

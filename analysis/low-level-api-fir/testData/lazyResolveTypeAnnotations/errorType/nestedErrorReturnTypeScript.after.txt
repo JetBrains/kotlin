@@ -4,7 +4,7 @@
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested return ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type3
   context -> FirNamedFunctionSymbol lowlevel/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(receiver ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Abc>
   context -> FirNamedFunctionSymbol lowlevel/function
@@ -12,15 +12,15 @@
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested receiver ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Abc
   context -> FirNamedFunctionSymbol lowlevel/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(param ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type1
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested param ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type2
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(bound ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested bound ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for ASF>
   context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol lowlevel/function
@@ -28,7 +28,7 @@
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested bound ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for ASF
   context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol lowlevel/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 FILE: [ResolvedTo(IMPORTS)] nestedErrorReturnTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -50,3 +50,4 @@ FILE: [ResolvedTo(IMPORTS)] nestedErrorReturnTypeScript.kts
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|lowlevel/Anno|(position = <strcat>(String(bound ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested bound ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for ASF>|> R|@R|lowlevel/Anno|(position = <strcat>(String(receiver ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Abc>|.function([ResolvedTo(ANNOTATION_ARGUMENTS)] param: @R|lowlevel/Anno|[Types](position = <strcat>(String(param ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type1>): R|@R|lowlevel/Anno|(position = <strcat>(String(return ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type3>| {
         }
+

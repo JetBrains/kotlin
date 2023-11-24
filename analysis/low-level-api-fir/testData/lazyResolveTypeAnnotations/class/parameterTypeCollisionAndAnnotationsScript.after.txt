@@ -1,14 +1,14 @@
 @R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyDataClass.MyDataClass
-  anchor -> [FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyDataClass.MyDataClass]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>
   context -> FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyDataClass.MyDataClass
-  anchor -> [FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyDataClass.MyDataClass]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int
   context -> FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyDataClass.MyDataClass
-  anchor -> [FirValueParameterSymbol <local>/prop from FirConstructorSymbol one/two/MyDataClass.MyDataClass]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionAndAnnotationsScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

@@ -24,15 +24,15 @@
 
 @R|lowlevel/Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/Collection<@R|lowlevel/Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(<strcat>(String(bound type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested bound type ), prop#))  kotlin/String>
   context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol lowlevel/function

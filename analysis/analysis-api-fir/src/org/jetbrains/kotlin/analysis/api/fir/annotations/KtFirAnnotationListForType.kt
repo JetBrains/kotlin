@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.resolveAnnotationsWithArguments
 import org.jetbrains.kotlin.fir.symbols.resolveAnnotationsWithClassIds
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -86,7 +87,8 @@ private fun ConeKotlinType.customAnnotationsWithLazyResolve(phase: FirResolvePha
     val custom = attributes.custom ?: return emptyList()
     val annotations = custom.annotations.ifEmpty { return emptyList() }
 
-    for (containerSymbol in custom.containerSymbols) {
+    for (annotation in annotations) {
+        val containerSymbol = (annotation as? FirAnnotationCall)?.containingDeclarationSymbol ?: continue
         when (phase) {
             FirResolvePhase.TYPES -> resolveAnnotationsWithClassIds(containerSymbol)
             FirResolvePhase.ANNOTATION_ARGUMENTS -> annotations.resolveAnnotationsWithArguments(containerSymbol)

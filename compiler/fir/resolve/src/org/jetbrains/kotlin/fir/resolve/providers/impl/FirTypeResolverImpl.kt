@@ -222,7 +222,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         result: TypeResolutionResult,
         areBareTypesAllowed: Boolean,
         topContainer: FirDeclaration?,
-        containerDeclaration: FirDeclaration?,
         isOperandOfIsOperator: Boolean
     ): ConeKotlinType {
         val (symbol, substitutor) = when (result) {
@@ -284,7 +283,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             typeRef.isMarkedNullable,
             typeRef.annotations.computeTypeAttributes(
                 session,
-                containerDeclaration = containerDeclaration,
                 shouldExpandTypeAliases = true,
                 allowExtensionFunctionType = (symbol.toLookupTag() as? ConeClassLikeLookupTag)?.isSomeFunctionType(session) == true,
             )
@@ -373,10 +371,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return null
     }
 
-    private fun createFunctionType(
-        typeRef: FirFunctionTypeRef,
-        containerDeclaration: FirDeclaration? = null
-    ): FirTypeResolutionResult {
+    private fun createFunctionType(typeRef: FirFunctionTypeRef): FirTypeResolutionResult {
         val parameters =
             typeRef.contextReceiverTypeRefs.map { it.coneType } +
                     listOfNotNull(typeRef.receiverTypeRef?.coneType) +
@@ -406,7 +401,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     add(CompilerConeAttributes.ContextFunctionTypeParams(typeRef.contextReceiverTypeRefs.size))
                 }
             },
-            containerDeclaration,
             shouldExpandTypeAliases = true
         )
         return FirTypeResolutionResult(
@@ -438,16 +432,14 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     result,
                     areBareTypesAllowed,
                     scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingDeclarations.lastOrNull(),
-                    scopeClassDeclaration.containerDeclaration,
                     isOperandOfIsOperator,
                 )
                 FirTypeResolutionResult(resolvedType, (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic)
             }
-            is FirFunctionTypeRef -> createFunctionType(typeRef, scopeClassDeclaration.containerDeclaration)
+            is FirFunctionTypeRef -> createFunctionType(typeRef)
             is FirDynamicTypeRef -> {
                 val attributes = typeRef.annotations.computeTypeAttributes(
                     session,
-                    containerDeclaration = scopeClassDeclaration.containerDeclaration,
                     shouldExpandTypeAliases = true
                 )
                 FirTypeResolutionResult(ConeDynamicType.create(session, attributes), diagnostic = null)

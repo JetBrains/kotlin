@@ -1,26 +1,26 @@
 @R|one/two/Anno|(IntegerLiteral(0).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/prop1 from FirNamedFunctionSymbol one/two/MyDataClass.copy
-  anchor -> [FirValueParameterSymbol <local>/prop1 from FirNamedFunctionSymbol one/two/MyDataClass.copy]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(IntegerLiteral(1).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>
   context -> FirValueParameterSymbol <local>/prop1 from FirNamedFunctionSymbol one/two/MyDataClass.copy
-  anchor -> [FirValueParameterSymbol <local>/prop1 from FirConstructorSymbol one/two/MyDataClass.MyDataClass]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int
   context -> FirValueParameterSymbol <local>/prop1 from FirNamedFunctionSymbol one/two/MyDataClass.copy
-  anchor -> [FirValueParameterSymbol <local>/prop1 from FirConstructorSymbol one/two/MyDataClass.MyDataClass]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(IntegerLiteral(3).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/prop2 from FirNamedFunctionSymbol one/two/MyDataClass.copy
-  anchor -> [FirValueParameterSymbol <local>/prop2 from FirNamedFunctionSymbol one/two/MyDataClass.copy]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(IntegerLiteral(4).plus#(constant#))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int>
   context -> FirValueParameterSymbol <local>/prop2 from FirNamedFunctionSymbol one/two/MyDataClass.copy
-  anchor -> [FirValueParameterSymbol <local>/prop2 from FirConstructorSymbol one/two/MyDataClass.MyDataClass]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(IntegerLiteral(5).plus#(constant#))  kotlin/Int
   context -> FirValueParameterSymbol <local>/prop2 from FirNamedFunctionSymbol one/two/MyDataClass.copy
-  anchor -> [FirValueParameterSymbol <local>/prop2 from FirConstructorSymbol one/two/MyDataClass.MyDataClass]
+  anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotationsScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)

@@ -1,14 +1,14 @@
 @R|Anno|(position = <strcat>(String(bound ), R|<local>/localProp|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), R|<local>/localProp|))  kotlin/Int>
   context -> FirTypeParameterSymbol T from FirRegularClassSymbol <local>/OriginalClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol <local>/OriginalClass]
 
 @R|Anno|(position = <strcat>(String(nested bound ), R|<local>/localProp|))  kotlin/Int
   context -> FirTypeParameterSymbol T from FirRegularClassSymbol <local>/OriginalClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol <local>/OriginalClass]
 
 @R|Anno|(position = <strcat>(String(super type ), R|<local>/localProp|))  A<@R|Anno|(position = <strcat>(String(nested super type ), R|<local>/localProp|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested super type ), R|<local>/localProp|))  kotlin/Int>>
   context -> FirConstructorSymbol <local>/OriginalClass.OriginalClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol <local>/OriginalClass]
 
 @R|Anno|(position = <strcat>(String(nested super type ), R|<local>/localProp|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested super type ), R|<local>/localProp|))  kotlin/Int>
   context -> FirConstructorSymbol <local>/OriginalClass.OriginalClass
@@ -20,15 +20,15 @@
 
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int>
   context -> FirTypeParameterSymbol T from FirRegularClassSymbol <local>/OriginalClass.InnerClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol <local>/OriginalClass.InnerClass]
 
 @R|Anno|(position = <strcat>(String(nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int
   context -> FirTypeParameterSymbol T from FirRegularClassSymbol <local>/OriginalClass.InnerClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol <local>/OriginalClass.InnerClass]
 
 @R|Anno|(position = <strcat>(String(super type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  A<@R|Anno|(position = <strcat>(String(nested super type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested super type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int>>
   context -> FirConstructorSymbol <local>/OriginalClass.InnerClass.InnerClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol <local>/OriginalClass.InnerClass]
 
 @R|Anno|(position = <strcat>(String(nested super type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested super type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int>
   context -> FirConstructorSymbol <local>/OriginalClass.InnerClass.InnerClass
@@ -104,3 +104,4 @@ FILE: [ResolvedTo(IMPORTS)] classAnnotationsInLocalClassScript.kts
             }
 
         }
+

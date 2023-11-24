@@ -1,14 +1,14 @@
 @R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>
   context -> FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int
   context -> FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] constructorParameterScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

@@ -28,7 +28,7 @@
 
 @R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
-  anchor -> [FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve]
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
@@ -79,3 +79,4 @@ FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] var <@R|myPack/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] T : R|@R|myPack/Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested bound ), prop#))  kotlin/String>|> @RECEIVER:R|myPack/Anno|[Types](LAZY_EXPRESSION) R|@R|myPack/Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<ERROR CLASS: Incomplete code>|.variableToResolve: R|@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>|
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] get(): R|@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>| { LAZY_BLOCK }
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) value: R|@R|myPack/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/Collection<@R|myPack/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|myPack/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+

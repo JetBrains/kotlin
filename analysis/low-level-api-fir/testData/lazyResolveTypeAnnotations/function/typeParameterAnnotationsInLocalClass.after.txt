@@ -24,15 +24,15 @@
 
 @R|Anno|(position = <strcat>(String(parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType]
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType]
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType]
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>
   context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol <local>/explicitType

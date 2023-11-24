@@ -24,15 +24,15 @@
 
 @R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/ListIterator<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /Derived.explicitType
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.explicitType]
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
 
 @R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /Derived.explicitType
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.explicitType]
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
 
 @R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /Derived.explicitType
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.explicitType]
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
 
 @R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>
   context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol /Derived.explicitType
@@ -79,3 +79,4 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeScript.kts
             @R|Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(STATUS)] fun <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.explicitType([ResolvedTo(STATUS)] @R|Anno|[Types](LAZY_EXPRESSION) param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/ListIterator<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>|): R|@R|Anno|(<strcat>(String(explicitType return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested nested return type ), prop#))  kotlin/Int>>| { LAZY_BLOCK }
 
         }
+

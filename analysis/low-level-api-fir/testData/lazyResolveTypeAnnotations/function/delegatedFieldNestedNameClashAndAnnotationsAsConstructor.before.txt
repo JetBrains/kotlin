@@ -1,6 +1,6 @@
 @R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base
   context -> FirValueParameterSymbol <local>/prop from FirConstructorSymbol second/MyClass.MyClass
-  anchor -> [FirValueParameterSymbol <local>/prop from FirConstructorSymbol second/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol second/MyClass.MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstructor.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {

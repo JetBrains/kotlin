@@ -1,6 +1,6 @@
 @R|second/Anno|(constant#)  second/Base
   context -> FirFieldSymbol second/MyClass.$$delegate_0
-  anchor -> []
+  anchor -> [FirRegularClassSymbol second/MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClashScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
@@ -43,3 +43,4 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClashScript.kts
             }
 
         }
+

@@ -1,6 +1,6 @@
 @R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base
   context -> FirFieldSymbol second/MyClass.$$delegate_0
-  anchor -> []
+  anchor -> [FirRegularClassSymbol second/MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
@@ -55,3 +55,4 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsScript.kt
             }
 
         }
+

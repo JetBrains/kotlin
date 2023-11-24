@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.FirImplicitInvokeCallBuilder
@@ -72,7 +71,6 @@ fun FirTypeRef.resolvedTypeFromPrototype(
 fun List<FirAnnotation>.computeTypeAttributes(
     session: FirSession,
     predefined: List<ConeAttribute<*>> = emptyList(),
-    containerDeclaration: FirDeclaration? = null,
     allowExtensionFunctionType: Boolean = true,
     shouldExpandTypeAliases: Boolean
 ): ConeAttributes {
@@ -115,7 +113,7 @@ fun List<FirAnnotation>.computeTypeAttributes(
     }
 
     if (customAnnotations.isNotEmpty()) {
-        attributes += CustomAnnotationTypeAttribute(customAnnotations, containerDeclaration?.symbol)
+        attributes += CustomAnnotationTypeAttribute(customAnnotations)
     }
 
     return ConeAttributes.create(attributes)

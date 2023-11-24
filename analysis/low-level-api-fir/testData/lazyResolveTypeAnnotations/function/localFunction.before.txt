@@ -1,54 +1,54 @@
 @R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>
   context -> FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>
   context -> FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int
   context -> FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int>>
   context -> FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int>
   context -> FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int
   context -> FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(parameter type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested parameter type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested parameter type ), R|lowlevel/prop|))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested parameter type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested parameter type ), R|lowlevel/prop|))  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested nested parameter type ), R|lowlevel/prop|))  kotlin/String
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(bound type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested bound type ), R|lowlevel/prop|))  kotlin/String>
   context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested bound type ), R|lowlevel/prop|))  kotlin/String
   context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(constraint type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested constraint type ), R|lowlevel/prop|))  kotlin/Int>
   context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested constraint type ), R|lowlevel/prop|))  kotlin/Int
   context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol <local>/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/func]
 
 FILE: [ResolvedTo(IMPORTS)] localFunction.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

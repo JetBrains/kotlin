@@ -1,14 +1,14 @@
 @R|properties/Anno|(<strcat>(String(parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>>
   context -> FirNamedFunctionSymbol properties/MyClass.component1
-  anchor -> [FirNamedFunctionSymbol properties/MyClass.component1]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>
   context -> FirNamedFunctionSymbol properties/MyClass.component1
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int
   context -> FirNamedFunctionSymbol properties/MyClass.component1
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] generatedComponentNScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)

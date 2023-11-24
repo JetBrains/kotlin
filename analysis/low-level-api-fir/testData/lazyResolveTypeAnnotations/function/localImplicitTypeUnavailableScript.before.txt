@@ -93,3 +93,4 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableScript.kts
 
             [ResolvedTo(BODY_RESOLVE)] lval a: R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| = R|<local>/A.A|().R|<local>/bar|()
         }
+

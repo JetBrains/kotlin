@@ -1,22 +1,22 @@
 @R|lowlevel/Anno|(<strcat>(String(return ), prop#))  ERROR CLASS: Symbol not found for Type3
   context -> FirNamedFunctionSymbol lowlevel/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(<strcat>(String(receiver ), prop#))  ERROR CLASS: Symbol not found for Abc
   context -> FirNamedFunctionSymbol lowlevel/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(<strcat>(String(param ), prop#))  ERROR CLASS: Symbol not found for Type1
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(<strcat>(String(nested param ), prop#))  ERROR CLASS: Symbol not found for Type2
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(<strcat>(String(bound ), prop#))  ERROR CLASS: Symbol not found for ASF
   context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol lowlevel/function
-  anchor -> []
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 FILE: [ResolvedTo(IMPORTS)] errorTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
@@ -37,3 +37,4 @@ FILE: [ResolvedTo(IMPORTS)] errorTypeScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] F : @R|lowlevel/Anno|[Unresolved](<strcat>(String(bound ), prop#)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Unresolved](<strcat>(String(receiver ), prop#)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(TYPES)] param: @R|lowlevel/Anno|[Unresolved](<strcat>(String(param ), prop#)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Unresolved](<strcat>(String(return ), prop#)) <ERROR TYPE REF: Symbol not found for Type3> { LAZY_BLOCK }
+

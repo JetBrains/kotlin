@@ -8,11 +8,11 @@
 
 @R|Anno|(<strcat>(String(setter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setter nested type ), prop#))  kotlin/Int>
   context -> FirValueParameterSymbol <local>/l from FirNamedFunctionSymbol /Derived.setSomething
-  anchor -> [FirValueParameterSymbol <local>/l from FirNamedFunctionSymbol /Derived.setSomething]
+  anchor -> [FirNamedFunctionSymbol /Derived.setSomething]
 
 @R|Anno|(<strcat>(String(setter nested type ), prop#))  kotlin/Int
   context -> FirValueParameterSymbol <local>/l from FirNamedFunctionSymbol /Derived.setSomething
-  anchor -> [FirValueParameterSymbol <local>/l from FirNamedFunctionSymbol /Derived.setSomething]
+  anchor -> [FirNamedFunctionSymbol /Derived.setSomething]
 
 @R|Anno|(<strcat>(String(getter return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getter nested return type ), prop#))  kotlin/Int>
   context -> FirSimpleSyntheticPropertySymbol /Derived.something

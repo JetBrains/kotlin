@@ -24,15 +24,15 @@
 
 @R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /Derived.implicitType
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.implicitType]
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.implicitType]
 
 @R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /Derived.implicitType
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.implicitType]
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.implicitType]
 
 @R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /Derived.implicitType
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.implicitType]
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.implicitType]
 
 @R|Anno|(position = <strcat>(String(bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|))  kotlin/String>>
   context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol /Derived.implicitType

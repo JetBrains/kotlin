@@ -1,50 +1,50 @@
 @R|properties/Anno|(<strcat>(String(parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>>
   context -> FirPropertySymbol properties/MyClass.property
-  anchor -> [FirPropertySymbol properties/MyClass.property]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>
   context -> FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int
   context -> FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>>
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirPropertySymbol properties/MyClass.property]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>>
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirPropertySymbol properties/MyClass.property]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(nested parameter type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int>
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(<strcat>(String(nested nested parameter type: ), constant#))  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromConstructor.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {

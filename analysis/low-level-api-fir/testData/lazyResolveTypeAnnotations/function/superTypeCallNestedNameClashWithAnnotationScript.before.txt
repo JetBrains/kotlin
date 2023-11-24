@@ -1,6 +1,6 @@
 @R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>
   context -> FirConstructorSymbol second/MyClass.MyClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol second/MyClass]
 
 @R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>
   context -> FirConstructorSymbol second/MyClass.MyClass
@@ -12,7 +12,7 @@
 
 @R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>>
   context -> FirConstructorSymbol second/MyClass.MyClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol second/MyClass]
 
 @R|second/Anno|(IntegerLiteral(2).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(3).plus#(outer#))  kotlin/Int>
   context -> FirConstructorSymbol second/MyClass.MyClass
@@ -76,3 +76,4 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotationScript.kts
             }
 
         }
+

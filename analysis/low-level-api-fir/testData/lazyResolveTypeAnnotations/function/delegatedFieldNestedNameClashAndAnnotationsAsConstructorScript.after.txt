@@ -1,6 +1,6 @@
 @R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base
   context -> FirValueParameterSymbol <local>/prop from FirConstructorSymbol second/MyClass.MyClass
-  anchor -> [FirValueParameterSymbol <local>/prop from FirConstructorSymbol second/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol second/MyClass.MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

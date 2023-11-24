@@ -1,10 +1,10 @@
 @R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base
   context -> FirConstructorSymbol second/MyClass.MyClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol second/MyClass]
 
 @R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base
   context -> FirConstructorSymbol second/MyClass.MyClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol second/MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
@@ -60,3 +60,4 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationImplicitConstruc
             }
 
         }
+

@@ -1,6 +1,6 @@
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number
   context -> FirTypeParameterSymbol A from FirTypeAliasSymbol <local>/OriginalClass.NestedTypeAlias
-  anchor -> []
+  anchor -> [FirTypeAliasSymbol <local>/OriginalClass.NestedTypeAlias]
 
 @R|Anno|(position = <strcat>(String(type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  <local>/OriginalClass<A>
   context -> FirTypeAliasSymbol <local>/OriginalClass.NestedTypeAlias
@@ -35,3 +35,4 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kt
             }
 
         }
+

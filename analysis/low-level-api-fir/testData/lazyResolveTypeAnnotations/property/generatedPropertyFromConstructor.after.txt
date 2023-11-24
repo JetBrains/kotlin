@@ -1,50 +1,50 @@
 @R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>
   context -> FirPropertySymbol properties/MyClass.property
-  anchor -> [FirPropertySymbol properties/MyClass.property]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>
   context -> FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int
   context -> FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirPropertySymbol properties/MyClass.property]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int
   context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int
   context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirPropertySymbol properties/MyClass.property]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol properties/MyClass.property
-  anchor -> [FirValueParameterSymbol <local>/property from FirConstructorSymbol properties/MyClass.MyClass]
+  anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromConstructor.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -63,9 +63,9 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromConstructor.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @PROPERTY:R|properties/Anno|[Types](position = <strcat>(String(property ), R|properties/constant|)) field:@FIELD:R|properties/Anno|[Types](position = <strcat>(String(field ), R|properties/constant|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] var property: R|@R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>| = R|<local>/property|
-            @PROPERTY_GETTER:R|properties/Anno|[Types](position = <strcat>(String(get ), R|properties/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|@R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>|
-            @PROPERTY_SETTER:R|properties/Anno|[Types](position = <strcat>(String(set ), R|properties/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|properties/Anno|[Types](position = <strcat>(String(set ), R|properties/constant|)) value: R|@R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>|): R|kotlin/Unit|
+        @PROPERTY:R|properties/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|properties/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var property: R|@R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>| = R|<local>/property|
+            @PROPERTY_GETTER:R|properties/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>|
+            @PROPERTY_SETTER:R|properties/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|properties/Anno|[Types](LAZY_EXPRESSION) value: R|@R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>|): R|kotlin/Unit|
 
         @PROPERTY:R|properties/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|properties/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var unrelatedProperty: R|@R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>| = R|<local>/unrelatedProperty|
             @PROPERTY_GETTER:R|properties/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|properties/Anno|(position = <strcat>(String(parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter type: ), R|properties/constant|))  kotlin/Int>>|

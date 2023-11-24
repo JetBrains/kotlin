@@ -1,10 +1,10 @@
 @R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base
   context -> FirConstructorSymbol second/MyClass.MyClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol second/MyClass]
 
 @R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base
   context -> FirConstructorSymbol second/MyClass.MyClass
-  anchor -> []
+  anchor -> [FirRegularClassSymbol second/MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotation.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {

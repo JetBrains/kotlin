@@ -40,15 +40,15 @@
 
 @R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol second/SubClass.resolveMe
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol second/AbstractClass.resolveMe]
+  anchor -> [FirNamedFunctionSymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol second/SubClass.resolveMe
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol second/AbstractClass.resolveMe]
+  anchor -> [FirNamedFunctionSymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol second/SubClass.resolveMe
-  anchor -> [FirRegularClassSymbol second/SubClass, FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol second/AbstractClass.resolveMe]
+  anchor -> [FirRegularClassSymbol second/SubClass, FirNamedFunctionSymbol second/AbstractClass.resolveMe]
 
 @R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol second/SubClass.resolveMe
@@ -111,3 +111,4 @@ FILE: [ResolvedTo(IMPORTS)] implicitFunctionScript.kts
             }
 
         }
+

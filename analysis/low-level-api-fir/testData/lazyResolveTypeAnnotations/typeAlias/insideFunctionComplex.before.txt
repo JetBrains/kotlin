@@ -1,14 +1,14 @@
 @R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe]
+  anchor -> [FirNamedFunctionSymbol pack/resolveMe]
 
 @R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe]
+  anchor -> [FirNamedFunctionSymbol pack/resolveMe]
 
 @R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe]
+  anchor -> [FirNamedFunctionSymbol pack/resolveMe]
 
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {

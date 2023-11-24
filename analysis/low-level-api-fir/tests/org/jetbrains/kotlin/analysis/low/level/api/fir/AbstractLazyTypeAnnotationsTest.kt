@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.custom
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -65,10 +65,8 @@ abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResol
             dumpFir(typesWithContext, declaration, firFiles, builderBeforeAnnotationResolve)
 
             typesWithContext.forEach { typeWithContext ->
-                typeWithContext.type.attributes.custom?.let { annotationAttribute ->
-                    annotationAttribute.containerSymbols.forEach { symbol ->
-                        symbol.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
-                    }
+                typeWithContext.type.annotationContainingSymbols().forEach {
+                    it.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
                 }
             }
 
@@ -96,6 +94,10 @@ abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResol
     }
 }
 
+private fun ConeKotlinType.annotationContainingSymbols(): List<FirBasedSymbol<*>> = customAnnotations.mapNotNull {
+    (it as? FirAnnotationCall)?.containingDeclarationSymbol
+}
+
 abstract class AbstractSourceLazyTypeAnnotationsTest : AbstractLazyTypeAnnotationsTest() {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 }
@@ -119,7 +121,7 @@ private fun dumpFir(
         builder.append("  context -> ")
         builder.appendLine(typeWithContext.context)
         builder.append("  anchor -> ")
-        builder.appendLine(typeWithContext.type.attributes.custom!!.containerSymbols.map { it.toStringWithContext() })
+        builder.appendLine(typeWithContext.type.annotationContainingSymbols().map { it.toStringWithContext() })
         builder.appendLine()
     }
 
