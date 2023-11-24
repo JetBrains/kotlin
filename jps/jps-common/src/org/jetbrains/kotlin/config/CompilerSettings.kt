@@ -19,28 +19,28 @@ package org.jetbrains.kotlin.config
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.Freezable
 
-class CompilerSettings : Freezable() {
-    var additionalArguments: String = DEFAULT_ADDITIONAL_ARGUMENTS
+open class CompilerSettings : Freezable() {
+    open var additionalArguments: String = DEFAULT_ADDITIONAL_ARGUMENTS
         set(value) {
             checkFrozen()
             field = value
         }
-    var scriptTemplates: String = ""
+    open var scriptTemplates: String = ""
         set(value) {
             checkFrozen()
             field = value
         }
-    var scriptTemplatesClasspath: String = ""
+    open var scriptTemplatesClasspath: String = ""
         set(value) {
             checkFrozen()
             field = value
         }
-    var copyJsLibraryFiles = true
+    open var copyJsLibraryFiles = true
         set(value) {
             checkFrozen()
             field = value
         }
-    var outputDirectoryForJsLibraryFiles: String = DEFAULT_OUTPUT_DIRECTORY
+    open var outputDirectoryForJsLibraryFiles: String = DEFAULT_OUTPUT_DIRECTORY
         set(value) {
             checkFrozen()
             field = value
@@ -48,7 +48,7 @@ class CompilerSettings : Freezable() {
 
     companion object {
         val DEFAULT_ADDITIONAL_ARGUMENTS = ""
-        private val DEFAULT_OUTPUT_DIRECTORY = "lib"
+        val DEFAULT_OUTPUT_DIRECTORY = "lib"
     }
 
     override fun copyOf(): Freezable = copyCompilerSettings(this, CompilerSettings())
