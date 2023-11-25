@@ -6,19 +6,21 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.externalSymbolOrThrow
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.ir.isUnit
+import org.jetbrains.kotlin.backend.konan.serialization.AbstractKonanIrMangler
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
-import org.jetbrains.kotlin.backend.konan.serialization.AbstractKonanIrMangler
-import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -62,6 +64,10 @@ object KonanBinaryInterface {
 
     private fun withPrefix(prefix: String, mangle: String) = "$prefix:$mangle"
 
+    private fun IrFunction.findManglingAnnotation() =
+        this.annotations.findAnnotation(RuntimeNames.exportForCppRuntime)
+                ?: this.annotations.findAnnotation(RuntimeNames.exportedBridge)
+
     private fun IrFunction.funSymbolNameImpl(containerName: String?): String {
         if (isExternal) {
             this.externalSymbolOrThrow()?.let {
@@ -69,7 +75,7 @@ object KonanBinaryInterface {
             }
         }
 
-        this.annotations.findAnnotation(RuntimeNames.exportForCppRuntime)?.let {
+        this.findManglingAnnotation()?.let {
             val name = it.getAnnotationStringValue() ?: this.name.asString()
             return name // no wrapping currently required
         }
