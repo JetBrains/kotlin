@@ -612,6 +612,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             java.io.File(path)
         }
     }
+
+    internal val cInterfaceGenerationMode: CInterfaceGenerationMode by lazy {
+        configuration.get(BinaryOptions.cInterfaceMode) ?: CInterfaceGenerationMode.V1
+    }
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)
