@@ -11,6 +11,7 @@ object NativeRuntimeNames {
     object Annotations {
         val symbolNameClassId = ClassId(kotlinNativePackage, Name.identifier("SymbolName"))
         val cNameClassId = ClassId(kotlinNativePackage, Name.identifier("CName"))
+        val exportedBridgeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportedBridge"))
         val exportForCppRuntimeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportForCppRuntime"))
         val exportForCompilerClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportForCompiler"))
         val gcUnsafeCallClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("GCUnsafeCall"))

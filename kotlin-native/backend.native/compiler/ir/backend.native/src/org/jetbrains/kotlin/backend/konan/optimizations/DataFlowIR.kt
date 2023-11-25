@@ -603,6 +603,7 @@ internal object DataFlowIR {
             if (returnsNothing)
                 attributes = attributes or FunctionAttributes.RETURNS_NOTHING
             if (it.hasAnnotation(RuntimeNames.exportForCppRuntime)
+                    || it.hasAnnotation(RuntimeNames.exportedBridge)
                     || it.getExternalObjCMethodInfo() != null // TODO-DCE-OBJC-INIT
                     || it.hasAnnotation(RuntimeNames.objCMethodImp)) {
                 attributes = attributes or FunctionAttributes.EXPLICITLY_EXPORTED

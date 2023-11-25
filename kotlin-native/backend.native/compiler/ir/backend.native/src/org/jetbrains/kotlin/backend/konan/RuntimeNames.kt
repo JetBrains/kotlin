@@ -8,6 +8,7 @@ object RuntimeNames {
     val cnameAnnotation = NativeRuntimeNames.Annotations.cNameClassId.asSingleFqName()
     val frozenAnnotation = FqName("kotlin.native.internal.Frozen")
     val exportForCppRuntime = NativeRuntimeNames.Annotations.exportForCppRuntimeClassId.asSingleFqName()
+    val exportedBridge = NativeRuntimeNames.Annotations.exportedBridgeClassId.asSingleFqName()
     val exportForCompilerAnnotation = NativeRuntimeNames.Annotations.exportForCompilerClassId.asSingleFqName()
     val exportTypeInfoAnnotation = FqName("kotlin.native.internal.ExportTypeInfo")
     val cCall = FqName("kotlinx.cinterop.internal.CCall")

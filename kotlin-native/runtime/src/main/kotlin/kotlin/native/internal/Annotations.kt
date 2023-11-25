@@ -180,3 +180,13 @@ internal annotation class InternalForKotlinNativeTests
 @InternalForKotlinNativeTests
 @Target(AnnotationTarget.FILE)
 public annotation class ReflectionPackageName(val name: String)
+
+/**
+ * Indicates that the marked function is an exported bridge between Kotlin and the platform.
+ * This annotation prevents the function from being removed by DCE
+ * and specifies a stable [bridgeName] for the function symbol.
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(value = AnnotationRetention.BINARY)
+@InternalForKotlinNative
+public annotation class ExportedBridge(val bridgeName: String)

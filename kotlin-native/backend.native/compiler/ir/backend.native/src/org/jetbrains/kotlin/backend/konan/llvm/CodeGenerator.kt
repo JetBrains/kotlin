@@ -114,6 +114,8 @@ internal inline fun generateFunction(
     val llvmFunction = codegen.llvmFunction(function)
 
     val isCToKotlinBridge = function.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
+            // TODO: Alternative approach: lowering that changes origin of such functions to C_TO_KOTLIN_BRIDGE?
+            || function.hasAnnotation(RuntimeNames.exportedBridge)
 
     val functionGenerationContext = DefaultFunctionGenerationContext(
             llvmFunction,
