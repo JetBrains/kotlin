@@ -93,7 +93,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             try {
                 backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
-                    val cExportFiles = if (config.produce.isNativeLibrary) {
+                    val cExportFiles = if (config.produceCInterface) {
                         CExportFiles(
                                 cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
                                 bitcodeAdapter = tempFiles.create("api", ".bc").javaFile(),
@@ -317,7 +317,7 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, cExportFiles: CExportFiles?) {
     runCodegen(module)
-    val generatedBitcodeFiles = if (context.config.produce.isNativeLibrary) {
+    val generatedBitcodeFiles = if (context.config.produceCInterface) {
         require(cExportFiles != null)
         val input = CExportGenerateApiInput(
                 context.context.cAdapterExportedElements!!,

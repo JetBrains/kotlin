@@ -30,6 +30,12 @@ val KonanConfig.isFinalBinary: Boolean get() = when (this.produce) {
 val CompilerOutputKind.isNativeLibrary: Boolean
     get() = this == CompilerOutputKind.DYNAMIC || this == CompilerOutputKind.STATIC
 
+/**
+ * Return true if compiler has to generate a C API for dynamic/static library.
+ */
+val KonanConfig.produceCInterface: Boolean
+    get() = this.produce.isNativeLibrary && this.cInterfaceGenerationMode != CInterfaceGenerationMode.NONE
+
 val CompilerOutputKind.involvesBitcodeGeneration: Boolean
     get() = this != CompilerOutputKind.LIBRARY
 

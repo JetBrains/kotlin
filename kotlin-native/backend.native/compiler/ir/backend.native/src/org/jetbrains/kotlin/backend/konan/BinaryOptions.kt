@@ -72,6 +72,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val enableSafepointSignposts by booleanOption()
 
     val packFields by booleanOption()
+
+    val cInterfaceMode by option<CInterfaceGenerationMode>()
 }
 
 open class BinaryOption<T : Any>(
