@@ -22,6 +22,16 @@ internal fun ConfigurationContainer.createResolvable(name: String): Configuratio
 }
 
 internal fun ConfigurationContainer.findResolvable(name: String): Configuration? = findByName(name)?.apply {
+    // In earlier gradle versions (6.4 for example) some default configurations such as "compile" and "runtime"
+    // are both resolvable and consumable by default, here they get fixed to one specific role
+    // this prevents from incorrect usage e.g. two consecutive calls findResolvable("foo") findConsumable("foo")
+    // would fail and indicate the incorrect usage.
+    // Another reason is that before this role-based Configurations API code in KGP sets manually the roles
+    // i.e. `findByName("someDefaultConfiguration").isCanBeConsumed = false` now it is just `findResolvable()`
+    // In earlier versions of gradle this did make sense i.e. "compileClasspath" configuration was both resolvable and consumable
+    // and code above fixes configuration role. However with recent gradle versions these default configurations already come in
+    // correct state. But gradle 8.2 reports a warning when you try to "re-set" already set flags on configuration
+    // This is why setting a flag is required only when (isCanBeResolved && isCanBeConsumed) are both true.
     if (isCanBeResolved && isCanBeConsumed) {
         isCanBeConsumed = false
     } else {
