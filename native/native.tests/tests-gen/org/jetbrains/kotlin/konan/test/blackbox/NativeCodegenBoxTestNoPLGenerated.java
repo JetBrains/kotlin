@@ -12546,6 +12546,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("DelegationByFunctionWithEnumUpperBound.kt")
+            public void testDelegationByFunctionWithEnumUpperBound() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/DelegationByFunctionWithEnumUpperBound.kt");
+            }
+
+            @Test
             @TestMetadata("extensionDelegatesWithSameNames.kt")
             public void testExtensionDelegatesWithSameNames() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/extensionDelegatesWithSameNames.kt");

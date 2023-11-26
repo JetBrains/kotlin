@@ -12664,6 +12664,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/delegatedProperty/delegatedPropertyInEnum.kt");
         }
 
+        @TestMetadata("DelegationByFunctionWithEnumUpperBound.kt")
+        public void testDelegationByFunctionWithEnumUpperBound() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/DelegationByFunctionWithEnumUpperBound.kt");
+        }
+
         @TestMetadata("extensionDelegatesWithSameNames.kt")
         public void testExtensionDelegatesWithSameNames() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/extensionDelegatesWithSameNames.kt");
