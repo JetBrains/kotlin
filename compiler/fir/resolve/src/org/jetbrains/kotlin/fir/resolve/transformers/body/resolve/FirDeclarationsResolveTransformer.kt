@@ -474,10 +474,6 @@ open class FirDeclarationsResolveTransformer(
         val typeVariablesRelatedToProvideDelegate =
             allTypeVariables.subList(candidateStorage.outerSystemVariablesPrefixSize, allTypeVariables.size).toSet()
 
-        check(typeVariable in typeVariablesRelatedToProvideDelegate) {
-            "Return type of provideDelegate is expected to be one of the type variables of a candidate, but $typeVariable was found"
-        }
-
         val variableWithConstraints =
             candidateSystem.notFixedTypeVariables[typeVariable] ?: error("Not found type variable $typeVariable")
 
