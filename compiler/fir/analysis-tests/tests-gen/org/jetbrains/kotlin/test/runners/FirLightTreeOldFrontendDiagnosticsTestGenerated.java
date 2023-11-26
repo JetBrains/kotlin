@@ -3743,6 +3743,24 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                             }
 
                             @Test
+                            @TestMetadata("ByAssignmentToALocalVariableMaterializeCase.kt")
+                            public void testByAssignmentToALocalVariableMaterializeCase() throws Exception {
+                                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableMaterializeCase.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("ByAssignmentToALocalVariableYieldCase.kt")
+                            public void testByAssignmentToALocalVariableYieldCase() throws Exception {
+                                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableYieldCase.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("InsideLocalClass.kt")
+                            public void testInsideLocalClass() throws Exception {
+                                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideLocalClass.kt");
+                            }
+
+                            @Test
                             @TestMetadata("InsideNestedBuilderInferenceLambda.kt")
                             public void testInsideNestedBuilderInferenceLambda() throws Exception {
                                 runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideNestedBuilderInferenceLambda.kt");
@@ -3752,6 +3770,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                             @TestMetadata("ThroughDelegatedLocalVariableMaterializeCase.kt")
                             public void testThroughDelegatedLocalVariableMaterializeCase() throws Exception {
                                 runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableMaterializeCase.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("ThroughGenericFunctionCall.kt")
+                            public void testThroughGenericFunctionCall() throws Exception {
+                                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughGenericFunctionCall.kt");
                             }
                         }
 

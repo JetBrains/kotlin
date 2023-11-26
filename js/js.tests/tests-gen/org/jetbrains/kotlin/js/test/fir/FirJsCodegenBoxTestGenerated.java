@@ -1922,9 +1922,27 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
                         }
 
                         @Test
+                        @TestMetadata("ByAssignmentToALocalVariableMaterializeCase.kt")
+                        public void testByAssignmentToALocalVariableMaterializeCase() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableMaterializeCase.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ByAssignmentToALocalVariableYieldCase.kt")
+                        public void testByAssignmentToALocalVariableYieldCase() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableYieldCase.kt");
+                        }
+
+                        @Test
                         @TestMetadata("InsideAnonymousObject.kt")
                         public void testInsideAnonymousObject() throws Exception {
                             runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideAnonymousObject.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("InsideLocalClass.kt")
+                        public void testInsideLocalClass() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideLocalClass.kt");
                         }
 
                         @Test
@@ -1943,6 +1961,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
                         @TestMetadata("ThroughDelegatedLocalVariableYieldCase.kt")
                         public void testThroughDelegatedLocalVariableYieldCase() throws Exception {
                             runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableYieldCase.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ThroughGenericFunctionCall.kt")
+                        public void testThroughGenericFunctionCall() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughGenericFunctionCall.kt");
                         }
 
                         @Test
