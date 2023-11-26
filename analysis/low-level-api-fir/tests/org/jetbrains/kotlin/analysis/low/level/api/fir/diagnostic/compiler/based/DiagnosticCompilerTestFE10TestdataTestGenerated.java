@@ -166,6 +166,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("capturedTypesSubtyping.kt")
+        public void testCapturedTypesSubtyping() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/capturedTypesSubtyping.kt");
+        }
+
+        @Test
         @TestMetadata("Casts.kt")
         public void testCasts() throws Exception {
             runTest("compiler/testData/diagnostics/tests/Casts.kt");
