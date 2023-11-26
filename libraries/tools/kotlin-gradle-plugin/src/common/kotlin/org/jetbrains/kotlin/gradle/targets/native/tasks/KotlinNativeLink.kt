@@ -239,6 +239,7 @@ constructor(
             args.produce = outputKind.name.toLowerCaseAsciiOnly()
             args.multiPlatform = true
             args.noendorsedlibs = true
+            args.nodefaultlibs = true
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
             args.generateTestRunner = processTests
             args.mainPackage = entryPoint

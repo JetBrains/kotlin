@@ -52,7 +52,7 @@ class KotlinNativeCompileArgumentsTest {
         val argumentsFromCompilerArgumentsProducer = compile.createCompilerArguments(lenient)
         val argumentsFromBuildCompilerArgs = K2NativeCompilerArguments().apply {
             @Suppress("DEPRECATION_ERROR")
-            compile.setupCompilerArgs(this, true)
+            compile.setupCompilerArgs(this, false, true)
         }
 
         assertEquals(

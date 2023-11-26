@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.PLATFORM_INTEGERS_SUPPORT_LIBRARY
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
@@ -90,11 +89,16 @@ private fun getCommonizedPlatformLibrariesFor(rootOutputDirectory: File, target:
     return targetOutputDirectory.listLibraryFiles()
 }
 
+private suspend fun InternalKotlinSourceSet.singlePlatformCompilationOrNull(): KotlinCompilation<*>? {
+    return awaitPlatformCompilations().distinctBy { it.target }.singleOrNull()
+}
+
 private suspend fun Project.addDependencies(
     sourceSet: KotlinSourceSet, libraries: FileCollection, isCompilationDependency: Boolean = true, isIdeDependency: Boolean = true
 ) {
     if (isCompilationDependency) {
-        findMetadataCompilation(sourceSet)?.let { compilation ->
+        val compilation = findMetadataCompilation(sourceSet) ?: sourceSet.internal.singlePlatformCompilationOrNull()
+        if (compilation != null) {
             compilation.compileDependencyFiles += libraries
         }
     }

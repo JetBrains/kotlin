@@ -10,6 +10,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import java.util.*
+import kotlin.test.assertEquals
 
 /**
  * Asserts Gradle output contains [expectedSubString] string.
@@ -422,12 +423,15 @@ fun BuildResult.assertOutputContainsNativeFrameworkVariant(variantName: String, 
  * Asserts that the command line arguments do not contain any duplicates.
  */
 fun CommandLineArguments.assertNoDuplicates() {
-    assert(args.size == args.toSet().size) {
-        buildResult.printBuildOutput()
-        "Link task has duplicated arguments: ${args.joinToString()}"
-    }
-}
+    // -library can be duplicated as it represent compile dependencies
+    val argsWithoutLibraries = args.filter { it != "-library" }
 
+    assertEquals(
+        argsWithoutLibraries.joinToString("\n"),
+        argsWithoutLibraries.toSet().joinToString("\n"),
+        "Link task has duplicated arguments"
+    )
+}
 
 private fun BuildResult.extractNativeCustomEnvironment(taskPath: String, toolName: NativeToolKind): Map<String, String> =
     extractNativeToolSettings(getOutputForTask(taskPath, LogLevel.INFO), toolName, NativeToolSettingsKind.CUSTOM_ENV_VARIABLES).map {

@@ -80,5 +80,6 @@ interface CompilerArgumentAware<T : CommonToolArguments> : KotlinCompilerArgumen
 
 private val includedArgumentTypes = setOf(
     ArgumentType.Primitive,
+    ArgumentType.DependencyClasspath,
     ArgumentType.PluginClasspath,
 )
