@@ -28,6 +28,32 @@ fun main() {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuiteWithJUnit5 {
+        // Former konan local tests
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "NativeCodegenLocalTestGenerated",
+                annotations = listOf(
+                    provider<UseExtTestCaseGroupProvider>(),
+                )
+            ) {
+                model("codegen", targetBackend = TargetBackend.NATIVE)
+                model("datagen", targetBackend = TargetBackend.NATIVE)
+                model("lower", targetBackend = TargetBackend.NATIVE)
+                model("serialization", targetBackend = TargetBackend.NATIVE)
+            }
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "FirNativeCodegenLocalTestGenerated",
+                annotations = listOf(
+                    *frontendFir(),
+                    provider<UseExtTestCaseGroupProvider>()
+                )
+            ) {
+                model("codegen", targetBackend = TargetBackend.NATIVE)
+                model("datagen", targetBackend = TargetBackend.NATIVE)
+                model("lower", targetBackend = TargetBackend.NATIVE)
+                model("serialization", targetBackend = TargetBackend.NATIVE)
+            }
+        }
         // Codegen box tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeCodegenBoxTest>(

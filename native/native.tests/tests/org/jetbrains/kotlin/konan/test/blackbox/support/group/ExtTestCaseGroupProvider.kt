@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K1
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K2
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
@@ -151,7 +152,7 @@ private class ExtTestDataFile(
 
     val isRelevant: Boolean =
         isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
-                && !isDisabledNative(pipelineType, structure.directives)
+                && !settings.isIgnoredWithNativeDirective(structure.directives, DISABLE_NATIVE.name, DISABLE_NATIVE_K1.name, DISABLE_NATIVE_K2.name)
                 && testDataFileSettings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
@@ -167,6 +168,7 @@ private class ExtTestDataFile(
         val args = mutableListOf<String>()
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
+        args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for codegen/initializers/static.kt or Any.isLocal() in tests like codegen/escapeAnalysis/{stackAllocated|string}.kt
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         return TestCompilerArgs(args)
     }
@@ -197,6 +199,10 @@ private class ExtTestDataFile(
         if (directives.contains(IGNORE_NATIVE.name) ||
             directives.contains(IGNORE_NATIVE_K1.name) ||
             directives.contains(IGNORE_NATIVE_K2.name)
+        ) return true
+        if (directives.contains(DISABLE_NATIVE.name) ||
+            directives.contains(DISABLE_NATIVE_K1.name) ||
+            directives.contains(DISABLE_NATIVE_K2.name)
         ) return true
 
         var isStandaloneTest = false
@@ -509,6 +515,7 @@ private class ExtTestDataFile(
             }
         )
         val fileCheckStage = retrieveFileCheckStage()
+        val testDataFileContents = testDataFile.readText()
         val testCase = TestCase(
             id = TestCaseId.TestDataFile(testDataFile),
             kind = if (isStandaloneTest) TestKind.STANDALONE else TestKind.REGULAR,
@@ -519,9 +526,10 @@ private class ExtTestDataFile(
                 fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) },
                 exitCodeCheck = TestRunCheck.ExitCode.Expected(0).takeUnless { isIgnoredTarget },
                 expectedFailureCheck = TestRunCheck.ExpectedFailure.takeIf { isIgnoredTarget },
+                outputDataFile = outputDataFile(testDataFileContents, OUTPUT_DATA_FILE.name, "out")?.let { TestRunCheck.OutputDataFile(it) },
             ),
             fileCheckStage = fileCheckStage,
-            extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)
+            extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT),
         )
         testCase.initialize(
             givenModules = customKlibs.klibs.mapToSet(TestModule::Given),
@@ -529,6 +537,23 @@ private class ExtTestDataFile(
         )
 
         return testCase
+    }
+
+    private fun outputDataFile(testDataFileContents: String, directiveName: String, fileExtension: String): File? {
+        val dataFileFromDirective = findStringWithPrefixes(testDataFileContents, "$directiveName:")?.let {
+            val file = testDataFile.parentFile.resolve(File(it))
+            if (!file.exists())
+                throw IllegalStateException("Directive $directiveName in ${testDataFile.absolutePath} has nonexistent file ${file.absolutePath}")
+            file
+        }
+        if (dataFileFromDirective == null) {
+            val fileName = testDataFile.name.replace(".kt", ".$fileExtension")
+            val file = testDataFile.parentFile.resolve(fileName)
+            require(!file.exists()) {
+                "Please add `// $directiveName: $fileName` test directive into ${testDataFile.absolutePath}"
+            }
+        }
+        return dataFileFromDirective
     }
 
     private fun retrieveFileCheckStage(): String? {
@@ -870,14 +895,6 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable?) : T
     }
 }
 
-internal fun isDisabledNative(pipelineType: PipelineType, directives: Directives): Boolean {
-    return when (pipelineType) {
-        PipelineType.K1 -> directives.contains(DISABLE_NATIVE.name) || directives.contains(DISABLE_NATIVE_K1.name)
-        PipelineType.K2 -> directives.contains(DISABLE_NATIVE.name) || directives.contains(DISABLE_NATIVE_K2.name)
-        PipelineType.DEFAULT -> directives.contains(DISABLE_NATIVE.name)
-    }
-}
-
 internal fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
     val extTestDataFileStructure =
         ExtTestDataFileStructureFactory(parentDisposable = null).ExtTestDataFileStructure(testDataFile, emptyList())
@@ -886,7 +903,7 @@ internal fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
 
 internal fun Settings.isIgnoredTarget(directives: Directives): Boolean {
     return isIgnoredWithIGNORE_BACKEND(directives) ||
-            isIgnoredWithIGNORE_NATIVE(directives)
+            isIgnoredWithNativeDirective(directives, IGNORE_NATIVE.name, IGNORE_NATIVE_K1.name, IGNORE_NATIVE_K2.name)
 }
 
 // Mimics `InTextDirectivesUtils.isIgnoredTarget(NATIVE, file)` but does not require file contents, but only already parsed directives.
@@ -911,43 +928,60 @@ private val CACHE_MODE_NAMES = CacheMode.Alias.entries.map { it.name }
 private val TEST_MODE_NAMES = TestMode.entries.map { it.name }
 private val OPTIMIZATION_MODE_NAMES = OptimizationMode.entries.map { it.name }
 
-private fun Settings.isIgnoredWithIGNORE_NATIVE(
+private fun Settings.isIgnoredWithNativeDirective(
     directives: Directives,
+    directiveGeneral: String,
+    directiveK1: String,
+    directiveK2: String,
 ): Boolean {
+    val pipelineType = get<PipelineType>()
+    val directiveFound = when (pipelineType) {
+        PipelineType.K1 -> directives.contains(directiveGeneral) || directives.contains(directiveK1)
+        PipelineType.K2 -> directives.contains(directiveGeneral) || directives.contains(directiveK2)
+        PipelineType.DEFAULT -> directives.contains(directiveGeneral)
+    }
+    if (!directiveFound)
+        return false
+
     val directiveValues = buildList {
-        directives.listValues(IGNORE_NATIVE.name)?.let { addAll(it) }
-        when (get<PipelineType>()) {
-            PipelineType.K1 -> directives.listValues(IGNORE_NATIVE_K1.name)?.let { addAll(it) }
-            PipelineType.K2 -> directives.listValues(IGNORE_NATIVE_K2.name)?.let { addAll(it) }
+        directives.listValues(directiveGeneral)?.let { addAll(it) }
+        when (pipelineType) {
+            PipelineType.K1 -> directives.listValues(directiveK1)?.let { addAll(it) }
+            PipelineType.K2 -> directives.listValues(directiveK2)?.let { addAll(it) }
             else -> {}
         }
     }
-    // Boolean evaluation of expressions like `property1=value1 && property2=value2`
-    directiveValues.forEach {
-        val split = it.split("&&")
-        val booleanList = split.map {
-            val matchResult = "(.+)=(.+)".toRegex().find(it.trim())
-                ?: throw AssertionError("Invalid format for IGNORE_NATIVE* directive ($it). Must be <property>=<value>")
-            val propName = matchResult.groups[1]?.value
-            val (actualValue, supportedValues) = when (propName) {
-                ClassLevelProperty.CACHE_MODE.shortName -> get<CacheMode>().alias.name to CACHE_MODE_NAMES
-                ClassLevelProperty.TEST_MODE.shortName -> get<TestMode>().name to TEST_MODE_NAMES
-                ClassLevelProperty.OPTIMIZATION_MODE.shortName -> get<OptimizationMode>().name to OPTIMIZATION_MODE_NAMES
-                ClassLevelProperty.TEST_TARGET.shortName -> get<KotlinNativeTargets>().testTarget.name to null
-                else -> throw AssertionError("ClassLevelProperty name: $propName is not yet supported in IGNORE_NATIVE* test directives.")
+    if (directiveValues.isEmpty()) {
+        // The directive has no expression, so applied unconditionally
+        return true
+    } else {
+        // Boolean evaluation of expressions like `property1=value1 && property2=value2`
+        directiveValues.forEach {
+            val split = it.split("&&")
+            val booleanList = split.map {
+                val matchResult = "(.+)=(.+)".toRegex().find(it.trim())
+                    ?: throw AssertionError("Invalid format for $directiveGeneral* directive ($it). Must be <property>=<value>")
+                val propName = matchResult.groups[1]?.value
+                val (actualValue, supportedValues) = when (propName) {
+                    ClassLevelProperty.CACHE_MODE.shortName -> get<CacheMode>().alias.name to CACHE_MODE_NAMES
+                    ClassLevelProperty.TEST_MODE.shortName -> get<TestMode>().name to TEST_MODE_NAMES
+                    ClassLevelProperty.OPTIMIZATION_MODE.shortName -> get<OptimizationMode>().name to OPTIMIZATION_MODE_NAMES
+                    ClassLevelProperty.TEST_TARGET.shortName -> get<KotlinNativeTargets>().testTarget.name to null
+                    else -> throw AssertionError("ClassLevelProperty name: $propName is not yet supported in $directiveGeneral* test directives.")
+                }
+                val valueFromTestDirective = matchResult.groups[2]?.value!!
+                supportedValues?.let {
+                    if (actualValue !in it)
+                        throw AssertionError("Internal error: Test run value $propName=$actualValue is not in expected supported values: $it")
+                    if (valueFromTestDirective !in it)
+                        throw AssertionError("Test directive `$directiveGeneral*: $propName=$valueFromTestDirective` has unsupported value. Supported are: $it")
+                }
+                actualValue == valueFromTestDirective
             }
-            val valueFromTestDirective = matchResult.groups[2]?.value!!
-            supportedValues?.let {
-                if (actualValue !in it)
-                    throw AssertionError("Internal error: Test run value $propName=$actualValue is not in expected supported values: $it")
-                if (valueFromTestDirective !in it)
-                    throw AssertionError("Test directive `IGNORE_NATIVE*: $propName=$valueFromTestDirective` has unsupported value. Supported are: $it")
-            }
-            actualValue == valueFromTestDirective
+            val matches = booleanList.reduce { a, b -> a && b }
+            if (matches)
+                return true
         }
-        val matches = booleanList.reduce { a, b -> a && b }
-        if (matches)
-            return true
+        return false
     }
-    return false
 }

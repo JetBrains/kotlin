@@ -1,0 +1,25 @@
+// OUTPUT_DATA_FILE: finally5.out
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
+
+import kotlin.test.*
+
+fun box(): String {
+    println(foo())
+
+    return "OK"
+}
+
+fun foo(): Int {
+    try {
+        println("Done")
+        return 0
+    } finally {
+        println("Finally")
+    }
+
+    println("After")
+    return 1
+}
