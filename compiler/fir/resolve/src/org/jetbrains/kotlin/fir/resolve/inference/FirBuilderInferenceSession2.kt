@@ -191,8 +191,8 @@ class FirBuilderInferenceSession2(
                 ?.let { handleQualifiedAccess(it, ResolutionMode.ContextDependent) }
         }
 
-        if (dispatchReceiver?.resolvedType?.containsNotFixedTypeVariables() == true) return true
-        if (givenExtensionReceiverOptions.any { it.resolvedType.containsNotFixedTypeVariables() }) return true
+        if (dispatchReceiver?.isReceiverPostponed() == true) return true
+        if (givenExtensionReceiverOptions.any { it.isReceiverPostponed() }) return true
         if (callInfo.arguments.any { it.isArgumentAmongPostponedQualifiedAccess() }) return true
         if (callInfo.isDelegateExpression) return true
         // For assignments
@@ -201,6 +201,13 @@ class FirBuilderInferenceSession2(
         }
         // Synthetic calls with blocks work like lambdas
         if (callInfo.callKind == CallKind.SyntheticSelect) return true
+
+        return false
+    }
+
+    private fun FirExpression.isReceiverPostponed(): Boolean {
+        if (resolvedType.containsNotFixedTypeVariables()) return true
+        if ((this as? FirResolvable)?.candidate()?.usedOuterCs == true) return true
 
         return false
     }
