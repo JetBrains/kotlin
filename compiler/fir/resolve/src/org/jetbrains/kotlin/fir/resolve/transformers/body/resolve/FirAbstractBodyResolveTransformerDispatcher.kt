@@ -424,6 +424,15 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirDeclarationsResolveTransformer::transformEnumEntry,
     )
 
+    override fun transformDanglingModifierList(
+        danglingModifierList: FirDanglingModifierList,
+        data: ResolutionMode,
+    ): FirDanglingModifierList = declarationTransformation(
+        danglingModifierList,
+        data,
+        FirDeclarationsResolveTransformer::transformDanglingModifierList,
+    )
+
     override fun transformProperty(
         property: FirProperty,
         data: ResolutionMode,

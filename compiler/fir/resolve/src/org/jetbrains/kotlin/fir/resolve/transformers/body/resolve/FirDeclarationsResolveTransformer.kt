@@ -111,6 +111,11 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
+    override fun transformDanglingModifierList(
+        danglingModifierList: FirDanglingModifierList,
+        data: ResolutionMode
+    ): FirDanglingModifierList = danglingModifierList
+
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty = whileAnalysing(session, property) {
         require(property !is FirSyntheticProperty) { "Synthetic properties should not be processed by body transformers" }
 
@@ -682,6 +687,7 @@ open class FirDeclarationsResolveTransformer(
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias = whileAnalysing(session, typeAlias) {
+        if (implicitTypeOnly) return typeAlias
         if (typeAlias.isLocal && typeAlias !in context.targetedLocalClasses) {
             return typeAlias.runAllPhasesForLocalClass(transformer, components, data, transformer.firResolveContextCollector)
         }

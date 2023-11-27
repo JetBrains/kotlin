@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Target(AnnotationTarget.TYPE, AnnotationTarget.TYPEALIAS, AnnotationTarget.TYPE_PARAMETER)
 annotation class Anno(val position: String)
 

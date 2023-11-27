@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 annotation class Anno(val position: String)
 
 class MyClass {
