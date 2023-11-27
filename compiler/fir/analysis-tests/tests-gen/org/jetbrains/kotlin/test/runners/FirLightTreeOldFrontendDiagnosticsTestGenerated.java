@@ -1873,6 +1873,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("danglingAnnotation.kt")
+            public void testDanglingAnnotation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/danglingAnnotation.kt");
+            }
+
+            @Test
             @TestMetadata("DanglingMixed.kt")
             public void testDanglingMixed() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/DanglingMixed.kt");
@@ -1957,6 +1963,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("initializerWithNestedAnnotation.kt")
+            public void testInitializerWithNestedAnnotation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/initializerWithNestedAnnotation.kt");
+            }
+
+            @Test
             @TestMetadata("invalidTypesInAnnotationConstructor.kt")
             public void testInvalidTypesInAnnotationConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/invalidTypesInAnnotationConstructor.kt");
@@ -2026,6 +2038,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             @TestMetadata("MutuallyRecursivelyAnnotatedGlobalFunction.kt")
             public void testMutuallyRecursivelyAnnotatedGlobalFunction() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/MutuallyRecursivelyAnnotatedGlobalFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedAliasWithNestedAnnotation.kt")
+            public void testNestedAliasWithNestedAnnotation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/nestedAliasWithNestedAnnotation.kt");
             }
 
             @Test
