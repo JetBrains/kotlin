@@ -129,8 +129,18 @@ abstract class FirDataFlowAnalyzer(
     fun isAccessToUnstableLocalVariable(expression: FirExpression): Boolean =
         context.variableAssignmentAnalyzer.isAccessToUnstableLocalVariable(expression)
 
-    open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
-        val flow = graphBuilder.lastNode.flow
+    /**
+     * @param ignoreCallArguments Should be set to `true` when call argument flow should not be used for smart-casting. This is important
+     * because the receiver of implicit `invoke` calls is visited *after* the call arguments due to tower resolution.
+     */
+    open fun getTypeUsingSmartcastInfo(
+        expression: FirExpression,
+        ignoreCallArguments: Boolean,
+    ): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
+        // TODO(KT-64094): Consider moving logic to tower resolution instead.
+        val node = graphBuilder.lastNode
+            .let { if (ignoreCallArguments && it is FunctionCallArgumentsExitNode) it.enterNode else it }
+        val flow = node.flow
         val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(flow, expression) ?: return null
         val types = flow.getTypeStatement(variable)?.exactType?.ifEmpty { null } ?: return null
         return variable.stability to types.toMutableList()
@@ -871,14 +881,27 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun enterCallArguments(call: FirStatement, arguments: List<FirExpression>) {
+        graphBuilder.enterCall()
+
         val lambdas = arguments.mapNotNull { it.unwrapAnonymousFunctionExpression() }
         context.variableAssignmentAnalyzer.enterFunctionCall(lambdas)
-        graphBuilder.enterCall()
-        graphBuilder.enterCallArguments(call, lambdas)
+        graphBuilder.enterCallArguments(call, lambdas)?.mergeIncomingFlow()
     }
 
     fun exitCallArguments() {
-        graphBuilder.exitCallArguments()?.mergeIncomingFlow()
+        val (splitNode, exitNode) = graphBuilder.exitCallArguments()
+        splitNode?.mergeIncomingFlow()
+
+        if (exitNode != null) {
+            exitNode.mergeIncomingFlow()
+
+            // Reset implicit receivers back to their state *before* call arguments as tower resolve will use receiver types to lookup
+            // functions after call arguments have been processed.
+            // TODO(KT-64094): Consider moving logic to tower resolution instead.
+            val flow = exitNode.enterNode.flow
+            updateAllReceivers(currentReceiverState, flow)
+            currentReceiverState = flow
+        }
     }
 
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {

@@ -205,67 +205,72 @@ digraph tryCatch_kt {
                                         subgraph cluster_30 {
                                             color=blue
                                             72 [label="Enter when branch condition "];
-                                            73 [label="Access variable R|<local>/b|"];
-                                            74 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()" style="filled" fillcolor=yellow];
-                                            75 [label="Exit when branch condition"];
+                                            subgraph cluster_31 {
+                                                color=blue
+                                                73 [label="Function call arguments enter"];
+                                                74 [label="Access variable R|<local>/b|"];
+                                                75 [label="Function call arguments exit"];
+                                            }
+                                            76 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()" style="filled" fillcolor=yellow];
+                                            77 [label="Exit when branch condition"];
                                         }
-                                        76 [label="Synthetic else branch"];
-                                        77 [label="Enter when branch result"];
-                                        subgraph cluster_31 {
+                                        78 [label="Synthetic else branch"];
+                                        79 [label="Enter when branch result"];
+                                        subgraph cluster_32 {
                                             color=blue
-                                            78 [label="Enter block"];
-                                            79 [label="Jump: break@@@[Boolean(true)] "];
-                                            80 [label="Stub" style="filled" fillcolor=gray];
-                                            81 [label="Exit block" style="filled" fillcolor=gray];
+                                            80 [label="Enter block"];
+                                            81 [label="Jump: break@@@[Boolean(true)] "];
+                                            82 [label="Stub" style="filled" fillcolor=gray];
+                                            83 [label="Exit block" style="filled" fillcolor=gray];
                                         }
-                                        82 [label="Exit when branch result" style="filled" fillcolor=gray];
-                                        83 [label="Exit when"];
+                                        84 [label="Exit when branch result" style="filled" fillcolor=gray];
+                                        85 [label="Exit when"];
                                     }
-                                    84 [label="Exit block"];
+                                    86 [label="Exit block"];
                                 }
-                                85 [label="Try main block exit"];
+                                87 [label="Try main block exit"];
                             }
-                            subgraph cluster_32 {
+                            subgraph cluster_33 {
                                 color=blue
-                                86 [label="Catch enter"];
-                                87 [label="Variable declaration: e: R|kotlin/Exception|"];
-                                subgraph cluster_33 {
+                                88 [label="Catch enter"];
+                                89 [label="Variable declaration: e: R|kotlin/Exception|"];
+                                subgraph cluster_34 {
                                     color=blue
-                                    88 [label="Enter block"];
-                                    89 [label="Jump: continue@@@[Boolean(true)] "];
-                                    90 [label="Stub" style="filled" fillcolor=gray];
-                                    91 [label="Exit block" style="filled" fillcolor=gray];
+                                    90 [label="Enter block"];
+                                    91 [label="Jump: continue@@@[Boolean(true)] "];
+                                    92 [label="Stub" style="filled" fillcolor=gray];
+                                    93 [label="Exit block" style="filled" fillcolor=gray];
                                 }
-                                92 [label="Catch exit" style="filled" fillcolor=gray];
+                                94 [label="Catch exit" style="filled" fillcolor=gray];
                             }
-                            subgraph cluster_34 {
+                            subgraph cluster_35 {
                                 color=blue
-                                93 [label="Catch enter"];
-                                94 [label="Variable declaration: e: R|kotlin/RuntimeException|"];
-                                subgraph cluster_35 {
+                                95 [label="Catch enter"];
+                                96 [label="Variable declaration: e: R|kotlin/RuntimeException|"];
+                                subgraph cluster_36 {
                                     color=blue
-                                    95 [label="Enter block"];
-                                    96 [label="Jump: break@@@[Boolean(true)] "];
-                                    97 [label="Stub" style="filled" fillcolor=gray];
-                                    98 [label="Exit block" style="filled" fillcolor=gray];
+                                    97 [label="Enter block"];
+                                    98 [label="Jump: break@@@[Boolean(true)] "];
+                                    99 [label="Stub" style="filled" fillcolor=gray];
+                                    100 [label="Exit block" style="filled" fillcolor=gray];
                                 }
-                                99 [label="Catch exit" style="filled" fillcolor=gray];
+                                101 [label="Catch exit" style="filled" fillcolor=gray];
                             }
-                            100 [label="Try expression exit"];
+                            102 [label="Try expression exit"];
                         }
-                        101 [label="Const: Int(2)"];
-                        102 [label="Variable declaration: lval y: R|kotlin/Int|"];
-                        103 [label="Exit block"];
+                        103 [label="Const: Int(2)"];
+                        104 [label="Variable declaration: lval y: R|kotlin/Int|"];
+                        105 [label="Exit block"];
                     }
-                    104 [label="Exit loop block"];
+                    106 [label="Exit loop block"];
                 }
-                105 [label="Exit while loop"];
+                107 [label="Exit while loop"];
             }
-            106 [label="Const: Int(3)"];
-            107 [label="Variable declaration: lval z: R|kotlin/Int|"];
-            108 [label="Exit block"];
+            108 [label="Const: Int(3)"];
+            109 [label="Variable declaration: lval z: R|kotlin/Int|"];
+            110 [label="Exit block"];
         }
-        109 [label="Exit function test_3" style="filled" fillcolor=red];
+        111 [label="Exit function test_3" style="filled" fillcolor=red];
     }
     46 -> {47};
     47 -> {48};
@@ -273,10 +278,10 @@ digraph tryCatch_kt {
     49 -> {50};
     50 -> {51};
     51 -> {52};
-    51 -> {105} [style=dotted];
+    51 -> {107} [style=dotted];
     52 -> {53};
     53 -> {54};
-    54 -> {55 86 93};
+    54 -> {55 88 95};
     55 -> {56};
     56 -> {57};
     57 -> {58};
@@ -286,7 +291,7 @@ digraph tryCatch_kt {
     61 -> {68};
     62 -> {63};
     63 -> {64};
-    64 -> {109};
+    64 -> {111};
     64 -> {65} [style=dotted];
     65 -> {66} [style=dotted];
     66 -> {67} [style=dotted];
@@ -298,42 +303,44 @@ digraph tryCatch_kt {
     72 -> {73};
     73 -> {74};
     74 -> {75};
-    75 -> {76 77};
-    76 -> {83};
-    77 -> {78};
-    78 -> {79};
-    79 -> {105};
-    79 -> {80} [style=dotted];
-    80 -> {81} [style=dotted];
+    75 -> {76};
+    76 -> {77};
+    77 -> {78 79};
+    78 -> {85};
+    79 -> {80};
+    80 -> {81};
+    81 -> {107};
     81 -> {82} [style=dotted];
     82 -> {83} [style=dotted];
-    83 -> {84};
-    84 -> {85};
-    85 -> {86 93 100};
+    83 -> {84} [style=dotted];
+    84 -> {85} [style=dotted];
+    85 -> {86};
     86 -> {87};
-    87 -> {88};
+    87 -> {88 95 102};
     88 -> {89};
-    89 -> {49} [color=green style=dashed];
-    89 -> {90} [style=dotted];
-    90 -> {91} [style=dotted];
+    89 -> {90};
+    90 -> {91};
+    91 -> {49} [color=green style=dashed];
     91 -> {92} [style=dotted];
-    92 -> {100} [style=dotted];
-    93 -> {94};
-    94 -> {95};
+    92 -> {93} [style=dotted];
+    93 -> {94} [style=dotted];
+    94 -> {102} [style=dotted];
     95 -> {96};
-    96 -> {105};
-    96 -> {97} [style=dotted];
-    97 -> {98} [style=dotted];
+    96 -> {97};
+    97 -> {98};
+    98 -> {107};
     98 -> {99} [style=dotted];
     99 -> {100} [style=dotted];
-    100 -> {101};
-    101 -> {102};
+    100 -> {101} [style=dotted];
+    101 -> {102} [style=dotted];
     102 -> {103};
     103 -> {104};
-    104 -> {49} [color=green style=dashed];
+    104 -> {105};
     105 -> {106};
-    106 -> {107};
+    106 -> {49} [color=green style=dashed];
     107 -> {108};
     108 -> {109};
+    109 -> {110};
+    110 -> {111};
 
 }

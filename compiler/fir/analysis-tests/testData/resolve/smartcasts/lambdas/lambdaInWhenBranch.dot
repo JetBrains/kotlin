@@ -144,70 +144,75 @@ digraph lambdaInWhenBranch_kt {
                 subgraph cluster_18 {
                     color=blue
                     49 [label="Enter block"];
-                    50 [label="Const: String()"];
-                    51 [label="Postponed enter to lambda"];
                     subgraph cluster_19 {
                         color=blue
-                        52 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                        50 [label="Function call arguments enter"];
+                        51 [label="Const: String()"];
+                        52 [label="Postponed enter to lambda"];
                         subgraph cluster_20 {
                             color=blue
-                            53 [label="Enter block"];
-                            54 [label="Access variable R|<local>/it|"];
-                            55 [label="Exit block"];
+                            53 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                            subgraph cluster_21 {
+                                color=blue
+                                54 [label="Enter block"];
+                                55 [label="Access variable R|<local>/it|"];
+                                56 [label="Exit block"];
+                            }
+                            57 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                         }
-                        56 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                        58 [label="Function call arguments exit"];
                     }
-                    57 [label="Postponed exit from lambda"];
-                    58 [label="Function call: String().R|kotlin/let|<R|kotlin/String|, R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
-                    59 [label="Exit block"];
+                    59 [label="Postponed exit from lambda"];
+                    60 [label="Function call: String().R|kotlin/let|<R|kotlin/String|, R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
+                    61 [label="Exit block"];
                 }
-                60 [label="Exit when branch result"];
-                61 [label="Exit when"];
+                62 [label="Exit when branch result"];
+                63 [label="Exit when"];
             }
-            62 [label="Access variable R|<local>/p|"];
-            63 [label="Access variable <Unresolved name: t>#"];
-            subgraph cluster_21 {
+            64 [label="Access variable R|<local>/p|"];
+            65 [label="Access variable <Unresolved name: t>#"];
+            subgraph cluster_22 {
                 color=blue
-                64 [label="Enter when"];
-                65 [label="Access variable R|<local>/p|"];
-                subgraph cluster_22 {
-                    color=blue
-                    66 [label="Enter when branch condition "];
-                    67 [label="Exit $subj"];
-                    68 [label="Type operator: ($subj$ is R|SubClass1|)"];
-                    69 [label="Exit when branch condition"];
-                }
+                66 [label="Enter when"];
+                67 [label="Access variable R|<local>/p|"];
                 subgraph cluster_23 {
                     color=blue
-                    70 [label="Enter when branch condition "];
-                    71 [label="Exit $subj"];
-                    72 [label="Type operator: ($subj$ is R|SubClass2|)"];
-                    73 [label="Exit when branch condition"];
+                    68 [label="Enter when branch condition "];
+                    69 [label="Exit $subj"];
+                    70 [label="Type operator: ($subj$ is R|SubClass1|)"];
+                    71 [label="Exit when branch condition"];
                 }
-                74 [label="Enter when branch result"];
                 subgraph cluster_24 {
                     color=blue
-                    75 [label="Enter block"];
-                    76 [label="Const: String(2)"];
-                    77 [label="Exit block"];
+                    72 [label="Enter when branch condition "];
+                    73 [label="Exit $subj"];
+                    74 [label="Type operator: ($subj$ is R|SubClass2|)"];
+                    75 [label="Exit when branch condition"];
                 }
-                78 [label="Exit when branch result"];
-                79 [label="Enter when branch result"];
+                76 [label="Enter when branch result"];
                 subgraph cluster_25 {
                     color=blue
-                    80 [label="Enter block"];
-                    81 [label="Access variable R|<local>/p|"];
-                    82 [label="Smart cast: R|<local>/p|"];
-                    83 [label="Access variable R|/SubClass1.t|"];
-                    84 [label="Exit block"];
+                    77 [label="Enter block"];
+                    78 [label="Const: String(2)"];
+                    79 [label="Exit block"];
                 }
-                85 [label="Exit when branch result"];
-                86 [label="Exit when"];
+                80 [label="Exit when branch result"];
+                81 [label="Enter when branch result"];
+                subgraph cluster_26 {
+                    color=blue
+                    82 [label="Enter block"];
+                    83 [label="Access variable R|<local>/p|"];
+                    84 [label="Smart cast: R|<local>/p|"];
+                    85 [label="Access variable R|/SubClass1.t|"];
+                    86 [label="Exit block"];
+                }
+                87 [label="Exit when branch result"];
+                88 [label="Exit when"];
             }
-            87 [label="Access variable R|kotlin/String.length|"];
-            88 [label="Exit block"];
+            89 [label="Access variable R|kotlin/String.length|"];
+            90 [label="Exit block"];
         }
-        89 [label="Exit function foo" style="filled" fillcolor=red];
+        91 [label="Exit function foo" style="filled" fillcolor=red];
     }
     31 -> {32};
     32 -> {33};
@@ -225,22 +230,22 @@ digraph lambdaInWhenBranch_kt {
     44 -> {45};
     45 -> {46};
     46 -> {47};
-    47 -> {61};
+    47 -> {63};
     48 -> {49};
     49 -> {50};
     50 -> {51};
-    51 -> {52 58};
-    51 -> {57} [style=dotted];
-    51 -> {52} [style=dashed];
-    52 -> {53};
+    51 -> {52};
+    52 -> {53 58};
+    52 -> {59} [style=dotted];
+    52 -> {53} [style=dashed];
     53 -> {54};
     54 -> {55};
     55 -> {56};
     56 -> {57};
-    57 -> {58} [color=green];
-    57 -> {61} [color=red];
-    58 -> {59};
-    59 -> {60};
+    57 -> {59};
+    58 -> {60};
+    59 -> {60} [color=green];
+    59 -> {63} [color=red];
     60 -> {61};
     61 -> {62};
     62 -> {63};
@@ -250,18 +255,18 @@ digraph lambdaInWhenBranch_kt {
     66 -> {67};
     67 -> {68};
     68 -> {69};
-    69 -> {70 79};
+    69 -> {70};
     70 -> {71};
-    71 -> {72};
+    71 -> {72 81};
     72 -> {73};
     73 -> {74};
     74 -> {75};
     75 -> {76};
     76 -> {77};
     77 -> {78};
-    78 -> {86};
+    78 -> {79};
     79 -> {80};
-    80 -> {81};
+    80 -> {88};
     81 -> {82};
     82 -> {83};
     83 -> {84};
@@ -270,5 +275,7 @@ digraph lambdaInWhenBranch_kt {
     86 -> {87};
     87 -> {88};
     88 -> {89};
+    89 -> {90};
+    90 -> {91};
 
 }

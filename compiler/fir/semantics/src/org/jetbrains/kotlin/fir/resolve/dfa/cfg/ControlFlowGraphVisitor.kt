@@ -319,6 +319,14 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitFunctionCallArgumentsEnterNode(node: FunctionCallArgumentsEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitFunctionCallArgumentsExitNode(node: FunctionCallArgumentsExitNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     open fun visitFunctionCallNode(node: FunctionCallNode, data: D): R {
         return visitNode(node, data)
     }

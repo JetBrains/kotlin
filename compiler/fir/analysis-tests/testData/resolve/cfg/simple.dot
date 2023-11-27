@@ -32,14 +32,24 @@ digraph simple_kt {
             7 [label="Enter block"];
             8 [label="Const: Int(1)"];
             9 [label="Variable declaration: lval x: R|kotlin/Int|"];
-            10 [label="Access variable R|<local>/x|"];
-            11 [label="Const: Int(1)"];
-            12 [label="Function call: R|<local>/x|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
-            13 [label="Variable declaration: lval y: R|kotlin/Int|"];
-            14 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
-            15 [label="Exit block"];
+            subgraph cluster_5 {
+                color=blue
+                10 [label="Function call arguments enter"];
+                11 [label="Access variable R|<local>/x|"];
+                12 [label="Const: Int(1)"];
+                13 [label="Function call arguments exit"];
+            }
+            14 [label="Function call: R|<local>/x|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
+            15 [label="Variable declaration: lval y: R|kotlin/Int|"];
+            subgraph cluster_6 {
+                color=blue
+                16 [label="Function call arguments enter"];
+                17 [label="Function call arguments exit"];
+            }
+            18 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
+            19 [label="Exit block"];
         }
-        16 [label="Exit function test" style="filled" fillcolor=red];
+        20 [label="Exit function test" style="filled" fillcolor=red];
     }
     6 -> {7};
     7 -> {8};
@@ -51,5 +61,9 @@ digraph simple_kt {
     13 -> {14};
     14 -> {15};
     15 -> {16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
 
 }

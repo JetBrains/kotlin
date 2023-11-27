@@ -703,6 +703,24 @@ class ResolvedQualifierNode(
     }
 }
 
+class FunctionCallArgumentsEnterNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int) :
+    CFGNode<FirFunctionCall>(owner, level), EnterNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitFunctionCallArgumentsEnterNode(this, data)
+    }
+}
+
+class FunctionCallArgumentsExitNode(
+    owner: ControlFlowGraph,
+    override val fir: FirFunctionCall,
+    val enterNode: FunctionCallArgumentsEnterNode,
+    level: Int,
+) : CFGNode<FirFunctionCall>(owner, level), ExitNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitFunctionCallArgumentsExitNode(this, data)
+    }
+}
+
 class FunctionCallNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int)
     : CFGNode<FirFunctionCall>(owner, level) {
     override val isUnion: Boolean

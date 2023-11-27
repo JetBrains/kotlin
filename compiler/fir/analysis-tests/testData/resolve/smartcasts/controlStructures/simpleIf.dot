@@ -160,31 +160,36 @@ digraph simpleIf_kt {
                     60 [label="Access variable R|<local>/x|"];
                     61 [label="Smart cast: R|<local>/x|"];
                     62 [label="Access variable R|kotlin/String.length|"];
-                    63 [label="Access variable R|<local>/x|"];
-                    64 [label="Smart cast: R|<local>/x|"];
-                    65 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
-                    66 [label="Exit block"];
+                    subgraph cluster_18 {
+                        color=blue
+                        63 [label="Function call arguments enter"];
+                        64 [label="Access variable R|<local>/x|"];
+                        65 [label="Smart cast: R|<local>/x|"];
+                        66 [label="Function call arguments exit"];
+                    }
+                    67 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
+                    68 [label="Exit block"];
                 }
-                67 [label="Exit when branch result"];
-                68 [label="Enter when branch result"];
-                subgraph cluster_18 {
-                    color=blue
-                    69 [label="Enter block"];
-                    70 [label="Exit block"];
-                }
-                71 [label="Exit when branch result"];
-                72 [label="Enter when branch result"];
+                69 [label="Exit when branch result"];
+                70 [label="Enter when branch result"];
                 subgraph cluster_19 {
                     color=blue
-                    73 [label="Enter block"];
-                    74 [label="Exit block"];
+                    71 [label="Enter block"];
+                    72 [label="Exit block"];
                 }
-                75 [label="Exit when branch result"];
-                76 [label="Exit when"];
+                73 [label="Exit when branch result"];
+                74 [label="Enter when branch result"];
+                subgraph cluster_20 {
+                    color=blue
+                    75 [label="Enter block"];
+                    76 [label="Exit block"];
+                }
+                77 [label="Exit when branch result"];
+                78 [label="Exit when"];
             }
-            77 [label="Exit block"];
+            79 [label="Exit block"];
         }
-        78 [label="Exit function test_3" style="filled" fillcolor=red];
+        80 [label="Exit function test_3" style="filled" fillcolor=red];
     }
     44 -> {45};
     45 -> {46};
@@ -192,12 +197,12 @@ digraph simpleIf_kt {
     47 -> {48};
     48 -> {49};
     49 -> {50};
-    50 -> {51 72};
+    50 -> {51 74};
     51 -> {52};
     52 -> {53};
     53 -> {54};
     54 -> {55};
-    55 -> {56 68};
+    55 -> {56 70};
     56 -> {57};
     57 -> {58};
     58 -> {59};
@@ -209,16 +214,18 @@ digraph simpleIf_kt {
     64 -> {65};
     65 -> {66};
     66 -> {67};
-    67 -> {76};
+    67 -> {68};
     68 -> {69};
-    69 -> {70};
+    69 -> {78};
     70 -> {71};
-    71 -> {76};
+    71 -> {72};
     72 -> {73};
-    73 -> {74};
+    73 -> {78};
     74 -> {75};
     75 -> {76};
     76 -> {77};
     77 -> {78};
+    78 -> {79};
+    79 -> {80};
 
 }

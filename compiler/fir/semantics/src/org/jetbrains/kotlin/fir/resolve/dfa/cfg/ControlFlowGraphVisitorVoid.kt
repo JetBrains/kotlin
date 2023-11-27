@@ -239,6 +239,14 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
+    open fun visitFunctionCallArgumentsEnterNode(node: FunctionCallArgumentsEnterNode) {
+        visitNode(node)
+    }
+
+    open fun visitFunctionCallArgumentsExitNode(node: FunctionCallArgumentsExitNode) {
+        visitNode(node)
+    }
+
     open fun visitFunctionCallNode(node: FunctionCallNode) {
         visitNode(node)
     }
@@ -510,6 +518,14 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitResolvedQualifierNode(node: ResolvedQualifierNode, data: Nothing?) {
         visitResolvedQualifierNode(node)
+    }
+
+    final override fun visitFunctionCallArgumentsEnterNode(node: FunctionCallArgumentsEnterNode, data: Nothing?) {
+        visitFunctionCallArgumentsEnterNode(node)
+    }
+
+    final override fun visitFunctionCallArgumentsExitNode(node: FunctionCallArgumentsExitNode, data: Nothing?) {
+        visitFunctionCallArgumentsExitNode(node)
     }
 
     final override fun visitFunctionCallNode(node: FunctionCallNode, data: Nothing?) {

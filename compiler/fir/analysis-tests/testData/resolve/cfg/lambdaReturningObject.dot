@@ -62,59 +62,80 @@ digraph lambdaReturningObject_kt {
         subgraph cluster_8 {
             color=blue
             16 [label="Enter block"];
-            17 [label="Function call: R|kotlin/TODO|()" style="filled" fillcolor=yellow];
-            18 [label="Stub" style="filled" fillcolor=gray];
-            19 [label="Jump: ^MyOut R|kotlin/TODO|()" style="filled" fillcolor=gray];
+            subgraph cluster_9 {
+                color=blue
+                17 [label="Function call arguments enter"];
+                18 [label="Function call arguments exit"];
+            }
+            19 [label="Function call: R|kotlin/TODO|()" style="filled" fillcolor=yellow];
             20 [label="Stub" style="filled" fillcolor=gray];
-            21 [label="Exit block" style="filled" fillcolor=gray];
+            21 [label="Jump: ^MyOut R|kotlin/TODO|()" style="filled" fillcolor=gray];
+            22 [label="Stub" style="filled" fillcolor=gray];
+            23 [label="Exit block" style="filled" fillcolor=gray];
         }
-        22 [label="Exit function MyOut" style="filled" fillcolor=gray];
+        24 [label="Exit function MyOut" style="filled" fillcolor=gray];
     }
     15 -> {16};
     16 -> {17};
-    17 -> {18} [style=dotted];
-    18 -> {19} [style=dotted];
-    19 -> {20 22} [style=dotted];
+    17 -> {18};
+    18 -> {19};
+    19 -> {20} [style=dotted];
     20 -> {21} [style=dotted];
-    21 -> {22} [style=dotted];
+    21 -> {22 24} [style=dotted];
+    22 -> {23} [style=dotted];
+    23 -> {24} [style=dotted];
 
-    subgraph cluster_9 {
+    subgraph cluster_10 {
         color=red
-        23 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_10 {
+        25 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_11 {
             color=blue
-            24 [label="Enter block"];
-            25 [label="Postponed enter to lambda"];
-            subgraph cluster_11 {
+            26 [label="Enter block"];
+            subgraph cluster_12 {
                 color=blue
-                26 [label="Enter function <anonymous>" style="filled" fillcolor=red];
-                subgraph cluster_12 {
+                27 [label="Function call arguments enter"];
+                subgraph cluster_13 {
                     color=blue
-                    27 [label="Enter block"];
-                    28 [label="Access qualifier /IrStarProjectionImpl"];
-                    29 [label="Exit block"];
+                    28 [label="Function call arguments enter"];
+                    29 [label="Postponed enter to lambda"];
+                    subgraph cluster_14 {
+                        color=blue
+                        30 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                        subgraph cluster_15 {
+                            color=blue
+                            31 [label="Enter block"];
+                            32 [label="Access qualifier /IrStarProjectionImpl"];
+                            33 [label="Exit block"];
+                        }
+                        34 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                    }
+                    35 [label="Function call arguments exit"];
                 }
-                30 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                36 [label="Postponed exit from lambda"];
+                37 [label="Function call: R|/MyOut|<R|IrStarProjectionImpl|>(...)" style="filled" fillcolor=yellow];
+                38 [label="Function call arguments exit"];
             }
-            31 [label="Postponed exit from lambda"];
-            32 [label="Function call: R|/MyOut|<R|IrStarProjectionImpl|>(...)" style="filled" fillcolor=yellow];
-            33 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
-            34 [label="Exit block"];
+            39 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
+            40 [label="Exit block"];
         }
-        35 [label="Exit function foo" style="filled" fillcolor=red];
+        41 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    23 -> {24};
-    24 -> {25};
-    25 -> {26 31 32};
-    25 -> {26} [style=dashed];
+    25 -> {26};
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    29 -> {30};
-    31 -> {32} [color=green];
-    31 -> {33} [color=red];
+    29 -> {30 35 36};
+    29 -> {30} [style=dashed];
+    30 -> {31};
+    31 -> {32};
     32 -> {33};
     33 -> {34};
-    34 -> {35};
+    35 -> {37};
+    36 -> {37} [color=green];
+    36 -> {39} [color=red];
+    37 -> {38};
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
 
 }

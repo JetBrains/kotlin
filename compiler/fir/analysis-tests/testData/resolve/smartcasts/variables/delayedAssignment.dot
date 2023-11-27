@@ -76,21 +76,36 @@ digraph delayedAssignment_kt {
                 subgraph cluster_11 {
                     color=blue
                     27 [label="Enter block"];
-                    28 [label="Function call: R|/A.A|()" style="filled" fillcolor=yellow];
-                    29 [label="Assignment: R|<local>/a|"];
-                    30 [label="Access variable R|<local>/a|"];
-                    31 [label="Smart cast: R|<local>/a|"];
-                    32 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
-                    33 [label="Exit block"];
+                    subgraph cluster_12 {
+                        color=blue
+                        28 [label="Function call arguments enter"];
+                        29 [label="Function call arguments exit"];
+                    }
+                    30 [label="Function call: R|/A.A|()" style="filled" fillcolor=yellow];
+                    31 [label="Assignment: R|<local>/a|"];
+                    subgraph cluster_13 {
+                        color=blue
+                        32 [label="Function call arguments enter"];
+                        33 [label="Access variable R|<local>/a|"];
+                        34 [label="Smart cast: R|<local>/a|"];
+                        35 [label="Function call arguments exit"];
+                    }
+                    36 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
+                    37 [label="Exit block"];
                 }
-                34 [label="Exit when branch result"];
-                35 [label="Exit when"];
+                38 [label="Exit when branch result"];
+                39 [label="Exit when"];
             }
-            36 [label="Access variable R|<local>/a|"];
-            37 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
-            38 [label="Exit block"];
+            subgraph cluster_14 {
+                color=blue
+                40 [label="Function call arguments enter"];
+                41 [label="Access variable R|<local>/a|"];
+                42 [label="Function call arguments exit"];
+            }
+            43 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
+            44 [label="Exit block"];
         }
-        39 [label="Exit function test" style="filled" fillcolor=red];
+        45 [label="Exit function test" style="filled" fillcolor=red];
     }
     11 -> {12};
     12 -> {13};
@@ -106,7 +121,7 @@ digraph delayedAssignment_kt {
     22 -> {23};
     23 -> {24};
     24 -> {25};
-    25 -> {35};
+    25 -> {39};
     26 -> {27};
     27 -> {28};
     28 -> {29};
@@ -120,5 +135,11 @@ digraph delayedAssignment_kt {
     36 -> {37};
     37 -> {38};
     38 -> {39};
+    39 -> {40};
+    40 -> {41};
+    41 -> {42};
+    42 -> {43};
+    43 -> {44};
+    44 -> {45};
 
 }

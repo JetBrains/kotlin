@@ -62,7 +62,7 @@ fun case_4() {
 fun case_5() {
     var x: Class? = Class()
     x!!
-    <!UNSAFE_IMPLICIT_INVOKE_CALL!>x<!>(if (true) {x=null;0} else 0, <!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>)
+    x(if (true) {x=null;0} else 0, <!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>)
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!><!UNSAFE_CALL!>.<!>fun_1()
 }
 
@@ -83,7 +83,7 @@ fun case_6() {
 fun case_7() {
     var x: Class? = Class()
     x!!
-    <!UNSAFE_IMPLICIT_INVOKE_CALL!>x<!>(if (true) {x=null;0} else 0)(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>)
+    x(if (true) {x=null;0} else 0)(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>)
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!><!UNSAFE_CALL!>.<!>fun_1()
 }
 

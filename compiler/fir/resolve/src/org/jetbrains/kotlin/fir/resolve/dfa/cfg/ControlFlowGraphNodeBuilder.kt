@@ -118,6 +118,15 @@ fun ControlFlowGraphBuilder.createLoopBlockEnterNode(fir: FirLoop): LoopBlockEnt
 fun ControlFlowGraphBuilder.createLoopBlockExitNode(fir: FirLoop): LoopBlockExitNode =
     LoopBlockExitNode(currentGraph, fir, levelCounter)
 
+fun ControlFlowGraphBuilder.createFunctionCallArgumentsEnterNode(fir: FirFunctionCall): FunctionCallArgumentsEnterNode =
+    FunctionCallArgumentsEnterNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createFunctionCallArgumentsExitNode(
+    fir: FirFunctionCall,
+    enterNode: FunctionCallArgumentsEnterNode,
+): FunctionCallArgumentsExitNode =
+    FunctionCallArgumentsExitNode(currentGraph, fir, enterNode, levelCounter)
+
 fun ControlFlowGraphBuilder.createFunctionCallNode(fir: FirFunctionCall): FunctionCallNode =
     FunctionCallNode(currentGraph, fir, levelCounter)
 
@@ -202,7 +211,10 @@ fun ControlFlowGraphBuilder.createEnterSafeCallNode(fir: FirSafeCallExpression):
 fun ControlFlowGraphBuilder.createPostponedLambdaExitNode(fir: FirAnonymousFunctionExpression): PostponedLambdaExitNode =
     PostponedLambdaExitNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createSplitPostponedLambdasNode(fir: FirStatement, lambdas: List<FirAnonymousFunction>): SplitPostponedLambdasNode =
+fun ControlFlowGraphBuilder.createSplitPostponedLambdasNode(
+    fir: FirStatement,
+    lambdas: List<FirAnonymousFunction>,
+): SplitPostponedLambdasNode =
     SplitPostponedLambdasNode(currentGraph, fir, lambdas, levelCounter)
 
 fun ControlFlowGraphBuilder.createMergePostponedLambdaExitsNode(fir: FirElement): MergePostponedLambdaExitsNode =

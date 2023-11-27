@@ -56,21 +56,26 @@ digraph annotatedLocalClass_kt {
                 20 [label="Exit when"];
             }
             21 [label="Local class declaration"];
-            22 [label="Function call: R|/bar|()" style="filled" fillcolor=yellow];
-            23 [label="Exit block"];
+            subgraph cluster_8 {
+                color=blue
+                22 [label="Function call arguments enter"];
+                23 [label="Function call arguments exit"];
+            }
+            24 [label="Function call: R|/bar|()" style="filled" fillcolor=yellow];
+            25 [label="Exit block"];
         }
-        24 [label="Exit function foo" style="filled" fillcolor=red];
+        26 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    subgraph cluster_8 {
+    subgraph cluster_9 {
         color=blue
-        25 [label="Enter class Local" style="filled" fillcolor=red];
-        subgraph cluster_9 {
+        27 [label="Enter class Local" style="filled" fillcolor=red];
+        subgraph cluster_10 {
             color=blue
-            26 [label="Enter function <init>" style="filled" fillcolor=red];
-            27 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            28 [label="Exit function <init>" style="filled" fillcolor=red];
+            28 [label="Enter function <init>" style="filled" fillcolor=red];
+            29 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            30 [label="Exit function <init>" style="filled" fillcolor=red];
         }
-        29 [label="Exit class Local" style="filled" fillcolor=red];
+        31 [label="Exit class Local" style="filled" fillcolor=red];
     }
     7 -> {8};
     8 -> {9};
@@ -81,35 +86,37 @@ digraph annotatedLocalClass_kt {
     13 -> {20};
     14 -> {15};
     15 -> {16};
-    16 -> {24};
+    16 -> {26};
     16 -> {17} [style=dotted];
     17 -> {18} [style=dotted];
     18 -> {19} [style=dotted];
     19 -> {20} [style=dotted];
     20 -> {21};
-    21 -> {22 25};
-    21 -> {25} [style=dashed];
+    21 -> {22 27};
+    21 -> {27} [style=dashed];
     22 -> {23};
     23 -> {24};
+    24 -> {25};
     25 -> {26};
-    25 -> {29} [style=dotted];
-    25 -> {26} [style=dashed];
-    26 -> {27};
     27 -> {28};
-    28 -> {29} [color=green];
+    27 -> {31} [style=dotted];
+    27 -> {28} [style=dashed];
+    28 -> {29};
+    29 -> {30};
+    30 -> {31} [color=green];
 
-    subgraph cluster_10 {
+    subgraph cluster_11 {
         color=red
-        30 [label="Enter function bar" style="filled" fillcolor=red];
-        subgraph cluster_11 {
+        32 [label="Enter function bar" style="filled" fillcolor=red];
+        subgraph cluster_12 {
             color=blue
-            31 [label="Enter block"];
-            32 [label="Exit block"];
+            33 [label="Enter block"];
+            34 [label="Exit block"];
         }
-        33 [label="Exit function bar" style="filled" fillcolor=red];
+        35 [label="Exit function bar" style="filled" fillcolor=red];
     }
-    30 -> {31};
-    31 -> {32};
     32 -> {33};
+    33 -> {34};
+    34 -> {35};
 
 }

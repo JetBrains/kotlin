@@ -35506,6 +35506,18 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("invokeRecieverSmartcastK1.kt")
+        public void testInvokeRecieverSmartcastK1() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/invokeRecieverSmartcastK1.kt");
+        }
+
+        @Test
+        @TestMetadata("invokeRecieverSmartcastK2.kt")
+        public void testInvokeRecieverSmartcastK2() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/invokeRecieverSmartcastK2.kt");
+        }
+
+        @Test
         @TestMetadata("kt17725.kt")
         public void testKt17725() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/kt17725.kt");

@@ -57,33 +57,38 @@ digraph initBlock_kt {
                 15 [label="Enter block"];
                 16 [label="Const: Int(1)"];
                 17 [label="Variable declaration: lval x: R|kotlin/Int|"];
-                18 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
-                19 [label="Throw: throw R|java/lang/Exception.Exception|()"];
-                20 [label="Stub" style="filled" fillcolor=gray];
-                21 [label="Const: Int(2)" style="filled" fillcolor=gray];
-                22 [label="Variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
-                23 [label="Exit block" style="filled" fillcolor=gray];
+                subgraph cluster_8 {
+                    color=blue
+                    18 [label="Function call arguments enter"];
+                    19 [label="Function call arguments exit"];
+                }
+                20 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
+                21 [label="Throw: throw R|java/lang/Exception.Exception|()"];
+                22 [label="Stub" style="filled" fillcolor=gray];
+                23 [label="Const: Int(2)" style="filled" fillcolor=gray];
+                24 [label="Variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
+                25 [label="Exit block" style="filled" fillcolor=gray];
             }
-            24 [label="Exit init block" style="filled" fillcolor=gray];
+            26 [label="Exit init block" style="filled" fillcolor=gray];
         }
-        subgraph cluster_8 {
+        subgraph cluster_9 {
             color=blue
-            25 [label="Enter function <init>" style="filled" fillcolor=gray];
-            26 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=gray];
-            27 [label="Exit function <init>" style="filled" fillcolor=gray];
+            27 [label="Enter function <init>" style="filled" fillcolor=gray];
+            28 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=gray];
+            29 [label="Exit function <init>" style="filled" fillcolor=gray];
         }
-        28 [label="Exit class Bar" style="filled" fillcolor=gray];
+        30 [label="Exit class Bar" style="filled" fillcolor=gray];
     }
     13 -> {14} [color=green];
-    13 -> {28} [style=dotted];
-    13 -> {14 25} [style=dashed];
+    13 -> {30} [style=dotted];
+    13 -> {14 27} [style=dashed];
     14 -> {15};
     15 -> {16};
     16 -> {17};
     17 -> {18};
     18 -> {19};
-    19 -> {20} [style=dotted];
-    20 -> {21} [style=dotted];
+    19 -> {20};
+    20 -> {21};
     21 -> {22} [style=dotted];
     22 -> {23} [style=dotted];
     23 -> {24} [style=dotted];
@@ -91,5 +96,7 @@ digraph initBlock_kt {
     25 -> {26} [style=dotted];
     26 -> {27} [style=dotted];
     27 -> {28} [style=dotted];
+    28 -> {29} [style=dotted];
+    29 -> {30} [style=dotted];
 
 }

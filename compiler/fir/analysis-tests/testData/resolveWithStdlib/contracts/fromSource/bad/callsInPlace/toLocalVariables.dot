@@ -55,28 +55,43 @@ digraph toLocalVariables_kt {
                     17 [label="Enter block"];
                     18 [label="Access variable R|<local>/y|"];
                     19 [label="Variable declaration: lval yCopy: R|() -> kotlin/Unit|"];
-                    20 [label="Function call: R|<local>/yCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                    21 [label="Exit block"];
+                    subgraph cluster_10 {
+                        color=blue
+                        20 [label="Function call arguments enter"];
+                        21 [label="Function call arguments exit"];
+                    }
+                    22 [label="Function call: R|<local>/yCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                    23 [label="Exit block"];
                 }
-                22 [label="Exit when branch result"];
-                23 [label="Enter when branch result"];
-                subgraph cluster_10 {
+                24 [label="Exit when branch result"];
+                25 [label="Enter when branch result"];
+                subgraph cluster_11 {
                     color=blue
-                    24 [label="Enter block"];
-                    25 [label="Access variable R|<local>/x|"];
-                    26 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
-                    27 [label="Exit block"];
+                    26 [label="Enter block"];
+                    subgraph cluster_12 {
+                        color=blue
+                        27 [label="Function call arguments enter"];
+                        28 [label="Access variable R|<local>/x|"];
+                        29 [label="Function call arguments exit"];
+                    }
+                    30 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
+                    31 [label="Exit block"];
                 }
-                28 [label="Exit when branch result"];
-                29 [label="Exit when"];
+                32 [label="Exit when branch result"];
+                33 [label="Exit when"];
             }
-            30 [label="Variable declaration: lval zCopy: R|() -> kotlin/Unit|"];
-            31 [label="Access variable R|<local>/z|"];
-            32 [label="Assignment: R|<local>/zCopy|"];
-            33 [label="Function call: R|<local>/zCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-            34 [label="Exit block"];
+            34 [label="Variable declaration: lval zCopy: R|() -> kotlin/Unit|"];
+            35 [label="Access variable R|<local>/z|"];
+            36 [label="Assignment: R|<local>/zCopy|"];
+            subgraph cluster_13 {
+                color=blue
+                37 [label="Function call arguments enter"];
+                38 [label="Function call arguments exit"];
+            }
+            39 [label="Function call: R|<local>/zCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            40 [label="Exit block"];
         }
-        35 [label="Exit function foo" style="filled" fillcolor=red];
+        41 [label="Exit function foo" style="filled" fillcolor=red];
     }
     6 -> {7};
     7 -> {8};
@@ -85,7 +100,7 @@ digraph toLocalVariables_kt {
     10 -> {11};
     11 -> {12};
     12 -> {13};
-    13 -> {14 23};
+    13 -> {14 25};
     14 -> {15};
     15 -> {16};
     16 -> {17};
@@ -94,9 +109,9 @@ digraph toLocalVariables_kt {
     19 -> {20};
     20 -> {21};
     21 -> {22};
-    22 -> {29};
+    22 -> {23};
     23 -> {24};
-    24 -> {25};
+    24 -> {33};
     25 -> {26};
     26 -> {27};
     27 -> {28};
@@ -107,5 +122,11 @@ digraph toLocalVariables_kt {
     32 -> {33};
     33 -> {34};
     34 -> {35};
+    35 -> {36};
+    36 -> {37};
+    37 -> {38};
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
 
 }

@@ -77,6 +77,7 @@ class ControlFlowGraphBuilder {
     private val finallyBlocksInProgress: Stack<FinallyBlockEnterNode> = stackOf()
     private val finallyBlocksInProgressSet = mutableSetOf<FirElement>()
 
+    private val exitFunctionCallArgumentsNodes: Stack<FunctionCallArgumentsExitNode?> = stackOf()
     private val exitSafeCallNodes: Stack<ExitSafeCallNode> = stackOf()
     private val exitElvisExpressionNodes: Stack<ElvisExitNode> = stackOf()
     private val elvisRhsEnterNodes: Stack<ElvisRhsEnterNode> = stackOf()
@@ -1172,18 +1173,33 @@ class ControlFlowGraphBuilder {
         splitDataFlowForPostponedLambdas()
     }
 
-    fun enterCallArguments(fir: FirStatement, anonymousFunctions: List<FirAnonymousFunction>) {
+    fun enterCallArguments(call: FirStatement, anonymousFunctions: List<FirAnonymousFunction>): FunctionCallArgumentsEnterNode? {
         if (anonymousFunctions.isEmpty()) {
             argumentListSplitNodes.push(null)
         } else {
-            val splitNode = createSplitPostponedLambdasNode(fir, anonymousFunctions)
+            val splitNode = createSplitPostponedLambdasNode(call, anonymousFunctions)
             anonymousFunctions.associateTo(postponedAnonymousFunctionNodes) { it.symbol to (splitNode to null) }
             argumentListSplitNodes.push(splitNode)
         }
+
+        if (call is FirFunctionCall) {
+            val enterNode = createFunctionCallArgumentsEnterNode(call)
+            val exitNode = createFunctionCallArgumentsExitNode(call, enterNode)
+
+            exitFunctionCallArgumentsNodes.push(exitNode)
+            addNewSimpleNode(enterNode)
+
+            return enterNode
+        } else {
+            exitFunctionCallArgumentsNodes.push(null)
+            return null
+        }
     }
 
-    fun exitCallArguments(): SplitPostponedLambdasNode? {
-        return argumentListSplitNodes.pop()?.also { addNewSimpleNode(it) }
+    fun exitCallArguments(): Pair<SplitPostponedLambdasNode?, FunctionCallArgumentsExitNode?> {
+        val splitNode = argumentListSplitNodes.pop()?.also { addNewSimpleNode(it) }
+        val exitNode = exitFunctionCallArgumentsNodes.pop()?.also { addNewSimpleNode(it) }
+        return splitNode to exitNode
     }
 
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): FunctionCallNode {

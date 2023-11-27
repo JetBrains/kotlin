@@ -35,20 +35,30 @@ digraph flow_kt {
                 subgraph cluster_6 {
                     color=blue
                     12 [label="Enter block"];
-                    13 [label="Access variable R|<local>/x|"];
-                    14 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                    15 [label="Jump: ^bar Unit"];
-                    16 [label="Stub" style="filled" fillcolor=gray];
-                    17 [label="Exit block" style="filled" fillcolor=gray];
+                    subgraph cluster_7 {
+                        color=blue
+                        13 [label="Function call arguments enter"];
+                        14 [label="Access variable R|<local>/x|"];
+                        15 [label="Function call arguments exit"];
+                    }
+                    16 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                    17 [label="Jump: ^bar Unit"];
+                    18 [label="Stub" style="filled" fillcolor=gray];
+                    19 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                18 [label="Exit when branch result" style="filled" fillcolor=gray];
-                19 [label="Exit when"];
+                20 [label="Exit when branch result" style="filled" fillcolor=gray];
+                21 [label="Exit when"];
             }
-            20 [label="Access variable R|<local>/x|"];
-            21 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
-            22 [label="Exit block"];
+            subgraph cluster_8 {
+                color=blue
+                22 [label="Function call arguments enter"];
+                23 [label="Access variable R|<local>/x|"];
+                24 [label="Function call arguments exit"];
+            }
+            25 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
+            26 [label="Exit block"];
         }
-        23 [label="Exit function bar" style="filled" fillcolor=red];
+        27 [label="Exit function bar" style="filled" fillcolor=red];
     }
     2 -> {3};
     3 -> {4};
@@ -58,209 +68,259 @@ digraph flow_kt {
     7 -> {8};
     8 -> {9};
     9 -> {10 11};
-    10 -> {19};
+    10 -> {21};
     11 -> {12};
     12 -> {13};
     13 -> {14};
     14 -> {15};
-    15 -> {23};
-    15 -> {16} [style=dotted];
-    16 -> {17} [style=dotted];
+    15 -> {16};
+    16 -> {17};
+    17 -> {27};
     17 -> {18} [style=dotted];
     18 -> {19} [style=dotted];
-    19 -> {20};
-    20 -> {21};
+    19 -> {20} [style=dotted];
+    20 -> {21} [style=dotted];
     21 -> {22};
     22 -> {23};
-
-    subgraph cluster_7 {
-        color=red
-        24 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_8 {
-            color=blue
-            25 [label="Enter block"];
-            subgraph cluster_9 {
-                color=blue
-                26 [label="Enter block"];
-                27 [label="Exit block"];
-            }
-            subgraph cluster_10 {
-                color=blue
-                28 [label="Enter when"];
-                subgraph cluster_11 {
-                    color=blue
-                    29 [label="Enter when branch condition "];
-                    30 [label="Const: Boolean(true)"];
-                    31 [label="Exit when branch condition"];
-                }
-                subgraph cluster_12 {
-                    color=blue
-                    32 [label="Enter when branch condition else"];
-                    33 [label="Exit when branch condition"];
-                }
-                34 [label="Enter when branch result"];
-                subgraph cluster_13 {
-                    color=blue
-                    35 [label="Enter block"];
-                    subgraph cluster_14 {
-                        color=blue
-                        36 [label="Enter when"];
-                        subgraph cluster_15 {
-                            color=blue
-                            37 [label="Enter when branch condition "];
-                            38 [label="Const: Boolean(false)"];
-                            39 [label="Exit when branch condition"];
-                        }
-                        subgraph cluster_16 {
-                            color=blue
-                            40 [label="Enter when branch condition else"];
-                            41 [label="Exit when branch condition"];
-                        }
-                        42 [label="Enter when branch result"];
-                        subgraph cluster_17 {
-                            color=blue
-                            43 [label="Enter block"];
-                            44 [label="Access variable R|<local>/y|"];
-                            45 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                            46 [label="Access variable R|<local>/z|"];
-                            47 [label="Function call: R|<local>/z|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                            48 [label="Jump: ^foo Unit"];
-                            49 [label="Stub" style="filled" fillcolor=gray];
-                            50 [label="Exit block" style="filled" fillcolor=gray];
-                        }
-                        51 [label="Exit when branch result" style="filled" fillcolor=gray];
-                        52 [label="Enter when branch result"];
-                        subgraph cluster_18 {
-                            color=blue
-                            53 [label="Enter block"];
-                            54 [label="Access variable R|<local>/y|"];
-                            55 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                            56 [label="Exit block"];
-                        }
-                        57 [label="Exit when branch result"];
-                        58 [label="Exit when"];
-                    }
-                    59 [label="Exit block"];
-                }
-                60 [label="Exit when branch result"];
-                61 [label="Enter when branch result"];
-                subgraph cluster_19 {
-                    color=blue
-                    62 [label="Enter block"];
-                    subgraph cluster_20 {
-                        color=blue
-                        63 [label="Enter block"];
-                        64 [label="Const: Int(0)"];
-                        65 [label="Const: Int(0)"];
-                        66 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...)" style="filled" fillcolor=yellow];
-                        67 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...).R|kotlin/ranges/IntProgression.iterator|()" style="filled" fillcolor=yellow];
-                        68 [label="Variable declaration: lval <iterator>: R|kotlin/collections/IntIterator|"];
-                        subgraph cluster_21 {
-                            color=blue
-                            69 [label="Enter while loop"];
-                            subgraph cluster_22 {
-                                color=blue
-                                70 [label="Enter loop condition"];
-                                71 [label="Access variable R|<local>/<iterator>|"];
-                                72 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()" style="filled" fillcolor=yellow];
-                                73 [label="Exit loop condition"];
-                            }
-                            subgraph cluster_23 {
-                                color=blue
-                                74 [label="Enter loop block"];
-                                subgraph cluster_24 {
-                                    color=blue
-                                    75 [label="Enter block"];
-                                    76 [label="Access variable R|<local>/<iterator>|"];
-                                    77 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()" style="filled" fillcolor=yellow];
-                                    78 [label="Variable declaration: lval i: R|kotlin/Int|"];
-                                    subgraph cluster_25 {
-                                        color=blue
-                                        79 [label="Enter block"];
-                                        80 [label="Access variable R|<local>/x|"];
-                                        81 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                                        82 [label="Exit block"];
-                                    }
-                                    83 [label="Exit block"];
-                                }
-                                84 [label="Exit loop block"];
-                            }
-                            85 [label="Exit while loop"];
-                        }
-                        86 [label="Exit block"];
-                    }
-                    87 [label="Access variable R|<local>/y|"];
-                    88 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                    89 [label="Exit block"];
-                }
-                90 [label="Exit when branch result"];
-                91 [label="Exit when"];
-            }
-            subgraph cluster_26 {
-                color=blue
-                92 [label="Enter do-while loop"];
-                subgraph cluster_27 {
-                    color=blue
-                    93 [label="Enter loop block"];
-                    subgraph cluster_28 {
-                        color=blue
-                        94 [label="Enter block"];
-                        95 [label="Access variable R|<local>/z|"];
-                        96 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
-                        97 [label="Exit block"];
-                    }
-                    98 [label="Exit loop block"];
-                }
-                subgraph cluster_29 {
-                    color=blue
-                    99 [label="Enter loop condition"];
-                    100 [label="Const: Boolean(true)"];
-                    101 [label="Exit loop condition"];
-                }
-                102 [label="Exit do-while loop" style="filled" fillcolor=gray];
-            }
-            103 [label="Exit block" style="filled" fillcolor=gray];
-        }
-        104 [label="Exit function foo" style="filled" fillcolor=red];
-    }
+    23 -> {24};
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {28};
+
+    subgraph cluster_9 {
+        color=red
+        28 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_10 {
+            color=blue
+            29 [label="Enter block"];
+            subgraph cluster_11 {
+                color=blue
+                30 [label="Enter block"];
+                31 [label="Exit block"];
+            }
+            subgraph cluster_12 {
+                color=blue
+                32 [label="Enter when"];
+                subgraph cluster_13 {
+                    color=blue
+                    33 [label="Enter when branch condition "];
+                    34 [label="Const: Boolean(true)"];
+                    35 [label="Exit when branch condition"];
+                }
+                subgraph cluster_14 {
+                    color=blue
+                    36 [label="Enter when branch condition else"];
+                    37 [label="Exit when branch condition"];
+                }
+                38 [label="Enter when branch result"];
+                subgraph cluster_15 {
+                    color=blue
+                    39 [label="Enter block"];
+                    subgraph cluster_16 {
+                        color=blue
+                        40 [label="Enter when"];
+                        subgraph cluster_17 {
+                            color=blue
+                            41 [label="Enter when branch condition "];
+                            42 [label="Const: Boolean(false)"];
+                            43 [label="Exit when branch condition"];
+                        }
+                        subgraph cluster_18 {
+                            color=blue
+                            44 [label="Enter when branch condition else"];
+                            45 [label="Exit when branch condition"];
+                        }
+                        46 [label="Enter when branch result"];
+                        subgraph cluster_19 {
+                            color=blue
+                            47 [label="Enter block"];
+                            subgraph cluster_20 {
+                                color=blue
+                                48 [label="Function call arguments enter"];
+                                49 [label="Access variable R|<local>/y|"];
+                                50 [label="Function call arguments exit"];
+                            }
+                            51 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                            subgraph cluster_21 {
+                                color=blue
+                                52 [label="Function call arguments enter"];
+                                53 [label="Access variable R|<local>/z|"];
+                                54 [label="Function call arguments exit"];
+                            }
+                            55 [label="Function call: R|<local>/z|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                            56 [label="Jump: ^foo Unit"];
+                            57 [label="Stub" style="filled" fillcolor=gray];
+                            58 [label="Exit block" style="filled" fillcolor=gray];
+                        }
+                        59 [label="Exit when branch result" style="filled" fillcolor=gray];
+                        60 [label="Enter when branch result"];
+                        subgraph cluster_22 {
+                            color=blue
+                            61 [label="Enter block"];
+                            subgraph cluster_23 {
+                                color=blue
+                                62 [label="Function call arguments enter"];
+                                63 [label="Access variable R|<local>/y|"];
+                                64 [label="Function call arguments exit"];
+                            }
+                            65 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                            66 [label="Exit block"];
+                        }
+                        67 [label="Exit when branch result"];
+                        68 [label="Exit when"];
+                    }
+                    69 [label="Exit block"];
+                }
+                70 [label="Exit when branch result"];
+                71 [label="Enter when branch result"];
+                subgraph cluster_24 {
+                    color=blue
+                    72 [label="Enter block"];
+                    subgraph cluster_25 {
+                        color=blue
+                        73 [label="Enter block"];
+                        subgraph cluster_26 {
+                            color=blue
+                            74 [label="Function call arguments enter"];
+                            subgraph cluster_27 {
+                                color=blue
+                                75 [label="Function call arguments enter"];
+                                76 [label="Const: Int(0)"];
+                                77 [label="Const: Int(0)"];
+                                78 [label="Function call arguments exit"];
+                            }
+                            79 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...)" style="filled" fillcolor=yellow];
+                            80 [label="Function call arguments exit"];
+                        }
+                        81 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...).R|kotlin/ranges/IntProgression.iterator|()" style="filled" fillcolor=yellow];
+                        82 [label="Variable declaration: lval <iterator>: R|kotlin/collections/IntIterator|"];
+                        subgraph cluster_28 {
+                            color=blue
+                            83 [label="Enter while loop"];
+                            subgraph cluster_29 {
+                                color=blue
+                                84 [label="Enter loop condition"];
+                                subgraph cluster_30 {
+                                    color=blue
+                                    85 [label="Function call arguments enter"];
+                                    86 [label="Access variable R|<local>/<iterator>|"];
+                                    87 [label="Function call arguments exit"];
+                                }
+                                88 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()" style="filled" fillcolor=yellow];
+                                89 [label="Exit loop condition"];
+                            }
+                            subgraph cluster_31 {
+                                color=blue
+                                90 [label="Enter loop block"];
+                                subgraph cluster_32 {
+                                    color=blue
+                                    91 [label="Enter block"];
+                                    subgraph cluster_33 {
+                                        color=blue
+                                        92 [label="Function call arguments enter"];
+                                        93 [label="Access variable R|<local>/<iterator>|"];
+                                        94 [label="Function call arguments exit"];
+                                    }
+                                    95 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()" style="filled" fillcolor=yellow];
+                                    96 [label="Variable declaration: lval i: R|kotlin/Int|"];
+                                    subgraph cluster_34 {
+                                        color=blue
+                                        97 [label="Enter block"];
+                                        subgraph cluster_35 {
+                                            color=blue
+                                            98 [label="Function call arguments enter"];
+                                            99 [label="Access variable R|<local>/x|"];
+                                            100 [label="Function call arguments exit"];
+                                        }
+                                        101 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                                        102 [label="Exit block"];
+                                    }
+                                    103 [label="Exit block"];
+                                }
+                                104 [label="Exit loop block"];
+                            }
+                            105 [label="Exit while loop"];
+                        }
+                        106 [label="Exit block"];
+                    }
+                    subgraph cluster_36 {
+                        color=blue
+                        107 [label="Function call arguments enter"];
+                        108 [label="Access variable R|<local>/y|"];
+                        109 [label="Function call arguments exit"];
+                    }
+                    110 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                    111 [label="Exit block"];
+                }
+                112 [label="Exit when branch result"];
+                113 [label="Exit when"];
+            }
+            subgraph cluster_37 {
+                color=blue
+                114 [label="Enter do-while loop"];
+                subgraph cluster_38 {
+                    color=blue
+                    115 [label="Enter loop block"];
+                    subgraph cluster_39 {
+                        color=blue
+                        116 [label="Enter block"];
+                        subgraph cluster_40 {
+                            color=blue
+                            117 [label="Function call arguments enter"];
+                            118 [label="Access variable R|<local>/z|"];
+                            119 [label="Function call arguments exit"];
+                        }
+                        120 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
+                        121 [label="Exit block"];
+                    }
+                    122 [label="Exit loop block"];
+                }
+                subgraph cluster_41 {
+                    color=blue
+                    123 [label="Enter loop condition"];
+                    124 [label="Const: Boolean(true)"];
+                    125 [label="Exit loop condition"];
+                }
+                126 [label="Exit do-while loop" style="filled" fillcolor=gray];
+            }
+            127 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        128 [label="Exit function foo" style="filled" fillcolor=red];
+    }
     28 -> {29};
     29 -> {30};
     30 -> {31};
-    31 -> {32 61};
+    31 -> {32};
     32 -> {33};
     33 -> {34};
     34 -> {35};
-    35 -> {36};
+    35 -> {36 71};
     36 -> {37};
     37 -> {38};
     38 -> {39};
-    39 -> {40 52};
+    39 -> {40};
     40 -> {41};
     41 -> {42};
     42 -> {43};
-    43 -> {44};
+    43 -> {44 60};
     44 -> {45};
     45 -> {46};
     46 -> {47};
     47 -> {48};
-    48 -> {104};
-    48 -> {49} [style=dotted];
-    49 -> {50} [style=dotted];
-    50 -> {51} [style=dotted];
-    51 -> {58} [style=dotted];
+    48 -> {49};
+    49 -> {50};
+    50 -> {51};
+    51 -> {52};
     52 -> {53};
     53 -> {54};
     54 -> {55};
     55 -> {56};
-    56 -> {57};
-    57 -> {58};
-    58 -> {59};
-    59 -> {60};
-    60 -> {91};
+    56 -> {128};
+    56 -> {57} [style=dotted];
+    57 -> {58} [style=dotted];
+    58 -> {59} [style=dotted];
+    59 -> {68} [style=dotted];
+    60 -> {61};
     61 -> {62};
     62 -> {63};
     63 -> {64};
@@ -270,10 +330,10 @@ digraph flow_kt {
     67 -> {68};
     68 -> {69};
     69 -> {70};
-    70 -> {71};
+    70 -> {113};
     71 -> {72};
     72 -> {73};
-    73 -> {74 85};
+    73 -> {74};
     74 -> {75};
     75 -> {76};
     76 -> {77};
@@ -284,12 +344,12 @@ digraph flow_kt {
     81 -> {82};
     82 -> {83};
     83 -> {84};
-    84 -> {70} [color=green style=dashed];
+    84 -> {85};
     85 -> {86};
     86 -> {87};
     87 -> {88};
     88 -> {89};
-    89 -> {90};
+    89 -> {90 105};
     90 -> {91};
     91 -> {92};
     92 -> {93};
@@ -301,9 +361,33 @@ digraph flow_kt {
     98 -> {99};
     99 -> {100};
     100 -> {101};
-    101 -> {93} [color=green style=dashed];
-    101 -> {102} [style=dotted];
-    102 -> {103} [style=dotted];
-    103 -> {104} [style=dotted];
+    101 -> {102};
+    102 -> {103};
+    103 -> {104};
+    104 -> {84} [color=green style=dashed];
+    105 -> {106};
+    106 -> {107};
+    107 -> {108};
+    108 -> {109};
+    109 -> {110};
+    110 -> {111};
+    111 -> {112};
+    112 -> {113};
+    113 -> {114};
+    114 -> {115};
+    115 -> {116};
+    116 -> {117};
+    117 -> {118};
+    118 -> {119};
+    119 -> {120};
+    120 -> {121};
+    121 -> {122};
+    122 -> {123};
+    123 -> {124};
+    124 -> {125};
+    125 -> {115} [color=green style=dashed];
+    125 -> {126} [style=dotted];
+    126 -> {127} [style=dotted];
+    127 -> {128} [style=dotted];
 
 }

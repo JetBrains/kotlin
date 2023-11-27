@@ -45,63 +45,68 @@ digraph safeCallAndEqualityToBool_kt {
                     12 [label="Enter when branch condition "];
                     13 [label="Access variable R|<local>/s|"];
                     14 [label="Enter safe call"];
-                    15 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
-                    16 [label="Exit safe call"];
-                    17 [label="Const: Boolean(true)"];
-                    18 [label="Equality operator =="];
-                    19 [label="Exit when branch condition"];
-                }
-                subgraph cluster_7 {
-                    color=blue
-                    20 [label="Enter when branch condition else"];
+                    subgraph cluster_7 {
+                        color=blue
+                        15 [label="Function call arguments enter"];
+                        16 [label="Function call arguments exit"];
+                    }
+                    17 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
+                    18 [label="Exit safe call"];
+                    19 [label="Const: Boolean(true)"];
+                    20 [label="Equality operator =="];
                     21 [label="Exit when branch condition"];
                 }
-                22 [label="Enter when branch result"];
                 subgraph cluster_8 {
                     color=blue
-                    23 [label="Enter block"];
-                    24 [label="Access variable R|<local>/s|"];
-                    25 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
-                    26 [label="Exit block"];
+                    22 [label="Enter when branch condition else"];
+                    23 [label="Exit when branch condition"];
                 }
-                27 [label="Exit when branch result"];
-                28 [label="Enter when branch result"];
+                24 [label="Enter when branch result"];
                 subgraph cluster_9 {
                     color=blue
-                    29 [label="Enter block"];
-                    30 [label="Access variable R|<local>/s|"];
-                    31 [label="Smart cast: R|<local>/s|"];
-                    32 [label="Access variable R|kotlin/String.length|"];
-                    33 [label="Exit block"];
+                    25 [label="Enter block"];
+                    26 [label="Access variable R|<local>/s|"];
+                    27 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
+                    28 [label="Exit block"];
                 }
-                34 [label="Exit when branch result"];
-                35 [label="Exit when"];
+                29 [label="Exit when branch result"];
+                30 [label="Enter when branch result"];
+                subgraph cluster_10 {
+                    color=blue
+                    31 [label="Enter block"];
+                    32 [label="Access variable R|<local>/s|"];
+                    33 [label="Smart cast: R|<local>/s|"];
+                    34 [label="Access variable R|kotlin/String.length|"];
+                    35 [label="Exit block"];
+                }
+                36 [label="Exit when branch result"];
+                37 [label="Exit when"];
             }
-            36 [label="Exit block"];
+            38 [label="Exit block"];
         }
-        37 [label="Exit function test_1" style="filled" fillcolor=red];
+        39 [label="Exit function test_1" style="filled" fillcolor=red];
     }
     9 -> {10};
     10 -> {11};
     11 -> {12};
     12 -> {13};
-    13 -> {14 16};
+    13 -> {14 18};
     14 -> {15};
     15 -> {16};
     16 -> {17};
     17 -> {18};
     18 -> {19};
-    19 -> {20 28};
+    19 -> {20};
     20 -> {21};
-    21 -> {22};
+    21 -> {22 30};
     22 -> {23};
     23 -> {24};
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {35};
+    27 -> {28};
     28 -> {29};
-    29 -> {30};
+    29 -> {37};
     30 -> {31};
     31 -> {32};
     32 -> {33};
@@ -109,226 +114,241 @@ digraph safeCallAndEqualityToBool_kt {
     34 -> {35};
     35 -> {36};
     36 -> {37};
+    37 -> {38};
+    38 -> {39};
 
-    subgraph cluster_10 {
+    subgraph cluster_11 {
         color=red
-        38 [label="Enter function test_2" style="filled" fillcolor=red];
-        subgraph cluster_11 {
+        40 [label="Enter function test_2" style="filled" fillcolor=red];
+        subgraph cluster_12 {
             color=blue
-            39 [label="Enter block"];
-            subgraph cluster_12 {
+            41 [label="Enter block"];
+            subgraph cluster_13 {
                 color=blue
-                40 [label="Enter when"];
-                subgraph cluster_13 {
-                    color=blue
-                    41 [label="Enter when branch condition "];
-                    42 [label="Access variable R|<local>/s|"];
-                    43 [label="Enter safe call"];
-                    44 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
-                    45 [label="Exit safe call"];
-                    46 [label="Const: Boolean(false)"];
-                    47 [label="Equality operator =="];
-                    48 [label="Exit when branch condition"];
-                }
+                42 [label="Enter when"];
                 subgraph cluster_14 {
                     color=blue
-                    49 [label="Enter when branch condition else"];
-                    50 [label="Exit when branch condition"];
+                    43 [label="Enter when branch condition "];
+                    44 [label="Access variable R|<local>/s|"];
+                    45 [label="Enter safe call"];
+                    subgraph cluster_15 {
+                        color=blue
+                        46 [label="Function call arguments enter"];
+                        47 [label="Function call arguments exit"];
+                    }
+                    48 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
+                    49 [label="Exit safe call"];
+                    50 [label="Const: Boolean(false)"];
+                    51 [label="Equality operator =="];
+                    52 [label="Exit when branch condition"];
                 }
-                51 [label="Enter when branch result"];
-                subgraph cluster_15 {
-                    color=blue
-                    52 [label="Enter block"];
-                    53 [label="Access variable R|<local>/s|"];
-                    54 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
-                    55 [label="Exit block"];
-                }
-                56 [label="Exit when branch result"];
-                57 [label="Enter when branch result"];
                 subgraph cluster_16 {
                     color=blue
-                    58 [label="Enter block"];
-                    59 [label="Access variable R|<local>/s|"];
-                    60 [label="Smart cast: R|<local>/s|"];
-                    61 [label="Access variable R|kotlin/String.length|"];
-                    62 [label="Exit block"];
+                    53 [label="Enter when branch condition else"];
+                    54 [label="Exit when branch condition"];
                 }
-                63 [label="Exit when branch result"];
-                64 [label="Exit when"];
+                55 [label="Enter when branch result"];
+                subgraph cluster_17 {
+                    color=blue
+                    56 [label="Enter block"];
+                    57 [label="Access variable R|<local>/s|"];
+                    58 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
+                    59 [label="Exit block"];
+                }
+                60 [label="Exit when branch result"];
+                61 [label="Enter when branch result"];
+                subgraph cluster_18 {
+                    color=blue
+                    62 [label="Enter block"];
+                    63 [label="Access variable R|<local>/s|"];
+                    64 [label="Smart cast: R|<local>/s|"];
+                    65 [label="Access variable R|kotlin/String.length|"];
+                    66 [label="Exit block"];
+                }
+                67 [label="Exit when branch result"];
+                68 [label="Exit when"];
             }
-            65 [label="Exit block"];
+            69 [label="Exit block"];
         }
-        66 [label="Exit function test_2" style="filled" fillcolor=red];
+        70 [label="Exit function test_2" style="filled" fillcolor=red];
     }
-    38 -> {39};
-    39 -> {40};
     40 -> {41};
     41 -> {42};
-    42 -> {43 45};
+    42 -> {43};
     43 -> {44};
-    44 -> {45};
+    44 -> {45 49};
     45 -> {46};
     46 -> {47};
     47 -> {48};
-    48 -> {49 57};
+    48 -> {49};
     49 -> {50};
     50 -> {51};
     51 -> {52};
-    52 -> {53};
+    52 -> {53 61};
     53 -> {54};
     54 -> {55};
     55 -> {56};
-    56 -> {64};
+    56 -> {57};
     57 -> {58};
     58 -> {59};
     59 -> {60};
-    60 -> {61};
+    60 -> {68};
     61 -> {62};
     62 -> {63};
     63 -> {64};
     64 -> {65};
     65 -> {66};
-
-    subgraph cluster_17 {
-        color=red
-        67 [label="Enter function test_3" style="filled" fillcolor=red];
-        subgraph cluster_18 {
-            color=blue
-            68 [label="Enter block"];
-            subgraph cluster_19 {
-                color=blue
-                69 [label="Enter when"];
-                subgraph cluster_20 {
-                    color=blue
-                    70 [label="Enter when branch condition "];
-                    71 [label="Access variable R|<local>/s|"];
-                    72 [label="Enter safe call"];
-                    73 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
-                    74 [label="Exit safe call"];
-                    75 [label="Const: Boolean(true)"];
-                    76 [label="Equality operator !="];
-                    77 [label="Exit when branch condition"];
-                }
-                subgraph cluster_21 {
-                    color=blue
-                    78 [label="Enter when branch condition else"];
-                    79 [label="Exit when branch condition"];
-                }
-                80 [label="Enter when branch result"];
-                subgraph cluster_22 {
-                    color=blue
-                    81 [label="Enter block"];
-                    82 [label="Access variable R|<local>/s|"];
-                    83 [label="Smart cast: R|<local>/s|"];
-                    84 [label="Access variable R|kotlin/String.length|"];
-                    85 [label="Exit block"];
-                }
-                86 [label="Exit when branch result"];
-                87 [label="Enter when branch result"];
-                subgraph cluster_23 {
-                    color=blue
-                    88 [label="Enter block"];
-                    89 [label="Access variable R|<local>/s|"];
-                    90 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
-                    91 [label="Exit block"];
-                }
-                92 [label="Exit when branch result"];
-                93 [label="Exit when"];
-            }
-            94 [label="Exit block"];
-        }
-        95 [label="Exit function test_3" style="filled" fillcolor=red];
-    }
+    66 -> {67};
     67 -> {68};
     68 -> {69};
     69 -> {70};
-    70 -> {71};
-    71 -> {72 74};
+
+    subgraph cluster_19 {
+        color=red
+        71 [label="Enter function test_3" style="filled" fillcolor=red];
+        subgraph cluster_20 {
+            color=blue
+            72 [label="Enter block"];
+            subgraph cluster_21 {
+                color=blue
+                73 [label="Enter when"];
+                subgraph cluster_22 {
+                    color=blue
+                    74 [label="Enter when branch condition "];
+                    75 [label="Access variable R|<local>/s|"];
+                    76 [label="Enter safe call"];
+                    subgraph cluster_23 {
+                        color=blue
+                        77 [label="Function call arguments enter"];
+                        78 [label="Function call arguments exit"];
+                    }
+                    79 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
+                    80 [label="Exit safe call"];
+                    81 [label="Const: Boolean(true)"];
+                    82 [label="Equality operator !="];
+                    83 [label="Exit when branch condition"];
+                }
+                subgraph cluster_24 {
+                    color=blue
+                    84 [label="Enter when branch condition else"];
+                    85 [label="Exit when branch condition"];
+                }
+                86 [label="Enter when branch result"];
+                subgraph cluster_25 {
+                    color=blue
+                    87 [label="Enter block"];
+                    88 [label="Access variable R|<local>/s|"];
+                    89 [label="Smart cast: R|<local>/s|"];
+                    90 [label="Access variable R|kotlin/String.length|"];
+                    91 [label="Exit block"];
+                }
+                92 [label="Exit when branch result"];
+                93 [label="Enter when branch result"];
+                subgraph cluster_26 {
+                    color=blue
+                    94 [label="Enter block"];
+                    95 [label="Access variable R|<local>/s|"];
+                    96 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
+                    97 [label="Exit block"];
+                }
+                98 [label="Exit when branch result"];
+                99 [label="Exit when"];
+            }
+            100 [label="Exit block"];
+        }
+        101 [label="Exit function test_3" style="filled" fillcolor=red];
+    }
+    71 -> {72};
     72 -> {73};
     73 -> {74};
     74 -> {75};
-    75 -> {76};
+    75 -> {76 80};
     76 -> {77};
-    77 -> {78 87};
+    77 -> {78};
     78 -> {79};
     79 -> {80};
     80 -> {81};
     81 -> {82};
     82 -> {83};
-    83 -> {84};
+    83 -> {84 93};
     84 -> {85};
     85 -> {86};
-    86 -> {93};
+    86 -> {87};
     87 -> {88};
     88 -> {89};
     89 -> {90};
     90 -> {91};
     91 -> {92};
-    92 -> {93};
+    92 -> {99};
     93 -> {94};
     94 -> {95};
-
-    subgraph cluster_24 {
-        color=red
-        96 [label="Enter function test_4" style="filled" fillcolor=red];
-        subgraph cluster_25 {
-            color=blue
-            97 [label="Enter block"];
-            subgraph cluster_26 {
-                color=blue
-                98 [label="Enter when"];
-                subgraph cluster_27 {
-                    color=blue
-                    99 [label="Enter when branch condition "];
-                    100 [label="Access variable R|<local>/s|"];
-                    101 [label="Enter safe call"];
-                    102 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
-                    103 [label="Exit safe call"];
-                    104 [label="Const: Boolean(false)"];
-                    105 [label="Equality operator !="];
-                    106 [label="Exit when branch condition"];
-                }
-                subgraph cluster_28 {
-                    color=blue
-                    107 [label="Enter when branch condition else"];
-                    108 [label="Exit when branch condition"];
-                }
-                109 [label="Enter when branch result"];
-                subgraph cluster_29 {
-                    color=blue
-                    110 [label="Enter block"];
-                    111 [label="Access variable R|<local>/s|"];
-                    112 [label="Smart cast: R|<local>/s|"];
-                    113 [label="Access variable R|kotlin/String.length|"];
-                    114 [label="Exit block"];
-                }
-                115 [label="Exit when branch result"];
-                116 [label="Enter when branch result"];
-                subgraph cluster_30 {
-                    color=blue
-                    117 [label="Enter block"];
-                    118 [label="Access variable R|<local>/s|"];
-                    119 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
-                    120 [label="Exit block"];
-                }
-                121 [label="Exit when branch result"];
-                122 [label="Exit when"];
-            }
-            123 [label="Exit block"];
-        }
-        124 [label="Exit function test_4" style="filled" fillcolor=red];
-    }
+    95 -> {96};
     96 -> {97};
     97 -> {98};
     98 -> {99};
     99 -> {100};
-    100 -> {101 103};
-    101 -> {102};
+    100 -> {101};
+
+    subgraph cluster_27 {
+        color=red
+        102 [label="Enter function test_4" style="filled" fillcolor=red];
+        subgraph cluster_28 {
+            color=blue
+            103 [label="Enter block"];
+            subgraph cluster_29 {
+                color=blue
+                104 [label="Enter when"];
+                subgraph cluster_30 {
+                    color=blue
+                    105 [label="Enter when branch condition "];
+                    106 [label="Access variable R|<local>/s|"];
+                    107 [label="Enter safe call"];
+                    subgraph cluster_31 {
+                        color=blue
+                        108 [label="Function call arguments enter"];
+                        109 [label="Function call arguments exit"];
+                    }
+                    110 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
+                    111 [label="Exit safe call"];
+                    112 [label="Const: Boolean(false)"];
+                    113 [label="Equality operator !="];
+                    114 [label="Exit when branch condition"];
+                }
+                subgraph cluster_32 {
+                    color=blue
+                    115 [label="Enter when branch condition else"];
+                    116 [label="Exit when branch condition"];
+                }
+                117 [label="Enter when branch result"];
+                subgraph cluster_33 {
+                    color=blue
+                    118 [label="Enter block"];
+                    119 [label="Access variable R|<local>/s|"];
+                    120 [label="Smart cast: R|<local>/s|"];
+                    121 [label="Access variable R|kotlin/String.length|"];
+                    122 [label="Exit block"];
+                }
+                123 [label="Exit when branch result"];
+                124 [label="Enter when branch result"];
+                subgraph cluster_34 {
+                    color=blue
+                    125 [label="Enter block"];
+                    126 [label="Access variable R|<local>/s|"];
+                    127 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
+                    128 [label="Exit block"];
+                }
+                129 [label="Exit when branch result"];
+                130 [label="Exit when"];
+            }
+            131 [label="Exit block"];
+        }
+        132 [label="Exit function test_4" style="filled" fillcolor=red];
+    }
     102 -> {103};
     103 -> {104};
     104 -> {105};
     105 -> {106};
-    106 -> {107 116};
+    106 -> {107 111};
     107 -> {108};
     108 -> {109};
     109 -> {110};
@@ -336,8 +356,8 @@ digraph safeCallAndEqualityToBool_kt {
     111 -> {112};
     112 -> {113};
     113 -> {114};
-    114 -> {115};
-    115 -> {122};
+    114 -> {115 124};
+    115 -> {116};
     116 -> {117};
     117 -> {118};
     118 -> {119};
@@ -345,6 +365,14 @@ digraph safeCallAndEqualityToBool_kt {
     120 -> {121};
     121 -> {122};
     122 -> {123};
-    123 -> {124};
+    123 -> {130};
+    124 -> {125};
+    125 -> {126};
+    126 -> {127};
+    127 -> {128};
+    128 -> {129};
+    129 -> {130};
+    130 -> {131};
+    131 -> {132};
 
 }
