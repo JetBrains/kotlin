@@ -12551,6 +12551,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
+            @TestMetadata("delegateToConstVal.kt")
+            public void testDelegateToConstVal() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConstVal.kt");
+            }
+
+            @Test
             @TestMetadata("delegateToConstructorParameter.kt")
             public void testDelegateToConstructorParameter() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConstructorParameter.kt");

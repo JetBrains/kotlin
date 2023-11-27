@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.shallowCopyOrNull
 import org.jetbrains.kotlin.ir.util.statements
 
 internal val IrSimpleFunction.returnsResultOfStdlibCall: Boolean
@@ -68,3 +69,14 @@ internal fun IrProperty.getSingletonOrConstantForOptimizableDelegatedProperty():
 fun IrProperty.isJvmOptimizableDelegate(): Boolean =
     isDelegated && !isFakeOverride && backingField != null && // fast path
             (getPropertyReferenceForOptimizableDelegatedProperty() != null || getSingletonOrConstantForOptimizableDelegatedProperty() != null)
+
+internal val IrMemberAccessExpression<*>.constInitializer: IrExpression?
+    get() {
+        if (this !is IrPropertyReference) return null
+        val constPropertyField = if (field == null) {
+            symbol.owner.takeIf { it.isConst }?.backingField
+        } else {
+            field!!.owner.takeIf { it.isFinal && it.isStatic }
+        }
+        return constPropertyField?.initializer?.expression?.shallowCopyOrNull()
+    }

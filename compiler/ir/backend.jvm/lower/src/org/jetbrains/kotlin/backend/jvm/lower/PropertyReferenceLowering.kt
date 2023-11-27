@@ -67,17 +67,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     private val IrMemberAccessExpression<*>.field: IrFieldSymbol?
         get() = (this as? IrPropertyReference)?.field
 
-    private val IrMemberAccessExpression<*>.constInitializer: IrExpression?
-        get() {
-            if (this !is IrPropertyReference) return null
-            val constPropertyField = if (field == null) {
-                symbol.owner.takeIf { it.isConst }?.backingField
-            } else {
-                field!!.owner.takeIf { it.isFinal && it.isStatic }
-            }
-            return constPropertyField?.initializer?.expression?.shallowCopyOrNull()
-        }
-
     private val arrayItemGetter =
         context.ir.symbols.array.owner.functions.single { it.name.asString() == "get" }
 

@@ -15479,9 +15479,21 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         }
 
         @Test
+        @TestMetadata("delegateToConstVal.kt")
+        public void testDelegateToConstVal() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConstVal.kt");
+        }
+
+        @Test
         @TestMetadata("delegateToConstructorParameter.kt")
         public void testDelegateToConstructorParameter() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConstructorParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("delegateToJavaFinalStaticField.kt")
+        public void testDelegateToJavaFinalStaticField() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToJavaFinalStaticField.kt");
         }
 
         @Test

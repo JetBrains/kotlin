@@ -41,9 +41,14 @@ private class PropertyReferenceDelegationLowering(val context: JvmBackendContext
 }
 
 private class PropertyReferenceDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
-    private fun IrSimpleFunction.accessorBody(delegate: IrPropertyReference, receiverFieldOrExpression: IrStatement?) =
+    private fun IrSimpleFunction.accessorBody(delegate: IrPropertyReference, receiverFieldOrExpression: IrStatement?): IrBody =
         context.createIrBuilder(symbol, startOffset, endOffset).run {
             val value = valueParameters.singleOrNull()?.let(::irGet)
+            val isGetter = value == null
+            if (isGetter) {
+                delegate.constInitializer?.let { return@run irExprBody(it) }
+            }
+
             var boundReceiver = when (receiverFieldOrExpression) {
                 null -> null
                 is IrField -> irGetField(dispatchReceiverParameter?.let(::irGet), receiverFieldOrExpression)
@@ -54,7 +59,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             val unboundReceiver = extensionReceiverParameter ?: dispatchReceiverParameter
             val field = delegate.field?.owner
             val access = if (field == null) {
-                val accessor = if (value == null) delegate.getter!! else delegate.setter!!
+                val accessor = if (isGetter) delegate.getter!! else delegate.setter!!
                 irCall(accessor).apply {
                     // This has the same assumptions about receivers as `PropertyReferenceLowering.propertyReferenceKindFor`:
                     // only one receiver can be bound, and if the property has both, the extension receiver cannot be bound.
@@ -72,7 +77,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                 }
             } else {
                 val receiver = if (field.isStatic) null else boundReceiver ?: irGet(unboundReceiver!!)
-                if (value == null) irGetField(receiver, field) else irSetField(receiver, field, value)
+                if (isGetter) irGetField(receiver, field) else irSetField(receiver, field, value!!)
             }
             irExprBody(access)
         }
