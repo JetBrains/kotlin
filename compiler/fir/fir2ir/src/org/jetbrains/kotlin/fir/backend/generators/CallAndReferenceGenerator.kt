@@ -649,7 +649,7 @@ class CallAndReferenceGenerator(
             }
 
             val symbol = calleeReference.toSymbolForCall(
-                variableAssignment.dispatchReceiver,
+                extractDispatchReceiverOfAssignment(variableAssignment),
                 explicitReceiver = variableAssignment.explicitReceiver,
                 preferGetter = false,
             )
@@ -683,14 +683,8 @@ class CallAndReferenceGenerator(
 
                     is IrPropertySymbol -> {
                         val setterSymbol = declarationStorage.findSetterOfProperty(symbol)
-                        var backingFieldSymbol = declarationStorage.findBackingFieldOfProperty(symbol)
+                        val backingFieldSymbol = declarationStorage.findBackingFieldOfProperty(symbol)
                         val firProperty = calleeReference.toResolvedPropertySymbol()!!.fir
-
-                        // If we found neither a setter nor a backing field, check if we have an override (possibly fake) of a val with
-                        // backing field. This can happen in a class initializer where `this` was smart-casted. See KT-57105.
-                        if (setterSymbol == null && backingFieldSymbol == null) {
-                            backingFieldSymbol = symbol.overriddenBackingFieldOrNull()
-                        }
 
                         when {
                             setterSymbol != null -> IrCallImpl(
@@ -744,11 +738,23 @@ class CallAndReferenceGenerator(
         }
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun IrPropertySymbol.overriddenBackingFieldOrNull(): IrFieldSymbol? {
-        return owner.overriddenSymbols.firstNotNullOfOrNull {
-            val owner = it.owner
-            owner.backingField?.symbol ?: it.overriddenBackingFieldOrNull()
+
+    /**
+     * If we have assignment like `this.x = ...` and this `this` is a dispatch this of some class, then we should unwrap
+     *   smartcast if possible to generate SetField instead of setter call
+     *
+     * See KT-57105
+     */
+    private fun extractDispatchReceiverOfAssignment(variableAssignment: FirVariableAssignment): FirExpression? {
+        val receiver = variableAssignment.dispatchReceiver ?: return null
+        if (receiver !is FirSmartCastExpression) return receiver
+        val thisReceiver = receiver.originalExpression as? FirThisReceiverExpression ?: return receiver
+        val thisClass = thisReceiver.calleeReference.boundSymbol as? FirClassSymbol<*> ?: return receiver
+        val propertySymbol = variableAssignment.calleeReference?.toResolvedPropertySymbol() ?: return receiver
+        val propertyDispatchReceiverType = propertySymbol.dispatchReceiverType ?: return receiver
+        return when (thisClass.defaultType().isSubtypeOf(propertyDispatchReceiverType, session)) {
+            true -> thisReceiver
+            false -> receiver
         }
     }
 
