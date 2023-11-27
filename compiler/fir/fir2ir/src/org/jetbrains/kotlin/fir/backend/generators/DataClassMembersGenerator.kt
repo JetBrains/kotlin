@@ -109,7 +109,10 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     }
                 } ?: error("Property for parameter $irValueParameter")
 
-            inner class Fir2IrHashCodeFunctionInfo(override val symbol: IrSimpleFunctionSymbol) : HashCodeFunctionInfo {
+            inner class Fir2IrHashCodeFunctionInfo(
+                override val symbol: IrSimpleFunctionSymbol,
+                override val hasDispatchReceiver: Boolean,
+            ) : HashCodeFunctionInfo {
                 override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>) {
                     // TODO
                 }
@@ -158,8 +161,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     .first { (it as FirPropertySymbol).fromPrimaryConstructor } as FirPropertySymbol
 
                 val type = firProperty.resolvedReturnType.fullyExpandedType(session)
-                val symbol = when {
-                    type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
+                val (symbol, hasDispatchReceiver) = when {
+                    type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol to false
                     else -> {
                         val classForType = when (val classifier = type.coerceToAny().toSymbol(session)?.fir) {
                             is FirRegularClass -> classifier
@@ -168,10 +171,10 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                         }
                         val firHashCode = getHashCodeFunction(classForType)
                         val lookupTag = classForType.symbol.toLookupTag()
-                        declarationStorage.getIrFunctionSymbol(firHashCode, lookupTag) as IrSimpleFunctionSymbol
+                        declarationStorage.getIrFunctionSymbol(firHashCode, lookupTag) as IrSimpleFunctionSymbol to (firHashCode.dispatchReceiverType != null)
                     }
                 }
-                return Fir2IrHashCodeFunctionInfo(symbol)
+                return Fir2IrHashCodeFunctionInfo(symbol, hasDispatchReceiver)
             }
         }
 

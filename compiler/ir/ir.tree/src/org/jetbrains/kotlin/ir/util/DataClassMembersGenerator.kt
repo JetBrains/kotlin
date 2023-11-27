@@ -240,7 +240,7 @@ abstract class DataClassMembersGenerator(
 
     protected fun IrBuilderWithScope.getHashCodeOf(hashCodeFunctionInfo: HashCodeFunctionInfo, irValue: IrExpression): IrExpression {
         val hashCodeFunctionSymbol = hashCodeFunctionInfo.symbol
-        val hasDispatchReceiver = hashCodeFunctionSymbol.hasDispatchReceiver()
+        val hasDispatchReceiver = hashCodeFunctionInfo.hasDispatchReceiver ?: hashCodeFunctionSymbol.hasDispatchReceiver()
         return irCall(
             hashCodeFunctionSymbol,
             context.irBuiltIns.intType,
@@ -263,6 +263,13 @@ abstract class DataClassMembersGenerator(
 
     interface HashCodeFunctionInfo {
         val symbol: IrSimpleFunctionSymbol
+
+        /**
+         * Implement it if [symbol] may be unbound
+         */
+        val hasDispatchReceiver: Boolean?
+            get() = null
+
         fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>)
     }
 
