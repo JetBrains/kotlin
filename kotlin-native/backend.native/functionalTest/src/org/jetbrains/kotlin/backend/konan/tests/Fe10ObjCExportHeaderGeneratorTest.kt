@@ -102,4 +102,9 @@ class Fe10ObjCExportHeaderGeneratorTest : AbstractFE10ObjCExportHeaderGeneratorT
     fun `test - functionWithThrowsAnnotation`() {
         doTest(objCExportTestDataDir.resolve("functionWithThrowsAnnotation"))
     }
+
+    @Test
+    fun `test - functionWithErrorType`() {
+        doTest(objCExportTestDataDir.resolve("functionWithErrorType"))
+    }
 }
