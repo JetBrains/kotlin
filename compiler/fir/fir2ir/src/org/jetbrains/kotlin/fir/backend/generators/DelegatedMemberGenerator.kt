@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -195,26 +196,40 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         return result
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     fun bindDelegatedMembersOverriddenSymbols(irClass: IrClass) {
         val superClasses by lazy(LazyThreadSafetyMode.NONE) {
-            irClass.superTypes.mapNotNullTo(mutableSetOf()) { it.classifierOrNull?.owner as? IrClass }
+            irClass.superTypes.mapNotNullTo(mutableSetOf()) {
+                // All class symbols should be already bound at this moment
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                it.classifierOrNull?.owner as? IrClass
+            }
         }
-        for (declaration in irClass.declarations) {
+
+        require(irClass !is Fir2IrLazyClass)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        val declarations = irClass.declarations
+
+        for (declaration in declarations) {
             if (declaration.origin != IrDeclarationOrigin.DELEGATED_MEMBER) continue
             when (declaration) {
                 is IrSimpleFunction -> {
+                    val symbol = declaration.symbol
                     declaration.overriddenSymbols = baseFunctionSymbols[declaration]?.flatMap {
                         fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)
-                    }?.filter { it.owner != declaration }.orEmpty()
+                    }?.filter { it != symbol }.orEmpty()
                 }
                 is IrProperty -> {
+                    val symbol = declaration.symbol
                     declaration.overriddenSymbols = basePropertySymbols[declaration]?.flatMap {
                         fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)
-                    }?.filter { it.owner != declaration }.orEmpty()
-                    declaration.getter!!.overriddenSymbols = declaration.overriddenSymbols.mapNotNull { it.owner.getter?.symbol }
+                    }?.filter { it != symbol }.orEmpty()
+                    declaration.getter!!.overriddenSymbols = declaration.overriddenSymbols.mapNotNull {
+                        declarationStorage.findGetterOfProperty(it)
+                    }
                     if (declaration.isVar) {
-                        declaration.setter!!.overriddenSymbols = declaration.overriddenSymbols.mapNotNull { it.owner.setter?.symbol }
+                        declaration.setter!!.overriddenSymbols = declaration.overriddenSymbols.mapNotNull {
+                            declarationStorage.findSetterOfProperty(it)
+                        }
                     }
                 }
                 else -> continue
