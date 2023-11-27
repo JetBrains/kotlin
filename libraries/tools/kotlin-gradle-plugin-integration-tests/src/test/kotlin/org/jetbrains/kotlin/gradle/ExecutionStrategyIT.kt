@@ -8,23 +8,30 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.DisplayName
-import java.io.File
 
 @DisplayName("Kotlin JS compile execution strategy")
 class ExecutionStrategyJsIT : ExecutionStrategyIT() {
     override fun setupProject(project: TestProject) {
         super.setupProject(project)
 
-        project.subProject("app").buildGradle.modify {
+        // transform the project into a multiplatform project with JS target
+        val appSubProject = project.subProject("app")
+        appSubProject.buildGradle.modify {
             it.replace(
                 "id \"org.jetbrains.kotlin.jvm\"",
-                "id \"org.jetbrains.kotlin.js\""
+                "id \"org.jetbrains.kotlin.multiplatform\""
             ) +
                     """
                     |
                     |kotlin {
                     |    js {
+                    |        nodejs()
+                    |    }
                     |    
+                    |    sourceSets {
+                    |        jsMain {
+                    |           kotlin.srcDir("src/main")
+                    |        }
                     |    }
                     |}
                     |
