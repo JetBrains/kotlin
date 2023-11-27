@@ -12,6 +12,7 @@ interface KotlinNativeCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
 
     /**
      * Specify a name for the compilation module.
+     *
      * Default value: null
      */
     @get:org.gradle.api.tasks.Optional

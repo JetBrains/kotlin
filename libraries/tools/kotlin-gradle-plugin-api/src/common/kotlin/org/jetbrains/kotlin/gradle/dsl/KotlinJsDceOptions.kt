@@ -16,6 +16,7 @@ interface KotlinJsDceOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolO
 
     /**
      * Development mode: don't strip out any code, just copy dependencies.
+     *
      * Default value: false
      */
     var devMode: kotlin.Boolean
@@ -24,6 +25,7 @@ interface KotlinJsDceOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolO
 
     /**
      * Output directory.
+     *
      * Default value: null
      */
     @Deprecated(message = "Use task 'destinationDirectory' to configure output directory", level = DeprecationLevel.WARNING)

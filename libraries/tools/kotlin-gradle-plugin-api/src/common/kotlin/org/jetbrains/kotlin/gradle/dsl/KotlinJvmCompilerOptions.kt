@@ -12,6 +12,7 @@ interface KotlinJvmCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommo
 
     /**
      * Generate metadata for Java 1.8 reflection on method parameters.
+     *
      * Default value: false
      */
     @get:org.gradle.api.tasks.Input
@@ -19,7 +20,9 @@ interface KotlinJvmCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommo
 
     /**
      * The target version of the generated JVM bytecode (1.8, 9, 10, ..., 21), with 1.8 as the default.
+     *
      * Possible values: "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21"
+     *
      * Default value: JvmTarget.DEFAULT
      */
     @get:org.gradle.api.tasks.Input
@@ -27,6 +30,7 @@ interface KotlinJvmCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommo
 
     /**
      * Name of the generated '.kotlin_module' file.
+     *
      * Default value: null
      */
     @get:org.gradle.api.tasks.Optional
@@ -35,6 +39,7 @@ interface KotlinJvmCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommo
 
     /**
      * Don't automatically include the Java runtime in the classpath.
+     *
      * Default value: false
      */
     @get:org.gradle.api.tasks.Input

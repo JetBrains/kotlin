@@ -912,8 +912,10 @@ private fun Printer.generateDoc(property: KProperty1<*, *>) {
     println("/**")
     println(" * ${description.replace("\n", " ")}")
     if (possibleValues != null) {
+        println(" *")
         println(" * Possible values: ${possibleValues.joinToString()}")
     }
+    println(" *")
     println(" * Default value: ${defaultValue.removePrefix("$OPTIONS_PACKAGE_PREFIX.")}")
     println(" */")
 }

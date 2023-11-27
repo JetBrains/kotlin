@@ -16,6 +16,7 @@ interface KotlinCommonToolOptions {
 
     /**
      * Report an error if there are any warnings.
+     *
      * Default value: false
      */
     var allWarningsAsErrors: kotlin.Boolean
@@ -24,6 +25,7 @@ interface KotlinCommonToolOptions {
 
     /**
      * Don't generate any warnings.
+     *
      * Default value: false
      */
     var suppressWarnings: kotlin.Boolean
@@ -32,6 +34,7 @@ interface KotlinCommonToolOptions {
 
     /**
      * Enable verbose logging output.
+     *
      * Default value: false
      */
     var verbose: kotlin.Boolean
@@ -40,6 +43,7 @@ interface KotlinCommonToolOptions {
 
     /**
      * A list of additional compiler arguments
+     *
      * Default value: emptyList<String>()
      */
     var freeCompilerArgs: kotlin.collections.List<kotlin.String>
