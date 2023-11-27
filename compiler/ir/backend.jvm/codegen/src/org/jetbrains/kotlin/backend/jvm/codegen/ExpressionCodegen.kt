@@ -403,11 +403,6 @@ class ExpressionCodegen(
             }
         }
 
-        // This block must be executed after `writeLocalVariablesInTable`
-        if (expression is IrInlinedFunctionBlock) {
-            lineNumberMapper.afterIrInline(expression)
-        }
-
         if (isSynthesizedInitBlock) {
             expression.markLineNumber(startOffset = false)
             mv.nop()
@@ -461,13 +456,15 @@ class ExpressionCodegen(
         }
     }
 
-    private fun generateInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: BlockInfo): PromisedValue {
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: BlockInfo): PromisedValue {
+        val info = BlockInfo(data)
+
         val inlineCall = inlinedBlock.inlineCall
         val callee = inlinedBlock.inlineDeclaration as? IrFunction
 
         // 1. Evaluate NON DEFAULT arguments from inline function call
         inlinedBlock.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
-            exp.accept(this, data).discard()
+            exp.accept(this, info).discard()
         }
 
         lineNumberMapper.beforeIrInline(inlinedBlock)
@@ -476,7 +473,7 @@ class ExpressionCodegen(
             inlineCall.markLineNumber(startOffset = true)
             mv.nop()
 
-            lineNumberMapper.buildSmapFor(inlinedBlock, inlinedBlock.buildOrGetClassSMAP(data), data)
+            lineNumberMapper.buildSmapFor(inlinedBlock, inlinedBlock.buildOrGetClassSMAP(info), info)
 
             if (inlineCall.usesDefaultArguments()) {
                 // $default function has first LN pointing to original callee
@@ -486,7 +483,7 @@ class ExpressionCodegen(
 
             // 2. Evaluate DEFAULT arguments from inline function call
             inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
-                exp.accept(this, data).discard()
+                exp.accept(this, info).discard()
             }
 
             if (inlineCall.usesDefaultArguments()) {
@@ -497,7 +494,7 @@ class ExpressionCodegen(
             // 3. Evaluate statements from inline function body
             val result = inlinedBlock.getOriginalStatementsFromInlinedBlock().fold(unitValue) { prev, exp ->
                 prev.discard()
-                exp.accept(this, data)
+                exp.accept(this, info)
             }
 
             if (callee != null && (inlinedBlock.inlinedElement !is IrCallableReference<*> || callee.isInline)) {
@@ -518,7 +515,13 @@ class ExpressionCodegen(
 
             lineNumberMapper.dropCurrentSmap()
 
-            return result
+            return result.materialized().also {
+                if (info.variables.isNotEmpty()) {
+                    writeLocalVariablesInTable(info, markNewLabel())
+                }
+                // This block must be executed after `writeLocalVariablesInTable`
+                lineNumberMapper.afterIrInline(inlinedBlock)
+            }
         }
     }
 
@@ -558,9 +561,6 @@ class ExpressionCodegen(
     }
 
     private fun visitStatementContainer(container: IrStatementContainer, data: BlockInfo): PromisedValue {
-        if (container is IrInlinedFunctionBlock) {
-            return generateInlinedFunctionBlock(container, data)
-        }
         return container.statements.fold(unitValue) { prev, exp ->
             prev.discard()
             exp.accept(this, data)
