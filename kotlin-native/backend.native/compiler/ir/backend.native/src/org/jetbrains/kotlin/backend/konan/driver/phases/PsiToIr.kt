@@ -70,9 +70,9 @@ internal interface PsiToIrContext : PhaseContext {
 }
 
 internal class PsiToIrContextImpl(
-        config: KonanConfig,
-        private val moduleDescriptor: ModuleDescriptor,
-        override val bindingContext: BindingContext,
+    config: KonanConfig,
+    private val moduleDescriptor: ModuleDescriptor,
+    override val bindingContext: BindingContext,
 ) : BasicPhaseContext(config), PsiToIrContext {
     // TODO: Invalidate properly in dispose method.
     override val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)

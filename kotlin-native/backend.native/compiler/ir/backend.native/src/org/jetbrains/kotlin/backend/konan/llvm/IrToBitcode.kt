@@ -1864,9 +1864,9 @@ internal class CodeGeneratorVisitor(
             alignment = generationState.llvmDeclarations.forStaticField(value.symbol.owner).alignment
         }
         functionGenerationContext.storeAny(
-                valueToAssign, address, false,
-                isVolatile = value.symbol.owner.hasAnnotation(KonanFqNames.volatile),
-                alignment = alignment,
+            valueToAssign, address, false,
+            isVolatile = value.symbol.owner.hasAnnotation(KonanFqNames.volatile),
+            alignment = alignment,
         )
 
         assert (value.type.isUnit())

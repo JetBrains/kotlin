@@ -319,15 +319,8 @@ fun isFunctionNoUnwind(function: LLVMValueRef): Boolean {
     return attribute != null
 }
 
-internal fun getLlvmAttributeKindId(attributeName: String): LLVMAttributeKindId {
-    val attrKindId = LLVMGetEnumAttributeKindForName(attributeName, attributeName.length.signExtend())
-    if (attrKindId == 0) {
-        throw Error("Unable to find '$attributeName' attribute kind id")
-    }
-    return LLVMAttributeKindId(attrKindId)
-}
 
-data class LLVMAttributeKindId(val value: Int)
+
 
 fun setFunctionNoUnwind(function: LLVMValueRef) {
     addLlvmFunctionEnumAttribute(function, LlvmFunctionAttribute.NoUnwind)

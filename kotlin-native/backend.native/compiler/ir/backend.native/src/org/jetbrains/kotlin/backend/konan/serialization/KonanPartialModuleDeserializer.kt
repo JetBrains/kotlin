@@ -36,15 +36,15 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoF
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class KonanPartialModuleDeserializer(
-    konanIrLinker: KonanIrLinker,
-    moduleDescriptor: ModuleDescriptor,
-    override val klib: KotlinLibrary,
-    private val stubGenerator: DeclarationStubGenerator,
-    private val cachedLibraries: CachedLibraries,
-    private val inlineFunctionFiles: MutableMap<IrExternalPackageFragment, IrFile>,
-    strategyResolver: (String) -> DeserializationStrategy,
-    private val cacheDeserializationStrategy: CacheDeserializationStrategy,
-    containsErrorCode: Boolean = false
+        konanIrLinker: KonanIrLinker,
+        moduleDescriptor: ModuleDescriptor,
+        override val klib: KotlinLibrary,
+        private val stubGenerator: DeclarationStubGenerator,
+        private val cachedLibraries: CachedLibraries,
+        private val inlineFunctionFiles: MutableMap<IrExternalPackageFragment, IrFile>,
+        strategyResolver: (String) -> DeserializationStrategy,
+        private val cacheDeserializationStrategy: CacheDeserializationStrategy,
+        containsErrorCode: Boolean = false
 ) : BasicIrModuleDeserializer(konanIrLinker, moduleDescriptor, klib,
                               { fileName ->
             if (cacheDeserializationStrategy.contains(fileName))

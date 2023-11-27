@@ -72,10 +72,10 @@ private fun <Context : PhaseContext, Data> getIrValidator(): Action<Data, Contex
                 return
             }
             val validatorConfig = IrValidatorConfig(
-                    abortOnError = context.config.irVerificationMode == IrVerificationMode.ERROR,
-                    ensureAllNodesAreDifferent = true,
-                    checkTypes = true,
-                    checkDescriptors = false
+                abortOnError = context.config.irVerificationMode == IrVerificationMode.ERROR,
+                ensureAllNodesAreDifferent = true,
+                checkTypes = true,
+                checkDescriptors = false
             )
             try {
                 element.accept(IrValidator(backendContext, validatorConfig), null)

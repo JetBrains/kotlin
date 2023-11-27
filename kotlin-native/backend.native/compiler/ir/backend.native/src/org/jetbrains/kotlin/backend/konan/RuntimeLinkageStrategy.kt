@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMModuleCreateWithNameInContext
 import llvm.LLVMModuleRef
-import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.backend.konan.llvm.llvmLinkModules2
 
 /**
@@ -83,7 +83,3 @@ internal sealed class RuntimeLinkageStrategy {
     }
 }
 
-enum class RuntimeLinkageStrategyBinaryOption {
-    Raw,
-    Optimize
-}

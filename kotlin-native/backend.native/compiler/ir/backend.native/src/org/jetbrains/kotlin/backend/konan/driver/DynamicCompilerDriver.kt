@@ -188,10 +188,10 @@ internal class DynamicCompilerDriver : CompilerDriver() {
     }
 
     private fun createBackendContext(
-            config: KonanConfig,
-            frontendOutput: FrontendPhaseOutput.Full,
-            psiToIrOutput: PsiToIrOutput.ForBackend,
-            additionalDataSetter: (Context) -> Unit = {}
+        config: KonanConfig,
+        frontendOutput: FrontendPhaseOutput.Full,
+        psiToIrOutput: PsiToIrOutput.ForBackend,
+        additionalDataSetter: (Context) -> Unit = {}
     ) = Context(
             config,
             frontendOutput.moduleDescriptor.getIncludedLibraryDescriptors(config).toSet() + frontendOutput.moduleDescriptor,

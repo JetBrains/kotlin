@@ -43,6 +43,17 @@ compileCompilerKotlin {
             '-opt-in=kotlin.RequiresOptIn',
             "-opt-in=kotlinx.cinterop.BetaInteropApi",
             "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+            "-opt-in=org.jetbrains.kotlin.backend.konan.InternalKonanApi",
+            '-Xskip-prerelease-check']
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.freeCompilerArgs += [
+            '-opt-in=kotlin.RequiresOptIn',
+            "-opt-in=kotlinx.cinterop.BetaInteropApi",
+            "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+            "-opt-in=org.jetbrains.kotlin.backend.konan.InternalKonanApi",
             '-Xskip-prerelease-check']
 }
 
@@ -100,6 +111,7 @@ kotlinNativeInterop {
     files {
         linker 'clang++'
         link configurations.commonFilesBitcode
+
 
         // TODO: These should come from some sort of commonFilesApi configuration
         headers fileTree('../common/src/files/headers') {
@@ -159,6 +171,9 @@ dependencies {
     kotlin_script_runtime_jar project(":kotlin-script-runtime")
 
     compilerApi project(":kotlin-native:utilities:basic-utils")
+    compilerApi project(":kotlin-native:utilities:descriptor-utils")
+    compilerApi project(":kotlin-native:objcexport")
+    compilerApi project(":kotlin-native:model")
 
     compilerImplementation project(":kotlin-compiler")
     compilerApi project(":native:kotlin-native-utils")

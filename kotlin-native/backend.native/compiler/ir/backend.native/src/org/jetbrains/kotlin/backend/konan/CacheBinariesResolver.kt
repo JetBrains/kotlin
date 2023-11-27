@@ -32,8 +32,8 @@ internal class ResolvedCacheBinaries(val static: List<String>, val dynamic: List
  * Find binary files for compiler caches that are actually required for the linkage.
  */
 internal fun resolveCacheBinaries(
-        cachedLibraries: CachedLibraries,
-        dependenciesTrackingResult: DependenciesTrackingResult,
+    cachedLibraries: CachedLibraries,
+    dependenciesTrackingResult: DependenciesTrackingResult,
 ): ResolvedCacheBinaries {
     val staticCaches = mutableListOf<String>()
     val dynamicCaches = mutableListOf<String>()

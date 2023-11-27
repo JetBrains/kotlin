@@ -27,10 +27,10 @@ private fun IrBuilderWithScope.irConstantInt(int: Int) = irConstantPrimitive(irI
 private fun IrBuilderWithScope.irConstantBoolean(boolean: Boolean) = irConstantPrimitive(irBoolean(boolean))
 
 internal class KTypeGenerator(
-        val context: KonanBackendContext,
-        val irFile: IrFile,
-        val irElement: IrElement,
-        val needExactTypeParameters: Boolean = false
+    val context: KonanBackendContext,
+    val irFile: IrFile,
+    val irElement: IrElement,
+    val needExactTypeParameters: Boolean = false
 ) {
     private val symbols = context.ir.symbols
 
