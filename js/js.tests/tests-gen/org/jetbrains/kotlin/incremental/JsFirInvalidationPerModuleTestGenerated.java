@@ -21,6 +21,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvalidationPerModuleTest {
     @Test
+    @TestMetadata("abstractClassWithJsExport")
+    public void testAbstractClassWithJsExport() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/abstractClassWithJsExport/");
+    }
+
+    @Test
     @TestMetadata("addUpdateRemoveDependentFile")
     public void testAddUpdateRemoveDependentFile() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentFile/");
@@ -59,6 +65,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
     @TestMetadata("classFunctionsAndFields")
     public void testClassFunctionsAndFields() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/classFunctionsAndFields/");
+    }
+
+    @Test
+    @TestMetadata("classWithJsExport")
+    public void testClassWithJsExport() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/classWithJsExport/");
     }
 
     @Test
@@ -302,6 +314,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
     }
 
     @Test
+    @TestMetadata("interfaceWithJsExport")
+    public void testInterfaceWithJsExport() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/interfaceWithJsExport/");
+    }
+
+    @Test
     @TestMetadata("jsCode")
     public void testJsCode() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/jsCode/");
@@ -347,6 +365,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
     @TestMetadata("jsModuleAnnotationOnObjectWithUsage")
     public void testJsModuleAnnotationOnObjectWithUsage() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/jsModuleAnnotationOnObjectWithUsage/");
+    }
+
+    @Test
+    @TestMetadata("jsName")
+    public void testJsName() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/jsName/");
     }
 
     @Test
