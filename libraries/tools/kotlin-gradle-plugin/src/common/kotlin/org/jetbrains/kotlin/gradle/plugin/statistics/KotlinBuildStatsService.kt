@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAc
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
-import org.jetbrains.kotlin.gradle.utils.currentBuild
-import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -192,7 +190,7 @@ internal abstract class KotlinBuildStatsService internal constructor() : Statist
     /**
      * Collects metrics at the end of a build
      */
-    open fun recordBuildFinish(action: String?, buildFailed: Boolean, metric: NonSynchronizedMetricsContainer) {}
+    open fun recordBuildFinish(action: String?, buildFailed: Boolean, metricsContainer: NonSynchronizedMetricsContainer) {}
 
     open fun recordProjectsEvaluated(project: Project) {}
 }
@@ -305,7 +303,7 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         report(StringMetrics.valueOf(name), value, subprojectName, weight)
 
     //only one jmx bean service should report global metrics
-    override fun recordBuildFinish(action: String?, buildFailed: Boolean, metrics: NonSynchronizedMetricsContainer) {
-        KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, metrics)
+    override fun recordBuildFinish(action: String?, buildFailed: Boolean, metricsContainer: NonSynchronizedMetricsContainer) {
+        KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, metricsContainer)
     }
 }

@@ -267,10 +267,10 @@ class KotlinBuildStatHandler {
         sessionLogger: BuildSessionLogger,
         action: String?,
         buildFailed: Boolean,
-        metrics: NonSynchronizedMetricsContainer,
+        metricsContainer: NonSynchronizedMetricsContainer,
     ) {
         runSafe("${KotlinBuildStatHandler::class.java}.reportBuildFinish") {
-            metrics.sendToConsumer(sessionLogger)
+            metricsContainer.sendToConsumer(sessionLogger)
             sessionLogger.finishBuildSession(action, buildFailed)
         }
     }

@@ -14,14 +14,18 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
+import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
+import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
@@ -112,18 +116,22 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
                 })
                 spec.parameters.useBuildFinishFlowAction.set(GradleVersion.current().baseVersion >= GradleVersion.version("8.1"))
             }.also { buildService ->
-                when {
-                    GradleVersion.current().baseVersion < GradleVersion.version("8.1") ->
-                        BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)
-                    else -> StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult()
+                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)
+                if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
+                    StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult()
                 }
             }
         }
     }
 
     override fun onFinish(event: FinishEvent?) {
-        if ((event is TaskFinishEvent) && (event.result is TaskFailureResult)) {
-            buildFailed = true
+        if (event is TaskFinishEvent) {
+            if (event.result is TaskFailureResult) {
+                buildFailed = true
+            }
+
+            val taskExecutionResult = TaskExecutionResults[event.descriptor.taskPath]
+            taskExecutionResult?.also { reportTaskMetrics(it, event) }
         }
     }
 
@@ -141,6 +149,31 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             it.recordBuildFinish(action, buildFailed, fusMetricsConsumer)
         }
         KotlinBuildStatsService.closeServices()
+    }
+    private fun reportTaskMetrics(taskExecutionResult: TaskExecutionResult, event: TaskFinishEvent) {
+        val totalTimeMs = event.result.endTime - event.result.startTime
+        val buildMetrics = taskExecutionResult.buildMetrics
+        fusMetricsConsumer.report(NumericalMetrics.COMPILATION_DURATION, totalTimeMs)
+        fusMetricsConsumer.report(BooleanMetrics.KOTLIN_COMPILATION_FAILED, event.result is FailureResult)
+        fusMetricsConsumer.report(NumericalMetrics.COMPILATIONS_COUNT, 1)
+
+        val metricsMap = buildMetrics.buildPerformanceMetrics.asMap()
+
+        val linesOfCode = metricsMap[GradleBuildPerformanceMetric.ANALYZED_LINES_NUMBER]
+        if (linesOfCode != null && linesOfCode > 0 && totalTimeMs > 0) {
+            fusMetricsConsumer.report(NumericalMetrics.COMPILED_LINES_OF_CODE, linesOfCode)
+            fusMetricsConsumer.report(NumericalMetrics.COMPILATION_LINES_PER_SECOND, linesOfCode * 1000 / totalTimeMs, null, linesOfCode)
+            metricsMap[GradleBuildPerformanceMetric.ANALYSIS_LPS]?.also { value ->
+                fusMetricsConsumer.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, value, null, linesOfCode)
+            }
+            metricsMap[GradleBuildPerformanceMetric.CODE_GENERATION_LPS]?.also { value ->
+                fusMetricsConsumer.report(NumericalMetrics.CODE_GENERATION_LINES_PER_SECOND, value, null, linesOfCode)
+            }
+        }
+        fusMetricsConsumer.report(
+            NumericalMetrics.INCREMENTAL_COMPILATIONS_COUNT,
+            if (taskExecutionResult.buildMetrics.buildAttributes.asMap().isEmpty()) 1 else 0
+        )
     }
 }
 

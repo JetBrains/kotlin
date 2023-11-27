@@ -61,7 +61,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
     override fun apply(project: Project) {
         project.registerDefaultVariantImplementations()
-        val buildFusService = BuildFusService.registerIfAbsent(project, pluginVersion)
+        BuildFusService.registerIfAbsent(project, pluginVersion)
 
         project.gradle.projectsEvaluated {
             whenBuildEvaluated(project)
@@ -80,7 +80,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, pluginVersion)
         }
 
-        BuildMetricsService.registerIfAbsent(project, buildFusService)
+        BuildMetricsService.registerIfAbsent(project)
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {
