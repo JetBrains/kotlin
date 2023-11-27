@@ -156,9 +156,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         get() = listOf(JvmEnvironmentConfigurationDirectives)
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(
-            service(::CompiledClassesManager),
-        )
+        get() = listOf(service(::CompiledClassesManager))
 
     override fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {
         register(STRING_CONCAT, JVMConfigurationKeys.STRING_CONCAT)
