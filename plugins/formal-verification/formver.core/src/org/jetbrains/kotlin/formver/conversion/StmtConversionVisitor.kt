@@ -142,30 +142,34 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         val leftType = left.type
         val rightType = right.type
         // TODO: check whether isNullVal can be used here with no loss of generality.
-        return if (leftType is NullableTypeEmbedding && rightType !is NullableTypeEmbedding) {
-            And(
-                NeCmp(left, leftType.nullVal),
-                // TODO: Replace the Eq comparison with a member call function to `left.equals`
-                EqCmp(left.withType(leftType.elementType), right.withType(leftType.elementType)),
-            )
-        } else if (leftType is NullableTypeEmbedding && rightType is NullableTypeEmbedding) {
-            Or(
-                And(
-                    EqCmp(left, leftType.nullVal),
-                    EqCmp(right, rightType.nullVal),
-                ),
-                // TODO: Replace the Eq comparison with a member call function to `left.equals`
-                And(
+        // TODO: In all branches, replace the final Eq comparison with a member call function to `left.equals`
+        return when {
+            leftType is NullableTypeEmbedding && rightType !is NullableTypeEmbedding ->
+                share(left) { sharedLeft ->
                     And(
-                        NeCmp(left, leftType.nullVal),
-                        NeCmp(right, rightType.nullVal),
-                    ),
-                    EqCmp(left.withType(leftType.elementType), right.withType(leftType.elementType)),
-                ),
-            )
-        } else {
-            // TODO: Replace the Eq comparison with a member call function to `left.equals`
-            EqCmp(left, right.withType(leftType))
+                        NeCmp(sharedLeft, leftType.nullVal),
+                        EqCmp(sharedLeft.withType(leftType.elementType), right.withType(leftType.elementType)),
+                    )
+                }
+            leftType is NullableTypeEmbedding && rightType is NullableTypeEmbedding ->
+                share(left) { sharedLeft ->
+                    share(right) { sharedRight ->
+                        Or(
+                            And(
+                                EqCmp(sharedLeft, leftType.nullVal),
+                                EqCmp(sharedRight, rightType.nullVal),
+                            ),
+                            And(
+                                And(
+                                    NeCmp(sharedLeft, leftType.nullVal),
+                                    NeCmp(sharedRight, rightType.nullVal),
+                                ),
+                                EqCmp(sharedLeft.withType(leftType.elementType), sharedRight.withType(leftType.elementType)),
+                            ),
+                        )
+                    }
+                }
+            else -> EqCmp(left, right.withType(leftType))
         }
     }
 
@@ -368,16 +372,14 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         val expType = data.embedType(safeCallExpression.resolvedType)
         val checkedSafeCallSubjectType = data.embedType(safeCallExpression.checkedSubjectRef.value.resolvedType)
 
-        val storedReceiverDecl = data.declareAnonVar(receiver.type, receiver)
-        return Block(
-            storedReceiverDecl,
+        return share(receiver) { sharedReceiver ->
             If(
-                storedReceiverDecl.variable.notNullCmp(),
-                data.withCheckedSafeCallSubject(storedReceiverDecl.variable.withType(checkedSafeCallSubjectType)) { convert(selector) },
+                sharedReceiver.notNullCmp(),
+                data.withCheckedSafeCallSubject(sharedReceiver.withType(checkedSafeCallSubjectType)) { convert(selector) },
                 expType.getNullable().nullVal,
                 expType
-            ),
-        )
+            )
+        }
     }
 
     override fun visitCheckedSafeCallSubject(

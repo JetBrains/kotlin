@@ -15,14 +15,12 @@ method global$fun_testSafeCall$fun_take$NT_class_global$class_Foo$return$NT_Unit
     acc((dom$Casting$cast(local$foo, dom$Type$global$class_Foo()): Ref).class_Foo$member_x, wildcard)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Unit()))
 {
-  var anonymous$0: dom$Nullable[Ref]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Foo()))
-  anonymous$0 := local$foo
-  if (anonymous$0 != (dom$Nullable$null(): dom$Nullable[Ref])) {
-    var anonymous$1: dom$Unit
-    anonymous$1 := class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit((dom$Casting$cast(anonymous$0,
+  if (local$foo != (dom$Nullable$null(): dom$Nullable[Ref])) {
+    var anonymous$0: dom$Unit
+    anonymous$0 := class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit((dom$Casting$cast(local$foo,
       dom$Type$global$class_Foo()): Ref))
-    ret$0 := (dom$Casting$cast(anonymous$1, dom$Type$special$Nullable(dom$Type$Unit())): dom$Nullable[dom$Unit])
+    ret$0 := (dom$Casting$cast(anonymous$0, dom$Type$special$Nullable(dom$Type$Unit())): dom$Nullable[dom$Unit])
   } else {
     ret$0 := (dom$Nullable$null(): dom$Nullable[dom$Unit])}
   goto label$ret$0
@@ -44,14 +42,12 @@ method global$fun_testSafeCallNonNullable$fun_take$T_class_global$class_Foo$retu
   ensures acc(local$foo.class_Foo$member_x, wildcard)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Unit()))
 {
-  var anonymous$0: Ref
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$global$class_Foo())
-  anonymous$0 := local$foo
-  if ((dom$Casting$cast(anonymous$0, dom$Type$special$Nullable(dom$Type$global$class_Foo())): dom$Nullable[Ref]) !=
+  if ((dom$Casting$cast(local$foo, dom$Type$special$Nullable(dom$Type$global$class_Foo())): dom$Nullable[Ref]) !=
   (dom$Nullable$null(): dom$Nullable[Ref])) {
-    var anonymous$1: dom$Unit
-    anonymous$1 := class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(anonymous$0)
-    ret$0 := (dom$Casting$cast(anonymous$1, dom$Type$special$Nullable(dom$Type$Unit())): dom$Nullable[dom$Unit])
+    var anonymous$0: dom$Unit
+    anonymous$0 := class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(local$foo)
+    ret$0 := (dom$Casting$cast(anonymous$0, dom$Type$special$Nullable(dom$Type$Unit())): dom$Nullable[dom$Unit])
   } else {
     ret$0 := (dom$Nullable$null(): dom$Nullable[dom$Unit])}
   goto label$ret$0
@@ -69,11 +65,9 @@ method global$fun_testSafeCallProperty$fun_take$NT_class_global$class_Foo$return
     acc((dom$Casting$cast(local$foo, dom$Type$global$class_Foo()): Ref).class_Foo$member_x, wildcard)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
-  var anonymous$0: dom$Nullable[Ref]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Foo()))
-  anonymous$0 := local$foo
-  if (anonymous$0 != (dom$Nullable$null(): dom$Nullable[Ref])) {
-    ret$0 := (dom$Casting$cast((dom$Casting$cast(anonymous$0, dom$Type$global$class_Foo()): Ref).class_Foo$member_x,
+  if (local$foo != (dom$Nullable$null(): dom$Nullable[Ref])) {
+    ret$0 := (dom$Casting$cast((dom$Casting$cast(local$foo, dom$Type$global$class_Foo()): Ref).class_Foo$member_x,
       dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
   } else {
     ret$0 := (dom$Nullable$null(): dom$Nullable[Int])}
@@ -90,12 +84,10 @@ method global$fun_testSafeCallPropertyNonNullable$fun_take$T_class_global$class_
   ensures acc(local$foo.class_Foo$member_x, wildcard)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
-  var anonymous$0: Ref
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$global$class_Foo())
-  anonymous$0 := local$foo
-  if ((dom$Casting$cast(anonymous$0, dom$Type$special$Nullable(dom$Type$global$class_Foo())): dom$Nullable[Ref]) !=
+  if ((dom$Casting$cast(local$foo, dom$Type$special$Nullable(dom$Type$global$class_Foo())): dom$Nullable[Ref]) !=
   (dom$Nullable$null(): dom$Nullable[Ref])) {
-    ret$0 := (dom$Casting$cast(anonymous$0.class_Foo$member_x, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+    ret$0 := (dom$Casting$cast(local$foo.class_Foo$member_x, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
   } else {
     ret$0 := (dom$Nullable$null(): dom$Nullable[Int])}
   goto label$ret$0

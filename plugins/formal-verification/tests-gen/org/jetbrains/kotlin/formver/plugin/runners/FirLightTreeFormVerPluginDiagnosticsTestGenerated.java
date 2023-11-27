@@ -424,6 +424,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("smartcast.kt")
+        public void testSmartcast() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/smartcast.kt");
+        }
+
+        @Test
         @TestMetadata("subtyping.kt")
         public void testSubtyping() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/subtyping.kt");

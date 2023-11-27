@@ -145,12 +145,10 @@ method global$fun_safe_call$fun_take$NT_class_pkg$kotlin$global$class_String$ret
   ensures local$s != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
     acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_String$member_length, wildcard)
 {
-  var anonymous$0: dom$Nullable[Ref]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$s): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$kotlin$global$class_String()))
-  anonymous$0 := local$s
-  if (anonymous$0 != (dom$Nullable$null(): dom$Nullable[Ref])) {
-    var anonymous$1: Int
-    anonymous$1 := pkg$kotlin$class_Any$fun_hashCode$fun_take$T_Any$return$T_Int((dom$Casting$cast((dom$Casting$cast(anonymous$0,
+  if (local$s != (dom$Nullable$null(): dom$Nullable[Ref])) {
+    var anonymous$0: Int
+    anonymous$0 := pkg$kotlin$class_Any$fun_hashCode$fun_take$T_Any$return$T_Int((dom$Casting$cast((dom$Casting$cast(local$s,
       dom$Type$pkg$kotlin$global$class_String()): Ref), dom$Type$Any()): dom$Any))
   }
   label label$ret$0
@@ -175,11 +173,9 @@ method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_S
     acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_String$member_length, wildcard)
 {
   var local0$l: dom$Nullable[Int]
-  var anonymous$0: dom$Nullable[Ref]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$s): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$kotlin$global$class_String()))
-  anonymous$0 := local$s
-  if (anonymous$0 != (dom$Nullable$null(): dom$Nullable[Ref])) {
-    local0$l := (dom$Casting$cast((dom$Casting$cast(anonymous$0, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_String$member_length,
+  if (local$s != (dom$Nullable$null(): dom$Nullable[Ref])) {
+    local0$l := (dom$Casting$cast((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_String$member_length,
       dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
   } else {
     local0$l := (dom$Nullable$null(): dom$Nullable[Int])}
@@ -210,23 +206,21 @@ method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_I
     acc((dom$Casting$cast(local$foo, dom$Type$global$class_Foo()): Ref).class_Foo$member_v, wildcard)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
-  var anonymous$2: dom$Nullable[Ref]
-  var anonymous$1: dom$Nullable[Ref]
   var anonymous$0: dom$Nullable[Ref]
+  var anonymous$1: dom$Nullable[Ref]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Foo()))
-  anonymous$0 := local$foo
-  if (anonymous$0 != (dom$Nullable$null(): dom$Nullable[Ref])) {
-    anonymous$1 := class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo((dom$Casting$cast(anonymous$0,
+  if (local$foo != (dom$Nullable$null(): dom$Nullable[Ref])) {
+    anonymous$1 := class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo((dom$Casting$cast(local$foo,
       dom$Type$global$class_Foo()): Ref))
   } else {
     anonymous$1 := (dom$Nullable$null(): dom$Nullable[Ref])}
   if (anonymous$1 != (dom$Nullable$null(): dom$Nullable[Ref])) {
-    anonymous$2 := class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo((dom$Casting$cast(anonymous$1,
+    anonymous$0 := class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo((dom$Casting$cast(anonymous$1,
       dom$Type$global$class_Foo()): Ref))
   } else {
-    anonymous$2 := (dom$Nullable$null(): dom$Nullable[Ref])}
-  if (anonymous$2 != (dom$Nullable$null(): dom$Nullable[Ref])) {
-    ret$0 := (dom$Casting$cast((dom$Casting$cast(anonymous$2, dom$Type$global$class_Foo()): Ref).class_Foo$member_v,
+    anonymous$0 := (dom$Nullable$null(): dom$Nullable[Ref])}
+  if (anonymous$0 != (dom$Nullable$null(): dom$Nullable[Ref])) {
+    ret$0 := (dom$Casting$cast((dom$Casting$cast(anonymous$0, dom$Type$global$class_Foo()): Ref).class_Foo$member_v,
       dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
   } else {
     ret$0 := (dom$Nullable$null(): dom$Nullable[Int])}
