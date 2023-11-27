@@ -6,7 +6,6 @@ package maven
 //   Mangled name: maven.MavenProject
 //   Public signature: maven/MavenProject|null[0]
 interface MavenProject {
-
 }
 
 // MODULE: lib
