@@ -21,8 +21,7 @@ fun Bar() {
 @NonRestartableComposable
 @Composable
 fun Bar(%composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Bar)<HasDef...>,<NoDefa...>,<Multip...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Bar)<HasDef...>,<NoDefa...>,<Multip...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -32,5 +31,5 @@ fun Bar(%composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

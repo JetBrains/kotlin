@@ -64,8 +64,7 @@ val localBoxMeasurePolicy: MeasurePolicy = MeasurePolicy { <unused var>: List<Me
 @Composable
 @ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
 fun LocalBox(modifier: Modifier?, content: @[ExtensionFunctionType] Function3<LocalBoxScope, Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "CC(LocalBox)P(1)<Layout...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "CC(LocalBox)P(1)<Layout...>:Test.kt")
   if (%default and 0b0001 != 0) {
     modifier = Companion
   }
@@ -75,5 +74,5 @@ fun LocalBox(modifier: Modifier?, content: @[ExtensionFunctionType] Function3<Lo
     content(LocalBoxScopeInstance, %composer, 0b0110 or 0b01110000 and %changed@LocalBox)
     sourceInformationMarkerEnd(%composer)
   }, modifier, tmp0_measurePolicy, %composer, 0b000110000000 or 0b01110000 and %changed shl 0b0011, 0)
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

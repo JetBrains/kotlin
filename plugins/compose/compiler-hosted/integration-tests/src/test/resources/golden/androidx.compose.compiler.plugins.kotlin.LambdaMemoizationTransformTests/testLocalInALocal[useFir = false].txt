@@ -26,21 +26,19 @@ fun Example(%composer: Composer?, %changed: Int) {
     }
     @Composable
     fun A(%composer: Composer?, %changed: Int) {
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(A):Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "C(A):Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
       if (isTraceInProgress()) {
         traceEventEnd()
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
     }
     @Composable
     @ComposableInferredTarget(scheme = "[0[0]]")
     fun B(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(B)<conten...>:Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "C(B)<conten...>:Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -48,16 +46,15 @@ fun Example(%composer: Composer?, %changed: Int) {
       if (isTraceInProgress()) {
         traceEventEnd()
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
     }
     @Composable
     fun C(%composer: Composer?, %changed: Int) {
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(C)<B>:Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "C(C)<{>,<B>:Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      B(composableLambda(%composer, <>, false) { %composer: Composer?, %changed: Int ->
+      B(rememberComposableLambda(<>, false, { %composer: Composer?, %changed: Int ->
         sourceInformation(%composer, "C<A()>:Test.kt")
         if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
           if (isTraceInProgress()) {
@@ -70,11 +67,11 @@ fun Example(%composer: Composer?, %changed: Int) {
         } else {
           %composer.skipToGroupEnd()
         }
-      }, %composer, 0b0110)
+      }, %composer, 0b00110110), %composer, 0b0110)
       if (isTraceInProgress()) {
         traceEventEnd()
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
     }
     if (isTraceInProgress()) {
       traceEventEnd()

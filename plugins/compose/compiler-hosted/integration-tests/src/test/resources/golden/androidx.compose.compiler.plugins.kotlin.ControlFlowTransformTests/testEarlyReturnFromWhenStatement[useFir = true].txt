@@ -26,14 +26,13 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     val state = <block>{
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         mutableStateOf(
           value = false
         )
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp0_group
     }
     val tmp0_subject = state.value

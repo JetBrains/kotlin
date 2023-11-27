@@ -17,29 +17,28 @@ import androidx.compose.runtime.*
 @Composable
 fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<Wrappe...>:Test.kt")
+  sourceInformation(%composer, "C(Test)<{>,<Wrappe...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  Wrapper(composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
+  Wrapper(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<rememb...>:Test.kt")
     if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       %composer.cache(%composer.changed(param) or %composer.changed(unstable)) {
         param
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       if (isTraceInProgress()) {
         traceEventEnd()
       }
     } else {
       %composer.skipToGroupEnd()
     }
-  }, %composer, 0b0110)
+  }, %composer, 0b00110110), %composer, 0b0110)
   if (isTraceInProgress()) {
     traceEventEnd()
   }

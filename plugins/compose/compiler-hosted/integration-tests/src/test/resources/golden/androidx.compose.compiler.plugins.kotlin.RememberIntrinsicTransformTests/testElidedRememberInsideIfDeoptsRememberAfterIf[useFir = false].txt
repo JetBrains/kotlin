@@ -22,8 +22,7 @@ fun app(x: Boolean) {
 @Composable
 @NonRestartableComposable
 fun app(x: Boolean, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(app)<rememb...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(app)<rememb...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -31,12 +30,11 @@ fun app(x: Boolean, %composer: Composer?, %changed: Int) {
     %composer.startReplaceableGroup(<>)
     sourceInformation(%composer, "<rememb...>")
     val tmp1_group = if (x) {
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         1
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp0_group
     } else {
       2
@@ -45,16 +43,15 @@ fun app(x: Boolean, %composer: Composer?, %changed: Int) {
     tmp1_group
   }
   val b = <block>{
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp2_group = %composer.cache(false) {
       2
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     tmp2_group
   }
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

@@ -23,13 +23,14 @@ fun Example(x: Int?) {
 @NonRestartableComposable
 @Composable
 fun Example(x: Int?, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Example)<R()>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
   val y = <block>{
     val <elvis> = x
+    %composer.startReplaceableGroup(<>)
+    sourceInformation(%composer, "<R()>")
     val tmp0_group = when {
       <elvis> == null -> {
         R(%composer, 0)
@@ -38,10 +39,11 @@ fun Example(x: Int?, %composer: Composer?, %changed: Int) {
         <elvis>
       }
     }
+    %composer.endReplaceableGroup()
     tmp0_group
   }
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

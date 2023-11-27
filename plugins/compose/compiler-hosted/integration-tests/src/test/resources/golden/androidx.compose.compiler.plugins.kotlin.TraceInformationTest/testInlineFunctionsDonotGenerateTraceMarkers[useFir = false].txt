@@ -25,10 +25,9 @@ fun Test(condition: Boolean) {
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "CC(Wrapper)<conten...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "CC(Wrapper)<conten...>:Test.kt")
   content(%composer, 0b1110 and %changed)
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }
 @Composable
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {

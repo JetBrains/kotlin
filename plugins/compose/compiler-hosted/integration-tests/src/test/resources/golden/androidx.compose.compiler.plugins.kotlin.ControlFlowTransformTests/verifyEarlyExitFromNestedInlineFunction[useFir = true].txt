@@ -27,8 +27,7 @@ fun Test(condition: Boolean) {
 @Composable
 @NonRestartableComposable
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Test)<Text("...>,<Inline...>,<Text("...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Test)<Text("...>,<Inline...>,<Text("...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -54,5 +53,5 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }
