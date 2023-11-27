@@ -11,10 +11,10 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.utils.CommandFallback
 import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
-import org.jetbrains.kotlin.gradle.utils.runCommand
+import org.jetbrains.kotlin.gradle.utils.runCommandWithFallback
 import java.io.File
-import java.io.IOException
 
 /**
  * The task takes the path to the Podfile and calls `pod install`
@@ -45,25 +45,35 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
 
     @TaskAction
     open fun doPodInstall() {
-        // env is used here to work around the JVM PATH caching when spawning a child process with custom environment, i.e. LC_ALL
-        // The caching causes the ProcessBuilder to ignore changes in the PATH that may occur on incremental runs of the Gradle daemon
-        // KT-60394
-        val podInstallCommand = listOf("env", "pod", "install")
-
-        runCommand(podInstallCommand,
-                   logger,
-                   errorHandler = { retCode, output, process -> sharedHandleError(podInstallCommand, retCode, output, process) },
-                   processConfiguration = {
-                       directory(workingDir.get())
-                       // CocoaPods requires to be run with Unicode external encoding
-                       environment().putIfAbsent("LC_ALL", "en_US.UTF-8")
-                   })
+        runPodInstall(false)
 
         with(podsXcodeProjDirProvider.get()) {
             check(exists() && isDirectory) {
                 "The directory 'Pods/Pods.xcodeproj' was not created as a result of the `pod install` call."
             }
         }
+    }
+
+    private fun runPodInstall(updateRepo: Boolean): String {
+        // env is used here to work around the JVM PATH caching when spawning a child process with custom environment, i.e. LC_ALL
+        // The caching causes the ProcessBuilder to ignore changes in the PATH that may occur on incremental runs of the Gradle daemon
+        // KT-60394
+        val podInstallCommand = listOfNotNull("env", "pod", "install", if (updateRepo) "--repo-update" else null)
+
+        return runCommandWithFallback(podInstallCommand,
+                                      logger,
+                                      fallback = { retCode, output, process ->
+                                          if (output.contains("out-of-date source repos which you can update with `pod repo update` or with `pod install --repo-update`") && updateRepo.not()) {
+                                              CommandFallback.Action(runPodInstall(true))
+                                          } else {
+                                              CommandFallback.Error(sharedHandleError(podInstallCommand, retCode, output, process))
+                                          }
+                                      },
+                                      processConfiguration = {
+                                          directory(workingDir.get())
+                                          // CocoaPods requires to be run with Unicode external encoding
+                                          environment().putIfAbsent("LC_ALL", "en_US.UTF-8")
+                                      })
     }
 
     private fun sharedHandleError(podInstallCommand: List<String>, retCode: Int, error: String, process: Process): String? {
