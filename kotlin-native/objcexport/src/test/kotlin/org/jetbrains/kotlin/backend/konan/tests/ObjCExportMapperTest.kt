@@ -67,20 +67,20 @@ class ObjCExportMapperTest : InlineSourceTestEnvironment {
         val objcExportNamer = createObjCExportNamer(mapper = objcExportMapper)
 
         val objcExportTranslator = ObjCExportTranslatorImpl(
-            generator = ObjCExportHeaderGeneratorImpl(
-                context = BasicPhaseContext(
-                    KonanConfig(kotlinCoreEnvironment.project, kotlinCoreEnvironment.configuration)
+                generator = ObjCExportHeaderGeneratorImpl(
+                        context = BasicPhaseContext(
+                                KonanConfig(kotlinCoreEnvironment.project, kotlinCoreEnvironment.configuration)
+                        ),
+                        moduleDescriptors = listOf(module),
+                        mapper = objcExportMapper,
+                        namer = objcExportNamer,
+                        problemCollector = ObjCExportProblemCollector.SILENT,
+                        objcGenerics = true
                 ),
-                moduleDescriptors = listOf(module),
                 mapper = objcExportMapper,
                 namer = objcExportNamer,
                 problemCollector = ObjCExportProblemCollector.SILENT,
                 objcGenerics = true
-            ),
-            mapper = objcExportMapper,
-            namer = objcExportNamer,
-            problemCollector = ObjCExportProblemCollector.SILENT,
-            objcGenerics = true
         )
 
         val listClassDescriptor = module.findClassAcrossModuleDependencies(ClassId.fromString("kotlin/collections/List"))!!
@@ -88,7 +88,7 @@ class ObjCExportMapperTest : InlineSourceTestEnvironment {
 
         /* Represents List<Int> */
         val listOfIntType = KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, listClassDescriptor, listOf(
-            TypeProjectionImpl(KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, intClassDescriptor, emptyList()))
+                TypeProjectionImpl(KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, intClassDescriptor, emptyList()))
         ))
 
         val typeMapper = assertNotNull(objcExportMapper.getCustomTypeMapper(listClassDescriptor))

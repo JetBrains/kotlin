@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
+import org.jetbrains.kotlin.backend.konan.InternalKonanApi
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.getCompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -36,7 +37,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
  * * On the other hand, middle- and bitcode phases are hard to decouple due to the way the code was written many years ago.
  * It will take some time to rewrite it properly.
  */
-internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext {
+@InternalKonanApi
+interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext {
     val messageCollector: MessageCollector
 
     /**
@@ -45,7 +47,8 @@ internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingCo
     fun dispose()
 }
 
-internal open class BasicPhaseContext(
+@InternalKonanApi
+open class BasicPhaseContext(
         override val config: KonanConfig,
 ) : PhaseContext {
     override var inVerbosePhase = false

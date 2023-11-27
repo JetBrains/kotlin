@@ -29,12 +29,6 @@ sourceSets {
     cli_bc {
         kotlin.srcDir 'cli.bc/src'
     }
-
-    test {
-        kotlin {
-            srcDir 'functionalTest/src'
-        }
-    }
 }
 
 compileCompilerKotlin {
@@ -47,15 +41,7 @@ compileCompilerKotlin {
             '-Xskip-prerelease-check']
 }
 
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += [
-            '-opt-in=kotlin.RequiresOptIn',
-            "-opt-in=kotlinx.cinterop.BetaInteropApi",
-            "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-            "-opt-in=org.jetbrains.kotlin.backend.konan.InternalKonanApi",
-            '-Xskip-prerelease-check']
-}
+
 
 TasksKt.optInToUnsafeDuringIrConstructionAPI(project)
 
@@ -202,11 +188,6 @@ dependencies {
     cli_bcApi sourceSets.compiler.output
 
     cli_bcApiElements sourceSets.cli_bc.output
-
-    testImplementation(project(path: ":compiler:tests-common", configuration: "tests-jar"))
-    testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.junit.jupiter.params)
-    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 classes.dependsOn 'compilerClasses', 'cli_bcClasses'
@@ -267,26 +248,3 @@ RepoArtifacts.sourcesJar(project) {
 }
 
 RepoArtifacts.javadocJar(project)
-
-/*
-Configure 'test' task
- */
-
-TasksKt.projectTest(project, JUnitMode.JUnit5)
-tasks {
-    test {
-        useJUnitPlatform()
-        dependsOn ':kotlin-native:dist'
-        systemProperty("org.jetbrains.kotlin.native.home", distDir.canonicalPath)
-        workingDir(rootProject.projectDir)
-    }
-}
-
-kotlin {
-    target {
-        compilations {
-            test.associateWith(compiler)
-        }
-    }
-}
-

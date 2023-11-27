@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.konan.InternalKonanApi
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.reportCompilationWarning
@@ -17,7 +18,8 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-internal class ObjCExportHeaderGeneratorImpl(
+@InternalKonanApi
+class ObjCExportHeaderGeneratorImpl(
         val context: PhaseContext,
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
