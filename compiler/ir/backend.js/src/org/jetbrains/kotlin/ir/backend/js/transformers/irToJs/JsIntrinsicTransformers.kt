@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
+import java.lang.Exception
 
 typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
 
@@ -89,7 +90,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(intrinsics.jsIsEs6) { _, _ -> JsBooleanLiteral(backendContext.es6mode) }
 
             add(intrinsics.jsObjectCreateSymbol) { call, context ->
-                val classToCreate = call.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
+                val classToCreate = call.getTypeArgumentOrThrow(0).classifierOrFail.owner as IrClass
                 val className = classToCreate.getClassRef(context.staticContext)
                 objectCreate(prototypeOf(className, context.staticContext), context.staticContext)
             }
@@ -167,17 +168,17 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             for ((type, prefix) in intrinsics.primitiveToTypedArrayMap) {
-                add(intrinsics.primitiveToSizeConstructor[type]!!) { call, context ->
+                add(intrinsics.primitiveToSizeConstructor[type] ?: doError(intrinsics.primitiveToSizeConstructor)) { call, context ->
                     JsNew(JsNameRef("${prefix}Array"), translateCallArguments(call, context))
                 }
-                add(intrinsics.primitiveToLiteralConstructor[type]!!) { call, context ->
+                add(intrinsics.primitiveToLiteralConstructor[type] ?: doError(intrinsics.primitiveToSizeConstructor)) { call, context ->
                     JsNew(JsNameRef("${prefix}Array"), translateCallArguments(call, context))
                 }
             }
 
             add(intrinsics.jsBoxIntrinsic) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                val inlineClass = icUtils.getInlinedClass(call.getTypeArgument(0)!!)!!
+                val inlineClass = icUtils.getInlinedClassOrThrow(call.getTypeArgumentOrThrow(0))
                 val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
 
                 JsNew(constructor.getConstructorRef(context.staticContext), listOf(arg))
@@ -186,7 +187,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsUnboxIntrinsic) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                val inlineClass = icUtils.getInlinedClass(call.getTypeArgument(1)!!)!!
+                val inlineClass = icUtils.getInlinedClassOrThrow(call.getTypeArgumentOrThrow(1))
                 val field = getInlineClassBackingField(inlineClass)
                 val fieldName = context.getNameForField(field)
                 JsNameRef(fieldName, arg).apply { isInlineClassUnboxing = true }
@@ -203,9 +204,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsBind) { call, context: JsGenerationContext ->
-                val receiver = call.getValueArgument(0)!!
+                val receiver = call.getValueArgumentOrThrow(0)
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val jsBindTarget = when (val target = call.getValueArgument(1)!!) {
+                val jsBindTarget = when (val target = call.getValueArgumentOrThrow(1)) {
                     is IrFunctionReference -> {
                         val superClass = call.superQualifierSymbol!!
                         val functionName = context.getNameForMemberFunction(target.symbol.owner as IrSimpleFunction)
@@ -223,9 +224,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsContexfulRef) { call, context: JsGenerationContext ->
-                val receiver = call.getValueArgument(0)!!
+                val receiver = call.getValueArgumentOrThrow(0)
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val target = call.getValueArgument(1) as IrRawFunctionReference
+                val target = call.getValueArgumentOrThrow(1) as IrRawFunctionReference
                 val jsTarget = context.getNameForMemberFunction(target.symbol.owner as IrSimpleFunction)
 
                 JsNameRef(jsTarget, jsReceiver)
@@ -277,7 +278,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.void.owner.getter!!.symbol) { _, context ->
-                val backingField = context.getNameForField(intrinsics.void.owner.backingField!!)
+                val backingField = context.getNameForField(intrinsics.void.owner.backingField ?: doError(intrinsics.void.owner))
                 JsNameRef(backingField)
             }
         }
@@ -291,16 +292,16 @@ private fun translateCallArguments(expression: IrCall, context: JsGenerationCont
 }
 
 private fun MutableMap<IrSymbol, IrCallTransformer>.add(functionSymbol: IrSymbol, t: IrCallTransformer) {
-    put(functionSymbol, t)
+    put(functionSymbol, t.wrappedWithErrorHandler())
 }
 
 private fun MutableMap<IrSymbol, IrCallTransformer>.add(function: IrSimpleFunction, t: IrCallTransformer) {
-    put(function.symbol, t)
+    put(function.symbol, t.wrappedWithErrorHandler())
 }
 
 private fun MutableMap<IrSymbol, IrCallTransformer>.addIfNotNull(symbol: IrSymbol?, t: IrCallTransformer) {
     if (symbol == null) return
-    put(symbol, t)
+    put(symbol, t.wrappedWithErrorHandler())
 }
 
 private fun MutableMap<IrSymbol, IrCallTransformer>.binOp(function: IrSimpleFunctionSymbol, op: JsBinaryOperator) {
@@ -319,5 +320,27 @@ private inline fun MutableMap<IrSymbol, IrCallTransformer>.withTranslatedArgs(
     function: IrSimpleFunctionSymbol,
     crossinline t: (List<JsExpression>) -> JsExpression
 ) {
-    put(function) { call, context -> t(translateCallArguments(call, context)) }
+    put(function) { call, context ->
+        runCatching {
+            t(translateCallArguments(call, context))
+        }.getOrElse {
+            doError(context.createErrorContextInfo(), cause = it)
+        }
+    }
 }
+
+private fun IrCallTransformer.wrappedWithErrorHandler(): IrCallTransformer = { call, context ->
+    runCatching {
+        this@wrappedWithErrorHandler(call, context)
+    }.getOrElse {
+        doError(context.createErrorContextInfo(), cause = it)
+    }
+}
+
+private fun doError(
+    vararg args: Any,
+    cause: Throwable? = null
+): Nothing = throw IllegalStateException(
+    "Unable to complete transformation. Args: ${args.joinToString()}",
+    cause
+)

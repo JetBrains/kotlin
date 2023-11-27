@@ -134,6 +134,8 @@ interface JsCommonInlineClassesUtils : InlineClassesUtils {
      */
     fun getInlinedClass(type: IrType): IrClass?
 
+    fun getInlinedClassOrThrow(type: IrType): IrClass = getInlinedClass(type) ?: error("Unable to get inlined class for type $type")
+
     fun isTypeInlined(type: IrType): Boolean {
         return getInlinedClass(type) != null
     }
