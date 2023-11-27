@@ -38,9 +38,9 @@ import kotlin.time.DurationUnit
 import kotlin.time.measureTimedValue
 
 val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhase, List<String>>>(
-    ::BirJvmNameLowering to listOf(),
+    /*::BirJvmNameLowering to listOf(),
     ::BirJvmStaticInObjectLowering to listOf("JvmStaticInObject"),
-    /*::BirRepeatedAnnotationLowering to listOf("RepeatedAnnotation"),
+    ::BirRepeatedAnnotationLowering to listOf("RepeatedAnnotation"),
     ::BirTypeAliasAnnotationMethodsLowering to listOf("TypeAliasAnnotationMethodsLowering"),
     ::BirProvisionalFunctionExpressionLowering to listOf("FunctionExpression"),
     ::BirJvmOverloadsAnnotationLowering to listOf("JvmOverloadsAnnotation"),
@@ -61,9 +61,9 @@ private val excludedPhases = setOf<String>(
     // This phase removes annotation constructors, but they are still being used,
     // which causes an exception in BIR. It works in IR because removed constructors
     // still have their parent property set.
-    //"Annotation",
+    "Annotation",
     // This phase is not implemented, as it is hardly ever relevant.
-    "AnnotationImplementation",
+    //"AnnotationImplementation",
 )
 
 fun lowerWithBir(
@@ -128,12 +128,13 @@ private fun reconstructPhases(
                 .map { it.second as AbstractNamedCompilerPhase<JvmBackendContext, IrFile, IrFile> }
                 .toMutableList()
 
-            val annotationPhase = filePhases.find { it.name == "Annotation" }!!
-            filePhases.remove(annotationPhase)
-            filePhases.add(
+            /*val annotationPhasesRange = filePhases.subList(filePhases.indexOfFirst { it.name == "Annotation" }, filePhases.indexOfFirst { it.name == "AnnotationImplementation" } + 1)
+            val annotationPhases = annotationPhasesRange.toList()
+            annotationPhasesRange.clear()
+            filePhases.addAll(
                 filePhases.indexOfFirst { it.name == "DirectInvokes" } + 1,
-                annotationPhase
-            )
+                annotationPhases
+            )*/
 
             filePhases.add(
                 filePhases.indexOfFirst { it.name == "FunctionReference" },

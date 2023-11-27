@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
+import org.jetbrains.kotlin.backend.jvm.jvmLoweringPhases
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -32,6 +35,10 @@ open class AbstractIrBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<Cl
         super.configure(builder)
         with(builder) {
             configureDumpHandlersForCodegenTest()
+
+            defaultDirectives {
+                DUMP_IR_FOR_GIVEN_PHASES with listOf(jvmLoweringPhases)
+            }
         }
     }
 }
