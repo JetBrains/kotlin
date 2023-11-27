@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
 
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
@@ -196,5 +197,28 @@ class KotlinNativeCompileArgumentsTest {
             linuxX64SourceFile.absolutePath in arguments.freeArgs,
             "Expected linuxX64 source file to be present in 'freeArgs'"
         )
+    }
+
+    @Test
+    fun `native compilation dependency files should contain native platform dependencies`() {
+        val project = buildProjectWithMPP()
+        project.repositories.mavenLocal()
+        project.repositories.mavenCentralCacheRedirector()
+        val kotlin = project.multiplatformExtension
+
+        kotlin.linuxX64()
+
+        project.evaluate()
+        val nativeCompilation = kotlin.linuxX64().compilations.main
+
+        val expectedDependencies = listOf("iconv", "posix", "zlib", "linux", "builtin").map {
+            "org.jetbrains.kotlin.native.platform.$it"
+        }.toSet()
+
+        val actualDependencies = nativeCompilation.compileDependencyFiles
+            .map { it.name }
+            .toSet()
+
+        assertEquals(expectedDependencies, actualDependencies)
     }
 }
