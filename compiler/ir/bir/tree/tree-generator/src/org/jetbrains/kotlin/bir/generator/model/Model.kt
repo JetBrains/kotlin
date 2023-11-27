@@ -18,15 +18,13 @@ import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 class Element(
     config: ElementConfig,
-    override val name: String,
+    name: String,
     override val packageName: String,
     override val params: List<TypeVariable>,
     override val fields: MutableSet<Field>,
-) : AbstractElement<Element, Field>() {
+) : AbstractElement<Element, Field>(name) {
     override var elementParents: List<ElementRef> = emptyList()
     override var otherParents: MutableList<ClassRef<*>> = mutableListOf()
-    var visitorParent: ElementRef? = null
-    var transformerReturnType: Element? = null
     val targetKind = config.typeKind
     override var kind: ImplementationKind? = null
     override val typeName
@@ -62,8 +60,6 @@ class Element(
 
     override fun toString() = name
 
-    override val visitFunctionName: String
-        get() = error("Not used")
     override val visitorParameterName: String
         get() = error("Not used")
     override val parentInVisitor: Element?
