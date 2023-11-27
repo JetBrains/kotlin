@@ -310,6 +310,17 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             }
         }
 
+        override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias {
+            return typeAlias
+        }
+
+        override fun transformDanglingModifierList(
+            danglingModifierList: FirDanglingModifierList,
+            data: ResolutionMode
+        ): FirDanglingModifierList {
+            return danglingModifierList
+        }
+
         override fun transformErrorPrimaryConstructor(
             errorPrimaryConstructor: FirErrorPrimaryConstructor,
             data: ResolutionMode,
