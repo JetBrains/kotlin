@@ -16,8 +16,7 @@ class Dependency {
 
 val DEPENDENCY_TOP_LEVEL_VAL_FLAG: Flag<*> = TODO()
 
-// MODULE: app
-// DEPENDENCY: lib Binary
+// MODULE: app(lib)
 // FILE: main.kt
 
 package some

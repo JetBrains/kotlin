@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompilerJar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -45,6 +46,8 @@ object StandaloneModeLibraryBinaryTestConfigurator : StandaloneModeConfiguratorB
             useAdditionalService<KtModuleFactory> { KtCombinedModuleFactory() }
             useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
             useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
+
+            this.defaultsProviderBuilder.dependencyKind = DependencyKind.Binary
         }
     }
 
