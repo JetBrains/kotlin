@@ -4,8 +4,7 @@ scopes:
   LocalScope, index = 0
     packages: 0
     classifiers: 0
-    callables: 1
-      val loopVar: kotlin.Int
+    callables: 0
     constructors: 0
 
   LocalScope, index = 1

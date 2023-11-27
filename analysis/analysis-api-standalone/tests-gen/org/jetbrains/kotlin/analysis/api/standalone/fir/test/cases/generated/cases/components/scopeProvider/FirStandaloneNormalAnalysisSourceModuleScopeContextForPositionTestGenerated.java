@@ -53,6 +53,18 @@ public class FirStandaloneNormalAnalysisSourceModuleScopeContextForPositionTestG
     }
 
     @Test
+    @TestMetadata("classPropertyDelegate.kt")
+    public void testClassPropertyDelegate() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/classPropertyDelegate.kt");
+    }
+
+    @Test
+    @TestMetadata("classPropertyInitializer.kt")
+    public void testClassPropertyInitializer() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/classPropertyInitializer.kt");
+    }
+
+    @Test
     @TestMetadata("contextReceiver.kt")
     public void testContextReceiver() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextReceiver.kt");
@@ -146,6 +158,36 @@ public class FirStandaloneNormalAnalysisSourceModuleScopeContextForPositionTestG
     @TestMetadata("smartCastInWhenEntryCondition.kt")
     public void testSmartCastInWhenEntryCondition() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCastInWhenEntryCondition.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeConstructor.kt")
+    public void testSuperTypeConstructor() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/superTypeConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeConstructor_lambda.kt")
+    public void testSuperTypeConstructor_lambda() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/superTypeConstructor_lambda.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeConstructor_nestedClasses.kt")
+    public void testSuperTypeConstructor_nestedClasses() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/superTypeConstructor_nestedClasses.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeConstructor_nestedClasses_typeArgument.kt")
+    public void testSuperTypeConstructor_nestedClasses_typeArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/superTypeConstructor_nestedClasses_typeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeDelegate.kt")
+    public void testSuperTypeDelegate() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/superTypeDelegate.kt");
     }
 
     @Test

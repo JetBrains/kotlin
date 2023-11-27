@@ -1,10 +1,10 @@
-element: e
+element: this
 implicit receivers:
   type: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
-    type: A
-  owner symbol: KtFirFunctionSymbol
+    type: test/Receiver
+  owner symbol: KtFirAnonymousFunctionSymbol
 
 scopes:
   LocalScope, index = 0
@@ -13,28 +13,39 @@ scopes:
     callables: 0
     constructors: 0
 
-  LocalScope, index = 1
+  TypeScope, index = 1
     packages: 0
     classifiers: 0
-    callables: 0
-    constructors: 0
-
-  LocalScope, index = 2
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0
-
-  LocalScope, index = 3
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0
-
-  TypeScope, index = 4
-    packages: 0
-    classifiers: 0
-    callables: 3
+    callables: 4
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: test/Receiver.fromReceiver
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: FINAL
+        name: fromReceiver
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Unit
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
       KtFunctionSymbol:
         annotationsList: []
         callableIdIfNonLocal: kotlin/Any.equals
@@ -147,7 +158,7 @@ scopes:
       KtConstructorSymbol:
         annotationsList: []
         callableIdIfNonLocal: null
-        containingClassIdIfNonLocal: A
+        containingClassIdIfNonLocal: test/Receiver
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
@@ -159,48 +170,36 @@ scopes:
         returnType: KtUsualClassType:
           annotationsList: []
           ownTypeArguments: []
-          type: A
+          type: test/Receiver
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
 
-  LocalScope, index = 5
+  LocalScope, index = 2
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 6
+  LocalScope, index = 3
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 7
-    packages: 6
-      KtPackageSymbol:
-        fqName: META-INF
-        origin: SOURCE
-      KtPackageSymbol:
-        fqName: java
-        origin: SOURCE
-      KtPackageSymbol:
-        fqName: javax
-        origin: SOURCE
-      KtPackageSymbol:
-        fqName: kotlin
-        origin: SOURCE
-      KtPackageSymbol:
-        fqName: org
-        origin: SOURCE
-      KtPackageSymbol:
-        fqName: sun
-        origin: SOURCE
-    classifiers: 1
+  ExplicitSimpleImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 5
+    packages: 0
+    classifiers: 3
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: A
+        classIdIfNonLocal: test/Receiver
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -212,7 +211,7 @@ scopes:
         isInline: false
         isInner: false
         modality: FINAL
-        name: A
+        name: Receiver
         origin: SOURCE
         superTypes: [
           KtUsualClassType:
@@ -223,59 +222,68 @@ scopes:
         symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
-    callables: 1
-      KtFunctionSymbol:
+      KtNamedClassOrObjectSymbol:
         annotationsList: []
-        callableIdIfNonLocal: /test
+        classIdIfNonLocal: test/Base
+        classKind: CLASS
+        companionObject: null
         contextReceivers: []
-        contractEffects: []
-        hasStableParameterNames: true
         isActual: false
-        isBuiltinFunctionInvoke: false
+        isData: false
         isExpect: false
-        isExtension: true
         isExternal: false
-        isInfix: false
+        isFun: false
         isInline: false
-        isOperator: false
-        isOverride: false
-        isStatic: false
-        isSuspend: false
-        modality: FINAL
-        name: test
+        isInner: false
+        modality: OPEN
+        name: Base
         origin: SOURCE
-        receiverParameter: KtReceiverParameterSymbol:
-          annotationsList: []
-          origin: SOURCE
-          owningCallableSymbol: KtFunctionSymbol(/test)
-          type: KtUsualClassType:
+        superTypes: [
+          KtUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Any
-        returnType: KtFunctionalType:
-          annotationsList: []
-          ownTypeArguments: [
-            KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
-              type: kotlin/Int
-          ]
-          type: kotlin/Function0<kotlin/Int>
+        ]
         symbolKind: TOP_LEVEL
         typeParameters: []
-        valueParameters: []
         visibility: Public
+      KtNamedClassOrObjectSymbol:
+        annotationsList: []
+        classIdIfNonLocal: test/Child
+        classKind: CLASS
+        companionObject: null
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        modality: FINAL
+        name: Child
+        origin: SOURCE
+        superTypes: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: test/Base
+        ]
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        visibility: Public
+    callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 8
+  DefaultSimpleImportingScope, index = 6
 
-  DefaultSimpleImportingScope, index = 9
+  DefaultSimpleImportingScope, index = 7
 
-  ExplicitStarImportingScope, index = 10
+  ExplicitStarImportingScope, index = 8
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 11
+  DefaultStarImportingScope, index = 9
 

@@ -1,0 +1,36 @@
+element: base
+implicit receivers:
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 1
+      base: test.Base
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 2
+    packages: 0
+    classifiers: 2
+      interface Base
+      class Child(base: test.Base) : test.Base
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 3
+
+  DefaultSimpleImportingScope, index = 4
+
+  ExplicitStarImportingScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 6
+
