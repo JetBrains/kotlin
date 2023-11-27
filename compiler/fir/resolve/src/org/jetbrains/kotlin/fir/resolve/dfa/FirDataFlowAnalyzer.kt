@@ -1139,7 +1139,9 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun exitBooleanNot(flow: MutableFlow, expression: FirFunctionCall) {
-        val argumentVariable = variableStorage.get(flow, expression.dispatchReceiver!!) ?: return
+        val argumentVariable = variableStorage.get(flow,
+            expression.candidate()?.dispatchReceiverExpression() ?: expression.dispatchReceiver!!
+        ) ?: return
         val expressionVariable = variableStorage.createSynthetic(expression)
         // Alternatively: (expression == true => argument == false) && (expression == false => argument == true)
         // Which implementation is faster and/or consumes less memory is an open question.
