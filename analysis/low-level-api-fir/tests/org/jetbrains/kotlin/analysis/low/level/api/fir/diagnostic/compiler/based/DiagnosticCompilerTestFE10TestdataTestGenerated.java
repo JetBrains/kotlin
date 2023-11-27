@@ -28895,6 +28895,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("intersectionOverrideWithProtectedAbstract.kt")
+            public void testIntersectionOverrideWithProtectedAbstract() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionOverrideWithProtectedAbstract.kt");
+            }
+
+            @Test
             @TestMetadata("intersectionOverrideWithSubsumedDifferentType.kt")
             public void testIntersectionOverrideWithSubsumedDifferentType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/intersectionOverrideWithSubsumedDifferentType.kt");

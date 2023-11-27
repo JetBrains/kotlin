@@ -26647,6 +26647,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("intersectionOverrideWithProtectedAbstract.kt")
+            public void testIntersectionOverrideWithProtectedAbstract() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/intersectionOverrideWithProtectedAbstract.kt");
+            }
+
+            @Test
             @TestMetadata("intersectionOverrideWithSubsumedDifferentType.kt")
             public void testIntersectionOverrideWithSubsumedDifferentType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/intersectionOverrideWithSubsumedDifferentType.kt");
