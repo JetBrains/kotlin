@@ -53,7 +53,6 @@ abstract class TowerScopeLevel {
             dispatchReceiver: FirExpression?,
             givenExtensionReceiverOptions: List<FirExpression>,
             scope: FirScope,
-            objectsByName: Boolean = false,
             isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
         )
     }
@@ -466,7 +465,6 @@ class ScopeTowerLevel(
                 it, dispatchReceiver = null,
                 givenExtensionReceiverOptions = emptyList(),
                 scope = scope,
-                objectsByName = true
             )
         }
         return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND

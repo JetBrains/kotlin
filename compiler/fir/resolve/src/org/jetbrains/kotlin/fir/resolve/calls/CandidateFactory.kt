@@ -58,7 +58,6 @@ class CandidateFactory private constructor(
         scope: FirScope?,
         dispatchReceiver: FirExpression? = null,
         givenExtensionReceiverOptions: List<FirExpression> = emptyList(),
-        objectsByName: Boolean = false,
         isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
     ): Candidate {
         @Suppress("NAME_SHADOWING")
@@ -99,7 +98,7 @@ class CandidateFactory private constructor(
                     )
                 }
             }
-        } else if (objectsByName && symbol.isRegularClassWithoutCompanion(callInfo)) {
+        } else if (symbol.isRegularClassWithoutCompanion(callInfo)) {
             result.addDiagnostic(NoCompanionObject)
         }
         if (callInfo.origin == FirFunctionCallOrigin.Operator && symbol is FirPropertySymbol) {
