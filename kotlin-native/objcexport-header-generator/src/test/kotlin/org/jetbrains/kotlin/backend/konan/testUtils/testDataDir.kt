@@ -7,5 +7,5 @@ package org.jetbrains.kotlin.backend.konan.testUtils
 
 import java.io.File
 
-val projectDir = File("kotlin-native/objcexport")
+val projectDir = File(System.getProperty("projectDir"))
 val testDataDir = projectDir.resolve("src/test/testData")

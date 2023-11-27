@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":compiler:ir.tree"))
     implementation(project(":core:compiler.common.native"))
     implementation(project(":core:descriptors"))
-    implementation(project(":kotlin-native:model"))
+    implementation(project(":kotlin-native:base"))
     implementation(project(":native:kotlin-native-utils"))
 
     testImplementation(libs.junit.jupiter.api)
@@ -36,5 +36,6 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
     dependsOn(":kotlin-native:dist")
     systemProperty("org.jetbrains.kotlin.native.home", kotlinNativeDist.canonicalPath)
+    systemProperty("projectDir", projectDir.absolutePath)
     workingDir(rootProject.projectDir)
 }
