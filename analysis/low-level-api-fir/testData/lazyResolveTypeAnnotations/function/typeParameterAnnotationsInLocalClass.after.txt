@@ -1,0 +1,74 @@
+@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int>>
+  context -> FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+
+@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int>
+  context -> FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+
+@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int
+  context -> FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+
+@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>
+  context -> FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+
+@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>
+  context -> FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+
+@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String
+  context -> FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+
+@R|Anno|(position = <strcat>(String(parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType]
+
+@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType]
+
+@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol <local>/explicitType]
+
+@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>
+  context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+
+@R|Anno|(position = <strcat>(String(nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>
+  context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+
+@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String
+  context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol <local>/explicitType
+  anchor -> [FirNamedFunctionSymbol <local>/explicitType]
+
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class OriginalClass : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] constructor(): R|<local>/OriginalClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
+
+            @R|Anno|[Types](position = <strcat>(String(function ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] fun <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>|.explicitType([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](position = <strcat>(String(parameter annotation ), this@R|<local>/OriginalClass|.R|<local>/prop|)) param: R|@R|Anno|(position = <strcat>(String(parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>|): R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int>>| {
+                ^explicitType Int(0)
+            }
+
+        }
+
+    }

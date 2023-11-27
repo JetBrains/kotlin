@@ -34,6 +34,12 @@ public class OutOfContentRootLazyDeclarationResolveForTypeAnnotationsTestGenerat
         }
 
         @Test
+        @TestMetadata("classAnnotationsInLocalClass.kt")
+        public void testClassAnnotationsInLocalClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/class/classAnnotationsInLocalClass.kt");
+        }
+
+        @Test
         @TestMetadata("delegateFieldWithAnnotationClash.kt")
         public void testDelegateFieldWithAnnotationClash() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/class/delegateFieldWithAnnotationClash.kt");
@@ -362,6 +368,12 @@ public class OutOfContentRootLazyDeclarationResolveForTypeAnnotationsTestGenerat
         }
 
         @Test
+        @TestMetadata("typeParameterAnnotationsInLocalClass.kt")
+        public void testTypeParameterAnnotationsInLocalClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/typeParameterAnnotationsInLocalClass.kt");
+        }
+
+        @Test
         @TestMetadata("typePropagationFromFunctionWithInaccessibleAnnotationArgument.kt")
         public void testTypePropagationFromFunctionWithInaccessibleAnnotationArgument() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/typePropagationFromFunctionWithInaccessibleAnnotationArgument.kt");
@@ -453,6 +465,12 @@ public class OutOfContentRootLazyDeclarationResolveForTypeAnnotationsTestGenerat
         @TestMetadata("propertyTypeCollisionAndAnnotations.kt")
         public void testPropertyTypeCollisionAndAnnotations() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/propertyTypeCollisionAndAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("typeParameterAnnotationsInLocalClass.kt")
+        public void testTypeParameterAnnotationsInLocalClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/typeParameterAnnotationsInLocalClass.kt");
         }
     }
 
@@ -579,6 +597,12 @@ public class OutOfContentRootLazyDeclarationResolveForTypeAnnotationsTestGenerat
         @TestMetadata("insideFunctionComplex.kt")
         public void testInsideFunctionComplex() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/typeAlias/insideFunctionComplex.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedAliasWithNestedAnnotationInLocalClass.kt")
+        public void testNestedAliasWithNestedAnnotationInLocalClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/typeAlias/nestedAliasWithNestedAnnotationInLocalClass.kt");
         }
 
         @Test

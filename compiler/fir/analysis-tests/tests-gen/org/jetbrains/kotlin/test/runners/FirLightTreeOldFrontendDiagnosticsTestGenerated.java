@@ -1741,6 +1741,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("classAnnotationsInLocalClass.kt")
+            public void testClassAnnotationsInLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/classAnnotationsInLocalClass.kt");
+            }
+
+            @Test
             @TestMetadata("constantFromOuterScopeAsAnnotaionParameter.kt")
             public void testConstantFromOuterScopeAsAnnotaionParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/constantFromOuterScopeAsAnnotaionParameter.kt");
@@ -1879,6 +1885,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("danglingAnnotationInLocalClass.kt")
+            public void testDanglingAnnotationInLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/danglingAnnotationInLocalClass.kt");
+            }
+
+            @Test
             @TestMetadata("DanglingMixed.kt")
             public void testDanglingMixed() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/DanglingMixed.kt");
@@ -1969,6 +1981,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("initializerWithNestedAnnotationInLocalClass.kt")
+            public void testInitializerWithNestedAnnotationInLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/initializerWithNestedAnnotationInLocalClass.kt");
+            }
+
+            @Test
             @TestMetadata("invalidTypesInAnnotationConstructor.kt")
             public void testInvalidTypesInAnnotationConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/invalidTypesInAnnotationConstructor.kt");
@@ -2044,6 +2062,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             @TestMetadata("nestedAliasWithNestedAnnotation.kt")
             public void testNestedAliasWithNestedAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/nestedAliasWithNestedAnnotation.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedAliasWithNestedAnnotationInLocalClass.kt")
+            public void testNestedAliasWithNestedAnnotationInLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/nestedAliasWithNestedAnnotationInLocalClass.kt");
             }
 
             @Test
@@ -2218,6 +2242,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             @TestMetadata("typeParameterAnnotations.kt")
             public void testTypeParameterAnnotations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/typeParameterAnnotations.kt");
+            }
+
+            @Test
+            @TestMetadata("typeParameterAnnotationsInLocalClass.kt")
+            public void testTypeParameterAnnotationsInLocalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/typeParameterAnnotationsInLocalClass.kt");
             }
 
             @Test

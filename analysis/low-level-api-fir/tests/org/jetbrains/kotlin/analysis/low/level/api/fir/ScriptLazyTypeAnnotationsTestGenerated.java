@@ -34,6 +34,12 @@ public class ScriptLazyTypeAnnotationsTestGenerated extends AbstractScriptLazyTy
         }
 
         @Test
+        @TestMetadata("classAnnotationsInLocalClassScript.kts")
+        public void testClassAnnotationsInLocalClassScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/class/classAnnotationsInLocalClassScript.kts");
+        }
+
+        @Test
         @TestMetadata("delegateFieldWithAnnotationClashScript.kts")
         public void testDelegateFieldWithAnnotationClashScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/class/delegateFieldWithAnnotationClashScript.kts");
@@ -318,6 +324,12 @@ public class ScriptLazyTypeAnnotationsTestGenerated extends AbstractScriptLazyTy
         public void testSuperTypeCallNestedNameClashWithAnnotationScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/superTypeCallNestedNameClashWithAnnotationScript.kts");
         }
+
+        @Test
+        @TestMetadata("typeParameterAnnotationsInLocalClassScript.kts")
+        public void testTypeParameterAnnotationsInLocalClassScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/typeParameterAnnotationsInLocalClassScript.kts");
+        }
     }
 
     @Nested
@@ -387,6 +399,12 @@ public class ScriptLazyTypeAnnotationsTestGenerated extends AbstractScriptLazyTy
         @TestMetadata("resultWithPropagatedTypeUnavailable.kts")
         public void testResultWithPropagatedTypeUnavailable() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/resultWithPropagatedTypeUnavailable.kts");
+        }
+
+        @Test
+        @TestMetadata("typeParameterAnnotationsInLocalClassScript.kts")
+        public void testTypeParameterAnnotationsInLocalClassScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/typeParameterAnnotationsInLocalClassScript.kts");
         }
     }
 
@@ -495,6 +513,12 @@ public class ScriptLazyTypeAnnotationsTestGenerated extends AbstractScriptLazyTy
         @TestMetadata("insideFunctionScript.kts")
         public void testInsideFunctionScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/typeAlias/insideFunctionScript.kts");
+        }
+
+        @Test
+        @TestMetadata("nestedAliasWithNestedAnnotationInLocalClassScript.kts")
+        public void testNestedAliasWithNestedAnnotationInLocalClassScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/typeAlias/nestedAliasWithNestedAnnotationInLocalClassScript.kts");
         }
 
         @Test
