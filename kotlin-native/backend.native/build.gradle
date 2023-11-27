@@ -157,7 +157,6 @@ dependencies {
     kotlin_script_runtime_jar project(":kotlin-script-runtime")
 
     compilerApi project(":kotlin-native:utilities:basic-utils")
-    compilerApi project(":kotlin-native:utilities:descriptor-utils")
     compilerApi project(":kotlin-native:objcexport")
     compilerApi project(":kotlin-native:model")
 

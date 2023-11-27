@@ -9,9 +9,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
-@InternalKonanApi const val NATIVE_PTR_NAME = "NativePtr"
-@InternalKonanApi const val NON_NULL_NATIVE_PTR_NAME = "NonNullNativePtr"
-@InternalKonanApi const val IMMUTABLE_BLOB_OF = "immutableBlobOf"
+@InternalKonanApi
+const val NATIVE_PTR_NAME = "NativePtr"
+@InternalKonanApi
+const val NON_NULL_NATIVE_PTR_NAME = "NonNullNativePtr"
+@InternalKonanApi
+const val IMMUTABLE_BLOB_OF = "immutableBlobOf"
 
 object KonanFqNames {
     val function = FqName("kotlin.Function")

@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 
-@InternalKonanApi fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? =
+@InternalKonanApi
+fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? =
         createCompilerMessageLocation(containingFile, this.startOffset, this.endOffset)
 
-@InternalKonanApi fun IrBuilderWithScope.getCompilerMessageLocation(): CompilerMessageLocation? {
+@InternalKonanApi
+fun IrBuilderWithScope.getCompilerMessageLocation(): CompilerMessageLocation? {
     val declaration = this.scope.scopeOwnerSymbol.owner as? IrDeclaration ?: return null
     val file = declaration.getPackageFragment() as? IrFile ?: return null
     return createCompilerMessageLocation(file, startOffset, endOffset)

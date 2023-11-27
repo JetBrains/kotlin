@@ -845,8 +845,6 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:Interop:JsRuntime'
     include ':kotlin-native:Interop:Skia'
     include ':kotlin-native:utilities:basic-utils'
-    include ':kotlin-native:utilities:annotations'
-    include ':kotlin-native:utilities:descriptor-utils'
     include ':kotlin-native:utilities:cli-runner'
     include ':kotlin-native:klib'
     include ':kotlin-native:common'

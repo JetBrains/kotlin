@@ -125,7 +125,8 @@ fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): ObjCExportCo
     return ObjCExportCodeSpec(files, types)
 }
 
-@InternalKonanApi fun <S : IrFunctionSymbol> createObjCMethodSpecBaseMethod(
+@InternalKonanApi
+fun <S : IrFunctionSymbol> createObjCMethodSpecBaseMethod(
     mapper: ObjCExportMapper,
     namer: ObjCExportNamer,
     symbol: S,
@@ -145,7 +146,8 @@ class ObjCExportCodeSpec(
     val types: List<ObjCTypeForKotlinType>
 )
 
-@InternalKonanApi sealed class ObjCMethodSpec {
+@InternalKonanApi
+sealed class ObjCMethodSpec {
     /**
      * Aggregates base method (as defined by [ObjCExportMapper.isBaseMethod])
      * and details required to generate code for bridges between Kotlin and Obj-C methods.
@@ -153,24 +155,28 @@ class ObjCExportCodeSpec(
     data class BaseMethod<out S : IrFunctionSymbol>(val symbol: S, val bridge: MethodBridge, val selector: String)
 }
 
-@InternalKonanApi class ObjCMethodForKotlinMethod(val baseMethod: BaseMethod<IrSimpleFunctionSymbol>) : ObjCMethodSpec() {
+@InternalKonanApi
+class ObjCMethodForKotlinMethod(val baseMethod: BaseMethod<IrSimpleFunctionSymbol>) : ObjCMethodSpec() {
     override fun toString(): String =
             "ObjC spec of method `${baseMethod.selector}` for `${baseMethod.symbol}`"
 }
 
-@InternalKonanApi class ObjCInitMethodForKotlinConstructor(val baseMethod: BaseMethod<IrConstructorSymbol>) : ObjCMethodSpec() {
+@InternalKonanApi
+class ObjCInitMethodForKotlinConstructor(val baseMethod: BaseMethod<IrConstructorSymbol>) : ObjCMethodSpec() {
     override fun toString(): String =
             "ObjC spec of method `${baseMethod.selector}` for `${baseMethod.symbol}`"
 }
 
-@InternalKonanApi class ObjCFactoryMethodForKotlinArrayConstructor(
+@InternalKonanApi
+class ObjCFactoryMethodForKotlinArrayConstructor(
         val baseMethod: BaseMethod<IrConstructorSymbol>
 ) : ObjCMethodSpec() {
     override fun toString(): String =
             "ObjC spec of factory ${baseMethod.selector} for ${baseMethod.symbol}"
 }
 
-@InternalKonanApi class ObjCGetterForKotlinEnumEntry(
+@InternalKonanApi
+class ObjCGetterForKotlinEnumEntry(
         val irEnumEntrySymbol: IrEnumEntrySymbol,
         val selector: String
 ) : ObjCMethodSpec() {
@@ -178,7 +184,8 @@ class ObjCExportCodeSpec(
             "ObjC spec of getter `$selector` for `$irEnumEntrySymbol`"
 }
 
-@InternalKonanApi class ObjCClassMethodForKotlinEnumValuesOrEntries(
+@InternalKonanApi
+class ObjCClassMethodForKotlinEnumValuesOrEntries(
         val valuesFunctionSymbol: IrFunctionSymbol,
         val selector: String
 ) : ObjCMethodSpec() {
@@ -186,25 +193,30 @@ class ObjCExportCodeSpec(
             "ObjC spec of method `$selector` for $valuesFunctionSymbol"
 }
 
-@InternalKonanApi class ObjCGetterForObjectInstance(val selector: String, val classSymbol: IrClassSymbol) : ObjCMethodSpec() {
+@InternalKonanApi
+class ObjCGetterForObjectInstance(val selector: String, val classSymbol: IrClassSymbol) : ObjCMethodSpec() {
     override fun toString(): String =
             "ObjC spec of instance getter `$selector` for $classSymbol"
 }
 
-@InternalKonanApi object ObjCKotlinThrowableAsErrorMethod : ObjCMethodSpec() {
+@InternalKonanApi
+object ObjCKotlinThrowableAsErrorMethod : ObjCMethodSpec() {
     override fun toString(): String =
             "ObjC spec for ThrowableAsError method"
 }
 
-@InternalKonanApi sealed class ObjCTypeSpec(val binaryName: String)
+@InternalKonanApi
+sealed class ObjCTypeSpec(val binaryName: String)
 
-@InternalKonanApi sealed class ObjCTypeForKotlinType(
+@InternalKonanApi
+sealed class ObjCTypeForKotlinType(
         binaryName: String,
         val irClassSymbol: IrClassSymbol,
         val methods: List<ObjCMethodSpec>
 ) : ObjCTypeSpec(binaryName)
 
-@InternalKonanApi class ObjCClassForKotlinClass(
+@InternalKonanApi
+class ObjCClassForKotlinClass(
     binaryName: String,
     irClassSymbol: IrClassSymbol,
     methods: List<ObjCMethodSpec>,
@@ -215,7 +227,8 @@ class ObjCExportCodeSpec(
             "ObjC spec of class `$binaryName` for `$irClassSymbol`"
 }
 
-@InternalKonanApi class ObjCProtocolForKotlinInterface(
+@InternalKonanApi
+class ObjCProtocolForKotlinInterface(
         binaryName: String,
         irClassSymbol: IrClassSymbol,
         methods: List<ObjCMethodSpec>

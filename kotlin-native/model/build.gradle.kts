@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":kotlin-native:utilities:annotations"))
     implementation(intellijCore())
     implementation(project(":compiler:cli-base"))
     implementation(project(":compiler:cli-common"))
