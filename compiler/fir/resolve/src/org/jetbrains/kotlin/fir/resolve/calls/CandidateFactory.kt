@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.util.PrivateForInline
 
 class CandidateFactory private constructor(
     val context: ResolutionContext,
@@ -97,7 +99,7 @@ class CandidateFactory private constructor(
                     )
                 }
             }
-        } else if (objectsByName && symbol.isRegularClassWithoutCompanion(callInfo.session)) {
+        } else if (objectsByName && symbol.isRegularClassWithoutCompanion(callInfo)) {
             result.addDiagnostic(NoCompanionObject)
         }
         if (callInfo.origin == FirFunctionCallOrigin.Operator && symbol is FirPropertySymbol) {
@@ -115,8 +117,28 @@ class CandidateFactory private constructor(
         return result
     }
 
-    private fun FirBasedSymbol<*>.isRegularClassWithoutCompanion(session: FirSession): Boolean {
-        val referencedClass = (this as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session) ?: return false
+    @OptIn(PrivateForInline::class)
+    private fun FirBasedSymbol<*>.isRegularClassWithoutCompanion(callInfo: CallInfo): Boolean {
+        // `NO_COMPANION_OBJECT` is only actual for call without a receiver,
+        // But the second check `isJavaOrEnhancement` is used for disambiguating cases between Java classes and declared Kotlin properties.
+        // Consider the following example:
+        //
+        // ```kt
+        // FILE: test: W.java
+        // public class W { public void foo() {} }
+        //
+        // FILE: main.kt
+        // import test.W
+        // val W: W = W()
+        // fun test() = W.foo()
+        // ```
+        //
+        // Last `W` should be resolved to declared property instead of Java class
+        // That's why `NO_COMPANION_OBJECT` will be added to the candidate's diagnostic and the second candidate without error will be chosen.
+        // It doesn't relate to Kotlin companion objects and objects since they have higher priority
+        if (callInfo.isUsedAsReceiver && !origin.isJavaOrEnhancement) return false
+
+        val referencedClass = (this as? FirClassLikeSymbol<*>)?.fullyExpandedClass(callInfo.session) ?: return false
         return referencedClass.classKind != ClassKind.OBJECT && referencedClass.companionObjectSymbol == null
     }
 
