@@ -247,7 +247,13 @@ class FirCallResolver(
         callSite: FirElement,
         resolutionMode: ResolutionMode,
     ): FirStatement {
-        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver, callSite) { true }
+        return resolveVariableAccessAndSelectCandidateImpl(
+            qualifiedAccess,
+            isUsedAsReceiver,
+            resolutionMode,
+            isUsedAsGetClassReceiver,
+            callSite
+        ) { true }
     }
 
     private fun resolveVariableAccessAndSelectCandidateImpl(
