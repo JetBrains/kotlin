@@ -200,7 +200,10 @@ class FirCallResolver(
     ): Pair<Set<Candidate>, CandidateApplicability?> {
         fun chooseMostSpecific(list: Set<Candidate>): Set<Candidate> {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
-            return conflictResolver.chooseMaximallySpecificCandidates(list, discriminateAbstracts = onSuperReference)
+            return conflictResolver.chooseMaximallySpecificCandidates(
+                list.filterOutAmbiguousTypealiases(session),
+                discriminateAbstracts = onSuperReference
+            )
         }
 
         val candidates = collector.bestCandidates()
@@ -222,7 +225,7 @@ class FirCallResolver(
             }
         }
 
-        return candidates.toSet() to null
+        return candidates.toSet().filterOutAmbiguousTypealiases(session) to null
     }
 
     fun resolveVariableAccessAndSelectCandidate(

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
+import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -639,3 +640,20 @@ val FirTypeParameterSymbol.defaultType: ConeTypeParameterType
 
 fun ConeClassLikeLookupTag.isRealOwnerOf(declarationSymbol: FirCallableSymbol<*>): Boolean =
     this == declarationSymbol.dispatchReceiverClassLookupTagOrNull()
+
+internal fun <T : AbstractCandidate> Set<T>.filterOutAmbiguousTypealiases(session: FirSession): Set<T> {
+    if (size <= 1) return this
+
+    val aliasesToRemove = mutableSetOf<ClassId>()
+    val classTypealiasesThatDontCauseAmbiguity = session.platformClassMapper.classTypealiasesThatDontCauseAmbiguity
+    for (candidate in this) {
+        val symbol = candidate.symbol
+        if (symbol is FirClassLikeSymbol<*>) {
+            classTypealiasesThatDontCauseAmbiguity[symbol.classId]?.let { aliasesToRemove.add(it) }
+        }
+    }
+
+    if (aliasesToRemove.isEmpty()) return this
+
+    return filterTo(mutableSetOf()) { (it.symbol as? FirClassLikeSymbol)?.classId?.let { classId -> aliasesToRemove.contains(classId) } != true }
+}

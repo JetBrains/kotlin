@@ -1,5 +1,7 @@
 package
 
+public val x: kotlin.reflect.KClass<kotlin.Throws /* = kotlin.jvm.Throws */>
+
 package abc1 {
     @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo1(): kotlin.Unit
     @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo2(): kotlin.Unit

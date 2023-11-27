@@ -81,7 +81,8 @@ class FirOverloadByLambdaReturnTypeResolver(
         val newCandidates =
             analyzeLambdaAndReduceNumberOfCandidatesRegardingOverloadResolutionByLambdaReturnType(call, reducedCandidates) ?: return null
 
-        var maximallySpecificCandidates = components.callResolver.conflictResolver.chooseMaximallySpecificCandidates(newCandidates, discriminateAbstracts = false)
+        var maximallySpecificCandidates =
+            components.callResolver.conflictResolver.chooseMaximallySpecificCandidates(newCandidates, discriminateAbstracts = false)
         if (maximallySpecificCandidates.size > 1 && candidatesWithoutAnnotation.any { it in maximallySpecificCandidates }) {
             maximallySpecificCandidates = maximallySpecificCandidates.toMutableSet().apply { removeAll(candidatesWithAnnotation) }
             maximallySpecificCandidates.singleOrNull()?.addDiagnostic(CandidateChosenUsingOverloadResolutionByLambdaAnnotation)
