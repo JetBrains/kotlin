@@ -10,8 +10,7 @@ object DependencyObject {
     var varFlag: Flag<*> = TODO()
 }
 
-// MODULE: app
-// DEPENDENCY: lib Binary
+// MODULE: app(lib)
 // FILE: main.kt
 
 package some

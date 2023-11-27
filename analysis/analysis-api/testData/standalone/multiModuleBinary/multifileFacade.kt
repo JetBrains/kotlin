@@ -17,8 +17,7 @@ package my.collections
 
 fun <K, V> myMapOf(vararg pairs: Pair<K, V>): Map<K, V> = mapOf(*pairs)
 
-// MODULE: app
-// DEPENDENCY: lib Binary
+// MODULE: app(lib)
 // FILE: main.kt
 
 import my.collections.*
