@@ -20,10 +20,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.unexpandedConeClassLikeType
 import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
@@ -31,19 +29,19 @@ object FirNativeObjCRefinementOverridesChecker : FirClassChecker() {
 
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         // We just need to check intersection overrides, all other declarations are checked by FirNativeObjCRefinementChecker
-        val firTypeScope = declaration.unsubstitutedScope(context)
-        firTypeScope.processAllFunctions { symbol ->
+        val baseScope = declaration.unsubstitutedScope(context)
+        baseScope.processAllFunctions { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllFunctions
-            check(firTypeScope, symbol, declaration, context, reporter, emptyList(), emptyList())
+            check(baseScope, symbol, declaration, context, reporter, emptyList(), emptyList())
         }
-        firTypeScope.processAllProperties { symbol ->
+        baseScope.processAllProperties { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllProperties
-            check(firTypeScope, symbol, declaration, context, reporter, emptyList(), emptyList())
+            check(baseScope, symbol, declaration, context, reporter, emptyList(), emptyList())
         }
     }
 
     fun check(
-        firTypeScope: FirTypeScope,
+        baseScope: FirTypeScope,
         memberSymbol: FirCallableSymbol<*>,
         declarationToReport: FirDeclaration,
         context: CheckerContext,
@@ -51,14 +49,14 @@ object FirNativeObjCRefinementOverridesChecker : FirClassChecker() {
         objCAnnotations: List<FirAnnotation>,
         swiftAnnotations: List<FirAnnotation>
     ) {
-        val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(memberSymbol)
+        val overriddenMemberSymbols = baseScope.getDirectOverriddenMembersWithBaseScope(memberSymbol)
         if (overriddenMemberSymbols.isEmpty()) return
         var isHiddenFromObjC = objCAnnotations.isNotEmpty()
         var isRefinedInSwift = swiftAnnotations.isNotEmpty()
         val supersNotHiddenFromObjC = mutableListOf<FirCallableSymbol<*>>()
         val supersNotRefinedInSwift = mutableListOf<FirCallableSymbol<*>>()
-        for (symbol in overriddenMemberSymbols) {
-            val (superIsHiddenFromObjC, superIsRefinedInSwift) = symbol.inheritsRefinedAnnotations(context.session, firTypeScope)
+        for ((symbol, scope) in overriddenMemberSymbols) {
+            val (superIsHiddenFromObjC, superIsRefinedInSwift) = symbol.inheritsRefinedAnnotations(context.session, scope)
             if (superIsHiddenFromObjC) isHiddenFromObjC = true else supersNotHiddenFromObjC.add(symbol)
             if (superIsRefinedInSwift) isRefinedInSwift = true else supersNotRefinedInSwift.add(symbol)
         }
@@ -70,13 +68,13 @@ object FirNativeObjCRefinementOverridesChecker : FirClassChecker() {
         }
     }
 
-    private fun FirCallableSymbol<*>.inheritsRefinedAnnotations(session: FirSession, firTypeScope: FirTypeScope): Pair<Boolean, Boolean> {
+    private fun FirCallableSymbol<*>.inheritsRefinedAnnotations(session: FirSession, baseScope: FirTypeScope): Pair<Boolean, Boolean> {
         val (hasObjC, hasSwift) = hasRefinedAnnotations(session)
         if (hasObjC && hasSwift) return true to true
         // Note: `checkMember` requires all overridden symbols to be either refined or not refined.
-        val overriddenMemberSymbol = firTypeScope.retrieveDirectOverriddenOf(this).firstOrNull()
+        val (overriddenMemberSymbol, scope) = baseScope.getDirectOverriddenMembersWithBaseScope(this).firstOrNull()
             ?: return hasObjC to hasSwift
-        val (inheritsObjC, inheritsSwift) = overriddenMemberSymbol.inheritsRefinedAnnotations(session, firTypeScope)
+        val (inheritsObjC, inheritsSwift) = overriddenMemberSymbol.inheritsRefinedAnnotations(session, scope)
         return (hasObjC || inheritsObjC) to (hasSwift || inheritsSwift)
     }
 
