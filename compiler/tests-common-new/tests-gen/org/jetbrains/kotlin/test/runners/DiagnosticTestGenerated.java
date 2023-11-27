@@ -23977,6 +23977,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("nestedClassViaActualTypealiasExpandInTypeParam.kt")
+            public void testNestedClassViaActualTypealiasExpandInTypeParam() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/nestedClassViaActualTypealiasExpandInTypeParam.kt");
+            }
+
+            @Test
             @TestMetadata("nestedClassViaActualTypealiasWithTypeParam.kt")
             public void testNestedClassViaActualTypealiasWithTypeParam() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/nestedClassViaActualTypealiasWithTypeParam.kt");
