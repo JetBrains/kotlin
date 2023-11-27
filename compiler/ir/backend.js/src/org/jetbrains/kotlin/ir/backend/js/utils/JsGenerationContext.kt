@@ -103,4 +103,15 @@ class JsGenerationContext(
     ): JsLocation? = cache.getOrPut(irElement.offsetSelector()) {
         irElement.getSourceLocation(currentFile.fileEntry, offsetSelector) ?: return null
     }.copy(name = originalName)
+
+    fun createErrorContextInfo(): String {
+        return """
+            File: ${currentFile.nameWithPackage},
+            Function: ${currentFunction?.name},
+            Static context: $staticContext,
+            Local names: ${localNames?.variableNames?.names},
+            Name cache: ${nameCache},
+            Use bare parameter names: ${useBareParameterNames},
+        """.trimIndent()
+    }
 }
