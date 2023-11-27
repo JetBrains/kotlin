@@ -43,9 +43,17 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         return valueArguments[index]
     }
 
+    fun getValueArgumentOrThrow(index: Int): IrExpression {
+        return getValueArgument(index) ?: throw createCheckArgumentError("value", index, valueArguments.size)
+    }
+
     fun getTypeArgument(index: Int): IrType? {
         checkArgumentSlotAccess("type", index, typeArguments.size)
         return typeArguments[index]
+    }
+
+    fun getTypeArgumentOrThrow(index: Int): IrType {
+        return getTypeArgument(index) ?: throw createCheckArgumentError("type", index, typeArguments.size)
     }
 
     fun putValueArgument(index: Int, valueArgument: IrExpression?) {
