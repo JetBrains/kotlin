@@ -138,17 +138,6 @@ open class FirImplicitAwareBodyResolveTransformer(
         super.transformDeclarationContent(declaration, data)
     }
 
-    override fun transformDanglingModifierList(
-        danglingModifierList: FirDanglingModifierList,
-        data: ResolutionMode
-    ): FirDanglingModifierList {
-        return if (implicitTypeOnly) {
-            danglingModifierList
-        } else {
-            transformElement(danglingModifierList, data)
-        }
-    }
-
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode

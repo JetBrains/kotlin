@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ProvideDelegateFixationPosition
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 open class FirDeclarationsResolveTransformer(
@@ -114,7 +115,16 @@ open class FirDeclarationsResolveTransformer(
     override fun transformDanglingModifierList(
         danglingModifierList: FirDanglingModifierList,
         data: ResolutionMode
-    ): FirDanglingModifierList = danglingModifierList
+    ): FirDanglingModifierList {
+        if (implicitTypeOnly) return danglingModifierList
+
+        @OptIn(PrivateForInline::class)
+        context.withContainer(danglingModifierList) {
+            danglingModifierList.transformAnnotations(transformer, data)
+        }
+
+        return danglingModifierList
+    }
 
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty = whileAnalysing(session, property) {
         require(property !is FirSyntheticProperty) { "Synthetic properties should not be processed by body transformers" }
@@ -138,12 +148,6 @@ open class FirDeclarationsResolveTransformer(
         }
 
         val shouldResolveEverything = !implicitTypeOnly
-        // this is required to resolve annotations on properties of local classes
-        if (shouldResolveEverything) {
-            property.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
-            doTransformTypeParameters(property)
-        }
-
         val bodyResolveState = property.bodyResolveState
         return withFullBodyResolve {
             val initializerIsAlreadyResolved = bodyResolveState >= FirPropertyBodyResolveState.INITIALIZER_RESOLVED
@@ -153,6 +157,12 @@ open class FirDeclarationsResolveTransformer(
 
             var backingFieldIsAlreadyResolved = false
             context.withProperty(property) {
+                // this is required to resolve annotations on properties of local classes
+                if (shouldResolveEverything) {
+                    property.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
+                    doTransformTypeParameters(property)
+                }
+
                 context.forPropertyInitializer {
                     if (!initializerIsAlreadyResolved) {
                         val resolutionMode = withExpectedType(returnTypeRefBeforeResolve)
@@ -224,19 +234,20 @@ open class FirDeclarationsResolveTransformer(
                         property.setter?.transformReturnTypeRef(transformer, withExpectedType(session.builtinTypes.unitType.type))
                     }
                 }
-            }
 
-            if (!initializerIsAlreadyResolved) {
-                if (!backingFieldIsAlreadyResolved) {
+                if (!initializerIsAlreadyResolved && !backingFieldIsAlreadyResolved) {
                     property.backingField?.let {
                         transformBackingField(it, withExpectedType(property.returnTypeRef), shouldResolveEverything)
                     }
                 }
+            }
 
+            if (!initializerIsAlreadyResolved) {
                 dataFlowAnalyzer.exitProperty(property)?.let {
                     property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
                 }
             }
+
             property
         }
     }
@@ -657,7 +668,11 @@ open class FirDeclarationsResolveTransformer(
             }
 
             if (isLocal || !implicitTypeOnly) {
-                doTransformTypeParameters(regularClass)
+                context.insideClassHeader {
+                    regularClass.transformAnnotations(this, ResolutionMode.ContextIndependent)
+                    regularClass.transformTypeParameters(this, ResolutionMode.ContextIndependent)
+                    regularClass.transformSuperTypeRefs(this, ResolutionMode.ContextIndependent)
+                }
             }
 
             doTransformRegularClass(regularClass, data)
@@ -691,10 +706,15 @@ open class FirDeclarationsResolveTransformer(
         if (typeAlias.isLocal && typeAlias !in context.targetedLocalClasses) {
             return typeAlias.runAllPhasesForLocalClass(transformer, components, data, transformer.firResolveContextCollector)
         }
-        doTransformTypeParameters(typeAlias)
-        typeAlias.transformAnnotations(transformer, data)
-        transformer.firResolveContextCollector?.addDeclarationContext(typeAlias, context)
-        typeAlias.transformExpandedTypeRef(transformer, data)
+
+        @OptIn(PrivateForInline::class)
+        context.withContainer(typeAlias) {
+            doTransformTypeParameters(typeAlias)
+            typeAlias.transformAnnotations(transformer, data)
+            transformer.firResolveContextCollector?.addDeclarationContext(typeAlias, context)
+            typeAlias.transformExpandedTypeRef(transformer, data)
+        }
+
         return typeAlias
     }
 

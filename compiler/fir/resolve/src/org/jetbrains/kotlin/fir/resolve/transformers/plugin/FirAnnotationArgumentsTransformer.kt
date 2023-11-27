@@ -321,31 +321,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
         return backingField
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias {
-        @OptIn(PrivateForInline::class)
-        context.withContainer(typeAlias) {
-            doTransformTypeParameters(typeAlias)
-            typeAlias.transformAnnotations(transformer, data)
-            transformer.firResolveContextCollector?.addDeclarationContext(typeAlias, context)
-            typeAlias.expandedTypeRef.transformSingle(transformer, data)
-        }
-
-        return typeAlias
-    }
-
     override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
         return script
-    }
-
-    override fun transformDanglingModifierList(
-        danglingModifierList: FirDanglingModifierList,
-        data: ResolutionMode
-    ): FirDanglingModifierList {
-        @OptIn(PrivateForInline::class)
-        context.withContainer(danglingModifierList) {
-            danglingModifierList.transformAnnotations(transformer, data)
-        }
-
-        return danglingModifierList
     }
 }
