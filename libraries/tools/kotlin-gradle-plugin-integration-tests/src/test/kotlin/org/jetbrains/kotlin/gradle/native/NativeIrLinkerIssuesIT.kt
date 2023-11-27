@@ -47,7 +47,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             localRepo = null,
             nativeCacheKind = NativeCacheKind.STATIC,
             gradleVersion = gradleVersion
-        ) { kotlinNativeCompilerVersion ->
+        ) {
             """
             |e: The symbol of unexpected type encountered during IR deserialization: IrTypeAliasPublicSymbolImpl, kotlinx.coroutines/CancellationException|null[0]. IrClassifierSymbol is expected.
             |
@@ -66,37 +66,11 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             ||    |    +--- io.ktor:ktor-utils (io.ktor:ktor-utils-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4
             ||    |    |    +--- io.ktor:ktor-io (io.ktor:ktor-io-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4
             ||    |    |    |    +--- io.ktor:ktor-io-cinterop-bits: 1.5.4
-            ||    |    |    |    |    \--- stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
             ||    |    |    |    +--- io.ktor:ktor-io-cinterop-sockets: 1.5.4
-            ||    |    |    |    |    \--- stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
-            ||    |    |    |    +--- stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
-            ||    |    |    |    +--- org.jetbrains.kotlin.native.platform.CoreFoundation: 1.4.32 -> $kotlinNativeCompilerVersion
-            ||    |    |    |    |    +--- stdlib: $kotlinNativeCompilerVersion
-            ||    |    |    |    |    +--- org.jetbrains.kotlin.native.platform.CoreFoundationBase: $kotlinNativeCompilerVersion
-            ||    |    |    |    |    |    \--- stdlib: $kotlinNativeCompilerVersion
-            ||    |    |    |    |    +--- org.jetbrains.kotlin.native.platform.darwin: $kotlinNativeCompilerVersion
-            ||    |    |    |    |    |    +--- stdlib: $kotlinNativeCompilerVersion
-            ||    |    |    |    |    |    \--- org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion
-            ||    |    |    |    |    |         \--- stdlib: $kotlinNativeCompilerVersion
-            ||    |    |    |    |    \--- org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion (*)
-            ||    |    |    |    +--- org.jetbrains.kotlin.native.platform.darwin: 1.4.32 -> $kotlinNativeCompilerVersion (*)
-            ||    |    |    |    +--- org.jetbrains.kotlin.native.platform.iconv: 1.4.32 -> $kotlinNativeCompilerVersion
-            ||    |    |    |    |    +--- stdlib: $kotlinNativeCompilerVersion
-            ||    |    |    |    |    \--- org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion (*)
-            ||    |    |    |    +--- org.jetbrains.kotlin.native.platform.posix: 1.4.32 -> $kotlinNativeCompilerVersion (*)
             ||    |    |    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 0.15.1 -> 0.16.1
-            ||    |    |    |    |    +--- stdlib: 1.5 -> $kotlinNativeCompilerVersion
-            ||    |    |    |    |    +--- org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
-            ||    |    |    |    |    \--- org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1
-            ||    |    |    |    |         +--- stdlib: 1.5 -> $kotlinNativeCompilerVersion
-            ||    |    |    |    |         \--- org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
             ||    |    |    |    +--- org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
             ||    |    |    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.4.3-native-mt -> 1.5.0-RC-native-mt
             ||    |    |    |         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-            ||    |    |    |         +--- stdlib: 1.5 -> $kotlinNativeCompilerVersion
-            ||    |    |    |         +--- org.jetbrains.kotlin.native.platform.CoreFoundation: 1.5 -> $kotlinNativeCompilerVersion (*)
-            ||    |    |    |         +--- org.jetbrains.kotlin.native.platform.darwin: 1.5 -> $kotlinNativeCompilerVersion (*)
-            ||    |    |    |         +--- org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
             ||    |    |    |         +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 0.16.1 (*)
             ||    |    |    |         \--- org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
             ||    |    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 0.15.1 -> 0.16.1 (*)
@@ -134,7 +108,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             nativeCacheKind = NativeCacheKind.STATIC,
             gradleVersion = gradleVersion,
             localRepo = tempDir
-        ) { kotlinNativeCompilerVersion ->
+        ) {
             """
             |e: Module "org.sample:libb (org.sample:libb-native)" has a reference to symbol sample.liba/C|null[0]. Neither the module itself nor its dependencies contain such declaration.
             |
@@ -145,12 +119,10 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             |
             |Project dependencies:
             |+--- org.sample:liba (org.sample:liba-native): 2.0
-            ||    +--- stdlib: $kotlinNativeCompilerVersion
             ||    \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
             |+--- org.sample:libb (org.sample:libb-native): 1.0
             ||    ^^^ This module requires symbol sample.liba/C|null[0].
             ||    +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
-            ||    +--- stdlib: $kotlinNativeCompilerVersion
             ||    \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
             |\--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
             |
@@ -170,7 +142,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             nativeCacheKind = NativeCacheKind.NONE,
             gradleVersion = gradleVersion,
             localRepo = tempDir
-        ) { kotlinNativeCompilerVersion ->
+        ) {
             """
             e: Module "org.sample:libb (org.sample:libb-native)" has a reference to symbol sample.liba/C|null[0]. Neither the module itself nor its dependencies contain such declaration.
             
@@ -181,15 +153,11 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             
             Project dependencies:
             +--- org.sample:liba (org.sample:liba-native): 2.0
-            |    +--- stdlib: $kotlinNativeCompilerVersion
             |    \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
             +--- org.sample:libb (org.sample:libb-native): 1.0
             |    ^^^ This module requires symbol sample.liba/C|null[0].
             |    +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
-            |    +--- stdlib: $kotlinNativeCompilerVersion
             |    \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
-            +--- org.jetbrains.kotlin.native.platform.* (NNN libraries): $kotlinNativeCompilerVersion
-            |    \--- stdlib: $kotlinNativeCompilerVersion
             \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
             
             (*) - dependencies omitted (listed previously)
@@ -210,7 +178,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             nativeCacheKind = NativeCacheKind.STATIC,
             gradleVersion = gradleVersion,
             localRepo = tempDir
-        ) { kotlinNativeCompilerVersion ->
+        ) {
             """
             e: The symbol of unexpected type encountered during IR deserialization: IrClassPublicSymbolImpl, sample.liba/B|null[0]. IrTypeAliasSymbol is expected.
             
@@ -222,12 +190,10 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             Project dependencies:
             +--- org.sample:liba (org.sample:liba-native): 2.0
             |    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
-            |    +--- stdlib: $kotlinNativeCompilerVersion
             |    \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
             +--- org.sample:libb (org.sample:libb-native): 1.0
             |    +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
             |    |    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
-            |    +--- stdlib: $kotlinNativeCompilerVersion
             |    \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
             \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
 
@@ -247,7 +213,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             nativeCacheKind = NativeCacheKind.NONE,
             gradleVersion = gradleVersion,
             localRepo = tempDir
-        ) { kotlinNativeCompilerVersion ->
+        ) {
             """
             e: The symbol of unexpected type encountered during IR deserialization: IrClassPublicSymbolImpl, sample.liba/B|null[0]. IrTypeAliasSymbol is expected.
             
@@ -259,15 +225,11 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             Project dependencies:
             +--- org.sample:liba (org.sample:liba-native): 2.0
             |    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
-            |    +--- stdlib: $kotlinNativeCompilerVersion
             |    \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
             +--- org.sample:libb (org.sample:libb-native): 1.0
             |    +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
             |    |    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
-            |    +--- stdlib: $kotlinNativeCompilerVersion
             |    \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
-            +--- org.jetbrains.kotlin.native.platform.* (NNN libraries): $kotlinNativeCompilerVersion
-            |    \--- stdlib: $kotlinNativeCompilerVersion
             \--- org.jetbrains.kotlin:kotlin-stdlib: ${KOTLIN_VERSION}
             
             (*) - dependencies omitted (listed previously)
@@ -280,7 +242,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
         nativeCacheKind: NativeCacheKind,
         gradleVersion: GradleVersion,
         localRepo: Path,
-        expectedErrorMessage: (compilerVersion: String) -> String,
+        expectedErrorMessage: () -> String,
     ) {
         buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "liba-v1.0", localRepo = localRepo, gradleVersion)
         buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "liba-v2.0", localRepo = localRepo, gradleVersion)
@@ -302,28 +264,18 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
         localRepo: Path?,
         nativeCacheKind: NativeCacheKind,
         gradleVersion: GradleVersion,
-        expectedErrorMessage: (compilerVersion: String) -> String,
+        expectedErrorMessage: () -> String,
     ) {
         prepareProject(directoryPrefix, projectName, localRepo, nativeCacheKind, gradleVersion) {
             buildAndFail("linkDebugExecutableNative", buildOptions = this.buildOptions.copy(logLevel = LogLevel.DEBUG)) {
 
-                val kotlinNativeCompilerVersion = findKotlinNativeCompilerVersion(output)
-                assertNotNull(kotlinNativeCompilerVersion)
-
                 val errorMessage = ERROR_LINE_REGEX.findAll(getOutputForTask(":linkDebugExecutableNative"))
                     .map { matchResult -> matchResult.groupValues[1] }
-                    .filterNot { it.startsWith("w:") || it.startsWith("v:") || it.startsWith("i:") }.map { line ->
-                        line.replace(COMPRESSED_PLATFORM_LIBS_REGEX) { result ->
-                            val rangeWithPlatformLibrariesCount = result.groups[1]!!.range
-                            buildString {
-                                append(line.substring(0, rangeWithPlatformLibrariesCount.first))
-                                append("NNN")
-                                append(line.substring(rangeWithPlatformLibrariesCount.last + 1))
-                            }
-                        }
-                    }.joinToString("\n")
+                    .filterNot { it.startsWith("w:") || it.startsWith("v:") || it.startsWith("i:") }
+                    .filterNot { it.matches(KONAN_PLATFORM_LIB_DEPENDENCY_REGEX) || it.contains(" stdlib: ") }
+                    .joinToString("\n")
 
-                assertEquals(expectedErrorMessage(kotlinNativeCompilerVersion), errorMessage)
+                assertEquals(expectedErrorMessage(), errorMessage)
             }
         }
     }
@@ -357,8 +309,8 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
 
     companion object {
         private val ERROR_LINE_REGEX = "(?m)^.*\\[ERROR] \\[\\S+] (.*)$".toRegex()
-        private val COMPRESSED_PLATFORM_LIBS_REGEX =
-            ".*${KONAN_PLATFORM_LIBS_NAME_PREFIX.replace(".", "\\.")}\\* \\((\\d+) libraries\\).*".toRegex()
+        private val KONAN_PLATFORM_LIB_DEPENDENCY_REGEX =
+            ".*${KONAN_PLATFORM_LIBS_NAME_PREFIX.replace(".", "\\.")}.*".toRegex()
 
         private fun findKotlinNativeCompilerVersion(output: String): String? = findParameterInOutput(
             "for_test_kotlin_native_compiler_version",
