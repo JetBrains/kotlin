@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.DestructuringContext
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
-import org.jetbrains.kotlin.fir.builder.addDestructuringStatements
+import org.jetbrains.kotlin.fir.builder.addDestructuringVariables
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -80,7 +80,7 @@ fun MutableList<FirStatement>.addDestructuringStatements(
     localEntries: Boolean,
 ) {
     with(DestructuringEntry) {
-        addDestructuringStatements(
+        addDestructuringVariables(
             moduleData,
             container,
             multiDeclaration.entries,

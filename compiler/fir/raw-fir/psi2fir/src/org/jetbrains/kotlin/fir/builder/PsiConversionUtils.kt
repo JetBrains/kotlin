@@ -132,7 +132,7 @@ internal fun generateDestructuringBlock(
 ): FirBlock {
     return buildBlock {
         source = multiDeclaration.toKtPsiSourceElement()
-        statements.addDestructuringStatements(
+        statements.addDestructuringVariables(
             moduleData,
             multiDeclaration,
             container,
@@ -143,12 +143,15 @@ internal fun generateDestructuringBlock(
 }
 
 context(AbstractRawFirBuilder<*>, DestructuringContext<KtDestructuringDeclarationEntry>)
-internal fun MutableList<FirStatement>.addDestructuringStatements(
+internal fun MutableList<in FirVariable>.addDestructuringVariables(
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
     tmpVariable: Boolean,
     localEntries: Boolean,
+    configure: (FirVariable) -> Unit = {}
 ) {
-    addDestructuringStatements(moduleData, container, multiDeclaration.entries, multiDeclaration.isVar, tmpVariable, localEntries)
+    this@addDestructuringVariables.addDestructuringVariables(
+        moduleData, container, multiDeclaration.entries, multiDeclaration.isVar, tmpVariable, localEntries, configure
+    )
 }
