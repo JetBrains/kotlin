@@ -33,8 +33,7 @@ fun A(x: Int, %composer: Composer?, %changed: Int) {
     }
     @Composable
     fun foo(y: Int, %composer: Composer?, %changed: Int) {
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(foo)<B(x,>:Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "C(foo)<B(x,>:Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -42,7 +41,7 @@ fun A(x: Int, %composer: Composer?, %changed: Int) {
       if (isTraceInProgress()) {
         traceEventEnd()
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
     }
     foo(x, %composer, 0b1110 and %dirty)
     if (isTraceInProgress()) {

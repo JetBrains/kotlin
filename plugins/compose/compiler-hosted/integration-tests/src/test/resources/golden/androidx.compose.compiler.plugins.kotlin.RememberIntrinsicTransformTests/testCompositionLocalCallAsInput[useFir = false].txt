@@ -25,12 +25,11 @@ fun Test(%composer: Composer?, %changed: Int) {
     }
     val foo = <block>{
       val tmp0_remember%arg%0 = compositionLocalBar.<get-current>(%composer, 0b0110)
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp1_group = %composer.cache(%composer.changed(tmp0_remember%arg%0)) {
         Foo()
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp1_group
     }
     if (isTraceInProgress()) {

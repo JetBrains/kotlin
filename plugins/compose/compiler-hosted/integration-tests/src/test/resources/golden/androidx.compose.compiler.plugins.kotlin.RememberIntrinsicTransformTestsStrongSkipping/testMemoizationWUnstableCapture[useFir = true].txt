@@ -27,14 +27,13 @@ fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) 
       traceEventStart(<>, %dirty, -1, <>)
     }
     Wrapper(<block>{
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%composer.changedInstance(unstable)) {
         {
           println(unstable)
         }
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp0_group
     }, %composer, 0)
     if (isTraceInProgress()) {

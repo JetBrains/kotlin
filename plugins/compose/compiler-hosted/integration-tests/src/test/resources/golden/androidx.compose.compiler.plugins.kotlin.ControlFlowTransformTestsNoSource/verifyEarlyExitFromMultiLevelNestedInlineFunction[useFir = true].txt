@@ -27,7 +27,6 @@ fun Test(condition: Boolean) {
 @Composable
 @NonRestartableComposable
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
   Text("Before outer", %composer, 0b0110)
   InlineLinearA({ %composer: Composer?, %changed: Int ->
     val tmp0_marker = %composer.currentMarker
@@ -47,5 +46,4 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
     %composer.endReplaceableGroup()
   }, %composer, 0)
   Text("Before outer", %composer, 0b0110)
-  %composer.endReplaceableGroup()
 }

@@ -26,12 +26,13 @@ fun Example() {
 @Composable
 @NonRestartableComposable
 fun Example(%composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Example)<Call()>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<Call()>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
   Call(%composer, 0)
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "")
   val <iterator> = 0 .. 1.iterator()
   while (<iterator>.hasNext()) {
     val index = <iterator>.next()
@@ -45,8 +46,9 @@ fun Example(%composer: Composer?, %changed: Int) {
     Call(%composer, 0)
     %composer.endReplaceableGroup()
   }
+  %composer.endReplaceableGroup()
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

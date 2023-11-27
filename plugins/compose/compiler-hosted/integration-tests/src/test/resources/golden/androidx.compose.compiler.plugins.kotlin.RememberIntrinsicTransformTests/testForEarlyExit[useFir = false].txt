@@ -29,14 +29,13 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     val value = <block>{
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         mutableStateOf(
           value = false
         )
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp0_group
     }
     if (!value.value && !condition) {
@@ -49,14 +48,13 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
       return
     }
     val value2 = <block>{
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp1_group = %composer.cache(false) {
         mutableStateOf(
           value = false
         )
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp1_group
     }
     Text("Text %{value.value}, %{value2.value}", %composer, 0)

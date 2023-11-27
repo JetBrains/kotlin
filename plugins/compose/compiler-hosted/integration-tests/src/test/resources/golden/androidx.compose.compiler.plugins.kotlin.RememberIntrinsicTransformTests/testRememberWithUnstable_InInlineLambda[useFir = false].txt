@@ -26,12 +26,11 @@ fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) 
   println(unstable)
   InlineWrapper({ %composer: Composer?, %changed: Int ->
     sourceInformationMarkerStart(%composer, <>, "C<rememb...>:Test.kt")
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     %composer.cache(%changed@Test and 0b1110 xor 0b0110 > 4 && %composer@Test.changed(param) || %changed@Test and 0b0110 == 0b0100) {
       param
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     sourceInformationMarkerEnd(%composer)
   }, %composer, 0)
   if (isTraceInProgress()) {

@@ -46,12 +46,11 @@ fun Icon(param: Int, defaultParam: Int, %composer: Composer?, %changed: Int, %de
       traceEventStart(<>, %dirty, -1, <>)
     }
     val remembered = <block>{
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       %composer.cache(%dirty and 0b1110 == 0b0100 or %dirty and 0b01110000 xor 0b00110000 > 32 && %composer.changed(defaultParam) || %dirty and 0b00110000 == 0b00100000) {
         TODO()
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
     }
     if (isTraceInProgress()) {
       traceEventEnd()

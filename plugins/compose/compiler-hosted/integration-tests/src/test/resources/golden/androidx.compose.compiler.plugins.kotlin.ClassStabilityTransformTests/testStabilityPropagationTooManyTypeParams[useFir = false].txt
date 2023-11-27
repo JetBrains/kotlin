@@ -69,7 +69,7 @@ fun A(y: Any?, %composer: Composer?, %changed: Int, %default: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     used(y)
-    A(Foo(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true), %composer, Foo.%stable or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0 or 0, 0)
+    A(Foo(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true), %composer, Foo.%stable, 0)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

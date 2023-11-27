@@ -15,8 +15,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 
 @Composable
 fun Test(x: Int, %composer: Composer?, %changed: Int): Int {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Test)<A()>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Test)<A()>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -24,6 +23,6 @@ fun Test(x: Int, %composer: Composer?, %changed: Int): Int {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }

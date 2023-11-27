@@ -25,8 +25,7 @@ fun Err() {
 @NonRestartableComposable
 @Composable
 fun Err(%composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Err):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Err):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -41,5 +40,5 @@ fun Err(%composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

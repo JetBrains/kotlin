@@ -26,8 +26,7 @@ val bar: Int @Composable get() { return 123 }
 val bar: Int
   @Composable @JvmName(name = "getBar")
   get() {
-    %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "C:Test.kt#2487m")
+    sourceInformationMarkerStart(%composer, <>, "C:Test.kt#2487m")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -35,14 +34,13 @@ val bar: Int
     if (isTraceInProgress()) {
       traceEventEnd()
     }
-    %composer.endReplaceableGroup()
+    sourceInformationMarkerEnd(%composer)
     return tmp0
   }
 @NonRestartableComposable
 @Composable
 fun Example(%composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Example)<bar>:Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<bar>:Test.kt#2487m")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -50,5 +48,5 @@ fun Example(%composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

@@ -47,6 +47,7 @@ class StrongSkippingModeTransformTests(
             ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
             intrinsicRememberEnabled
         )
+        put(ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY, true)
     }
 
     @Test

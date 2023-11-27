@@ -68,7 +68,7 @@ fun A(y: Any, %composer: Composer?, %changed: Int) {
     A(X(listOf(StableClass())), %composer, 0)
     A(StableDelegateProp(), %composer, 0)
     A(UnstableDelegateProp(), %composer, UnstableDelegate.%stable)
-    A(SingleParamProp(0), %composer, SingleParamProp.%stable or 0)
+    A(SingleParamProp(0), %composer, SingleParamProp.%stable)
     A(SingleParamNonProp(0), %composer, SingleParamNonProp.%stable)
     A(SingleParamProp(Any()), %composer, 0)
     if (isTraceInProgress()) {

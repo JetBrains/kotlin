@@ -38,14 +38,13 @@ fun Example(a: A, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     Example(<block>{
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changedInstance(a)) {
         A { it: Int ->
           a.compute(it)
         }
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp0_group
     }, %composer, 0)
     if (isTraceInProgress()) {

@@ -26,11 +26,12 @@ fun Example(items: Iterator<Int>) {
 @NonRestartableComposable
 @Composable
 fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Example):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "")
   while (items.hasNext()) {
     %composer.startReplaceableGroup(<>)
     sourceInformation(%composer, "<P(i)>")
@@ -42,8 +43,9 @@ fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
     P(i, %composer, 0)
     %composer.endReplaceableGroup()
   }
+  %composer.endReplaceableGroup()
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

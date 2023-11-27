@@ -35,108 +35,99 @@ fun ArrayConstructorTest(n: Int, %composer: Composer?, %changed: Int) {
     }
     Array(n) { it: Int ->
       val tmp1_return = <block>{
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
           it
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
       tmp1_return
     }
     ByteArray(n) { it: Int ->
       val tmp1_return = <block>{
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
           it.toByte()
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
       tmp1_return
     }
     CharArray(n) { it: Int ->
       val tmp1_return = <block>{
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
           it.toChar()
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
       tmp1_return
     }
     ShortArray(n) { it: Int ->
       val tmp1_return = <block>{
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
           it.toShort()
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
       tmp1_return
     }
     IntArray(n) { it: Int ->
       val tmp1_return = <block>{
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
           it
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
       tmp1_return
     }
     LongArray(n) { it: Int ->
       val tmp1_return = <block>{
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
           it.toLong()
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
       tmp1_return
     }
     FloatArray(n) { it: Int ->
       val tmp1_return = <block>{
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
           it.toFloat()
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
       tmp1_return
     }
     DoubleArray(n) { it: Int ->
       val tmp1_return = <block>{
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
           it.toDouble()
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
       tmp1_return
     }
     BooleanArray(n) { it: Int ->
       val tmp1_return = <block>{
-        %composer.startReplaceableGroup(<>)
-        sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(false) {
           false
         }
-        %composer.endReplaceableGroup()
+        sourceInformationMarkerEnd(%composer)
         tmp0_group
       }
       tmp1_return

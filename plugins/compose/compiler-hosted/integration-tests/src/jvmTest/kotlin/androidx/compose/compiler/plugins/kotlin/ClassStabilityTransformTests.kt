@@ -1641,7 +1641,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             expectedTransformed = """
                 @StabilityInferred(parameters = 1)
                 class CombinedUnstable<T> (val first: T, val second: ParametrizedFoo<SomeFoo>) {
-                  static val %stable: Int = ParametrizedFoo.%stable or 0
+                  static val %stable: Int = ParametrizedFoo.%stable
                 }
             """
         )
@@ -1660,7 +1660,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             expectedTransformed = """
             @StabilityInferred(parameters = 1)
             class CombinedStable<T> (val first: T, val second: ParametrizedFoo<SomeFoo>) {
-              static val %stable: Int = SomeFoo.%stable or ParametrizedFoo.%stable or 0
+              static val %stable: Int = SomeFoo.%stable or ParametrizedFoo.%stable
             }
         """
         )
@@ -1679,7 +1679,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             expectedTransformed = """
             @StabilityInferred(parameters = 3)
             class CombinedStable<T, K> (val first: T, val second: ParametrizedFoo<K>) {
-              static val %stable: Int = 0 or ParametrizedFoo.%stable or 0
+              static val %stable: Int = ParametrizedFoo.%stable
             }
         """
         )

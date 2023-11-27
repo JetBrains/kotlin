@@ -21,8 +21,7 @@ fun Foo() {
 @Composable
 @NonRestartableComposable
 fun Foo(%composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Foo):Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "C(Foo):Test.kt#2487m")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -30,5 +29,5 @@ fun Foo(%composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

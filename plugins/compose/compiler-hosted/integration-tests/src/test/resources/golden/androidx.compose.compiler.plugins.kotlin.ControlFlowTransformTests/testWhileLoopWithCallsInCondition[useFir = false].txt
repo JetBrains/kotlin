@@ -25,16 +25,18 @@ fun Example() {
 @NonRestartableComposable
 @Composable
 fun Example(%composer: Composer?, %changed: Int) {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Example)*<B()>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "*<B()>")
   while (B(%composer, 0)) {
     print("hello world")
   }
+  %composer.endReplaceableGroup()
   if (isTraceInProgress()) {
     traceEventEnd()
   }
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
 }

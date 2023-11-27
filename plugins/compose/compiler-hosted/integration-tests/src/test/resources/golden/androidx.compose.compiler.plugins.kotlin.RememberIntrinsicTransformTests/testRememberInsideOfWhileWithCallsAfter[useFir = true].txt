@@ -31,12 +31,11 @@ fun Test(items: List<Int>, %composer: Composer?, %changed: Int) {
   while (<iterator>.hasNext()) {
     val item = <iterator>.next()
     val foo = <block>{
-      %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         Foo()
       }
-      %composer.endReplaceableGroup()
+      sourceInformationMarkerEnd(%composer)
       tmp0_group
     }
     A(%composer, 0)

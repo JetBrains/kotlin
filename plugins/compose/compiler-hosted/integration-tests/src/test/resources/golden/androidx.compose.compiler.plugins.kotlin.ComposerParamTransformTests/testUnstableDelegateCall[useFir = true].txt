@@ -39,10 +39,9 @@ class Foo {
 }
 @Composable
 fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {
-  %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "CC(getValue)P(1):Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "CC(getValue)P(1):Test.kt#2487m")
   val tmp0 = <this>
-  %composer.endReplaceableGroup()
+  sourceInformationMarkerEnd(%composer)
   return tmp0
 }
 @Composable
