@@ -365,10 +365,23 @@ class FirExpectActualMatchingContextImpl private constructor(
         if (this is ConeClassLikeType && classId?.isNestedClass == true) {
             val classSymbol = classId.toSymbol(actualSession)
             if (classSymbol is FirRegularClassSymbol && classSymbol.isExpect) {
-                tryExpandExpectNestedClassActualizedViaTypealias(this, classSymbol)?.let { return it }
+                tryExpandExpectNestedClassActualizedViaTypealias(this, classSymbol)?.let {
+                    return it.actualizeTypeArguments()
+                }
             }
         }
-        return fullyExpandedType(actualSession)
+        return fullyExpandedType(actualSession).actualizeTypeArguments()
+    }
+
+    private fun ConeKotlinType.actualizeTypeArguments(): ConeKotlinType {
+        if (this !is ConeClassLikeType) {
+            return this
+        }
+        return withArguments { arg ->
+            if (arg is ConeKotlinTypeProjection) {
+                arg.replaceType(arg.type.actualize()) as ConeTypeProjection
+            } else arg
+        }
     }
 
     /**
