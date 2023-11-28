@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan
@@ -9,9 +9,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
-internal const val NATIVE_PTR_NAME = "NativePtr"
-internal const val NON_NULL_NATIVE_PTR_NAME = "NonNullNativePtr"
-internal const val IMMUTABLE_BLOB_OF = "immutableBlobOf"
+@InternalKotlinNativeApi
+const val NATIVE_PTR_NAME = "NativePtr"
+
+@InternalKotlinNativeApi
+const val NON_NULL_NATIVE_PTR_NAME = "NonNullNativePtr"
+
+@InternalKotlinNativeApi
+const val IMMUTABLE_BLOB_OF = "immutableBlobOf"
 
 object KonanFqNames {
     val function = FqName("kotlin.Function")

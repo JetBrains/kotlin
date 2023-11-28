@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
-internal class ObjCExportedInterface(
+@InternalKotlinNativeApi
+class ObjCExportedInterface(
         val generatedClasses: Set<ClassDescriptor>,
         val categoryMembers: Map<ClassDescriptor, List<CallableMemberDescriptor>>,
         val topLevel: Map<SourceFile, List<CallableMemberDescriptor>>,
@@ -189,3 +190,6 @@ private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationSt
         // In this case resulting framework will likely be unusable due to compile errors when importing it.
     }
 }
+
+internal val PhaseContext.objCExportTopLevelNamePrefix: String
+    get() = abbreviate(config.fullExportedNamePrefix)

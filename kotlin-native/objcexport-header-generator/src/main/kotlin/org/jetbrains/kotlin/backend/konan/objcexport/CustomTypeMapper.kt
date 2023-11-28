@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.getFunctionTypeKind
@@ -15,12 +16,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
-internal fun ClassDescriptor.isMappedFunctionClass() =
+@InternalKotlinNativeApi
+fun ClassDescriptor.isMappedFunctionClass() =
         this.getFunctionTypeKind() == FunctionTypeKind.Function &&
                 // Type parameters include return type.
                 declaredTypeParameters.size - 1 < CustomTypeMappers.functionTypeMappersArityLimit
 
-internal interface CustomTypeMapper {
+@InternalKotlinNativeApi
+interface CustomTypeMapper {
     val mappedClassId: ClassId
     fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType
 }

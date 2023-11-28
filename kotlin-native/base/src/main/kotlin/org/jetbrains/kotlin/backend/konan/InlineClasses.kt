@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan
@@ -48,13 +48,15 @@ fun ClassDescriptor.isInlined(): Boolean = KotlinTypeInlineClassesSupport.isInli
 
 fun KotlinType.binaryRepresentationIsNullable() = KotlinTypeInlineClassesSupport.representationIsNullable(this)
 
-internal inline fun <R> KotlinType.unwrapToPrimitiveOrReference(
+@InternalKotlinNativeApi
+inline fun <R> KotlinType.unwrapToPrimitiveOrReference(
         eachInlinedClass: (inlinedClass: ClassDescriptor, nullable: Boolean) -> Unit,
         ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
         ifReference: (type: KotlinType) -> R
 ): R = KotlinTypeInlineClassesSupport.unwrapToPrimitiveOrReference(this, eachInlinedClass, ifPrimitive, ifReference)
 
-internal inline fun <R> IrType.unwrapToPrimitiveOrReference(
+@InternalKotlinNativeApi
+inline fun <R> IrType.unwrapToPrimitiveOrReference(
         eachInlinedClass: (inlinedClass: IrClass, nullable: Boolean) -> Unit,
         ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
         ifReference: (type: IrType) -> R
@@ -114,14 +116,18 @@ enum class KonanPrimitiveType(val classId: ClassId, val binaryType: BinaryType.P
     }
 }
 
-internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
-    protected abstract fun isNullable(type: Type): Boolean
-    protected abstract fun makeNullable(type: Type): Type
+@InternalKotlinNativeApi
+abstract class InlineClassesSupport<Class : Any, Type : Any> {
+    @InternalKotlinNativeApi
+    abstract fun isNullable(type: Type): Boolean
+    @InternalKotlinNativeApi
+    abstract fun makeNullable(type: Type): Type
     protected abstract fun erase(type: Type): Class
     protected abstract fun computeFullErasure(type: Type): Sequence<Class>
     protected abstract fun hasInlineModifier(clazz: Class): Boolean
     protected abstract fun getNativePointedSuperclass(clazz: Class): Class?
-    protected abstract fun getInlinedClassUnderlyingType(clazz: Class): Type
+    @InternalKotlinNativeApi
+    abstract fun getInlinedClassUnderlyingType(clazz: Class): Type
     protected abstract fun getPackageFqName(clazz: Class): FqName?
     protected abstract fun getName(clazz: Class): Name?
     abstract fun isTopLevelClass(clazz: Class): Boolean
@@ -135,15 +141,17 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
     fun getInlinedClass(type: Type): Class? =
             getInlinedClass(erase(type), isNullable(type))
 
-    protected fun getKonanPrimitiveType(clazz: Class): KonanPrimitiveType? =
+    @InternalKotlinNativeApi
+    fun getKonanPrimitiveType(clazz: Class): KonanPrimitiveType? =
             if (isTopLevelClass(clazz))
                 KonanPrimitiveType.byFqNameParts[getPackageFqName(clazz)]?.get(getName(clazz))
             else null
 
-    protected fun isImplicitInlineClass(clazz: Class): Boolean =
-        isTopLevelClass(clazz) && (getKonanPrimitiveType(clazz) != null ||
-                getName(clazz) == KonanFqNames.nativePtr.shortName() && getPackageFqName(clazz) == KonanFqNames.internalPackageName  ||
-                getName(clazz) == InteropFqNames.cPointer.shortName() && getPackageFqName(clazz) == InteropFqNames.cPointer.parent().toSafe())
+    @InternalKotlinNativeApi
+    fun isImplicitInlineClass(clazz: Class): Boolean =
+            isTopLevelClass(clazz) && (getKonanPrimitiveType(clazz) != null ||
+                    getName(clazz) == KonanFqNames.nativePtr.shortName() && getPackageFqName(clazz) == KonanFqNames.internalPackageName ||
+                    getName(clazz) == InteropFqNames.cPointer.shortName() && getPackageFqName(clazz) == InteropFqNames.cPointer.parent().toSafe())
 
     private fun getInlinedClass(erased: Class, isNullable: Boolean): Class? {
         val inlinedClass = getInlinedClass(erased) ?: return null
@@ -194,7 +202,7 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
 
             val nullable = isNullable(currentType)
 
-           getKonanPrimitiveType(inlinedClass)?.let { primitiveType ->
+            getKonanPrimitiveType(inlinedClass)?.let { primitiveType ->
                 return ifPrimitive(primitiveType, nullable)
             }
 
@@ -235,7 +243,8 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
             BinaryType.Reference(computeFullErasure(type), true)
 }
 
-internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescriptor, KotlinType>() {
+@InternalKotlinNativeApi
+object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescriptor, KotlinType>() {
 
     override fun isNullable(type: KotlinType): Boolean = type.isNullable()
     override fun makeNullable(type: KotlinType): KotlinType = type.makeNullable()
@@ -271,7 +280,8 @@ internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescr
     override fun isTopLevelClass(clazz: ClassDescriptor): Boolean = clazz.containingDeclaration is PackageFragmentDescriptor
 }
 
-internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
+@InternalKotlinNativeApi
+object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
 
     override fun isNullable(type: IrType): Boolean = type.isNullable()
 

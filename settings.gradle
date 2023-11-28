@@ -838,6 +838,8 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:endorsedLibraries:kotlinx.cli'
     include ':kotlin-native:Interop:StubGenerator'
     include ':kotlin-native:backend.native'
+    include ':kotlin-native:base'
+    include ':kotlin-native:objcexport-header-generator'
     include ':kotlin-native:Interop:Runtime'
     include ':kotlin-native:Interop:Indexer'
     include ':kotlin-native:Interop:JsRuntime'
