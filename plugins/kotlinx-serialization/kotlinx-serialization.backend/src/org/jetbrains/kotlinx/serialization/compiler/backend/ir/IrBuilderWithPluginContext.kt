@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -141,6 +142,13 @@ interface IrBuilderWithPluginContext {
         return prop
     }
 
+    fun IrElement.createAnnotationCallWithoutArgs(annotationSymbol: IrClassSymbol): IrConstructorCall {
+        val annotationCtor = annotationSymbol.constructors.single { it.owner.isPrimary }
+        val annotationType = annotationSymbol.defaultType
+
+        return IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+    }
+
     fun IrClass.addValPropertyWithJvmField(
         type: IrType,
         name: Name,
@@ -153,11 +161,7 @@ interface IrBuilderWithPluginContext {
                 val resultExpression = addAndGetLastExpression(initializerBuilder)
                 +irSetField(irGet(thisReceiver!!), field, resultExpression)
             }
-
-            val annotationCtor = compilerContext.jvmFieldClassSymbol.constructors.single { it.owner.isPrimary }
-            val annotationType = compilerContext.jvmFieldClassSymbol.defaultType
-
-            field.annotations += IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+            field.annotations += createAnnotationCallWithoutArgs(compilerContext.jvmFieldClassSymbol)
         }
     }
 
@@ -177,11 +181,7 @@ interface IrBuilderWithPluginContext {
                 field.endOffset
             )
             field.initializer = IrExpressionBodyImpl(builder.initializer())
-
-            val annotationCtor = compilerContext.jvmFieldClassSymbol.constructors.single { it.owner.isPrimary }
-            val annotationType = compilerContext.jvmFieldClassSymbol.defaultType
-
-            field.annotations += IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+            field.annotations += createAnnotationCallWithoutArgs(compilerContext.jvmFieldClassSymbol)
         }
     }
 
