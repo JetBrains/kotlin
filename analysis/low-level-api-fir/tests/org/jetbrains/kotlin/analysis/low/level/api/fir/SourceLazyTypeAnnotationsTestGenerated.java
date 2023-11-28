@@ -134,6 +134,12 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
         }
 
         @Test
+        @TestMetadata("propagationToLocalMemberFunction.kt")
+        public void testPropagationToLocalMemberFunction() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/constructor/propagationToLocalMemberFunction.kt");
+        }
+
+        @Test
         @TestMetadata("reference.kt")
         public void testReference() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/constructor/reference.kt");
@@ -241,6 +247,28 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
     }
 
     @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DestructuringDeclaration {
+        @Test
+        public void testAllFilesPresentInDestructuringDeclaration() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("classLevel.kt")
+        public void testClassLevel() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/classLevel.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevel.kt")
+        public void testTopLevel() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/topLevel.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/errorType")
     @TestDataPath("$PROJECT_ROOT")
     public class ErrorType {
@@ -338,6 +366,48 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
         }
 
         @Test
+        @TestMetadata("localImplicitTypeUnavailable.kt")
+        public void testLocalImplicitTypeUnavailable() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/localImplicitTypeUnavailable.kt");
+        }
+
+        @Test
+        @TestMetadata("localImplicitTypeUnavailableInImplicitBody.kt")
+        public void testLocalImplicitTypeUnavailableInImplicitBody() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/localImplicitTypeUnavailableInImplicitBody.kt");
+        }
+
+        @Test
+        @TestMetadata("multiDeclaration.kt")
+        public void testMultiDeclaration() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/multiDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("propagationBetweenLocalMemberFunctions.kt")
+        public void testPropagationBetweenLocalMemberFunctions() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/propagationBetweenLocalMemberFunctions.kt");
+        }
+
+        @Test
+        @TestMetadata("propagationBetweenLocalMemberFunctionsImplicitBody.kt")
+        public void testPropagationBetweenLocalMemberFunctionsImplicitBody() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/propagationBetweenLocalMemberFunctionsImplicitBody.kt");
+        }
+
+        @Test
+        @TestMetadata("propagationToLocalMemberFunction.kt")
+        public void testPropagationToLocalMemberFunction() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/propagationToLocalMemberFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("propagationToLocalMemberFunctionImplicitBody.kt")
+        public void testPropagationToLocalMemberFunctionImplicitBody() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/propagationToLocalMemberFunctionImplicitBody.kt");
+        }
+
+        @Test
         @TestMetadata("superTypeCallNameClashWithAnnotation.kt")
         public void testSuperTypeCallNameClashWithAnnotation() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/superTypeCallNameClashWithAnnotation.kt");
@@ -383,6 +453,22 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
         @TestMetadata("typePropagationFromPropertyWithInaccessibleAnnotationArgument.kt")
         public void testTypePropagationFromPropertyWithInaccessibleAnnotationArgument() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/typePropagationFromPropertyWithInaccessibleAnnotationArgument.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/initializer")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Initializer {
+        @Test
+        public void testAllFilesPresentInInitializer() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/initializer"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("classInitializer.kt")
+        public void testClassInitializer() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/initializer/classInitializer.kt");
         }
     }
 
@@ -444,6 +530,18 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
         }
 
         @Test
+        @TestMetadata("localImplicitTypeUnavailable.kt")
+        public void testLocalImplicitTypeUnavailable() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/localImplicitTypeUnavailable.kt");
+        }
+
+        @Test
+        @TestMetadata("localImplicitTypeUnavailableInImplicitBody.kt")
+        public void testLocalImplicitTypeUnavailableInImplicitBody() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/localImplicitTypeUnavailableInImplicitBody.kt");
+        }
+
+        @Test
         @TestMetadata("localPropertyWithExplicitType.kt")
         public void testLocalPropertyWithExplicitType() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/localPropertyWithExplicitType.kt");
@@ -459,6 +557,30 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
         @TestMetadata("localPropertyWithPropagatedTypeUnavailable.kt")
         public void testLocalPropertyWithPropagatedTypeUnavailable() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/localPropertyWithPropagatedTypeUnavailable.kt");
+        }
+
+        @Test
+        @TestMetadata("propagationBetweenLocalMemberProperties.kt")
+        public void testPropagationBetweenLocalMemberProperties() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/propagationBetweenLocalMemberProperties.kt");
+        }
+
+        @Test
+        @TestMetadata("propagationBetweenLocalMemberPropertiesImplicitBody.kt")
+        public void testPropagationBetweenLocalMemberPropertiesImplicitBody() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/propagationBetweenLocalMemberPropertiesImplicitBody.kt");
+        }
+
+        @Test
+        @TestMetadata("propagationToLocalMemberProperty.kt")
+        public void testPropagationToLocalMemberProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/propagationToLocalMemberProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("propagationToLocalMemberPropertyImplicitBody.kt")
+        public void testPropagationToLocalMemberPropertyImplicitBody() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/propagationToLocalMemberPropertyImplicitBody.kt");
         }
 
         @Test

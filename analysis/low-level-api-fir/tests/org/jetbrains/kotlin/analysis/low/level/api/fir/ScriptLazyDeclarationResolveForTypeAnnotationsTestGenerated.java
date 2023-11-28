@@ -110,6 +110,12 @@ public class ScriptLazyDeclarationResolveForTypeAnnotationsTestGenerated extends
         }
 
         @Test
+        @TestMetadata("propagationToLocalMemberFunctionScript.kts")
+        public void testPropagationToLocalMemberFunctionScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/constructor/propagationToLocalMemberFunctionScript.kts");
+        }
+
+        @Test
         @TestMetadata("referenceScript.kts")
         public void testReferenceScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/constructor/referenceScript.kts");
@@ -217,6 +223,34 @@ public class ScriptLazyDeclarationResolveForTypeAnnotationsTestGenerated extends
     }
 
     @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DestructuringDeclaration {
+        @Test
+        public void testAllFilesPresentInDestructuringDeclaration() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("scriptClassLevel.kts")
+        public void testScriptClassLevel() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/scriptClassLevel.kts");
+        }
+
+        @Test
+        @TestMetadata("scriptStatementLevel.kts")
+        public void testScriptStatementLevel() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/scriptStatementLevel.kts");
+        }
+
+        @Test
+        @TestMetadata("scriptStatementLevelAsLastStatement.kts")
+        public void testScriptStatementLevelAsLastStatement() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/destructuringDeclaration/scriptStatementLevelAsLastStatement.kts");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/errorType")
     @TestDataPath("$PROJECT_ROOT")
     public class ErrorType {
@@ -302,6 +336,48 @@ public class ScriptLazyDeclarationResolveForTypeAnnotationsTestGenerated extends
         }
 
         @Test
+        @TestMetadata("localImplicitTypeUnavailableInImplicitBodyScript.kts")
+        public void testLocalImplicitTypeUnavailableInImplicitBodyScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/localImplicitTypeUnavailableInImplicitBodyScript.kts");
+        }
+
+        @Test
+        @TestMetadata("localImplicitTypeUnavailableScript.kts")
+        public void testLocalImplicitTypeUnavailableScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/localImplicitTypeUnavailableScript.kts");
+        }
+
+        @Test
+        @TestMetadata("multiDeclarationScript.kts")
+        public void testMultiDeclarationScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/multiDeclarationScript.kts");
+        }
+
+        @Test
+        @TestMetadata("propagationBetweenLocalMemberFunctionsImplicitBodyScript.kts")
+        public void testPropagationBetweenLocalMemberFunctionsImplicitBodyScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/propagationBetweenLocalMemberFunctionsImplicitBodyScript.kts");
+        }
+
+        @Test
+        @TestMetadata("propagationBetweenLocalMemberFunctionsScript.kts")
+        public void testPropagationBetweenLocalMemberFunctionsScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/propagationBetweenLocalMemberFunctionsScript.kts");
+        }
+
+        @Test
+        @TestMetadata("propagationToLocalMemberFunctionImplicitBodyScript.kts")
+        public void testPropagationToLocalMemberFunctionImplicitBodyScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/propagationToLocalMemberFunctionImplicitBodyScript.kts");
+        }
+
+        @Test
+        @TestMetadata("propagationToLocalMemberFunctionScript.kts")
+        public void testPropagationToLocalMemberFunctionScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/propagationToLocalMemberFunctionScript.kts");
+        }
+
+        @Test
         @TestMetadata("superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts")
         public void testSuperTypeCallNameClashWithAnnotationImplicitConstructorScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts");
@@ -329,6 +405,22 @@ public class ScriptLazyDeclarationResolveForTypeAnnotationsTestGenerated extends
         @TestMetadata("typeParameterAnnotationsInLocalClassScript.kts")
         public void testTypeParameterAnnotationsInLocalClassScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/typeParameterAnnotationsInLocalClassScript.kts");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/initializer")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Initializer {
+        @Test
+        public void testAllFilesPresentInInitializer() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/initializer"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("classInitializerScript.kts")
+        public void testClassInitializerScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/initializer/classInitializerScript.kts");
         }
     }
 
@@ -378,9 +470,45 @@ public class ScriptLazyDeclarationResolveForTypeAnnotationsTestGenerated extends
         }
 
         @Test
+        @TestMetadata("localImplicitTypeUnavailableInImplicitBodyScript.kts")
+        public void testLocalImplicitTypeUnavailableInImplicitBodyScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/localImplicitTypeUnavailableInImplicitBodyScript.kts");
+        }
+
+        @Test
+        @TestMetadata("localImplicitTypeUnavailableScript.kts")
+        public void testLocalImplicitTypeUnavailableScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/localImplicitTypeUnavailableScript.kts");
+        }
+
+        @Test
         @TestMetadata("localPropertyWithPropagatedTypeScript.kts")
         public void testLocalPropertyWithPropagatedTypeScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/localPropertyWithPropagatedTypeScript.kts");
+        }
+
+        @Test
+        @TestMetadata("propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts")
+        public void testPropagationBetweenLocalMemberPropertiesImplicitBodyScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts");
+        }
+
+        @Test
+        @TestMetadata("propagationBetweenLocalMemberPropertiesScript.kts")
+        public void testPropagationBetweenLocalMemberPropertiesScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/propagationBetweenLocalMemberPropertiesScript.kts");
+        }
+
+        @Test
+        @TestMetadata("propagationToLocalMemberPropertyImplicitBodyScript.kts")
+        public void testPropagationToLocalMemberPropertyImplicitBodyScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/propagationToLocalMemberPropertyImplicitBodyScript.kts");
+        }
+
+        @Test
+        @TestMetadata("propagationToLocalMemberPropertyScript.kts")
+        public void testPropagationToLocalMemberPropertyScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/propagationToLocalMemberPropertyScript.kts");
         }
 
         @Test

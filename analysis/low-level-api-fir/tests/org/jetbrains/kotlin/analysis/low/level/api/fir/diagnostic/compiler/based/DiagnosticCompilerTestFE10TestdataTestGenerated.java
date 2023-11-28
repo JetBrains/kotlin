@@ -2053,6 +2053,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("localImplicitTypeUnavailable.kt")
+            public void testLocalImplicitTypeUnavailable() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/localImplicitTypeUnavailable.kt");
+            }
+
+            @Test
             @TestMetadata("missingValOnParameter.kt")
             public void testMissingValOnParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/missingValOnParameter.kt");
@@ -2152,6 +2158,30 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             @TestMetadata("onMultiDeclaration.kt")
             public void testOnMultiDeclaration() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/onMultiDeclaration.kt");
+            }
+
+            @Test
+            @TestMetadata("propagationAnnotationToLocalMemberFunction.kt")
+            public void testPropagationAnnotationToLocalMemberFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/propagationAnnotationToLocalMemberFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("propagationBetweenLocalMemberProperties.kt")
+            public void testPropagationBetweenLocalMemberProperties() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/propagationBetweenLocalMemberProperties.kt");
+            }
+
+            @Test
+            @TestMetadata("propagationFromLocalMemberFunctionAnnotation.kt")
+            public void testPropagationFromLocalMemberFunctionAnnotation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/propagationFromLocalMemberFunctionAnnotation.kt");
+            }
+
+            @Test
+            @TestMetadata("propagationToLocalMemberProperty.kt")
+            public void testPropagationToLocalMemberProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/propagationToLocalMemberProperty.kt");
             }
 
             @Test
