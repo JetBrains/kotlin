@@ -12,4 +12,6 @@ dependencies {
     implementation 'com.example:sample-lib:1.0'
 }
 
-mainClassName = 'A'
+application {
+    mainClass = 'A'
+}

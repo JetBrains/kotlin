@@ -421,7 +421,9 @@ open class NewMultiplatformIT : BaseGradleIT() {
                         }
                     }
                     
-                    mainClassName = 'com.example.lib.CommonKt'
+                    application {
+                        mainClass = 'com.example.lib.CommonKt'
+                    }
                     
                     dependencies {
                         jvm6MainImplementation("com.google.dagger:dagger:2.24")

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.util.GradleVersion
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
 import kotlin.io.path.*
@@ -163,5 +164,31 @@ fun GradleProject.addPropertyToGradleProperties(
             """.trimMargin()
         )
 
+    }
+}
+
+/**
+ * Configures 'archivesBaseName' in Gradle older and newer versions compatible way avoiding
+ * deprecation warnings.
+ */
+internal fun TestProject.addArchivesBaseNameCompat(
+    archivesBaseName: String
+) {
+    if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_7_1)) {
+        buildGradle.appendText(
+            """
+            |
+            |archivesBaseName = '$archivesBaseName'
+            """.trimMargin()
+        )
+    } else {
+        buildGradle.appendText(
+            """
+            |
+            |base {
+            |    archivesBaseName = '$archivesBaseName'
+            |}
+            """.trimMargin()
+        )
     }
 }

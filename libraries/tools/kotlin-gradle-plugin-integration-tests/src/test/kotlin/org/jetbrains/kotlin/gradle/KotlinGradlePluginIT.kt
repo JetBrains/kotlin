@@ -336,7 +336,7 @@ class KotlinGradleIT : KGPBaseTest() {
     fun testArchiveBaseNameForModuleName(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             val archivesBaseName = "myArchivesBaseName"
-            buildGradle.appendText("\narchivesBaseName = '$archivesBaseName'")
+            addArchivesBaseNameCompat(archivesBaseName)
 
             // Add top-level members to force generation of the *.kotlin_module files for the two source sets
             val mainHelloWorldKt = kotlinSourcesDir().resolve("helloWorld.kt")
@@ -439,15 +439,15 @@ class KotlinGradleIT : KGPBaseTest() {
     @GradleTest
     fun testModuleNameFiltering(gradleVersion: GradleVersion) {
         project("typeAlias", gradleVersion) { // Use a Project with a top-level typealias
+            addArchivesBaseNameCompat("""a/really\\trick\n\rmodule\tname""")
+
             buildGradle.appendText(
                 """
-                                    
-                archivesBaseName = 'a/really\\trick\n\rmodule\tname'
-                
-                tasks.withType(Jar.class).configureEach {
-                    archiveBaseName.set('typeAlias')
-                }
-                """.trimIndent()
+                |
+                |tasks.withType(Jar.class).configureEach {
+                |    archiveBaseName.set('typeAlias')
+                |}
+                """.trimMargin()
             )
 
             build("classes") {

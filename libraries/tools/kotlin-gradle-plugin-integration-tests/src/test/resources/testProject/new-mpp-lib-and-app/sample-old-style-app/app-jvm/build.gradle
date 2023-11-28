@@ -5,4 +5,6 @@ dependencies {
 	implementation 'com.example:sample-lib:1.0'
 }
 
-mainClassName = 'com.example.app.JvmAppKt'
+application {
+	mainClass = 'com.example.app.JvmAppKt'
+}

@@ -1067,7 +1067,7 @@ open class Kapt3IT : Kapt3BaseIT() {
             buildJdk = jdk.location
         ) {
             buildGradle.append(
-                "\nsourceCompatibility = '8'"
+                "\njava.sourceCompatibility = JavaVersion.VERSION_1_8"
             )
 
             // because Java sourceCompatibility is fixed JVM target will different with JDK 11 on Gradle 8
