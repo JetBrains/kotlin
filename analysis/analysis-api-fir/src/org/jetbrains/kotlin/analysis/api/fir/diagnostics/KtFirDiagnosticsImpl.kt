@@ -2103,6 +2103,12 @@ internal class DynamicReceiverNotAllowedImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.DynamicReceiverNotAllowed
 
+internal class DynamicReceiverExpectedButWasNonDynamicImpl(
+    override val actualType: KtType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DynamicReceiverExpectedButWasNonDynamic
+
 internal class IncompatibleTypesImpl(
     override val typeA: KtType,
     override val typeB: KtType,

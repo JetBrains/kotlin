@@ -93,6 +93,10 @@ class InapplicableWrongReceiver(
     val actualType: ConeKotlinType? = null,
 ) : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
 
+class DynamicReceiverExpectedButWasNonDynamic(
+    val actualType: ConeKotlinType,
+) : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
+
 object NoCompanionObject : ResolutionDiagnostic(K2_NO_COMPANION_OBJECT)
 
 class UnsafeCall(val actualType: ConeKotlinType) : ResolutionDiagnostic(UNSAFE_CALL)

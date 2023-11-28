@@ -392,6 +392,11 @@ private fun checkApplicabilityForArgumentType(
         return
     }
 
+    if (isReceiver && expectedType is ConeDynamicType && argumentType !is ConeDynamicType) {
+        sink.reportDiagnostic(DynamicReceiverExpectedButWasNonDynamic(argumentType))
+        return
+    }
+
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
         val smartcastExpression = argument as? FirSmartCastExpression
         if (smartcastExpression != null && !smartcastExpression.isStable) {
