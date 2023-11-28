@@ -16686,6 +16686,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("fixingDependentVariablesForReceivers.kt")
+                public void testFixingDependentVariablesForReceivers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingDependentVariablesForReceivers.kt");
+                }
+
+                @Test
+                @TestMetadata("fixingDependentVariablesForReceiversInitial.kt")
+                public void testFixingDependentVariablesForReceiversInitial() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingDependentVariablesForReceiversInitial.kt");
+                }
+
+                @Test
                 @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter.kt")
                 public void testFixingTVForLambadaWithShallowDependencyToOuter() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter.kt");

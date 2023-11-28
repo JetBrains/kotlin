@@ -624,7 +624,7 @@ class PostponedArgumentInputTypesResolver(
             postponedArguments,
             ConstraintSystemCompletionMode.FULL,
             topLevelType,
-            isRelevantToInputType = true,
+            isRelevantToInputType = false,
         )
     }
 
