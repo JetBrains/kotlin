@@ -472,9 +472,8 @@ internal object CheckArguments : CheckerStage() {
         val argumentMapping =
             candidate.argumentMapping ?: error("Argument should be already mapped while checking arguments!")
 
-        @OptIn(UnresolvedExpressionTypeAccess::class)
         val isInvokeFromExtensionFunctionType = candidate.explicitReceiverKind == DISPATCH_RECEIVER
-                && candidate.dispatchReceiver?.coneTypeOrNull?.isExtensionFunctionType == true
+                && candidate.dispatchReceiver?.resolvedType?.isExtensionFunctionType == true
                 && (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
 
         for ((index, argument) in callInfo.arguments.withIndex()) {
