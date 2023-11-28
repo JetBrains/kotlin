@@ -77,9 +77,9 @@ fun main1() {
 fun test() {
     {x : Int -> 1}<!NO_VALUE_FOR_PARAMETER!>()<!>;
     (fun Int.() = 1)<!NO_VALUE_FOR_PARAMETER!>()<!>
-    <!ARGUMENT_TYPE_MISMATCH!>"sd"<!>.(fun Int.() = 1)()
+    "sd".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>(fun Int.() = 1)<!>()
     val i : Int? = null
-    <!ARGUMENT_TYPE_MISMATCH!>i<!>.(fun Int.() = 1)();
+    i.<!UNSAFE_IMPLICIT_INVOKE_CALL!>(fun Int.() = 1)<!>();
     <!INAPPLICABLE_CANDIDATE!>{}<!><Int>()
     1<!UNNECESSARY_SAFE_CALL!>?.<!>(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)()
     1.<!NO_RECEIVER_ALLOWED!>{}<!>()

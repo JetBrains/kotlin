@@ -471,12 +471,18 @@ internal object CheckArguments : CheckerStage() {
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val argumentMapping =
             candidate.argumentMapping ?: error("Argument should be already mapped while checking arguments!")
-        for (argument in callInfo.arguments) {
+
+        @OptIn(UnresolvedExpressionTypeAccess::class)
+        val isInvokeFromExtensionFunctionType = candidate.explicitReceiverKind == DISPATCH_RECEIVER
+                && candidate.dispatchReceiver?.coneTypeOrNull?.isExtensionFunctionType == true
+                && (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
+
+        for ((index, argument) in callInfo.arguments.withIndex()) {
             candidate.resolveArgument(
                 callInfo,
                 argument,
                 argumentMapping[argument],
-                isReceiver = false,
+                isReceiver = index == 0 && isInvokeFromExtensionFunctionType,
                 sink = sink,
                 context = context
             )
