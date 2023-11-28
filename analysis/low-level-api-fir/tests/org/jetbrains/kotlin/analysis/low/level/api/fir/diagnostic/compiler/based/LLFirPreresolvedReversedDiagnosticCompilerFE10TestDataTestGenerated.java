@@ -16950,6 +16950,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("lambdaParameterForBareType.kt")
+                public void testLambdaParameterForBareType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForBareType.kt");
+                }
+
+                @Test
                 @TestMetadata("lambdaParameterTypeFixation.kt")
                 public void testLambdaParameterTypeFixation() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterTypeFixation.kt");
