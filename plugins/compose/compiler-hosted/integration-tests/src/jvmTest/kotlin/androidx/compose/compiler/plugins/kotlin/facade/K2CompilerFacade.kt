@@ -216,6 +216,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
                 configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
                 EvaluatedConstTracker.create(),
                 configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+                configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false
             ),
             IrGenerationExtension.getInstances(project),
