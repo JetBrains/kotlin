@@ -66,7 +66,6 @@ abstract class FirProvidedDeclarationsForMetadataService : FirSessionComponent {
     abstract fun getProvidedTopLevelDeclarations(packageFqName: FqName, scopeSession: ScopeSession): List<FirDeclaration>
     abstract fun getProvidedConstructors(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirConstructor>
     abstract fun getProvidedCallables(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirCallableDeclaration>
-    abstract fun getProvidedNestedClassifiers(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirClassLikeSymbol<*>>
 
     abstract fun registerDeclaration(declaration: FirCallableDeclaration)
 
@@ -103,11 +102,6 @@ private class FirProvidedDeclarationsForMetadataServiceImpl(private val session:
 
     override fun getProvidedCallables(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirCallableDeclaration> {
         return memberCache[owner]?.providedCallables ?: emptyList()
-    }
-
-    override fun getProvidedNestedClassifiers(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirClassLikeSymbol<*>> {
-        // TODO: remove
-        return emptyList()
     }
 
     private class ClassDeclarations {

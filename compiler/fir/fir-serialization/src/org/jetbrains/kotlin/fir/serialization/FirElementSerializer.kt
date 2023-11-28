@@ -380,7 +380,6 @@ class FirElementSerializer private constructor(
      * Order of nested classifiers:
      *   - declared classifiers in declaration order
      *   - generated classifiers in sorted order
-     *   - provided classifiers in sorted order
      */
     fun computeNestedClassifiersForClass(classSymbol: FirClassSymbol<*>): List<FirClassifierSymbol<*>> {
         val scope = session.nestedClassifierScope(classSymbol.fir) ?: return emptyList()
@@ -391,11 +390,6 @@ class FirElementSerializer private constructor(
                 .partition { it in indexByDeclaration }
             declared.sortedBy { indexByDeclaration.getValue(it) }.mapTo(this) { it.symbol }
             nonDeclared.sortedWith(FirMemberDeclarationComparator).mapTo(this) { it.symbol }
-
-            providedDeclarationsService.getProvidedNestedClassifiers(classSymbol, scopeSession)
-                .map { it.fir }
-                .sortedWith(FirMemberDeclarationComparator)
-                .mapTo(this) { it.symbol }
         }
     }
 
