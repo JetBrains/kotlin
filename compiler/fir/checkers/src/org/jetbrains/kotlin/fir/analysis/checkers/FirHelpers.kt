@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredComponentFunctionCall
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -643,7 +642,7 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
             when {
                 annotated.isLocal ->
                     when {
-                        annotated.source?.kind == DesugaredComponentFunctionCall -> TargetLists.T_DESTRUCTURING_DECLARATION
+                        annotated.name == SpecialNames.DESTRUCT -> TargetLists.T_DESTRUCTURING_DECLARATION
                         annotated.isCatchParameter == true -> TargetLists.T_CATCH_PARAMETER
                         else -> TargetLists.T_LOCAL_VARIABLE
                     }
@@ -694,9 +693,7 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
             } else {
                 TargetLists.T_OBJECT_LITERAL
             }
-//            TODO, KT-59819: properly implement those cases
-//            is KtDestructuringDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
-//            is KtDestructuringDeclaration -> TargetLists.T_DESTRUCTURING_DECLARATION
+//            TODO, KT-59819: properly implement this case
 //            is KtLambdaExpression -> TargetLists.T_FUNCTION_LITERAL
         else -> TargetLists.EMPTY
     }

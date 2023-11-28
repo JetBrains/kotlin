@@ -71,15 +71,15 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
         private val map = HashMap<String, KotlinTarget>()
 
         init {
-            for (target in values()) {
+            for (target in entries) {
                 map[target.name] = target
             }
         }
 
         fun valueOrNull(name: String): KotlinTarget? = map[name]
 
-        val DEFAULT_TARGET_SET: Set<KotlinTarget> = values().filter { it.isDefault }.toSet()
-        val ALL_TARGET_SET: Set<KotlinTarget> = values().toSet()
+        val DEFAULT_TARGET_SET: Set<KotlinTarget> = entries.filter { it.isDefault }.toSet()
+        val ALL_TARGET_SET: Set<KotlinTarget> = entries.toSet()
 
         val ANNOTATION_CLASS_LIST = listOf(ANNOTATION_CLASS, CLASS)
         val LOCAL_CLASS_LIST = listOf(LOCAL_CLASS, CLASS)
