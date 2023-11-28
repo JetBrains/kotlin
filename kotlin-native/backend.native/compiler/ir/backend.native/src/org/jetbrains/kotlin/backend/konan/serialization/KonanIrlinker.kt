@@ -759,7 +759,6 @@ internal class KonanIrLinker(
                     outerThisIndex,
                     Array(fields.size) {
                         val field = fields[it]
-                        val irField = field.irField ?: error("No IR for field ${field.name} of ${irClass.render()}")
                         if (it == outerThisIndex) {
                             require(irClass.isInner) { "Expected an inner class: ${irClass.render()}" }
                             require(protoClasses.size > 1) { "An inner class must have at least one outer class" }
@@ -768,14 +767,14 @@ internal class KonanIrLinker(
 
                             SerializedClassFieldInfo(name = InvalidIndex, binaryType = InvalidIndex, nameAndType.typeIndex, flags = 0, field.alignment)
                         } else {
-                            val protoField = protoFieldsMap[field.name] ?: error("No proto for ${irField.render()}")
+                            val protoField = protoFieldsMap[field.name] ?: error("No proto for ${field.name}")
                             val nameAndType = BinaryNameAndType.decode(protoField.nameType)
                             var flags = 0
                             if (field.isConst)
                                 flags = flags or SerializedClassFieldInfo.FLAG_IS_CONST
-                            val classifier = irField.type.classifierOrNull
-                                    ?: error("Fields of type ${irField.type.render()} are not supported")
-                            val primitiveBinaryType = irField.type.computePrimitiveBinaryTypeOrNull()
+                            val classifier = field.type.classifierOrNull
+                                    ?: error("Fields of type ${field.type.render()} are not supported")
+                            val primitiveBinaryType = field.type.computePrimitiveBinaryTypeOrNull()
 
                             SerializedClassFieldInfo(
                                     nameAndType.nameIndex,
