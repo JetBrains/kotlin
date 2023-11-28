@@ -121,7 +121,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             when (compiler) {
                 is K2JSCompiler -> compileJsLibrary(
                     libraryName,
-                    additionalOptions = libraryOptions + "-Xforce-deprecated-legacy-compiler-usage"
+                    additionalOptions = libraryOptions
                 )
                 is K2JVMCompiler -> compileLibrary(libraryName, additionalOptions = libraryOptions)
                 else -> throw UnsupportedOperationException(compiler.toString())

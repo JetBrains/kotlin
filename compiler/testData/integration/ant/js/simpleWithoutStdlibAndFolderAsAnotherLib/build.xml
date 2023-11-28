@@ -13,7 +13,6 @@
       <libraries>
         <pathelement path="${temp.library.path}"/>
       </libraries>
-      <compilerarg value="-Xforce-deprecated-legacy-compiler-usage"/>
     </kotlin2js>
     <copy todir="${temp}">
       <fileset dir="${temp.library.path}">

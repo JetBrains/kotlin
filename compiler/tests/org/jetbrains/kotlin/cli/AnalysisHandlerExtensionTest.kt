@@ -11,9 +11,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLITool
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -67,17 +65,10 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
         }
         val plugin = writePlugin(klass)
         val args = listOf("-Xplugin=$plugin", mainKt.absolutePath)
-        val outputPath = if (compiler is K2JSCompiler)
-            listOf(
-                "-Xforce-deprecated-legacy-compiler-usage",
-                "-language-version", "1.9",
-                "-output", tmpdir.resolve("out.js").absolutePath
-            )
-        else
-            listOf(
-                "-language-version", "1.9",
-                "-d", tmpdir.resolve("out").absolutePath
-            )
+        val outputPath = listOf(
+            "-language-version", "1.9",
+            "-d", tmpdir.resolve("out").absolutePath
+        )
 
         val (output, exitCode) = CompilerTestUtil.executeCompiler(compiler, args + outputPath + extras)
         assertEquals(expectedExitCode, exitCode, output)
@@ -87,20 +78,12 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
         runTest(K2JVMCompiler(), classNotFound, CustomComponentRegistrar::class)
     }
 
-    fun testShouldNotGenerateCodeJS() {
-        runTest(K2JSCompiler(), classNotFound, CustomComponentRegistrar::class)
-    }
-
     fun testShouldNotGenerateCodeMetadata() {
         runTest(K2MetadataCompiler(), classNotFound, CustomComponentRegistrar::class)
     }
 
     fun testRepeatedAnalysisJVM() {
         runTest(K2JVMCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
-    }
-
-    fun testRepeatedAnalysisJS() {
-        runTest(K2JSCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
     }
 
     fun testRepeatedAnalysisMetadata() {
