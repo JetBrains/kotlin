@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
+import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.bitMaskSlotCount
@@ -58,17 +60,17 @@ class IrPreGenerator(
             modality = Modality.FINAL
             origin = SERIALIZATION_PLUGIN_ORIGIN
         }
-        method.apply {
-            dispatchReceiverParameter = null // function is static
-            excludeFromJsExport()
-        }
+        method.excludeFromJsExport()
 
-        val typeParams = irClass.typeParameters.map {
+        val typeParamsMap = irClass.typeParameters.associateWith {
             method.addTypeParameter(
                 it.name.asString(), compilerContext.irBuiltIns.anyNType
             )
         }
-        val typeParamsAsArguments = typeParams.map { it.defaultType }
+        // Despite this function should be static in bytecode, registerFunctionAsMetadataVisible needs a correct dispatch receiver
+        // to handle function metadata correctly. This dispatchReceiverParameter will become `null` later.
+        method.dispatchReceiverParameter = irClass.thisReceiver?.copyTo(method, remapTypeMap = typeParamsMap)
+        val typeParamsAsArguments = typeParamsMap.values.map { it.defaultType }
 
         // object
         method.addValueParameter(
@@ -96,7 +98,14 @@ class IrPreGenerator(
                 SERIALIZATION_PLUGIN_ORIGIN
             )
         }
+
+        compilerContext.referenceClass(JVM_STATIC_ANNOTATION_CLASS_ID)
+            ?.let { method.annotations += method.createAnnotationCallWithoutArgs(it) }
+
         compilerContext.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(method)
+
+        // Make function static in bytecode (see JvmStaticAnnotationLowering.makeStatic).
+        method.dispatchReceiverParameter = null
     }
 
     private fun preGenerateDeserializationConstructorIfNeeded() {

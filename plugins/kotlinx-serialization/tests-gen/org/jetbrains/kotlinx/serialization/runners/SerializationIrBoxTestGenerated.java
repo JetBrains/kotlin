@@ -21,6 +21,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxTest {
     @Test
+    @TestMetadata("allConstructorsAccessible.kt")
+    public void testAllConstructorsAccessible() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/allConstructorsAccessible.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInBoxIr() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/boxIr"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
