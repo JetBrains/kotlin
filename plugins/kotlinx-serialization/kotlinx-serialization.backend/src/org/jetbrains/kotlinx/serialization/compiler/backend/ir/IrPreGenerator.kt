@@ -96,6 +96,7 @@ class IrPreGenerator(
                 SERIALIZATION_PLUGIN_ORIGIN
             )
         }
+        compilerContext.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(method)
     }
 
     private fun preGenerateDeserializationConstructorIfNeeded() {
@@ -125,6 +126,7 @@ class IrPreGenerator(
         }
 
         ctor.addValueParameter(SerialEntityNames.dummyParamName, markerClassSymbol.defaultType.makeNullable(), SERIALIZATION_PLUGIN_ORIGIN)
+        compilerContext.metadataDeclarationRegistrar.registerConstructorAsMetadataVisible(ctor)
     }
 
     private fun IrType.makeNullableIfNotPrimitive() =
