@@ -17,7 +17,6 @@ class FirSerializationExtensionRegistrar : FirExtensionRegistrar() {
         +::SerializationFirResolveExtension
         +::SerializationFirSupertypesExtension
         +::FirSerializationCheckersComponent
-        +::SerializationFirDeclarationsForMetadataProvider
 
         // services
         +::DependencySerializationInfoProvider
