@@ -443,11 +443,13 @@ class KotlinCoreEnvironment private constructor(
 
         @JvmStatic
         fun createForProduction(
-            parentDisposable: Disposable, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
+            projectDisposable: Disposable,
+            configuration: CompilerConfiguration,
+            configFiles: EnvironmentConfigFiles,
         ): KotlinCoreEnvironment {
             setupIdeaStandaloneExecution()
-            val appEnv = getOrCreateApplicationEnvironmentForProduction(parentDisposable, configuration)
-            val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
+            val appEnv = getOrCreateApplicationEnvironmentForProduction(projectDisposable, configuration)
+            val projectEnv = ProjectEnvironment(projectDisposable, appEnv, configuration)
             val environment = KotlinCoreEnvironment(projectEnv, configuration, configFiles)
 
             return environment
@@ -480,11 +482,13 @@ class KotlinCoreEnvironment private constructor(
         @TestOnly
         @JvmStatic
         fun createForParallelTests(
-            parentDisposable: Disposable, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
+            projectDisposable: Disposable,
+            initialConfiguration: CompilerConfiguration,
+            extensionConfigs: EnvironmentConfigFiles,
         ): KotlinCoreEnvironment {
             val configuration = initialConfiguration.copy()
-            val appEnv = getOrCreateApplicationEnvironmentForTests(parentDisposable, configuration)
-            val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
+            val appEnv = getOrCreateApplicationEnvironmentForTests(projectDisposable, configuration)
+            val projectEnv = ProjectEnvironment(projectDisposable, appEnv, configuration)
             return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
         }
 
@@ -497,37 +501,38 @@ class KotlinCoreEnvironment private constructor(
         }
 
         @TestOnly
-        fun createProjectEnvironmentForTests(parentDisposable: Disposable, configuration: CompilerConfiguration): ProjectEnvironment {
+        fun createProjectEnvironmentForTests(projectDisposable: Disposable, configuration: CompilerConfiguration): ProjectEnvironment {
             val appEnv = createApplicationEnvironment(
-                parentDisposable,
+                projectDisposable,
                 configuration,
                 KotlinCoreApplicationEnvironmentMode.UnitTest,
             )
-            return ProjectEnvironment(parentDisposable, appEnv, configuration)
+            return ProjectEnvironment(projectDisposable, appEnv, configuration)
         }
 
         // used in the daemon for jar cache cleanup
         val applicationEnvironment: KotlinCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
         fun getOrCreateApplicationEnvironmentForProduction(
-            parentDisposable: Disposable, configuration: CompilerConfiguration
+            projectDisposable: Disposable,
+            configuration: CompilerConfiguration,
         ): KotlinCoreApplicationEnvironment = getOrCreateApplicationEnvironment(
-            parentDisposable,
+            projectDisposable,
             configuration,
             KotlinCoreApplicationEnvironmentMode.Production,
         )
 
         fun getOrCreateApplicationEnvironmentForTests(
-            parentDisposable: Disposable,
+            projectDisposable: Disposable,
             configuration: CompilerConfiguration,
         ): KotlinCoreApplicationEnvironment = getOrCreateApplicationEnvironment(
-            parentDisposable,
+            projectDisposable,
             configuration,
             KotlinCoreApplicationEnvironmentMode.UnitTest,
         )
 
         fun getOrCreateApplicationEnvironment(
-            parentDisposable: Disposable,
+            projectDisposable: Disposable,
             configuration: CompilerConfiguration,
             environmentMode: KotlinCoreApplicationEnvironmentMode,
         ): KotlinCoreApplicationEnvironment {
@@ -553,7 +558,7 @@ class KotlinCoreEnvironment private constructor(
                     // Disposer uses identity of passed object to deduplicate registered disposables
                     // We should everytime pass new instance to avoid un-registering from previous one
                     @Suppress("ObjectLiteralToLambda")
-                    Disposer.register(parentDisposable, object : Disposable {
+                    Disposer.register(projectDisposable, object : Disposable {
                         override fun dispose() {
                             synchronized(APPLICATION_LOCK) {
                                 // Build-systems may run many instances of the compiler in parallel

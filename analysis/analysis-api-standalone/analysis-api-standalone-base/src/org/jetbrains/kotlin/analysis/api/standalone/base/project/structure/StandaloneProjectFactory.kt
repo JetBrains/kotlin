@@ -69,18 +69,17 @@ import java.nio.file.Paths
 object StandaloneProjectFactory {
     fun createProjectEnvironment(
         projectDisposable: Disposable,
-        applicationDisposable: Disposable,
         applicationEnvironmentMode: KotlinCoreApplicationEnvironmentMode,
         compilerConfiguration: CompilerConfiguration = CompilerConfiguration(),
         classLoader: ClassLoader = MockProject::class.java.classLoader,
     ): KotlinCoreProjectEnvironment {
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(
-            applicationDisposable,
+            projectDisposable = projectDisposable,
             compilerConfiguration,
             applicationEnvironmentMode,
         )
 
-        registerApplicationExtensionPoints(applicationEnvironment, applicationDisposable)
+        registerApplicationExtensionPoints(applicationEnvironment)
 
         registerApplicationServices(applicationEnvironment)
 
@@ -138,10 +137,7 @@ object StandaloneProjectFactory {
         }
     }
 
-    private fun registerApplicationExtensionPoints(
-        applicationEnvironment: KotlinCoreApplicationEnvironment,
-        applicationDisposable: Disposable,
-    ) {
+    private fun registerApplicationExtensionPoints(applicationEnvironment: KotlinCoreApplicationEnvironment) {
         val applicationArea = applicationEnvironment.application.extensionArea
 
         if (!applicationArea.hasExtensionPoint(AdditionalKDocResolutionProvider.EP_NAME)) {
@@ -162,7 +158,7 @@ object StandaloneProjectFactory {
                     ClassTypePointerFactory::class.java
                 )
                 applicationArea.getExtensionPoint(ClassTypePointerFactory.EP_NAME)
-                    .registerExtension(PsiClassReferenceTypePointerFactory(), applicationDisposable)
+                    .registerExtension(PsiClassReferenceTypePointerFactory(), applicationEnvironment.application)
             }
         }
     }

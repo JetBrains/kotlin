@@ -48,7 +48,6 @@ internal class Kapt4Facade(private val testServices: TestServices) :
         val (context, stubMap) = run(
             configuration,
             options,
-            testServices.applicationDisposableProvider.getApplicationRootDisposable(),
             configurationProvider.testRootDisposable
         )
         return Kapt4ContextBinaryArtifact(context, stubMap.values.filterNotNull())
@@ -67,10 +66,9 @@ internal class Kapt4Facade(private val testServices: TestServices) :
 private fun run(
     configuration: CompilerConfiguration,
     options: KaptOptions,
-    applicationDisposable: Disposable,
     projectDisposable: Disposable,
 ): Pair<KaptContext, Map<KtLightClass, KaptStub?>> {
-    val standaloneAnalysisAPISession = buildStandaloneAnalysisAPISession(applicationDisposable, projectDisposable) {
+    val standaloneAnalysisAPISession = buildStandaloneAnalysisAPISession(projectDisposable) {
         (project as MockProject).registerService(
             KtLifetimeTokenProvider::class.java,
             KtReadActionConfinementLifetimeTokenProvider::class.java

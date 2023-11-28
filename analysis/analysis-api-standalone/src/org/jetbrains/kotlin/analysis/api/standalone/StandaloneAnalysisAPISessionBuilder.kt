@@ -44,7 +44,6 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 public class StandaloneAnalysisAPISessionBuilder(
-    applicationDisposable: Disposable,
     projectDisposable: Disposable,
     unitTestMode: Boolean,
     classLoader: ClassLoader = MockProject::class.java.classLoader
@@ -61,7 +60,6 @@ public class StandaloneAnalysisAPISessionBuilder(
     private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment =
         StandaloneProjectFactory.createProjectEnvironment(
             projectDisposable,
-            applicationDisposable,
             KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode),
             classLoader = classLoader
         )
@@ -229,7 +227,6 @@ public class StandaloneAnalysisAPISessionBuilder(
 
 @OptIn(ExperimentalContracts::class)
 public inline fun buildStandaloneAnalysisAPISession(
-    applicationDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.application"),
     projectDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project"),
     unitTestMode: Boolean = false,
     withPsiDeclarationFromBinaryModuleProvider: Boolean = false,
@@ -240,7 +237,6 @@ public inline fun buildStandaloneAnalysisAPISession(
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return StandaloneAnalysisAPISessionBuilder(
-        applicationDisposable,
         projectDisposable,
         unitTestMode,
         classLoader
