@@ -571,7 +571,7 @@ class BlockDecomposerTransformer(
                     lastIntrinsicCall = JsIrBuilder.buildCall(saveToTmp.symbol, saveToTmp.type, saveToTmp.typeArguments.filterNotNull())
                     rootIntrinsicCall = lastIntrinsicCall
                 } else {
-                    val nextCall = JsIrBuilder.buildCall(saveToTmp.symbol)
+                    val nextCall = JsIrBuilder.buildCall(saveToTmp.symbol, saveToTmp.type, saveToTmp.typeArguments.filterNotNull())
                     lastIntrinsicCall.putValueArgument(0, nextCall)
                     lastIntrinsicCall = nextCall
                 }
