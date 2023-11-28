@@ -20,7 +20,9 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(TYPES)] val $$result: <implicit> = value#
             public [ResolvedTo(TYPES)] get(): <implicit>

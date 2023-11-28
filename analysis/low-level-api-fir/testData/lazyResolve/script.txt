@@ -46,12 +46,17 @@ FILE: [ResolvedTo(RAW_FIR)] script.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] script.kts
@@ -101,12 +106,17 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] script.kts
@@ -156,12 +166,17 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] script.kts
@@ -211,12 +226,17 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] script.kts
@@ -266,12 +286,17 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] script.kts
@@ -321,12 +346,17 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] script.kts
@@ -376,12 +406,17 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] script.kts
@@ -431,12 +466,17 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] script.kts
@@ -486,12 +526,17 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] script.kts
@@ -541,12 +586,17 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] script.kts
@@ -596,12 +646,17 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] script.kts
@@ -655,29 +710,38 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
-        @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|/Builder.version| = String(123)
-            local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
-                    super<R|kotlin/Any|>()
+        [ResolvedTo(BODY_RESOLVE)] init {
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/Builder.version| = String(123)
+                local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+                    }
+
                 }
 
-                @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
-                }
-
+                this@R|special/anonymous|.R|/Builder.execute|()
             }
-
-            this@R|special/anonymous|.R|/Builder.execute|()
+            )
         }
-        )
+
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/builder|.R|/Builder.execute|()
-        R|/builder|.R|/Builder.version| = String()
+        [ResolvedTo(BODY_RESOLVE)] init {
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/builder|.R|/Builder.execute|()
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/builder|.R|/Builder.version| = String()
+        }
+
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
@@ -731,26 +795,35 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
-        @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|/Builder.version| = String(123)
-            local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
-                    super<R|kotlin/Any|>()
+        [ResolvedTo(BODY_RESOLVE)] init {
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/Builder.version| = String(123)
+                local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+                    }
+
                 }
 
-                @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
-                }
-
+                this@R|special/anonymous|.R|/Builder.execute|()
             }
-
-            this@R|special/anonymous|.R|/Builder.execute|()
+            )
         }
-        )
+
         public final [ResolvedTo(BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
             public [ResolvedTo(BODY_RESOLVE)] get(): R|Builder|
 
-        @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/builder|.R|/Builder.execute|()
-        R|/builder|.R|/Builder.version| = String()
+        [ResolvedTo(BODY_RESOLVE)] init {
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/builder|.R|/Builder.execute|()
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/builder|.R|/Builder.version| = String()
+        }
+

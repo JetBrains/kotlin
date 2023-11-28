@@ -31,11 +31,11 @@ Tower Data Context:
                 lval args: R|kotlin/Array<kotlin/String>|
 
                 public final fun scriptFunction(): R|kotlin/Int|
-                R|/scriptFunction|()
+                init
                 public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
-                R|/scriptFunction|()
+                init
                 public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
-                R|/foo|(R|/scriptFunction|(), <L> = foo@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline> )
+                init
                 public final val $$result: R|kotlin/Int|
                     public get(): R|kotlin/Int|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs

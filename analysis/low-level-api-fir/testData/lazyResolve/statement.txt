@@ -23,29 +23,38 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
-        R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|/Builder.version| = String(123)
-            local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
-                    super<R|kotlin/Any|>()
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/Builder.version| = String(123)
+                local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] fun doo(): R|kotlin/Unit| {
+                    }
+
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] fun doo(): R|kotlin/Unit| {
-                }
-
+                this@R|special/anonymous|.R|/Builder.execute|()
             }
-
-            this@R|special/anonymous|.R|/Builder.execute|()
+            )
         }
-        )
+
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.R|/Builder.execute|()
-        R|/builder|.R|/Builder.version| = String()
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/builder|.R|/Builder.execute|()
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/builder|.R|/Builder.version| = String()
+        }
+
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] statement.kts
@@ -72,26 +81,35 @@ FILE: [ResolvedTo(BODY_RESOLVE)] statement.kts
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
-        R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|/Builder.version| = String(123)
-            local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
-                    super<R|kotlin/Any|>()
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/Builder.version| = String(123)
+                local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] fun doo(): R|kotlin/Unit| {
+                    }
+
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] fun doo(): R|kotlin/Unit| {
-                }
-
+                this@R|special/anonymous|.R|/Builder.execute|()
             }
-
-            this@R|special/anonymous|.R|/Builder.execute|()
+            )
         }
-        )
+
         public final [ResolvedTo(BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
             public [ResolvedTo(BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.R|/Builder.execute|()
-        R|/builder|.R|/Builder.version| = String()
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/builder|.R|/Builder.execute|()
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/builder|.R|/Builder.version| = String()
+        }
+

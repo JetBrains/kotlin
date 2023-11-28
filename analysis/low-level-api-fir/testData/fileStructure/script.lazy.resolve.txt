@@ -26,21 +26,24 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
             ^build2 R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
-        R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|/Builder.version| = String(123)
-            local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/A| {
-                    super<R|kotlin/Any|>()
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/Builder.version| = String(123)
+                local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/A| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] fun doo(): R|kotlin/Unit| {
+                    }
+
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] fun doo(): R|kotlin/Unit| {
-                }
-
+                this@R|special/anonymous|.R|/Builder.execute|()
             }
-
-            this@R|special/anonymous|.R|/Builder.execute|()
+            )
         }
-        )
+
         public final [ResolvedTo(BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/Builder.version| = String(321)
         }

@@ -230,15 +230,18 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevel.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        when () {
-            Boolean(true) ->  {
-                @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
-                @R|util/Anno|[Types](str = <strcat>(String(a ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval a: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
-                @R|util/Anno|[Types](str = <strcat>(String(b ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval b: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
-                @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
-                @R|util/Anno|[Types](str = <strcat>(String(c ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval c: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
-                @R|util/Anno|[Types](str = <strcat>(String(d ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval d: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
+        [ResolvedTo(BODY_RESOLVE)] init {
+            when () {
+                Boolean(true) ->  {
+                    @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
+                    @R|util/Anno|[Types](str = <strcat>(String(a ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval a: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
+                    @R|util/Anno|[Types](str = <strcat>(String(b ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval b: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
+                    @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
+                    @R|util/Anno|[Types](str = <strcat>(String(c ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval c: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
+                    @R|util/Anno|[Types](str = <strcat>(String(d ), R|util/prop|)) [ResolvedTo(BODY_RESOLVE)] lval d: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
+                }
             }
+
         }
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

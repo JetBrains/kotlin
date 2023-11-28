@@ -19,9 +19,12 @@ FILE: [ResolvedTo(RAW_FIR)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -59,9 +62,12 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -99,9 +105,12 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -139,9 +148,12 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -179,9 +191,12 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -219,9 +234,12 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -259,9 +277,12 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -299,9 +320,12 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -339,9 +363,12 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -379,9 +406,12 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -419,9 +449,12 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -460,9 +493,18 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
-        R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
-        R|/x|!!
-        R|/consume|(R|/x|.R|kotlin/Int.plus|(Int(1)))
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/x|!!
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
+        }
+
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -507,9 +549,18 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script2.kts
             ^foo R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
         }
 
-        R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
-        R|/x|!!
-        R|/consume|(R|/x|.R|kotlin/Int.plus|(Int(1)))
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/x|!!
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
+        }
+
         public final [ResolvedTo(BODY_RESOLVE)] val zz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 

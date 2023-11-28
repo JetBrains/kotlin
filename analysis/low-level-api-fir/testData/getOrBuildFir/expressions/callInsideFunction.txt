@@ -28,9 +28,13 @@ FILE: [ResolvedTo(IMPORTS)] callInsideFunction.kts
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
-        build#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        builder#.execute#()
-        builder#.version# = String()
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }

@@ -7,7 +7,8 @@ FILE: [ResolvedTo(RAW_FIR)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
 
-        myProp#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -20,7 +21,8 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
 
-        myProp#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -33,7 +35,8 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
 
-        myProp#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -46,7 +49,8 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
 
-        myProp#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -59,7 +63,8 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
 
-        myProp#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -72,7 +77,8 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
 
-        myProp#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -85,7 +91,8 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
 
-        myProp#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -98,7 +105,8 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
 
-        myProp#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -111,7 +119,8 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
 
-        myProp#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -124,7 +133,8 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
 
-        myProp#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -137,7 +147,8 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
 
-        myProp#(<L> = LAZY_EXPRESSION)
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -153,10 +164,13 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
 
             public [ResolvedTo(CONTRACTS)] get(): R|() -> kotlin/Unit|
 
-        R|/myProp|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function0.invoke>#|(<L> = [ResolvedTo(BODY_RESOLVE)] myProp@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-            ^ Int(123)
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/myProp|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function0.invoke>#|(<L> = [ResolvedTo(BODY_RESOLVE)] myProp@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                ^ Int(123)
+            }
+            )
         }
-        )
+
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
@@ -172,9 +186,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] statementTransformation.kts
 
             public [ResolvedTo(BODY_RESOLVE)] get(): R|() -> kotlin/Unit|
 
-        R|/myProp|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function0.invoke>#|(<L> = [ResolvedTo(BODY_RESOLVE)] myProp@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-            ^ Int(123)
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/myProp|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function0.invoke>#|(<L> = [ResolvedTo(BODY_RESOLVE)] myProp@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                ^ Int(123)
+            }
+            )
         }
-        )
+
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         }

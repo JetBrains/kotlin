@@ -21,8 +21,10 @@ FILE: [ResolvedTo(RAW_FIR)] implicitTypeFromIncorrectAccessorsScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -50,8 +52,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -79,8 +83,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: <implicit>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -108,8 +114,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
             public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] value: <implicit>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -137,8 +145,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public? [ResolvedTo(SUPER_TYPES)] get(): <implicit>
             public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] value: <implicit>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -166,8 +176,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public? [ResolvedTo(TYPES)] get(): <implicit>
             public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: <implicit>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -195,8 +207,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public [ResolvedTo(STATUS)] get(): <implicit>
             public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -224,8 +238,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: <implicit>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -253,8 +269,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public [ResolvedTo(CONTRACTS)] get(): <implicit>
             public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(TYPES)] val $$result: <implicit> = value#
             public [ResolvedTo(TYPES)] get(): <implicit>
 
@@ -282,8 +300,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(TYPES)] val $$result: <implicit> = value#
             public [ResolvedTo(TYPES)] get(): <implicit>
 
@@ -311,8 +331,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(TYPES)] val $$result: <implicit> = value#
             public [ResolvedTo(TYPES)] get(): <implicit>
 
@@ -340,8 +362,10 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
-        set#(LAZY_EXPRESSION)
-        @Anno[Unresolved](LAZY_EXPRESSION) List#<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
         public final [ResolvedTo(TYPES)] val $$result: <implicit> = value#
             public [ResolvedTo(TYPES)] get(): <implicit>
 
@@ -369,7 +393,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectAccessorsScript.kts
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
-        <Unresolved name: set>#(<Unresolved name: value>#)
-        @R|low/Anno|[Types](position = <strcat>(String(setter parameter type ), R|low/prop|)) Q|kotlin/collections/List|
+        [ResolvedTo(BODY_RESOLVE)] init {
+            <Unresolved name: set>#(<Unresolved name: value>#)
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            @R|low/Anno|[Types](position = <strcat>(String(setter parameter type ), R|low/prop|)) Q|kotlin/collections/List|
+        }
+
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: value> = <Unresolved name: value>#
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: value>

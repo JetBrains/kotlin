@@ -29,11 +29,18 @@ FILE: script.kts
 
         public? final? fun build2(action: ( Builder.() -> Unit )): Builder { LAZY_BLOCK }
 
-        build#(<L> = LAZY_EXPRESSION)
-        +=(version#, IntegerLiteral(123))
+        init { LAZY_BLOCK }
+
+        init { LAZY_BLOCK }
+
         public? final? val builder: <implicit> = LAZY_EXPRESSION
             public? get(): <implicit>
 
-        println#()
-        builder#.version# = String()
-        builder#.execute#()
+        init { LAZY_BLOCK }
+
+        init { LAZY_BLOCK }
+
+        init {
+            builder#.execute#()
+        }
+

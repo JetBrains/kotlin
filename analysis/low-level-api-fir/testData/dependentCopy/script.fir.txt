@@ -23,7 +23,10 @@ SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-script.kts>
 
     public? final? [ResolvedTo(RAW_FIR)] fun unusedScriptFunction([ResolvedTo(RAW_FIR)] p: String): <implicit> { LAZY_BLOCK }
 
-    R|/scriptFunction|()
+    [ResolvedTo(BODY_RESOLVE)] init {
+        R|/scriptFunction|()
+    }
+
     public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit| {
         action#(i#)
     }
