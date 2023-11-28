@@ -1102,6 +1102,19 @@ object IrTree : AbstractTreeBuilder() {
     val stringConcatenation: Element by element(Expression) {
         parent(expression)
 
+        kDoc = """
+        Represents a string template expression.
+        
+        For example, the value of `template` in the following code:
+        ```kotlin
+        val i = 10
+        val template = "i = ${'$'}i"
+        ```
+        will be represented by [${typeName}] with the following list of [arguments]:
+        - [${const.typeName}] whose `value` is `"i = "`
+        - [${getValue.typeName}] whose `symbol` will be that of the `i` variable. 
+        """.trimIndent()
+
         +listField("arguments", expression, mutability = MutableList)
     }
     val suspensionPoint: Element by element(Expression) {

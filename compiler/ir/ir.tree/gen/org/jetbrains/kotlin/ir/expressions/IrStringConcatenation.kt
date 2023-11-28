@@ -13,7 +13,16 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
+ * Represents a string template expression.
+ *
+ * For example, the value of `template` in the following code:
+ * ```kotlin
+ * val i = 10
+ * val template = "i = $i"
+ * ```
+ * will be represented by [IrStringConcatenation] with the following list of [arguments]:
+ * - [IrConst] whose `value` is `"i = "`
+ * - [IrGetValue] whose `symbol` will be that of the `i` variable. 
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.stringConcatenation]
  */
