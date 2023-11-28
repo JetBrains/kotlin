@@ -85,10 +85,10 @@ fun Test2(content: Function2<Composer, Int, Unit>, %composer: Composer?, %change
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test2)<Layout...>:Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -156,16 +156,16 @@ fun Test5(content: Function2<Composer, Int, Unit>, %composer: Composer?, %change
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test5)<Compos...>:Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     CompositionLocalProvider(Local provides 5, composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
       sourceInformation(%composer, "C<Test1(...>,<conten...>:Test.kt")
-      if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
@@ -194,16 +194,16 @@ fun Test6(test: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test6)<Compos...>:Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(test)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     CompositionLocalProvider(Local provides 6, composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
       sourceInformation(%composer, "C<T(test...>,<Test1(...>:Test.kt")
-      if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }

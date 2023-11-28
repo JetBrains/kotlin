@@ -27,10 +27,15 @@ fun <V> B(value: V, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(B)<A(Wrap...>:Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
-    %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(value)
+    } else {
+      %composer.changedInstance(value)
+    }
+    ) 0b0100 else 0b0010
   }
-  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -51,16 +56,26 @@ fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %compo
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(X)P(1)*<itemCo...>:Test.kt")
   val %dirty = %changed
-  if (isTraceInProgress()) {
-    traceEventStart(<>, %dirty, -1, <>)
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(items)) 0b0100 else 0b0010
   }
-  val <iterator> = items.iterator()
-  while (<iterator>.hasNext()) {
-    val item = <iterator>.next()
-    itemContent(item, %composer, 0b01110000 and %dirty)
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(itemContent)) 0b00100000 else 0b00010000
   }
-  if (isTraceInProgress()) {
-    traceEventEnd()
+  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val <iterator> = items.iterator()
+    while (<iterator>.hasNext()) {
+      val item = <iterator>.next()
+      itemContent(item, %composer, 0b01110000 and %dirty)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
     X(items, itemContent, %composer, updateChangedFlags(%changed or 0b0001))
@@ -70,12 +85,20 @@ fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %compo
 fun C(items: List<String>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(C)<X(item...>:Test.kt")
-  if (isTraceInProgress()) {
-    traceEventStart(<>, %changed, -1, <>)
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(items)) 0b0100 else 0b0010
   }
-  X(items, ComposableSingletons%TestKt.lambda-1, %composer, 0b00111000)
-  if (isTraceInProgress()) {
-    traceEventEnd()
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    X(items, ComposableSingletons%TestKt.lambda-1, %composer, 0b00110000 or 0b1110 and %dirty)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
     C(items, %composer, updateChangedFlags(%changed or 0b0001))
@@ -85,10 +108,10 @@ internal object ComposableSingletons%TestKt {
   val lambda-1: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false) { item: String, %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<A(item...>,<A(Wrap...>:Test.kt")
     val %dirty = %changed
-    if (%changed and 0b1110 == 0) {
+    if (%changed and 0b0110 == 0) {
       %dirty = %dirty or if (%composer.changed(item)) 0b0100 else 0b0010
     }
-    if (%dirty and 0b01011011 != 0b00010010 || !%composer.skipping) {
+    if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %dirty, -1, <>)
       }

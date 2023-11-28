@@ -26,7 +26,7 @@ import org.junit.Test
 
 class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     @Test
-    fun testUnstableTypesAreNeverStatic() = assertUnstable(
+    fun testUnstableTypesAreNeverStatic() = assertUncertain(
         expression = "Any()"
     )
 
@@ -49,7 +49,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     )
 
     @Test
-    fun testComputedValReferencesAreNotStatic() = assertStableAndNotStatic(
+    fun testComputedValReferencesAreNotStatic() = assertUncertain(
         expression = "computedProperty",
         extraSrc = """
             val computedProperty get() = 42
@@ -57,7 +57,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     )
 
     @Test
-    fun testVarReferencesAreNotStatic() = assertStableAndNotStatic(
+    fun testVarReferencesAreNotStatic() = assertUncertain(
         expression = "mutableProperty",
         extraSrc = """
             var mutableProperty = 42
@@ -215,7 +215,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
         )
     }
 
-    private fun assertStableAndNotStatic(
+    private fun assertUncertain(
         expression: String,
         @Language("kotlin")
         extraSrc: String = ""
@@ -225,19 +225,6 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
             expression = expression,
             extraSrc = extraSrc,
             expectedEncodedChangedParameter = ChangedParameterEncoding.Uncertain
-        )
-    }
-
-    private fun assertUnstable(
-        expression: String,
-        @Language("kotlin")
-        extraSrc: String = ""
-    ) {
-        assertParameterChangeBitsForExpression(
-            message = "Expression `$expression` did not compile with the correct %changed flags",
-            expression = expression,
-            extraSrc = extraSrc,
-            expectedEncodedChangedParameter = ChangedParameterEncoding.Unstable
         )
     }
 
@@ -321,16 +308,14 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     }
 
     private enum class ChangedParameterEncoding(val bits: Int) {
-        Uncertain(0b000),
-        Same(0b001),
-        Different(0b010),
-        Static(0b011),
-        Unstable(0b100),
-
+        Uncertain(0b00),
+        Same(0b01),
+        Different(0b10),
+        Static(0b11),
         ;
 
         companion object {
-            const val Mask = 0b111
+            const val Mask = 0b11
         }
     }
 }
