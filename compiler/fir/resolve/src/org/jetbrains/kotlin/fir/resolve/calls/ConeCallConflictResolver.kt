@@ -12,14 +12,9 @@ import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 abstract class ConeCallConflictResolver {
-    fun chooseMaximallySpecificCandidates(
-        candidates: Collection<Candidate>,
-        // It's set to 'true' only for `super.foo()`-like calls and used only at ConeOverloadConflictResolver
-        discriminateAbstracts: Boolean = false
-    ): Set<Candidate> = chooseMaximallySpecificCandidates(candidates.toSet(), discriminateAbstracts)
-
     abstract fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
+        // It's set to 'true' only for `super.foo()`-like calls and used only at ConeOverloadConflictResolver
         discriminateAbstracts: Boolean
     ): Set<Candidate>
 }

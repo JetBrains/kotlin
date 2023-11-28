@@ -198,7 +198,7 @@ class FirCallResolver(
         explicitReceiver: FirExpression? = null,
         resolutionContext: ResolutionContext = transformer.resolutionContext,
     ): Pair<Set<Candidate>, CandidateApplicability?> {
-        fun chooseMostSpecific(list: List<Candidate>): Set<Candidate> {
+        fun chooseMostSpecific(list: Set<Candidate>): Set<Candidate> {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
             return conflictResolver.chooseMaximallySpecificCandidates(list, discriminateAbstracts = onSuperReference)
         }
@@ -206,7 +206,7 @@ class FirCallResolver(
         val candidates = collector.bestCandidates()
 
         if (collector.currentApplicability.isSuccess) {
-            return chooseMostSpecific(candidates) to null
+            return chooseMostSpecific(candidates.toSet()) to null
         }
 
         if (candidates.size > 1) {
@@ -218,7 +218,7 @@ class FirCallResolver(
 
             // Then, select the group with the least bad applicability.
             groupedByDiagnosticCount.maxBy { it.key }.let {
-                return chooseMostSpecific(it.value) to it.key
+                return chooseMostSpecific(it.value.toSet()) to it.key
             }
         }
 
