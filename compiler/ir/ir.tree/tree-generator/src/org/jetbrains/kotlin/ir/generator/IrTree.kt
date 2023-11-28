@@ -329,6 +329,10 @@ object IrTree : AbstractTreeBuilder() {
     val anonymousInitializer: Element by element(Declaration) {
         parent(declarationBase)
 
+        kDoc = """
+        Represents a single `init {}` block in a Kotlin class.
+        """.trimIndent()
+
         +descriptor("ClassDescriptor") // TODO special descriptor for anonymous initializer blocks
         +symbol(anonymousInitializerSymbolType)
         +field("isStatic", boolean) {

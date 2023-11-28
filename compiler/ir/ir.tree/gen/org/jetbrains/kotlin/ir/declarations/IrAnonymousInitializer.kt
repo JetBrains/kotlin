@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
+ * Represents a single `init {}` block in a Kotlin class.
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.anonymousInitializer]
  */
