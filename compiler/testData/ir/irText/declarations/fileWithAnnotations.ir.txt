@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/fileWithAnnotations.kt
   annotations:
-    JvmName(name = 'FileWithAnnotations')
+    JvmName(name = "FileWithAnnotations")
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
   PROPERTY name:bar visibility:public modality:FINAL [val]

@@ -34,4 +34,4 @@ FILE fqName:<root> fileName:/typeAliasesWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   TYPEALIAS name:TestTypeAlias visibility:public expandedType:kotlin.String
     annotations:
-      TestAnn(x = 'TestTypeAlias')
+      TestAnn(x = "TestTypeAlias")

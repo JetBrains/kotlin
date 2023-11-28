@@ -34,9 +34,9 @@ FILE fqName:<root> fileName:/variablesWithAnnotations.kt
     BLOCK_BODY
       VAR name:testVal type:kotlin.String [val]
         annotations:
-          TestAnn(x = 'foo/testVal')
+          TestAnn(x = "foo/testVal")
         CONST String type=kotlin.String value="testVal"
       VAR name:testVar type:kotlin.String [var]
         annotations:
-          TestAnn(x = 'foo/testVar')
+          TestAnn(x = "foo/testVar")
         CONST String type=kotlin.String value="testVar"

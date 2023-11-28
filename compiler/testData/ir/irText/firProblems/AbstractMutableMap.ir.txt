@@ -107,7 +107,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
       VALUE_PARAMETER name:key index:0 type:K of <root>.MyMap
     FUN FAKE_OVERRIDE name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K of <root>.MyMap, V of <root>.MyMap>, key:K of <root>.MyMap, defaultValue:V of <root>.MyMap) returnType:V of <root>.MyMap [fake_override]
       annotations:
-        SinceKotlin(version = '1.1')
+        SinceKotlin(version = "1.1")
         PlatformDependent
       overridden:
         public open fun getOrDefault (key: K of kotlin.collections.AbstractMutableMap, defaultValue: V of kotlin.collections.AbstractMutableMap): V of kotlin.collections.AbstractMutableMap declared in kotlin.collections.AbstractMutableMap
@@ -147,7 +147,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
       VALUE_PARAMETER name:key index:0 type:K of <root>.MyMap
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K of <root>.MyMap, V of <root>.MyMap>, key:K of <root>.MyMap, value:V of <root>.MyMap) returnType:kotlin.Boolean [fake_override]
       annotations:
-        SinceKotlin(version = '1.1')
+        SinceKotlin(version = "1.1")
         PlatformDependent
       overridden:
         public open fun remove (key: K of kotlin.collections.AbstractMutableMap, value: V of kotlin.collections.AbstractMutableMap): kotlin.Boolean declared in kotlin.collections.AbstractMutableMap

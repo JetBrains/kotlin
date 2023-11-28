@@ -115,7 +115,7 @@ FILE fqName:<root> fileName:/kt43342.kt
                 receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-values>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     FUN FAKE_OVERRIDE name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>, key:K of <root>.ControlFlowInfo, defaultValue:V of <root>.ControlFlowInfo) returnType:V of <root>.ControlFlowInfo [fake_override]
       annotations:
-        SinceKotlin(version = '1.1')
+        SinceKotlin(version = "1.1")
         PlatformDependent
       overridden:
         public open fun getOrDefault (key: K of kotlin.collections.Map, defaultValue: V of kotlin.collections.Map): V of kotlin.collections.Map declared in kotlin.collections.Map
@@ -180,7 +180,7 @@ FILE fqName:<root> fileName:/kt43342.kt
       VALUE_PARAMETER name:key index:0 type:kotlin.String
     FUN FAKE_OVERRIDE name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<kotlin.String, kotlin.String>, key:kotlin.String, defaultValue:kotlin.String) returnType:kotlin.String [fake_override]
       annotations:
-        SinceKotlin(version = '1.1')
+        SinceKotlin(version = "1.1")
         PlatformDependent
       overridden:
         public open fun getOrDefault (key: K of <root>.ControlFlowInfo, defaultValue: V of <root>.ControlFlowInfo): V of <root>.ControlFlowInfo declared in <root>.ControlFlowInfo

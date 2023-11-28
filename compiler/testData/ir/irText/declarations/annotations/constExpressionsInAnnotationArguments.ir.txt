@@ -41,9 +41,9 @@ FILE fqName:<root> fileName:/constExpressionsInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A(x = '1')
+      A(x = 1)
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A(x = '2')
+      A(x = 2)
     BLOCK_BODY

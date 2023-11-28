@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/localCompanion.kt
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:local superTypes:[kotlin.Any]'
         CLASS OBJECT name:Companion modality:FINAL visibility:local [companion] superTypes:[kotlin.Any]
           annotations:
-            Suppress(names = ['WRONG_MODIFIER_CONTAINING_DECLARATION'])
+            Suppress(names = ["WRONG_MODIFIER_CONTAINING_DECLARATION"])
           $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.main.Foo.Companion
           CONSTRUCTOR visibility:private <> () returnType:<root>.main.Foo.Companion [primary]
             BLOCK_BODY

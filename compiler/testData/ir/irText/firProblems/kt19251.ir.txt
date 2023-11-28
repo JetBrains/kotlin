@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/test.kt
           <V>: kotlin.String
       VAR name:fn type:<root>.Fun [val]
         TYPE_OP type=<root>.Fun origin=SAM_CONVERSION typeOperand=<root>.Fun
-          FUN_EXPR type=kotlin.Function1<@[ParameterName(name = 'string')] @[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?> origin=LAMBDA
+          FUN_EXPR type=kotlin.Function1<@[ParameterName(name = "string")] @[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:@[FlexibleNullability] kotlin.String?) returnType:@[FlexibleNullability] kotlin.String?
               VALUE_PARAMETER name:it index:0 type:@[FlexibleNullability] kotlin.String?
               BLOCK_BODY

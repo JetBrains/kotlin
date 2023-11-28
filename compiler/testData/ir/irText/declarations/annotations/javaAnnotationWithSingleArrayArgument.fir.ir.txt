@@ -260,9 +260,9 @@ FILE fqName:<root> fileName:/C.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.A]'
     FUN FAKE_OVERRIDE name:test visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Unit [fake_override]
       annotations:
-        Annos(value = Anno(token = 'OK'))
-        Strings(value = 'OK')
-        Ints(value = '42')
+        Annos(value = Anno(token = "OK"))
+        Strings(value = "OK")
+        Ints(value = 42)
         Enums(value = GET_ENUM 'ENUM_ENTRY name:EA' type=<root>.E)
         Classes(value = CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.Double>)
       overridden:

@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/selfReferentialAnnotation.kt
     CONSTRUCTOR visibility:public <> (e:kotlin.Int) returnType:<root>.Ann [primary]
       VALUE_PARAMETER name:e index:0 type:kotlin.Int
         annotations:
-          Ann(e = '1')
+          Ann(e = 1)
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Ann modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/selfReferentialAnnotation.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:MyRequiresOptIn modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      MyRequiresOptIn(a = '', b = GET_ENUM 'ENUM_ENTRY name:ERROR' type=<root>.MyRequiresOptIn.MyLevel)
+      MyRequiresOptIn(a = "", b = GET_ENUM 'ENUM_ENTRY name:ERROR' type=<root>.MyRequiresOptIn.MyLevel)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyRequiresOptIn
     CONSTRUCTOR visibility:public <> (a:kotlin.String, b:<root>.MyRequiresOptIn.MyLevel) returnType:<root>.MyRequiresOptIn [primary]
       VALUE_PARAMETER name:a index:0 type:kotlin.String
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/selfReferentialAnnotation.kt
           CONST String type=kotlin.String value=""
       VALUE_PARAMETER name:b index:1 type:<root>.MyRequiresOptIn.MyLevel
         annotations:
-          MyRequiresOptIn(a = '', b = GET_ENUM 'ENUM_ENTRY name:WARNING' type=<root>.MyRequiresOptIn.MyLevel)
+          MyRequiresOptIn(a = "", b = GET_ENUM 'ENUM_ENTRY name:WARNING' type=<root>.MyRequiresOptIn.MyLevel)
         EXPRESSION_BODY
           GET_ENUM 'ENUM_ENTRY name:ERROR' type=<root>.MyRequiresOptIn.MyLevel
       BLOCK_BODY

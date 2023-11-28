@@ -68,11 +68,11 @@ FILE fqName:<root> fileName:/valueClassEquals.kt
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Z'
           CONST Boolean type=kotlin.Boolean value=true
   PROPERTY name:equals visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:equals type:kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = 'other')] kotlin.Any?, kotlin.Boolean> visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:equals type:kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = "other")] kotlin.Any?, kotlin.Boolean> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Z' type=kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = 'other')] kotlin.Any?, kotlin.Boolean> origin=null reflectionTarget=<same>
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-equals> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = 'other')] kotlin.Any?, kotlin.Boolean>
+        FUNCTION_REFERENCE 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Z' type=kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = "other")] kotlin.Any?, kotlin.Boolean> origin=null reflectionTarget=<same>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-equals> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = "other")] kotlin.Any?, kotlin.Boolean>
       correspondingProperty: PROPERTY name:equals visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-equals> (): kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = 'other')] kotlin.Any?, kotlin.Boolean> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:equals type:kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = 'other')] kotlin.Any?, kotlin.Boolean> visibility:private [final,static]' type=kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = 'other')] kotlin.Any?, kotlin.Boolean> origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-equals> (): kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = "other")] kotlin.Any?, kotlin.Boolean> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:equals type:kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = "other")] kotlin.Any?, kotlin.Boolean> visibility:private [final,static]' type=kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = "other")] kotlin.Any?, kotlin.Boolean> origin=null

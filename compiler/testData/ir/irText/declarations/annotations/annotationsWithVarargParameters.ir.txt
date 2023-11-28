@@ -32,11 +32,11 @@ FILE fqName:<root> fileName:/annotationsWithVarargParameters.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A(xs = ['abc', 'def'])
+      A(xs = ["abc", "def"])
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A(xs = ['abc'])
+      A(xs = ["abc"])
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:

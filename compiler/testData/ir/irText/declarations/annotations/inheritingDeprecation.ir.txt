@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo
     PROPERTY name:prop visibility:public modality:OPEN [val]
       annotations:
-        Deprecated(message = '', replaceWith = <null>, level = <null>)
+        Deprecated(message = "", replaceWith = <null>, level = <null>)
       FUN name:<get-prop> visibility:public modality:OPEN <> ($this:<root>.IFoo) returnType:kotlin.String
         correspondingProperty: PROPERTY name:prop visibility:public modality:OPEN [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.IFoo
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
             CONST String type=kotlin.String value=""
     PROPERTY name:extProp visibility:public modality:OPEN [val]
       annotations:
-        Deprecated(message = '', replaceWith = <null>, level = <null>)
+        Deprecated(message = "", replaceWith = <null>, level = <null>)
       FUN name:<get-extProp> visibility:public modality:OPEN <> ($this:<root>.IFoo, $receiver:kotlin.String) returnType:kotlin.String
         correspondingProperty: PROPERTY name:extProp visibility:public modality:OPEN [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.IFoo
@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DefaultImpl modality:FINAL visibility:public superTypes:[<root>.IFoo]'
     PROPERTY FAKE_OVERRIDE name:prop visibility:public modality:OPEN [fake_override,val]
       annotations:
-        Deprecated(message = '', replaceWith = <null>, level = <null>)
+        Deprecated(message = "", replaceWith = <null>, level = <null>)
       overridden:
         public open prop: kotlin.String
       FUN FAKE_OVERRIDE name:<get-prop> visibility:public modality:OPEN <> ($this:<root>.IFoo) returnType:kotlin.String [fake_override]
@@ -102,7 +102,7 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.IFoo
     PROPERTY FAKE_OVERRIDE name:extProp visibility:public modality:OPEN [fake_override,val]
       annotations:
-        Deprecated(message = '', replaceWith = <null>, level = <null>)
+        Deprecated(message = "", replaceWith = <null>, level = <null>)
       overridden:
         public open extProp: kotlin.String
       FUN FAKE_OVERRIDE name:<get-extProp> visibility:public modality:OPEN <> ($this:<root>.IFoo, $receiver:kotlin.String) returnType:kotlin.String [fake_override]

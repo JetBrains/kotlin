@@ -19,7 +19,7 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
     PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BITS visibility:public modality:FINAL [const,val]
       annotations:
-        SinceKotlin(version = '1.3')
+        SinceKotlin(version = "1.3")
       FIELD PROPERTY_BACKING_FIELD name:SIZE_BITS type:kotlin.Int visibility:public [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=32
@@ -28,7 +28,7 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
     PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BYTES visibility:public modality:FINAL [const,val]
       annotations:
-        SinceKotlin(version = '1.3')
+        SinceKotlin(version = "1.3")
       FIELD PROPERTY_BACKING_FIELD name:SIZE_BYTES type:kotlin.Int visibility:public [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=4
@@ -211,61 +211,61 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
     VALUE_PARAMETER name:other index:0 type:kotlin.Short
   FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.ranges.IntRange [operator]
     annotations:
-      SinceKotlin(version = '1.9')
+      SinceKotlin(version = "1.9")
       WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>])
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER name:other index:0 type:kotlin.Byte
   FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.ranges.IntRange [operator]
     annotations:
-      SinceKotlin(version = '1.9')
+      SinceKotlin(version = "1.9")
       WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>])
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER name:other index:0 type:kotlin.Int
   FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:kotlin.ranges.LongRange [operator]
     annotations:
-      SinceKotlin(version = '1.9')
+      SinceKotlin(version = "1.9")
       WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>])
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER name:other index:0 type:kotlin.Long
   FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:kotlin.ranges.IntRange [operator]
     annotations:
-      SinceKotlin(version = '1.9')
+      SinceKotlin(version = "1.9")
       WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>])
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER name:other index:0 type:kotlin.Short
   FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.Int [operator]
     annotations:
-      SinceKotlin(version = '1.1')
+      SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER name:other index:0 type:kotlin.Byte
   FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:kotlin.Double [operator]
     annotations:
-      SinceKotlin(version = '1.1')
+      SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER name:other index:0 type:kotlin.Double
   FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:kotlin.Float [operator]
     annotations:
-      SinceKotlin(version = '1.1')
+      SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER name:other index:0 type:kotlin.Float
   FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [operator]
     annotations:
-      SinceKotlin(version = '1.1')
+      SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER name:other index:0 type:kotlin.Int
   FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:kotlin.Long [operator]
     annotations:
-      SinceKotlin(version = '1.1')
+      SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER name:other index:0 type:kotlin.Long
   FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:kotlin.Int [operator]
     annotations:
-      SinceKotlin(version = '1.1')
+      SinceKotlin(version = "1.1")
       IntrinsicConstEvaluation
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER name:other index:0 type:kotlin.Short

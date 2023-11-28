@@ -29,18 +29,18 @@ FILE fqName:<root> fileName:/passingLambdaToContextualParam.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:contextual visibility:public modality:FINAL <> (f:@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.String>) returnType:kotlin.String
-    VALUE_PARAMETER name:f index:0 type:@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.String>
+  FUN name:contextual visibility:public modality:FINAL <> (f:@[ContextFunctionTypeParams(count = 1)] kotlin.Function1<<root>.C, kotlin.String>) returnType:kotlin.String
+    VALUE_PARAMETER name:f index:0 type:@[ContextFunctionTypeParams(count = 1)] kotlin.Function1<<root>.C, kotlin.String>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun contextual (f: @[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.String>): kotlin.String declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun contextual (f: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<<root>.C, kotlin.String>): kotlin.String declared in <root>'
         CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.String origin=INVOKE
-          $this: GET_VAR 'f: @[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.String> declared in <root>.contextual' type=@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.String> origin=VARIABLE_AS_FUNCTION
+          $this: GET_VAR 'f: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<<root>.C, kotlin.String> declared in <root>.contextual' type=@[ContextFunctionTypeParams(count = 1)] kotlin.Function1<<root>.C, kotlin.String> origin=VARIABLE_AS_FUNCTION
           p1: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun contextual (f: @[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
-          f: FUN_EXPR type=@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.String> origin=LAMBDA
+        CALL 'public final fun contextual (f: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<<root>.C, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
+          f: FUN_EXPR type=@[ContextFunctionTypeParams(count = 1)] kotlin.Function1<<root>.C, kotlin.String> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($context_receiver_0:<root>.C) returnType:kotlin.String
               contextReceiverParametersCount: 1
               VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.C

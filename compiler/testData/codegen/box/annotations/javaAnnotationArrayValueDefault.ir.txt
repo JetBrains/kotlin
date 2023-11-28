@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:MyClass3 modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
-      JavaAnn(value = ['asd'])
+      JavaAnn(value = ["asd"])
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyClass3
     CONSTRUCTOR visibility:public <> () returnType:<root>.MyClass3 [primary]
       BLOCK_BODY

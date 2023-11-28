@@ -670,12 +670,12 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun entries (): kotlin.collections.List<<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>> declared in <root>.ArrayMapImpl'
-          CALL 'public final fun mapIndexedNotNull <T, R> (transform: kotlin.Function2<@[ParameterName(name = 'index')] kotlin.Int, T of kotlin.collections.mapIndexedNotNull, R of kotlin.collections.mapIndexedNotNull?>): kotlin.collections.List<R of kotlin.collections.mapIndexedNotNull> declared in kotlin.collections' type=kotlin.collections.List<<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>> origin=null
+          CALL 'public final fun mapIndexedNotNull <T, R> (transform: kotlin.Function2<@[ParameterName(name = "index")] kotlin.Int, T of kotlin.collections.mapIndexedNotNull, R of kotlin.collections.mapIndexedNotNull?>): kotlin.collections.List<R of kotlin.collections.mapIndexedNotNull> declared in kotlin.collections' type=kotlin.collections.List<<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>> origin=null
             <T>: kotlin.Any?
             <R>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>
             $receiver: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.entries' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-            transform: FUN_EXPR type=kotlin.Function2<@[ParameterName(name = 'index')] kotlin.Int, kotlin.Any?, <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>?> origin=LAMBDA
+            transform: FUN_EXPR type=kotlin.Function2<@[ParameterName(name = "index")] kotlin.Int, kotlin.Any?, <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>?> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (index:kotlin.Int, value:kotlin.Any?) returnType:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>?
                 VALUE_PARAMETER name:index index:0 type:kotlin.Int
                 VALUE_PARAMETER name:value index:1 type:kotlin.Any?

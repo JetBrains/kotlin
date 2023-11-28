@@ -141,7 +141,7 @@ FILE fqName:<root> fileName:/partialSam.kt
           $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
           f1: CALL 'public final fun <get-fsi> (): <root>.Fn<kotlin.String, kotlin.Int> declared in <root>' type=<root>.Fn<kotlin.String, kotlin.Int> origin=GET_PROPERTY
           f2: TYPE_OP type=<root>.Fn<kotlin.Int, kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.Fn<kotlin.Int, kotlin.String>
-            FUN_EXPR type=kotlin.Function3<@[ParameterName(name = 's')] kotlin.String, @[ParameterName(name = 'i')] kotlin.Int, @[ParameterName(name = 't')] kotlin.Int, kotlin.String> origin=LAMBDA
+            FUN_EXPR type=kotlin.Function3<@[ParameterName(name = "s")] kotlin.String, @[ParameterName(name = "i")] kotlin.Int, @[ParameterName(name = "t")] kotlin.Int, kotlin.String> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (s:kotlin.String, i:kotlin.Int, ti:kotlin.Int) returnType:kotlin.String
                 VALUE_PARAMETER name:s index:0 type:kotlin.String
                 VALUE_PARAMETER name:i index:1 type:kotlin.Int
@@ -153,7 +153,7 @@ FILE fqName:<root> fileName:/partialSam.kt
         CALL 'public final fun runConversion (f1: <root>.Fn<kotlin.String, kotlin.Int>, f2: <root>.Fn<kotlin.Int, kotlin.String>): kotlin.Int declared in <root>.J' type=kotlin.Int origin=null
           $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
           f1: TYPE_OP type=<root>.Fn<kotlin.String, kotlin.Int> origin=SAM_CONVERSION typeOperand=<root>.Fn<kotlin.String, kotlin.Int>
-            FUN_EXPR type=kotlin.Function3<@[ParameterName(name = 's')] kotlin.String, @[ParameterName(name = 'i')] kotlin.Int, @[ParameterName(name = 't')] kotlin.String, kotlin.Int> origin=LAMBDA
+            FUN_EXPR type=kotlin.Function3<@[ParameterName(name = "s")] kotlin.String, @[ParameterName(name = "i")] kotlin.Int, @[ParameterName(name = "t")] kotlin.String, kotlin.Int> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (s:kotlin.String, i:kotlin.Int, ts:kotlin.String) returnType:kotlin.Int
                 VALUE_PARAMETER name:s index:0 type:kotlin.String
                 VALUE_PARAMETER name:i index:1 type:kotlin.Int
