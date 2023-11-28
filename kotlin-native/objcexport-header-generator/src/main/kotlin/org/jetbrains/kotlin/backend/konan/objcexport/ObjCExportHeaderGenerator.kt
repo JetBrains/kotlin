@@ -1358,6 +1358,18 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
                 add("#import <$it>")
             }
         }
+
+        fun createInstance(
+            moduleDescriptors: List<ModuleDescriptor>,
+            mapper: ObjCExportMapper,
+            namer: ObjCExportNamer,
+            problemCollector: ObjCExportProblemCollector,
+            objcGenerics: Boolean,
+            shouldExportKDoc: Boolean,
+            additionalImports: List<String>,
+        ): ObjCExportHeaderGenerator = ObjCExportHeaderGeneratorImpl(
+            moduleDescriptors, mapper, namer, problemCollector, objcGenerics, shouldExportKDoc, additionalImports
+        )
     }
 }
 

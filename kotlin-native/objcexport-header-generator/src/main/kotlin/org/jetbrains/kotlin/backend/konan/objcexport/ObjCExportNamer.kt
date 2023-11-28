@@ -284,7 +284,6 @@ class ObjCExportNamerImpl(
         private val problemCollector: ObjCExportProblemCollector,
         private val local: Boolean
 ) : ObjCExportNamer {
-
     constructor(
             moduleDescriptors: Set<ModuleDescriptor>,
             builtIns: KotlinBuiltIns,

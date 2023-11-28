@@ -18,7 +18,6 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(project(":compiler:tests-common", "tests-jar"))
-    testImplementation(project(":kotlin-native:backend.native"))
 
     testRuntimeOnly(libs.junit.jupiter.engine)
 }

@@ -9,8 +9,6 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
-import org.jetbrains.kotlin.backend.konan.KlibFactories
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -87,13 +84,6 @@ private fun createCompilerConfiguration(): CompilerConfiguration {
     val configuration = KotlinTestUtils.newConfiguration()
     configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, createLanguageVersionSettings())
     configuration.put(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG, createFlexiblePhaseConfig(K2NativeCompilerArguments()))
-    configuration.put(KonanConfigKeys.KONAN_HOME, konanHomePath)
-    configuration.put(KonanConfigKeys.PRODUCE, CompilerOutputKind.FRAMEWORK)
-    configuration.put(KonanConfigKeys.AUTO_CACHEABLE_FROM, emptyList())
-    configuration.put(KonanConfigKeys.CACHE_DIRECTORIES, emptyList())
-    configuration.put(KonanConfigKeys.CACHED_LIBRARIES, emptyMap())
-    configuration.put(KonanConfigKeys.FRAMEWORK_IMPORT_HEADERS, emptyList())
-    configuration.put(KonanConfigKeys.EXPORT_KDOC, true)
     return configuration
 }
 
