@@ -9,5 +9,5 @@ fun test(identifier: SomeClass, fn: String.() -> Unit) {
     <!NONE_APPLICABLE!>identifier<!>()
     <!NONE_APPLICABLE!>identifier<!>(123)
     <!OPERATOR_MODIFIER_REQUIRED!>identifier<!>(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!TOO_MANY_ARGUMENTS!>2<!>)
-    <!ARGUMENT_TYPE_MISMATCH!>1<!>.fn()
+    1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>fn<!>()
 }
