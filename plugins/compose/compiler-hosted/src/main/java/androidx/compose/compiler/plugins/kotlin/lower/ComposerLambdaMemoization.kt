@@ -62,7 +62,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.copyAttributes
+import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -74,7 +74,6 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
@@ -458,17 +457,64 @@ class ComposerLambdaMemoization(
         return super.visitValueAccess(expression)
     }
 
+    override fun visitBlock(expression: IrBlock): IrExpression {
+        val result = super.visitBlock(expression)
+
+        if (result is IrBlock && result.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
+            if (inlineLambdaInfo.isInlineFunctionExpression(expression)) {
+                // Do not memoize function references for inline lambdas
+                return result
+            }
+
+            val functionReference = result.statements.last()
+            if (functionReference !is IrFunctionReference) {
+                //  Do not memoize if the expected shape doesn't match.
+                return result
+            }
+
+            return rememberFunctionReference(functionReference, expression)
+        }
+
+        return result
+    }
+
     // Memoize the instance created by using the :: operator
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        val result = super.visitFunctionReference(expression)
+
+        if (
+            inlineLambdaInfo.isInlineFunctionExpression(expression) ||
+                inlineLambdaInfo.isInlineLambda(expression.symbol.owner)
+        ) {
+            // Do not memoize function references used in inline parameters.
+            return result
+        }
+
+        if (expression.symbol.owner.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
+            // Adapted function reference (inexact function signature match) is handled in block
+            return result
+        }
+
+        if (result !is IrFunctionReference) {
+            // Do not memoize if the shape doesn't match
+            return result
+        }
+
+        return rememberFunctionReference(result, result)
+    }
+
+    private fun rememberFunctionReference(
+        reference: IrFunctionReference,
+        expression: IrExpression
+    ): IrExpression {
         // Get the local captures for local function ref, to make sure we invalidate memoized
         // reference if its capture is different.
-        val localCaptures = if (expression.symbol.owner.isLocal) {
-            declarationContextStack.recordLocalCapture(expression.symbol.owner)
+        val localCaptures = if (reference.symbol.owner.isLocal) {
+            declarationContextStack.recordLocalCapture(reference.symbol.owner)
         } else {
             null
         }
-        val result = super.visitFunctionReference(expression)
-        val functionContext = currentFunctionContext ?: return result
+        val functionContext = currentFunctionContext ?: return expression
 
         // The syntax <expr>::<method>(<params>) and ::<function>(<params>) is reserved for
         // future use. Revisit implementation if this syntax is as a curry syntax in the future.
@@ -476,27 +522,27 @@ class ComposerLambdaMemoization(
         // receivers are treated below.
 
         // Do not attempt memoization if the referenced function has context receivers.
-        if (expression.symbol.owner.contextReceiverParametersCount > 0) {
-            return result
+        if (reference.symbol.owner.contextReceiverParametersCount > 0) {
+            return expression
         }
 
         // Do not attempt memoization if value parameters are not null. This is to guard against
         // unexpected IR shapes.
-        for (i in 0 until expression.valueArgumentsCount) {
-            if (expression.getValueArgument(i) != null) {
-                return result
+        for (i in 0 until reference.valueArgumentsCount) {
+            if (reference.getValueArgument(i) != null) {
+                return expression
             }
         }
 
         if (functionContext.canRemember) {
             // Memoize the reference for <expr>::<method>
-            val dispatchReceiver = expression.dispatchReceiver
-            val extensionReceiver = expression.extensionReceiver
+            val dispatchReceiver = reference.dispatchReceiver
+            val extensionReceiver = reference.extensionReceiver
 
             val hasReceiver = dispatchReceiver != null || extensionReceiver != null
             val receiverIsStable =
                 dispatchReceiver.isNullOrStable() &&
-                extensionReceiver.isNullOrStable()
+                    extensionReceiver.isNullOrStable()
 
             val captures = mutableListOf<IrValueDeclaration>()
             if (localCaptures != null) {
@@ -526,28 +572,22 @@ class ComposerLambdaMemoization(
                         tmp
                     }
 
+                    // Patch reference receiver in place
+                    reference.dispatchReceiver = tempDispatchReceiver?.let { irGet(it) }
+                    reference.extensionReceiver = tempExtensionReceiver?.let { irGet(it) }
+
                     +rememberExpression(
                         functionContext,
-                        IrFunctionReferenceImpl(
-                            startOffset,
-                            endOffset,
-                            expression.type,
-                            expression.symbol,
-                            expression.typeArgumentsCount,
-                            expression.valueArgumentsCount,
-                            expression.reflectionTarget
-                        ).copyAttributes(expression).apply {
-                            this.dispatchReceiver = tempDispatchReceiver?.let { irGet(it) }
-                            this.extensionReceiver = tempExtensionReceiver?.let { irGet(it) }
-                        },
+                        expression,
                         captures
                     )
                 }
             } else if (dispatchReceiver == null && extensionReceiver == null) {
-                return rememberExpression(functionContext, result, captures)
+                return rememberExpression(functionContext, expression, captures)
             }
         }
-        return result
+
+        return expression
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {

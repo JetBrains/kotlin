@@ -1814,4 +1814,35 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
     ) {
         assertFalse(it.contains("INVOKESTATIC kotlin/jvm/internal/Reflection.property0 (Lkotlin/jvm/internal/PropertyReference0;)Lkotlin/reflect/KProperty0;"))
     }
+
+    @Test
+    fun testComposableAdaptedFunctionReference() = validateBytecode(
+        """
+            class ScrollState {
+                fun test(index: Int, default: Int = 0): Int = 0
+                fun testExact(index: Int): Int = 0
+            }
+            fun scrollState(): ScrollState = TODO()
+
+            @Composable fun rememberFooInline() = fooInline(scrollState()::test)
+            @Composable fun rememberFoo() = foo(scrollState()::test)
+            @Composable fun rememberFooExactInline() = fooInline(scrollState()::testExact)
+            @Composable fun rememberFooExact() = foo(scrollState()::testExact)
+
+            @Composable
+            inline fun fooInline(block: (Int) -> Int) = block(0)
+
+            @Composable
+            fun foo(block: (Int) -> Int) = block(0)
+        """,
+        validate = {
+            // Validate that function references in inline calls are actually getting inlined
+            assertFalse(
+                it.contains("""INVOKESPECIAL Test_0Kt${'$'}rememberFooInline$1$1.<init> (Ljava/lang/Object;)V""")
+            )
+            assertFalse(
+                it.contains("""INVOKESPECIAL Test_0Kt${'$'}rememberFooExactInline$1$1.<init> (Ljava/lang/Object;)V""")
+            )
+        }
+    )
 }
