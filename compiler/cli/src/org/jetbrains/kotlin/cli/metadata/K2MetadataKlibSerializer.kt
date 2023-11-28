@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
+import org.jetbrains.kotlin.konan.file.File as KFile
 
 internal class K2MetadataKlibSerializer(
     configuration: CompilerConfiguration,
@@ -78,8 +80,8 @@ private class KlibMetadataDependencyContainer(
         val klibFiles = classpathFiles
             .filter { it.extension == "klib" || it.isDirectory }
 
-        // TODO: need to move K2Metadata to SearchPathResolver.
-        klibFiles.map { resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(it.absolutePath)) }
+        val logger = configuration.getLogger()
+        klibFiles.map { resolveSingleFileKlib(KFile(it.absolutePath), logger) }
     }
 
     private val friendPaths = configuration.get(K2MetadataConfigurationKeys.FRIEND_PATHS).orEmpty().toSet()

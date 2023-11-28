@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.metadata.*
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.common.toLogger
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -70,8 +71,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.util.DummyLogger
-import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
@@ -102,21 +101,6 @@ private val CompilerConfiguration.metadataVersion
 
 internal val SerializedIrFile.fileMetadata: ByteArray
     get() = backendSpecificMetadata ?: error("Expect file caches to have backendSpecificMetadata, but '$path' doesn't")
-
-val CompilerConfiguration.resolverLogger: Logger
-    get() = when (val messageLogger = this[IrMessageLogger.IR_MESSAGE_LOGGER]) {
-        null -> DummyLogger
-        else -> object : Logger {
-            override fun log(message: String) = messageLogger.report(IrMessageLogger.Severity.INFO, message, null)
-            override fun error(message: String) = messageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
-            override fun warning(message: String) = messageLogger.report(IrMessageLogger.Severity.WARNING, message, null)
-
-            override fun fatal(message: String): Nothing {
-                messageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
-                throw CompilationErrorException()
-            }
-        }
-    }
 
 class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
 
@@ -485,7 +469,7 @@ class ModulesStructure(
 
     val allDependenciesResolution = CommonKLibResolver.resolveWithoutDependencies(
         dependencies,
-        compilerConfiguration.resolverLogger,
+        compilerConfiguration.irMessageLogger.toLogger(),
         compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
     )
 

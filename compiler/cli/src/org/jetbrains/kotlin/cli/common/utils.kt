@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
-import kotlin.system.exitProcess
+import org.jetbrains.kotlin.cli.common.messages.toLogger as toLoggerNew
 
 fun incrementalCompilationIsEnabled(arguments: CommonCompilerArguments): Boolean {
     return arguments.incrementalCompilation ?: IncrementalCompilation.isEnabledForJvm()
@@ -127,23 +127,9 @@ fun <PathProvider : Any> getLibraryFromHome(
     return null
 }
 
-fun MessageCollector.toLogger(): Logger =
-    object : Logger {
-        override fun error(message: String) {
-            report(CompilerMessageSeverity.ERROR, message)
-        }
-
-        override fun fatal(message: String): Nothing {
-            report(CompilerMessageSeverity.ERROR, message)
-            exitProcess(1)
-        }
-
-        override fun warning(message: String) {
-            report(CompilerMessageSeverity.WARNING, message)
-        }
-
-        override fun log(message: String) {
-            report(CompilerMessageSeverity.LOGGING, message)
-        }
-    }
-
+@Deprecated(
+    "Use org.jetbrains.kotlin.cli.common.messages.toLogger() instead",
+    ReplaceWith("toLogger()", "org.jetbrains.kotlin.cli.common.messages.toLogger"),
+    DeprecationLevel.ERROR
+)
+fun MessageCollector.toLogger(): Logger = toLoggerNew()

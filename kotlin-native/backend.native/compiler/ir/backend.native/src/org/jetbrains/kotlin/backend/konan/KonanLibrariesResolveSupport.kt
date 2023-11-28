@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.defaultResolver
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.UnresolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
-import org.jetbrains.kotlin.util.Logger
 
 class KonanLibrariesResolveSupport(
         configuration: CompilerConfiguration,
@@ -34,24 +32,13 @@ class KonanLibrariesResolveSupport(
     private val unresolvedLibraries = libraryNames.toUnresolvedLibraries
 
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
-    private val resolverLogger =
-            object : Logger {
-                private val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                override fun warning(message: String)= collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
-                override fun error(message: String) = collector.report(CompilerMessageSeverity.ERROR, message)
-                override fun log(message: String) = collector.report(CompilerMessageSeverity.LOGGING, message)
-                override fun fatal(message: String): Nothing {
-                    collector.report(CompilerMessageSeverity.ERROR, message)
-                    throw KonanCompilationException()
-                }
-            }
 
     private val resolver = defaultResolver(
             repositories,
             libraryNames.filter { it.contains(File.separator) } + includedLibraryFiles.map { it.absolutePath },
             target,
             distribution,
-            resolverLogger
+            configuration.getLogger()
     ).libraryResolver(resolveManifestDependenciesLenient)
 
     // We pass included libraries by absolute paths to avoid repository-based resolution for them.

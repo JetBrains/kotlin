@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
+import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.configuration.getKlibDependencies
 import java.io.File
 
 fun resolveLibraries(configuration: CompilerConfiguration, paths: List<String>): List<KotlinResolvedLibrary> {
-    return CommonKLibResolver.resolve(paths, configuration.resolverLogger).getFullResolvedList()
+    return CommonKLibResolver.resolve(paths, configuration.getLogger()).getFullResolvedList()
 }
 
 fun getTransitivesAndFriendsPaths(module: TestModule, testServices: TestServices): List<String> {

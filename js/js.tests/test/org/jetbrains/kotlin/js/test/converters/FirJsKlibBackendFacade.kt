@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
+import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
@@ -81,7 +81,7 @@ class FirJsKlibBackendFacade(
         // TODO: consider avoiding repeated libraries resolution
         val lib = CommonKLibResolver.resolve(
             getAllJsDependenciesPaths(module, testServices) + listOf(outputFile),
-            configuration.resolverLogger
+            configuration.getLogger(treatWarningsAsErrors = true)
         ).getFullResolvedList().last().library
 
         val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(

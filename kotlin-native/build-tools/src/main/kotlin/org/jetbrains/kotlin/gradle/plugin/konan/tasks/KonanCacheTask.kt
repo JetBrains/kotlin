@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.konan.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliCompilerRunner
 import org.jetbrains.kotlin.konan.library.defaultResolver
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.util.Logger
 import java.io.File
 
 enum class KonanCacheKind(val outputKind: CompilerOutputKind) {
@@ -54,9 +54,16 @@ abstract class KonanCacheTask : DefaultTask() {
     private fun readKlibUniqNameFromManifest(): String {
         val konanHome = compilerDistributionPath.get().absolutePath
         val resolver = defaultResolver(
-            emptyList(),
-            PlatformManager(konanHome).targetByName(target),
-            Distribution(konanHome)
+                repositories = emptyList(),
+                directLibs = emptyList(),
+                target = PlatformManager(konanHome).targetByName(target),
+                distribution = Distribution(konanHome),
+                logger = object : Logger {
+                    override fun log(message: String) = logger.info(message)
+                    override fun warning(message: String) = logger.warn(message)
+                    override fun error(message: String): Unit = logger.error(message)
+                    override fun fatal(message: String): Nothing = kotlin.error(message)
+                }
         )
         return resolver.resolve(originalKlib.asFile.get().absolutePath).uniqueName
     }

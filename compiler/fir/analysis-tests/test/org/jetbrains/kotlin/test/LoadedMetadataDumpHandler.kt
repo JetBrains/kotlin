@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.cli.common.SessionWithSources
+import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.common.prepareJsSessions
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -53,7 +54,6 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
-import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.File
 
@@ -107,7 +107,11 @@ class KlibLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoaded
         libraryList: DependencyListForCliModule,
     ): List<SessionWithSources<KtFile>> {
         val libraries = getAllJsDependenciesPaths(module, testServices)
-        val resolvedLibraries = CommonKLibResolver.resolve(libraries, DummyLogger).getFullResolvedList()
+        val resolvedLibraries = CommonKLibResolver.resolve(
+            libraries,
+            configuration.getLogger(treatWarningsAsErrors = true)
+        ).getFullResolvedList()
+
         return prepareJsSessions(
             files = emptyList(),
             configuration,

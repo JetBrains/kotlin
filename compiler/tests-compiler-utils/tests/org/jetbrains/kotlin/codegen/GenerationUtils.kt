@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
@@ -42,8 +40,6 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.util.DummyLogger
-import org.jetbrains.kotlin.util.Logger
 import java.io.File
 
 object GenerationUtils {
@@ -160,17 +156,6 @@ object GenerationUtils {
         return generationState
     }
 
-    fun messageCollectorLogger(collector: MessageCollector) = object : Logger {
-        override fun warning(message: String) = collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
-        override fun error(message: String) = collector.report(CompilerMessageSeverity.ERROR, message)
-        override fun log(message: String) = collector.report(CompilerMessageSeverity.LOGGING, message)
-        override fun fatal(message: String): Nothing {
-            collector.report(CompilerMessageSeverity.ERROR, message)
-            (collector as? GroupingMessageCollector)?.flush()
-            kotlin.error(message)
-        }
-    }
-
     private fun compileFilesUsingStandardMode(
         project: Project,
         files: List<KtFile>,
@@ -179,10 +164,8 @@ object GenerationUtils {
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
         trace: BindingTrace
     ): GenerationState {
-        val logger = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)?.let { messageCollectorLogger(it) }
-            ?: DummyLogger
         val resolvedKlibs = configuration.get(JVMConfigurationKeys.KLIB_PATHS)?.let { klibPaths ->
-            jvmResolveLibraries(klibPaths, logger)
+            jvmResolveLibraries(klibPaths, configuration.getLogger(treatWarningsAsErrors = true))
         }
 
         val analysisResult =

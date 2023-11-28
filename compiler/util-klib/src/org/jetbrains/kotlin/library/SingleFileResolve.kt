@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
 interface SingleFileKlibResolveStrategy {
@@ -14,11 +15,6 @@ interface SingleFileKlibResolveStrategy {
 
 fun resolveSingleFileKlib(
     libraryFile: File,
-    logger: Logger = object : Logger {
-        override fun log(message: String) {}
-        override fun error(message: String) = kotlin.error("e: $message")
-        override fun warning(message: String) {}
-        override fun fatal(message: String) = kotlin.error("e: $message")
-    },
+    logger: Logger = DummyLogger,
     strategy: SingleFileKlibResolveStrategy = CompilerSingleFileKlibResolveStrategy
 ): KotlinLibrary = strategy.resolve(libraryFile, logger)
