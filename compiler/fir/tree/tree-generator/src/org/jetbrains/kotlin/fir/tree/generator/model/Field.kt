@@ -21,7 +21,6 @@ sealed class Field : AbstractField<Field>() {
     open val fromDelegate: Boolean get() = false
 
     open var useNullableForReplace: Boolean = false
-    open var notNull: Boolean = false
 
     var withBindThis = true
 

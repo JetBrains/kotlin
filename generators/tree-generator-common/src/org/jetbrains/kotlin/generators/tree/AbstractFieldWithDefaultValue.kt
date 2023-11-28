@@ -9,7 +9,6 @@ interface AbstractFieldWithDefaultValue<OriginField : AbstractField<OriginField>
     val origin: OriginField
     var withGetter: Boolean
     var customSetter: String?
-    var notNull: Boolean
     var defaultValueInImplementation: String?
     var defaultValueInBuilder: String?
 }
