@@ -226,6 +226,7 @@ internal object NativeTestSupport {
         output += computeCompilerOutputInterceptor(enforcedProperties)
         output += computeBinaryLibraryKind(enforcedProperties)
         output += computeCInterfaceMode(enforcedProperties)
+        output += computeXCTestRunner(enforcedProperties, nativeTargets)
 
         return nativeTargets
     }
@@ -364,6 +365,15 @@ internal object NativeTestSupport {
         )
         return Timeouts(executionTimeout)
     }
+
+    private fun computeXCTestRunner(enforcedProperties: EnforcedProperties, nativeTargets: KotlinNativeTargets) = XCTestRunner(
+        ClassLevelProperty.XCTEST_FRAMEWORK.readValue(
+            enforcedProperties,
+            String::toBooleanStrictOrNull,
+            default = false
+        ),
+        nativeTargets
+    )
 
     /*************** Test class settings (for black box tests only) ***************/
 

@@ -330,6 +330,8 @@ internal sealed interface TestCaseGroup {
                     && testCase.sharedModules == sharedModules
                     && testCase.extras<WithTestRunnerExtras>().runnerType == runnerType
         }
+
+        override fun toString() = "TestCaseGroup.Default::${testCasesById.keys.firstNotNullOfOrNull { it.testCaseGroupId }}"
     }
 
     data class MetaGroup(val testCaseGroupId: TestCaseGroupId, val testGroups: Set<TestCaseGroup>) : TestCaseGroup {

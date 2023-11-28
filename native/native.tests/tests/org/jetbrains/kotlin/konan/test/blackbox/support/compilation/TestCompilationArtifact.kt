@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
 import java.io.File
+import java.nio.file.*
 
 sealed interface TestCompilationArtifact {
     val logFile: File
@@ -71,5 +72,14 @@ sealed interface TestCompilationArtifact {
             override val logFile: File get() = rootDir.resolve("$moduleName.log")
             val binaryLibrary: File get() = rootDir.resolve("lib$moduleName.dylib")
         }
+    }
+
+    data class XCTestBundle(val bundleDir: File, val fileCheckStage: String? = null) : TestCompilationArtifact {
+        override val logFile: File get() = bundleDir.resolveSibling("${bundleDir.name}.log")
+        val testDumpFile: File get() = bundleDir.resolveSibling("${bundleDir.name}.dump")
+        val fileCheckDump: File?
+            get() = fileCheckStage?.let {
+                bundleDir.resolveSibling("out.$it.ll")
+            }
     }
 }

@@ -152,8 +152,6 @@ nativeTargets.forEach { target ->
             .interopProcessingTaskName
     ) as? TaskProvider<CInteropProcess> ?: error("Unable to get CInteropProcess task provider")
 
-    val frameworkCopyTask = tasks.named<Sync>("${targetName}FrameworkCopy")
-
     artifacts {
         add(kotlinTestNativeXCTest.name, outputKlibTask.flatMap { it.outputFile }) {
             classifier = targetName
@@ -162,11 +160,6 @@ nativeTargets.forEach { target ->
         add(kotlinTestNativeXCTest.name, cinteropKlibTask.flatMap { it.outputFileProvider }) {
             classifier = targetName
             builtBy(cinteropKlibTask)
-        }
-        // Add a path to a directory that contains copied framework to share it with test infrastructure
-        add(kotlinTestNativeXCTest.name, frameworkCopyTask.map { it.destinationDir }) {
-            classifier = "${targetName}Frameworks"
-            builtBy(frameworkCopyTask)
         }
     }
 }

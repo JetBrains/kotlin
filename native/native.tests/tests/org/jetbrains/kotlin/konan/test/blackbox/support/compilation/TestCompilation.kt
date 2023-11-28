@@ -529,15 +529,15 @@ internal class SwiftCompilation<T : TestCompilationArtifact>(
     }
 }
 
-class ExecutableCompilation(
+abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
     settings: Settings,
+    cacheMode: CacheMode,
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
-    private val extras: Extras,
     dependencies: Iterable<TestCompilationDependency<*>>,
-    expectedArtifact: Executable,
+    expectedArtifact: A,
     override val tryPassSystemCacheDirectory: Boolean = true,
-) : SourceBasedCompilation<Executable>(
+) : SourceBasedCompilation<A>(
     targets = settings.get(),
     home = settings.get(),
     classLoader = settings.get(),
@@ -549,12 +549,35 @@ class ExecutableCompilation(
     gcScheduler = settings.get(),
     allocator = settings.get(),
     pipelineType = settings.getStageDependentPipelineType(sourceModules),
-    cacheMode = settings.get(),
+    cacheMode = cacheMode,
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
+) {
+    override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
+        super.applyDependencies(argsBuilder)
+        addFlattened(dependencies.libraries) { library -> listOf("-l", library.path) }
+    }
+}
+
+class ExecutableCompilation(
+    settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
+    sourceModules: Collection<TestModule>,
+    private val extras: Extras,
+    dependencies: Iterable<TestCompilationDependency<*>>,
+    expectedArtifact: Executable,
+    tryPassSystemCacheDirectory: Boolean = true,
+) : FinalBinaryCompilation<Executable>(
+    settings = settings,
+    cacheMode = settings.get(),
+    freeCompilerArgs = freeCompilerArgs,
+    sourceModules = sourceModules,
+    dependencies = dependencies,
+    expectedArtifact = expectedArtifact,
+    tryPassSystemCacheDirectory
 ) {
     override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode, freeCompilerArgs.assertionsMode)
 
@@ -591,13 +614,8 @@ class ExecutableCompilation(
         super.applySpecificArgs(argsBuilder)
     }
 
-    override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        super.applyDependencies(argsBuilder)
-        addFlattened(dependencies.libraries) { library -> listOf("-l", library.path) }
-    }
-
     override fun postCompileCheck() {
-        expectedArtifact.assertTestDumpFileNotEmptyIfExists()
+        expectedArtifact.testDumpFile.assertTestDumpFileNotEmptyIfExists()
     }
 
     companion object {
@@ -611,10 +629,10 @@ class ExecutableCompilation(
             testDumpFile?.let { add("-Xdump-tests-to=$it") }
         }
 
-        internal fun Executable.assertTestDumpFileNotEmptyIfExists() {
-            if (testDumpFile.exists()) {
-                testDumpFile.useLines { lines ->
-                    assertTrue(lines.filter(String::isNotBlank).any()) { "Test dump file is empty: $testDumpFile" }
+        internal fun File.assertTestDumpFileNotEmptyIfExists() {
+            if (exists()) {
+                useLines { lines ->
+                    assertTrue(lines.filter(String::isNotBlank).any()) { "Test dump file is empty: $this" }
                 }
             }
         }
@@ -713,7 +731,73 @@ internal class StaticCacheCompilation(
     }
 
     override fun postCompileCheck() {
-        (options as? Options.ForIncludedLibraryWithTests)?.expectedExecutableArtifact?.assertTestDumpFileNotEmptyIfExists()
+        (options as? Options.ForIncludedLibraryWithTests)?.expectedExecutableArtifact?.testDumpFile?.assertTestDumpFileNotEmptyIfExists()
+    }
+}
+
+internal class TestBundleCompilation(
+    val settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
+    sourceModules: Collection<TestModule>,
+    private val extras: Extras,
+    dependencies: Iterable<TestCompilationDependency<*>>,
+    expectedArtifact: XCTestBundle,
+    tryPassSystemCacheDirectory: Boolean = true,
+) : FinalBinaryCompilation<XCTestBundle>(
+    settings,
+    settings.get(),
+    freeCompilerArgs,
+    sourceModules,
+    dependencies,
+    expectedArtifact,
+    tryPassSystemCacheDirectory
+) {
+    override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode, freeCompilerArgs.assertionsMode)
+
+    private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
+
+    override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
+        add(
+            "-produce", "test_bundle",
+            "-linker-option", "-F" + settings.get<XCTestRunner>().frameworksPath,
+            "-output", expectedArtifact.bundleDir.path,
+            "-Xbinary=bundleId=com.jetbrains.kotlin.${expectedArtifact.bundleDir.nameWithoutExtension}"
+        )
+        when (extras) {
+            is NoTestRunnerExtras -> error("XCTest supports only TestRunner extras")
+            is WithTestRunnerExtras -> {
+                val testDumpFile: File? = if (sourceModules.isEmpty()
+                    && dependencies.includedLibraries.isNotEmpty()
+                    && cacheMode.useStaticCacheForUserLibraries
+                ) {
+                    // If there are no source modules passed to the compiler, but there is an included library with the static cache, then
+                    // this should be two-stage test mode: Test functions are already stored in the included library, and they should
+                    // already have been dumped during generation of library's static cache.
+                    null // No, don't need to dump tests.
+                } else {
+                    expectedArtifact.testDumpFile // Yes, need to dump tests.
+                }
+                applyTestRunnerSpecificArgs(extras, testDumpFile)
+            }
+        }
+        applyPartialLinkageArgs(partialLinkageConfig)
+        applyFileCheckArgs(expectedArtifact.fileCheckStage, expectedArtifact.fileCheckDump)
+        super.applySpecificArgs(argsBuilder)
+    }
+
+    override fun postCompileCheck() {
+        expectedArtifact.testDumpFile.assertTestDumpFileNotEmptyIfExists()
+    }
+
+    companion object {
+        internal fun ArgsBuilder.applyTestRunnerSpecificArgs(extras: WithTestRunnerExtras, testDumpFile: File?) {
+            val testRunnerArg = when (extras.runnerType) {
+                TestRunnerType.DEFAULT -> "-generate-test-runner"
+                TestRunnerType.WORKER, TestRunnerType.NO_EXIT -> error("${extras.runnerType} runner is not supported in XCTest execution")
+            }
+            add(testRunnerArg)
+            testDumpFile?.let { add("-Xdump-tests-to=$it") }
+        }
     }
 }
 
