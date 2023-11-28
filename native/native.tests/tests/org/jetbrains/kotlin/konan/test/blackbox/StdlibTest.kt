@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestRunnerType
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCases
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase as TC
@@ -78,6 +81,87 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
 class FirStdlibTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
+}
+
+@Tag("stdlib")
+@Tag("xctest")
+@PredefinedTestCases(
+    TC(
+        name = "test-ios-launchTests",
+        runnerType = TestRunnerType.DEFAULT,
+        freeCompilerArgs = [
+            ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
+            ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
+            ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE],
+        sourceLocations = [
+            "libraries/stdlib/test/**.kt",
+            "libraries/stdlib/common/test/**.kt",
+            "libraries/stdlib/native-wasm/test/**.kt",
+            "kotlin-native/runtime/test/**.kt"
+        ],
+        ignoredTests = [DISABLED_STDLIB_TEST]
+    )
+)
+@DisabledTestsIfProperty(
+    sourceLocations = ["*.kt"],
+    property = ClassLevelProperty.XCTEST_FRAMEWORK,
+    propertyValue = "" // Framework location is not set
+)
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+class StdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
+    @TestFactory
+    fun xctest(): Collection<DynamicNode> {
+        Assumptions.assumeTrue {
+            System.getProperty(ClassLevelProperty.XCTEST_FRAMEWORK.propertyName).isNotEmpty()
+        }
+
+        return dynamicTestCase(TestCaseId.Named("test-ios-launchTests"))
+    }
+}
+
+@Tag("stdlib")
+@Tag("frontend-fir")
+@Tag("xctest")
+@PredefinedTestCases(
+    TC(
+        name = "test-ios-launchTests",
+        runnerType = TestRunnerType.DEFAULT,
+        freeCompilerArgs = [
+            ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
+            ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
+            ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE,
+            "-Xcommon-sources=libraries/stdlib/common/test/jsCollectionFactories.kt",
+            "-Xcommon-sources=libraries/stdlib/common/test/testUtils.kt",
+            "-Xcommon-sources=libraries/stdlib/test/testUtils.kt",
+            "-Xcommon-sources=libraries/stdlib/test/text/StringEncodingTest.kt",
+        ],
+        sourceLocations = [
+            "libraries/stdlib/test/**.kt",
+            "libraries/stdlib/common/test/**.kt",
+            "libraries/stdlib/native-wasm/test/**.kt",
+            "kotlin-native/runtime/test/**.kt"
+        ],
+        ignoredTests = [DISABLED_STDLIB_TEST]
+    )
+)
+@DisabledTestsIfProperty(
+    sourceLocations = ["*.kt"],
+    property = ClassLevelProperty.XCTEST_FRAMEWORK,
+    propertyValue = "" // Framework location is not set
+)
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "5m")
+@FirPipeline
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+class FirStdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
+    @TestFactory
+    fun xctest(): Collection<DynamicNode> {
+        Assumptions.assumeTrue {
+            System.getProperty(ClassLevelProperty.XCTEST_FRAMEWORK.propertyName).isNotEmpty()
+        }
+
+        return dynamicTestCase(TestCaseId.Named("test-ios-launchTests"))
+    }
 }
 
 private const val ENABLE_MPP = "-Xmulti-platform"

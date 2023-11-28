@@ -328,3 +328,12 @@ internal enum class CInterfaceMode(val compilerFlag: String) {
     V1("-Xbinary=cInterfaceMode=v1"),
     NONE("-Xbinary=cInterfaceMode=none")
 }
+
+/**
+ * XCTestRunner setting.
+ *
+ * @param frameworksPath is a linker path to the developer frameworks location.
+ */
+internal class XCTestRunner(val frameworksPath: String) {
+    val isEnabled: Boolean = frameworksPath.isNotEmpty()
+}

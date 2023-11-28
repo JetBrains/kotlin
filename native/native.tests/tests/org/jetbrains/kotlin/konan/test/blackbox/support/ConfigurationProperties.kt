@@ -74,6 +74,7 @@ internal enum class ClassLevelProperty(val shortName: String) {
     SHARED_TEST_EXECUTION("sharedTestExecution"),
     BINARY_LIBRARY_KIND("binaryLibraryKind"),
     C_INTERFACE_MODE("cInterfaceMode"),
+    XCTEST_FRAMEWORK("xctest"),
     ;
 
     internal val propertyName = fullPropertyName(shortName)
