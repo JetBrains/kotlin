@@ -161,11 +161,9 @@ open class DeepCopySymbolRemapper(
         declaration.acceptChildrenVoid(this)
     }
 
-    override fun visitBlock(expression: IrBlock) {
-        if (expression is IrReturnableBlock) {
-            remapSymbol(returnableBlocks, expression) {
-                IrReturnableBlockSymbolImpl()
-            }
+    override fun visitReturnableBlock(expression: IrReturnableBlock) {
+        remapSymbol(returnableBlocks, expression) {
+            IrReturnableBlockSymbolImpl()
         }
         expression.acceptChildrenVoid(this)
     }
@@ -178,9 +176,12 @@ open class DeepCopySymbolRemapper(
     private fun <T : IrSymbol> Map<T, T>.getReferenced(symbol: T) =
         getOrElse(symbol) { symbol }
 
+    override fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol) =
+        IrAnonymousInitializerSymbolImpl(symbol.owner.descriptor)
+
     override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol = classes.getDeclared(symbol)
     override fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getDeclared(symbol)
-    override fun getDeclaredFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getDeclared(symbol)
+    override fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getDeclared(symbol)
     override fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol = properties.getDeclared(symbol)
     override fun getDeclaredField(symbol: IrFieldSymbol): IrFieldSymbol = fields.getDeclared(symbol)
     override fun getDeclaredFile(symbol: IrFileSymbol): IrFileSymbol = files.getDeclared(symbol)
@@ -197,9 +198,10 @@ open class DeepCopySymbolRemapper(
 
     override fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getDeclared(symbol)
 
+    override fun getDeclaredReturnableBlock(symbol: IrReturnableBlockSymbol) = returnableBlocks.getDeclared(symbol)
+
     override fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol = classes.getReferenced(symbol)
     override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getReferenced(symbol)
-    override fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol? = symbol?.let { classes.getReferenced(it) }
     override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol = enumEntries.getReferenced(symbol)
     override fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol = variables.getReferenced(symbol)
     override fun getReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol =
@@ -221,8 +223,11 @@ open class DeepCopySymbolRemapper(
             is IrConstructorSymbol -> constructors.getReferenced(symbol)
         }
 
-    override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol =
-        returnableBlocks.getReferenced(symbol)
+    override fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol) =
+        when (symbol) {
+            is IrFunctionSymbol -> getReferencedFunction(symbol)
+            is IrReturnableBlockSymbol -> returnableBlocks.getReferenced(symbol)
+        }
 
     override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
         when (symbol) {

@@ -19,43 +19,49 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.ir.symbols.*
 
 interface SymbolRemapper {
+    fun getDeclaredValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol
     fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol
-    fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol
-    fun getDeclaredFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol
-    fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol
-    fun getDeclaredField(symbol: IrFieldSymbol): IrFieldSymbol
-    fun getDeclaredFile(symbol: IrFileSymbol): IrFileSymbol
+    fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol): IrAnonymousInitializerSymbol
+    fun getDeclaredTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol
     fun getDeclaredConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol
     fun getDeclaredEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol
-    fun getDeclaredExternalPackageFragment(symbol: IrExternalPackageFragmentSymbol): IrExternalPackageFragmentSymbol
-    fun getDeclaredVariable(symbol: IrVariableSymbol): IrVariableSymbol
+    fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol
+    fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol
+    fun getDeclaredField(symbol: IrFieldSymbol): IrFieldSymbol
     fun getDeclaredLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol
-    fun getDeclaredTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol
-    fun getDeclaredValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol
+    fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol
     fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol
+    fun getDeclaredVariable(symbol: IrVariableSymbol): IrVariableSymbol
+    fun getDeclaredExternalPackageFragment(symbol: IrExternalPackageFragmentSymbol): IrExternalPackageFragmentSymbol
+    fun getDeclaredFile(symbol: IrFileSymbol): IrFileSymbol
+    fun getDeclaredReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol
 
     fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol
-    fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol
-    fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol?
-    fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol
-    fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol
-    fun getReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol
-    fun getReferencedField(symbol: IrFieldSymbol): IrFieldSymbol
-    fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol
-    fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol
-    fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol
     fun getReferencedProperty(symbol: IrPropertySymbol): IrPropertySymbol
+    fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol
+    fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol
+    fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol
+    fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol
     fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol
-    fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol
+    fun getReferencedField(symbol: IrFieldSymbol): IrFieldSymbol
+    fun getReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol
+    fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol
     fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol
-    fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol
+
+    fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol): IrReturnTargetSymbol
+
+    fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol
+
+    fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol // TODO: Add to auto-generation
 
     open class Empty : SymbolRemapper {
         override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol = symbol
 
+        override fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol): IrAnonymousInitializerSymbol = symbol
+
         override fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol = symbol
 
-        override fun getDeclaredFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = symbol
+        override fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = symbol
 
         override fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol = symbol
 
@@ -79,11 +85,11 @@ interface SymbolRemapper {
 
         override fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = symbol
 
+        override fun getDeclaredReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol = symbol
+
         override fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol = symbol
 
         override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol = symbol
-
-        override fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol? = symbol
 
         override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol = symbol
 
@@ -103,11 +109,11 @@ interface SymbolRemapper {
 
         override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = symbol
 
-        override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol = symbol
-
         override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol = symbol
 
         override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = symbol
+
+        override fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol): IrReturnTargetSymbol = symbol
     }
 
 }
