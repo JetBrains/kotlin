@@ -41,6 +41,7 @@ plugins {
     id("idea-rt-hack")
     id("resolve-dependencies")
     id("org.gradle.crypto.checksum") version "1.4.0"
+    id("org.jetbrains.kotlinx.kover") version "0.7.5"
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.1" apply false
     signing
     id("org.jetbrains.kotlin.jvm") apply false
@@ -49,7 +50,7 @@ plugins {
         id("kotlin.native.build-tools-conventions") apply false
     }
 }
-
+*/
 pill {
     excludedDirs(
         "out",
