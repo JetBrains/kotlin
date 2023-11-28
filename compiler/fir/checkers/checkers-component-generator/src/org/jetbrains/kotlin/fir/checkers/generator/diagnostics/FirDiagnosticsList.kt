@@ -810,6 +810,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val DYNAMIC_RECEIVER_NOT_ALLOWED by error<KtElement>()
 
+        val DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC by error<PsiElement> {
+            parameter<ConeKotlinType>("actualType")
+        }
+
         val INCOMPATIBLE_TYPES by error<KtElement> {
             parameter<ConeKotlinType>("typeA")
             parameter<ConeKotlinType>("typeB")

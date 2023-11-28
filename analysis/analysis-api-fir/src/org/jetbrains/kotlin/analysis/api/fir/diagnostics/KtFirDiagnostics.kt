@@ -1748,6 +1748,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DynamicReceiverNotAllowed::class
     }
 
+    interface DynamicReceiverExpectedButWasNonDynamic : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DynamicReceiverExpectedButWasNonDynamic::class
+        val actualType: KtType
+    }
+
     interface IncompatibleTypes : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = IncompatibleTypes::class
         val typeA: KtType

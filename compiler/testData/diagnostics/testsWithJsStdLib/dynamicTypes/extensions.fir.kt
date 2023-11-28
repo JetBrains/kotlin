@@ -14,12 +14,12 @@ fun test(d: dynamic) {
     d.<!DEBUG_INFO_DYNAMIC!>onString<!>()
 
     d.<!DEBUG_INFO_DYNAMIC!>onDynamic<!>()
-    d?.<!UNRESOLVED_REFERENCE!>onDynamic<!>()
+    d?.<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>onDynamic<!>()
 
     (d as String).onString()
     (d as Any).onAny()
     (d as Any?).onNullableAny()
-    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamic<!>()
+    (d as Any).<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>onDynamic<!>()
 }
 
 fun Any.onAny() {}
