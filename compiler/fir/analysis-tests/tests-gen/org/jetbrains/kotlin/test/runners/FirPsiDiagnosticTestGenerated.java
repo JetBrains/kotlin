@@ -5267,6 +5267,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
         }
 
         @Test
+        @TestMetadata("castForFunctionsWithDifferentArities.kt")
+        public void testCastForFunctionsWithDifferentArities() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/castForFunctionsWithDifferentArities.kt");
+        }
+
+        @Test
         @TestMetadata("classLiteralForParameter.kt")
         public void testClassLiteralForParameter() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/classLiteralForParameter.kt");
