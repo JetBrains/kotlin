@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.library.metadata.resolver.impl
 
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
@@ -25,18 +24,18 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.LibraryOrder
 import org.jetbrains.kotlin.util.WithLogger
 
-fun <L: KotlinLibrary> SearchPathResolver<L>.libraryResolver(resolveManifestDependenciesLenient: Boolean = false)
-        = KotlinLibraryResolverImpl<L>(this, resolveManifestDependenciesLenient)
+fun <L : KotlinLibrary> SearchPathResolver<L>.libraryResolver(resolveManifestDependenciesLenient: Boolean = false) =
+    KotlinLibraryResolverImpl<L>(this, resolveManifestDependenciesLenient)
 
-class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
-        override val searchPathResolver: SearchPathResolver<L>,
-        val resolveManifestDependenciesLenient: Boolean
-): KotlinLibraryResolver<L>, WithLogger by searchPathResolver {
+class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
+    override val searchPathResolver: SearchPathResolver<L>,
+    val resolveManifestDependenciesLenient: Boolean,
+) : KotlinLibraryResolver<L>, WithLogger by searchPathResolver {
     override fun resolveWithoutDependencies(
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean,
         noDefaultLibs: Boolean,
-        noEndorsedLibs: Boolean
+        noEndorsedLibs: Boolean,
     ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs, noEndorsedLibs)
         .leaveDistinct()
         .omitDuplicateNames()
@@ -48,15 +47,15 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
      * from the original library set (root set).
      */
     private fun findLibraries(
-            unresolvedLibraries: List<UnresolvedLibrary>,
-            noStdLib: Boolean,
-            noDefaultLibs: Boolean,
-            noEndorsedLibs: Boolean
+        unresolvedLibraries: List<UnresolvedLibrary>,
+        noStdLib: Boolean,
+        noDefaultLibs: Boolean,
+        noEndorsedLibs: Boolean,
     ): List<KotlinLibrary> {
 
         val userProvidedLibraries = unresolvedLibraries.asSequence()
-                .mapNotNull { searchPathResolver.resolve(it) }
-                .toList()
+            .mapNotNull { searchPathResolver.resolve(it) }
+            .toList()
 
         val defaultLibraries = searchPathResolver.defaultLinks(noStdLib, noDefaultLibs, noEndorsedLibs)
 
@@ -69,10 +68,10 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
      * Leaves only distinct libraries (by absolute path), warns on duplicated paths.
      */
     private fun List<KotlinLibrary>.leaveDistinct() =
-            this.groupBy { it.libraryFile.absolutePath }.let { groupedByAbsolutePath ->
-                warnOnLibraryDuplicates(groupedByAbsolutePath.filter { it.value.size > 1 }.keys)
-                groupedByAbsolutePath.map { it.value.first() }
-            }
+        this.groupBy { it.libraryFile.absolutePath }.let { groupedByAbsolutePath ->
+            warnOnLibraryDuplicates(groupedByAbsolutePath.filter { it.value.size > 1 }.keys)
+            groupedByAbsolutePath.map { it.value.first() }
+        }
 
     /**
      * Having two libraries with the same uniqName we only keep the first one.
@@ -80,10 +79,10 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
      * so make it a warning for now.
      */
     private fun List<KotlinLibrary>.omitDuplicateNames() =
-            this.groupBy { it.uniqueName }.let { groupedByUniqName ->
-                warnOnLibraryDuplicateNames(groupedByUniqName.filter { it.value.size > 1 }.keys)
-                groupedByUniqName.map { it.value.first() }
-            }
+        this.groupBy { it.uniqueName }.let { groupedByUniqName ->
+            warnOnLibraryDuplicateNames(groupedByUniqName.filter { it.value.size > 1 }.keys)
+            groupedByUniqName.map { it.value.first() }
+        }
 
     private fun warnOnLibraryDuplicates(duplicatedPaths: Iterable<String>) {
         duplicatedPaths.forEach { logger.warning("library included more than once: $it") }
@@ -115,21 +114,21 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
             newDependencies = newDependencies.map { library: KotlinResolvedLibraryImpl ->
                 library.library.unresolvedDependencies(resolveManifestDependenciesLenient).asSequence()
 
-                        .filterNot { searchPathResolver.isProvidedByDefault(it) }
-                        .mapNotNull { searchPathResolver.resolve(it)?.let(::KotlinResolvedLibraryImpl) }
-                        .map { resolved ->
-                            val fileKey = resolved.library.libraryFile.fileKey
-                            if (fileKey in cache) {
-                                library.addDependency(cache[fileKey]!!)
-                                null
-                            } else {
-                                cache.put(fileKey, resolved)
-                                library.addDependency(resolved)
-                                resolved
-                            }
+                    .filterNot { searchPathResolver.isProvidedByDefault(it) }
+                    .mapNotNull { searchPathResolver.resolve(it)?.let(::KotlinResolvedLibraryImpl) }
+                    .map { resolved ->
+                        val fileKey = resolved.library.libraryFile.fileKey
+                        if (fileKey in cache) {
+                            library.addDependency(cache[fileKey]!!)
+                            null
+                        } else {
+                            cache.put(fileKey, resolved)
+                            library.addDependency(resolved)
+                            resolved
+                        }
 
-                        }.filterNotNull()
-                        .toList()
+                    }.filterNotNull()
+                    .toList()
             }.flatten()
         } while (newDependencies.isNotEmpty())
         return result
@@ -137,26 +136,26 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
 }
 
 class KotlinLibraryResolverResultImpl(
-        private val roots: List<KotlinResolvedLibrary>
-): KotlinLibraryResolveResult {
+    private val roots: List<KotlinResolvedLibrary>,
+) : KotlinLibraryResolveResult {
 
     private val all: List<KotlinResolvedLibrary>
-        by lazy {
-            val result = mutableSetOf<KotlinResolvedLibrary>().also { it.addAll(roots) }
+            by lazy {
+                val result = mutableSetOf<KotlinResolvedLibrary>().also { it.addAll(roots) }
 
-            var newDependencies = result.toList()
-            do {
-                newDependencies = newDependencies
-                    .map { it.resolvedDependencies }.flatten()
-                    .filter { it !in result }
-                result.addAll(newDependencies)
-            } while (newDependencies.isNotEmpty())
+                var newDependencies = result.toList()
+                do {
+                    newDependencies = newDependencies
+                        .map { it.resolvedDependencies }.flatten()
+                        .filter { it !in result }
+                    result.addAll(newDependencies)
+                } while (newDependencies.isNotEmpty())
 
-            result.toList()
-        }
+                result.toList()
+            }
 
     override fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean) =
-            KotlinLibraryResolverResultImpl(roots.filter(predicate))
+        KotlinLibraryResolverResultImpl(roots.filter(predicate))
 
     override fun getFullResolvedList(order: LibraryOrder?) = (order?.invoke(all) ?: all)
 
