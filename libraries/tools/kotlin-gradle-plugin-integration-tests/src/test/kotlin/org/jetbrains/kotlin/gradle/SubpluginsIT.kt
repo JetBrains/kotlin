@@ -200,6 +200,20 @@ class SubpuginsIT : KGPBaseTest() {
     @GradleTest
     fun testLombokPlugin(gradleVersion: GradleVersion) {
         project("lombokProject", gradleVersion) {
+            listOf(
+                subProject("yeskapt").buildGradle,
+                subProject("nokapt").buildGradle,
+                subProject("withconfig").buildGradle
+            ).forEach { buildGradle ->
+                buildGradle.modify {
+                    val freefairLombokVersion = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
+                        "5.3.0"
+                    } else {
+                        "8.4"
+                    }
+                    it.replace("<freefair_lombok_version>", freefairLombokVersion)
+                }
+            }
             build("build")
         }
     }
