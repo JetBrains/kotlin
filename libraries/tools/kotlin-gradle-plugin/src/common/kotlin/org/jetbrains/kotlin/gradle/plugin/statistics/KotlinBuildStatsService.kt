@@ -265,7 +265,6 @@ internal abstract class AbstractKotlinBuildStatsService(
                 sessionLogger.startBuildSession(
                     DaemonReuseCounter.incrementAndGetOrdinal(),
                     gradleBuildStartTime(project.gradle),
-//                    project.currentBuildId().buildPath
                 )
             }
         }

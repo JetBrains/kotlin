@@ -10,7 +10,10 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 class FileRecordLogger(private val statisticsFolder: File, private val fileName: String) : IRecordLogger {
-    private val profileFileNameSuffix = ".profile"
+    companion object {
+        const val PROFILE_FILE_NAME_SUFFIX = ".profile"
+    }
+
     private val metrics = ArrayList<String>()
 
     override fun append(s: String) {
@@ -20,11 +23,8 @@ class FileRecordLogger(private val statisticsFolder: File, private val fileName:
     override fun close() {
         try {
             statisticsFolder.mkdirs()
-            var file = File(statisticsFolder, fileName + profileFileNameSuffix)
-            var suffixIndex = 0
-            while (!file.createNewFile()) {
-                file = File(statisticsFolder, "${fileName}.${suffixIndex++}$profileFileNameSuffix")
-            }
+            val file = File(statisticsFolder, fileName + PROFILE_FILE_NAME_SUFFIX)
+
             FileOutputStream(file, true).bufferedWriter().use {
                 for (value in metrics) {
                     it.appendLine(value)

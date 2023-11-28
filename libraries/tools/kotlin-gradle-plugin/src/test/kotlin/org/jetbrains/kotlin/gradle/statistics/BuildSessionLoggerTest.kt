@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.statistics
 
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
+import org.jetbrains.kotlin.statistics.fileloggers.FileRecordLogger
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
@@ -44,17 +45,17 @@ class BuildSessionLoggerTest {
         assertEquals(false, logger1.isBuildSessionStarted())
         logger1.startBuildSession(0, 0)
 
-        // created single folder with kotlin statistics
-        assertEquals(1, statFilesCount())
-
         // check that file locks work properly and do not use the same file
         logger2.startBuildSession(0, 0)
-        assertEquals(2, statFilesCount())
 
         assertEquals(true, logger1.isBuildSessionStarted())
 
         logger1.finishBuildSession("", false)
+        // created single folder with kotlin statistics
+        assertEquals(1, statFilesCount())
+
         logger2.finishBuildSession("", false)
+        assertEquals(2, statFilesCount())
 
         rootFolder.listFiles()?.first()?.listFiles()?.forEach { file ->
             assertTrue(
@@ -62,31 +63,6 @@ class BuildSessionLoggerTest {
                 "Check that file name ${file.name} matches pattern ${BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN}"
             )
         }
-    }
-
-    @Test
-    fun testSizeLimitation() {
-        val maxFileSize = 10_000
-        val logger = BuildSessionLogger(rootFolder, 100, maxFileSize.toLong())
-        logger.startBuildSession(0, null)
-        logger.finishBuildSession("", false)
-
-        assertEquals(1, statFilesCount())
-
-        val file2edit = rootFolder.listFiles()?.first()?.listFiles()?.first() ?: fail("Could not find single stat file")
-
-        logger.startBuildSession(0, 0)
-        logger.finishBuildSession("", false)
-        //new file should not be created
-        assertEquals(1, statFilesCount())
-
-        file2edit.appendBytes(ByteArray(maxFileSize))
-
-        logger.startBuildSession(0, 0)
-        logger.finishBuildSession("", false)
-
-        // a new file should be created as maximal file size
-        assertEquals(2, statFilesCount())
     }
 
     @Test
@@ -134,30 +110,25 @@ class BuildSessionLoggerTest {
 
     @Test
     fun testReadWriteMetrics() {
+        val buildId = "test"
         val logger = BuildSessionLogger(rootFolder)
         logger.report(StringMetrics.KOTLIN_COMPILER_VERSION, "1.2.3.4-snapshot")
 
         val startTime = System.currentTimeMillis() - 1001
-        logger.startBuildSession(1, startTime)
+        logger.startBuildSession(1, startTime, buildId)
+        val reportFile = rootFolder.resolve(BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME)
+            .resolve(buildId + FileRecordLogger.Companion.PROFILE_FILE_NAME_SUFFIX)
+
+        reportFile.createNewFile()
+        reportFile.appendText("${StringMetrics.USE_FIR.name}=true\n")
+
         logger.finishBuildSession("Build", false)
         assertEquals(1, statFilesCount())
 
         val statFile = rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")
-        statFile.appendBytes("break format of the file".toByteArray())
+        statFile.appendBytes("break format of the file".toByteArray()) //this line should be filtered by MetricsContainer.readFromFile
 
-        logger.startBuildSession(1, startTime)
-
-        // the file should be locked
-        try {
-            MetricsContainer.readFromFile(statFile) {
-                fail("No metrics should be read due to locked file")
-            }
-            fail("Method should have failed")
-        } catch (e: IllegalStateException) {
-            //all right
-        }
-
-
+        logger.startBuildSession(1, startTime, buildId)
         logger.finishBuildSession("", false)
 
         val metrics = ArrayList<MetricsContainer>()
@@ -166,6 +137,11 @@ class BuildSessionLoggerTest {
         }
 
         assertEquals(2, metrics.size, "Invalid number of MerticContainers was read")
+        assertEquals(
+            "true",
+            metrics[0].getMetric(StringMetrics.USE_FIR)?.getValue()
+        )
+
         assertEquals(
             "1.2.3",
             metrics[0].getMetric(StringMetrics.KOTLIN_COMPILER_VERSION)?.getValue()

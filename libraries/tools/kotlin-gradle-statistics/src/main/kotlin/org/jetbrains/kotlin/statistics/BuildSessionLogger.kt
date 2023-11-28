@@ -67,11 +67,9 @@ class BuildSessionLogger(
     /**
      * Initializes a new tracking file
      * The following contracts are implemented:
-     * - number of tracking files should not be more than maxProfileFiles (the earlier file created the earlier deleted)
+     * - each file contains metrics for one build
+     * - any other process can add metrics to the file during build
      * - files with age (current time - last modified) more than maxFileAge should be deleted (if we trust lastModified returned by FS)
-     * - files are ordered on the basis of name (creation timestamp)
-     * - if the last file has size less then maxFileSize, the next record will be append to it (new file created otherwise)
-     * -
      */
     @Synchronized
     private fun initTrackingFile(buildUid: String?) {
