@@ -88,7 +88,7 @@ class Bar {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      val tmp0 = <this>.foo%delegate.getValue(<this>, ::foo, %composer, 0b001000000000 or 0b01110000 and %changed shl 0b0011)
+      val tmp0 = <this>.foo%delegate.getValue(<this>, ::foo, %composer, 0b01110000 and %changed shl 0b0011)
       if (isTraceInProgress()) {
         traceEventEnd()
       }

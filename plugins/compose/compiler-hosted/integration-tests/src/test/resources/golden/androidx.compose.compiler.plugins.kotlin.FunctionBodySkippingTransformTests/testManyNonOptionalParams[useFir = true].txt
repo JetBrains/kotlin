@@ -23,26 +23,28 @@ fun Test(a: Int, b: Boolean, c: Int, d: Foo?, e: List<Int>?, %composer: Composer
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
-  } else if (%changed and 0b1110 == 0) {
+  } else if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
   }
   if (%default and 0b0010 != 0) {
     %dirty = %dirty or 0b00110000
-  } else if (%changed and 0b01110000 == 0) {
+  } else if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
   }
   if (%default and 0b0100 != 0) {
     %dirty = %dirty or 0b000110000000
-  } else if (%changed and 0b001110000000 == 0) {
+  } else if (%changed and 0b000110000000 == 0) {
     %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
   }
-  if (%changed and 0b0001110000000000 == 0) {
+  if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%default and 0b1000 == 0 && %composer.changed(d)) 0b100000000000 else 0b010000000000
   }
   if (%default and 0b00010000 != 0) {
-    %dirty = %dirty or 0b0010000000000000
+    %dirty = %dirty or 0b0110000000000000
+  } else if (%changed and 0b0110000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(e)) 0b0100000000000000 else 0b0010000000000000
   }
-  if (%default and 0b00010000 != 0b00010000 || %dirty and 0b1011011011011011 != 0b0010010010010010 || !%composer.skipping) {
+  if (%dirty and 0b0010010010010011 != 0b0010010010010010 || !%composer.skipping) {
     %composer.startDefaults()
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0100 != 0) {
@@ -65,7 +67,7 @@ fun Test(a: Int, b: Boolean, c: Int, d: Foo?, e: List<Int>?, %composer: Composer
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    A(a, b, c, d, e, %composer, 0b1000000000000000 or 0b1110 and %dirty or 0b01110000 and %dirty or 0b001110000000 and %dirty or 0b0001110000000000 and %dirty)
+    A(a, b, c, d, e, %composer, 0b1110 and %dirty or 0b01110000 and %dirty or 0b001110000000 and %dirty or 0b0001110000000000 and %dirty or 0b1110000000000000 and %dirty)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

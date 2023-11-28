@@ -30,6 +30,7 @@ import org.junit.rules.TemporaryFolder
 abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
+        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, true)
     }
 
     @JvmField

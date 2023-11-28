@@ -31,10 +31,15 @@ fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Button)<getCol...>,<Text("...>:Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
-    %dirty = %dirty or if (%composer.changed(colors)) 0b0100 else 0b0010
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(colors)
+    } else {
+      %composer.changedInstance(colors)
+    }
+    ) 0b0100 else 0b0010
   }
-  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }

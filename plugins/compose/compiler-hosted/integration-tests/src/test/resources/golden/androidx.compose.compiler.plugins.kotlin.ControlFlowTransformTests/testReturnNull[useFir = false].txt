@@ -38,6 +38,30 @@ fun Test5(): String? {
 fun Test6(): String? {
     TODO()
 }
+@Composable
+fun Test7(b: Boolean): String? {
+    if (b) {
+        return null
+    }
+    return "false"
+}
+@Composable
+fun Test8(): Unit? {
+    var unitNull: Unit? = null
+    Test6()
+    return unitNull
+}
+@Composable
+fun Test9(): Unit? {
+    var unitNotNull: Unit? = Unit
+    Test6()
+    return unitNotNull
+}
+@Composable
+fun Test10(): Unit? {
+    Test6()
+    return Unit
+}
 
 //
 // Transformed IR
