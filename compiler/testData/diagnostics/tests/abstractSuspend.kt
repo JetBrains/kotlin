@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-63233
 
 interface A {
