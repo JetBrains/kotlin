@@ -6,7 +6,7 @@ class Controller<T> {
 fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
 fun bar(x: Any) {}
-fun <R> myWith(r: R, b: R.() -> Unit) {}
+fun <R> myWith(r: R, b: (R) -> Unit) {}
 
 fun main() {
     generate {
@@ -16,7 +16,7 @@ fun main() {
         // S <: R
         // Any <: R
         myWith(get()) {
-            <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>it<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>length<!>
+            it.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>length<!>
         }
 
         yield("")
