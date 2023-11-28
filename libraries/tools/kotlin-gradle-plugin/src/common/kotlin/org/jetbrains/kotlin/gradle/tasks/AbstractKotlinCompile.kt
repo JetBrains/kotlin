@@ -111,7 +111,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             val buildDirFile = projectLayout.buildDirectory.asFile.get()
             return friendPaths
                 .filter { it.exists() }
-                .map { it.normalize().relativeTo(buildDirFile).path }.toSet()
+                .map { it.normalize().relativeTo(buildDirFile).invariantSeparatorsPath }.toSet()
         }
 
     @Deprecated("Scheduled for removal with Kotlin 2.0", ReplaceWith("moduleName"))
