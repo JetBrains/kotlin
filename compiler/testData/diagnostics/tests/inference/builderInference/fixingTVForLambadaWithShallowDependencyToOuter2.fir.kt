@@ -6,7 +6,7 @@ class Controller<T> {
 fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
 fun bar(x: Any) {}
-fun <R> myWith(r: R, b: R.() -> Unit) {}
+fun <R> myWith(r: R, b: (R) -> Unit) {}
 
 fun main() {
     generate {
@@ -15,10 +15,10 @@ fun main() {
 
         // S <: R
         // Any <: R
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>myWith<!>(get()) {
-            <!UNRESOLVED_REFERENCE!>it<!>.length
+        myWith(get()) {
+            it.<!UNRESOLVED_REFERENCE!>length<!>
         }
 
-        yield(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
-    }.<!UNRESOLVED_REFERENCE!>length<!>
+        yield("")
+    }.length
 }
