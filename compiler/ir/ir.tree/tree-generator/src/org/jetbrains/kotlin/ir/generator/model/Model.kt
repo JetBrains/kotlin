@@ -162,6 +162,21 @@ sealed class Field(
                 UseFieldAsParameterInIrFactoryStrategy.Yes(null)
             }
 
+    enum class SymbolFieldRole {
+        DECLARED, REFERENCED
+    }
+
+    /**
+     * If this field represents a symbol of a declaration (IrSymbol), determines whether
+     * this symbol corresponds to the element containing this field, or some other element.
+     *
+     * In other words, for element `someElement` the following is true:
+     * [symbolFieldRole] == [SymbolFieldRole.DECLARED] iff `someElement.symbol.owner === someElement`.
+     *
+     * If this field does not represent a symbol, this property should be `null`.
+     */
+    var symbolFieldRole: SymbolFieldRole? = null
+
     override val withGetter: Boolean
         get() = baseGetter != null
 
@@ -189,6 +204,7 @@ sealed class Field(
         copy.baseGetter = baseGetter
         copy.customUseInIrFactoryStrategy = customUseInIrFactoryStrategy
         copy.customSetter = customSetter
+        copy.symbolFieldRole = symbolFieldRole
     }
 
     protected abstract fun internalCopy(): Field

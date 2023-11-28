@@ -36,6 +36,11 @@ fun main(args: Array<String>) {
             markLeaves(model.elements)
         },
         enableBaseTransformerTypeDetection = false,
-        addFiles = { add(printFactory(generationPath, model)) }
+        addFiles = {
+            add(printFactory(generationPath, model))
+            add(printSymbolRemapper(generationPath, model, declaredSymbolRemapperType, ::DeclaredSymbolRemapperInterfacePrinter))
+            add(printSymbolRemapper(generationPath, model, referencedSymbolRemapperType, ::ReferencedSymbolRemapperInterfacePrinter))
+            add(printSymbolRemapper(generationPath, model, symbolRemapperType, ::SymbolRemapperInterfacePrinter))
+        }
     )
 }
