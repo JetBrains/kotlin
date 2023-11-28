@@ -71,6 +71,7 @@ internal enum class ClassLevelProperty(val shortName: String) {
     SANITIZER("sanitizer"),
     COMPILER_OUTPUT_INTERCEPTOR("compilerOutputInterceptor"),
     PIPELINE_TYPE("pipelineType"),
+    XCTEST_FRAMEWORK("xctest"),
     ;
 
     internal val propertyName = fullPropertyName(shortName)

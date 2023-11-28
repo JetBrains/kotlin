@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilation
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.Executable
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.XCTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TreeNode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.buildTree
@@ -33,14 +36,16 @@ internal class TestRunProvider(
 ) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource {
     private val compilationFactory = TestCompilationFactory()
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<Executable>>()
+    private val cachedXCTestCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<TestCompilationArtifact.XCTestBundle>>()
 
     /**
      * Produces a single [TestRun] per [TestCase]. So-called "one test case/one test run" mode.
      *
      * If [TestCase] contains multiple functions annotated with [kotlin.test.Test], then all these functions will be executed
-     * in one shot. If either function will fail, the whole JUnit test will be considered as failed.
+     * in one shot. If either function fails, the whole JUnit test will be considered as failed.
      *
      * Example:
+     * ```
      *   //+++ testData file (foo.kt): +++//
      *   @kotlin.test.Test
      *   fun one() { /* ... */ }
@@ -58,11 +63,12 @@ internal class TestRunProvider(
      *           // If either of test functions fails, the whole "testFoo()" JUnit test is marked as failed.
      *       }
      *   }
+     * ```
      */
     fun getSingleTestRun(
         testCaseId: TestCaseId,
         settings: Settings
-    ): TestRun = withTestExecutable(testCaseId, settings) { testCase, executable ->
+    ): TestRun = withTestSettingsDispatched(testCaseId, settings) { testCase, executable ->
         createSingleTestRun(testCase, executable)
     }
 
@@ -72,10 +78,11 @@ internal class TestRunProvider(
      * If [TestCase] contains multiple functions annotated with [kotlin.test.Test], then a separate [TestRun] will be produced
      * for each such function.
      *
-     * This allows to have a better granularity in tests. So that every individual test method inside [TestCase] will be considered
+     * This allows having a better granularity in tests. So that every test method inside [TestCase] will be considered
      * as an individual JUnit test, and will be presented as a separate row in JUnit test report.
      *
      * Example:
+     * ```
      *   //+++ testData file (foo.kt): +++//
      *   @kotlin.test.Test
      *   fun one() { /* ... */ }
@@ -95,11 +102,12 @@ internal class TestRunProvider(
      *           // in the test report, and "testFoo.two" will be presented as passed.
      *       }
      *   }
+     * ```
      */
     fun getTestRuns(
         testCaseId: TestCaseId,
         settings: Settings
-    ): Collection<TreeNode<TestRun>> = withTestExecutable(testCaseId, settings) { testCase, executable ->
+    ): Collection<TreeNode<TestRun>> = withTestSettingsDispatched(testCaseId, settings) { testCase, executable ->
         fun createTestRun(testRunName: String, testName: TestName?) = createTestRun(testCase, executable, testRunName, testName)
 
         when (testCase.kind) {
@@ -115,6 +123,16 @@ internal class TestRunProvider(
                 }
             }
         }
+    }
+
+    private fun <T> withTestSettingsDispatched(
+        testCaseId: TestCaseId,
+        settings: Settings,
+        action: (TestCase, TestExecutable) -> T
+    ): T = if (settings.get<XCTestRunner>().isEnabled) {
+        withTestBundle(testCaseId, settings, action)
+    } else {
+        withTestExecutable(testCaseId, settings, action)
     }
 
     private fun <T> withTestExecutable(
@@ -158,6 +176,54 @@ internal class TestRunProvider(
 
         val compilationResult = testCompilation.result.assertSuccess() // <-- Compilation happens here.
         val executable = TestExecutable.fromCompilationResult(testCase, compilationResult)
+
+        return action(testCase, executable)
+    }
+
+    private fun <T> withTestBundle(
+        testCaseId: TestCaseId,
+        settings: Settings,
+        action: (TestCase, TestExecutable) -> T
+    ): T {
+        val testCaseGroup = testCaseGroupProvider.getTestCaseGroup(testCaseId.testCaseGroupId, settings)
+            ?: fail { "No test case for $testCaseId" }
+
+        assumeTrue(testCaseGroup.isEnabled(testCaseId), "Test case is disabled")
+
+        val testCase = testCaseGroup.getByName(testCaseId) ?: fail { "No test case for $testCaseId" }
+
+        val testCompilation = when (testCase.kind) {
+            TestKind.STANDALONE -> {
+                // Create a separate compilation for each standalone test case.
+                cachedXCTestCompilations.computeIfAbsent(
+                    TestCompilationCacheKey.Standalone(testCaseId)
+                ) {
+                    compilationFactory.testCasesToTestBundle(listOf(testCase), settings)
+                }
+            }
+            TestKind.REGULAR -> {
+                // Group regular test cases by compiler arguments.
+                val testRunnerType = testCase.extras<WithTestRunnerExtras>().runnerType
+                cachedXCTestCompilations.computeIfAbsent(
+                    TestCompilationCacheKey.Grouped(
+                        testCaseGroupId = testCaseId.testCaseGroupId,
+                        freeCompilerArgs = testCase.freeCompilerArgs,
+                        sharedModules = testCase.sharedModules,
+                        runnerType = testRunnerType
+                    )
+                ) {
+                    val testCases = testCaseGroup.getRegularOnly(testCase.freeCompilerArgs, testCase.sharedModules, testRunnerType)
+                    assertTrue(testCases.isNotEmpty())
+                    compilationFactory.testCasesToTestBundle(testCases, settings)
+                }
+            }
+            else -> error("Test kind ${testCase.kind} is not supported yet in XCTest runner")
+        }
+
+        val compilationResult = testCompilation.result.assertSuccess() // <-- Compilation happens here.
+        // FIXME: temp adapter: need to refactor TestRun and TestExecutable to be less artifact specific
+        val adapter = TestCompilationResult.Success(Executable(compilationResult.resultingArtifact.bundleDir), compilationResult.loggedData)
+        val executable = TestExecutable.fromCompilationResult(testCase, adapter)
 
         return action(testCase, executable)
     }

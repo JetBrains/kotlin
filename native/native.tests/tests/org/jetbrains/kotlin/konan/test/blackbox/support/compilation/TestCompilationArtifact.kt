@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
 import java.io.File
+import java.nio.file.*
 
 internal sealed interface TestCompilationArtifact {
     val logFile: File
@@ -36,7 +37,7 @@ internal sealed interface TestCompilationArtifact {
     data class ObjCFramework(private val buildDir: File, val frameworkName: String) : TestCompilationArtifact {
         val frameworkDir: File get() = buildDir.resolve("$frameworkName.framework")
         override val logFile: File get() = frameworkDir.resolveSibling("${frameworkDir.name}.log")
-        val headersDir: File get () = frameworkDir.resolve("Headers")
+        val headersDir: File get() = frameworkDir.resolve("Headers")
         val mainHeader: File get() = headersDir.resolve("$frameworkName.h")
     }
 
@@ -55,6 +56,15 @@ internal sealed interface TestCompilationArtifact {
             get() {
                 val expectedFile = libraryFile.resolveSibling("${libraryFile.nameWithoutExtension}_api.h")
                 return expectedFile.takeIf { it.exists() }
+            }
+    }
+
+    data class XCTestBundle(val bundleDir: File, val fileCheckStage: String? = null) : TestCompilationArtifact {
+        override val logFile: File get() = bundleDir.resolveSibling("${bundleDir.name}.log")
+        val testDumpFile: File get() = bundleDir.resolveSibling("${bundleDir.name}.dump")
+        val fileCheckDump: File?
+            get() = fileCheckStage?.let {
+                bundleDir.resolveSibling("out.$it.ll")
             }
     }
 }

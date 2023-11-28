@@ -19,13 +19,26 @@ internal object TestRunners {
         } else with(get<KotlinNativeTargets>()) {
             val executor = executorCache.computeIfAbsent(testTarget) {
                 val configurables = configurables
-                when {
-                    configurables.target == hostTarget -> HostExecutor()
-                    configurables is ConfigurablesWithEmulator -> EmulatorExecutor(configurables)
-                    configurables is AppleConfigurables && configurables.targetTriple.isSimulator ->
-                        XcodeSimulatorExecutor(configurables)
-                    configurables is AppleConfigurables && RosettaExecutor.availableFor(configurables) -> RosettaExecutor(configurables)
-                    else -> runningOnUnsupportedTarget()
+
+                if (settings.get<XCTestRunner>().isEnabled) {
+                    // Forcibly run tests with XCTest
+                    check(configurables is AppleConfigurables) {
+                        "Running tests with XCTest is not supported on non-Apple $configurables"
+                    }
+                    when {
+                        configurables.target == hostTarget -> XCTestHostExecutor(configurables)
+                        else -> XCTestSimulatorExecutor(configurables)
+                    }
+                } else {
+                    when {
+                        configurables.target == hostTarget -> HostExecutor()
+                        configurables is ConfigurablesWithEmulator -> EmulatorExecutor(configurables)
+                        configurables is AppleConfigurables && configurables.targetTriple.isSimulator ->
+                            XcodeSimulatorExecutor(configurables)
+                        configurables is AppleConfigurables && RosettaExecutor.availableFor(configurables) ->
+                            RosettaExecutor(configurables)
+                        else -> runningOnUnsupportedTarget()
+                    }
                 }
             }
 

@@ -208,6 +208,7 @@ internal object NativeTestSupport {
         output += computePipelineType(enforcedProperties, testClass.get())
         output += computeUsedPartialLinkageConfig(enclosingTestClass)
         output += computeCompilerOutputInterceptor(enforcedProperties)
+        output += computeXCTestRunner(enforcedProperties)
 
         return nativeTargets
     }
@@ -333,6 +334,15 @@ internal object NativeTestSupport {
         )
         return Timeouts(executionTimeout)
     }
+
+    private fun computeXCTestRunner(enforcedProperties: EnforcedProperties) = XCTestRunner(
+        ClassLevelProperty.XCTEST_FRAMEWORK.readValue(
+            enforcedProperties,
+            // The property is always set, it can be empty or contain a path
+            { if (it.isNotEmpty()) File(it).absolutePath else "" },
+            default = ""
+        )
+    )
 
     /*************** Test class settings (for black box tests only) ***************/
 
