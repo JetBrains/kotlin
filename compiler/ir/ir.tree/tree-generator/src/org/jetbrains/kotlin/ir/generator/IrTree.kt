@@ -823,15 +823,16 @@ object IrTree : AbstractTreeBuilder() {
         +symbol(enumEntrySymbolType, mutable = true)
     }
 
-    /**
-     * Platform-specific low-level reference to function.
-     *
-     * On JS platform it represents a plain reference to JavaScript function.
-     * On JVM platform it represents a MethodHandle constant.
-     */
     val rawFunctionReference: Element by element(Expression) {
-
         parent(declarationReference)
+
+        kDoc = """
+        Represents a platform-specific low-level reference to a function.
+        
+        On the JS platform it represents a plain reference to a JavaScript function.
+        
+        On the JVM platform it represents a [java.lang.invoke.MethodHandle] constant.
+        """.trimIndent()
 
         +symbol(functionSymbolType, mutable = true)
     }

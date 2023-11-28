@@ -12,7 +12,11 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
+ * Represents a platform-specific low-level reference to a function.
+ *
+ * On the JS platform it represents a plain reference to a JavaScript function.
+ *
+ * On the JVM platform it represents a [java.lang.invoke.MethodHandle] constant.
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.rawFunctionReference]
  */
