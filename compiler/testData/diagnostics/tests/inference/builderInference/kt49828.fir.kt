@@ -76,13 +76,13 @@ fun main() {
     val list6 = buildList {
         add("one")
 
-        get(0).<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>()
+        get(0).<!NONE_APPLICABLE!>bar<!>()
     }
     val list7 = buildList {
         add("one")
 
         with (get(0)) {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>()
+            <!NONE_APPLICABLE!>bar<!>()
         }
     }
     val list71 = buildList {
@@ -90,7 +90,7 @@ fun main() {
 
         with (get(0)) l1@ {
             with (listOf(1)) {
-                <!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>()
+                <!NONE_APPLICABLE!>bar<!>()
             }
         }
     }
@@ -99,7 +99,7 @@ fun main() {
 
         with (get(0)) {
             with (listOf(1)) {
-                <!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>()
+                <!NONE_APPLICABLE!>bar<!>()
             }
         }
     }
@@ -122,7 +122,7 @@ fun main() {
 
         with (get(0)) {
             with (Inv(this)) {
-                <!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>()
+                <!NONE_APPLICABLE!>bar<!>()
             }
         }
     }
@@ -161,14 +161,14 @@ fun main() {
         add("one")
 
         with (get(0)) {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo0003<!>(0f, this@l1.get(0))
+            <!NONE_APPLICABLE!>foo0003<!>(0f, this@l1.get(0))
         }
     }
 
     val list18 = buildList {
         add("one")
 
-        get(0).<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo0003<!>(0f, get(0))
+        get(0).<!NONE_APPLICABLE!>foo0003<!>(0f, get(0))
     }
 
     val map1 = buildMap {
@@ -211,7 +211,7 @@ fun test() {
             add("")
             with (get()) {
                 with (listOf(1)) {
-                    <!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>()
+                    <!NONE_APPLICABLE!>bar<!>()
                 }
             }
         },

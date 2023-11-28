@@ -869,6 +869,9 @@ object FirErrors {
     val PRE_RELEASE_CLASS by error1<PsiElement, String>()
     val IR_WITH_UNSTABLE_ABI_COMPILED_CLASS by error1<PsiElement, String>()
 
+    // Builder inference
+    val BUILDER_INFERENCE_STUB_RECEIVER by error2<PsiElement, Name, Name>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirErrorsDefaultMessages)
     }

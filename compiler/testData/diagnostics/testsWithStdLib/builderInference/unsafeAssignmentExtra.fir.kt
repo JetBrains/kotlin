@@ -26,18 +26,18 @@ fun main(arg: Any, condition: Boolean) {
     val value = myBuilder {
         b[0] = 123
         a = 45
-        a<!OVERLOAD_RESOLUTION_AMBIGUITY!>++<!>
+        a<!NONE_APPLICABLE!>++<!>
         bar(::a)
         if (<!USELESS_IS_CHECK!>a is Int<!>) {
             a = 67
-            a<!OVERLOAD_RESOLUTION_AMBIGUITY!>--<!>
+            a<!NONE_APPLICABLE!>--<!>
             bar(::a)
         }
         when (condition) {
             true -> a = 87
             false -> a = 65
         }
-        val x by <!DELEGATE_SPECIAL_FUNCTION_AMBIGUITY!>a<!>
+        val x by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>a<!>
 
         change {
             a = 99

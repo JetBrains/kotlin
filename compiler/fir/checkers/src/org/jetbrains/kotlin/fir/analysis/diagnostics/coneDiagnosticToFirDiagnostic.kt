@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstrai
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -306,6 +308,16 @@ private fun mapInapplicableCandidateError(
                     qualifiedAccessSource ?: source,
                     rootCause.expectedContextReceiverType.removeTypeVariableTypes(typeContext)
                 )
+
+            is StubBuilderInferenceReceiver -> {
+                val typeParameterSymbol = rootCause.typeParameterSymbol
+                @OptIn(SymbolInternals::class)
+                FirErrors.BUILDER_INFERENCE_STUB_RECEIVER.createOn(
+                    qualifiedAccessSource ?: source,
+                    typeParameterSymbol.name,
+                    (typeParameterSymbol.containingDeclarationSymbol.fir as FirMemberDeclaration).nameOrSpecialName
+                )
+            }
 
             is NullForNotNullType -> FirErrors.NULL_FOR_NONNULL_TYPE.createOn(
                 rootCause.argument.source ?: source, rootCause.expectedType.removeTypeVariableTypes(typeContext)

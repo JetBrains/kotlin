@@ -20,37 +20,37 @@ fun test() {
     val ret1 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
-        get()?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test2()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get().test2()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.hashCode()<!>
         get()?.<!NONE_APPLICABLE!>equals<!>(1)
         // there is `String?.equals` extension
-        get().equals("")
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get().equals("")<!>
     }
     val ret2 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
-        get()?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test2()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get().test2()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.hashCode()<!>
         get()?.<!NONE_APPLICABLE!>equals<!>(1)
         val x = get()
-        x?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x?.hashCode()<!>
         x?.<!NONE_APPLICABLE!>equals<!>(1)
-        x.equals("")
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x.equals("")<!>
     }
     val ret3 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
-        get()?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test2()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get().test2()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.hashCode()<!>
         get()?.<!NONE_APPLICABLE!>equals<!>(1)
         val x = get()
-        x?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x?.hashCode()<!>
         x?.<!NONE_APPLICABLE!>equals<!>(1)
 
         if (get() == null) {}
@@ -153,20 +153,20 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        x.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x.test()<!>
 
         ""
     }
     val ret41 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
-        get()?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test2()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get().test2()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.hashCode()<!>
         get()?.<!NONE_APPLICABLE!>equals<!>(1)
         val x = get()
-        x?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x?.hashCode()<!>
         x?.<!NONE_APPLICABLE!>equals<!>(1)
 
         if (get() == null) {}
@@ -284,19 +284,19 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        x.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x.test()<!>
         ""
     }
     val ret51 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
-        get()?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test2()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get().test2()<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.hashCode()<!>
         get()?.<!NONE_APPLICABLE!>equals<!>(1)
         val x = get()
-        x?.hashCode()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>x?.hashCode()<!>
         x?.<!NONE_APPLICABLE!>equals<!>(1)
 
         if (get() == null) {}

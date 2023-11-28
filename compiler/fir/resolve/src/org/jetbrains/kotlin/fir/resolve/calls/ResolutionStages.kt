@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -128,6 +129,21 @@ object CheckExtensionReceiver : ResolutionStage() {
         )
 
         candidate.chosenExtensionReceiver = receiver.expression
+
+        val checkBuilderInferenceRestriction =
+            !context.session.languageVersionSettings
+                .supportsFeature(LanguageFeature.NoBuilderInferenceWithoutAnnotationRestriction)
+        if (checkBuilderInferenceRestriction) {
+            val resolvedType = receiver.expression.resolvedType
+            if (resolvedType is ConeStubTypeForChainInference) {
+                val typeVariable = resolvedType.constructor.variable
+                sink.yieldDiagnostic(
+                    StubBuilderInferenceReceiver(
+                        (typeVariable.typeConstructor.originalTypeParameter as ConeTypeParameterLookupTag).typeParameterSymbol
+                    )
+                )
+            }
+        }
 
         sink.yieldIfNeed()
     }

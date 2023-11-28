@@ -4169,6 +4169,13 @@ internal class IrWithUnstableAbiCompiledClassImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.IrWithUnstableAbiCompiledClass
 
+internal class BuilderInferenceStubReceiverImpl(
+    override val typeParameterName: Name,
+    override val containingDeclarationName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.BuilderInferenceStubReceiver
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

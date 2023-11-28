@@ -1764,6 +1764,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("presentableString")
         }
     }
+
+    val BUILDER_INFERENCE by object : DiagnosticGroup("Builder inference") {
+        val BUILDER_INFERENCE_STUB_RECEIVER by error<PsiElement> {
+            parameter<Name>("typeParameterName")
+            parameter<Name>("containingDeclarationName")
+        }
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

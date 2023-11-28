@@ -112,6 +112,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BOUNDS_NOT_ALLOWE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BUILDER_INFERENCE_STUB_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON
@@ -2570,5 +2571,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "{0} is compiled by an unstable version of the Kotlin compiler and cannot be loaded by this compiler.",
             STRING
         )
+
+        map.put(
+            BUILDER_INFERENCE_STUB_RECEIVER,
+            "The type of a receiver hasn''t been inferred yet. Please specify type argument for generic parameter `{0}` of `{1}` explicitly",
+            TO_STRING,
+            TO_STRING
+        );
     }
 }

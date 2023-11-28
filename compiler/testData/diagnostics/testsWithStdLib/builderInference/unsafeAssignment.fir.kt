@@ -10,7 +10,7 @@ fun main(arg: Any) {
     val value = myBuilder {
         doSmthng("one ")
         run { a; this }.a = 10
-        a += 1
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>a += 1<!>
         this.a = 57
         this.<!ILLEGAL_SELECTOR, VARIABLE_EXPECTED!>(a)<!> = 57
         a = x
