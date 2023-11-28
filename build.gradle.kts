@@ -1084,8 +1084,8 @@ val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
         // Node.js with canary v8 that supports recent Wasm GC changes
-        nodeVersion = "21.0.0-v8-canary20231019bd785be450"
-        nodeDownloadBaseUrl = if (cacheRedirectorEnabled)
+        version = "21.0.0-v8-canary20231019bd785be450"
+        downloadBaseUrl = if (cacheRedirectorEnabled)
             "https://cache-redirector.jetbrains.com/nodejs.org/download/v8-canary"
         else
             "https://nodejs.org/download/v8-canary"

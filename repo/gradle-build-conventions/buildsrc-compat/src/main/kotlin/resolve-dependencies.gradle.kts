@@ -59,13 +59,13 @@ tasks.register("resolveDependencies") {
 
         rootProject.extensions.findByType<NodeJsRootExtension>()?.run {
             project.resolveDependencies(
-                "org.nodejs:node:$nodeVersion:linux-x64@tar.gz",
-                "org.nodejs:node:$nodeVersion:win-x64@zip",
-                "org.nodejs:node:$nodeVersion:darwin-x64@tar.gz",
-                "org.nodejs:node:$nodeVersion:darwin-arm64@tar.gz"
+                "org.nodejs:node:$version:linux-x64@tar.gz",
+                "org.nodejs:node:$version:win-x64@zip",
+                "org.nodejs:node:$version:darwin-x64@tar.gz",
+                "org.nodejs:node:$version:darwin-arm64@tar.gz"
             ) {
                 ivy {
-                    url = URI(nodeDownloadBaseUrl)
+                    url = URI(downloadBaseUrl)
                     patternLayout {
                         artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
                     }

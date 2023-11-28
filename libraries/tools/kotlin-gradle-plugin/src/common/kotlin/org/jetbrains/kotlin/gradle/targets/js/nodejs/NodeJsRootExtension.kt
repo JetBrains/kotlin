@@ -58,8 +58,7 @@ open class NodeJsRootExtension(
 
     override var download by Property(true)
 
-    // deprecate after bootstrap
-//    @Deprecated("Use downloadBaseUrl instead", ReplaceWith("downloadBaseUrl"))
+    @Deprecated("Use downloadBaseUrl instead", ReplaceWith("downloadBaseUrl"))
     var nodeDownloadBaseUrl
         get() = downloadBaseUrl
         set(value) {
@@ -68,8 +67,7 @@ open class NodeJsRootExtension(
 
     override var downloadBaseUrl: String? by Property("https://nodejs.org/dist")
 
-    // deprecate after bootstrap
-//    @Deprecated("Use version instead", ReplaceWith("version"))
+    @Deprecated("Use version instead", ReplaceWith("version"))
     var nodeVersion
         get() = version
         set(value) {
@@ -83,8 +81,7 @@ open class NodeJsRootExtension(
 
     override var command by Property("node")
 
-    // deprecate after bootstrap
-//    @Deprecated("Use command instead", ReplaceWith("command"))
+    @Deprecated("Use command instead", ReplaceWith("command"))
     var nodeCommand
         get() = command
         set(value) {
