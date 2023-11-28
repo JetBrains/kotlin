@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISe
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
+import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -28,13 +29,13 @@ import org.junit.jupiter.api.Assertions
 import java.nio.file.Path
 
 @OptIn(KtAnalysisApiInternals::class)
-abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest {
+abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : TestWithDisposable() {
     protected fun doTestKotlinStdLibResolve(
         targetPlatform: TargetPlatform, platformStdlibPath: Path,
         additionalStdlibRoots: List<Path> = emptyList(),
     ) {
         lateinit var sourceModule: KtSourceModule
-        val session = buildStandaloneAnalysisAPISession {
+        val session = buildStandaloneAnalysisAPISession(disposable) {
             registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
 
             buildKtModuleProvider {

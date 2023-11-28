@@ -93,7 +93,7 @@ open class CompilerConfigurationProviderImpl(
         val platform = module.targetPlatform
         val configFiles = platform.platformToEnvironmentConfigFiles()
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
-            testServices.applicationDisposableProvider.getApplicationRootDisposable(),
+            testRootDisposable,
             CompilerConfiguration()
         )
         val configuration = createCompilerConfiguration(module, configurators)

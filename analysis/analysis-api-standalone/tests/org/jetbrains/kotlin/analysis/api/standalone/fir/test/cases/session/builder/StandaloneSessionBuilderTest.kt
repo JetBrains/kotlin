@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
+import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -35,11 +36,11 @@ import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
 @OptIn(KtAnalysisApiInternals::class)
-class StandaloneSessionBuilderTest {
+class StandaloneSessionBuilderTest : TestWithDisposable() {
     @Test
     fun testJdkSessionBuilder() {
         lateinit var sourceModule: KtSourceModule
-        val session = buildStandaloneAnalysisAPISession {
+        val session = buildStandaloneAnalysisAPISession(disposable) {
             registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
 
             buildKtModuleProvider {
@@ -76,7 +77,7 @@ class StandaloneSessionBuilderTest {
     @Test
     fun testResolveAgainstCommonKlib() {
         lateinit var sourceModule: KtSourceModule
-        val session = buildStandaloneAnalysisAPISession {
+        val session = buildStandaloneAnalysisAPISession(disposable) {
             registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
 
             buildKtModuleProvider {
@@ -108,7 +109,7 @@ class StandaloneSessionBuilderTest {
     @Test
     fun testKotlinSourceModuleSessionBuilder() {
         lateinit var sourceModule: KtSourceModule
-        val session = buildStandaloneAnalysisAPISession {
+        val session = buildStandaloneAnalysisAPISession(disposable) {
             registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
 
             buildKtModuleProvider {

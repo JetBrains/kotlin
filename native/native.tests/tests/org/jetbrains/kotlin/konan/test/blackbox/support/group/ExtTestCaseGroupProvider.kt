@@ -849,7 +849,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable?) : T
             configuration.put(CommonConfigurationKeys.MODULE_NAME, "native-blackbox-test-patching-module")
 
             val environment = KotlinCoreEnvironment.createForProduction(
-                parentDisposable = parentDisposable,
+                projectDisposable = parentDisposable,
                 configuration = configuration,
                 configFiles = EnvironmentConfigFiles.METADATA_CONFIG_FILES
             )

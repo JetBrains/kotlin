@@ -68,18 +68,17 @@ import java.nio.file.Paths
 object StandaloneProjectFactory {
     fun createProjectEnvironment(
         projectDisposable: Disposable,
-        applicationDisposable: Disposable,
         applicationEnvironmentMode: KotlinCoreApplicationEnvironmentMode,
         compilerConfiguration: CompilerConfiguration = CompilerConfiguration(),
         classLoader: ClassLoader = MockProject::class.java.classLoader,
     ): KotlinCoreProjectEnvironment {
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(
-            applicationDisposable,
+            projectDisposable = projectDisposable,
             compilerConfiguration,
             applicationEnvironmentMode,
         )
 
-        registerApplicationExtensionPoints(applicationEnvironment, applicationDisposable)
+        registerApplicationExtensionPoints(applicationEnvironment, applicationEnvironment.parentDisposable)
 
         registerApplicationServices(applicationEnvironment)
 
