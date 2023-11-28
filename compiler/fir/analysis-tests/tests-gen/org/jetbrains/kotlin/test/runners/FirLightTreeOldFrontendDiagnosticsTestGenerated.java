@@ -31925,6 +31925,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("binaryOperatorsWithJumps.kt")
+            public void testBinaryOperatorsWithJumps() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/binaryOperatorsWithJumps.kt");
+            }
+
+            @Test
             @TestMetadata("classObjectMember.kt")
             public void testClassObjectMember() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/classObjectMember.kt");
@@ -31934,6 +31940,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             @TestMetadata("combineWithNoSelectorInfo.kt")
             public void testCombineWithNoSelectorInfo() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/combineWithNoSelectorInfo.kt");
+            }
+
+            @Test
+            @TestMetadata("comparisonOfBuiltInTypesUnderOr.kt")
+            public void testComparisonOfBuiltInTypesUnderOr() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/comparisonOfBuiltInTypesUnderOr.kt");
+            }
+
+            @Test
+            @TestMetadata("comparisonOfClassTypesUnderOr.kt")
+            public void testComparisonOfClassTypesUnderOr() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/comparisonOfClassTypesUnderOr.kt");
             }
 
             @Test
@@ -32489,6 +32507,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("nullableLambda.kt")
+            public void testNullableLambda() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/nullableLambda.kt");
+            }
+
+            @Test
             @TestMetadata("openInSealed.kt")
             public void testOpenInSealed() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/openInSealed.kt");
@@ -32516,6 +32540,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             @TestMetadata("safeAs.kt")
             public void testSafeAs() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/safeAs.kt");
+            }
+
+            @Test
+            @TestMetadata("savedSmartcastResult.kt")
+            public void testSavedSmartcastResult() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/savedSmartcastResult.kt");
             }
 
             @Test
@@ -32654,6 +32684,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             @TestMetadata("typeInComparison.kt")
             public void testTypeInComparison() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/typeInComparison.kt");
+            }
+
+            @Test
+            @TestMetadata("typeParameterWithBounds.kt")
+            public void testTypeParameterWithBounds() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/typeParameterWithBounds.kt");
             }
 
             @Test
@@ -33041,6 +33077,46 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("validTypeParametersNoSmartCast.kt")
                 public void testValidTypeParametersNoSmartCast() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/validTypeParametersNoSmartCast.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts")
+            @TestDataPath("$PROJECT_ROOT")
+            public class LambdasWithContracts {
+                @Test
+                public void testAllFilesPresentInLambdasWithContracts() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+                }
+
+                @Test
+                @TestMetadata("lambdaWithCallInPlace.kt")
+                public void testLambdaWithCallInPlace() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts/lambdaWithCallInPlace.kt");
+                }
+
+                @Test
+                @TestMetadata("lambdaWithCallInPlaceAndBounds.kt")
+                public void testLambdaWithCallInPlaceAndBounds() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts/lambdaWithCallInPlaceAndBounds.kt");
+                }
+
+                @Test
+                @TestMetadata("lambdaWithCallInPlaceAndDelegate.kt")
+                public void testLambdaWithCallInPlaceAndDelegate() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts/lambdaWithCallInPlaceAndDelegate.kt");
+                }
+
+                @Test
+                @TestMetadata("lambdaWithCallInPlaceAndOperators.kt")
+                public void testLambdaWithCallInPlaceAndOperators() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts/lambdaWithCallInPlaceAndOperators.kt");
+                }
+
+                @Test
+                @TestMetadata("lambdaWithImpliesContract.kt")
+                public void testLambdaWithImpliesContract() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts/lambdaWithImpliesContract.kt");
                 }
             }
 
@@ -33561,6 +33637,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("chainMixedUnsafe.kt")
                 public void testChainMixedUnsafe() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/safecalls/chainMixedUnsafe.kt");
+                }
+
+                @Test
+                @TestMetadata("childProperty.kt")
+                public void testChildProperty() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/safecalls/childProperty.kt");
                 }
 
                 @Test
