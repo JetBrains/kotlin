@@ -59,6 +59,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("abstractSuspend.kt")
+        public void testAbstractSuspend() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/abstractSuspend.kt");
+        }
+
+        @Test
         @TestMetadata("addTestForFalsePositiveDuplicateLabelInWhen.kt")
         public void testAddTestForFalsePositiveDuplicateLabelInWhen() throws Exception {
             runTest("compiler/testData/diagnostics/tests/addTestForFalsePositiveDuplicateLabelInWhen.kt");
