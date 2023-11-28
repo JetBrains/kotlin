@@ -179,11 +179,13 @@ class VariableFixationFinder(
         val candidate =
             allTypeVariables.maxByOrNull { getTypeVariableReadiness(it, dependencyProvider) } ?: return null
 
+        check(!isRelevantToInputType)
+
         return when (getTypeVariableReadiness(candidate, dependencyProvider)) {
             TypeVariableFixationReadiness.FORBIDDEN -> null
             TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> VariableForFixation(candidate, false)
             TypeVariableFixationReadiness.DEEP_OUTER_TYPE_VARIABLE_DEPENDENCY ->
-                VariableForFixation(candidate, hasProperConstraint = isRelevantToInputType)
+                VariableForFixation(candidate, hasProperConstraint = false)
             TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS ->
                 VariableForFixation(candidate, hasProperConstraint = true, hasOnlyTrivialProperConstraint = true)
 
