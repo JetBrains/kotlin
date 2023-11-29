@@ -7,7 +7,7 @@ fun <T : Any> myBuilder(block: Foo<T>.() -> Unit) : Foo<T> = Foo<T>().apply(bloc
 
 fun main(arg: Any) {
     val x = 57
-    val value = myBuilder {
+    val value = <!NEW_INFERENCE_ERROR!>myBuilder {
         doSmthng("one ")
         run { a; this }.a = 10
         <!BUILDER_INFERENCE_STUB_RECEIVER!>a += 1<!>
@@ -19,6 +19,6 @@ fun main(arg: Any) {
         if (arg is String) {
             a = arg
         }
-    }
+    }<!>
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value.a?.<!UNRESOLVED_REFERENCE!>count<!> { <!UNRESOLVED_REFERENCE!>it<!> in 'l' .. 'q' })
 }

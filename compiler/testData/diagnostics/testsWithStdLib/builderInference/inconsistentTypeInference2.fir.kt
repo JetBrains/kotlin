@@ -2,8 +2,8 @@
 // FIR_DUMP
 
 fun bar() {
-    buildList {
+    <!NEW_INFERENCE_ERROR!>buildList {
         add("Boom")
         println(this.plus(1)[0])
-    }
+    }<!>
 }
