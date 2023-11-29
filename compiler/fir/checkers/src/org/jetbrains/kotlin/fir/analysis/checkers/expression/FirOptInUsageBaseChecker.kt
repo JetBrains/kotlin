@@ -358,7 +358,12 @@ object FirOptInUsageBaseChecker {
                 isAnnotatedWithOptIn(annotationClassId, session) ||
                 fromSupertype && isAnnotatedWithSubclassOptInRequired(session, annotationClassId) ||
                 // Technically wrong but required for K1 compatibility
-                primaryConstructorParameterIsExperimentalityAcceptable(session, annotationClassId)
+                primaryConstructorParameterIsExperimentalityAcceptable(session, annotationClassId) ||
+                isImplicitDeclaration()
+    }
+
+    private fun FirAnnotationContainer.isImplicitDeclaration(): Boolean {
+        return this is FirDeclaration && this.origin != FirDeclarationOrigin.Source
     }
 
     @OptIn(SymbolInternals::class)
