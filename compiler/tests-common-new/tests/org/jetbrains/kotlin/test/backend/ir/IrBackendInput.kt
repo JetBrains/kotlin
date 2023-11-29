@@ -147,7 +147,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
             get() = backendInput.irModuleFragment
 
         override val irPluginContext: IrPluginContext
-            get() = backendInput.pluginContext
+            get() = backendInput.pluginContext!!
 
         override val diagnosticReporter: BaseDiagnosticsCollector
             get() = state.diagnosticReporter as BaseDiagnosticsCollector
