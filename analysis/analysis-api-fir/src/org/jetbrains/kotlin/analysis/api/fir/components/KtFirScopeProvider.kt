@@ -256,17 +256,16 @@ internal class KtFirScopeProvider(
         originalFile: KtFile,
         positionInFakeFile: KtElement
     ): KtScopeContext {
-        val fakeFile = positionInFakeFile.containingKtFile
-
         // If the position is in KDoc, we want to pass the owning declaration to the ContextCollector.
         // That way, the resulting scope will contain all the nested declarations which can be references by KDoc.
         val parentKDoc = positionInFakeFile.parentOfType<KDoc>()
         val correctedPosition = parentKDoc?.owner ?: positionInFakeFile
 
-        val context = ContextCollector.process(
-            fakeFile.getOrBuildFirFile(firResolveSession),
+        val context = ContextCollector.processFake(
+            originalFile.getOrBuildFirFile(firResolveSession),
             SessionHolderImpl(analysisSession.useSiteSession, getScopeSession()),
             correctedPosition,
+            firResolveSession,
         )
 
         val towerDataContext =

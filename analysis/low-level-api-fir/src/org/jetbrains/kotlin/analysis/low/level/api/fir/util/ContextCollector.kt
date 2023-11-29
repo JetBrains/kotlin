@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithScript
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
@@ -36,6 +40,8 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.yieldIfNotNull
@@ -106,6 +112,53 @@ object ContextCollector {
         return null
     }
 
+    fun processFake(file: FirFile, holder: SessionHolder, targetElement: PsiElement, resolveSession: LLFirResolveSession, bodyElement: PsiElement? = targetElement): Context? {
+        val isBodyContextCollected = bodyElement != null
+        val acceptedElements = targetElement.parentsWithSelf.flatMap {
+            val originalDeclarations = when (it) {
+                is KtDeclaration -> it.originalDeclaration
+                is KtFile -> it.originalFile
+                else -> null
+            }
+            listOfNotNull(it, originalDeclarations)
+        }.toSet()
+
+        val contextProvider = process(file, holder, computeFakeDesignation(file, targetElement, resolveSession), isBodyContextCollected) { candidate ->
+            when (candidate) {
+                targetElement -> FilterResponse.STOP
+                in acceptedElements -> FilterResponse.CONTINUE
+                else -> FilterResponse.SKIP
+            }
+        }
+
+        for (acceptedElement in acceptedElements) {
+            if (acceptedElement === bodyElement) {
+                val bodyContext = contextProvider[acceptedElement, ContextKind.BODY]
+                if (bodyContext != null) {
+                    return bodyContext
+                }
+            }
+
+            val elementContext = contextProvider[acceptedElement, ContextKind.SELF]
+            if (elementContext != null) {
+                return elementContext
+            }
+
+            val original = when (acceptedElement) {
+                is KtDeclaration -> acceptedElement.originalDeclaration
+                is KtFile -> acceptedElement.originalFile
+                else -> null
+            } ?: continue
+
+            val originalElementContext = contextProvider[original, ContextKind.SELF]
+            if (originalElementContext != null) {
+                return originalElementContext
+            }
+        }
+
+        return null
+    }
+
     fun computeDesignation(file: FirFile, targetElement: PsiElement): FirDesignation? {
         val contextKtDeclaration = targetElement.getNonLocalContainingOrThisDeclaration()
         if (contextKtDeclaration != null) {
@@ -115,6 +168,26 @@ object ContextCollector {
 
                 return if (script == null || script === designationPath.target) {
                     FirDesignation(designationPath.path, designationPath.target)
+                } else {
+                    FirDesignationWithScript(designationPath.path, designationPath.target, script)
+                }
+            }
+        }
+
+        return null
+    }
+
+    fun computeFakeDesignation(file: FirFile, targetElement: PsiElement, resolveSession: LLFirResolveSession): FirDesignation? {
+        val fakeContextKtDeclaration = LowLevelFirApiFacadeForResolveOnAir.getDeclarationForOnAirResolve(targetElement) as? KtDeclaration
+        val fakeFirDeclaration = fakeContextKtDeclaration?.getOrBuildFirSafe<FirDeclaration>(resolveSession) ?: return null
+        val contextKtDeclaration = PsiTreeUtil.findSameElementInCopy(fakeContextKtDeclaration, file.psi as KtFile)
+        if (contextKtDeclaration != null) {
+            val designationPath = FirElementFinder.collectDesignationPath(file, contextKtDeclaration)
+            if (designationPath != null) {
+                val script = file.declarations.singleOrNull() as? FirScript
+
+                return if (script == null || script === designationPath.target) {
+                    FirDesignation(designationPath.path, fakeFirDeclaration)
                 } else {
                     FirDesignationWithScript(designationPath.path, designationPath.target, script)
                 }

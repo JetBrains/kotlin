@@ -278,6 +278,15 @@ object LowLevelFirApiFacadeForResolveOnAir {
         return fileAnnotationsContainer.annotations.single()
     }
 
+    fun getDeclarationForOnAirResolve(originalPlace: PsiElement): KtElement? {
+        val minimalOriginalDeclarationToReplace = originalPlace.getNonLocalContainingOrThisDeclarationCodeFragmentAware {
+            it.isApplicableForOnAirResolve()
+        }
+
+        val originalDeclaration = minimalOriginalDeclarationToReplace?.onAirGetNonLocalContainingOrThisDeclaration()
+        return originalDeclaration
+    }
+
     /**
      * Creates a new fir declaration from closer non-local declaration based on [originalPlace] position.
      * The resulted [FirResolvePhase] depends on [forcedResolvePhase] or the position of [originalPlace] inside the non-local declaration.
@@ -355,7 +364,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         session.moduleComponents.firModuleLazyDeclarationResolver.runLazyDesignatedOnAirResolve(
             FirDesignationWithFile(originalDesignationPath.path, newFirDeclaration, originalFirFile),
             collector,
-            forcedResolvePhase ?: requiredResolvePhase(minimalOriginalDeclarationToReplace, originalPlace),
+            resolvePhase = forcedResolvePhase ?: requiredResolvePhase(minimalOriginalDeclarationToReplace, originalPlace),
         )
 
         return newFirDeclaration
