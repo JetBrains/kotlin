@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
+import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
@@ -20,7 +21,8 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
  *
  * TODO: this method is actually a part of resolve and probably duplicates another one
  */
-internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(allowAbstract: Boolean = false): T {
+@InternalKotlinNativeApi
+fun <T : CallableMemberDescriptor> T.resolveFakeOverride(allowAbstract: Boolean = false): T {
     if (this.kind.isReal) {
         return this
     } else {
@@ -32,19 +34,24 @@ internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(allowAbstract:
     }
 }
 
-internal val ClassDescriptor.isArray: Boolean
+@InternalKotlinNativeApi
+val ClassDescriptor.isArray: Boolean
     get() = this.fqNameSafe.asString() in arrayTypes
 
 
-internal val ClassDescriptor.isInterface: Boolean
+@InternalKotlinNativeApi
+val ClassDescriptor.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)
 
-internal fun ClassDescriptor.isUnit() = this.defaultType.isUnit()
+@InternalKotlinNativeApi
+fun ClassDescriptor.isUnit() = this.defaultType.isUnit()
 
-internal fun ClassDescriptor.isNothing() = this.defaultType.isNothing()
+@InternalKotlinNativeApi
+fun ClassDescriptor.isNothing() = this.defaultType.isNothing()
 
 
-internal val <T : CallableMemberDescriptor> T.allOverriddenDescriptors: List<T>
+@InternalKotlinNativeApi
+val <T : CallableMemberDescriptor> T.allOverriddenDescriptors: List<T>
     get() {
         val result = mutableListOf<T>()
         fun traverse(descriptor: T) {
@@ -56,11 +63,13 @@ internal val <T : CallableMemberDescriptor> T.allOverriddenDescriptors: List<T>
         return result
     }
 
-internal val ClassDescriptor.contributedMethods: List<FunctionDescriptor>
-    get () = unsubstitutedMemberScope.contributedMethods
+@InternalKotlinNativeApi
+val ClassDescriptor.contributedMethods: List<FunctionDescriptor>
+    get() = unsubstitutedMemberScope.contributedMethods
 
-internal val MemberScope.contributedMethods: List<FunctionDescriptor>
-    get () {
+@InternalKotlinNativeApi
+val MemberScope.contributedMethods: List<FunctionDescriptor>
+    get() {
         val contributedDescriptors = this.getContributedDescriptors()
 
         val functions = contributedDescriptors.filterIsInstance<FunctionDescriptor>()
@@ -74,15 +83,18 @@ internal val MemberScope.contributedMethods: List<FunctionDescriptor>
 
 fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
 
-internal val FunctionDescriptor.target: FunctionDescriptor
+@InternalKotlinNativeApi
+val FunctionDescriptor.target: FunctionDescriptor
     get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
 
-internal fun DeclarationDescriptor.findPackageView(): PackageViewDescriptor {
+@InternalKotlinNativeApi
+fun DeclarationDescriptor.findPackageView(): PackageViewDescriptor {
     val packageFragment = this.findPackage()
     return packageFragment.module.getPackage(packageFragment.fqName)
 }
 
-internal fun DeclarationDescriptor.allContainingDeclarations(): List<DeclarationDescriptor> {
+@InternalKotlinNativeApi
+fun DeclarationDescriptor.allContainingDeclarations(): List<DeclarationDescriptor> {
     var list = mutableListOf<DeclarationDescriptor>()
     var current = this.containingDeclaration
     while (current != null) {
@@ -120,5 +132,33 @@ val ClassDescriptor.enumEntries: List<ClassDescriptor>
                 .filter { it.kind == ClassKind.ENUM_ENTRY }
     }
 
-internal val DeclarationDescriptor.isExpectMember: Boolean
+@InternalKotlinNativeApi
+val DeclarationDescriptor.isExpectMember: Boolean
     get() = this is MemberDescriptor && this.isExpect
+
+@InternalKotlinNativeApi
+val arrayTypes = setOf(
+        "kotlin.Array",
+        "kotlin.ByteArray",
+        "kotlin.CharArray",
+        "kotlin.ShortArray",
+        "kotlin.IntArray",
+        "kotlin.LongArray",
+        "kotlin.FloatArray",
+        "kotlin.DoubleArray",
+        "kotlin.BooleanArray",
+        "kotlin.native.ImmutableBlob",
+        "kotlin.native.internal.NativePtrArray"
+)
+
+@InternalKotlinNativeApi
+val arraysWithFixedSizeItems = setOf(
+        "kotlin.ByteArray",
+        "kotlin.CharArray",
+        "kotlin.ShortArray",
+        "kotlin.IntArray",
+        "kotlin.LongArray",
+        "kotlin.FloatArray",
+        "kotlin.DoubleArray",
+        "kotlin.BooleanArray"
+)

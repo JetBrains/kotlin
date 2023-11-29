@@ -1,12 +1,13 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -79,7 +80,8 @@ fun createObjCExportLazy(
         deprecationResolver
 )
 
-internal class ObjCExportLazyImpl(
+@InternalKotlinNativeApi
+class ObjCExportLazyImpl(
         private val configuration: ObjCExportLazy.Configuration,
         problemCollector: ObjCExportProblemCollector,
         private val codeAnalyzer: KotlinCodeAnalyzer,

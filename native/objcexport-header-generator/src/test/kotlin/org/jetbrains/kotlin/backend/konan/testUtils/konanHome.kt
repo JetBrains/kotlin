@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.testUtils
 
-private const val konanHomePropertyKey = "org.jetbrains.kotlin.native.home"
+private const val konanHomePropertyKey = "kotlin.internal.native.test.nativeHome"
 
 val konanHomePath: String
     get() = System.getProperty(konanHomePropertyKey) ?: error("Missing System property: '$konanHomePropertyKey'")

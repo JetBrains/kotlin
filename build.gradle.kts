@@ -344,7 +344,11 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":kotlin-gradle-statistics",
                 ":jps:jps-common",
             ) +
-            if (kotlinBuildProperties.isKotlinNativeEnabled) arrayOf(":kotlin-native:backend.native") else emptyArray()
+            arrayOf(
+                ":native:base",
+                ":native:objcexport-header-generator",
+                ":compiler:ir.serialization.native"
+            )
 
 extra["projectsUsedInIntelliJKotlinPlugin"] = projectsUsedInIntelliJKotlinPlugin
 
@@ -415,7 +419,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:assignment-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
-    ":prepare:ide-plugin-dependencies:kotlin-backend-native-for-ide".takeIf { kotlinBuildProperties.isKotlinNativeEnabled },
+    ":prepare:ide-plugin-dependencies:kotlin-objcexport-header-generator-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-testdata-for-ide",
     ":prepare:ide-plugin-dependencies:low-level-api-fir-for-ide",
