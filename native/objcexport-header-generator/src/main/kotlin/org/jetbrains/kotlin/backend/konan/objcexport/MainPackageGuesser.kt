@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -14,7 +15,8 @@ import org.jetbrains.kotlin.name.isSubpackageOf
  * Tries to infer a main package name that can be used
  * for bundle ID of a framework.
  */
-internal class MainPackageGuesser {
+@InternalKotlinNativeApi
+class MainPackageGuesser {
     fun guess(
             moduleDescriptor: ModuleDescriptor,
             includedLibraryDescriptors: List<ModuleDescriptor>,

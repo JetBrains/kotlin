@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.llvm.LlvmParameterAttribute
+import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.Variance
 
@@ -154,16 +154,17 @@ object ObjCVoidType : ObjCType() {
     override fun render(attrsAndName: String) = "void".withAttrsAndName(attrsAndName)
 }
 
-internal enum class ObjCValueType(val encoding: String, val defaultParameterAttributes: List<LlvmParameterAttribute> = emptyList()) {
-    BOOL("c", listOf(LlvmParameterAttribute.SignExt)),
-    UNICHAR("S", listOf(LlvmParameterAttribute.ZeroExt)),
+@InternalKotlinNativeApi
+enum class ObjCValueType(val encoding: String) {
+    BOOL("c"),
+    UNICHAR("S"),
     // TODO: Switch to explicit SIGNED_CHAR
-    CHAR("c", listOf(LlvmParameterAttribute.SignExt)),
-    SHORT("s", listOf(LlvmParameterAttribute.SignExt)),
+    CHAR("c"),
+    SHORT("s"),
     INT("i"),
     LONG_LONG("q"),
-    UNSIGNED_CHAR("C", listOf(LlvmParameterAttribute.ZeroExt)),
-    UNSIGNED_SHORT("S", listOf(LlvmParameterAttribute.ZeroExt)),
+    UNSIGNED_CHAR("C"),
+    UNSIGNED_SHORT("S"),
     UNSIGNED_INT("I"),
     UNSIGNED_LONG_LONG("Q"),
     FLOAT("f"),
@@ -206,7 +207,8 @@ data class ObjCGenericTypeParameterDeclaration(
         get() = ObjCVariance.fromKotlinVariance(typeParameterDescriptor.variance)
 }
 
-internal fun ObjCType.makeNullableIfReferenceOrPointer(): ObjCType = when (this) {
+@InternalKotlinNativeApi
+fun ObjCType.makeNullableIfReferenceOrPointer(): ObjCType = when (this) {
     is ObjCPointerType -> ObjCPointerType(this.pointee, nullable = true)
 
     is ObjCNonNullReferenceType -> ObjCNullableReferenceType(this)

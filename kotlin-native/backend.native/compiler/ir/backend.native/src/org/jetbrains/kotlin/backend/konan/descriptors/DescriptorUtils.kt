@@ -41,31 +41,6 @@ internal val IrFunction.isTypedIntrinsic: Boolean
 internal val IrConstructor.isConstantConstructorIntrinsic: Boolean
     get() = annotations.hasAnnotation(KonanFqNames.constantConstructorIntrinsic)
 
-internal val arrayTypes = setOf(
-        "kotlin.Array",
-        "kotlin.ByteArray",
-        "kotlin.CharArray",
-        "kotlin.ShortArray",
-        "kotlin.IntArray",
-        "kotlin.LongArray",
-        "kotlin.FloatArray",
-        "kotlin.DoubleArray",
-        "kotlin.BooleanArray",
-        "kotlin.native.ImmutableBlob",
-        "kotlin.native.internal.NativePtrArray"
-)
-
-internal val arraysWithFixedSizeItems = setOf(
-        "kotlin.ByteArray",
-        "kotlin.CharArray",
-        "kotlin.ShortArray",
-        "kotlin.IntArray",
-        "kotlin.LongArray",
-        "kotlin.FloatArray",
-        "kotlin.DoubleArray",
-        "kotlin.BooleanArray"
-)
-
 internal val IrClass.isArray: Boolean
     get() = this.fqNameForIrSerialization.asString() in arrayTypes
 

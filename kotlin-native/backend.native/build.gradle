@@ -29,12 +29,6 @@ sourceSets {
     cli_bc {
         kotlin.srcDir 'cli.bc/src'
     }
-
-    test {
-        kotlin {
-            srcDir 'functionalTest/src'
-        }
-    }
 }
 
 compileCompilerKotlin {
@@ -43,6 +37,7 @@ compileCompilerKotlin {
             '-opt-in=kotlin.RequiresOptIn',
             "-opt-in=kotlinx.cinterop.BetaInteropApi",
             "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+            "-opt-in=org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi",
             '-Xskip-prerelease-check']
 }
 
@@ -159,6 +154,8 @@ dependencies {
     kotlin_script_runtime_jar project(":kotlin-script-runtime")
 
     compilerApi project(":kotlin-native:utilities:basic-utils")
+    compilerApi project(":native:objcexport-header-generator")
+    compilerApi project(":native:base")
 
     compilerImplementation project(":kotlin-compiler")
     compilerApi project(":native:kotlin-native-utils")
@@ -187,11 +184,6 @@ dependencies {
     cli_bcApi sourceSets.compiler.output
 
     cli_bcApiElements sourceSets.cli_bc.output
-
-    testImplementation(project(path: ":compiler:tests-common", configuration: "tests-jar"))
-    testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.junit.jupiter.params)
-    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 classes.dependsOn 'compilerClasses', 'cli_bcClasses'
@@ -252,26 +244,3 @@ RepoArtifacts.sourcesJar(project) {
 }
 
 RepoArtifacts.javadocJar(project)
-
-/*
-Configure 'test' task
- */
-
-TasksKt.projectTest(project, JUnitMode.JUnit5)
-tasks {
-    test {
-        useJUnitPlatform()
-        dependsOn ':kotlin-native:dist'
-        systemProperty("org.jetbrains.kotlin.native.home", distDir.canonicalPath)
-        workingDir(rootProject.projectDir)
-    }
-}
-
-kotlin {
-    target {
-        compilations {
-            test.associateWith(compiler)
-        }
-    }
-}
-

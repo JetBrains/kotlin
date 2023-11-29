@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.objcexport
@@ -52,12 +52,13 @@ interface ObjCExportProblemCollector {
     }
 }
 
-internal class ObjCExportTranslatorImpl(
-        private val generator: ObjCExportHeaderGenerator?,
-        val mapper: ObjCExportMapper,
-        val namer: ObjCExportNamer,
-        val problemCollector: ObjCExportProblemCollector,
-        val objcGenerics: Boolean
+@InternalKotlinNativeApi
+class ObjCExportTranslatorImpl(
+    private val generator: ObjCExportHeaderGenerator?,
+    val mapper: ObjCExportMapper,
+    val namer: ObjCExportNamer,
+    val problemCollector: ObjCExportProblemCollector,
+    val objcGenerics: Boolean
 ) : ObjCExportTranslator {
 
     private val kotlinAnyName = namer.kotlinAnyName
@@ -1096,12 +1097,12 @@ internal class ObjCExportTranslatorImpl(
             StubBuilder<S>(problemCollector).apply(block).build()
 }
 
-abstract class ObjCExportHeaderGenerator internal constructor(
-        val moduleDescriptors: List<ModuleDescriptor>,
-        internal val mapper: ObjCExportMapper,
-        val namer: ObjCExportNamer,
-        val objcGenerics: Boolean,
-        problemCollector: ObjCExportProblemCollector
+abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
+    val moduleDescriptors: List<ModuleDescriptor>,
+    internal val mapper: ObjCExportMapper,
+    val namer: ObjCExportNamer,
+    val objcGenerics: Boolean,
+    problemCollector: ObjCExportProblemCollector
 ) {
     private val stubs = mutableListOf<Stub<*>>()
 
@@ -1173,7 +1174,8 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         add("NS_ASSUME_NONNULL_END")
     }
 
-    internal fun buildInterface(): ObjCExportedInterface {
+    @InternalKotlinNativeApi
+    fun buildInterface(): ObjCExportedInterface {
         val headerLines = build()
         return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, namer, mapper)
     }
@@ -1356,6 +1358,18 @@ abstract class ObjCExportHeaderGenerator internal constructor(
                 add("#import <$it>")
             }
         }
+
+        fun createInstance(
+            moduleDescriptors: List<ModuleDescriptor>,
+            mapper: ObjCExportMapper,
+            namer: ObjCExportNamer,
+            problemCollector: ObjCExportProblemCollector,
+            objcGenerics: Boolean,
+            shouldExportKDoc: Boolean,
+            additionalImports: List<String>,
+        ): ObjCExportHeaderGenerator = ObjCExportHeaderGeneratorImpl(
+            moduleDescriptors, mapper, namer, problemCollector, objcGenerics, shouldExportKDoc, additionalImports
+        )
     }
 }
 
@@ -1423,7 +1437,8 @@ private fun computeSuperClassType(descriptor: ClassDescriptor): KotlinType? =
 
 internal const val OBJC_SUBCLASSING_RESTRICTED = "objc_subclassing_restricted"
 
-internal fun ClassDescriptor.needCompanionObjectProperty(namer: ObjCExportNamer, mapper: ObjCExportMapper): Boolean {
+@InternalKotlinNativeApi
+fun ClassDescriptor.needCompanionObjectProperty(namer: ObjCExportNamer, mapper: ObjCExportMapper): Boolean {
     val companionObject = companionObjectDescriptor
     if (companionObject == null || !mapper.shouldBeExposed(companionObject)) return false
 

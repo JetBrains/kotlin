@@ -1075,10 +1075,10 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             is MethodBridge.ReturnValue.Mapped -> if (LLVMTypeOf(targetResult!!) == llvm.voidType) {
                 returnBridge.bridge.makeNothing(llvm)
             } else {
-                when (returnBridge.bridge) {
+                when (val bridge = returnBridge.bridge) {
                     is ReferenceBridge -> return autoreleaseAndRet(kotlinReferenceToRetainedObjC(targetResult))
-                    is BlockPointerBridge -> return autoreleaseAndRet(kotlinFunctionToRetainedObjCBlockPointer(returnBridge.bridge, targetResult))
-                    is ValueTypeBridge -> kotlinToObjC(targetResult, returnBridge.bridge.objCValueType)
+                    is BlockPointerBridge -> return autoreleaseAndRet(kotlinFunctionToRetainedObjCBlockPointer(bridge, targetResult))
+                    is ValueTypeBridge -> kotlinToObjC(targetResult, bridge.objCValueType)
                 }
             }
             MethodBridge.ReturnValue.WithError.Success -> llvm.int8(1) // true
@@ -1198,11 +1198,11 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                     if (LLVMTypeOf(kotlinValue) == llvm.voidType) {
                         bridge.bridge.makeNothing(llvm)
                     } else {
-                        when (bridge.bridge) {
+                        when (val typeBridge = bridge.bridge) {
                             is ReferenceBridge -> kotlinReferenceToRetainedObjC(kotlinValue).also { objCReferenceArgsToRelease += it }
-                            is BlockPointerBridge -> kotlinFunctionToRetainedObjCBlockPointer(bridge.bridge, kotlinValue) // TODO: use stack-allocated block here.
+                            is BlockPointerBridge -> kotlinFunctionToRetainedObjCBlockPointer(typeBridge, kotlinValue) // TODO: use stack-allocated block here.
                                     .also { objCReferenceArgsToRelease += it }
-                            is ValueTypeBridge -> kotlinToObjC(kotlinValue, bridge.bridge.objCValueType)
+                            is ValueTypeBridge -> kotlinToObjC(kotlinValue, typeBridge.objCValueType)
                         }
                     }
                 }
@@ -2005,4 +2005,27 @@ private fun NativeGenerationState.is64BitNSInteger(): Boolean {
         "Target ${configurables.target} has no support for NSInteger type."
     }
     return llvm.nsIntegerTypeWidth == 64L
+}
+
+private fun MethodBridge.parametersAssociated(
+        irFunction: IrFunction
+): List<Pair<MethodBridgeParameter, IrValueParameter?>> {
+    val kotlinParameters = irFunction.allParameters.iterator()
+
+    return this.paramBridges.map {
+        when (it) {
+            is MethodBridgeValueParameter.Mapped,
+            MethodBridgeReceiver.Instance,
+            is MethodBridgeValueParameter.SuspendCompletion ->
+                it to kotlinParameters.next()
+
+            MethodBridgeReceiver.Static, MethodBridgeSelector, MethodBridgeValueParameter.ErrorOutParameter ->
+                it to null
+
+            MethodBridgeReceiver.Factory -> {
+                kotlinParameters.next()
+                it to null
+            }
+        }
+    }.also { assert(!kotlinParameters.hasNext()) }
 }

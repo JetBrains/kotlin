@@ -1,29 +1,14 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.utils.atMostOne
-import org.jetbrains.kotlin.descriptors.findPackage
-import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.descriptors.findPackage
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -35,12 +20,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
-fun IrType.getInlinedClassNative(): IrClass? = IrTypeInlineClassesSupport.getInlinedClass(this)
-
-fun IrType.isInlinedNative(): Boolean = IrTypeInlineClassesSupport.isInlined(this)
-fun IrClass.isInlined(): Boolean = IrTypeInlineClassesSupport.isInlined(this)
-fun IrClass.isNativePrimitiveType() = IrTypeInlineClassesSupport.isTopLevelClass(this) &&
-        KonanPrimitiveType.byFqNameParts[packageFqName]?.get(name) != null
 
 fun KotlinType.getInlinedClass(): ClassDescriptor? = KotlinTypeInlineClassesSupport.getInlinedClass(this)
 
@@ -48,34 +27,21 @@ fun ClassDescriptor.isInlined(): Boolean = KotlinTypeInlineClassesSupport.isInli
 
 fun KotlinType.binaryRepresentationIsNullable() = KotlinTypeInlineClassesSupport.representationIsNullable(this)
 
-internal inline fun <R> KotlinType.unwrapToPrimitiveOrReference(
+@InternalKotlinNativeApi
+inline fun <R> KotlinType.unwrapToPrimitiveOrReference(
         eachInlinedClass: (inlinedClass: ClassDescriptor, nullable: Boolean) -> Unit,
         ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
         ifReference: (type: KotlinType) -> R
 ): R = KotlinTypeInlineClassesSupport.unwrapToPrimitiveOrReference(this, eachInlinedClass, ifPrimitive, ifReference)
 
-internal inline fun <R> IrType.unwrapToPrimitiveOrReference(
-        eachInlinedClass: (inlinedClass: IrClass, nullable: Boolean) -> Unit,
-        ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
-        ifReference: (type: IrType) -> R
-): R = IrTypeInlineClassesSupport.unwrapToPrimitiveOrReference(this, eachInlinedClass, ifPrimitive, ifReference)
 
 // TODO: consider renaming to `isReference`.
 fun KotlinType.binaryTypeIsReference(): Boolean = this.computePrimitiveBinaryTypeOrNull() == null
-fun IrType.binaryTypeIsReference(): Boolean = this.computePrimitiveBinaryTypeOrNull() == null
 
 fun KotlinType.computePrimitiveBinaryTypeOrNull(): PrimitiveBinaryType? =
         this.computeBinaryType().primitiveBinaryTypeOrNull()
 
 fun KotlinType.computeBinaryType(): BinaryType<ClassDescriptor> = KotlinTypeInlineClassesSupport.computeBinaryType(this)
-
-fun IrType.computePrimitiveBinaryTypeOrNull(): PrimitiveBinaryType? =
-        this.computeBinaryType().primitiveBinaryTypeOrNull()
-
-fun IrType.computeBinaryType(): BinaryType<IrClass> = IrTypeInlineClassesSupport.computeBinaryType(this)
-
-fun IrClass.inlinedClassIsNullable(): Boolean = this.defaultType.makeNullable().getInlinedClassNative() == this // TODO: optimize
-fun IrClass.isUsedAsBoxClass(): Boolean = IrTypeInlineClassesSupport.isUsedAsBoxClass(this)
 
 /**
  * Most "underlying" user-visible non-reference type.
@@ -114,14 +80,18 @@ enum class KonanPrimitiveType(val classId: ClassId, val binaryType: BinaryType.P
     }
 }
 
-internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
-    protected abstract fun isNullable(type: Type): Boolean
-    protected abstract fun makeNullable(type: Type): Type
+@InternalKotlinNativeApi
+abstract class InlineClassesSupport<Class : Any, Type : Any> {
+    @InternalKotlinNativeApi
+    abstract fun isNullable(type: Type): Boolean
+    @InternalKotlinNativeApi
+    abstract fun makeNullable(type: Type): Type
     protected abstract fun erase(type: Type): Class
     protected abstract fun computeFullErasure(type: Type): Sequence<Class>
     protected abstract fun hasInlineModifier(clazz: Class): Boolean
     protected abstract fun getNativePointedSuperclass(clazz: Class): Class?
-    protected abstract fun getInlinedClassUnderlyingType(clazz: Class): Type
+    @InternalKotlinNativeApi
+    abstract fun getInlinedClassUnderlyingType(clazz: Class): Type
     protected abstract fun getPackageFqName(clazz: Class): FqName?
     protected abstract fun getName(clazz: Class): Name?
     abstract fun isTopLevelClass(clazz: Class): Boolean
@@ -135,15 +105,17 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
     fun getInlinedClass(type: Type): Class? =
             getInlinedClass(erase(type), isNullable(type))
 
-    protected fun getKonanPrimitiveType(clazz: Class): KonanPrimitiveType? =
+    @InternalKotlinNativeApi
+    fun getKonanPrimitiveType(clazz: Class): KonanPrimitiveType? =
             if (isTopLevelClass(clazz))
                 KonanPrimitiveType.byFqNameParts[getPackageFqName(clazz)]?.get(getName(clazz))
             else null
 
-    protected fun isImplicitInlineClass(clazz: Class): Boolean =
-        isTopLevelClass(clazz) && (getKonanPrimitiveType(clazz) != null ||
-                getName(clazz) == KonanFqNames.nativePtr.shortName() && getPackageFqName(clazz) == KonanFqNames.internalPackageName  ||
-                getName(clazz) == InteropFqNames.cPointer.shortName() && getPackageFqName(clazz) == InteropFqNames.cPointer.parent().toSafe())
+    @InternalKotlinNativeApi
+    fun isImplicitInlineClass(clazz: Class): Boolean =
+            isTopLevelClass(clazz) && (getKonanPrimitiveType(clazz) != null ||
+                    getName(clazz) == KonanFqNames.nativePtr.shortName() && getPackageFqName(clazz) == KonanFqNames.internalPackageName ||
+                    getName(clazz) == InteropFqNames.cPointer.shortName() && getPackageFqName(clazz) == InteropFqNames.cPointer.parent().toSafe())
 
     private fun getInlinedClass(erased: Class, isNullable: Boolean): Class? {
         val inlinedClass = getInlinedClass(erased) ?: return null
@@ -194,7 +166,7 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
 
             val nullable = isNullable(currentType)
 
-           getKonanPrimitiveType(inlinedClass)?.let { primitiveType ->
+            getKonanPrimitiveType(inlinedClass)?.let { primitiveType ->
                 return ifPrimitive(primitiveType, nullable)
             }
 
@@ -235,7 +207,8 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
             BinaryType.Reference(computeFullErasure(type), true)
 }
 
-internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescriptor, KotlinType>() {
+@InternalKotlinNativeApi
+object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescriptor, KotlinType>() {
 
     override fun isNullable(type: KotlinType): Boolean = type.isNullable()
     override fun makeNullable(type: KotlinType): KotlinType = type.makeNullable()
@@ -271,46 +244,3 @@ internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescr
     override fun isTopLevelClass(clazz: ClassDescriptor): Boolean = clazz.containingDeclaration is PackageFragmentDescriptor
 }
 
-internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
-
-    override fun isNullable(type: IrType): Boolean = type.isNullable()
-
-    override fun makeNullable(type: IrType): IrType = type.makeNullable()
-
-    override tailrec fun erase(type: IrType): IrClass {
-        val classifier = type.classifierOrFail
-        return when (classifier) {
-            is IrClassSymbol -> classifier.owner
-            is IrTypeParameterSymbol -> erase(classifier.owner.superTypes.first())
-            else -> error(classifier)
-        }
-    }
-
-    override fun computeFullErasure(type: IrType): Sequence<IrClass> = when (val classifier = type.classifierOrFail) {
-        is IrClassSymbol -> sequenceOf(classifier.owner)
-        is IrTypeParameterSymbol -> classifier.owner.superTypes.asSequence().flatMap { computeFullErasure(it) }
-        is IrScriptSymbol -> classifier.unexpectedSymbolKind<IrClassifierSymbol>()
-    }
-
-    override fun hasInlineModifier(clazz: IrClass): Boolean = clazz.isSingleFieldValueClass
-
-    override fun getNativePointedSuperclass(clazz: IrClass): IrClass? {
-        var superClass: IrClass? = clazz
-        while (superClass != null && InteropFqNames.nativePointed.toSafe() != superClass.fqNameWhenAvailable)
-            superClass = superClass.getSuperClassNotAny()
-        return superClass
-    }
-
-    override fun getInlinedClassUnderlyingType(clazz: IrClass): IrType =
-            clazz.constructors.firstOrNull { it.isPrimary }?.valueParameters?.single()?.type
-                    ?: clazz.declarations.filterIsInstance<IrProperty>().atMostOne { it.backingField?.takeUnless { it.isStatic } != null }?.backingField?.type
-                    ?: clazz.inlineClassRepresentation!!.underlyingType
-
-    override fun getPackageFqName(clazz: IrClass) =
-            clazz.packageFqName
-
-    override fun getName(clazz: IrClass): Name? =
-            clazz.name
-
-    override fun isTopLevelClass(clazz: IrClass): Boolean = clazz.isTopLevel
-}
