@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.expressions.impl
@@ -22,7 +22,14 @@ class BirCatchImpl(
     result: BirExpression?,
 ) : BirCatch() {
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(3)
@@ -36,7 +43,6 @@ class BirCatchImpl(
         }
 
     private var _catchParameter: BirVariable? = catchParameter
-
     override var catchParameter: BirVariable?
         get() {
             recordPropertyRead(1)
@@ -51,7 +57,6 @@ class BirCatchImpl(
         }
 
     private var _result: BirExpression? = result
-
     override var result: BirExpression?
         get() {
             recordPropertyRead(2)
@@ -64,6 +69,8 @@ class BirCatchImpl(
                 invalidate(2)
             }
         }
+
+
     init {
         initChild(_catchParameter)
         initChild(_result)
@@ -74,15 +81,17 @@ class BirCatchImpl(
         _result?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        this._catchParameter === old -> {
-            this._catchParameter = new as BirVariable?
-            1
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            this._catchParameter === old -> {
+                this._catchParameter = new as BirVariable?
+                1
+            }
+            this._result === old -> {
+                this._result = new as BirExpression?
+                2
+            }
+            else -> throwChildForReplacementNotFound(old)
         }
-        this._result === old -> {
-            this._result = new as BirExpression?
-            2
-        }
-        else -> throwChildForReplacementNotFound(old)
     }
 }

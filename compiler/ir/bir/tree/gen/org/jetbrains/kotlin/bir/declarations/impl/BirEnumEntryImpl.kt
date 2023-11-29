@@ -3,18 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.BirImplElementBase
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.bir.declarations.BirEnumEntry
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -25,13 +19,12 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
-class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
+class BirEnumEntryImpl(
     sourceSpan: SourceSpan,
-    @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor?,
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
+    descriptor: ClassDescriptor?,
     initializerExpression: BirExpressionBody?,
     correspondingClass: BirClass?,
 ) : BirImplElementBase(), BirEnumEntry {
@@ -39,7 +32,14 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
         get() = this
 
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(6)
@@ -53,7 +53,6 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _signature: IdSignature? = signature
-
     override var signature: IdSignature?
         get() {
             recordPropertyRead(7)
@@ -66,11 +65,7 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val annotations: BirImplChildElementList<BirConstructorCall> =
-            BirImplChildElementList(this, 1, false)
-
     private var _origin: IrDeclarationOrigin = origin
-
     override var origin: IrDeclarationOrigin
         get() {
             recordPropertyRead(4)
@@ -84,7 +79,6 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _name: Name = name
-
     override var name: Name
         get() {
             recordPropertyRead(5)
@@ -97,8 +91,10 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _initializerExpression: BirExpressionBody? = initializerExpression
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: ClassDescriptor? = descriptor
 
+    private var _initializerExpression: BirExpressionBody? = initializerExpression
     override var initializerExpression: BirExpressionBody?
         get() {
             recordPropertyRead(2)
@@ -113,7 +109,6 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _correspondingClass: BirClass? = correspondingClass
-
     override var correspondingClass: BirClass?
         get() {
             recordPropertyRead(3)
@@ -126,6 +121,9 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate(3)
             }
         }
+
+    override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
+
     init {
         initChild(_initializerExpression)
         initChild(_correspondingClass)
@@ -137,20 +135,24 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
         _correspondingClass?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        this._initializerExpression === old -> {
-            this._initializerExpression = new as BirExpressionBody?
-            2
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            this._initializerExpression === old -> {
+                this._initializerExpression = new as BirExpressionBody?
+                2
+            }
+            this._correspondingClass === old -> {
+                this._correspondingClass = new as BirClass?
+                3
+            }
+            else -> throwChildForReplacementNotFound(old)
         }
-        this._correspondingClass === old -> {
-            this._correspondingClass = new as BirClass?
-            3
-        }
-        else -> throwChildForReplacementNotFound(old)
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.annotations
-        else -> throwChildrenListWithIdNotFound(id)
+    override fun getChildrenListById(id: Int): BirChildElementList<*> {
+        return when (id) {
+            1 -> this.annotations
+            else -> throwChildrenListWithIdNotFound(id)
+        }
     }
 }

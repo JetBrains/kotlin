@@ -3,11 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
@@ -18,9 +19,8 @@ import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.call]
  */
-abstract class BirCall : BirFunctionAccessExpression() {
+abstract class BirCall : BirFunctionAccessExpression(), BirElement {
     abstract override var symbol: BirSimpleFunctionSymbol
-
     abstract var superQualifierSymbol: BirClassSymbol?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

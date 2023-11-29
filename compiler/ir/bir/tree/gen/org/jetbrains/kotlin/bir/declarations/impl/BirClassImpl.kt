@@ -3,46 +3,30 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.BirImplElementBase
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
-import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
-import org.jetbrains.kotlin.bir.declarations.BirClass
-import org.jetbrains.kotlin.bir.declarations.BirDeclaration
-import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
-import org.jetbrains.kotlin.bir.declarations.BirValueParameter
+import org.jetbrains.kotlin.bir.*
+import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
-class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
+class BirClassImpl(
     sourceSpan: SourceSpan,
-    @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor?,
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
     isExternal: Boolean,
     visibility: DescriptorVisibility,
+    descriptor: ClassDescriptor?,
     kind: ClassKind,
     modality: Modality,
     isCompanion: Boolean,
@@ -52,7 +36,7 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     isExpect: Boolean,
     isFun: Boolean,
     hasEnumEntries: Boolean,
-    override val source: SourceElement,
+    source: SourceElement,
     superTypes: List<BirType>,
     thisReceiver: BirValueParameter?,
     valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?,
@@ -61,7 +45,14 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         get() = this
 
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(14)
@@ -75,7 +66,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _signature: IdSignature? = signature
-
     override var signature: IdSignature?
         get() {
             recordPropertyRead(14)
@@ -88,11 +78,7 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val annotations: BirImplChildElementList<BirConstructorCall> =
-            BirImplChildElementList(this, 1, false)
-
     private var _origin: IrDeclarationOrigin = origin
-
     override var origin: IrDeclarationOrigin
         get() {
             recordPropertyRead(6)
@@ -106,7 +92,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _name: Name = name
-
     override var name: Name
         get() {
             recordPropertyRead(7)
@@ -120,7 +105,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isExternal: Boolean = isExternal
-
     override var isExternal: Boolean
         get() {
             recordPropertyRead(8)
@@ -134,7 +118,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _visibility: DescriptorVisibility = visibility
-
     override var visibility: DescriptorVisibility
         get() {
             recordPropertyRead(9)
@@ -147,14 +130,7 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val typeParameters: BirImplChildElementList<BirTypeParameter> =
-            BirImplChildElementList(this, 2, false)
-
-    override val declarations: BirImplChildElementList<BirDeclaration> =
-            BirImplChildElementList(this, 3, false)
-
     private var _attributeOwnerId: BirAttributeContainer = this
-
     override var attributeOwnerId: BirAttributeContainer
         get() {
             recordPropertyRead(5)
@@ -167,8 +143,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _kind: ClassKind = kind
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: ClassDescriptor? = descriptor
 
+    private var _kind: ClassKind = kind
     override var kind: ClassKind
         get() {
             recordPropertyRead(10)
@@ -182,7 +160,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _modality: Modality = modality
-
     override var modality: Modality
         get() {
             recordPropertyRead(11)
@@ -196,7 +173,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isCompanion: Boolean = isCompanion
-
     override var isCompanion: Boolean
         get() {
             recordPropertyRead(12)
@@ -210,7 +186,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isInner: Boolean = isInner
-
     override var isInner: Boolean
         get() {
             recordPropertyRead(13)
@@ -224,7 +199,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isData: Boolean = isData
-
     override var isData: Boolean
         get() {
             recordPropertyRead(14)
@@ -238,7 +212,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isValue: Boolean = isValue
-
     override var isValue: Boolean
         get() {
             recordPropertyRead(14)
@@ -252,7 +225,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isExpect: Boolean = isExpect
-
     override var isExpect: Boolean
         get() {
             recordPropertyRead(14)
@@ -266,7 +238,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isFun: Boolean = isFun
-
     override var isFun: Boolean
         get() {
             recordPropertyRead(14)
@@ -280,7 +251,12 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _hasEnumEntries: Boolean = hasEnumEntries
-
+    /**
+     * Returns true iff this is a class loaded from dependencies which has the `HAS_ENUM_ENTRIES` metadata flag set.
+     * This flag is useful for Kotlin/JVM to determine whether an enum class from dependency actually has the `entries` property
+     * in its bytecode, as opposed to whether it has it in its member scope, which is true even for enum classes compiled by
+     * old versions of Kotlin which did not support the EnumEntries language feature.
+     */
     override var hasEnumEntries: Boolean
         get() {
             recordPropertyRead(14)
@@ -293,8 +269,9 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _superTypes: List<BirType> = superTypes
+    override val source: SourceElement = source
 
+    private var _superTypes: List<BirType> = superTypes
     override var superTypes: List<BirType>
         get() {
             recordPropertyRead(14)
@@ -308,7 +285,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _thisReceiver: BirValueParameter? = thisReceiver
-
     override var thisReceiver: BirValueParameter?
         get() {
             recordPropertyRead(4)
@@ -322,9 +298,7 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _valueClassRepresentation: ValueClassRepresentation<BirSimpleType>? =
-            valueClassRepresentation
-
+    private var _valueClassRepresentation: ValueClassRepresentation<BirSimpleType>? = valueClassRepresentation
     override var valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?
         get() {
             recordPropertyRead(14)
@@ -336,6 +310,11 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate(14)
             }
         }
+
+    override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
+    override val typeParameters: BirImplChildElementList<BirTypeParameter> = BirImplChildElementList(this, 2, false)
+    override val declarations: BirImplChildElementList<BirDeclaration> = BirImplChildElementList(this, 3, false)
+
     init {
         initChild(_thisReceiver)
     }
@@ -347,18 +326,22 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         _thisReceiver?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        this._thisReceiver === old -> {
-            this._thisReceiver = new as BirValueParameter?
-            4
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            this._thisReceiver === old -> {
+                this._thisReceiver = new as BirValueParameter?
+                4
+            }
+            else -> throwChildForReplacementNotFound(old)
         }
-        else -> throwChildForReplacementNotFound(old)
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.annotations
-        2 -> this.typeParameters
-        3 -> this.declarations
-        else -> throwChildrenListWithIdNotFound(id)
+    override fun getChildrenListById(id: Int): BirChildElementList<*> {
+        return when (id) {
+            1 -> this.annotations
+            2 -> this.typeParameters
+            3 -> this.declarations
+            else -> throwChildrenListWithIdNotFound(id)
+        }
     }
 }

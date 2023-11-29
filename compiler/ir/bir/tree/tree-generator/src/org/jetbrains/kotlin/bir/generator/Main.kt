@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.bir.generator
 
-import org.jetbrains.kotlin.bir.generator.model.config2model
+import org.jetbrains.kotlin.bir.generator.model.transformModel
 import org.jetbrains.kotlin.bir.generator.print.printElementImpls
 import org.jetbrains.kotlin.bir.generator.print.printElements
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
@@ -15,13 +15,14 @@ import java.io.File
 
 const val BASE_PACKAGE = "org.jetbrains.kotlin.bir"
 const val VISITOR_PACKAGE = "$BASE_PACKAGE.visitors"
+internal const val TREE_GENERATOR_README = "compiler/ir/bir.tree/tree-generator/ReadMe.md"
 
 fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }
         ?: File("compiler/ir/bir/tree/gen").canonicalFile
 
-    val config = BirTree.build()
-    val model = config2model(config)
+    val model = BirTree.build()
+    transformModel(model)
 
     val previouslyGeneratedFiles = collectPreviouslyGeneratedFiles(generationPath)
     val generatedFiles = sequence {
