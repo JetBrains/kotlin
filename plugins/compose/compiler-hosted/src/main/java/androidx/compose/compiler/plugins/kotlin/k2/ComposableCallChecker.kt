@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.k2
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
@@ -41,12 +42,16 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.isInvoke
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.functionTypeKind
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 
 object ComposablePropertyAccessExpressionChecker : FirPropertyAccessExpressionChecker() {
     override fun check(
@@ -119,49 +124,44 @@ private fun checkComposableCall(
         visitAnonymousFunction = { function ->
             if (function.typeRef.coneType.functionTypeKind(context.session) === ComposableFunction)
                 return
+            val functionPsi = function.psi
+            if (functionPsi is KtFunctionLiteral || functionPsi is KtLambdaExpression ||
+                functionPsi !is KtFunction
+            ) {
+                return@visitCurrentScope
+            }
+            val nonReadOnlyCalleeReference =
+                if (!calleeFunction.isReadOnlyComposable(context.session)) {
+                    expression.calleeReference.source
+                } else {
+                    null
+                }
+            if (checkComposableFunction(
+                    function,
+                    nonReadOnlyCalleeReference,
+                    context,
+                    reporter,
+                ) == ComposableCheckForScopeStatus.STOP
+            ) {
+                return
+            }
         },
         visitFunction = { function ->
-            if (function.hasComposableAnnotation(context.session)) {
-                if (
-                    function.hasReadOnlyComposableAnnotation(context.session) &&
-                    !calleeFunction.isReadOnlyComposable(context.session)
-                ) {
-                    reporter.reportOn(
-                        expression.calleeReference.source,
-                        ComposeErrors.NONREADONLY_CALL_IN_READONLY_COMPOSABLE,
-                        context
-                    )
+            val nonReadOnlyCalleeReference =
+                if (!calleeFunction.isReadOnlyComposable(context.session)) {
+                    expression.calleeReference.source
+                } else {
+                    null
                 }
+            if (checkComposableFunction(
+                    function,
+                    nonReadOnlyCalleeReference,
+                    context,
+                    reporter,
+                ) == ComposableCheckForScopeStatus.STOP
+            ) {
                 return
             }
-            // We allow composable calls in local delegated properties.
-            // The only call this could be is a getValue/setValue in the synthesized getter/setter.
-            if (function is FirPropertyAccessor && function.propertySymbol.hasDelegate) {
-                if (function.propertySymbol.isVar) {
-                    reporter.reportOn(
-                        function.source,
-                        ComposeErrors.COMPOSE_INVALID_DELEGATE,
-                        context
-                    )
-                }
-                // Only local variables can be implicitly composable, for top-level or class-level
-                // declarations we require an explicit annotation.
-                if (!function.propertySymbol.isLocal) {
-                    reporter.reportOn(
-                        function.propertySymbol.source,
-                        ComposeErrors.COMPOSABLE_EXPECTED,
-                        context
-                    )
-                }
-                return
-            }
-            // We've found a non-composable function which contains a composable call.
-            val source = if (function is FirPropertyAccessor) {
-                function.propertySymbol.source
-            } else {
-                function.source
-            }
-            reporter.reportOn(source, ComposeErrors.COMPOSABLE_EXPECTED, context)
         },
         visitTryExpression = { tryExpression, container ->
             // Only report an error if the composable call happens inside of the `try`
@@ -180,6 +180,69 @@ private fun checkComposableCall(
         ComposeErrors.COMPOSABLE_INVOCATION,
         context
     )
+}
+
+private enum class ComposableCheckForScopeStatus {
+    STOP,
+    CONTINUE,
+}
+
+/**
+ * This function will be called by [visitCurrentScope], and this function determines
+ * whether it will continue the composable element check for the scope or not
+ * by returning [ComposableCheckForScopeStatus].
+ */
+private fun checkComposableFunction(
+    function: FirFunction,
+    nonReadOnlyCallInsideFunction: KtSourceElement?,
+    context: CheckerContext,
+    reporter: DiagnosticReporter,
+): ComposableCheckForScopeStatus {
+    // [function] is a function with "read-only" composable annotation, but it has a call
+    // without "read-only" composable annotation.
+    // -> report NONREADONLY_CALL_IN_READONLY_COMPOSABLE.
+    if (function.hasComposableAnnotation(context.session)) {
+        if (
+            function.hasReadOnlyComposableAnnotation(context.session) &&
+            nonReadOnlyCallInsideFunction != null
+        ) {
+            reporter.reportOn(
+                nonReadOnlyCallInsideFunction,
+                ComposeErrors.NONREADONLY_CALL_IN_READONLY_COMPOSABLE,
+                context
+            )
+        }
+        return ComposableCheckForScopeStatus.STOP
+    }
+    // We allow composable calls in local delegated properties.
+    // The only call this could be is a getValue/setValue in the synthesized getter/setter.
+    if (function is FirPropertyAccessor && function.propertySymbol.hasDelegate) {
+        if (function.propertySymbol.isVar) {
+            reporter.reportOn(
+                function.source,
+                ComposeErrors.COMPOSE_INVALID_DELEGATE,
+                context
+            )
+        }
+        // Only local variables can be implicitly composable, for top-level or class-level
+        // declarations we require an explicit annotation.
+        if (!function.propertySymbol.isLocal) {
+            reporter.reportOn(
+                function.propertySymbol.source,
+                ComposeErrors.COMPOSABLE_EXPECTED,
+                context
+            )
+        }
+        return ComposableCheckForScopeStatus.STOP
+    }
+    // We've found a non-composable function which contains a composable call.
+    val source = if (function is FirPropertyAccessor) {
+        function.propertySymbol.source
+    } else {
+        function.source
+    }
+    reporter.reportOn(source, ComposeErrors.COMPOSABLE_EXPECTED, context)
+    return ComposableCheckForScopeStatus.CONTINUE
 }
 
 /**
