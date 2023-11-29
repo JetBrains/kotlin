@@ -5,29 +5,40 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.checkSubTypes
+import org.jetbrains.kotlin.fir.analysis.checkers.findContextReceiverListSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.types.*
 
 object FirContextReceiversTypeChecker : FirTypeRefChecker() {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) return
         if (typeRef !is FirResolvedTypeRef) return
-        val source = typeRef.source ?: return
-        if (source.kind is KtFakeSourceElementKind) return
+        if (typeRef.source?.kind is KtFakeSourceElementKind) return
+        if (!typeRef.coneType.hasContextReceivers) return
+        val source = typeRef.source?.findContextReceiverListSource() ?: return
 
-        if (typeRef.coneType.hasContextReceivers) {
-            reporter.reportOn(
-                source,
-                FirErrors.UNSUPPORTED_FEATURE,
-                LanguageFeature.ContextReceivers to context.languageVersionSettings,
-                context
-            )
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+            if (checkSubTypes(typeRef.coneType.contextReceiversTypes(context.session), context)) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS,
+                    context
+                )
+            }
+            return
         }
+
+        reporter.reportOn(
+            source,
+            FirErrors.UNSUPPORTED_FEATURE,
+            LanguageFeature.ContextReceivers to context.languageVersionSettings,
+            context
+        )
     }
 }
 

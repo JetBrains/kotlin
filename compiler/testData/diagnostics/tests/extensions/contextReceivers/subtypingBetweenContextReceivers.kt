@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNCHECKED_CAST
 // !LANGUAGE: +ContextReceivers
 

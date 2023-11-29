@@ -1,0 +1,27 @@
+FILE: contextReceiversSubtyping.kt
+    public abstract interface D : R|D1|, R|D2| {
+    }
+    public abstract interface D1 : R|kotlin/Any| {
+    }
+    public abstract interface D2 : R|kotlin/Any| {
+    }
+    context(R|T|, R|D2|)
+    public final fun <T : R|D1|, R|D2|> foo(): R|kotlin/Unit| {
+    }
+    public abstract interface Cov<out T> : R|kotlin/Any| {
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(R|Cov<T>|, R|Cov<B>|)
+    public final fun <T : R|A|> foo(): R|kotlin/Unit| {
+    }

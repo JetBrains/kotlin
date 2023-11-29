@@ -1500,6 +1500,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = UnsupportedContextualDeclarationCall::class
     }
 
+    interface SubtypingBetweenContextReceivers : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = SubtypingBetweenContextReceivers::class
+    }
+
     interface RecursionInImplicitTypes : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = RecursionInImplicitTypes::class
     }

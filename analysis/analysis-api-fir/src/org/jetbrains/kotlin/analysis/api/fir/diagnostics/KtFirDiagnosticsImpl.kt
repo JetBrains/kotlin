@@ -1800,6 +1800,11 @@ internal class UnsupportedContextualDeclarationCallImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.UnsupportedContextualDeclarationCall
 
+internal class SubtypingBetweenContextReceiversImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.SubtypingBetweenContextReceivers
+
 internal class RecursionInImplicitTypesImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
