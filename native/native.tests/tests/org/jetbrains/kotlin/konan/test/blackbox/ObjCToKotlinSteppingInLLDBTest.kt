@@ -256,7 +256,6 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             checks = TestRunChecks(
                 executionTimeoutCheck = ExecutionTimeout.ShouldNotExceed(testRunSettings.get<Timeouts>().executionTimeout),
                 exitCodeCheck = TestRunCheck.ExitCode.Expected(0),
-                expectedFailureCheck = null,
                 outputDataFile = null,
                 outputMatcher = spec.let { TestRunCheck.OutputMatcher { output -> spec.checkLLDBOutput(output, testRunSettings.get()) } },
                 fileCheckMatcher = null,

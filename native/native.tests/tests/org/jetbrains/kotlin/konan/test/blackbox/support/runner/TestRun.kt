@@ -55,7 +55,8 @@ internal class TestRun(
     val executable: TestExecutable,
     val runParameters: List<TestRunParameter>,
     val testCaseId: TestCaseId,
-    val checks: TestRunChecks
+    val checks: TestRunChecks,
+    val expectedFailure: Boolean,
 )
 
 internal sealed interface TestRunParameter {

@@ -40,7 +40,7 @@ internal class TestNameResultHandler(
     visibleProcessName: String,
     checks: TestRunChecks,
     private val loggedParameters: LoggedData.TestRunParameters
-) : LocalResultHandler<Collection<TestName>>(runResult, visibleProcessName, checks) {
+) : LocalResultHandler<Collection<TestName>>(runResult, visibleProcessName, checks, null, false) {
     override fun getLoggedRun() = LoggedData.TestRun(loggedParameters, runResult)
     override fun doHandle() = GTestListing.parse(runResult.processOutput.stdOut.filteredOutput)
 }

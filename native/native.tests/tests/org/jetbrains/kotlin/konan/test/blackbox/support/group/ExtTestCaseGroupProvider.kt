@@ -124,7 +124,7 @@ private class ExtTestDataFile(
         structureFactory.ExtTestDataFileStructure(testDataFile, allSourceTransformers)
     }
 
-    private val isIgnoredTarget: Boolean = settings.isIgnoredTarget(structure.directives)
+    private val isExpectedFailure: Boolean = settings.isIgnoredTarget(structure.directives)
 
     private val testDataFileSettings by lazy {
         val optIns = structure.directives.multiValues(OPT_IN_DIRECTIVE)
@@ -197,7 +197,7 @@ private class ExtTestDataFile(
     private fun determineIfStandaloneTest(): Boolean = with(structure) {
         if (directives.contains(NATIVE_STANDALONE_DIRECTIVE)) return true
         if (directives.contains(FILECHECK_STAGE.name)) return true
-        if (isIgnoredTarget) return true
+        if (isExpectedFailure) return true
         // To make the debug of possible failed testruns easier, it makes sense to run dodgy tests alone
         if (directives.contains(IGNORE_NATIVE.name) ||
             directives.contains(IGNORE_NATIVE_K1.name) ||
@@ -524,10 +524,11 @@ private class ExtTestDataFile(
             modules = modules,
             freeCompilerArgs = assembleFreeCompilerArgs(),
             nominalPackageName = testDataFileSettings.nominalPackageName,
+            expectedFailure = isExpectedFailure,
             checks = TestRunChecks.Default(timeouts.executionTimeout).copy(
                 fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) },
-                exitCodeCheck = TestRunCheck.ExitCode.Expected(0).takeUnless { isIgnoredTarget },
-                expectedFailureCheck = TestRunCheck.ExpectedFailure.takeIf { isIgnoredTarget },
+                // for expected failures, it does not matter, which exit code would the process have, since test might fail with other reasons
+                exitCodeCheck = TestRunCheck.ExitCode.Expected(0).takeUnless { isExpectedFailure },
             ),
             fileCheckStage = fileCheckStage,
             extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)

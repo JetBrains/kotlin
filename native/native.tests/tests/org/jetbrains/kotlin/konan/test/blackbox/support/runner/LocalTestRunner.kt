@@ -59,7 +59,7 @@ internal class ResultHandler(
     checks: TestRunChecks,
     private val testRun: TestRun,
     private val loggedParameters: LoggedData.TestRunParameters
-) : LocalResultHandler<Unit>(runResult, visibleProcessName, checks) {
+) : LocalResultHandler<Unit>(runResult, visibleProcessName, checks, testRun.testCaseId, testRun.expectedFailure) {
     override fun getLoggedRun() = LoggedData.TestRun(loggedParameters, runResult)
 
     override fun doHandle() {
@@ -83,17 +83,8 @@ internal class ResultHandler(
             )
         }
 
-        if (checks.expectedFailureCheck !is TestRunCheck.ExpectedFailure)
+        if (!testRun.expectedFailure)
             verifyNoSuchTests(testReport.failedTests, "There are failed tests")
-        else {
-            runResult.processOutput.stdOut.filteredOutput.let {
-                if (it.isNotEmpty())
-                    println("Failure is expected. Exit code=${runResult.exitCode}, filtered test output is below:\n$it")
-                else
-                    println("Failure is expected. Exit code=${runResult.exitCode}, filtered test output is empty.")
-            }
-            verifyNoSuchTests(testReport.passedTests, "There are unexpectedly passed tests")
-        }
         assumeFalse(testReport.ignoredTests.isNotEmpty() && testReport.passedTests.isEmpty(), "Test case is disabled")
     }
 
