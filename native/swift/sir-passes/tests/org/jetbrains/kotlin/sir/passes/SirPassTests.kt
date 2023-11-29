@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.sir.passes
 
-import org.jetbrains.kotlin.sir.SirElement
-import org.jetbrains.kotlin.sir.SirForeignFunction
-import org.jetbrains.kotlin.sir.SirOrigin
-import org.jetbrains.kotlin.sir.SirVisibility
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildForeignFunction
 import org.jetbrains.sir.passes.SirPass
 import kotlin.test.Test
@@ -19,13 +16,13 @@ class SirPassTests {
     fun smoke() {
         val elementDescription = "mySirElement"
         val mySirElement = buildForeignFunction {
-            origin = SirOrigin(listOf(elementDescription))
+            origin = SirOrigin.KotlinEntity(listOf(elementDescription))
             visibility = SirVisibility.PUBLIC
         }
         val myPass = object : SirPass<List<String>?, Unit> {
             override fun run(element: SirElement, data: Unit): List<String>? {
-                if (element is SirForeignFunction) {
-                    return element.origin.path
+                if (element is SirDeclaration) {
+                    return (element.origin as? SirOrigin.KotlinEntity)?.path
                 }
                 return null
             }

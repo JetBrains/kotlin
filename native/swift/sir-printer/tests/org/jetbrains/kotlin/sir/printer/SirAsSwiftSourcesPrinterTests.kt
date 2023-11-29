@@ -16,8 +16,6 @@ import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import org.junit.Test
 import java.io.File
 
-fun basicModule(): SirModule = buildModule { name = "Test" }
-
 class SirAsSwiftSourcesPrinterTests {
     @Test
     fun `should ignore foreign elements`() {

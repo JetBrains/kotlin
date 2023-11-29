@@ -22,8 +22,8 @@ class SirTest {
 
     private fun produceSwiftElement(): Any {
         return buildEnum {
-            origin = SirOrigin(path = listOf())
-            name = "name"
+            origin = SirOrigin.KotlinEntity(path = listOf("org.me.MyEnum"))
+            name = "MyEnum"
             visibility = SirVisibility.PUBLIC
         }
     }
