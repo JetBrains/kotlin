@@ -6,43 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.testUtils
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
-import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
-import org.jetbrains.kotlin.backend.konan.KlibFactories
-import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.KONAN_HOME
 import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
-import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportHeaderGeneratorImpl
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
-import org.jetbrains.kotlin.cli.common.createFlexiblePhaseConfig
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.testFramework.MockProjectEx
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 object Fe10ObjCExportHeaderGenerator : AbstractObjCExportHeaderGeneratorTest.ObjCExportHeaderGenerator {
@@ -70,19 +38,17 @@ object Fe10ObjCExportHeaderGenerator : AbstractObjCExportHeaderGeneratorTest.Obj
         )
 
         val environment: KotlinCoreEnvironment = createKotlinCoreEnvironment(disposable)
-        val phaseContext = BasicPhaseContext(
-            KonanConfig(environment.project, environment.configuration)
-        )
 
         val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
 
         return ObjCExportHeaderGeneratorImpl(
-            context = phaseContext,
             moduleDescriptors = listOf(createModuleDescriptor(environment, kotlinFiles)),
             mapper = mapper,
             namer = namer,
             problemCollector = ObjCExportProblemCollector.SILENT,
-            objcGenerics = true
+            objcGenerics = true,
+            shouldExportKDoc = true,
+            additionalImports = emptyList()
         )
     }
 }

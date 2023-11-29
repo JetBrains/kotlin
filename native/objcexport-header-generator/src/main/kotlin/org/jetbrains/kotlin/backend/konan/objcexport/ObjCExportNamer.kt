@@ -1,20 +1,20 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.konan.*
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
@@ -88,9 +88,12 @@ interface ObjCExportNamer {
     fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String
 
     companion object {
-        internal const val kotlinThrowableAsErrorMethodName: String = "asError"
-        internal const val objectPropertyName: String = "shared"
-        internal const val companionObjectPropertyName: String = "companion"
+        @InternalKotlinNativeApi
+        const val kotlinThrowableAsErrorMethodName: String = "asError"
+        @InternalKotlinNativeApi
+        const val objectPropertyName: String = "shared"
+        @InternalKotlinNativeApi
+        const val companionObjectPropertyName: String = "companion"
     }
 }
 
@@ -273,14 +276,14 @@ private class ObjCExportNamingHelper(
             "char", "long", "float", "double", "int32_t", "int64_t", "int16_t", "int8_t", "unichar")
 }
 
-internal class ObjCExportNamerImpl(
+@InternalKotlinNativeApi
+class ObjCExportNamerImpl(
         private val configuration: ObjCExportNamer.Configuration,
         builtIns: KotlinBuiltIns,
         private val mapper: ObjCExportMapper,
         private val problemCollector: ObjCExportProblemCollector,
         private val local: Boolean
 ) : ObjCExportNamer {
-
     constructor(
             moduleDescriptors: Set<ModuleDescriptor>,
             builtIns: KotlinBuiltIns,
@@ -703,7 +706,7 @@ internal class ObjCExportNamerImpl(
                 builtIns.mutableMap to mutableMapName
         )
 
-        predefinedClassNames.forEach { descriptor, name ->
+        predefinedClassNames.forEach { (descriptor, name) ->
             objCClassNames.forceAssign(descriptor, name.objCName)
             swiftClassAndProtocolNames.forceAssign(descriptor, name.swiftName)
         }
@@ -714,11 +717,11 @@ internal class ObjCExportNamerImpl(
                         NoLookupLocation.FROM_BACKEND
                 ).single()
 
-        Predefined.anyMethodSelectors.forEach { name, selector ->
+        Predefined.anyMethodSelectors.forEach { (name, selector) ->
             methodSelectors.forceAssign(any.method(name), selector)
         }
 
-        Predefined.anyMethodSwiftNames.forEach { name, swiftName ->
+        Predefined.anyMethodSwiftNames.forEach { (name, swiftName) ->
             methodSwiftNames.forceAssign(any.method(name), swiftName)
         }
     }
@@ -1082,8 +1085,6 @@ internal val ModuleDescriptor.objCExportAdditionalNamePrefix: String get() {
     return abbreviate(fullPrefix)
 }
 
-internal val PhaseContext.objCExportTopLevelNamePrefix: String
-    get() = abbreviate(config.fullExportedNamePrefix)
 
 fun abbreviate(name: String): String {
     val normalizedName = name

@@ -1,44 +1,55 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
+import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.util.allParameters
 
-internal sealed class TypeBridge
-internal object ReferenceBridge : TypeBridge()
+@InternalKotlinNativeApi
+sealed class TypeBridge
 
-internal data class BlockPointerBridge(
+@InternalKotlinNativeApi
+object ReferenceBridge : TypeBridge()
+
+@InternalKotlinNativeApi
+data class BlockPointerBridge(
         val numberOfParameters: Int,
         val returnsVoid: Boolean
 ) : TypeBridge()
 
-internal data class ValueTypeBridge(val objCValueType: ObjCValueType) : TypeBridge()
+@InternalKotlinNativeApi
+data class ValueTypeBridge(val objCValueType: ObjCValueType) : TypeBridge()
 
-internal sealed class MethodBridgeParameter
+@InternalKotlinNativeApi
+sealed class MethodBridgeParameter
 
-internal sealed class MethodBridgeReceiver : MethodBridgeParameter() {
+@InternalKotlinNativeApi
+sealed class MethodBridgeReceiver : MethodBridgeParameter() {
     object Static : MethodBridgeReceiver()
     object Factory : MethodBridgeReceiver()
     object Instance : MethodBridgeReceiver()
 }
 
-internal object MethodBridgeSelector : MethodBridgeParameter()
+@InternalKotlinNativeApi
+object MethodBridgeSelector : MethodBridgeParameter()
 
-internal sealed class MethodBridgeValueParameter : MethodBridgeParameter() {
+@InternalKotlinNativeApi
+sealed class MethodBridgeValueParameter : MethodBridgeParameter() {
     data class Mapped(val bridge: TypeBridge) : MethodBridgeValueParameter()
     object ErrorOutParameter : MethodBridgeValueParameter()
     data class SuspendCompletion(val useUnitCompletion: Boolean) : MethodBridgeValueParameter()
 }
 
-internal data class MethodBridge(
+@InternalKotlinNativeApi
+data class MethodBridge(
         val returnBridge: ReturnValue,
         val receiver: MethodBridgeReceiver,
         val valueParameters: List<MethodBridgeValueParameter>
@@ -76,7 +87,8 @@ internal data class MethodBridge(
         get() = returnBridge is ReturnValue.WithError
 }
 
-internal fun MethodBridge.valueParametersAssociated(
+@InternalKotlinNativeApi
+fun MethodBridge.valueParametersAssociated(
         descriptor: FunctionDescriptor
 ): List<Pair<MethodBridgeValueParameter, ParameterDescriptor?>> {
     val kotlinParameters = descriptor.allParameters.iterator()
@@ -94,29 +106,6 @@ internal fun MethodBridge.valueParametersAssociated(
 
             is MethodBridgeValueParameter.SuspendCompletion,
             is MethodBridgeValueParameter.ErrorOutParameter -> it to null
-        }
-    }.also { assert(!kotlinParameters.hasNext()) }
-}
-
-internal fun MethodBridge.parametersAssociated(
-        irFunction: IrFunction
-): List<Pair<MethodBridgeParameter, IrValueParameter?>> {
-    val kotlinParameters = irFunction.allParameters.iterator()
-
-    return this.paramBridges.map {
-        when (it) {
-            is MethodBridgeValueParameter.Mapped,
-            MethodBridgeReceiver.Instance,
-            is MethodBridgeValueParameter.SuspendCompletion ->
-                it to kotlinParameters.next()
-
-            MethodBridgeReceiver.Static, MethodBridgeSelector, MethodBridgeValueParameter.ErrorOutParameter ->
-                it to null
-
-            MethodBridgeReceiver.Factory -> {
-                kotlinParameters.next()
-                it to null
-            }
         }
     }.also { assert(!kotlinParameters.hasNext()) }
 }

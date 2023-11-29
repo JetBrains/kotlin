@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.objcexport
@@ -25,10 +25,11 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-internal class ObjCExportMapper(
-        internal val deprecationResolver: DeprecationResolver? = null,
-        private val local: Boolean = false,
-        internal val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
+@InternalKotlinNativeApi
+class ObjCExportMapper(
+    internal val deprecationResolver: DeprecationResolver? = null,
+    private val local: Boolean = false,
+    internal val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
 ) {
     fun getCustomTypeMapper(descriptor: ClassDescriptor): CustomTypeMapper? = CustomTypeMappers.getMapper(descriptor)
 
@@ -89,7 +90,8 @@ private fun isComponentNMethod(method: CallableMemberDescriptor): Boolean {
 }
 
 // Note: partially duplicated in ObjCExportLazyImpl.translateTopLevels.
-internal fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean = when {
+@InternalKotlinNativeApi
+fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean = when {
     !descriptor.isEffectivelyPublicApi -> false
     descriptor.isExpect -> false
     isHiddenByDeprecation(descriptor) -> false
@@ -208,29 +210,33 @@ private fun ObjCExportMapper.isBase(descriptor: CallableMemberDescriptor): Boole
  * ```
  * Interface `I` is not exposed to the generated header, so C#f is considered to be a base method even though it has an "override" keyword.
  */
-internal fun ObjCExportMapper.isBaseMethod(descriptor: FunctionDescriptor) =
-        this.isBase(descriptor)
+@InternalKotlinNativeApi
+fun ObjCExportMapper.isBaseMethod(descriptor: FunctionDescriptor) =
+    this.isBase(descriptor)
 
-internal fun ObjCExportMapper.getBaseMethods(descriptor: FunctionDescriptor): List<FunctionDescriptor> =
-        if (isBaseMethod(descriptor)) {
-            listOf(descriptor)
-        } else {
-            descriptor.overriddenDescriptors.filter { shouldBeExposed(it) }
-                    .flatMap { getBaseMethods(it.original)}
-                    .distinct()
-        }
+@InternalKotlinNativeApi
+fun ObjCExportMapper.getBaseMethods(descriptor: FunctionDescriptor): List<FunctionDescriptor> =
+    if (isBaseMethod(descriptor)) {
+        listOf(descriptor)
+    } else {
+        descriptor.overriddenDescriptors.filter { shouldBeExposed(it) }
+            .flatMap { getBaseMethods(it.original) }
+            .distinct()
+    }
 
-internal fun ObjCExportMapper.isBaseProperty(descriptor: PropertyDescriptor) =
-        isBase(descriptor)
+@InternalKotlinNativeApi
+fun ObjCExportMapper.isBaseProperty(descriptor: PropertyDescriptor) =
+    isBase(descriptor)
 
-internal fun ObjCExportMapper.getBaseProperties(descriptor: PropertyDescriptor): List<PropertyDescriptor> =
-        if (isBaseProperty(descriptor)) {
-            listOf(descriptor)
-        } else {
-            descriptor.overriddenDescriptors
-                    .flatMap { getBaseProperties(it.original) }
-                    .distinct()
-        }
+@InternalKotlinNativeApi
+fun ObjCExportMapper.getBaseProperties(descriptor: PropertyDescriptor): List<PropertyDescriptor> =
+    if (isBaseProperty(descriptor)) {
+        listOf(descriptor)
+    } else {
+        descriptor.overriddenDescriptors
+            .flatMap { getBaseProperties(it.original) }
+            .distinct()
+    }
 
 @Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL") // K2 warning suppression, TODO: KT-62472
 internal tailrec fun KotlinType.getErasedTypeClass(): ClassDescriptor =
@@ -242,7 +248,8 @@ internal fun ObjCExportMapper.isTopLevel(descriptor: CallableMemberDescriptor): 
 internal fun ObjCExportMapper.isObjCProperty(property: PropertyDescriptor): Boolean =
         property.extensionReceiverParameter == null || getClassIfCategory(property) != null
 
-internal fun ClassDescriptor.getEnumValuesFunctionDescriptor(): SimpleFunctionDescriptor? {
+@InternalKotlinNativeApi
+fun ClassDescriptor.getEnumValuesFunctionDescriptor(): SimpleFunctionDescriptor? {
     require(this.kind == ClassKind.ENUM_CLASS)
 
     return this.staticScope.getContributedFunctions(
@@ -251,7 +258,8 @@ internal fun ClassDescriptor.getEnumValuesFunctionDescriptor(): SimpleFunctionDe
     ).singleOrNull { it.extensionReceiverParameter == null && it.valueParameters.size == 0 }
 }
 
-internal fun ClassDescriptor.getEnumEntriesPropertyDescriptor(): PropertyDescriptor? {
+@InternalKotlinNativeApi
+fun ClassDescriptor.getEnumEntriesPropertyDescriptor(): PropertyDescriptor? {
     require(this.kind == ClassKind.ENUM_CLASS)
 
     return this.staticScope.getContributedVariables(
@@ -312,7 +320,7 @@ private fun ObjCExportMapper.bridgeFunctionType(kotlinType: KotlinType): TypeBri
 }
 
 private fun ObjCExportMapper.bridgeParameter(parameter: ParameterDescriptor): MethodBridgeValueParameter =
-        MethodBridgeValueParameter.Mapped(bridgeType(parameter.type))
+    MethodBridgeValueParameter.Mapped(bridgeType(parameter.type))
 
 private fun ObjCExportMapper.bridgeReturnType(
         descriptor: FunctionDescriptor,
@@ -427,7 +435,8 @@ internal fun ObjCExportMapper.bridgePropertyType(descriptor: PropertyDescriptor)
     return bridgeType(descriptor.type)
 }
 
-internal enum class NSNumberKind(val mappedKotlinClassId: ClassId?, val objCType: ObjCType) {
+@InternalKotlinNativeApi
+enum class NSNumberKind(val mappedKotlinClassId: ClassId?, val objCType: ObjCType) {
     CHAR(PrimitiveType.BYTE, ObjCPrimitiveType.char),
     UNSIGNED_CHAR(UnsignedType.UBYTE, ObjCPrimitiveType.unsigned_char),
     SHORT(PrimitiveType.SHORT, ObjCPrimitiveType.short),

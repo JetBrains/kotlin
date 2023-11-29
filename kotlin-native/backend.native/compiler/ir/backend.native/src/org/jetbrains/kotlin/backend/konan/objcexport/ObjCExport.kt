@@ -11,14 +11,15 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.source.getPsi
 
 internal class ObjCExportedInterface(
         val generatedClasses: Set<ClassDescriptor>,
@@ -52,7 +53,7 @@ internal fun produceObjCExportInterface(
     val ignoreInterfaceMethodCollisions = config.configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
     val reportNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportReportNameCollisions)
 
-    val problemCollector = ObjCExportHeaderGeneratorImpl.ProblemCollector(context)
+    val problemCollector = ObjCExportCompilerProblemCollector(context)
 
     val namer = ObjCExportNamerImpl(
             moduleDescriptors.toSet(),
@@ -66,9 +67,34 @@ internal fun produceObjCExportInterface(
             ignoreInterfaceMethodCollisions = ignoreInterfaceMethodCollisions,
             reportNameCollisions = reportNameCollisions,
     )
-    val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, problemCollector, objcGenerics)
+    val shouldExportKDoc = context.shouldExportKDoc()
+    val additionalImports = context.config.configuration.getNotNull(KonanConfigKeys.FRAMEWORK_IMPORT_HEADERS)
+    val headerGenerator = ObjCExportHeaderGenerator.createInstance(
+            moduleDescriptors, mapper, namer, problemCollector, objcGenerics, shouldExportKDoc = shouldExportKDoc,
+            additionalImports = additionalImports)
     headerGenerator.translateModule()
     return headerGenerator.buildInterface()
+}
+
+private class ObjCExportCompilerProblemCollector(val context: PhaseContext) : ObjCExportProblemCollector {
+    override fun reportWarning(text: String) {
+        context.reportCompilationWarning(text)
+    }
+
+    override fun reportWarning(declaration: DeclarationDescriptor, text: String) {
+        val psi = (declaration as? DeclarationDescriptorWithSource)?.source?.getPsi()
+                ?: return reportWarning(
+                        "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declaration)})"
+                )
+
+        val location = MessageUtil.psiElementToMessageLocation(psi)
+
+        context.messageCollector.report(CompilerMessageSeverity.WARNING, text, location)
+    }
+
+    override fun reportException(throwable: Throwable) {
+        throw throwable
+    }
 }
 
 /**
@@ -189,3 +215,6 @@ private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationSt
         // In this case resulting framework will likely be unusable due to compile errors when importing it.
     }
 }
+
+internal val PhaseContext.objCExportTopLevelNamePrefix: String
+    get() = abbreviate(config.fullExportedNamePrefix)
