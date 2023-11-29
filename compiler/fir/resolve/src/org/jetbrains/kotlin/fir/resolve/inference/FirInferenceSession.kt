@@ -39,7 +39,7 @@ abstract class FirInferenceSession {
         lambda: ResolvedLambdaAtom,
         constraintSystemBuilder: ConstraintSystemBuilder,
         completionMode: ConstraintSystemCompletionMode,
-        // TODO: diagnostic holder
+        candidate: Candidate
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>?
 
     abstract fun clear()
@@ -55,7 +55,8 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         constraintSystemBuilder: ConstraintSystemBuilder,
-        completionMode: ConstraintSystemCompletionMode
+        completionMode: ConstraintSystemCompletionMode,
+        candidate: Candidate
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
     override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}

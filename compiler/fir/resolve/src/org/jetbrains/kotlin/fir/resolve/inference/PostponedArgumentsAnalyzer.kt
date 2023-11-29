@@ -214,7 +214,7 @@ class PostponedArgumentsAnalyzer(
         c.resolveForkPointsConstraints()
 
         if (inferenceSession != null) {
-            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, builder, completionMode)
+            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, builder, completionMode, candidate)
 
             if (postponedVariables == null) {
                 builder.removePostponedVariables()

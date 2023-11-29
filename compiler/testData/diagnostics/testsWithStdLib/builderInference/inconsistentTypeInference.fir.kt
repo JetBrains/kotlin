@@ -2,9 +2,9 @@
 // FIR_DUMP
 
 fun foo() {
-    buildList {
+    <!NEW_INFERENCE_ERROR!>buildList {
         add("Boom")
         println(plus(1)[0])
-    }
+    }<!>
 }
 

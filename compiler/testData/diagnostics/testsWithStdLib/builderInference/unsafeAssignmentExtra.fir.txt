@@ -91,7 +91,7 @@ FILE: unsafeAssignmentExtra.fir.kt
 
         }
         )
-        lval value3: R|Foo<kotlin/Int>| = R|/myBuilder|<R|kotlin/Int|>(<L> = myBuilder@fun R|Foo<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        lval value3: R|Foo<kotlin/Int>| = R|/myBuilder<CS errors: /myBuilder>#|<R|kotlin/Int|>(<L> = myBuilder@fun R|Foo<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.accept: R|kotlin/Unit|>|(String())
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(45)
             R|/bar|(::R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|)
@@ -100,7 +100,7 @@ FILE: unsafeAssignmentExtra.fir.kt
         local final fun baz(t: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
-        lval value4: R|Foo<it(kotlin/Comparable<*> & java/io/Serializable)>| = R|/myBuilder|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(<L> = myBuilder@fun R|Foo<it(kotlin/Comparable<*> & java/io/Serializable)>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        lval value4: R|Foo<it(kotlin/Comparable<*> & java/io/Serializable)>| = R|/myBuilder<CS errors: /myBuilder>#|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(<L> = myBuilder@fun R|Foo<it(kotlin/Comparable<*> & java/io/Serializable)>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.accept: R|kotlin/Unit|>|(String())
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(45)
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.b: R|kotlin/Array<Stub (chain inference): TypeVariable(T)>|>|.R|SubstitutionOverride<kotlin/Array.set: R|kotlin/Unit|>|(Int(0), Int(123))

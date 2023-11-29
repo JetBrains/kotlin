@@ -60,18 +60,18 @@ fun main(arg: Any, condition: Boolean) {
     }
 
     // See KT-54664
-    val value3 = myBuilder {
+    val value3 = <!NEW_INFERENCE_ERROR!>myBuilder {
         accept("")
         a = 45
         bar(::a)
-    }
+    }<!>
 
     fun baz(t: Int) {}
 
-    val value4 = myBuilder {
+    val value4 = <!NEW_INFERENCE_ERROR!>myBuilder {
         accept("")
         a = 45
         b[0] = 123
         baz(a)
-    }
+    }<!>
 }

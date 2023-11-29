@@ -79,7 +79,8 @@ class FirDelegatedPropertyInferenceSession(
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         constraintSystemBuilder: ConstraintSystemBuilder,
-        completionMode: ConstraintSystemCompletionMode
+        completionMode: ConstraintSystemCompletionMode,
+        candidate: Candidate
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
     fun completeCandidates(): List<FirResolvable> {
