@@ -358,6 +358,7 @@ class FirTypeIntersectionScopeContext(
             newDispatchReceiverType = dispatchReceiverType,
             deferredReturnTypeCalculation = deferredReturnTypeCalculation,
             newReturnType = if (!forClassUseSiteScope && deferredReturnTypeCalculation == null) intersectReturnTypes(mostSpecific) else null,
+            newSource = dispatchReceiverType.toSymbol(session)?.source,
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
         }
@@ -385,7 +386,8 @@ class FirTypeIntersectionScopeContext(
                 deferredReturnTypeCalculation = deferredReturnTypeCalculation,
                 // If any of the properties are vars and the types are not equal, these declarations are conflicting
                 // anyway and their uses should result in an overload resolution error.
-                newReturnType = returnType
+                newReturnType = returnType,
+                newSource = dispatchReceiverType.toSymbol(session)?.source,
             )
         }
     }
