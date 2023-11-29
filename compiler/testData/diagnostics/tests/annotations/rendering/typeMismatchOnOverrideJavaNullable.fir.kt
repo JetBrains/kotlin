@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 annotation class An
 
 class B : A {
-    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; @NotNull() @An() @MyTypeQualifier() fun foo(): @EnhancedNullability String")!>String?<!> = null
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; @NotNull() @An() @MyTypeQualifier() fun foo(): @EnhancedNullability @R|An|()  String")!>String?<!> = null
 }
 
 @An

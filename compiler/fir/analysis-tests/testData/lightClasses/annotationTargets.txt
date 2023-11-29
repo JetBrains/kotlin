@@ -1,0 +1,47 @@
+public final @interface A1 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({java.lang.annotation.ElementType.TYPE})
+public final @interface A2 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({java.lang.annotation.ElementType.ANNOTATION_TYPE})
+public final @interface A3 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({java.lang.annotation.ElementType.TYPE_PARAMETER})
+public final @interface A4 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({})
+public final @interface A5 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({java.lang.annotation.ElementType.FIELD})
+public final @interface A6 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({java.lang.annotation.ElementType.LOCAL_VARIABLE})
+public final @interface A7 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({java.lang.annotation.ElementType.PARAMETER})
+public final @interface A8 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({java.lang.annotation.ElementType.CONSTRUCTOR})
+public final @interface A9 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({java.lang.annotation.ElementType.METHOD})
+public final @interface A10 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({java.lang.annotation.ElementType.METHOD})
+public final @interface A11 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({java.lang.annotation.ElementType.METHOD})
+public final @interface A12 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({java.lang.annotation.ElementType.TYPE_USE})
+public final @interface A13 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({})
+public final @interface A14 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({})
+public final @interface A15 implements java.lang.annotation.Annotation {
+}
+@java.lang.annotation.Target({})
+public final @interface A16 implements java.lang.annotation.Annotation {
+}

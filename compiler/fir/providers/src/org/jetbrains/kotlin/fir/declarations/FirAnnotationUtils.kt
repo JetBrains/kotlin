@@ -78,22 +78,28 @@ fun FirAnnotation.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<Ann
 }
 
 private fun FirAnnotation.findUseSiteTargets(): Set<AnnotationUseSiteTarget> = buildSet {
-    fun addIfMatching(arg: FirExpression) {
-        if (arg !is FirQualifiedAccessExpression) return
-        val callableSymbol = arg.calleeReference.toResolvedCallableSymbol() ?: return
+    forEachAnnotationTarget {
+        USE_SITE_TARGET_NAME_MAP[it.identifier]?.let { addAll(it) }
+    }
+}
+
+fun FirAnnotation.forEachAnnotationTarget(action: (Name) -> Unit) {
+    fun take(arg: FirExpression) {
+        if (arg !is FirQualifiedAccessExpression) return@take
+        val callableSymbol = arg.calleeReference.toResolvedCallableSymbol() ?: return@take
         if (callableSymbol.containingClassLookupTag()?.classId == StandardClassIds.AnnotationTarget) {
-            USE_SITE_TARGET_NAME_MAP[callableSymbol.callableId.callableName.identifier]?.let { addAll(it) }
+            action(callableSymbol.callableId.callableName)
         }
     }
 
-    if (this@findUseSiteTargets is FirAnnotationCall) {
+    if (this is FirAnnotationCall) {
         for (arg in argumentList.arguments) {
-            arg.unwrapAndFlattenArgument(flattenArrays = true).forEach(::addIfMatching)
+            arg.unwrapAndFlattenArgument(flattenArrays = true).forEach(::take)
         }
     } else {
         argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]
             ?.unwrapAndFlattenArgument(flattenArrays = true)
-            ?.forEach(::addIfMatching)
+            ?.forEach(::take)
     }
 }
 

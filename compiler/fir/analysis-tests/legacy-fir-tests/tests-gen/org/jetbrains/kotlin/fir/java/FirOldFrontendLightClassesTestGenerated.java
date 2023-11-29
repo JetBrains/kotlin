@@ -29,6 +29,11 @@ public class FirOldFrontendLightClassesTestGenerated extends AbstractFirOldFront
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/lightClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("annotationTargets.kt")
+    public void testAnnotationTargets() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/lightClasses/annotationTargets.kt");
+    }
+
     @TestMetadata("genericClasses.kt")
     public void testGenericClasses() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/lightClasses/genericClasses.kt");
