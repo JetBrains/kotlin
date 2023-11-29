@@ -3,17 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirCatch
 import org.jetbrains.kotlin.bir.expressions.BirExpression
@@ -27,7 +22,14 @@ class BirTryImpl(
     finallyExpression: BirExpression?,
 ) : BirTry() {
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(6)
@@ -41,7 +43,6 @@ class BirTryImpl(
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
-
     override var attributeOwnerId: BirAttributeContainer
         get() {
             recordPropertyRead(4)
@@ -55,7 +56,6 @@ class BirTryImpl(
         }
 
     private var _type: BirType = type
-
     override var type: BirType
         get() {
             recordPropertyRead(5)
@@ -69,7 +69,6 @@ class BirTryImpl(
         }
 
     private var _tryResult: BirExpression? = tryResult
-
     override var tryResult: BirExpression?
         get() {
             recordPropertyRead(2)
@@ -83,11 +82,7 @@ class BirTryImpl(
             }
         }
 
-    override val catches: BirImplChildElementList<BirCatch> = BirImplChildElementList(this,
-            1, false)
-
     private var _finallyExpression: BirExpression? = finallyExpression
-
     override var finallyExpression: BirExpression?
         get() {
             recordPropertyRead(3)
@@ -100,6 +95,9 @@ class BirTryImpl(
                 invalidate(3)
             }
         }
+
+    override val catches: BirImplChildElementList<BirCatch> = BirImplChildElementList(this, 1, false)
+
     init {
         initChild(_tryResult)
         initChild(_finallyExpression)
@@ -111,20 +109,24 @@ class BirTryImpl(
         _finallyExpression?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        this._tryResult === old -> {
-            this._tryResult = new as BirExpression?
-            2
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            this._tryResult === old -> {
+                this._tryResult = new as BirExpression?
+                2
+            }
+            this._finallyExpression === old -> {
+                this._finallyExpression = new as BirExpression?
+                3
+            }
+            else -> throwChildForReplacementNotFound(old)
         }
-        this._finallyExpression === old -> {
-            this._finallyExpression = new as BirExpression?
-            3
-        }
-        else -> throwChildForReplacementNotFound(old)
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.catches
-        else -> throwChildrenListWithIdNotFound(id)
+    override fun getChildrenListById(id: Int): BirChildElementList<*> {
+        return when (id) {
+            1 -> this.catches
+            else -> throwChildrenListWithIdNotFound(id)
+        }
     }
 }

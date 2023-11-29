@@ -3,11 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
@@ -18,21 +19,13 @@ import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.simpleFunction]
  */
-interface BirSimpleFunction : BirFunction,
-        BirOverridableDeclaration<BirSimpleFunctionSymbol>, BirAttributeContainer,
-        BirSimpleFunctionSymbol {
+interface BirSimpleFunction : BirElement, BirFunction, BirOverridableDeclaration<BirSimpleFunctionSymbol>, BirAttributeContainer, BirSimpleFunctionSymbol {
     var isTailrec: Boolean
-
     var isSuspend: Boolean
-
     override var isFakeOverride: Boolean
-
     var isOperator: Boolean
-
     var isInfix: Boolean
-
     var correspondingPropertySymbol: BirPropertySymbol?
-
     override var overriddenSymbols: List<BirSimpleFunctionSymbol>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

@@ -5,125 +5,97 @@
 
 package org.jetbrains.kotlin.bir.generator.print
 
-import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.bir.generator.BirTree
 import org.jetbrains.kotlin.bir.generator.Packages
-import org.jetbrains.kotlin.bir.generator.model.Element
+import org.jetbrains.kotlin.bir.generator.TREE_GENERATOR_README
+import org.jetbrains.kotlin.bir.generator.elementVisitorType
+import org.jetbrains.kotlin.bir.generator.model.*
 import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.Model
-import org.jetbrains.kotlin.bir.generator.model.SingleField
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.TypeKind
-import org.jetbrains.kotlin.generators.tree.typeKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
-fun printElements(generationPath: File, model: Model) = sequence {
-    for (element in model.elements) {
-        if (element == model.rootElement || element.name == BirTree.symbolOwner.name)
-            continue
+private val elementAccept = ArbitraryImportable(Packages.tree, "accept")
 
-        val elementName = element.toPoet()
-        val selfParametrizedElementName = element.toPoetSelfParameterized()
+context(ImportCollector)
+private fun SmartPrinter.printElement(element: Element) {
+    val kind = element.kind ?: error("Expected non-null element kind")
 
-        val elementType = when (element.kind?.typeKind) {
-            null -> error("Element's category not configured")
-            TypeKind.Class -> TypeSpec.classBuilder(elementName)
-            TypeKind.Interface -> TypeSpec.interfaceBuilder(elementName)
-        }.apply {
-            addModifiers(
-                when (element.kind) {
-                    ImplementationKind.SealedClass -> listOf(KModifier.SEALED)
-                    ImplementationKind.SealedInterface -> listOf(KModifier.SEALED)
-                    ImplementationKind.AbstractClass -> listOf(KModifier.ABSTRACT)
-                    ImplementationKind.FinalClass -> listOf(KModifier.FINAL)
-                    ImplementationKind.OpenClass -> listOf(KModifier.OPEN)
-                    else -> emptyList()
-                }
-            )
-            addTypeVariables(element.params.map { it.toPoet() })
+    printKDoc(element.extendedKDoc("A ${if (element.isLeaf) "leaf" else "non-leaf"} IR tree element."))
+    print(kind.title, " ", element.typeName)
+    print(element.params.typeParameters())
 
-            val (classes, interfaces) = element.parentRefs.partition { it.typeKind == TypeKind.Class }
-            classes.singleOrNull()?.let {
-                superclass(it.toPoet())
+    val parentRefs = element.parentRefs
+    if (parentRefs.isNotEmpty()) {
+        print(
+            parentRefs.sortedBy { it.typeKind }.joinToString(prefix = " : ") { parent ->
+                parent.render() + parent.inheritanceClauseParenthesis()
             }
-            addSuperinterfaces(interfaces.map { it.toPoet() })
-
-            for (field in element.fields) {
-                if (!field.printProperty) continue
-                val poetType = field.typeRef.toPoet().copy(nullable = field.nullable)
-                addProperty(PropertySpec.builder(field.name, poetType).apply {
-                    mutable(field.isMutable)
-                    if (field.isOverride) {
-                        addModifiers(KModifier.OVERRIDE)
-                    }
-                    addModifiers(KModifier.ABSTRACT)
-
-                    if (field.needsDescriptorApiAnnotation) {
-                        addAnnotation(descriptorApiAnnotation)
-                    }
-
-                    field.kdoc?.let {
-                        addKdoc(it)
-                    }
-
-                    field.generationCallback?.invoke(this)
-                }.build())
-            }
-
-            if (element.isLeaf) {
-                if (element.allChildren.isNotEmpty()) {
-                    addFunction(
-                        FunSpec
-                            .builder("acceptChildren")
-                            .addModifiers(KModifier.OVERRIDE)
-                            .addTypeVariable(TypeVariableName("D"))
-                            .addParameter("visitor", elementVisitor.parameterizedBy(TypeVariableName("D")))
-                            .addParameter("data", TypeVariableName("D"))
-                            .apply {
-                                element.allChildren.forEach { child ->
-                                    addCode(child.name)
-                                    when (child) {
-                                        is SingleField -> {
-                                            if (child.nullable) addCode("?")
-                                            addCode(".%M(data, visitor)\n", elementAccept)
-                                        }
-                                        is ListField -> {
-                                            addCode(".acceptChildren(visitor, data)\n")
-                                        }
-                                    }
-                                }
-                            }
-                            .build()
-                    )
-                }
-            }
-
-            generateElementKDoc(element)
-
-            addType(TypeSpec.companionObjectBuilder().build())
-
-            element.generationCallback?.invoke(this)
-        }.build()
-
-        yield(printTypeCommon(generationPath, elementName.packageName, elementType, element.additionalImports))
+        )
     }
-}
+    print(element.params.multipleUpperBoundsList())
 
-private fun TypeSpec.Builder.generateElementKDoc(element: Element) {
-    addKdoc(buildString {
-        if (element.kDoc != null) {
-            appendLine(element.kDoc)
-        } else {
-            append("A ")
-            append(if (element.isLeaf) "leaf" else "non-leaf")
-            appendLine(" IR tree element.")
+    val body = SmartPrinter(StringBuilder()).apply {
+        withIndent {
+            for (field in element.fields) {
+                printField(
+                    field,
+                    override = field.isOverride,
+                    modality = Modality.ABSTRACT.takeIf { !kind.isInterface },
+                )
+                println()
+            }
+
+            if (element.isLeaf && element.walkableChildren.isNotEmpty()) {
+                println()
+                val dataTP = TypeVariable("D")
+                printFunctionWithBlockBody(
+                    name = "acceptChildren",
+                    parameters = listOf(
+                        FunctionParameter("visitor", elementVisitorType.withArgs(dataTP)),
+                        FunctionParameter("data", dataTP)
+                    ),
+                    returnType = StandardTypes.unit,
+                    typeParameters = listOf(dataTP),
+                    override = true,
+                ) {
+                    for (child in element.walkableChildren) {
+                        print(child.name)
+                        when (child) {
+                            is SingleField -> {
+                                addImport(elementAccept)
+                                if (child.nullable) print("?")
+                                println(".accept(data, visitor)")
+                            }
+                            is ListField -> {
+                                println(".acceptChildren(visitor, data)")
+                            }
+                        }
+                    }
+                }
+            }
+
+            println()
+            println("companion object")
         }
+    }.toString()
 
-        append("\nGenerated from: [${element.propertyName}]")
-    })
+    if (body.isNotEmpty()) {
+        println(" {")
+        print(body.trimStart('\n'))
+        print("}")
+    }
+    println()
 }
 
-private val descriptorApiAnnotation = ClassName("org.jetbrains.kotlin.ir", "ObsoleteDescriptorBasedAPI")
-private val elementVisitor = ClassName(Packages.tree, "BirElementVisitor")
-private val elementAccept = MemberName(Packages.tree, "accept", true)
+fun printElements(generationPath: File, model: Model) = model.elements.asSequence()
+    .filterNot { it == model.rootElement || it.name == BirTree.symbolOwner.name }
+    .map { element ->
+        printGeneratedType(generationPath, TREE_GENERATOR_README, element.packageName, element.typeName) {
+            printElement(element)
+        }
+    }

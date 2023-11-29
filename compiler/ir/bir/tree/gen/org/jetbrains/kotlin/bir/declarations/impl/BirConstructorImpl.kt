@@ -3,18 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.BirImplElementBase
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirConstructor
 import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
 import org.jetbrains.kotlin.bir.declarations.BirValueParameter
@@ -28,10 +22,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
-class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
+class BirConstructorImpl(
     sourceSpan: SourceSpan,
-    @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassConstructorDescriptor?,
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
@@ -44,13 +36,21 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
     extensionReceiverParameter: BirValueParameter?,
     contextReceiverParametersCount: Int,
     body: BirBody?,
+    descriptor: ClassConstructorDescriptor?,
     isPrimary: Boolean,
 ) : BirImplElementBase(), BirConstructor {
     override val owner: BirConstructorImpl
         get() = this
 
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(14)
@@ -64,7 +64,6 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _signature: IdSignature? = signature
-
     override var signature: IdSignature?
         get() {
             recordPropertyRead(14)
@@ -77,11 +76,7 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val annotations: BirImplChildElementList<BirConstructorCall> =
-            BirImplChildElementList(this, 1, false)
-
     private var _origin: IrDeclarationOrigin = origin
-
     override var origin: IrDeclarationOrigin
         get() {
             recordPropertyRead(7)
@@ -95,7 +90,6 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _name: Name = name
-
     override var name: Name
         get() {
             recordPropertyRead(8)
@@ -109,7 +103,6 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isExternal: Boolean = isExternal
-
     override var isExternal: Boolean
         get() {
             recordPropertyRead(9)
@@ -123,7 +116,6 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _visibility: DescriptorVisibility = visibility
-
     override var visibility: DescriptorVisibility
         get() {
             recordPropertyRead(10)
@@ -136,11 +128,7 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val typeParameters: BirImplChildElementList<BirTypeParameter> =
-            BirImplChildElementList(this, 2, false)
-
     private var _isInline: Boolean = isInline
-
     override var isInline: Boolean
         get() {
             recordPropertyRead(11)
@@ -154,7 +142,6 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isExpect: Boolean = isExpect
-
     override var isExpect: Boolean
         get() {
             recordPropertyRead(12)
@@ -168,7 +155,6 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _returnType: BirType = returnType
-
     override var returnType: BirType
         get() {
             recordPropertyRead(13)
@@ -182,7 +168,6 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _dispatchReceiverParameter: BirValueParameter? = dispatchReceiverParameter
-
     override var dispatchReceiverParameter: BirValueParameter?
         get() {
             recordPropertyRead(4)
@@ -197,7 +182,6 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _extensionReceiverParameter: BirValueParameter? = extensionReceiverParameter
-
     override var extensionReceiverParameter: BirValueParameter?
         get() {
             recordPropertyRead(5)
@@ -211,11 +195,7 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val valueParameters: BirImplChildElementList<BirValueParameter> =
-            BirImplChildElementList(this, 3, false)
-
     private var _contextReceiverParametersCount: Int = contextReceiverParametersCount
-
     override var contextReceiverParametersCount: Int
         get() {
             recordPropertyRead(14)
@@ -229,7 +209,6 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _body: BirBody? = body
-
     override var body: BirBody?
         get() {
             recordPropertyRead(6)
@@ -243,8 +222,10 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _isPrimary: Boolean = isPrimary
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: ClassConstructorDescriptor? = descriptor
 
+    private var _isPrimary: Boolean = isPrimary
     override var isPrimary: Boolean
         get() {
             recordPropertyRead(14)
@@ -256,6 +237,11 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate(14)
             }
         }
+
+    override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
+    override val typeParameters: BirImplChildElementList<BirTypeParameter> = BirImplChildElementList(this, 2, false)
+    override val valueParameters: BirImplChildElementList<BirValueParameter> = BirImplChildElementList(this, 3, false)
+
     init {
         initChild(_dispatchReceiverParameter)
         initChild(_extensionReceiverParameter)
@@ -271,26 +257,30 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         _body?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        this._dispatchReceiverParameter === old -> {
-            this._dispatchReceiverParameter = new as BirValueParameter?
-            4
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            this._dispatchReceiverParameter === old -> {
+                this._dispatchReceiverParameter = new as BirValueParameter?
+                4
+            }
+            this._extensionReceiverParameter === old -> {
+                this._extensionReceiverParameter = new as BirValueParameter?
+                5
+            }
+            this._body === old -> {
+                this._body = new as BirBody?
+                6
+            }
+            else -> throwChildForReplacementNotFound(old)
         }
-        this._extensionReceiverParameter === old -> {
-            this._extensionReceiverParameter = new as BirValueParameter?
-            5
-        }
-        this._body === old -> {
-            this._body = new as BirBody?
-            6
-        }
-        else -> throwChildForReplacementNotFound(old)
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.annotations
-        2 -> this.typeParameters
-        3 -> this.valueParameters
-        else -> throwChildrenListWithIdNotFound(id)
+    override fun getChildrenListById(id: Int): BirChildElementList<*> {
+        return when (id) {
+            1 -> this.annotations
+            2 -> this.typeParameters
+            3 -> this.valueParameters
+            else -> throwChildrenListWithIdNotFound(id)
+        }
     }
 }

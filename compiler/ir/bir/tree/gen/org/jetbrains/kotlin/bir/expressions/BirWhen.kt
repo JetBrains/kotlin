@@ -3,12 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
@@ -17,9 +18,8 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.when]
  */
-abstract class BirWhen : BirExpression() {
+abstract class BirWhen : BirExpression(), BirElement {
     abstract var origin: IrStatementOrigin?
-
     abstract val branches: BirChildElementList<BirBranch>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
