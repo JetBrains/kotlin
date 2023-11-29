@@ -37,7 +37,7 @@ interface FieldContainer<out Field : AbstractField<*>> {
      */
     val walkableChildren: List<Field>
         get() = allFields
-            .filter { it.containsElement && !it.withGetter && it.needAcceptAndTransform }
+            .filter { it.containsElement && !it.withGetter && it.isChild }
             .reorderFieldsIfNecessary(childrenOrderOverride)
 
     /**

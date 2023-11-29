@@ -57,11 +57,14 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     var useInBaseTransformerDetection = true
 
     /**
-     * Whether a visitor should be run on this field in the generated `acceptChildren` in `transformChildren` method.
+     * Whether this field semantically represents a reference to a child node of the tree.
+     *
+     * This may have the effect of including or excluding this field from visiting it by visitors in the generated
+     * `acceptChildren` and `transformChildren` methods (child fields are always visited in those methods).
      *
      * Only has effect if [containsElement] is `true`.
      */
-    var needAcceptAndTransform: Boolean = true
+    var isChild: Boolean = true
 
     open val overriddenTypes: MutableSet<TypeRefWithNullability> = mutableSetOf()
 
@@ -103,7 +106,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
         copy.visibility = visibility
         copy.fromParent = fromParent
         copy.useInBaseTransformerDetection = useInBaseTransformerDetection
-        copy.needAcceptAndTransform = needAcceptAndTransform
+        copy.isChild = isChild
         copy.overriddenTypes += overriddenTypes
     }
 }

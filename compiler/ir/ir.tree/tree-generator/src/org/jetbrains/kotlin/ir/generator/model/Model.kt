@@ -158,7 +158,7 @@ sealed class Field(
 
     val useInIrFactoryStrategy: UseFieldAsParameterInIrFactoryStrategy
         get() = customUseInIrFactoryStrategy
-            ?: if (needAcceptAndTransform && containsElement) {
+            ?: if (isChild && containsElement) {
                 UseFieldAsParameterInIrFactoryStrategy.No
             } else {
                 UseFieldAsParameterInIrFactoryStrategy.Yes(null)

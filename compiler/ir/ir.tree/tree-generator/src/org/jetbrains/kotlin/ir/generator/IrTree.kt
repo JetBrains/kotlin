@@ -104,8 +104,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +descriptor("DeclarationDescriptor")
         +field("origin", type(Packages.declarations, "IrDeclarationOrigin"))
-        +field("parent", declarationParent) {
-            needAcceptAndTransform = false
+        +field("parent", declarationParent, isChild = false) {
             skipInIrFactory()
         }
         +factory
@@ -316,13 +315,11 @@ object IrTree : AbstractTreeBuilder() {
               idempotence invariant and can contain a chain of declarations.
         """.trimIndent()
 
-        +field("attributeOwnerId", attributeContainer) {
-            needAcceptAndTransform = false
+        +field("attributeOwnerId", attributeContainer, isChild = false) {
             skipInIrFactory()
         }
         // null <=> this element wasn't inlined
-        +field("originalBeforeInline", attributeContainer, nullable = true) {
-            needAcceptAndTransform = false
+        +field("originalBeforeInline", attributeContainer, nullable = true, isChild = false) {
             skipInIrFactory()
         }
     }
@@ -552,9 +549,7 @@ object IrTree : AbstractTreeBuilder() {
         +listField("importedScripts", scriptSymbolType, mutability = Var, nullable = true)
         +listField("earlierScripts", scriptSymbolType, mutability = Var, nullable = true)
         +field("targetClass", classSymbolType, nullable = true)
-        +field("constructor", constructor, nullable = true) { // K1
-            needAcceptAndTransform = false
-        }
+        +field("constructor", constructor, nullable = true, isChild = false) // K1
     }
     val simpleFunction: Element by element(Declaration) {
         isLeaf = true
@@ -645,9 +640,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(metadataSourceOwner)
 
         +symbol(fileSymbolType)
-        +field("module", moduleFragment) {
-            needAcceptAndTransform = false
-        }
+        +field("module", moduleFragment, isChild = false)
         +field("fileEntry", type(Packages.tree, "IrFileEntry"))
     }
 
@@ -659,13 +652,11 @@ object IrTree : AbstractTreeBuilder() {
         parent(varargElement)
         parent(attributeContainer)
 
-        +field("attributeOwnerId", attributeContainer) {
-            needAcceptAndTransform = false
+        +field("attributeOwnerId", attributeContainer, isChild = false) {
             baseDefaultValue = "this"
             skipInIrFactory()
         }
-        +field("originalBeforeInline", attributeContainer, nullable = true) {
-            needAcceptAndTransform = false
+        +field("originalBeforeInline", attributeContainer, nullable = true, isChild = false) {
             baseDefaultValue = "null"
             skipInIrFactory()
         }
@@ -884,9 +875,7 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(expression)
 
-        +field("loop", loop) {
-            needAcceptAndTransform = false
-        }
+        +field("loop", loop, isChild = false)
         +field("label", string, nullable = true) {
             baseDefaultValue = "null"
         }

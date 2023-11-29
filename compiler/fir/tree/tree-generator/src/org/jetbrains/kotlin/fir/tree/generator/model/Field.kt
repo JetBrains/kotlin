@@ -127,7 +127,7 @@ class FieldWithDefault(override val origin: Field) : Field(), AbstractFieldWithD
             it.isMutable = isMutable
             it.withGetter = withGetter
             it.fromDelegate = fromDelegate
-            it.needAcceptAndTransform = needAcceptAndTransform
+            it.isChild = isChild
         }
     }
 }

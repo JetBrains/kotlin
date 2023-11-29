@@ -378,16 +378,18 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
                 }
 
             /**
-             * Allows to exclude this field from visiting it by visitors in the generated `acceptChildren` and `transformChildren`
-             * methods.
+             * Whether this field semantically represents a reference to a child node of the tree.
+             *
+             * This has the effect of including or excluding this field from visiting it by visitors in the generated
+             * `acceptChildren` and `transformChildren` methods (child fields are always visited in those methods)
              */
-            var needAcceptAndTransform: Boolean = true
+            var isChild: Boolean = true
 
             fun applyConfiguration() {
                 field.withGetter = withGetter
                 field.customSetter = customSetter
                 isMutable?.let { field.isMutable = it }
-                field.needAcceptAndTransform = needAcceptAndTransform
+                field.isChild = isChild
 
                 when {
                     value != null -> field.defaultValueInImplementation = value

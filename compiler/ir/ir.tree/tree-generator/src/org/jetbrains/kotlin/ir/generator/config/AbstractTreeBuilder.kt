@@ -75,9 +75,13 @@ abstract class AbstractTreeBuilder {
         type: TypeRefWithNullability,
         nullable: Boolean = false,
         mutable: Boolean = true,
+        isChild: Boolean = true,
         initializer: SingleField.() -> Unit = {}
     ): SingleField {
-        return SingleField(name, type.copy(nullable), mutable).apply(initializer)
+        return SingleField(name, type.copy(nullable), mutable).apply {
+            this.isChild = isChild
+            initializer()
+        }
     }
 
     protected fun listField(
@@ -85,6 +89,7 @@ abstract class AbstractTreeBuilder {
         baseType: TypeRef,
         nullable: Boolean = false,
         mutability: ListField.Mutability,
+        isChild: Boolean = true,
         initializer: ListField.() -> Unit = {}
     ): ListField {
         val listType = when (mutability) {
@@ -98,7 +103,10 @@ abstract class AbstractTreeBuilder {
             listType = listType,
             isNullable = nullable,
             mutable = mutability == ListField.Mutability.Var,
-        ).apply(initializer)
+        ).apply(initializer).apply {
+            this.isChild = isChild
+            initializer()
+        }
     }
 
     fun build(): Model {
