@@ -201,7 +201,7 @@ internal fun AbstractNativeSimpleTest.compileToStaticCache(
             this += klib.asLibraryDependency()
             dependencies.mapTo(this) { it.asStaticCacheDependency() }
         },
-        expectedArtifact = TestCompilationArtifact.KLIBStaticCache(cacheDir, klib)
+        expectedArtifact = TestCompilationArtifact.KLIBStaticCacheImpl(cacheDir, klib)
     )
     return compilation.result.assertSuccess().resultingArtifact
 }

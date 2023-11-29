@@ -210,6 +210,7 @@ sealed class CacheMode {
     abstract val staticCacheForDistributionLibrariesRootDir: File?
     abstract val useStaticCacheForUserLibraries: Boolean
     abstract val makePerFileCaches: Boolean
+    abstract val useHeaders: Boolean
     abstract val alias: Alias
 
     val useStaticCacheForDistributionLibraries: Boolean get() = staticCacheForDistributionLibrariesRootDir != null
@@ -218,6 +219,7 @@ sealed class CacheMode {
         override val staticCacheForDistributionLibrariesRootDir: File? get() = null
         override val useStaticCacheForUserLibraries: Boolean get() = false
         override val makePerFileCaches: Boolean = false
+        override val useHeaders = false
         override val alias = Alias.NO
     }
 
@@ -227,6 +229,7 @@ sealed class CacheMode {
         optimizationMode: OptimizationMode,
         override val useStaticCacheForUserLibraries: Boolean,
         override val makePerFileCaches: Boolean,
+        override val useHeaders: Boolean,
         override val alias: Alias,
     ) : CacheMode() {
         init {
@@ -255,7 +258,7 @@ sealed class CacheMode {
         }
     }
 
-    enum class Alias { NO, STATIC_ONLY_DIST, STATIC_EVERYWHERE, STATIC_PER_FILE_EVERYWHERE }
+    enum class Alias { NO, STATIC_ONLY_DIST, STATIC_EVERYWHERE, STATIC_PER_FILE_EVERYWHERE, STATIC_USE_HEADERS_EVERYWHERE }
 
     companion object {
         fun defaultForTestTarget(distribution: Distribution, kotlinNativeTargets: KotlinNativeTargets): Alias {

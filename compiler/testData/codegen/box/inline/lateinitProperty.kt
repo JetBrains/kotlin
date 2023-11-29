@@ -2,6 +2,7 @@
 // KT-64511: lateinit is not lowered with caches
 // DISABLE_NATIVE: cacheMode=STATIC_EVERYWHERE
 // DISABLE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// DISABLE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // MODULE: lib
 // FILE: lib.kt
 
