@@ -51,12 +51,15 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : Sta
             val channel = FileChannel.open(Paths.get(file.toURI()), StandardOpenOption.WRITE, StandardOpenOption.READ)
             channel.tryLock() ?: return false
 
+            //Any plugin can create fus-report-file and write into it. The file is ready to read by IDEA only when kotlin build is finished
+            var buildFinished = false
             val inputStream = Channels.newInputStream(channel)
             try {
                 var container = MetricsContainer()
                 // Note: close is called at forEachLine
                 BufferedReader(InputStreamReader(inputStream, ENCODING)).forEachLine { line ->
                     if (BUILD_SESSION_SEPARATOR == line) {
+                        buildFinished = true
                         consumer.invoke(container)
                         container = MetricsContainer()
                     } else {
@@ -96,7 +99,7 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : Sta
             } finally {
                 channel.close()
             }
-            return true
+            return buildFinished
         }
     }
 

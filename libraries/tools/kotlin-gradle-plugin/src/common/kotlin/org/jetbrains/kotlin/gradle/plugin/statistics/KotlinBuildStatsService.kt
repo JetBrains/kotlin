@@ -190,9 +190,9 @@ internal abstract class KotlinBuildStatsService internal constructor() : Statist
     /**
      * Collects metrics at the end of a build
      */
-    open fun recordBuildFinish(action: String?, buildFailed: Boolean, metricsContainer: NonSynchronizedMetricsContainer) {}
+    open fun recordBuildFinish(action: String?, buildFailed: Boolean, metricsContainer: NonSynchronizedMetricsContainer, buildId: String) {}
 
-    open fun recordProjectsEvaluated(project: Project) {}
+    open fun recordProjectsEvaluated(project: Project, buildId: String? = null) {}
 }
 
 internal class JMXKotlinBuildStatsService(private val mbs: MBeanServer, private val beanName: ObjectName) :
@@ -259,12 +259,13 @@ internal abstract class AbstractKotlinBuildStatsService(
         return (gradle as? DefaultGradle)?.services?.get(BuildRequestMetaData::class.java)?.startTime
     }
 
-    override fun recordProjectsEvaluated(project: Project) {
+    override fun recordProjectsEvaluated(project: Project, buildId: String?) {
         runSafe("${DefaultKotlinBuildStatsService::class.java}.projectEvaluated") {
             if (!sessionLogger.isBuildSessionStarted()) {
                 sessionLogger.startBuildSession(
                     DaemonReuseCounter.incrementAndGetOrdinal(),
                     gradleBuildStartTime(project.gradle),
+                    buildId
                 )
             }
         }
@@ -302,7 +303,7 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         report(StringMetrics.valueOf(name), value, subprojectName, weight)
 
     //only one jmx bean service should report global metrics
-    override fun recordBuildFinish(action: String?, buildFailed: Boolean, metricsContainer: NonSynchronizedMetricsContainer) {
-        KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, metricsContainer)
+    override fun recordBuildFinish(action: String?, buildFailed: Boolean, metricsContainer: NonSynchronizedMetricsContainer, buildId: String) {
+        KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, metricsContainer, buildId)
     }
 }

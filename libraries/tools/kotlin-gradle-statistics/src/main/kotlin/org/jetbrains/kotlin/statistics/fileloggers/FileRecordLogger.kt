@@ -25,9 +25,17 @@ class FileRecordLogger(private val statisticsFolder: File, private val fileName:
             statisticsFolder.mkdirs()
             val file = File(statisticsFolder, fileName + PROFILE_FILE_NAME_SUFFIX)
 
-            FileOutputStream(file, true).bufferedWriter().use {
-                for (value in metrics) {
-                    it.appendLine(value)
+            FileOutputStream(file, true).use {
+                val channel = it.getChannel()
+                val lockFile = channel.lock()
+                try {
+                    it.bufferedWriter().use { writer ->
+                        for (value in metrics) {
+                            writer.appendLine(value)
+                        }
+                    }
+                } finally {
+                    lockFile.release()
                 }
             }
         } catch (e: IOException) {

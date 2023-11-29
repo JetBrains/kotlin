@@ -72,7 +72,7 @@ class BuildSessionLogger(
      * - files with age (current time - last modified) more than maxFileAge should be deleted (if we trust lastModified returned by FS)
      */
     @Synchronized
-    private fun initTrackingFile(buildUid: String?) {
+    internal fun initTrackingFile(buildUid: String?) {
         closeTrackingFile()
 
         val fileName = buildUid ?: profileFileNameFormatter.format(LocalDateTime.now())
@@ -81,7 +81,7 @@ class BuildSessionLogger(
 
     private fun clearOldFiles() {
         // Get list of existing files. Try to create folder if possible, return from function if failed to create folder
-        val fileCandidates = listProfileFiles(statisticsFolder) ?: return
+        val fileCandidates = listProfileFiles(statisticsFolder) ?: if (statisticsFolder.mkdirs()) emptyList() else return
 
         for ((index, file) in fileCandidates.withIndex()) {
             if (index < fileCandidates.size - maxProfileFiles) {
@@ -102,6 +102,7 @@ class BuildSessionLogger(
         try {
             // nanotime could not be used as build start time in nanotime is unknown. As result, the measured duration
             // could be affected by system clock correction
+
             val finishTime = System.currentTimeMillis()
             buildSession?.also {
                 if (it.buildStartedTime != null) {

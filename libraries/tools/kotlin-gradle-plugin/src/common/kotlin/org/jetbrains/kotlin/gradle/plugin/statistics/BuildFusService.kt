@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.component.BuildIdentifier
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -29,6 +30,8 @@ import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.currentBuild
+import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
@@ -52,6 +55,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
     interface Parameters : BuildServiceParameters {
         val configurationMetrics: ListProperty<MetricContainer>
         val useBuildFinishFlowAction: Property<Boolean>
+        val buildId: Property<String>
     }
 
     private val fusMetricsConsumer = NonSynchronizedMetricsContainer()
@@ -99,8 +103,9 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             // so there is a change that no VariantImplementationFactory will be found
             return project.gradle.sharedServices.registerIfAbsent(serviceName, BuildFusService::class.java) { spec ->
                 KotlinBuildStatsService.getOrCreateInstance(project)
+                val buildId = generateBuildId(project.currentBuildId())
                 KotlinBuildStatsService.applyIfInitialised {
-                    it.recordProjectsEvaluated(project)
+                    it.recordProjectsEvaluated(project, buildId)
                 }
 
                 spec.parameters.configurationMetrics.add(project.provider {
@@ -115,12 +120,23 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
                     KotlinBuildStatHandler.collectProjectConfigurationTimeMetrics(project)
                 })
                 spec.parameters.useBuildFinishFlowAction.set(GradleVersion.current().baseVersion >= GradleVersion.version("8.1"))
+                spec.parameters.buildId.set(project.provider { generateBuildId(project.currentBuildId()) })
             }.also { buildService ->
                 BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)
                 if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
                     StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult()
                 }
             }
+        }
+        private fun generateBuildId(buildIdentifier: BuildIdentifier): String {
+//            val buildName = if (GradleVersion.current().baseVersion < GradleVersion.version("8.2")) {
+//                buildIdentifier.name
+//            } else {
+//                buildIdentifier.buildPath
+//            }
+//                .replace("\\W+", "")
+//            return "${buildName}_${buildIdentifier.hashCode()}"
+                return buildIdentifier.hashCode().toString()
         }
     }
 
@@ -146,10 +162,11 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
         KotlinBuildStatHandler.reportGlobalMetrics(fusMetricsConsumer)
         parameters.configurationMetrics.orElse(emptyList()).get().forEach { it.addToConsumer(fusMetricsConsumer) }
         KotlinBuildStatsService.applyIfInitialised {
-            it.recordBuildFinish(action, buildFailed, fusMetricsConsumer)
+            it.recordBuildFinish(action, buildFailed, fusMetricsConsumer, parameters.buildId.get())
         }
         KotlinBuildStatsService.closeServices()
     }
+
     private fun reportTaskMetrics(taskExecutionResult: TaskExecutionResult, event: TaskFinishEvent) {
         val totalTimeMs = event.result.endTime - event.result.startTime
         val buildMetrics = taskExecutionResult.buildMetrics
