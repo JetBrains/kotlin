@@ -3,16 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.types.BirType
@@ -23,13 +19,12 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
+class BirTypeParameterImpl(
     sourceSpan: SourceSpan,
-    @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: TypeParameterDescriptor?,
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
+    descriptor: TypeParameterDescriptor?,
     variance: Variance,
     index: Int,
     isReified: Boolean,
@@ -39,7 +34,14 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         get() = this
 
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(8)
@@ -53,7 +55,6 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _signature: IdSignature? = signature
-
     override var signature: IdSignature?
         get() {
             recordPropertyRead(9)
@@ -66,11 +67,7 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val annotations: BirImplChildElementList<BirConstructorCall> =
-            BirImplChildElementList(this, 1, false)
-
     private var _origin: IrDeclarationOrigin = origin
-
     override var origin: IrDeclarationOrigin
         get() {
             recordPropertyRead(2)
@@ -84,7 +81,6 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _name: Name = name
-
     override var name: Name
         get() {
             recordPropertyRead(3)
@@ -97,8 +93,10 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _variance: Variance = variance
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: TypeParameterDescriptor? = descriptor
 
+    private var _variance: Variance = variance
     override var variance: Variance
         get() {
             recordPropertyRead(4)
@@ -112,7 +110,6 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _index: Int = index
-
     override var index: Int
         get() {
             recordPropertyRead(5)
@@ -126,7 +123,6 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isReified: Boolean = isReified
-
     override var isReified: Boolean
         get() {
             recordPropertyRead(6)
@@ -140,7 +136,6 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _superTypes: List<BirType> = superTypes
-
     override var superTypes: List<BirType>
         get() {
             recordPropertyRead(7)
@@ -153,16 +148,25 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
+    override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
+
+    init {
+    }
+
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         annotations.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            else -> throwChildForReplacementNotFound(old)
+        }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.annotations
-        else -> throwChildrenListWithIdNotFound(id)
+    override fun getChildrenListById(id: Int): BirChildElementList<*> {
+        return when (id) {
+            1 -> this.annotations
+            else -> throwChildrenListWithIdNotFound(id)
+        }
     }
 }

@@ -6,146 +6,24 @@
 package org.jetbrains.kotlin.bir.generator.model
 
 import org.jetbrains.kotlin.bir.generator.BirTree
-import org.jetbrains.kotlin.bir.generator.childElementList
-import org.jetbrains.kotlin.bir.generator.config.*
-import org.jetbrains.kotlin.bir.generator.elementBaseType
-import org.jetbrains.kotlin.bir.generator.util.depthFirstSearch
+import org.jetbrains.kotlin.bir.generator.elementImplBaseType
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
-import org.jetbrains.kotlin.utils.addToStdlib.castAll
-import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
-private object InferredOverriddenType : TypeRefWithNullability {
-
-    context(ImportCollector)
-    override fun renderTo(appendable: Appendable) {
-        renderingIsNotSupported()
-    }
-
-    override fun substitute(map: TypeParameterSubstitutionMap) = this
-
-    override val nullable: Boolean
-        get() = false
-
-    override fun copy(nullable: Boolean) = this
-}
-
-data class Model(val elements: List<Element>, val rootElement: Element)
-
-fun config2model(config: Config): Model {
-    val ec2el = mutableMapOf<ElementConfig, Element>()
-
-    val elements = config.elements.map { ec ->
-        Element(
-            config = ec,
-            name = ec.name,
-            packageName = ec.category.packageName,
-            params = ec.params,
-            fields = ec.fields.mapTo(mutableSetOf(), ::transformFieldConfig),
-        ).also {
-            ec2el[ec.element] = it
-        }
-    }
-
-    val rootElement = replaceElementRefs(config, ec2el)
-    configureInterfacesAndAbstractClasses(elements)
-    addAbstractElement(elements)
-    adjustSymbolOwners(elements)
-    markLeaves(elements)
-    configureDescriptorApiAnnotation(elements)
-    processFieldOverrides(elements)
-    computeFieldProperties(elements)
-    computeFieldImpls(elements)
-
-    return Model(elements, rootElement)
-}
-
-private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
-    is SimpleFieldConfig -> {
-        if (fc.isChild) check(fc.nullable) { "All single child properties must be nullable" }
-        SingleField(
-            fc,
-            fc.name,
-            fc.type?.copy(fc.nullable) ?: InferredOverriddenType,
-            fc.mutable,
-            fc.isChild,
-            fc.baseDefaultValue,
-        )
-    }
-    is ListFieldConfig -> {
-        val listType = when {
-            fc.isChild -> childElementList
-            fc.mutability == ListFieldConfig.Mutability.List -> type("kotlin.collections", "MutableList")
-            fc.mutability == ListFieldConfig.Mutability.Array -> type("kotlin.", "Array")
-            else -> type("kotlin.collections", "List")
-        }
-        ListField(
-            fc,
-            fc.name,
-            fc.elementType ?: InferredOverriddenType,
-            listType.copy(fc.nullable),
-            !fc.isChild && fc.mutability == ListFieldConfig.Mutability.Var,
-            fc.isChild,
-            fc.baseDefaultValue,
-        )
-    }
-}
-
-@OptIn(UnsafeCastFunction::class)
-@Suppress("UNCHECKED_CAST")
-private fun replaceElementRefs(config: Config, mapping: Map<ElementConfig, Element>): Element {
-    val visited = mutableMapOf<TypeRef, TypeRef>()
-
-    fun transform(type: TypeRef): TypeRef {
-        visited[type]?.let {
-            return it
-        }
-
-        return when (type) {
-            is ElementConfigOrRef -> {
-                val args = type.args.mapValues { transform(it.value) }
-                val el = mapping.getValue(type.element)
-                ElementRef(el, args, type.nullable)
-            }
-            is ClassRef<*> -> {
-                @Suppress("UNCHECKED_CAST") // this is the upper bound, compiler could know that, right?
-                type as ClassRef<TypeParameterRef>
-
-                val args = type.args.mapValues { transform(it.value) }
-                type.copy(args = args)
-            }
-            else -> type
-        }.also { visited[type] = it }
-    }
-
-    val rootEl = transform(config.rootElement) as GenericElementRef<Element, Field>
-
-    for (ec in config.elements) {
-        val el = mapping[ec.element]!!
-        val (elParents, otherParents) = ec.parents
-            .map { transform(it) }
-            .partitionIsInstance<TypeRef, ElementRef>()
-        el.elementParents = elParents.takeIf { it.isNotEmpty() || el == rootEl.element } ?: listOf(rootEl)
-        el.otherParents = otherParents.castAll<ClassRef<*>>().toMutableList()
-
-        for (field in el.fields) {
-            when (field) {
-                is SingleField -> {
-                    field.typeRef = transform(field.typeRef) as TypeRefWithNullability
-                }
-                is ListField -> {
-                    field.elementType = transform(field.elementType)
-                }
-            }
-        }
-    }
-
-    return rootEl.element
+fun transformModel(model: Model) {
+    configureInterfacesAndAbstractClasses(model.elements)
+    addPureAbstractElement(model.elements, elementImplBaseType)
+    adjustSymbolOwners(model.elements)
+    markLeaves(model.elements)
+    processFieldOverrides(model.elements)
+    computeFieldProperties(model.elements)
+    computeFieldFakeOverrides(model.elements)
+    addWalkableChildren(model.elements)
 }
 
 private fun markLeaves(elements: List<Element>) {
     val leaves = elements.toMutableSet()
+    leaves -= BirTree.rootElement
 
     for (el in elements) {
         for (parent in el.elementParents) {
@@ -161,40 +39,19 @@ private fun markLeaves(elements: List<Element>) {
 }
 
 private fun adjustSymbolOwners(elements: List<Element>) {
-    for (el in elements) {
-        if (depthFirstSearch(ElementRef(el)) { it.element.elementParents }.any { it.element.name == BirTree.symbolOwner.name }) {
-            val symbolField = el.fields.singleOrNull { it.name == "symbol" } as SingleField?
+    for (element in elements) {
+        if (element.elementParentsRecursively().any { it.element.name == BirTree.symbolOwner.name }) {
+            val symbolField = element.fields.singleOrNull { it.name == "symbol" } as SingleField?
             if (symbolField != null) {
-                el.fields.remove(symbolField)
+                element.fields.remove(symbolField)
 
                 val symbolType = when (val type = symbolField.typeRef) {
                     is ClassRef<*> -> type
                     is TypeVariable -> type.bounds.single() as ClassRef<*>
                     else -> error(type)
                 }
-                el.ownerSymbolType = symbolType
-                el.otherParents += symbolType
-            }
-        }
-    }
-}
-
-private fun addAbstractElement(elements: List<Element>) {
-    for (el in elements) {
-        if (el.kind!!.typeKind == TypeKind.Class && el.elementParents.none { it.element.kind!!.typeKind == TypeKind.Class }) {
-            el.otherParents += elementBaseType
-        }
-    }
-}
-
-private fun configureDescriptorApiAnnotation(elements: List<Element>) {
-    for (el in elements) {
-        for (field in el.fields) {
-            val type = field.typeRef
-            if (type is ClassRef<*> && type.packageName.startsWith("org.jetbrains.kotlin.descriptors") &&
-                type.simpleName.endsWith("Descriptor") && type.simpleName != "ModuleDescriptor"
-            ) {
-                field.needsDescriptorApiAnnotation = true
+                element.ownerSymbolType = symbolType
+                element.otherParents += symbolType
             }
         }
     }
@@ -208,8 +65,7 @@ private fun processFieldOverrides(elements: List<Element>) {
                     val overriddenField = parent.element.fields.singleOrNull { it.name == field.name }
                     if (overriddenField != null) {
                         field.isOverride = true
-                        field.needsDescriptorApiAnnotation =
-                            field.needsDescriptorApiAnnotation || overriddenField.needsDescriptorApiAnnotation
+                        field.optInAnnotation = field.optInAnnotation ?: overriddenField.optInAnnotation
 
                         fun transformInferredType(type: TypeRef, overriddenType: TypeRef) =
                             type.takeUnless { it is InferredOverriddenType } ?: overriddenType
@@ -219,7 +75,7 @@ private fun processFieldOverrides(elements: List<Element>) {
                                     transformInferredType(field.typeRef, (overriddenField as SingleField).typeRef) as TypeRefWithNullability
                             }
                             is ListField -> {
-                                field.elementType = transformInferredType(field.elementType, (overriddenField as ListField).elementType)
+                                field.baseType = transformInferredType(field.baseType, (overriddenField as ListField).baseType)
                             }
                         }
 
@@ -244,45 +100,37 @@ private fun computeFieldProperties(elements: List<Element>) {
     }
 }
 
-
-private fun computeFieldImpls(elements: List<Element>) {
+private fun computeFieldFakeOverrides(elements: List<Element>) {
     for (element in elements.filter { it.isLeaf }) {
-        val allFieldsMap = mutableMapOf<String, Field>()
-        val visitedParents = hashSetOf<Element>()
-        fun visitParents(visited: Element) {
-            visited.elementParents.forEach { parent ->
-                if (visitedParents.add(parent.element)) {
-                    visitParents(parent.element)
-                }
-            }
+        val allFields = element.allFieldsRecursively()
+        element.fieldFakeOverrides += allFields.associateWith { FieldFakeOverride(it) }
 
-            visited.fields.forEach { field ->
-                allFieldsMap[field.name] = field
-            }
-        }
-
-        visitParents(element)
-        val allFieldImpls = allFieldsMap.values.map { FieldImpl(it) }
-        element.fieldImpls = allFieldImpls
-
-        var nextPropertyId = allFieldImpls.count { it.field is ListField && it.field.isChild } + 1
-        allFieldImpls
-            .filter { it.field.isReadWriteTrackedProperty }
+        var nextPropertyId = element.fieldFakeOverrides.count { it.key is ListField && it.key.isChild } + 1
+        element.fieldFakeOverrides
+            .filterKeys { it.isReadWriteTrackedProperty }
+            .entries
             .sortedBy {
-                val field = it.field
+                val field = it.key
                 // order by the most likely to change
                 when {
                     field.isChild -> 1
                     field.typeRef is GenericElementRef<*, *> -> 2
-                    field is ListField && field.elementType is GenericElementRef<*, *> -> 3
+                    field is ListField && field.baseType is GenericElementRef<*, *> -> 3
                     field.name == "sourceSpan" -> 11
                     field.name == "signature" -> 12
                     else -> 10
                 }
             }
             .forEach {
-                it.propertyId = (nextPropertyId++).coerceAtMost(14) // see [BirImplElementBase] for this maximum value
+                it.value.propertyId = (nextPropertyId++).coerceAtMost(14) // see [BirImplElementBase] for this maximum value
             }
+    }
+}
+
+private fun addWalkableChildren(elements: List<Element>) {
+    for (element in elements) {
+        val walkableChildren = element.allFieldsRecursively().filter { it.isChild }
+        element.walkableChildren = reorderIfNecessary(walkableChildren.toList(), element.childrenOrderOverride)
     }
 }
 

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.expressions.impl
@@ -27,7 +27,14 @@ class BirWhileLoopImpl(
     label: String?,
 ) : BirWhileLoop() {
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(7)
@@ -41,7 +48,6 @@ class BirWhileLoopImpl(
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
-
     override var attributeOwnerId: BirAttributeContainer
         get() {
             recordPropertyRead(3)
@@ -55,7 +61,6 @@ class BirWhileLoopImpl(
         }
 
     private var _type: BirType = type
-
     override var type: BirType
         get() {
             recordPropertyRead(4)
@@ -69,7 +74,6 @@ class BirWhileLoopImpl(
         }
 
     private var _origin: IrStatementOrigin? = origin
-
     override var origin: IrStatementOrigin?
         get() {
             recordPropertyRead(5)
@@ -83,7 +87,6 @@ class BirWhileLoopImpl(
         }
 
     private var _body: BirExpression? = body
-
     override var body: BirExpression?
         get() {
             recordPropertyRead(1)
@@ -98,7 +101,6 @@ class BirWhileLoopImpl(
         }
 
     private var _condition: BirExpression? = condition
-
     override var condition: BirExpression?
         get() {
             recordPropertyRead(2)
@@ -113,7 +115,6 @@ class BirWhileLoopImpl(
         }
 
     private var _label: String? = label
-
     override var label: String?
         get() {
             recordPropertyRead(6)
@@ -125,25 +126,29 @@ class BirWhileLoopImpl(
                 invalidate(6)
             }
         }
+
+
     init {
-        initChild(_body)
         initChild(_condition)
+        initChild(_body)
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        _body?.acceptLite(visitor)
         _condition?.acceptLite(visitor)
+        _body?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        this._body === old -> {
-            this._body = new as BirExpression?
-            1
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            this._condition === old -> {
+                this._condition = new as BirExpression?
+                2
+            }
+            this._body === old -> {
+                this._body = new as BirExpression?
+                1
+            }
+            else -> throwChildForReplacementNotFound(old)
         }
-        this._condition === old -> {
-            this._condition = new as BirExpression?
-            2
-        }
-        else -> throwChildForReplacementNotFound(old)
     }
 }

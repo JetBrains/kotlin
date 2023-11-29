@@ -5,30 +5,45 @@
 
 package org.jetbrains.kotlin.bir.generator.config
 
-import org.jetbrains.kotlin.generators.tree.TypeRef
-import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
-import org.jetbrains.kotlin.generators.tree.TypeVariable
-import org.jetbrains.kotlin.generators.tree.type
+import org.jetbrains.kotlin.bir.generator.BirTree
+import org.jetbrains.kotlin.bir.generator.childElementList
+import org.jetbrains.kotlin.bir.generator.model.Element
+import org.jetbrains.kotlin.bir.generator.model.ElementOrRef
+import org.jetbrains.kotlin.bir.generator.model.InferredOverriddenType
+import org.jetbrains.kotlin.bir.generator.model.SingleField
+import org.jetbrains.kotlin.bir.generator.model.ListField
+import org.jetbrains.kotlin.bir.generator.model.Model
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 
 abstract class AbstractTreeBuilder {
-    private val configurationCallbacks = mutableListOf<() -> ElementConfig>()
+    private val configurationCallbacks = mutableListOf<() -> Element>()
 
-    abstract val rootElement: ElementConfig
+    abstract val rootElement: Element
 
-    fun element(category: ElementConfig.Category, name: String? = null, initializer: ElementConfig.() -> Unit = {}): ElementConfigDel {
+    fun element(category: Element.Category, name: String? = null, initializer: Element.() -> Unit = {}): ElementConfigDel {
         val del = ElementConfigDel(category, name)
         configurationCallbacks.add {
-            del.element!!.apply { initializer() }
+            del.element!!.apply {
+                if (this != BirTree.rootElement) {
+                    parent(BirTree.rootElement)
+                }
+                initializer()
+            }
         }
         return del
     }
 
-    protected fun ElementConfig.parent(type: TypeRef) {
-        parents.add(type)
+    protected fun Element.parent(type: ClassRef<*>) {
+        otherParents.add(type)
+    }
+
+    protected fun Element.parent(type: ElementOrRef) {
+        elementParents.add(ElementRef(type.element, type.args, type.nullable))
     }
 
     protected fun param(name: String, vararg bounds: TypeRef, variance: Variance = Variance.INVARIANT): TypeVariable {
@@ -41,33 +56,48 @@ abstract class AbstractTreeBuilder {
         nullable: Boolean = false,
         mutable: Boolean = true,
         isChild: Boolean = false,
-        initializer: SimpleFieldConfig.() -> Unit = {}
-    ): SimpleFieldConfig {
+        initializer: SingleField.() -> Unit = {},
+    ): SingleField {
         checkChildType(isChild, type, name)
-        return SimpleFieldConfig(name, type, nullable, mutable, isChild).apply(initializer)
+        return SingleField(name, type?.copy(nullable) ?: InferredOverriddenType, mutable, isChild).apply(initializer)
     }
 
     protected fun listField(
         name: String,
         elementType: TypeRef?,
         nullable: Boolean = false,
-        mutability: ListFieldConfig.Mutability = ListFieldConfig.Mutability.Immutable,
+        mutability: ListField.Mutability = ListField.Mutability.Immutable,
         isChild: Boolean = false,
-        initializer: ListFieldConfig.() -> Unit = {}
-    ): ListFieldConfig {
+        initializer: ListField.() -> Unit = {},
+    ): ListField {
         checkChildType(isChild, elementType, name)
-        return ListFieldConfig(name, elementType, nullable, mutability, isChild).apply(initializer)
+        val listType = when {
+            isChild -> childElementList
+            mutability == ListField.Mutability.List -> StandardTypes.mutableList
+            mutability == ListField.Mutability.Array -> StandardTypes.array
+            else -> StandardTypes.list
+        }
+        return ListField(
+            name = name,
+            baseType = elementType ?: InferredOverriddenType,
+            listType = listType,
+            isNullable = nullable,
+            mutable = mutability == ListField.Mutability.Var && !isChild,
+            isChild = isChild,
+        ).apply(initializer)
     }
 
     private fun checkChildType(isChild: Boolean, type: TypeRef?, name: String) {
         if (isChild) {
-            require(type == null || type is ElementConfigOrRef) { "Field $name is a child field but has non-element type $type" }
+            require(type == null || type is GenericElementOrRef<*, *>) {
+                "Field $name is a child field but has non-element type $type"
+            }
         }
     }
 
-    fun build(): Config {
+    fun build(): Model {
         val elements = configurationCallbacks.map { it() }
-        return Config(elements, rootElement)
+        return Model(elements, rootElement)
     }
 
     companion object {
@@ -78,19 +108,19 @@ abstract class AbstractTreeBuilder {
 }
 
 class ElementConfigDel(
-    private val category: ElementConfig.Category,
-    private val name: String?
-) : ReadOnlyProperty<AbstractTreeBuilder, ElementConfig>, PropertyDelegateProvider<AbstractTreeBuilder, ElementConfigDel> {
-    var element: ElementConfig? = null
+    private val category: Element.Category,
+    private val name: String?,
+) : ReadOnlyProperty<AbstractTreeBuilder, Element>, PropertyDelegateProvider<AbstractTreeBuilder, ElementConfigDel> {
+    var element: Element? = null
         private set
 
-    override fun getValue(thisRef: AbstractTreeBuilder, property: KProperty<*>): ElementConfig {
+    override fun getValue(thisRef: AbstractTreeBuilder, property: KProperty<*>): Element {
         return element!!
     }
 
     override fun provideDelegate(thisRef: AbstractTreeBuilder, property: KProperty<*>): ElementConfigDel {
         val path = thisRef.javaClass.name + "." + property.name
-        element = ElementConfig(path, name ?: property.name, category)
+        element = Element(name ?: property.name.replaceFirstChar(Char::uppercaseChar), path, category)
         return this
     }
 }
