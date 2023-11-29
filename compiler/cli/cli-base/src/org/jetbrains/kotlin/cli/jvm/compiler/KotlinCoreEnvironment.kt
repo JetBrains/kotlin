@@ -531,12 +531,31 @@ class KotlinCoreEnvironment private constructor(
             DefaultKotlinCoreApplicationEnvironmentConfigurations.TEST,
         )
 
+        /**
+         * Returns a potentially shared application environment for the given [applicationEnvironmentConfiguration]. Shared application
+         * environments are alive until all their projects have been disposed, which is tracked by each given [projectDisposable]. The
+         * application environment's own disposable is created by this function and available via
+         * [KotlinCoreApplicationEnvironment.getParentDisposable].
+         */
         fun getOrCreateApplicationEnvironment(
             projectDisposable: Disposable,
             configuration: CompilerConfiguration,
             applicationEnvironmentConfiguration: KotlinCoreApplicationEnvironmentConfiguration,
         ): KotlinCoreApplicationEnvironment {
             synchronized(APPLICATION_LOCK) {
+                // There can only ever be one shared application environment, because its application is registered with the singleton
+                // `ApplicationManager`. We must only share an application environment to requesters who ask for the same application
+                // environment configuration, because otherwise the requester will receive an incorrectly configured application. Hence,
+                // while an application environment for some configuration `C1` is currently being shared, all requests with other
+                // configurations must wait. These waiting threads will be notified after the last use of the current shared application
+                // environment (for configuration `C1`) has been disposed.
+                while (
+                    ourApplicationEnvironment != null &&
+                    ourApplicationEnvironment?.configuration != applicationEnvironmentConfiguration
+                ) {
+                    APPLICATION_LOCK.wait()
+                }
+
                 if (ourApplicationEnvironment == null) {
                     val disposable = Disposer.newDisposable("Disposable for the KotlinCoreApplicationEnvironment")
                     ourApplicationEnvironment =
@@ -549,9 +568,11 @@ class KotlinCoreEnvironment private constructor(
                     Disposer.register(disposable, Disposable {
                         synchronized(APPLICATION_LOCK) {
                             ourApplicationEnvironment = null
+                            APPLICATION_LOCK.notifyAll()
                         }
                     })
                 }
+
                 try {
                     val disposeAppEnv =
                         CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value.toBooleanLenient() != true
