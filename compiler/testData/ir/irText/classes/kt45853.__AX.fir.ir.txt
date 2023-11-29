@@ -1,6 +1,10 @@
 CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.X]
   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AX
   CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.AX [primary]
+  FUN FAKE_OVERRIDE name:getA visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:@[FlexibleNullability] <root>.X? [fake_override]
+    overridden:
+      public abstract fun getA (): @[FlexibleNullability] <root>.X? declared in <root>.X
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.X
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:a visibility:public modality:OPEN [val]
     overridden:
       public abstract a: <root>.A? [val]
@@ -11,10 +15,6 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibili
       overridden:
         public abstract fun <get-a> (): <root>.A? declared in <root>.A
       $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.AX
-  FUN FAKE_OVERRIDE name:getA visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:@[FlexibleNullability] <root>.X? [fake_override]
-    overridden:
-      public abstract fun getA (): @[FlexibleNullability] <root>.X? declared in <root>.X
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.X
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
     overridden:
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A

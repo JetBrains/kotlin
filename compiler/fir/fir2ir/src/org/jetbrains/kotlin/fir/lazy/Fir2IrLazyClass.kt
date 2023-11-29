@@ -193,9 +193,7 @@ class Fir2IrLazyClass(
             for (name in scope.getCallableNames()) {
                 scope.processFunctionsByName(name) l@{ symbol ->
                     when {
-                        symbol.isSubstitutionOrIntersectionOverride -> {}
                         !shouldBuildStub(symbol.fir) -> {}
-                        symbol.containingClassLookupTag() != ownerLookupTag -> {}
                         else -> {
                             // Lazy declarations are created together with their symbol, so it's safe to take the owner here
                             @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -208,9 +206,7 @@ class Fir2IrLazyClass(
                         symbol is FirFieldSymbol && (symbol.isStatic || symbol.containingClassLookupTag() == ownerLookupTag) -> {
                             result += declarationStorage.getOrCreateIrField(symbol.fir, this)
                         }
-                        symbol.isSubstitutionOrIntersectionOverride -> {}
                         !shouldBuildStub(symbol.fir) -> {}
-                        symbol.containingClassLookupTag() != ownerLookupTag -> {}
                         symbol !is FirPropertySymbol -> {}
                         else -> {
                             // Lazy declarations are created together with their symbol, so it's safe to take the owner here
@@ -227,14 +223,6 @@ class Fir2IrLazyClass(
 
         with(classifierStorage) {
             result.addAll(getFieldsWithContextReceiversForClass(this@Fir2IrLazyClass, fir))
-        }
-
-        for (name in scope.getCallableNames()) {
-            getFakeOverridesByName(name).forEach {
-                if (it !is IrField) { // All fields are being added from scopes that's why filter out fields to get rid of duplicates
-                    result += it
-                }
-            }
         }
 
         result
