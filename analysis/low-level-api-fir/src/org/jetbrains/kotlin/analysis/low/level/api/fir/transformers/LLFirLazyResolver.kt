@@ -56,47 +56,39 @@ internal abstract class LLFirLazyResolver(
         if (target !is FirDeclaration) return
 
         checkFunctionParametersAreResolved(target)
-        checkPropertyAccessorsAreResolved(target)
-        checkPropertyBackingFieldIsResolved(target)
+        checkVariableSubDeclarationsAreResolved(target)
         checkTypeParametersAreResolved(target)
-        checkScriptDependentDeclaration(target)
+        checkScriptDependentDeclarationsAreResolved(target)
     }
 
-    private fun checkPropertyAccessorsAreResolved(declaration: FirDeclaration) {
-        if (declaration is FirProperty) {
-            declaration.getter?.let { checkIsResolved(it) }
-            declaration.setter?.let { checkIsResolved(it) }
-        }
+    private fun checkVariableSubDeclarationsAreResolved(declaration: FirDeclaration) {
+        if (declaration !is FirVariable) return
+
+        declaration.getter?.let(::checkIsResolved)
+        declaration.setter?.let(::checkIsResolved)
+        declaration.backingField?.let(::checkIsResolved)
     }
-
-
-    private fun checkPropertyBackingFieldIsResolved(declaration: FirDeclaration) {
-        if (declaration is FirProperty) {
-            declaration.backingField?.let { checkIsResolved(it) }
-        }
-    }
-
 
     private fun checkFunctionParametersAreResolved(declaration: FirDeclaration) {
-        if (declaration is FirFunction) {
-            for (parameter in declaration.valueParameters) {
-                checkIsResolved(parameter)
-            }
+        if (declaration !is FirFunction) return
+
+        for (parameter in declaration.valueParameters) {
+            checkIsResolved(parameter)
         }
     }
 
     private fun checkTypeParametersAreResolved(declaration: FirDeclaration) {
-        if (declaration is FirTypeParameterRefsOwner) {
-            for (parameter in declaration.typeParameters) {
-                if (parameter is FirTypeParameter) {
-                    checkIsResolved(parameter)
-                }
-            }
+        if (declaration !is FirTypeParameterRefsOwner) return
+
+        for (parameter in declaration.typeParameters) {
+            if (parameter !is FirTypeParameter) continue
+            checkIsResolved(parameter)
         }
     }
 
-    private fun checkScriptDependentDeclaration(declaration: FirDeclaration) {
+    private fun checkScriptDependentDeclarationsAreResolved(declaration: FirDeclaration) {
         if (declaration !is FirScript) return
+
         declaration.forEachDependentDeclaration(::checkIsResolved)
     }
 }
