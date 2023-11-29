@@ -261,15 +261,15 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     class KlibToolLinker(
-        module: ModuleDescriptor, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable
+            module: ModuleDescriptor, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable
     ) : KotlinIrLinker(module, KlibToolLogger, irBuiltIns, symbolTable, emptyList()) {
         override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-            linker = this,
-            symbolTable = symbolTable,
-            mangler = KonanManglerIr,
-            typeSystem = IrTypeSystemContextImpl(builtIns),
-            friendModules = emptyMap(),
-            partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
+                linker = this,
+                symbolTable = symbolTable,
+                mangler = KonanManglerIr,
+                typeSystem = IrTypeSystemContextImpl(builtIns),
+                friendModules = emptyMap(),
+                partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
         )
         override val translationPluginContext: TranslationPluginContext
             get() = TODO("Not needed for ir dumping")
