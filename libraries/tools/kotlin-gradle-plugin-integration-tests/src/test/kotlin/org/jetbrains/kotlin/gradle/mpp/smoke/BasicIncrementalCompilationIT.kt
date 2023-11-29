@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
+/**
+ * Basic smoke tests assert that the baseline IC is reasonable: if we do a local change, only a local rebuild is performed.
+ */
 @DisplayName("Basic incremental scenarios with KMP - K2")
 @MppGradlePluginTests
 open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
@@ -24,7 +27,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
          */
 
         testCase(
-            incrementalPath = touchAndGet("app", "commonMain", "PlainPublicClass.kt"),
+            incrementalPath = resolvePath("app", "commonMain", "Unused.kt").addPrivateVal(),
             executedTasks = setOf(
                 ":app:compileKotlinJvm",
                 ":app:compileKotlinJs",
@@ -36,7 +39,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
          * Step 2: touch app:jvm, no abi change
          */
 
-        val appJvmClassKt = touchAndGet("app", "jvmMain", "PlainPublicClassJvm.kt")
+        val appJvmClassKt = resolvePath("app", "jvmMain", "UnusedJvm.kt").addPrivateVal()
         testCase(
             incrementalPath = null, //TODO: it just doesn't print "Incremental compilation completed", why? (KT-63476)
             executedTasks = setOf(":app:compileKotlinJvm")
@@ -49,7 +52,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
          */
 
         testCase(
-            incrementalPath = touchAndGet("app", "jsMain", "PlainPublicClassJs.kt"),
+            incrementalPath = resolvePath("app", "jsMain", "UnusedJs.kt").addPrivateVal(),
             executedTasks = setOf(":app:compileKotlinJs"),
         )
 
@@ -57,7 +60,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
          * Step 4: touch app:native, no abi change
          */
 
-        touchAndGet("app", "nativeMain", "PlainPublicClassNative.kt")
+        resolvePath("app", "nativeMain", "UnusedNative.kt").addPrivateVal()
         testCase(
             incrementalPath = null, // no native incremental compilation - see KT-62824
             executedTasks = setOf(":app:compileKotlinNative"),
@@ -68,7 +71,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
          */
 
         testCase(
-            incrementalPath = touchAndGet("lib", "commonMain", "CommonUtil.kt"),
+            incrementalPath = resolvePath("lib", "commonMain", "UsedInLibPlatformTests.kt").addPrivateVal(),
             executedTasks = mainCompileTasks // TODO: KT-62642 - bad compile avoidance here
         )
 
@@ -76,7 +79,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
          * Step 6: touch lib:jvm, no abi change
          */
 
-        val libJvmUtilKt = touchAndGet("lib", "jvmMain", "libJvmPlatformUtil.kt")
+        val libJvmUtilKt = resolvePath("lib", "jvmMain", "UsedInAppJvmAndLibTests.kt").addPrivateVal()
         testCase(
             incrementalPath = null, //TODO: it just doesn't print "Incremental compilation completed", why? (KT-63476)
             executedTasks = setOf(":app:compileKotlinJvm", ":lib:compileKotlinJvm"),
@@ -89,7 +92,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
          */
 
         testCase(
-            incrementalPath = touchAndGet("lib", "jsMain", "libJsPlatformUtil.kt"),
+            incrementalPath = resolvePath("lib", "jsMain", "UsedInAppJsAndLibTests.kt").addPrivateVal(),
             executedTasks = setOf(":app:compileKotlinJs", ":lib:compileKotlinJs"),
         )
 
@@ -97,7 +100,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
          * Step 8: touch lib:native, no abi change
          */
 
-        touchAndGet("lib", "nativeMain", "libNativePlatformUtil.kt")
+        resolvePath("lib", "nativeMain", "UsedInAppNativeAndLibTests.kt").addPrivateVal()
         testCase(
             incrementalPath = null,
             executedTasks = setOf(":app:compileKotlinNative", ":lib:compileKotlinNative"),

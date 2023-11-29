@@ -1,10 +1,10 @@
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TrivialTest {
+class AppCommonTest {
 
     @Test
     fun sayYesSaysYes() {
-        assertEquals("Yes", sayYes())
+        assertEquals("Yes", appCommonFunForAppPlatformAndAppCommonTest())
     }
 }

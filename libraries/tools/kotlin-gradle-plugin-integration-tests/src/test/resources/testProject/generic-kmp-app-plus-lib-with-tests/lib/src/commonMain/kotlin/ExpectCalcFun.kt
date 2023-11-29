@@ -1,1 +1,1 @@
-expect fun calc(expression: String): Double
+expect fun expectActualCalc(expression: String): Double

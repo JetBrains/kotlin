@@ -1,1 +1,0 @@
-fun useLibJsPlatformUtil() = libJsPlatformUtil()

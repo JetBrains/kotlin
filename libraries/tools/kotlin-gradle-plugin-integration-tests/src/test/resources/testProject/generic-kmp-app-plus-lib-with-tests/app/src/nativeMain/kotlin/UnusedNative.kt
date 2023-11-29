@@ -1,3 +1,3 @@
-class PlainPublicClassNative {
+class AppNativeUnusedClass {
     fun queueSomething() = Unit
 }

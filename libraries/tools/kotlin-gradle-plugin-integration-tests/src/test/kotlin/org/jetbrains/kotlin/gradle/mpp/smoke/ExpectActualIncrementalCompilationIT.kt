@@ -33,9 +33,9 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
             build("assemble")
 
             listOf(
-                kotlinSourcesDir("jvmMain").resolve("FooJvm.kt"),
-                kotlinSourcesDir("nativeMain").resolve("FooNative.kt"),
-                kotlinSourcesDir("jsMain").resolve("FooJs.kt")
+                kotlinSourcesDir("jvmMain").resolve("ActualFunFoo.kt"),
+                kotlinSourcesDir("nativeMain").resolve("ActualFunFoo.kt"),
+                kotlinSourcesDir("jsMain").resolve("ActualFunFoo.kt")
             ).forEach {
                 it.replaceFirst("\"foo", "\"bar")
             }
@@ -44,9 +44,9 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
                 assertTasksExecuted(":compileKotlinJvm", ":compileKotlinJs", ":compileKotlinNative")
                 assertIncrementalCompilation(
                     listOf(
-                        kotlinSourcesDir("jvmMain").resolve("FooJvm.kt"),
-                        kotlinSourcesDir("jsMain").resolve("FooJs.kt"),
-                        kotlinSourcesDir("commonMain").resolve("Foo.kt")
+                        kotlinSourcesDir("jvmMain").resolve("ActualFunFoo.kt"),
+                        kotlinSourcesDir("jsMain").resolve("ActualFunFoo.kt"),
+                        kotlinSourcesDir("commonMain").resolve("ExpectFunFoo.kt")
                     ).relativizeTo(projectPath)
                 )
             }
@@ -59,8 +59,8 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
             build("assemble")
 
-            val valueKtPath = kotlinSourcesDir("commonMain").resolve("Value.kt")
-            valueKtPath.replaceFirst(
+            val unusedKtPath = kotlinSourcesDir("commonMain").resolve("Unused.kt")
+            unusedKtPath.replaceFirst(
                 "val secret = 1",
                 "val secret = \"k2\""
             )
@@ -69,10 +69,10 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
                 assertTasksExecuted(":compileKotlinJvm", ":compileKotlinJs", ":compileKotlinNative")
                 assertIncrementalCompilation(
                     listOf(
-                        kotlinSourcesDir("jvmMain").resolve("FooJvm.kt"),
-                        kotlinSourcesDir("jsMain").resolve("FooJs.kt"),
-                        kotlinSourcesDir("commonMain").resolve("Foo.kt"),
-                        valueKtPath
+                        kotlinSourcesDir("jvmMain").resolve("ActualFunFoo.kt"),
+                        kotlinSourcesDir("jsMain").resolve("ActualFunFoo.kt"),
+                        kotlinSourcesDir("commonMain").resolve("ExpectFunFoo.kt"),
+                        unusedKtPath
                     ).relativizeTo(projectPath)
                 )
             }
@@ -85,13 +85,17 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
             build("assemble")
 
-            kotlinSourcesDir("commonMain").resolve("Bar.kt").appendText("val irrelevant = 2")
+            kotlinSourcesDir("commonMain").resolve("ExpectClassBar.kt").appendText("val irrelevant = 2")
 
             build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTasksExecuted(":compileKotlinJvm", ":compileKotlinJs", ":compileKotlinNative")
-                assertIncrementalCompilation(listOf("commonMain", "jvmMain", "jsMain").map { sourceSet ->
-                    kotlinSourcesDir(sourceSet).resolve("Bar.kt")
-                }.relativizeTo(projectPath))
+                assertIncrementalCompilation(
+                    listOf(
+                        kotlinSourcesDir("jvmMain").resolve("ActualClassBar.kt"),
+                        kotlinSourcesDir("jsMain").resolve("ActualClassBar.kt"),
+                        kotlinSourcesDir("commonMain").resolve("ExpectClassBar.kt")
+                    ).relativizeTo(projectPath)
+                )
             }
         }
     }

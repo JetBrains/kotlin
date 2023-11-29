@@ -1,3 +1,3 @@
-actual fun calc(expression: String): Double {
+actual fun expectActualCalc(expression: String): Double {
     return Double.NaN
 }

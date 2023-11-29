@@ -4,14 +4,10 @@ plugins {
 
 kotlin {
     jvm()
-    js()
-    <SingleNativeTarget>("native")
-}
-
-kotlin {
-    js {
+    js() {
         nodejs()
     }
+    <SingleNativeTarget>("native")
 
     sourceSets {
         val commonMain by getting {

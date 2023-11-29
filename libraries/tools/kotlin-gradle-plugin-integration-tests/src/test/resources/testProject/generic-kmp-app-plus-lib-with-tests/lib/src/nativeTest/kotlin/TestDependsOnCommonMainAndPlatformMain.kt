@@ -1,7 +1,7 @@
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class AdvancedTest {
+class LibNativeTest {
 
     @Test
     fun nativeUtilReturns800() {
@@ -10,6 +10,6 @@ class AdvancedTest {
 
     @Test
     fun commonUtilTest() {
-        assertEquals(2, multiplyByTwo(1))
+        assertEquals(2, libCommonFunForLibPlatformTests(1))
     }
 }

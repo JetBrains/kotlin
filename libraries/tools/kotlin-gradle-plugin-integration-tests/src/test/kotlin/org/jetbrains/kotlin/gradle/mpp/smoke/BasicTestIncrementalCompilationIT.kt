@@ -46,7 +46,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
          */
 
         testCase(
-            incrementalPath = touchAndGet("lib", "commonMain", "CommonUtil.kt"),
+            incrementalPath = resolvePath("lib", "commonMain", "UsedInLibPlatformTests.kt").addPrivateVal(),
             executedTasks = mainCompileTasks,
         )
 
@@ -55,7 +55,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
          */
 
         testCase(
-            incrementalPath = touchAndGet("app", "commonMain", "PlainPublicClass.kt"),
+            incrementalPath = resolvePath("app", "commonMain", "Unused.kt").addPrivateVal(),
             executedTasks = setOf(
                 ":app:compileTestKotlinJvm",
                 ":app:compileTestKotlinNative",
@@ -70,7 +70,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
          * Step 3 - touch app/jvm, affect jvm tests in app
          */
 
-        val touchedAppJvm = touchAndGet("app", "jvmMain", "PlainPublicClassJvm.kt")
+        val touchedAppJvm = resolvePath("app", "jvmMain", "UnusedJvm.kt").addPrivateVal()
         testCase(
             incrementalPath = null,
             executedTasks = setOf(
@@ -86,7 +86,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
          */
 
         testCase(
-            incrementalPath = touchAndGet("app", "jsMain", "PlainPublicClassJs.kt"),
+            incrementalPath = resolvePath("app", "jsMain", "UnusedJs.kt").addPrivateVal(),
             executedTasks = setOf(
                 ":app:compileTestKotlinJs",
                 ":app:jsTest",
@@ -97,7 +97,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
          * Step 5 - touch app/native, affect native tests in app
          */
 
-        touchAndGet("app", "nativeMain", "PlainPublicClassNative.kt")
+        resolvePath("app", "nativeMain", "UnusedNative.kt").addPrivateVal()
         testCase(
             incrementalPath = null,
             executedTasks = setOf(
