@@ -196,6 +196,16 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidDestructing.kt");
         }
 
+        @TestMetadata("kotlinAny.kt")
+        public void testKotlinAny() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/kotlinAny.kt");
+        }
+
+        @TestMetadata("kotlinAnyNonTopLevel.kt")
+        public void testKotlinAnyNonTopLevel() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/kotlinAnyNonTopLevel.kt");
+        }
+
         @TestMetadata("localDeclarationsInEnumEntry.kt")
         public void testLocalDeclarationsInEnumEntry() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localDeclarationsInEnumEntry.kt");
@@ -269,6 +279,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
         @TestMetadata("typeParameters.kt")
         public void testTypeParameters() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/typeParameters.kt");
+        }
+
+        @TestMetadata("userAny.kt")
+        public void testUserAny() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/userAny.kt");
         }
 
         @TestMetadata("where.kt")

@@ -220,6 +220,18 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("kotlinAny.kt")
+        public void testKotlinAny() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/kotlinAny.kt");
+        }
+
+        @Test
+        @TestMetadata("kotlinAnyNonTopLevel.kt")
+        public void testKotlinAnyNonTopLevel() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/kotlinAnyNonTopLevel.kt");
+        }
+
+        @Test
         @TestMetadata("localDeclarationsInEnumEntry.kt")
         public void testLocalDeclarationsInEnumEntry() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localDeclarationsInEnumEntry.kt");
@@ -307,6 +319,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         @TestMetadata("typeParameters.kt")
         public void testTypeParameters() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/typeParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("userAny.kt")
+        public void testUserAny() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/userAny.kt");
         }
 
         @Test

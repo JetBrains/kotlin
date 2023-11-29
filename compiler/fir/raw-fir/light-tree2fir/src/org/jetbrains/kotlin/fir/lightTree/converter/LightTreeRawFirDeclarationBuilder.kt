@@ -462,6 +462,9 @@ class LightTreeRawFirDeclarationBuilder(
         val className = identifier.nameAsSafeName(if (modifiers.isCompanion()) "Companion" else "")
         val isLocalWithinParent = classNode.getParent()?.elementType != CLASS_BODY && isClassLocal(classNode) { getParent() }
         val classIsExpect = modifiers.hasExpect() || context.containerIsExpect
+        val classIsKotlinAny = identifier.nameAsSafeName() == StandardNames.FqNames.any.shortName()
+                && classNode.getParent()?.getChildNodeByType(PACKAGE_DIRECTIVE)?.getChildNodeByType(REFERENCE_EXPRESSION)
+            ?.getReferencedNameAsName() == StandardNames.BUILT_INS_PACKAGE_NAME
 
         return withChildClassName(className, isExpect = classIsExpect, isLocalWithinParent) {
             val isLocal = context.inLocalContext
@@ -527,7 +530,7 @@ class LightTreeRawFirDeclarationBuilder(
                         }
                     }
 
-                    superTypeRefs.ifEmpty {
+                    if (superTypeRefs.isEmpty() && !classIsKotlinAny) {
                         superTypeRefs += implicitAnyType
                         delegatedSuperTypeRef = implicitAnyType
                     }
@@ -551,7 +554,8 @@ class LightTreeRawFirDeclarationBuilder(
                         classWrapper,
                         delegatedConstructorSource,
                         containingClassIsExpectClass = status.isExpect,
-                        isImplicitlyActual = status.isActual && (status.isInline || classKind == ClassKind.ANNOTATION_CLASS)
+                        isImplicitlyActual = status.isActual && (status.isInline || classKind == ClassKind.ANNOTATION_CLASS),
+                        isKotlinAny = classIsKotlinAny,
                     )
                     val firPrimaryConstructor = primaryConstructorWrapper?.firConstructor
                     firPrimaryConstructor?.let { declarations += it }
@@ -887,6 +891,7 @@ class LightTreeRawFirDeclarationBuilder(
         isEnumEntry: Boolean = false,
         containingClassIsExpectClass: Boolean,
         isImplicitlyActual: Boolean = false,
+        isKotlinAny: Boolean = false,
     ): PrimaryConstructor? {
         fun ClassKind.isEnumRelated(): Boolean = this == ClassKind.ENUM_CLASS || this == ClassKind.ENUM_ENTRY
         val shouldGenerateImplicitConstructor =
@@ -912,7 +917,7 @@ class LightTreeRawFirDeclarationBuilder(
         val modifiers = modifiersIfPresent ?: Modifier()
 
         val defaultVisibility = classWrapper.defaultConstructorVisibility()
-        val firDelegatedCall = runUnless(containingClassIsExpectClass) {
+        val firDelegatedCall = runUnless(containingClassIsExpectClass || isKotlinAny) {
             fun createDelegatedConstructorCall(
                 delegatedConstructorSource: KtLightSourceElement?,
                 delegatedSuperTypeRef: FirTypeRef,
