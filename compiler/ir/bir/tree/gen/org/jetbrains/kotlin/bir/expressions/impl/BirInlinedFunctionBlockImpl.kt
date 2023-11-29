@@ -3,17 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.BirStatement
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirFunctionAccessExpression
 import org.jetbrains.kotlin.bir.expressions.BirInlinedFunctionBlock
@@ -28,7 +23,14 @@ class BirInlinedFunctionBlockImpl(
     inlinedElement: BirElement,
 ) : BirInlinedFunctionBlock() {
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(7)
@@ -42,7 +44,6 @@ class BirInlinedFunctionBlockImpl(
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
-
     override var attributeOwnerId: BirAttributeContainer
         get() {
             recordPropertyRead(2)
@@ -56,7 +57,6 @@ class BirInlinedFunctionBlockImpl(
         }
 
     private var _type: BirType = type
-
     override var type: BirType
         get() {
             recordPropertyRead(5)
@@ -69,11 +69,7 @@ class BirInlinedFunctionBlockImpl(
             }
         }
 
-    override val statements: BirImplChildElementList<BirStatement> =
-            BirImplChildElementList(this, 1, false)
-
     private var _origin: IrStatementOrigin? = origin
-
     override var origin: IrStatementOrigin?
         get() {
             recordPropertyRead(6)
@@ -87,7 +83,6 @@ class BirInlinedFunctionBlockImpl(
         }
 
     private var _inlineCall: BirFunctionAccessExpression = inlineCall
-
     override var inlineCall: BirFunctionAccessExpression
         get() {
             recordPropertyRead(3)
@@ -101,7 +96,6 @@ class BirInlinedFunctionBlockImpl(
         }
 
     private var _inlinedElement: BirElement = inlinedElement
-
     override var inlinedElement: BirElement
         get() {
             recordPropertyRead(4)
@@ -114,16 +108,25 @@ class BirInlinedFunctionBlockImpl(
             }
         }
 
+    override val statements: BirImplChildElementList<BirStatement> = BirImplChildElementList(this, 1, false)
+
+    init {
+    }
+
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         statements.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            else -> throwChildForReplacementNotFound(old)
+        }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.statements
-        else -> throwChildrenListWithIdNotFound(id)
+    override fun getChildrenListById(id: Int): BirChildElementList<*> {
+        return when (id) {
+            1 -> this.statements
+            else -> throwChildrenListWithIdNotFound(id)
+        }
     }
 }

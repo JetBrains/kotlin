@@ -3,18 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.BirImplElementBase
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirValueParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
@@ -25,15 +19,14 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
-class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
+class BirValueParameterImpl(
     sourceSpan: SourceSpan,
-    @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: ParameterDescriptor?,
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
     type: BirType,
     isAssignable: Boolean,
+    descriptor: ParameterDescriptor?,
     index: Int,
     varargElementType: BirType?,
     isCrossinline: Boolean,
@@ -45,7 +38,14 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         get() = this
 
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(12)
@@ -59,7 +59,6 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _signature: IdSignature? = signature
-
     override var signature: IdSignature?
         get() {
             recordPropertyRead(13)
@@ -72,11 +71,7 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val annotations: BirImplChildElementList<BirConstructorCall> =
-            BirImplChildElementList(this, 1, false)
-
     private var _origin: IrDeclarationOrigin = origin
-
     override var origin: IrDeclarationOrigin
         get() {
             recordPropertyRead(3)
@@ -90,7 +85,6 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _name: Name = name
-
     override var name: Name
         get() {
             recordPropertyRead(4)
@@ -104,7 +98,6 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _type: BirType = type
-
     override var type: BirType
         get() {
             recordPropertyRead(5)
@@ -118,7 +111,6 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isAssignable: Boolean = isAssignable
-
     override var isAssignable: Boolean
         get() {
             recordPropertyRead(6)
@@ -131,8 +123,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _index: Int = index
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: ParameterDescriptor? = descriptor
 
+    private var _index: Int = index
     override var index: Int
         get() {
             recordPropertyRead(7)
@@ -146,7 +140,6 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _varargElementType: BirType? = varargElementType
-
     override var varargElementType: BirType?
         get() {
             recordPropertyRead(8)
@@ -160,7 +153,6 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isCrossinline: Boolean = isCrossinline
-
     override var isCrossinline: Boolean
         get() {
             recordPropertyRead(9)
@@ -174,7 +166,6 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isNoinline: Boolean = isNoinline
-
     override var isNoinline: Boolean
         get() {
             recordPropertyRead(10)
@@ -188,7 +179,33 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isHidden: Boolean = isHidden
-
+    /**
+     * If `true`, the value parameter does not participate in [IdSignature] computation.
+     *
+     * This is a workaround that is needed for better support of compiler plugins.
+     * Suppose you have the following code and some IR plugin that adds a value parameter to functions
+     * marked with the `@PluginMarker` annotation.
+     * ```kotlin
+     * @PluginMarker
+     * fun foo(defined: Int) { /* ... */ }
+     * ```
+     *
+     * Suppose that after applying the plugin the function is changed to:
+     * ```kotlin
+     * @PluginMarker
+     * fun foo(defined: Int, $extra: String) { /* ... */ }
+     * ```
+     *
+     * If a compiler plugin adds parameters to an [BirFunction],
+     * the representations of the function in the frontend and in the backend may diverge, potentially causing signature mismatch and
+     * linkage errors (see [KT-40980](https://youtrack.jetbrains.com/issue/KT-40980)).
+     * We wouldn't want IR plugins to affect the frontend representation, since in an IDE you'd want to be able to see those
+     * declarations in their original form (without the `$extra` parameter).
+     *
+     * To fix this problem, [isHidden] was introduced.
+     *
+     * TODO: consider dropping [isHidden] if it isn't used by any known plugin.
+     */
     override var isHidden: Boolean
         get() {
             recordPropertyRead(11)
@@ -202,7 +219,6 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _defaultValue: BirExpressionBody? = defaultValue
-
     override var defaultValue: BirExpressionBody?
         get() {
             recordPropertyRead(2)
@@ -215,6 +231,9 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate(2)
             }
         }
+
+    override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
+
     init {
         initChild(_defaultValue)
     }
@@ -224,16 +243,20 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         _defaultValue?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        this._defaultValue === old -> {
-            this._defaultValue = new as BirExpressionBody?
-            2
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            this._defaultValue === old -> {
+                this._defaultValue = new as BirExpressionBody?
+                2
+            }
+            else -> throwChildForReplacementNotFound(old)
         }
-        else -> throwChildForReplacementNotFound(old)
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.annotations
-        else -> throwChildrenListWithIdNotFound(id)
+    override fun getChildrenListById(id: Int): BirChildElementList<*> {
+        return when (id) {
+            1 -> this.annotations
+            else -> throwChildrenListWithIdNotFound(id)
+        }
     }
 }

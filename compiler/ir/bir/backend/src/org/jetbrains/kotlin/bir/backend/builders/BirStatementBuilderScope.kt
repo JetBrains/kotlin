@@ -145,8 +145,15 @@ class BirStatementBuilderScope() {
         block: BirCall.() -> Unit = {},
     ): BirCall =
         BirCallImpl(
-            sourceSpan, type, function, null, null, origin,
-            typeArguments, 0, null
+            sourceSpan = sourceSpan,
+            type = type,
+            symbol = function,
+            dispatchReceiver = null,
+            extensionReceiver = null,
+            origin = origin,
+            typeArguments = typeArguments,
+            contextReceiversCount = 0,
+            superQualifierSymbol = null
         ).apply {
             valueArguments.resetWithNulls(function.valueParameters.size)
             block()
@@ -160,8 +167,16 @@ class BirStatementBuilderScope() {
         block: BirConstructorCall.() -> Unit = {},
     ): BirConstructorCall =
         BirConstructorCallImpl(
-            sourceSpan, type, constructor, null, null, origin,
-            typeArguments, 0, SourceElement.NO_SOURCE, 0
+            sourceSpan = sourceSpan,
+            type = type,
+            symbol = constructor,
+            dispatchReceiver = null,
+            extensionReceiver = null,
+            origin = origin,
+            typeArguments = typeArguments,
+            contextReceiversCount = 0,
+            source = SourceElement.NO_SOURCE,
+            constructorTypeArgumentsCount = 0
         ).apply {
             valueArguments.resetWithNulls(constructor.valueParameters.size)
             block()
@@ -184,8 +199,14 @@ class BirStatementBuilderScope() {
         block: BirDelegatingConstructorCall.() -> Unit = {},
     ): BirDelegatingConstructorCall =
         BirDelegatingConstructorCallImpl(
-            sourceSpan, birBuiltIns.unitType, constructor, null, null,
-            origin, listOfNulls(constructor.constructedClass.typeParameters.size), 0
+            sourceSpan = sourceSpan,
+            type = birBuiltIns.unitType,
+            symbol = constructor,
+            dispatchReceiver = null,
+            extensionReceiver = null,
+            origin = origin,
+            typeArguments = listOfNulls(constructor.constructedClass.typeParameters.size),
+            contextReceiversCount = 0,
         )
 
     fun birCallGetter(
@@ -194,7 +215,17 @@ class BirStatementBuilderScope() {
         origin: IrStatementOrigin? = this.origin,
         block: BirCall.() -> Unit = {},
     ): BirCall =
-        BirCallImpl(sourceSpan, type, property.getter!!, null, null, origin, emptyList(), 0, null).apply(block)
+        BirCallImpl(
+            sourceSpan = sourceSpan,
+            type = type,
+            symbol = property.getter!!,
+            dispatchReceiver = null,
+            extensionReceiver = null,
+            origin = origin,
+            typeArguments = emptyList(),
+            contextReceiversCount = 0,
+            superQualifierSymbol = null,
+        ).apply(block)
 
     fun birCallGetter(
         getter: BirSimpleFunctionSymbol,
@@ -202,7 +233,17 @@ class BirStatementBuilderScope() {
         origin: IrStatementOrigin? = this.origin,
         block: BirCall.() -> Unit = {},
     ): BirCall =
-        BirCallImpl(sourceSpan, type, getter, null, null, origin, emptyList(), 0, null).apply(block)
+        BirCallImpl(
+            sourceSpan = sourceSpan,
+            type = type,
+            symbol = getter,
+            dispatchReceiver = null,
+            extensionReceiver = null,
+            origin = origin,
+            typeArguments = emptyList(),
+            contextReceiversCount = 0,
+            superQualifierSymbol = null,
+        ).apply(block)
 
     fun birCallSetter(
         property: BirProperty,
@@ -211,7 +252,17 @@ class BirStatementBuilderScope() {
         origin: IrStatementOrigin? = this.origin,
         block: BirCall.() -> Unit = {},
     ): BirCall =
-        BirCallImpl(sourceSpan, type, property.setter!!, null, null, origin, emptyList(), 0, null).apply {
+        BirCallImpl(
+            sourceSpan = sourceSpan,
+            type = type,
+            symbol = property.setter!!,
+            dispatchReceiver = null,
+            extensionReceiver = null,
+            origin = origin,
+            typeArguments = emptyList(),
+            contextReceiversCount = 0,
+            superQualifierSymbol = null
+        ).apply {
             valueArguments += value
         }
 
@@ -223,7 +274,7 @@ class BirStatementBuilderScope() {
         origin: IrStatementOrigin? = this.origin,
         block: BirFunctionReference.() -> Unit = {},
     ): BirFunctionReference =
-        BirFunctionReferenceImpl(sourceSpan, type, function, null, null, origin, typeArguments, null).apply {
+        BirFunctionReferenceImpl(sourceSpan, type, null, null, origin, typeArguments, function, null).apply {
             valueArguments.resetWithNulls(function.valueParameters.size)
             block()
         }
@@ -308,8 +359,8 @@ class BirStatementBuilderScope() {
     ): BirVariable {
         val name = Name.identifier(getNameForTemporary(nameHint, addIndexToName))
         return BirVariableImpl(
-            sourceSpan, null, null, origin, name,
-            type, isVar = isMutable, isAssignable = true, isConst = false, isLateinit = false, initializer = null
+            sourceSpan = sourceSpan, signature = null, origin = origin, name = name,
+            type = type, isVar = isMutable, isAssignable = true, isConst = false, isLateinit = false, initializer = null, descriptor = null
         ).apply(block)
     }
 
@@ -337,8 +388,15 @@ class BirStatementBuilderScope() {
         block: BirCall.() -> Unit = {},
     ): BirCall =
         BirCallImpl(
-            sourceSpan, birBuiltIns.booleanType, birBuiltIns.eqeqSymbol, null, null, origin,
-            emptyList(), 0, null
+            sourceSpan = sourceSpan,
+            type = birBuiltIns.booleanType,
+            symbol = birBuiltIns.eqeqSymbol,
+            dispatchReceiver = null,
+            extensionReceiver = null,
+            origin = origin,
+            typeArguments = emptyList(),
+            contextReceiversCount = 0,
+            superQualifierSymbol = null
         ).apply {
             valueArguments += arg1
             valueArguments += arg2
@@ -352,9 +410,15 @@ class BirStatementBuilderScope() {
         block: BirCall.() -> Unit = {},
     ): BirCall =
         BirCallImpl(
-            sourceSpan, birBuiltIns.booleanType, birBuiltIns.booleanNotSymbol,
-            birEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ),
-            null, origin, emptyList(), 0, null
+            sourceSpan = sourceSpan,
+            type = birBuiltIns.booleanType,
+            symbol = birBuiltIns.booleanNotSymbol,
+            dispatchReceiver = birEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ),
+            extensionReceiver = null,
+            origin = origin,
+            typeArguments = emptyList(),
+            contextReceiversCount = 0,
+            superQualifierSymbol = null
         ).apply(block)
 
 

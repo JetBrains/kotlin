@@ -3,12 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 
@@ -17,11 +18,9 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.try]
  */
-abstract class BirTry : BirExpression() {
+abstract class BirTry : BirExpression(), BirElement {
     abstract var tryResult: BirExpression?
-
     abstract val catches: BirChildElementList<BirCatch>
-
     abstract var finallyExpression: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

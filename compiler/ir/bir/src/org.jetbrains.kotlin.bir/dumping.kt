@@ -18,8 +18,8 @@ import kotlin.io.path.div
 import kotlin.io.path.writeText
 
 private val irDumpOptions = DumpIrTreeOptions(printFlagsInDeclarationReferences = false, printFilePath = false)
-private val dumpBir = true
-private val dumpIr = true
+private val dumpBir = false
+private val dumpIr = false
 
 fun dumpOriginalIrPhase(context: JvmBackendContext, input: IrModuleFragment, phaseName: String, isBefore: Boolean) {
     if (!dumpIr) return

@@ -6,213 +6,212 @@
 
 package org.jetbrains.kotlin.bir.generator.print
 
-import com.squareup.kotlinpoet.*
+import org.jetbrains.kotlin.bir.generator.*
 import org.jetbrains.kotlin.bir.generator.BirTree.rootElement
-import org.jetbrains.kotlin.bir.generator.Packages
-import org.jetbrains.kotlin.bir.generator.childElementList
-import org.jetbrains.kotlin.bir.generator.elementBaseType
+import org.jetbrains.kotlin.bir.generator.TREE_GENERATOR_README
+import org.jetbrains.kotlin.bir.generator.model.*
 import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.Model
-import org.jetbrains.kotlin.bir.generator.model.SingleField
-import org.jetbrains.kotlin.bir.generator.util.tryParameterizedBy
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
+import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
-fun printElementImpls(generationPath: File, model: Model) = sequence {
-    for (element in model.elements.filter { it.isLeaf }) {
-        val elementType = TypeSpec.classBuilder(element.elementImplName).apply {
-            addTypeVariables(element.params.map { it.toPoet() })
+context(ImportCollector)
+private fun SmartPrinter.printElementImpl(element: Element) {
+    print("class ", element.elementImplName.typeName)
+    print(element.params.typeParameters())
 
-            if (element.kind == ImplementationKind.Interface || element.kind == ImplementationKind.SealedInterface) {
-                superclass(elementBaseType.toPoet())
-                addSuperinterface(element.toPoetSelfParameterized())
-            } else {
-                superclass(element.toPoetSelfParameterized())
+    val allFields = element.allFieldsRecursively()
+    println("(")
+    withIndent {
+        for (field in allFields) {
+            if (field.passViaConstructorParameter) {
+                printField(field, isMutable = null, inConstructor = true, kDoc = null, optInAnnotation = null)
+                println(",")
             }
+        }
+    }
+    print(")")
 
+    val parentRefs = listOfNotNull(elementImplBaseType.takeIf { element.kind!!.isInterface }, element)
+    print(
+        parentRefs.joinToString(prefix = " : ") { parent ->
+            parent.render() + parent.inheritanceClauseParenthesis()
+        }
+    )
+    print(element.params.multipleUpperBoundsList())
+
+    val body = SmartPrinter(StringBuilder()).apply {
+        withIndent {
             if (element.ownerSymbolType != null) {
-                addProperty(
-                    PropertySpec
-                        .builder("owner", element.elementImplName, KModifier.OVERRIDE)
-                        .getter(FunSpec.getterBuilder().addCode("return this\n").build())
-                        .build()
+                printPropertyHeader("owner", element.elementImplName, false, override = true)
+                println()
+                withIndent {
+                    println("get() = this")
+                }
+                println()
+            }
+
+            val childrenLists = element.walkableChildren.filterIsInstance<ListField>()
+            for (field in allFields.sortedBy { it is ListField && it.isChild }) {
+                if (field.isReadWriteTrackedProperty) {
+                    printPropertyHeader(
+                        field.backingFieldName,
+                        if (field.isChild) field.typeRef.copy(nullable = true) else field.typeRef,
+                        true,
+                        visibility = Visibility.PRIVATE
+                    )
+                    if (field.initializeToThis) print(" = this") else print(" = ${field.name}")
+                    println()
+                }
+
+                printField(
+                    field,
+                    override = true,
+                    type = if (field is ListField && field.isChild) childElementListImpl.withArgs(field.baseType) else field.typeRef
                 )
-            }
-
-            val ctor = FunSpec.constructorBuilder()
-
-            val fieldImpls = element.fieldImpls
-            val allChildren = fieldImpls.filter { it.field.isChild }
-            val childrenLists = allChildren.filter { it.field is ListField }
-
-            fieldImpls.forEach { fieldImpl ->
-                val field = fieldImpl.field
-                val poetType = if (field is ListField && field.isChild)
-                    childElementListImpl.tryParameterizedBy(field.elementType.toPoet())
-                else
-                    field.typeRef.toPoet().copy(nullable = field.nullable)
-
-                if (field.passViaConstructorParameter) {
-                    ctor.addParameter(field.name, poetType)
-                }
-
-                addProperty(PropertySpec.builder(field.name, poetType).apply {
-                    mutable(field.isMutable)
-                    addModifiers(KModifier.OVERRIDE)
-
-                    if (field.needsDescriptorApiAnnotation) {
-                        addAnnotation(
-                            AnnotationSpec
-                                .builder(descriptorApiAnnotation)
-                                .useSiteTarget(AnnotationSpec.UseSiteTarget.PROPERTY)
-                                .build()
-                        )
-                    }
-
-                    if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
-                        initializer(
-                            "%T(this, %L, %L)",
-                            childElementListImpl,
-                            childrenLists.indexOf(fieldImpl) + 1,
-                            (field.elementType as TypeRefWithNullability).nullable
-                        )
-                    } else if (field.isReadWriteTrackedProperty) {
-                        addProperty(
-                            PropertySpec.builder(field.backingFieldName, if (field.isChild) poetType.copy(nullable = true) else poetType)
-                                .mutable(true)
-                                .addModifiers(KModifier.PRIVATE)
-                                .apply {
-                                    if (field.initializeToThis) initializer("this") else initializer("%N", field.name)
+                if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
+                    print(" = ${childElementListImpl.render()}(this, ${childrenLists.indexOf(field) + 1}, ${(field.baseType as TypeRefWithNullability).nullable})")
+                } else if (field.isReadWriteTrackedProperty) {
+                    val fieldImpl = element.fieldFakeOverrides.getValue(field)
+                    println()
+                    withIndent {
+                        print("get()")
+                        printBlock {
+                            println("recordPropertyRead(${fieldImpl.propertyId})")
+                            print("return ${field.backingFieldName}")
+                            if (field.isChild && !field.nullable) {
+                                print(" ?: throwChildElementRemoved(\"${field.name}\")")
+                            }
+                            println()
+                        }
+                        print("set(value)")
+                        printBlock {
+                            print("if (${field.backingFieldName} != value)")
+                            printBlock {
+                                if (field.isChild) {
+                                    println("childReplaced(${field.backingFieldName}, value)")
                                 }
-                                .build()
-                        )
-                        getter(
-                            FunSpec.getterBuilder()
-                                .addCode("return ${field.backingFieldName}")
-                                .build()
-                        )
-                    } else {
-                        if (field.initializeToThis) initializer("this") else initializer("%N", field.name)
+                                println("${field.backingFieldName} = value")
+                                println("invalidate(${fieldImpl.propertyId})")
+                            }
+                        }
                     }
-
-                    if (field.isReadWriteTrackedProperty) {
-                        getter(
-                            FunSpec.getterBuilder()
-                                .apply {
-                                    addCode("recordPropertyRead(%L)\n", fieldImpl.propertyId)
-                                    addCode("return ${field.backingFieldName}")
-                                    if (field.isChild && !field.nullable) {
-                                        addCode(" ?: throwChildElementRemoved(%S)", field.name)
-                                    }
-                                }.build()
-                        )
-                        setter(
-                            FunSpec.setterBuilder()
-                                .addParameter(ParameterSpec("value", poetType))
-                                .apply {
-                                    addCode("if (${field.backingFieldName} != value) {\n")
-                                    if (field.isChild) {
-                                        addCode("    childReplaced(${field.backingFieldName}, value)\n")
-                                    }
-                                    addCode("    ${field.backingFieldName} = value\n")
-                                    addCode("    invalidate(%L)\n", fieldImpl.propertyId)
-                                    addCode("}\n")
-                                }.build()
-                        )
-                    }
-                }.build())
-            }
-
-            if (fieldImpls.any { it.field.needsDescriptorApiAnnotation }) {
-                ctor.addAnnotation(descriptorApiAnnotation)
-            }
-
-            allChildren.forEach { child ->
-                if (child.field is SingleField) {
-                    ctor.addCode("initChild(${child.field.backingFieldName})\n")
+                } else {
+                    if (field.initializeToThis) print(" = this") else print(" = ${field.name}")
+                    println()
                 }
+                (field as? SingleField)?.getter?.let {
+                    println()
+                    withIndent {
+                        println("get() = $it")
+                    }
+                }
+                println()
             }
 
-            primaryConstructor(ctor.build())
+            if (element.walkableChildren.isNotEmpty()) {
+                println()
+                print("init")
+                printBlock {
+                    element.walkableChildren.forEach { child ->
+                        if (child is SingleField) {
+                            println("initChild(${child.backingFieldName})")
+                        }
+                    }
+                }
 
-            if (allChildren.isNotEmpty()) {
-                addFunction(
-                    FunSpec
-                        .builder("acceptChildrenLite")
-                        .addModifiers(KModifier.OVERRIDE)
-                        .addParameter("visitor", elementVisitorLite)
-                        .apply {
-                            element.allChildren.forEach { child ->
-                                when (child) {
-                                    is SingleField -> {
-                                        addCode(child.backingFieldName)
-                                        addCode("?")
-                                        addCode(".%M(visitor)\n", elementAcceptLite)
-                                    }
-                                    is ListField -> {
-                                        addCode(child.name)
-                                        addCode(".acceptChildrenLite(visitor)\n")
-                                    }
+                println()
+                printFunctionDeclaration(
+                    name = "acceptChildrenLite",
+                    parameters = listOf(
+                        FunctionParameter("visitor", elementVisitorLite),
+                    ),
+                    returnType = StandardTypes.unit,
+                    override = true,
+                )
+                printBlock {
+                    for (child in element.walkableChildren) {
+                        when (child) {
+                            is SingleField -> {
+                                print(child.backingFieldName)
+                                addImport(elementAcceptLite)
+                                if (child.nullable) print("?")
+                                println(".acceptLite(visitor)")
+                            }
+                            is ListField -> {
+                                print(child.name)
+                                println(".acceptChildrenLite(visitor)")
+                            }
+                        }
+                    }
+                }
+
+                println()
+                printFunctionWithBlockBody(
+                    name = "replaceChildProperty",
+                    parameters = listOf(
+                        FunctionParameter("old", rootElement),
+                        FunctionParameter("new", rootElement.copy(nullable = true))
+                    ),
+                    returnType = StandardTypes.int,
+                    override = true,
+                ) {
+                    print("return when")
+                    printBlock {
+                        for (field in element.walkableChildren) {
+                            val fieldImpl = element.fieldFakeOverrides.getValue(field)
+                            if (field is SingleField) {
+                                print("this.${field.backingFieldName} === old ->")
+                                printBlock {
+                                    println("this.${field.backingFieldName} = new as ${field.typeRef.copy(nullable = true).render()}")
+                                    println(fieldImpl.propertyId)
                                 }
                             }
                         }
-                        .build()
-                )
-
-                addFunction(
-                    FunSpec
-                        .builder("replaceChildProperty")
-                        .addModifiers(KModifier.OVERRIDE)
-                        .addParameter("old", rootElement.toPoet())
-                        .addParameter("new", rootElement.toPoet().copy(nullable = true))
-                        .returns(INT)
-                        .apply {
-                            addCode("return when {\n")
-                            allChildren.forEach { fieldImpl ->
-                                val field = fieldImpl.field
-                                if (field is SingleField) {
-                                    addCode("    this.%N === old -> {\n", field.backingFieldName)
-                                    addCode(
-                                        "        this.%N = new as %T\n",
-                                        field.backingFieldName, field.typeRef.toPoet().copy(nullable = true)
-                                    )
-                                    addCode("        %L\n", fieldImpl.propertyId)
-                                    addCode("    }\n")
-                                }
-                            }
-                            addCode("    else -> throwChildForReplacementNotFound(old)\n")
-                            addCode("}\n")
-                        }
-                        .build()
-                )
+                        println("else -> throwChildForReplacementNotFound(old)")
+                    }
+                }
             }
 
             if (childrenLists.isNotEmpty()) {
-                addFunction(
-                    FunSpec
-                        .builder("getChildrenListById")
-                        .addModifiers(KModifier.OVERRIDE)
-                        .addParameter("id", INT)
-                        .returns(childElementList.toPoet().tryParameterizedBy(STAR))
-                        .apply {
-                            addCode("return when(id) {\n")
-                            childrenLists.forEachIndexed { index, fieldImpl ->
-                                addCode("    %L -> this.%N\n", index + 1, fieldImpl.field.name)
-                            }
-                            addCode("    else -> throwChildrenListWithIdNotFound(id)\n")
-                            addCode("}\n")
+                println()
+                printFunctionWithBlockBody(
+                    "getChildrenListById",
+                    override = true,
+                    parameters = listOf(FunctionParameter("id", StandardTypes.int)),
+                    returnType = childElementList.withArgs(TypeRef.Star)
+                ) {
+                    print("return when (id)")
+                    printBlock {
+                        childrenLists.forEachIndexed { index, field ->
+                            println("${index + 1} -> this.${field.name}")
                         }
-                        .build()
-                )
+                        println("else -> throwChildrenListWithIdNotFound(id)")
+                    }
+                }
             }
-        }.build()
+        }
+    }.toString()
 
-        yield(printTypeCommon(generationPath, element.elementImplName.packageName, elementType))
+    if (body.isNotEmpty()) {
+        println(" {")
+        print(body.trimStart('\n'))
+        print("}")
     }
+    println()
 }
 
-private val descriptorApiAnnotation = ClassName("org.jetbrains.kotlin.ir", "ObsoleteDescriptorBasedAPI")
-private val childElementListImpl = ClassName(Packages.tree, "BirImplChildElementList")
-val elementVisitorLite = ClassName(Packages.tree, "BirElementVisitorLite")
-val elementAcceptLite = MemberName(Packages.tree, "acceptLite", true)
+private val childElementListImpl = type(Packages.tree, "BirImplChildElementList")
+private val elementVisitorLite = type(Packages.tree, "BirElementVisitorLite")
+private val elementAcceptLite = ArbitraryImportable(Packages.tree, "acceptLite")
+
+fun printElementImpls(generationPath: File, model: Model) = model.elements.asSequence()
+    .filter { it.isLeaf }
+    .map { element ->
+        printGeneratedType(generationPath, TREE_GENERATOR_README, element.elementImplName.packageName, element.elementImplName.typeName) {
+            printElementImpl(element)
+        }
+    }

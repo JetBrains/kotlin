@@ -77,3 +77,85 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
         }
     }
 }
+
+context(ImportCollector)
+fun SmartPrinter.printField(
+    field: AbstractField<*>,
+    type: TypeRef = field.typeRef,
+    isMutable: Boolean? = field.isMutable,
+    override: Boolean = false,
+    modality: Modality? = null,
+    inConstructor: Boolean = false,
+    kDoc: String? = field.kDoc,
+    optInAnnotation: ClassRef<*>? = field.optInAnnotation,
+) = printPropertyHeader(
+    field.name, type, isMutable,
+    override = override,
+    inConstructor = inConstructor,
+    visibility = field.visibility,
+    modality = modality,
+    isLateinit = field.isLateinit,
+    isVolatile = field.isVolatile,
+    kDoc = kDoc,
+    optInAnnotation = optInAnnotation,
+    deprecation = field.deprecation,
+)
+
+context(ImportCollector)
+fun SmartPrinter.printPropertyHeader(
+    name: String,
+    type: TypeRef,
+    isMutable: Boolean?,
+    override: Boolean = false,
+    inConstructor: Boolean = false,
+    visibility: Visibility = Visibility.PUBLIC,
+    modality: Modality? = null,
+    isLateinit: Boolean = false,
+    isVolatile: Boolean = false,
+    kDoc: String? = null,
+    optInAnnotation: ClassRef<*>? = null,
+    deprecation: Deprecated? = null,
+) {
+    printKDoc(kDoc)
+
+    deprecation?.let {
+        println("@Deprecated(")
+        withIndent {
+            println("message = \"", it.message, "\",")
+            println("replaceWith = ReplaceWith(\"", it.replaceWith.expression, "\"),")
+            println("level = DeprecationLevel.", it.level.name, ",")
+        }
+        println(")")
+    }
+
+    if (isVolatile) {
+        println("@", type<Volatile>().render())
+    }
+
+    optInAnnotation?.let {
+        val rendered = it.render()
+        when {
+            inConstructor -> println("@property:", rendered)
+            else -> println("@", rendered)
+        }
+    }
+
+    if (visibility != Visibility.PUBLIC) {
+        print(visibility.name.toLowerCaseAsciiOnly(), " ")
+    }
+
+    modality?.let {
+        print(it.name.toLowerCaseAsciiOnly(), " ")
+    }
+
+    if (override) {
+        print("override ")
+    }
+    if (isLateinit) {
+        print("lateinit ")
+    }
+    if (isMutable != null) {
+        print(if (isMutable) "var " else "val ")
+    }
+    print(name, ": ", type.render())
+}

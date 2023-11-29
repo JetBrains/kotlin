@@ -3,18 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.BirImplElementBase
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirField
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
@@ -27,15 +21,14 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
-class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
+class BirFieldImpl(
     sourceSpan: SourceSpan,
-    @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor?,
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
     isExternal: Boolean,
     visibility: DescriptorVisibility,
+    descriptor: PropertyDescriptor?,
     type: BirType,
     isFinal: Boolean,
     isStatic: Boolean,
@@ -46,7 +39,14 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         get() = this
 
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(11)
@@ -60,7 +60,6 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _signature: IdSignature? = signature
-
     override var signature: IdSignature?
         get() {
             recordPropertyRead(12)
@@ -73,11 +72,7 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val annotations: BirImplChildElementList<BirConstructorCall> =
-            BirImplChildElementList(this, 1, false)
-
     private var _origin: IrDeclarationOrigin = origin
-
     override var origin: IrDeclarationOrigin
         get() {
             recordPropertyRead(3)
@@ -91,7 +86,6 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _name: Name = name
-
     override var name: Name
         get() {
             recordPropertyRead(4)
@@ -105,7 +99,6 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isExternal: Boolean = isExternal
-
     override var isExternal: Boolean
         get() {
             recordPropertyRead(5)
@@ -119,7 +112,6 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _visibility: DescriptorVisibility = visibility
-
     override var visibility: DescriptorVisibility
         get() {
             recordPropertyRead(6)
@@ -132,8 +124,10 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _type: BirType = type
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: PropertyDescriptor? = descriptor
 
+    private var _type: BirType = type
     override var type: BirType
         get() {
             recordPropertyRead(7)
@@ -147,7 +141,6 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isFinal: Boolean = isFinal
-
     override var isFinal: Boolean
         get() {
             recordPropertyRead(8)
@@ -161,7 +154,6 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isStatic: Boolean = isStatic
-
     override var isStatic: Boolean
         get() {
             recordPropertyRead(9)
@@ -175,7 +167,6 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _initializer: BirExpressionBody? = initializer
-
     override var initializer: BirExpressionBody?
         get() {
             recordPropertyRead(2)
@@ -190,7 +181,6 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _correspondingPropertySymbol: BirPropertySymbol? = correspondingPropertySymbol
-
     override var correspondingPropertySymbol: BirPropertySymbol?
         get() {
             recordPropertyRead(10)
@@ -202,6 +192,9 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate(10)
             }
         }
+
+    override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
+
     init {
         initChild(_initializer)
     }
@@ -211,16 +204,20 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         _initializer?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        this._initializer === old -> {
-            this._initializer = new as BirExpressionBody?
-            2
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            this._initializer === old -> {
+                this._initializer = new as BirExpressionBody?
+                2
+            }
+            else -> throwChildForReplacementNotFound(old)
         }
-        else -> throwChildForReplacementNotFound(old)
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.annotations
-        else -> throwChildrenListWithIdNotFound(id)
+    override fun getChildrenListById(id: Int): BirChildElementList<*> {
+        return when (id) {
+            1 -> this.annotations
+            else -> throwChildrenListWithIdNotFound(id)
+        }
     }
 }

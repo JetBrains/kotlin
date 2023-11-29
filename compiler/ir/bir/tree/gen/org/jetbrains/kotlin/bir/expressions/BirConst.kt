@@ -3,11 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 
 /**
@@ -15,9 +16,8 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.const]
  */
-abstract class BirConst<T> : BirExpression() {
+abstract class BirConst<T> : BirExpression(), BirElement {
     abstract var kind: IrConstKind<T>
-
     abstract var value: T
 
     companion object

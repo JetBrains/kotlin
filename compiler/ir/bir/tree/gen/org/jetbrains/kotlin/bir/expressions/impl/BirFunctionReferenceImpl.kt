@@ -3,17 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirFunctionReference
@@ -24,15 +19,22 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 class BirFunctionReferenceImpl(
     sourceSpan: SourceSpan,
     type: BirType,
-    symbol: BirFunctionSymbol,
     dispatchReceiver: BirExpression?,
     extensionReceiver: BirExpression?,
     origin: IrStatementOrigin?,
     typeArguments: List<BirType?>,
+    symbol: BirFunctionSymbol,
     reflectionTarget: BirFunctionSymbol?,
 ) : BirFunctionReference() {
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(10)
@@ -46,7 +48,6 @@ class BirFunctionReferenceImpl(
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
-
     override var attributeOwnerId: BirAttributeContainer
         get() {
             recordPropertyRead(4)
@@ -60,7 +61,6 @@ class BirFunctionReferenceImpl(
         }
 
     private var _type: BirType = type
-
     override var type: BirType
         get() {
             recordPropertyRead(5)
@@ -73,22 +73,7 @@ class BirFunctionReferenceImpl(
             }
         }
 
-    private var _symbol: BirFunctionSymbol = symbol
-
-    override var symbol: BirFunctionSymbol
-        get() {
-            recordPropertyRead(6)
-            return _symbol
-        }
-        set(value) {
-            if (_symbol != value) {
-                _symbol = value
-                invalidate(6)
-            }
-        }
-
     private var _dispatchReceiver: BirExpression? = dispatchReceiver
-
     override var dispatchReceiver: BirExpression?
         get() {
             recordPropertyRead(2)
@@ -103,7 +88,6 @@ class BirFunctionReferenceImpl(
         }
 
     private var _extensionReceiver: BirExpression? = extensionReceiver
-
     override var extensionReceiver: BirExpression?
         get() {
             recordPropertyRead(3)
@@ -118,38 +102,45 @@ class BirFunctionReferenceImpl(
         }
 
     private var _origin: IrStatementOrigin? = origin
-
     override var origin: IrStatementOrigin?
         get() {
-            recordPropertyRead(7)
+            recordPropertyRead(6)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate(7)
+                invalidate(6)
             }
         }
 
-    override val valueArguments: BirImplChildElementList<BirExpression?> =
-            BirImplChildElementList(this, 1, true)
-
     private var _typeArguments: List<BirType?> = typeArguments
-
     override var typeArguments: List<BirType?>
         get() {
-            recordPropertyRead(8)
+            recordPropertyRead(7)
             return _typeArguments
         }
         set(value) {
             if (_typeArguments != value) {
                 _typeArguments = value
+                invalidate(7)
+            }
+        }
+
+    private var _symbol: BirFunctionSymbol = symbol
+    override var symbol: BirFunctionSymbol
+        get() {
+            recordPropertyRead(8)
+            return _symbol
+        }
+        set(value) {
+            if (_symbol != value) {
+                _symbol = value
                 invalidate(8)
             }
         }
 
     private var _reflectionTarget: BirFunctionSymbol? = reflectionTarget
-
     override var reflectionTarget: BirFunctionSymbol?
         get() {
             recordPropertyRead(9)
@@ -161,6 +152,9 @@ class BirFunctionReferenceImpl(
                 invalidate(9)
             }
         }
+
+    override val valueArguments: BirImplChildElementList<BirExpression?> = BirImplChildElementList(this, 1, true)
+
     init {
         initChild(_dispatchReceiver)
         initChild(_extensionReceiver)
@@ -172,20 +166,24 @@ class BirFunctionReferenceImpl(
         valueArguments.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        this._dispatchReceiver === old -> {
-            this._dispatchReceiver = new as BirExpression?
-            2
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            this._dispatchReceiver === old -> {
+                this._dispatchReceiver = new as BirExpression?
+                2
+            }
+            this._extensionReceiver === old -> {
+                this._extensionReceiver = new as BirExpression?
+                3
+            }
+            else -> throwChildForReplacementNotFound(old)
         }
-        this._extensionReceiver === old -> {
-            this._extensionReceiver = new as BirExpression?
-            3
-        }
-        else -> throwChildForReplacementNotFound(old)
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.valueArguments
-        else -> throwChildrenListWithIdNotFound(id)
+    override fun getChildrenListById(id: Int): BirChildElementList<*> {
+        return when (id) {
+            1 -> this.valueArguments
+            else -> throwChildrenListWithIdNotFound(id)
+        }
     }
 }

@@ -3,18 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.BirImplElementBase
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
@@ -32,15 +26,14 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
-class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
+class BirSimpleFunctionImpl(
     sourceSpan: SourceSpan,
-    @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor?,
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
     isExternal: Boolean,
     visibility: DescriptorVisibility,
+    descriptor: FunctionDescriptor?,
     isInline: Boolean,
     isExpect: Boolean,
     returnType: BirType,
@@ -49,19 +42,26 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     contextReceiverParametersCount: Int,
     body: BirBody?,
     modality: Modality,
-    isFakeOverride: Boolean,
-    overriddenSymbols: List<BirSimpleFunctionSymbol>,
     isTailrec: Boolean,
     isSuspend: Boolean,
+    isFakeOverride: Boolean,
     isOperator: Boolean,
     isInfix: Boolean,
     correspondingPropertySymbol: BirPropertySymbol?,
+    overriddenSymbols: List<BirSimpleFunctionSymbol>,
 ) : BirImplElementBase(), BirSimpleFunction {
     override val owner: BirSimpleFunctionImpl
         get() = this
 
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(14)
@@ -75,7 +75,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _signature: IdSignature? = signature
-
     override var signature: IdSignature?
         get() {
             recordPropertyRead(14)
@@ -88,11 +87,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val annotations: BirImplChildElementList<BirConstructorCall> =
-            BirImplChildElementList(this, 1, false)
-
     private var _origin: IrDeclarationOrigin = origin
-
     override var origin: IrDeclarationOrigin
         get() {
             recordPropertyRead(8)
@@ -106,7 +101,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _name: Name = name
-
     override var name: Name
         get() {
             recordPropertyRead(9)
@@ -120,7 +114,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isExternal: Boolean = isExternal
-
     override var isExternal: Boolean
         get() {
             recordPropertyRead(10)
@@ -134,7 +127,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _visibility: DescriptorVisibility = visibility
-
     override var visibility: DescriptorVisibility
         get() {
             recordPropertyRead(11)
@@ -147,11 +139,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val typeParameters: BirImplChildElementList<BirTypeParameter> =
-            BirImplChildElementList(this, 2, false)
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: FunctionDescriptor? = descriptor
 
     private var _isInline: Boolean = isInline
-
     override var isInline: Boolean
         get() {
             recordPropertyRead(12)
@@ -165,7 +156,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isExpect: Boolean = isExpect
-
     override var isExpect: Boolean
         get() {
             recordPropertyRead(13)
@@ -179,7 +169,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _returnType: BirType = returnType
-
     override var returnType: BirType
         get() {
             recordPropertyRead(14)
@@ -193,7 +182,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _dispatchReceiverParameter: BirValueParameter? = dispatchReceiverParameter
-
     override var dispatchReceiverParameter: BirValueParameter?
         get() {
             recordPropertyRead(4)
@@ -208,7 +196,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _extensionReceiverParameter: BirValueParameter? = extensionReceiverParameter
-
     override var extensionReceiverParameter: BirValueParameter?
         get() {
             recordPropertyRead(5)
@@ -222,11 +209,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val valueParameters: BirImplChildElementList<BirValueParameter> =
-            BirImplChildElementList(this, 3, false)
-
     private var _contextReceiverParametersCount: Int = contextReceiverParametersCount
-
     override var contextReceiverParametersCount: Int
         get() {
             recordPropertyRead(14)
@@ -240,7 +223,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _body: BirBody? = body
-
     override var body: BirBody?
         get() {
             recordPropertyRead(6)
@@ -255,7 +237,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _modality: Modality = modality
-
     override var modality: Modality
         get() {
             recordPropertyRead(14)
@@ -268,36 +249,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _isFakeOverride: Boolean = isFakeOverride
-
-    override var isFakeOverride: Boolean
-        get() {
-            recordPropertyRead(14)
-            return _isFakeOverride
-        }
-        set(value) {
-            if (_isFakeOverride != value) {
-                _isFakeOverride = value
-                invalidate(14)
-            }
-        }
-
-    private var _overriddenSymbols: List<BirSimpleFunctionSymbol> = overriddenSymbols
-
-    override var overriddenSymbols: List<BirSimpleFunctionSymbol>
-        get() {
-            recordPropertyRead(14)
-            return _overriddenSymbols
-        }
-        set(value) {
-            if (_overriddenSymbols != value) {
-                _overriddenSymbols = value
-                invalidate(14)
-            }
-        }
-
     private var _attributeOwnerId: BirAttributeContainer = this
-
     override var attributeOwnerId: BirAttributeContainer
         get() {
             recordPropertyRead(7)
@@ -311,7 +263,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isTailrec: Boolean = isTailrec
-
     override var isTailrec: Boolean
         get() {
             recordPropertyRead(14)
@@ -325,7 +276,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isSuspend: Boolean = isSuspend
-
     override var isSuspend: Boolean
         get() {
             recordPropertyRead(14)
@@ -338,8 +288,20 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _isOperator: Boolean = isOperator
+    private var _isFakeOverride: Boolean = isFakeOverride
+    override var isFakeOverride: Boolean
+        get() {
+            recordPropertyRead(14)
+            return _isFakeOverride
+        }
+        set(value) {
+            if (_isFakeOverride != value) {
+                _isFakeOverride = value
+                invalidate(14)
+            }
+        }
 
+    private var _isOperator: Boolean = isOperator
     override var isOperator: Boolean
         get() {
             recordPropertyRead(14)
@@ -353,7 +315,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _isInfix: Boolean = isInfix
-
     override var isInfix: Boolean
         get() {
             recordPropertyRead(14)
@@ -367,7 +328,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     private var _correspondingPropertySymbol: BirPropertySymbol? = correspondingPropertySymbol
-
     override var correspondingPropertySymbol: BirPropertySymbol?
         get() {
             recordPropertyRead(14)
@@ -379,6 +339,24 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate(14)
             }
         }
+
+    private var _overriddenSymbols: List<BirSimpleFunctionSymbol> = overriddenSymbols
+    override var overriddenSymbols: List<BirSimpleFunctionSymbol>
+        get() {
+            recordPropertyRead(14)
+            return _overriddenSymbols
+        }
+        set(value) {
+            if (_overriddenSymbols != value) {
+                _overriddenSymbols = value
+                invalidate(14)
+            }
+        }
+
+    override val annotations: BirImplChildElementList<BirConstructorCall> = BirImplChildElementList(this, 1, false)
+    override val typeParameters: BirImplChildElementList<BirTypeParameter> = BirImplChildElementList(this, 2, false)
+    override val valueParameters: BirImplChildElementList<BirValueParameter> = BirImplChildElementList(this, 3, false)
+
     init {
         initChild(_dispatchReceiverParameter)
         initChild(_extensionReceiverParameter)
@@ -394,26 +372,30 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         _body?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
-        this._dispatchReceiverParameter === old -> {
-            this._dispatchReceiverParameter = new as BirValueParameter?
-            4
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
+        return when {
+            this._dispatchReceiverParameter === old -> {
+                this._dispatchReceiverParameter = new as BirValueParameter?
+                4
+            }
+            this._extensionReceiverParameter === old -> {
+                this._extensionReceiverParameter = new as BirValueParameter?
+                5
+            }
+            this._body === old -> {
+                this._body = new as BirBody?
+                6
+            }
+            else -> throwChildForReplacementNotFound(old)
         }
-        this._extensionReceiverParameter === old -> {
-            this._extensionReceiverParameter = new as BirValueParameter?
-            5
-        }
-        this._body === old -> {
-            this._body = new as BirBody?
-            6
-        }
-        else -> throwChildForReplacementNotFound(old)
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.annotations
-        2 -> this.typeParameters
-        3 -> this.valueParameters
-        else -> throwChildrenListWithIdNotFound(id)
+    override fun getChildrenListById(id: Int): BirChildElementList<*> {
+        return when (id) {
+            1 -> this.annotations
+            2 -> this.typeParameters
+            3 -> this.valueParameters
+            else -> throwChildrenListWithIdNotFound(id)
+        }
     }
 }

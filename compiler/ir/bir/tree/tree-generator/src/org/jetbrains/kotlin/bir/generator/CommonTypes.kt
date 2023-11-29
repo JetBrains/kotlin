@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.bir.generator.Packages.declarations
 import org.jetbrains.kotlin.bir.generator.Packages.symbols
 import org.jetbrains.kotlin.bir.generator.Packages.tree
 import org.jetbrains.kotlin.bir.generator.Packages.types
-import org.jetbrains.kotlin.bir.generator.Packages.visitors
 import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.type
 
@@ -19,17 +18,16 @@ object Packages {
     const val symbols = "org.jetbrains.kotlin.bir.symbols"
     const val declarations = "org.jetbrains.kotlin.bir.declarations"
     const val types = "org.jetbrains.kotlin.bir.types"
-    const val visitors = "org.jetbrains.kotlin.bir.visitors"
     const val descriptors = "org.jetbrains.kotlin.descriptors"
 }
 
-val elementBaseType = type(tree, "BirImplElementBase", TypeKind.Class)
+val elementImplBaseType = type(tree, "BirImplElementBase", TypeKind.Class)
+val elementVisitorType = type(tree, "BirElementVisitor")
 val statementOriginType = type("org.jetbrains.kotlin.ir.expressions", "IrStatementOrigin")
-val elementVisitorType = type(visitors, "BirElementVisitor")
-val elementTransformerType = type(visitors, "BirElementTransformer")
 val mutableAnnotationContainerType = type(declarations, "BirMutableAnnotationContainer")
 val irTypeType = type(types, "BirType")
 val childElementList = type(tree, "BirChildElementList")
+val obsoleteDescriptorBasedApiAnnotation = type("org.jetbrains.kotlin.ir", "ObsoleteDescriptorBasedAPI", TypeKind.Class)
 
 val symbolType = type(symbols, "BirSymbol")
 object SymbolTypes {

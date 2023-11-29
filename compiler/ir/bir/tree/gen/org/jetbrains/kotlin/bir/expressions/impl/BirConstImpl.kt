@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.expressions.impl
@@ -21,7 +21,14 @@ class BirConstImpl<T>(
     value: T,
 ) : BirConst<T>() {
     private var _sourceSpan: SourceSpan = sourceSpan
-
+    /**
+     * The span of source code of the syntax node from which this BIR node was generated,
+     * in number of characters from the start the source file. If there is no source information for this BIR node,
+     * the [SourceSpan.UNDEFINED] is used. In order to get the line number and the column number from this offset,
+     * [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+     *
+     * @see IrFileEntry.getSourceRangeInfo
+     */
     override var sourceSpan: SourceSpan
         get() {
             recordPropertyRead(5)
@@ -35,7 +42,6 @@ class BirConstImpl<T>(
         }
 
     private var _attributeOwnerId: BirAttributeContainer = this
-
     override var attributeOwnerId: BirAttributeContainer
         get() {
             recordPropertyRead(1)
@@ -49,7 +55,6 @@ class BirConstImpl<T>(
         }
 
     private var _type: BirType = type
-
     override var type: BirType
         get() {
             recordPropertyRead(2)
@@ -63,7 +68,6 @@ class BirConstImpl<T>(
         }
 
     private var _kind: IrConstKind<T> = kind
-
     override var kind: IrConstKind<T>
         get() {
             recordPropertyRead(3)
@@ -77,7 +81,6 @@ class BirConstImpl<T>(
         }
 
     private var _value: T = value
-
     override var value: T
         get() {
             recordPropertyRead(4)
@@ -89,4 +92,5 @@ class BirConstImpl<T>(
                 invalidate(4)
             }
         }
+
 }

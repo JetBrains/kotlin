@@ -12,7 +12,6 @@ dependencies {
     implementation(project(":generators"))
     implementation(project(":generators:tree-generator-common"))
     implementation(project(":compiler:util"))
-    implementation("com.squareup:kotlinpoet:1.11.0")
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))

@@ -3,12 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// This file was generated automatically. See compiler/ir/bir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -18,17 +19,12 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.memberAccessExpression]
  */
-abstract class BirMemberAccessExpression<S : BirSymbol> : BirDeclarationReference() {
+abstract class BirMemberAccessExpression<S : BirSymbol> : BirDeclarationReference(), BirElement {
     abstract var dispatchReceiver: BirExpression?
-
     abstract var extensionReceiver: BirExpression?
-
     abstract override val symbol: S
-
     abstract var origin: IrStatementOrigin?
-
     abstract val valueArguments: BirChildElementList<BirExpression?>
-
     abstract var typeArguments: List<BirType?>
 
     companion object
