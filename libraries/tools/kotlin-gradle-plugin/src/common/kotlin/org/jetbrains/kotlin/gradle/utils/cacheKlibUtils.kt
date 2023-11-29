@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.library.uniqueName
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import org.jetbrains.kotlin.util.Logger as KLogger
 
 internal fun getCacheDirectory(
     rootCacheDirectory: File,
@@ -112,11 +113,13 @@ internal fun getAllDependencies(dependency: ResolvedDependencyResult): Set<Resol
     return allDependencies
 }
 
-internal class GradleLoggerAdapter(private val gradleLogger: Logger) : org.jetbrains.kotlin.util.Logger {
+internal class GradleLoggerAdapter(private val gradleLogger: Logger) : KLogger {
     override fun log(message: String) = gradleLogger.info(message)
     override fun warning(message: String) = gradleLogger.warn(message)
-    override fun error(message: String) = kotlin.error(message)
-    override fun fatal(message: String): Nothing = kotlin.error(message)
+    override fun error(message: String) = gradleLogger.error(message)
+
+    @Deprecated(KLogger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(KLogger.FATAL_REPLACEMENT))
+    override fun fatal(message: String): Nothing = kotlin.error(message) // WARNING: This would crash Gradle daemon!
 }
 
 private fun libraryFilter(artifact: ResolvedArtifactResult): Boolean = artifact.file.absolutePath.endsWith(".klib")

@@ -34,6 +34,7 @@ import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
+import org.jetbrains.kotlin.util.Logger as KLogger
 
 class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory() {
     override fun createJvmLibrarySymbolProvider(
@@ -154,7 +155,7 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
         private val LOG = Logger.getInstance(LLFirStandaloneLibrarySymbolProviderFactory::class.java)
     }
 
-    private object IntellijLogBasedLogger : org.jetbrains.kotlin.util.Logger {
+    private object IntellijLogBasedLogger : KLogger {
         override fun log(message: String) {
             LOG.info(message)
         }
@@ -167,6 +168,7 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
             LOG.warn(message)
         }
 
+        @Deprecated(KLogger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(KLogger.FATAL_REPLACEMENT))
         override fun fatal(message: String): Nothing {
             throw IllegalStateException(message)
         }

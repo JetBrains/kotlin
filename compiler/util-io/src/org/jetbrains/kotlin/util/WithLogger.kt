@@ -4,9 +4,20 @@ import kotlin.system.exitProcess
 
 interface Logger {
     fun log(message: String)
-    fun error(message: String)
     fun warning(message: String)
+    fun error(message: String)
+
+    @Deprecated(FATAL_DEPRECATION_MESSAGE, ReplaceWith(FATAL_REPLACEMENT))
     fun fatal(message: String): Nothing
+
+    companion object {
+        const val FATAL_DEPRECATION_MESSAGE = "Invocation of fatal() may cause severe side effects such as throwing an exception or " +
+                "even terminating the current JVM process (check various implementations of this function for details). " +
+                "The code that uses Logger.fatal() sometimes expects a particular kind of side effect. " +
+                "This is an undesirable design. And it's definitely not a responsibility of Logger to influence " +
+                "the execution flow of the program."
+        const val FATAL_REPLACEMENT = "error(message)"
+    }
 }
 
 interface WithLogger {
@@ -27,10 +38,12 @@ interface WithLogger {
  */
 object DummyLogger : Logger {
     override fun log(message: String) = println(message)
-    override fun error(message: String) = println("e: $message")
     override fun warning(message: String) = println("w: $message")
+    override fun error(message: String) = println("e: $message")
+
+    @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
     override fun fatal(message: String): Nothing {
-        println("e: $message")
-        exitProcess(1)
+        error(message)
+        exitProcess(1) // WARNING: This would stop the JVM process!
     }
 }

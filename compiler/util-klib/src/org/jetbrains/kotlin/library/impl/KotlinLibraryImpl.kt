@@ -371,6 +371,8 @@ fun isKotlinLibrary(libraryFile: File): Boolean = try {
             override fun log(message: String) = Unit // don't log
             override fun error(message: String) = Unit // don't log
             override fun warning(message: String) = Unit // don't log
+
+            @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
             override fun fatal(message: String): Nothing = kotlin.error("This function should not be called")
         },
         knownIrProviders = emptyList()

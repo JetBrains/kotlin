@@ -155,10 +155,13 @@ internal fun logError(text: String, withStacktrace: Boolean = false): Nothing {
 }
 
 object KlibToolLogger : Logger, IrMessageLogger {
+    override fun log(message: String) = println(message)
     override fun warning(message: String) = logWarning(message)
     override fun error(message: String) = logWarning(message)
+
+    @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
     override fun fatal(message: String) = logError(message, withStacktrace = true)
-    override fun log(message: String) = println(message)
+
     override fun report(severity: IrMessageLogger.Severity, message: String, location: IrMessageLogger.Location?) {
         when (severity) {
             IrMessageLogger.Severity.INFO -> log(message)

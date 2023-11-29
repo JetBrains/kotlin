@@ -25,6 +25,7 @@ private class CompilerLoggerAdapter(
     override fun warning(message: String) = messageCollector.report(if (treatWarningsAsErrors) ERROR else STRONG_WARNING, message, null)
     override fun error(message: String) = messageCollector.report(ERROR, message, null)
 
+    @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
     override fun fatal(message: String): Nothing {
         error(message)
         (messageCollector as? GroupingMessageCollector)?.flush()

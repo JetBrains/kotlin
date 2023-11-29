@@ -19,6 +19,7 @@ private class IrMessageLoggerAdapter(private val irMessageLogger: IrMessageLogge
     override fun warning(message: String) = irMessageLogger.report(WARNING, message, null)
     override fun error(message: String) = irMessageLogger.report(ERROR, message, null)
 
+    @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
     override fun fatal(message: String): Nothing {
         error(message)
         throw CompilationErrorException()

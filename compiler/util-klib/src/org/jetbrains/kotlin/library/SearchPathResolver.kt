@@ -268,7 +268,18 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     override fun resolve(unresolved: RequiredUnresolvedLibrary, isDefaultLink: Boolean): L {
         return resolveOrNull(unresolved, isDefaultLink)
-            ?: logger.fatal("KLIB resolver: Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
+            ?: run {
+                // It does not make sense to replace logger.fatal() by logger.error() here, because:
+                // 1. We don't know which exactly side effect (throwing an exception, exiting JVM process, etc) is performed
+                //    by logger.fatal() as we don't know the concrete Logger class. So, we can't use logger.error()
+                //    and emulate the proper side effect here.
+                // 2. The contract of resolve(RequiredUnresolvedLibrary, Boolean) has a design flaw: It assumes that either
+                //    the library is resolved or the side effect takes place. The latter (side effect) affects the execution
+                //    flow of the program and should not be a responsibility of SearchPathResolver.
+                // 3. Finally, we are going to drop SearchPathResolver which is a part of KLIB resolver.
+                @Suppress("DEPRECATION")
+                logger.fatal("KLIB resolver: Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
+            }
     }
 
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean = true
