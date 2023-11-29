@@ -954,7 +954,7 @@ KtKotlinPropertySymbol:
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: true
   modality: ABSTRACT
@@ -1000,7 +1000,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: ABSTRACT
@@ -1042,7 +1042,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: true
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: ABSTRACT
@@ -1108,7 +1108,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: true
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: ABSTRACT
@@ -1154,7 +1154,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: ABSTRACT
@@ -1225,7 +1225,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: true
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: ABSTRACT
@@ -1291,7 +1291,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: ABSTRACT
@@ -1357,7 +1357,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: ABSTRACT
@@ -1562,7 +1562,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: OPEN
@@ -1603,7 +1603,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: OPEN

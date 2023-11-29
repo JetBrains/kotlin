@@ -1,1 +1,1 @@
-open val foo: kotlin.Int
+override val foo: kotlin.Int

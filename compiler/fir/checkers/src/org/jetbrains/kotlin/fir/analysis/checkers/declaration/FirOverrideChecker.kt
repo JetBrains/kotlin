@@ -311,10 +311,9 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
     ) {
         val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
         val hasOverrideKeyword = member.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-        val shouldBeTreatedAsExplicit = member.origin in listOf(FirDeclarationOrigin.Source, FirDeclarationOrigin.Synthetic.DataClassMember)
-        val isIncorrectExplicitOverride = shouldBeTreatedAsExplicit && (!member.isOverride || !hasOverrideKeyword)
+        val isOverride = member.isOverride && (member.origin != FirDeclarationOrigin.Source || hasOverrideKeyword)
 
-        if (isIncorrectExplicitOverride) {
+        if (!isOverride) {
             if (overriddenMemberSymbols.isEmpty() ||
                 context.session.overridesBackwardCompatibilityHelper.overrideCanBeOmitted(overriddenMemberSymbols, context)
             ) {
@@ -322,23 +321,6 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
             }
             val kind = member.source?.kind
             // Only report if the current member has real source or it's a member property declared inside the primary constructor.
-
-            if (kind is KtFakeSourceElementKind.DataClassGeneratedMembers) {
-                overriddenMemberSymbols.find { it.isFinal }?.let { base ->
-                    reporter.reportOn(
-                        containingClass.source,
-                        FirErrors.DATA_CLASS_OVERRIDE_CONFLICT,
-                        member,
-                        base,
-                        context
-                    )
-                }
-                if (member.name == StandardNames.DATA_CLASS_COPY) {
-                    member.checkDataClassCopy(reporter, overriddenMemberSymbols, containingClass, context)
-                }
-                return
-            }
-
             if (kind !is KtRealSourceElementKind && kind !is KtFakeSourceElementKind.PropertyFromParameter) return
 
             val visibilityChecker = context.session.visibilityChecker
@@ -368,6 +350,22 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
             return
         }
 
+        if (member.source?.kind is KtFakeSourceElementKind.DataClassGeneratedMembers) {
+            overriddenMemberSymbols.find { it.isFinal }?.let { base ->
+                reporter.reportOn(
+                    containingClass.source,
+                    FirErrors.DATA_CLASS_OVERRIDE_CONFLICT,
+                    member,
+                    base,
+                    context
+                )
+            }
+            if (member.name == StandardNames.DATA_CLASS_COPY) {
+                member.checkDataClassCopy(reporter, overriddenMemberSymbols, containingClass, context)
+            }
+            return
+        }
+
         if (overriddenMemberSymbols.isEmpty()) {
             reporter.reportNothingToOverride(member, context)
             return
@@ -394,11 +392,12 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
 
         member.checkVisibility(containingClass, reporter, overriddenMemberSymbols, context)
 
-        if (shouldBeTreatedAsExplicit) {
+        if (member.origin == FirDeclarationOrigin.Source) {
             member.checkDeprecation(reporter, overriddenMemberSymbols, context, firTypeScope)
         }
 
-        if (member is FirFunctionSymbol) {
+        // Data class members are already checked by `DATA_CLASS_OVERRIDE_DEFAULT_VALUES`
+        if (member is FirFunctionSymbol && member.origin != FirDeclarationOrigin.Synthetic.DataClassMember) {
             member.checkDefaultValues(reporter, context)
         }
 

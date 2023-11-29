@@ -1,3 +1,3 @@
-open fun foo(): kotlin.Int
+override fun foo(): kotlin.Int
 
-open fun bar(): kotlin.Int
+override fun bar(): kotlin.Int

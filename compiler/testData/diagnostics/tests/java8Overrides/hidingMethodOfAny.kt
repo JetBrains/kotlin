@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface IA {
     fun <!VIRTUAL_MEMBER_HIDDEN!>toString<!>(): String = "IB"
 

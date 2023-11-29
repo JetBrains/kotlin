@@ -15,7 +15,7 @@ KtKotlinPropertySymbol:
   isExtension: true
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: false
   modality: OPEN
@@ -67,7 +67,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: OPEN
@@ -108,7 +108,7 @@ KtKotlinPropertySymbol:
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: true
   modality: OPEN
@@ -150,7 +150,7 @@ KtFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   modality: OPEN
@@ -201,7 +201,7 @@ KtKotlinPropertySymbol:
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: false
   modality: OPEN
@@ -246,7 +246,7 @@ KtKotlinPropertySymbol:
   isExtension: true
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: true
   modality: OPEN

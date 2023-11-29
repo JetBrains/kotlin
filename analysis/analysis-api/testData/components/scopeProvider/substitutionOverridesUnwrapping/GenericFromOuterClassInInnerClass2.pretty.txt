@@ -2,7 +2,7 @@ fun noGeneric()
 
 fun withOuter(): Outer?
 
-fun withOwnAndOuter(t: test.SomeClass): Outer?
+override fun withOwnAndOuter(t: test.SomeClass): Outer?
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 

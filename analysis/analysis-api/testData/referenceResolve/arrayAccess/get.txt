@@ -1,2 +1,2 @@
 Resolved to:
-0: (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
+0: (in kotlin.collections.MutableList) override operator fun get(index: kotlin.Int): E

@@ -1,6 +1,6 @@
 val <Own : test.ClassA> Own.withOwnGeneric_InterfaceWithValBase: test.ClassA
 
-abstract val <Own : test.ClassB> Own.withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase: test.ClassA
+override val <Own : test.ClassB> Own.withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase: test.ClassA
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 

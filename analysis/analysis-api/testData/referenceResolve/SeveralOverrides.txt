@@ -1,2 +1,2 @@
 Resolved to:
-0: (in C) fun foo()
+0: (in C) override fun foo()

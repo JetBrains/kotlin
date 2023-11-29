@@ -1,22 +1,22 @@
 val noGenerics_InterfaceWithVal: test.SomeClass1
 
-abstract val withOuterGeneric_InterfaceWithVal: test.SomeClass2
+override val withOuterGeneric_InterfaceWithVal: test.SomeClass2
 
 val <Own> Own.withOwnGeneric_InterfaceWithVal: test.SomeClass1
 
-abstract val <Own> Own.withOwnAndOuterGeneric_InterfaceWithVal: test.SomeClass2
+override val <Own> Own.withOwnAndOuterGeneric_InterfaceWithVal: test.SomeClass2
 
 val noGenerics_InterfaceWithValBase: test.SomeClass1
 
-val withOuterGenericT1_InterfaceWithValBase: test.SomeClass1
+override val withOuterGenericT1_InterfaceWithValBase: test.SomeClass1
 
-abstract val withOuterGenericT2_InterfaceWithValBase: test.SomeClass2
+override val withOuterGenericT2_InterfaceWithValBase: test.SomeClass2
 
 val <Own> Own.withOwnGeneric_InterfaceWithValBase: test.SomeClass1
 
-val <Own> Own.withOwnAndOuterGenericT1_InterfaceWithValBase: test.SomeClass1
+override val <Own> Own.withOwnAndOuterGenericT1_InterfaceWithValBase: test.SomeClass1
 
-abstract val <Own> Own.withOwnAndOuterGenericT2_InterfaceWithValBase: test.SomeClass2
+override val <Own> Own.withOwnAndOuterGenericT2_InterfaceWithValBase: test.SomeClass2
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 

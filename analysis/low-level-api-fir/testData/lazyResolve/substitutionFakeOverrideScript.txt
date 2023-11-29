@@ -1,5 +1,5 @@
 STATUS:
-TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
 
 
 EXPECT_ACTUAL_MATCHING:
-TARGET: public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
 
 
 CONTRACTS:
-TARGET: public abstract [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-TARGET: public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
@@ -107,7 +107,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
 
 
 ANNOTATION_ARGUMENTS:
-TARGET: public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
 
 
 BODY_RESOLVE:
-TARGET: public abstract [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
+TARGET: public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val R|kotlin/Int|.property: R|kotlin/Int|
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts

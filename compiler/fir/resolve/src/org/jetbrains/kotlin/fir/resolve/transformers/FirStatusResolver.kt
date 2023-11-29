@@ -35,6 +35,7 @@ class FirStatusResolver(
             FirDeclarationStatusImpl.Modifier.LATEINIT,
             FirDeclarationStatusImpl.Modifier.TAILREC,
             FirDeclarationStatusImpl.Modifier.EXTERNAL,
+            FirDeclarationStatusImpl.Modifier.OVERRIDE,
         )
 
         private val MODIFIERS_FROM_OVERRIDDEN: List<FirDeclarationStatusImpl.Modifier> =
@@ -261,6 +262,7 @@ class FirStatusResolver(
                     acc || overriddenStatus[modifier]
                 }
             }
+            status[FirDeclarationStatusImpl.Modifier.OVERRIDE] = true
         }
 
         val parentEffectiveVisibility = when {

@@ -16,14 +16,15 @@ public final class BaseImpl /* BaseImpl*/ implements Base {
   private final int x;
 
   @java.lang.Override()
+  public final int getX();//  getX()
+
+  @java.lang.Override()
   public void printMessage();//  printMessage()
 
   @java.lang.Override()
   public void printMessageLine();//  printMessageLine()
 
   public  BaseImpl(int);//  .ctor(int)
-
-  public final int getX();//  getX()
 }
 
 public final class Derived /* Derived*/ implements Base {

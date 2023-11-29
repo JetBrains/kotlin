@@ -1,1 +1,1 @@
-open fun <K : kotlin.String?> foo()
+override fun <K : kotlin.String?> foo()

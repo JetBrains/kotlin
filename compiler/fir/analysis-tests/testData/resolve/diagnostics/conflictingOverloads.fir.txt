@@ -33,7 +33,7 @@ FILE: conflictingOverloads.kt
         public open override fun rest(s: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        public final fun rest(s: R|kotlin/String|): R|kotlin/Unit| {
+        public final override fun rest(s: R|kotlin/String|): R|kotlin/Unit| {
         }
 
         public final fun rest(l: R|kotlin/Long|): R|kotlin/Unit| {

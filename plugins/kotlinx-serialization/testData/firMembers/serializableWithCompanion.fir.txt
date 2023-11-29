@@ -44,14 +44,14 @@ FILE: serializableWithCompanion.kt
         public final fun copy(i: R|kotlin/Int| = this@R|com/example/WithCompanion|.R|com/example/WithCompanion.i|): R|com/example/WithCompanion|
 
         public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<com/example/WithCompanion>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/WithCompanion|): R|kotlin/Unit|
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/WithCompanion|): R|kotlin/Unit|
 
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/WithCompanion|
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/WithCompanion|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|com/example/WithCompanion.$serializer| {
                 super<R|kotlin/Any|>()
@@ -86,14 +86,14 @@ FILE: serializableWithCompanion.kt
         public final fun copy(i: R|kotlin/Int| = this@R|com/example/WithNamedCompanion|.R|com/example/WithNamedCompanion.i|): R|com/example/WithNamedCompanion|
 
         public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<com/example/WithNamedCompanion>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/WithNamedCompanion|): R|kotlin/Unit|
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/WithNamedCompanion|): R|kotlin/Unit|
 
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/WithNamedCompanion|
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/WithNamedCompanion|
 
             public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|com/example/WithNamedCompanion.$serializer| {
                 super<R|kotlin/Any|>()
