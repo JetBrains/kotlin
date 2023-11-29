@@ -8,20 +8,19 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestProjectConfigurator
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.DefaultAnalysisApiLibraryTestApplicationEnvironmentConfiguration
-import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneApplicationEnvironmentConfiguration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
@@ -51,11 +50,11 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
     override val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
         get() = DefaultAnalysisApiLibraryTestApplicationEnvironmentConfiguration
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> =
+    override val projectConfigurators: List<AnalysisApiTestProjectConfigurator> =
         listOf(
-            AnalysisApiBaseTestServiceRegistrar,
-            AnalysisApiDecompiledCodeTestServiceRegistrar,
-            AnalysisApiFirTestServiceRegistrar,
+            AnalysisApiBaseTestProjectConfigurator,
+            AnalysisApiDecompiledCodeTestProjectConfigurator,
+            AnalysisApiFirTestProjectConfigurator,
         )
 }
 

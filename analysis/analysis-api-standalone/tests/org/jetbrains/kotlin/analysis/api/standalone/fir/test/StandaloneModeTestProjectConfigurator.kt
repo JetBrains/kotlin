@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 @OptIn(KtAnalysisApiInternals::class)
-public object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
+public object StandaloneModeTestProjectConfigurator : AnalysisApiTestProjectConfigurator() {
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider::class.java)

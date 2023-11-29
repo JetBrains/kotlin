@@ -15,7 +15,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.DefaultStandaloneApplicationEnvironmentConfigurations
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneProjectConfigurator
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.LLFirStandaloneLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
@@ -113,9 +113,9 @@ public class StandaloneAnalysisAPISessionBuilder(
         project.apply {
             registerService(KotlinMessageBusProvider::class.java, KotlinProjectMessageBusProvider::class.java)
 
-            FirStandaloneServiceRegistrar.registerProjectServices(project)
-            FirStandaloneServiceRegistrar.registerProjectExtensionPoints(project)
-            FirStandaloneServiceRegistrar.registerProjectModelServices(project, kotlinCoreProjectEnvironment.parentDisposable)
+            FirStandaloneProjectConfigurator.registerProjectServices(project)
+            FirStandaloneProjectConfigurator.registerProjectExtensionPoints(project)
+            FirStandaloneProjectConfigurator.registerProjectModelServices(project, kotlinCoreProjectEnvironment.parentDisposable)
 
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
             registerService(KotlinGlobalModificationService::class.java, KotlinStaticGlobalModificationService::class.java)

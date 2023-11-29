@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
@@ -46,8 +46,8 @@ object StandaloneModeConfigurator : AnalysisApiTestConfigurator() {
     override val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
         get() = sourceConfigurator.applicationEnvironmentConfiguration
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
-        get() = sourceConfigurator.serviceRegistrars + listOf(StandaloneModeTestServiceRegistrar)
+    override val projectConfigurators: List<AnalysisApiTestProjectConfigurator>
+        get() = sourceConfigurator.projectConfigurators + listOf(StandaloneModeTestProjectConfigurator)
 
     override fun createModules(
         moduleStructure: TestModuleStructure,

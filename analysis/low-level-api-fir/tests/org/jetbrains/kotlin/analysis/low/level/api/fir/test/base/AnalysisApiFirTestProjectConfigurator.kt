@@ -6,26 +6,26 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneProjectConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.NoOpKtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.providers.PackagePartProviderFactory
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.services.TestServices
 
-object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
+object AnalysisApiFirTestProjectConfigurator : AnalysisApiTestProjectConfigurator() {
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
-        FirStandaloneServiceRegistrar.registerProjectExtensionPoints(project)
+        FirStandaloneProjectConfigurator.registerProjectExtensionPoints(project)
     }
 
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
-            FirStandaloneServiceRegistrar.registerProjectServices(project)
+            FirStandaloneProjectConfigurator.registerProjectServices(project)
 
             registerService(FirSealedClassInheritorsProcessorFactory::class.java, LLFirSealedClassInheritorsProcessorFactoryForTests())
             registerService(PackagePartProviderFactory::class.java, PackagePartProviderTestImpl(testServices))
@@ -35,6 +35,6 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
     @OptIn(TestInfrastructureInternals::class)
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
-        FirStandaloneServiceRegistrar.registerProjectModelServices(project, testServices.testConfiguration.rootDisposable)
+        FirStandaloneProjectConfigurator.registerProjectModelServices(project, testServices.testConfiguration.rootDisposable)
     }
 }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.test.configurators
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AnalysisApiTestServiceRegistrar {
+abstract class AnalysisApiTestProjectConfigurator {
     open fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
 
     open fun registerProjectServices(project: MockProject, testServices: TestServices) {}

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker
 import org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport
 
 @OptIn(LLFirInternals::class, KtAnalysisApiInternals::class)
-object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
+object FirStandaloneProjectConfigurator : AnalysisApiStandaloneProjectConfigurator {
     override fun registerProjectExtensionPoints(project: MockProject) {
         IrGenerationExtension.registerExtensionPoint(project)
         FirExtensionRegistrarAdapter.registerExtensionPoint(project)

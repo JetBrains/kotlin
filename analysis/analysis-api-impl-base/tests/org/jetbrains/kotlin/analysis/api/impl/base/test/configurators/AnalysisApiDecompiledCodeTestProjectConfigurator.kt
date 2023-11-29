@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 
-object AnalysisApiDecompiledCodeTestServiceRegistrar : AnalysisApiTestServiceRegistrar()
+object AnalysisApiDecompiledCodeTestProjectConfigurator : AnalysisApiTestProjectConfigurator()

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsFor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.impl.testConfiguration
@@ -57,14 +57,14 @@ abstract class AbstractErrorResistanceTest : AbstractLowLevelApiSingleFileTest()
 }
 
 private object ErrorResistanceConfigurator : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
+    override val projectConfigurators: List<AnalysisApiTestProjectConfigurator>
         get() = buildList {
-            addAll(super.serviceRegistrars)
-            add(ErrorResistanceServiceRegistrar)
+            addAll(super.projectConfigurators)
+            add(ErrorResistanceProjectConfigurator)
         }
 }
 
-private object ErrorResistanceServiceRegistrar : AnalysisApiTestServiceRegistrar() {
+private object ErrorResistanceProjectConfigurator : AnalysisApiTestProjectConfigurator() {
     @OptIn(TestInfrastructureInternals::class)
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         with(PsiElementFinder.EP.getPoint(project)) {

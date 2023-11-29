@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
 import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiModifiablePsiTestApplicationEnvironmentConfiguration
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiModifiablePsiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiModifiablePsiTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -38,8 +38,8 @@ object AnalysisApiFirModifiablePsiSourceTestConfigurator : AnalysisApiFirSourceT
     override val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
         get() = AnalysisApiModifiablePsiTestApplicationEnvironmentConfiguration
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = buildList {
-        addAll(super.serviceRegistrars)
-        add(AnalysisApiModifiablePsiTestServiceRegistrar)
+    override val projectConfigurators: List<AnalysisApiTestProjectConfigurator> = buildList {
+        addAll(super.projectConfigurators)
+        add(AnalysisApiModifiablePsiTestProjectConfigurator)
     }
 }

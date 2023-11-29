@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.references.ReadWriteAccessC
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.references.fe10.base.KtFe10KotlinReferenceProviderCo
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.services.TestServices
 
-object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
+object AnalysisApiFe10TestProjectConfigurator : AnalysisApiTestProjectConfigurator() {
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
         AnalysisHandlerExtension.registerExtensionPoint(project)
     }

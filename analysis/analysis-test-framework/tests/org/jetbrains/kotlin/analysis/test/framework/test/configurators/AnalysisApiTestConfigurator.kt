@@ -29,7 +29,7 @@ abstract class AnalysisApiTestConfigurator {
 
     abstract val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
 
-    abstract val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
+    abstract val projectConfigurators: List<AnalysisApiTestProjectConfigurator>
 
     open fun prepareFilesInModule(files: List<PsiFile>, module: TestModule, testServices: TestServices) {}
 
@@ -42,14 +42,14 @@ abstract class AnalysisApiTestConfigurator {
     abstract fun createModules(moduleStructure: TestModuleStructure, testServices: TestServices, project: Project): KtModuleProjectStructure
 
     fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
-        serviceRegistrars.forEach { it.registerProjectExtensionPoints(project, testServices) }
+        projectConfigurators.forEach { it.registerProjectExtensionPoints(project, testServices) }
     }
 
     fun registerProjectServices(project: MockProject, testServices: TestServices) {
-        serviceRegistrars.forEach { it.registerProjectServices(project, testServices) }
+        projectConfigurators.forEach { it.registerProjectServices(project, testServices) }
     }
 
     fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
-        serviceRegistrars.forEach { it.registerProjectModelServices(project, testServices) }
+        projectConfigurators.forEach { it.registerProjectModelServices(project, testServices) }
     }
 }

@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 
-interface AnalysisApiStandaloneServiceRegistrar {
+interface AnalysisApiStandaloneProjectConfigurator {
     fun registerProjectExtensionPoints(project: MockProject)
 
     fun registerProjectServices(project: MockProject)

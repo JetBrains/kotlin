@@ -12,7 +12,7 @@ import com.intellij.pom.core.impl.PomModelImpl
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.psi.PsiTreeChangeEvent
 import com.intellij.psi.PsiTreeChangeListener
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 /**
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.services.TestServices
  *
  * @see AnalysisApiModifiablePsiTestApplicationEnvironmentConfiguration
  */
-object AnalysisApiModifiablePsiTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
+object AnalysisApiModifiablePsiTestProjectConfigurator : AnalysisApiTestProjectConfigurator() {
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
         CoreApplicationEnvironment.registerExtensionPoint(
             project.extensionArea,

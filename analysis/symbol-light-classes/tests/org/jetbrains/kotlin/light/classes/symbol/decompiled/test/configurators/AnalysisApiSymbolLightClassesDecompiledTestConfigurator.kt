@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -28,9 +28,9 @@ object AnalysisApiSymbolLightClassesDecompiledTestConfigurator : AnalysisApiTest
     override val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
         get() = AnalysisApiFirLibraryBinaryTestConfigurator.applicationEnvironmentConfiguration
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
-        get() = AnalysisApiFirLibraryBinaryTestConfigurator.serviceRegistrars +
-                AnalysisApiSymbolLightClassesDecompiledTestServiceRegistrar
+    override val projectConfigurators: List<AnalysisApiTestProjectConfigurator>
+        get() = AnalysisApiFirLibraryBinaryTestConfigurator.projectConfigurators +
+                AnalysisApiSymbolLightClassesDecompiledTestProjectConfigurator
 
     override fun createModules(
         moduleStructure: TestModuleStructure,

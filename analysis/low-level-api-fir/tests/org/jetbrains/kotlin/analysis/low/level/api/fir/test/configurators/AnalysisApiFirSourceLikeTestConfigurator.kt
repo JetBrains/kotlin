@@ -7,17 +7,17 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestProjectConfigurator
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.DefaultAnalysisApiTestApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
@@ -42,10 +42,10 @@ abstract class AnalysisApiFirSourceLikeTestConfigurator(override val analyseInDe
     override val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
         get() = DefaultAnalysisApiTestApplicationEnvironmentConfiguration
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = listOf(
-        AnalysisApiBaseTestServiceRegistrar,
-        AnalysisApiDecompiledCodeTestServiceRegistrar,
-        AnalysisApiFirTestServiceRegistrar,
+    override val projectConfigurators: List<AnalysisApiTestProjectConfigurator> = listOf(
+        AnalysisApiBaseTestProjectConfigurator,
+        AnalysisApiDecompiledCodeTestProjectConfigurator,
+        AnalysisApiFirTestProjectConfigurator,
     )
 
     override fun createModules(

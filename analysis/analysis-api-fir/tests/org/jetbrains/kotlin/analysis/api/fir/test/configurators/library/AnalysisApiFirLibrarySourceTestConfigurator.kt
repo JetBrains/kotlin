@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.analysis.api.fir.test.configurators.library
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestProjectConfigurator
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.DefaultAnalysisApiLibraryTestApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.createKtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompilerJar
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
-import kotlin.contracts.contract
-import kotlin.test.assertNotNull
 
 object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
@@ -63,11 +61,11 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
     override val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
         get() = DefaultAnalysisApiLibraryTestApplicationEnvironmentConfiguration
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> =
+    override val projectConfigurators: List<AnalysisApiTestProjectConfigurator> =
         listOf(
-            AnalysisApiBaseTestServiceRegistrar,
-            AnalysisApiDecompiledCodeTestServiceRegistrar,
-            AnalysisApiFirTestServiceRegistrar,
+            AnalysisApiBaseTestProjectConfigurator,
+            AnalysisApiDecompiledCodeTestProjectConfigurator,
+            AnalysisApiFirTestProjectConfigurator,
         )
 }
 

@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiScriptTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestProjectConfigurator
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestProjectConfigurator
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiScriptTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.DefaultAnalysisApiTestApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptMo
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -39,11 +39,11 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
     override val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
         get() = DefaultAnalysisApiTestApplicationEnvironmentConfiguration
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = listOf(
-        AnalysisApiBaseTestServiceRegistrar,
-        AnalysisApiDecompiledCodeTestServiceRegistrar,
-        AnalysisApiFirTestServiceRegistrar,
-        AnalysisApiScriptTestServiceRegistrar,
+    override val projectConfigurators: List<AnalysisApiTestProjectConfigurator> = listOf(
+        AnalysisApiBaseTestProjectConfigurator,
+        AnalysisApiDecompiledCodeTestProjectConfigurator,
+        AnalysisApiFirTestProjectConfigurator,
+        AnalysisApiScriptTestProjectConfigurator,
     )
 
     override fun createModules(

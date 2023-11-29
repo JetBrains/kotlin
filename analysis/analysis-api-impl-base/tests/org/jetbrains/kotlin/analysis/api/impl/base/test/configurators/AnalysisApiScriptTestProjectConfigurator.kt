@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.test.services.TestServices
 
-object AnalysisApiScriptTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
+object AnalysisApiScriptTestProjectConfigurator : AnalysisApiTestProjectConfigurator() {
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         project.registerService(ScriptDefinitionProvider::class.java, CliScriptDefinitionProvider())
     }

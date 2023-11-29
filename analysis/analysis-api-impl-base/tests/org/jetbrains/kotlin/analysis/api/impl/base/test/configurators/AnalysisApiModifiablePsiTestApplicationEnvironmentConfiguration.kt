@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentCon
  * Registers application services which are required for PSI modification operations (such as deleting a PSI element) to complete without
  * throwing exceptions.
  *
- * @see AnalysisApiModifiablePsiTestServiceRegistrar
+ * @see AnalysisApiModifiablePsiTestProjectConfigurator
  */
 object AnalysisApiModifiablePsiTestApplicationEnvironmentConfiguration : AnalysisApiBaseTestApplicationEnvironmentConfiguration() {
     init {

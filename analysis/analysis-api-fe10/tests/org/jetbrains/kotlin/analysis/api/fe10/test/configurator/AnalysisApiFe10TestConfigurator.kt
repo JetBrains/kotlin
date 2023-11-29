@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fe10.test.configurator
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestProjectConfigurator
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.DefaultAnalysisApiTestApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneApplicationEnvironmentConfiguration
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFa
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestProjectConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -47,10 +47,10 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
     override val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
         get() = DefaultAnalysisApiTestApplicationEnvironmentConfiguration
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = listOf(
-        AnalysisApiBaseTestServiceRegistrar,
-        AnalysisApiDecompiledCodeTestServiceRegistrar,
-        AnalysisApiFe10TestServiceRegistrar,
+    override val projectConfigurators: List<AnalysisApiTestProjectConfigurator> = listOf(
+        AnalysisApiBaseTestProjectConfigurator,
+        AnalysisApiDecompiledCodeTestProjectConfigurator,
+        AnalysisApiFe10TestProjectConfigurator,
     )
 
     override fun createModules(
