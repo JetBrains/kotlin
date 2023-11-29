@@ -12,7 +12,16 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): PackageResolutionResult {
+/**
+ * Compared to [resolveToPackageOrClass], does not perform the actual resolve.
+ *
+ * Instead of it, it just looks for the longest existing package name prefix in the [fqName],
+ * and assumes that the rest of the name (if present) is a relative class name.
+ *
+ * Given that [FqName.ROOT] package is always present in any [FirSymbolProvider],
+ * this function **can never fail**.
+ */
+fun findLongestExistingPackage(symbolProvider: FirSymbolProvider, fqName: FqName): PackageAndClass {
     var currentPackage = fqName
 
     val pathSegments = fqName.pathSegments()
@@ -25,8 +34,17 @@ fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): 
         prefixSize--
     }
 
-    if (currentPackage == fqName) return PackageResolutionResult.PackageOrClass(currentPackage, null, null)
+    if (currentPackage == fqName) return PackageAndClass(currentPackage, relativeClassFqName = null)
     val relativeClassFqName = FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it].asString() })
+
+    return PackageAndClass(currentPackage, relativeClassFqName)
+}
+
+data class PackageAndClass(val packageFqName: FqName, val relativeClassFqName: FqName?)
+
+fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): PackageResolutionResult {
+    val (currentPackage, relativeClassFqName) = findLongestExistingPackage(symbolProvider, fqName)
+    if (relativeClassFqName == null) return PackageResolutionResult.PackageOrClass(currentPackage, null, null)
 
     val classId = ClassId(currentPackage, relativeClassFqName, isLocal = false)
     val symbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return PackageResolutionResult.Error(

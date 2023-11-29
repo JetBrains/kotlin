@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.builder.buildErrorImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeImportFromSingleton
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
@@ -76,25 +72,8 @@ open class FirImportResolveTransformer protected constructor(
         get() = true
 
     private fun transformImportForFqName(fqName: FqName, delegate: FirImport): FirImport {
-        val (packageFqName, relativeClassFqName, classSymbol) = when (val result = resolveToPackageOrClass(symbolProvider, fqName)) {
-            is PackageResolutionResult.Error ->
-                return if (delegate.source?.kind == KtFakeSourceElementKind.ImplicitImport) {
-                    delegate
-                } else {
-                    buildErrorImport {
-                        this.delegate = delegate
-                        this.diagnostic = result.diagnostic
-                    }
-                }
-            is PackageResolutionResult.PackageOrClass -> result
-        }
-        val firClass = classSymbol?.fir as? FirRegularClass
-        if (delegate.isAllUnder && firClass?.classKind?.isSingleton == true) {
-            return buildErrorImport {
-                this.delegate = delegate
-                this.diagnostic = ConeImportFromSingleton(firClass.name)
-            }
-        }
+        val (packageFqName, relativeClassFqName) = findLongestExistingPackage(symbolProvider, fqName)
+
         return buildResolvedImport {
             this.delegate = delegate
             this.packageFqName = packageFqName
