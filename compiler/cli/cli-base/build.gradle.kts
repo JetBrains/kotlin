@@ -23,13 +23,22 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+
+    testImplementation(intellijCore())
+    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 }
 
 sourceSets {
     "main" {
         projectDefault()
     }
-    "test" { none() }
+    "test" { projectDefault() }
 }
 
 allprojects {
@@ -38,6 +47,7 @@ allprojects {
 
 testsJar {}
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
+    useJUnitPlatform()
 }
