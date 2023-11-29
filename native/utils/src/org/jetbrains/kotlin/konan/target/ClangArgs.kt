@@ -25,14 +25,15 @@ sealed class ClangArgs(
         private val forJni: Boolean
 ) {
 
-    private val absoluteTargetToolchain = configurables.absoluteTargetToolchain
-    private val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
-    private val absoluteLlvmHome = configurables.absoluteLlvmHome
-    private val target = configurables.target
-    private val targetTriple = configurables.targetTriple
+    private val absoluteTargetToolchain
+        get() = configurables.absoluteTargetToolchain
+    private val absoluteTargetSysRoot get() = configurables.absoluteTargetSysRoot
+    private val absoluteLlvmHome get() = configurables.absoluteLlvmHome
+    private val target get() = configurables.target
+    private val targetTriple get() = configurables.targetTriple
 
     // TODO: Should be dropped in favor of real MSVC target.
-    private val argsForWindowsJni = forJni && target == KonanTarget.MINGW_X64
+    private val argsForWindowsJni get() = forJni && target == KonanTarget.MINGW_X64
 
     private val clangArgsSpecificForKonanSources : List<String>
         get() {
@@ -71,9 +72,9 @@ sealed class ClangArgs(
             return (konanOptions + otherOptions).map { "-D$it" }
         }
 
-    private val binDir = "$absoluteTargetToolchain/bin"
+    private val binDir get() = "$absoluteTargetToolchain/bin"
     // TODO: Use buildList
-    private val commonClangArgs: List<String> = mutableListOf<List<String>>().apply {
+    private val commonClangArgs: List<String> get() = mutableListOf<List<String>>().apply {
         // Currently, MinGW toolchain contains old LLVM 8, and -fuse-ld=lld picks linker from there.
         // And, unfortunately, `-fuse-ld=<absolute path>` doesn't work correctly for MSVC toolchain.
         // That's why we just don't add $absoluteTargetToolchain/bin to binary search path in case of JNI compilation.
@@ -143,7 +144,7 @@ sealed class ClangArgs(
         }
     }.flatten()
 
-    private val specificClangArgs: List<String> = when (target) {
+    private val specificClangArgs: List<String> get() = when (target) {
         KonanTarget.LINUX_ARM32_HFP -> listOf(
                 "-mfpu=vfp", "-mfloat-abi=hard"
         )
@@ -205,17 +206,17 @@ sealed class ClangArgs(
         else -> emptyList()
     }
 
-    val clangPaths = listOf("$absoluteLlvmHome/bin", binDir)
+    val clangPaths get() = listOf("$absoluteLlvmHome/bin", binDir)
 
     /**
      * Clang args for Objectice-C and plain C compilation.
      */
-    val clangArgs: Array<String> = (commonClangArgs + specificClangArgs).toTypedArray()
+    val clangArgs: Array<String> get() = (commonClangArgs + specificClangArgs).toTypedArray()
 
     /**
      * Clang args for C++ compilation.
      */
-    val clangXXArgs: Array<String> = clangArgs + when (configurables) {
+    val clangXXArgs: Array<String> get() = clangArgs + when (configurables) {
         is AppleConfigurables -> arrayOf(
                 "-stdlib=libc++",
                 // KT-57848
@@ -224,10 +225,10 @@ sealed class ClangArgs(
         else -> emptyArray()
     }
 
-    val clangArgsForKonanSources =
+    val clangArgsForKonanSources get() =
             clangXXArgs + clangArgsSpecificForKonanSources
 
-    private val libclangSpecificArgs =
+    private val libclangSpecificArgs get() =
             // libclang works not exactly the same way as the clang binary and
             // (in particular) uses different default header search path.
             // See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
@@ -240,7 +241,7 @@ sealed class ClangArgs(
      *
      * Note that it's different from [clangArgs].
      */
-    val libclangArgs: List<String> =
+    val libclangArgs: List<String> get() =
             libclangSpecificArgs + clangArgs
 
     /**
@@ -248,17 +249,17 @@ sealed class ClangArgs(
      *
      * Note that it's different from [clangXXArgs].
      */
-    val libclangXXArgs: List<String> =
+    val libclangXXArgs: List<String> get() =
             libclangSpecificArgs + clangXXArgs
 
     private val targetClangCmd
-            = listOf("${absoluteLlvmHome}/bin/clang") + clangArgs
+        get() = listOf("${absoluteLlvmHome}/bin/clang") + clangArgs
 
     private val targetClangXXCmd
-            = listOf("${absoluteLlvmHome}/bin/clang++") + clangXXArgs
+        get() = listOf("${absoluteLlvmHome}/bin/clang++") + clangXXArgs
 
     private val targetArCmd
-            = listOf("${absoluteLlvmHome}/bin/llvm-ar")
+        get() = listOf("${absoluteLlvmHome}/bin/llvm-ar")
 
 
     fun clangC(vararg userArgs: String) = targetClangCmd + userArgs.asList()
@@ -293,4 +294,3 @@ sealed class ClangArgs(
      */
     class Native(configurables: Configurables) : ClangArgs(configurables, forJni = false)
 }
-

@@ -252,18 +252,32 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     } ?: false
 
     init {
-        if (!platformManager.isEnabled(target)) {
+        // NB: producing LIBRARY is enabled on any combination of hosts/targets
+        if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {
             error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")
         }
     }
 
-    val platform = platformManager.platform(target).apply {
+    val platform by lazy { platformManager.platform(target) }
+
+    /**
+     * TODO(consider removing after review)
+     * We're not making the code simpler/prettier here.
+     * Specifically, one more implicit assumption is added (that you have to call [downloadDependenciesIfNecessary] manually after the
+     * frontend run). That's not very robust: if a new OUTPUT_KIND is added, or someone calls K/N compiler API on a lower-level
+     * than [DynamicCompilerDriver], they might easuly forget to call [downloadDependenciesIfNecessary]
+     *
+     * Better solution: KT-64509 Refactor Kotlin/Native compiler setup: run FE without KonanConfig
+     * This way, KonanConfig will be a class necessary only for Backend run, and instantiated only when we get
+     * to these phases
+     */
+    fun downloadDependenciesIfNecessary() {
         if (configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES)) {
-            downloadDependencies()
+            platform.downloadDependencies()
         }
     }
 
-    internal val clang = platform.clang
+    internal val clang by lazy { platform.clang }
     val indirectBranchesAreAllowed = target != KonanTarget.WASM32
     val threadsAreAllowed = (target != KonanTarget.WASM32) && (target !is KonanTarget.ZEPHYR)
 

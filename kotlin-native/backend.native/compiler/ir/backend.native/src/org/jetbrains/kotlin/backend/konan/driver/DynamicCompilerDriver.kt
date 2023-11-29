@@ -60,6 +60,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
      */
     private fun produceObjCFramework(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
+        config.downloadDependenciesIfNecessary()
         val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
         engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
         if (config.omitFrameworkBinary) {
@@ -78,6 +79,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
 
     private fun produceCLibrary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
+        config.downloadDependenciesIfNecessary()
 
         val (psiToIrOutput, cAdapterElements) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
             if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
@@ -149,6 +151,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
      */
     private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
+        config.downloadDependenciesIfNecessary()
         val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
@@ -156,6 +159,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
     }
 
     private fun produceBinaryFromBitcode(engine: PhaseEngine<PhaseContext>, config: KonanConfig, bitcodeFilePath: String) {
+        config.downloadDependenciesIfNecessary()
         val llvmContext = LLVMContextCreate()!!
         var llvmModule: CPointer<LLVMOpaqueModule>? = null
         try {
@@ -185,6 +189,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         require(config.produce == CompilerOutputKind.TEST_BUNDLE)
 
         val frontendOutput = engine.runFrontend(config, environment) ?: return
+        config.downloadDependenciesIfNecessary()
         engine.runPhase(CreateTestBundlePhase, frontendOutput)
         val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
