@@ -338,6 +338,12 @@ class LocalDeclarationsLowering(
                     visitMember(declaration) ?: super.visitFunction(declaration)
                 }
 
+            override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement =
+                (localContext as? LocalClassContext)?.constructorContext
+                    ?.let { declaration.apply { transformChildrenVoid(FunctionBodiesRewriter(it)) } }
+                    ?: visitMember(declaration)
+                    ?: super.visitAnonymousInitializer(declaration)
+
             private fun visitMember(declaration: IrDeclaration): IrStatement? =
                 if (localContext is LocalClassContext && declaration.parent == localContext.declaration) {
                     val classMemberLocalContext = LocalClassMemberContext(declaration, localContext)
@@ -581,12 +587,6 @@ class LocalDeclarationsLowering(
 
             localClassConstructors.values.forEach { constructorContext ->
                 rewriteFunctionBody(constructorContext.declaration, constructorContext)
-
-                if (!constructorContext.declaration.isPrimary) return@forEach
-
-                constructorContext.declaration.constructedClass.declarations
-                    .filterIsInstance<IrAnonymousInitializer>()
-                    .forEach { rewriteFunctionBody(it, constructorContext) }
             }
 
             localClasses.values.forEach {
