@@ -17,7 +17,7 @@ fun Any.test() {}
 fun Any?.test2() {}
 
 fun test() {
-    val ret1 = build {
+    val ret1 = <!NEW_INFERENCE_ERROR!>build {
         emit(1)
         emit(null)
         <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test()<!>
@@ -27,8 +27,8 @@ fun test() {
         get()?.equals(1)
         // there is `String?.equals` extension
         get().equals("")
-    }
-    val ret2 = build {
+    }<!>
+    val ret2 = <!NEW_INFERENCE_ERROR!>build {
         emit(1)
         emit(null)
         <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test()<!>
@@ -40,8 +40,8 @@ fun test() {
         x?.hashCode()
         x?.equals(1)
         x.equals("")
-    }
-    val ret3 = build {
+    }<!>
+    val ret3 = <!NEW_INFERENCE_ERROR!>build {
         emit(1)
         emit(null)
         <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test()<!>
@@ -68,7 +68,7 @@ fun test() {
         }
 
         ""
-    }
+    }<!>
     val ret4 = build {
         emit(1)
         emit(null)
@@ -149,15 +149,15 @@ fun test() {
 
         ""
     }
-    val ret408 = build {
+    val ret408 = <!NEW_INFERENCE_ERROR!>build {
         emit(1)
         emit(null)
         val x = get()
         <!BUILDER_INFERENCE_STUB_RECEIVER!>x.test()<!>
 
         ""
-    }
-    val ret41 = build {
+    }<!>
+    val ret41 = <!NEW_INFERENCE_ERROR!>build {
         emit(1)
         emit(null)
         <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test()<!>
@@ -205,7 +205,7 @@ fun test() {
         }
 
         ""
-    }
+    }<!>
     val ret5 = build {
         emit(1)
         emit(null)
@@ -280,14 +280,14 @@ fun test() {
         }
         ""
     }
-    val ret508 = build {
+    val ret508 = <!NEW_INFERENCE_ERROR!>build {
         emit(1)
         emit(null)
         val x = get()
         <!BUILDER_INFERENCE_STUB_RECEIVER!>x.test()<!>
         ""
-    }
-    val ret51 = build {
+    }<!>
+    val ret51 = <!NEW_INFERENCE_ERROR!>build {
         emit(1)
         emit(null)
         <!BUILDER_INFERENCE_STUB_RECEIVER!>get()?.test()<!>
@@ -310,5 +310,5 @@ fun test() {
         }
 
         ""
-    }
+    }<!>
 }
