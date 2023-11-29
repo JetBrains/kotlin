@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.kotlinp.jvm
 
-import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.jvm.KotlinModuleMetadata
-import kotlinx.metadata.jvm.Metadata
-import kotlinx.metadata.jvm.UnstableMetadataApi
+import kotlin.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.KotlinModuleMetadata
+import kotlin.metadata.jvm.Metadata
+import kotlin.metadata.jvm.UnstableMetadataApi
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.io.FileInputStream

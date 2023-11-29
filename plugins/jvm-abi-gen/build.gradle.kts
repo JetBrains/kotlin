@@ -31,11 +31,11 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":kotlin-build-common"))
 
-    // Include kotlinx.metadata for metadata stripping.
-    // Note that kotlinx-metadata-jvm already includes kotlinx-metadata, core:metadata, core:metadata.jvm,
-    // and protobuf-lite, so we only need to include kotlinx-metadata-jvm in the shadow jar.
-    compileOnly(project(":kotlinx-metadata"))
-    embedded(project(":kotlinx-metadata-jvm"))
+    // Include kotlin.metadata for metadata stripping.
+    // Note that kotlin-metadata-jvm already includes kotlin-metadata, core:metadata, core:metadata.jvm,
+    // and protobuf-lite, so we only need to include kotlin-metadata-jvm in the shadow jar.
+    compileOnly(project(":kotlin-metadata"))
+    embedded(project(":kotlin-metadata-jvm"))
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))

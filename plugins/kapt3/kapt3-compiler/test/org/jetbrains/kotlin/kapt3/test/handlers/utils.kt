@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.kapt3.test.handlers
 
 import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.Pretty
-import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames

@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":kotlinx-metadata"))
+    compileOnly(project(":kotlin-metadata"))
 }
 
 sourceSets {

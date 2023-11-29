@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.abicmp.tasks
 
-import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.abicmp.checkers.*
 import org.jetbrains.kotlin.abicmp.reports.ClassMetadataReport
 

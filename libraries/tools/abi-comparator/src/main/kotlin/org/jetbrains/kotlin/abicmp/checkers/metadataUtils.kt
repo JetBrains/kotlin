@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.abicmp.checkers
 
-import kotlinx.metadata.*
-import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.jvm.getterSignature
-import kotlinx.metadata.jvm.localDelegatedProperties
-import kotlinx.metadata.jvm.signature
+import kotlin.metadata.*
+import kotlin.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.getterSignature
+import kotlin.metadata.jvm.localDelegatedProperties
+import kotlin.metadata.jvm.signature
 import org.jetbrains.kotlin.abicmp.reports.MetadataPropertyReport
 import org.jetbrains.kotlin.abicmp.tasks.GenericMetadataTask
 

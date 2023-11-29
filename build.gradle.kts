@@ -722,7 +722,7 @@ tasks {
         (coreLibProjects + listOfNotNull(
             ":kotlin-stdlib:samples",
             ":kotlin-test:kotlin-test-js-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
-            ":kotlinx-metadata-jvm",
+            ":kotlin-metadata-jvm",
             ":tools:binary-compatibility-validator",
             ":tools:jdk-api-validator",
         )).forEach {

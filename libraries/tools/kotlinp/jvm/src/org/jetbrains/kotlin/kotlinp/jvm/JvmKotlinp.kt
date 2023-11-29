@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kotlinp.jvm
 
-import kotlinx.metadata.*
-import kotlinx.metadata.jvm.*
+import kotlin.metadata.*
+import kotlin.metadata.jvm.*
 import org.jetbrains.kotlin.kotlinp.*
 
 class JvmKotlinp(settings: Settings) : Kotlinp(settings) {

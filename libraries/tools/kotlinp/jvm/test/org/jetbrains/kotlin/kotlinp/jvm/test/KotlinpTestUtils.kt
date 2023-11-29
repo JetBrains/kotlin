@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.kotlinp.jvm.test
 
 import com.intellij.openapi.Disposable
 import junit.framework.TestCase.assertEquals
-import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.jvm.KotlinModuleMetadata
-import kotlinx.metadata.jvm.UnstableMetadataApi
+import kotlin.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.KotlinModuleMetadata
+import kotlin.metadata.jvm.UnstableMetadataApi
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment

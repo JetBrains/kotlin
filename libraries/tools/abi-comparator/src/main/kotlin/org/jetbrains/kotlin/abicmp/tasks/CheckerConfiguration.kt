@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.abicmp.tasks
 
-import kotlinx.metadata.*
-import kotlinx.metadata.jvm.*
+import kotlin.metadata.*
+import kotlin.metadata.jvm.*
 import org.jetbrains.kotlin.abicmp.*
 import org.jetbrains.kotlin.abicmp.checkers.*
 import org.jetbrains.kotlin.kotlinp.*
@@ -212,6 +212,7 @@ class CheckerConfiguration(private val enabledExclusively: Set<String>, private 
         return name !in disabled
     }
 }
+
 
 private val kotlinp = JvmKotlinp(Settings(isVerbose = true, sortDeclarations = true))
 

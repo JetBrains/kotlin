@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kotlinp
 
-import kotlinx.metadata.*
+import kotlin.metadata.*
 import kotlin.contracts.ExperimentalContracts
 
 abstract class Kotlinp(protected val settings: Settings) {

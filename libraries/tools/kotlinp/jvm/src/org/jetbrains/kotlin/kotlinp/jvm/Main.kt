@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kotlinp.jvm
 
-import kotlinx.metadata.jvm.UnstableMetadataApi
+import kotlin.metadata.jvm.UnstableMetadataApi
 import org.jetbrains.kotlin.kotlinp.Settings
 import java.io.File
 import java.io.IOException

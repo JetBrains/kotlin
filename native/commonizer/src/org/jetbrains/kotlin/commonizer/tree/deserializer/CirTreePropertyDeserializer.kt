@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
-import kotlinx.metadata.KmProperty
+import kotlin.metadata.KmProperty
 import org.jetbrains.kotlin.commonizer.cir.CirContainingClass
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirProperty

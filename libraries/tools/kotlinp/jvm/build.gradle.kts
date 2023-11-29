@@ -11,24 +11,24 @@ val kotlinpAsmVersion = "9.0"
 val shadows by configurations.creating
 
 dependencies {
-    compileOnly(project(":kotlinx-metadata"))
-    compileOnly(project(":kotlinx-metadata-jvm"))
+    compileOnly(project(":kotlin-metadata"))
+    compileOnly(project(":kotlin-metadata-jvm"))
 
     api(project(":tools:kotlinp"))
     implementation("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
 
     testApi(intellijCore())
 
-    testCompileOnly(project(":kotlinx-metadata"))
-    testCompileOnly(project(":kotlinx-metadata-jvm"))
+    testCompileOnly(project(":kotlin-metadata"))
+    testCompileOnly(project(":kotlin-metadata-jvm"))
 
     testImplementation(libs.junit4)
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":generators:test-generator"))
 
-    testRuntimeOnly(project(":kotlinx-metadata-jvm"))
+    testRuntimeOnly(project(":kotlin-metadata-jvm"))
 
-    shadows(project(":kotlinx-metadata-jvm"))
+    shadows(project(":kotlin-metadata-jvm"))
     shadows("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
 }
 

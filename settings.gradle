@@ -186,8 +186,8 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":plugins:fir-plugin-prototype:plugin-annotations",
         ":plugins:fir-plugin-prototype:fir-plugin-ic-test",
         ":kotlin-test-js-runner",
-        ":kotlinx-metadata",
-        ":kotlinx-metadata-jvm",
+        ":kotlin-metadata",
+        ":kotlin-metadata-jvm",
         ":kotlinx-metadata-klib",
         ":prepare:build.version",
         ":kotlin-build-common",
@@ -672,8 +672,8 @@ project(':kotlin-script-runtime').projectDir = "$rootDir/libraries/tools/script-
 project(':kotlin-test-js-runner').projectDir = "$rootDir/libraries/tools/kotlin-test-js-runner" as File
 project(':kotlin-reflect').projectDir = "$rootDir/libraries/reflect" as File
 project(':kotlin-reflect-api').projectDir = "$rootDir/libraries/reflect/api" as File
-project(':kotlinx-metadata').projectDir = "$rootDir/libraries/kotlinx-metadata" as File
-project(':kotlinx-metadata-jvm').projectDir = "$rootDir/libraries/kotlinx-metadata/jvm" as File
+project(':kotlin-metadata').projectDir = "$rootDir/libraries/kotlinx-metadata" as File
+project(':kotlin-metadata-jvm').projectDir = "$rootDir/libraries/kotlinx-metadata/jvm" as File
 project(':kotlinx-metadata-klib').projectDir = "$rootDir/libraries/kotlinx-metadata/klib" as File
 project(':kotlin-compiler').projectDir = "$rootDir/prepare/compiler" as File
 project(':kotlin-compiler-embeddable').projectDir = "$rootDir/prepare/compiler-embeddable" as File

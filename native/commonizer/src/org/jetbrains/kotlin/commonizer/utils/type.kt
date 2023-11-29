@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.utils
 
-import kotlinx.metadata.*
+import kotlin.metadata.*
 
 internal inline val KmTypeParameter.filteredUpperBounds: List<KmType>
     get() = upperBounds.takeUnless { it.singleOrNull()?.isNullableAny == true } ?: emptyList()

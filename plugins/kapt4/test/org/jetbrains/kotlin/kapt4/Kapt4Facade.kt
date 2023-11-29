@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.kapt4
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetimeTokenProvider

@@ -46,7 +46,7 @@ dependencies {
     embedded(project(":kotlin-annotation-processing-base")) { isTransitive = false }
 
     testApi(project(":tools:kotlinp-jvm"))
-    testApi(project(":kotlinx-metadata-jvm"))
+    testApi(project(":kotlin-metadata-jvm"))
 }
 
 optInToExperimentalCompilerApi()

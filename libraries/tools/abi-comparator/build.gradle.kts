@@ -8,8 +8,8 @@ dependencies {
     implementation(commonDependency("org.apache.commons:commons-text"))
 
     implementation(project(":tools:kotlinp-jvm"))
-    implementation(project(":kotlinx-metadata-jvm"))
-    implementation(project(":kotlinx-metadata"))
+    implementation(project(":kotlin-metadata-jvm"))
+    implementation(project(":kotlin-metadata"))
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }

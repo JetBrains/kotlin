@@ -23,7 +23,7 @@ configurations.getByName("testApi").extendsFrom(embedded)
 
 dependencies {
     api(kotlinStdlib())
-    embedded(project(":kotlinx-metadata"))
+    embedded(project(":kotlin-metadata"))
     embedded(project(":core:compiler.common"))
     embedded(project(":core:metadata"))
     embedded(project(":core:deserialization"))
@@ -42,9 +42,15 @@ if (deployVersion != null) {
 runtimeJarWithRelocation {
     from(mainSourceSet.output)
     exclude("**/*.proto")
-    relocate("org.jetbrains.kotlin", "kotlinx.metadata.internal")
+    relocate("org.jetbrains.kotlin", "kotlin.metadata.internal")
 }
 
 sourcesJar()
 
 javadocJar()
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xallow-kotlin-package")
+    }
+}

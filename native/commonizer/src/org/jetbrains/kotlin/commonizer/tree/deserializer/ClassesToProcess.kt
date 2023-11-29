@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
 import com.intellij.util.containers.FactoryMap
-import kotlinx.metadata.*
-import kotlinx.metadata.internal.common.KmModuleFragment
+import kotlin.metadata.*
+import kotlin.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.klibEnumEntries
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
