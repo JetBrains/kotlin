@@ -801,6 +801,7 @@ class JvmSymbols(
             addValueParameter("name", irBuiltIns.stringType)
             addValueParameter("descriptor", irBuiltIns.stringType)
             addValueParameter("isInterface", irBuiltIns.booleanType)
+            addValueParameter("args", irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType))
             returnType = irBuiltIns.anyNType
         }.symbol
 

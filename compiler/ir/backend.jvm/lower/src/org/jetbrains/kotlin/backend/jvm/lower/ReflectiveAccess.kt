@@ -539,6 +539,17 @@ internal class ReflectiveAccessLowering(
             putValueArgument(1, builder.irString(jvmSignature.asmMethod.name))
             putValueArgument(2, builder.irString(jvmSignature.asmMethod.descriptor))
             putValueArgument(3, builder.irFalse())
+            // A workaround to pass the initial call arguments. Elements of this array
+            // will be extracted and passed to the bytecode generator right before
+            // generating the bytecode for invokeSpecial itself.
+            val args = with(context.irBuiltIns) {
+                builder.irArray(arrayClass.typeWith(anyNType)) {
+                    for (i in 0 until expression.valueArgumentsCount) {
+                        add(expression.getValueArgument(i)!!)
+                    }
+                }
+            }
+            putValueArgument(4, args)
         }
     }
 
