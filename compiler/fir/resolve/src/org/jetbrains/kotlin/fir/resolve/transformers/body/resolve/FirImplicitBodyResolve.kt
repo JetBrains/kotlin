@@ -175,11 +175,7 @@ open class FirImplicitAwareBodyResolveTransformer(
             "Unexpected status in transformCallableMember ($status) for ${member.render()}"
         }
 
-        implicitBodyResolveComputationSession.startComputing(symbol)
-        val result = transform()
-        implicitBodyResolveComputationSession.storeResult(symbol, result)
-
-        return result
+        return implicitBodyResolveComputationSession.compute(symbol, transform)
     }
 }
 
@@ -379,7 +375,7 @@ open class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
     }
 }
 
-class ImplicitBodyResolveComputationSession {
+open class ImplicitBodyResolveComputationSession {
     private val implicitBodyResolveStatusMap = hashMapOf<FirCallableSymbol<*>, ImplicitBodyResolveComputationStatus>()
 
     internal fun getStatus(symbol: FirCallableSymbol<*>): ImplicitBodyResolveComputationStatus {
@@ -392,7 +388,18 @@ class ImplicitBodyResolveComputationSession {
         return implicitBodyResolveStatusMap[symbol] ?: ImplicitBodyResolveComputationStatus.NotComputed
     }
 
-    fun startComputing(symbol: FirCallableSymbol<*>) {
+    protected open fun <D : FirCallableDeclaration> executeTransformation(symbol: FirCallableSymbol<*>, transformation: () -> D): D {
+        return transformation()
+    }
+
+    internal fun <D : FirCallableDeclaration> compute(symbol: FirCallableSymbol<*>, transformation: () -> D): D {
+        startComputing(symbol)
+        val result = executeTransformation(symbol, transformation)
+        storeResult(symbol, result)
+        return result
+    }
+
+    private fun startComputing(symbol: FirCallableSymbol<*>) {
         require(implicitBodyResolveStatusMap[symbol] == null) {
             "Unexpected static in startComputing for $symbol: ${implicitBodyResolveStatusMap[symbol]}"
         }
@@ -400,7 +407,7 @@ class ImplicitBodyResolveComputationSession {
         implicitBodyResolveStatusMap[symbol] = ImplicitBodyResolveComputationStatus.Computing
     }
 
-    fun storeResult(
+    private fun storeResult(
         symbol: FirCallableSymbol<*>,
         transformedDeclaration: FirCallableDeclaration
     ) {
