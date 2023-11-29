@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
+import org.jetbrains.kotlin.load.java.structure.impl.NotEvaluatedConstAware
 import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -41,7 +42,7 @@ internal class SymbolLightFieldForProperty private constructor(
     private val isStatic: Boolean,
     override val kotlinOrigin: KtCallableDeclaration?,
     private val backingFieldSymbolPointer: KtSymbolPointer<KtBackingFieldSymbol>?,
-) : SymbolLightField(containingClass, lightMemberOrigin) {
+) : SymbolLightField(containingClass, lightMemberOrigin), NotEvaluatedConstAware {
     internal constructor(
         ktAnalysisSession: KtAnalysisSession,
         propertySymbol: KtPropertySymbol,
@@ -230,6 +231,10 @@ internal class SymbolLightFieldForProperty private constructor(
     }
 
     override fun computeConstantValue(): Any? = _constantValue
+
+    override fun isNotYetComputed(): Boolean {
+        return withPropertySymbol { propertySymbol -> (propertySymbol as? KtKotlinPropertySymbol)?.isConst == true }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

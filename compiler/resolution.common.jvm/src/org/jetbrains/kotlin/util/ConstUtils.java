@@ -39,7 +39,10 @@ public class ConstUtils {
 
 // Copy of `com.intellij.psi.util.IsConstantExpressionVisitor`.
 // This copy is required to be able to handle K2 constants without triggering constant evaluation.
-// The only change is done in `visitReferenceExpression` where we check for constant expression without triggering evaluation.
+// There are two major changes:
+// 1. In `visitReferenceExpression` where we check for constant expression without triggering evaluation.
+// 2. In `visitPolyadicExpression` before we check for the type.
+// At the moment when we check for constant, not all types could be resolved, and if we return a wrong type, it will be cached.
 final class IsConstantExpressionVisitor extends JavaElementVisitor {
     private boolean myIsConstant;
     private final Map<PsiVariable, Boolean> varIsConst = new HashMap<>();
@@ -85,6 +88,7 @@ final class IsConstantExpressionVisitor extends JavaElementVisitor {
             myIsConstant = false;
             return;
         }
+
         PsiType type = element.getType();
         if (type instanceof PsiPrimitiveType) return;
         if (type.equalsToText(CommonClassNames.JAVA_LANG_STRING)) return;
@@ -112,6 +116,11 @@ final class IsConstantExpressionVisitor extends JavaElementVisitor {
         for (PsiExpression operand : expression.getOperands()) {
             operand.accept(this);
             if (!myIsConstant) return;
+
+            // CHANGE #1
+            if (checkForNotYetEvaluatedConstant(operand)) return;
+            // END
+
             final PsiType type = operand.getType();
             if (type != null && !(type instanceof PsiPrimitiveType) && !type.equalsToText(CommonClassNames.JAVA_LANG_STRING)) {
                 myIsConstant = false;
@@ -165,15 +174,8 @@ final class IsConstantExpressionVisitor extends JavaElementVisitor {
             return;
         }
 
-        // This block is the only difference with the original `IsConstantExpressionVisitor`
-        if (variable instanceof ClsFieldImpl) {
-            PsiFieldStub stub = ((ClsFieldImpl) variable).getStub();
-            if (stub instanceof NotEvaluatedConstAware && ((NotEvaluatedConstAware) stub).isNotYetComputed()) {
-                myIsConstant = true;
-                varIsConst.put(variable, Boolean.TRUE);
-                return;
-            }
-        }
+        // CHANGE #2
+        if (checkForNotYetEvaluatedConstant(expression)) return;
         // END
 
         variable.hasInitializer();
@@ -184,5 +186,33 @@ final class IsConstantExpressionVisitor extends JavaElementVisitor {
         }
         initializer.accept(this);
         varIsConst.put(variable, myIsConstant);
+    }
+
+    private boolean checkForNotYetEvaluatedConstant(PsiExpression operand) {
+        if (operand instanceof PsiReferenceExpression) {
+            PsiElement refElement = ((PsiReferenceExpression) operand).resolve();
+            NotEvaluatedConstAware notEvaluatedConstAware = getNotEvaluatedConstAware(refElement);
+            if (notEvaluatedConstAware != null) {
+                if (notEvaluatedConstAware.isNotYetComputed()) {
+                    myIsConstant = true;
+                    varIsConst.put((PsiVariable) refElement, Boolean.TRUE);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Nullable
+    private static NotEvaluatedConstAware getNotEvaluatedConstAware(PsiElement refElement) {
+        if (refElement instanceof ClsFieldImpl) {
+            PsiFieldStub stub = ((ClsFieldImpl) refElement).getStub();
+            if (stub instanceof NotEvaluatedConstAware) {
+                return (NotEvaluatedConstAware) stub;
+            }
+        } else if (refElement instanceof NotEvaluatedConstAware) {
+            return (NotEvaluatedConstAware) refElement;
+        }
+        return null;
     }
 }

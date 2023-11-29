@@ -1,5 +1,4 @@
-// IGNORE_REVERSED_RESOLVE
-// IGNORE_CONTRACT_VIOLATIONS
+// FIR_IDENTICAL
 // FILE: Bar.java
 
 public class Bar {
@@ -10,12 +9,12 @@ public class Bar {
 
 class Foo {
     companion object {
-        const val FOO = Baz.BAZ + 1
+        val FOO = Baz.BAZ + 1
     }
 }
 
 class Baz {
     companion object {
-        const val BAZ = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>Bar.BAR + 1<!>
+        val BAZ = Bar.BAR + 1
     }
 }

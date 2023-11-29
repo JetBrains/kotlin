@@ -1,0 +1,37 @@
+package test
+
+public open class StaticFinalConstTypes {
+    public constructor StaticFinalConstTypes()
+
+    // Static members
+    public final val booleanField: kotlin.Boolean!
+    public final val booleanFieldNull: kotlin.Boolean!
+    public const final val booleanPrimitiveField: kotlin.Boolean = false
+    public final val byteField: kotlin.Byte!
+    public final val byteFieldNull: kotlin.Byte!
+    public const final val bytePrimitiveField: kotlin.Byte = 0.toByte()
+    public final val characterField: kotlin.Char!
+    public final val characterFieldNull: kotlin.Char!
+    public const final val characterPrimitiveField: kotlin.Char = \u0030 ('0')
+    public final val doubleField: kotlin.Double!
+    public final val doubleFieldNull: kotlin.Double!
+    public const final val doublePrimitiveField: kotlin.Double = 0.0.toDouble()
+    public final val floatField: kotlin.Float!
+    public final val floatFieldNull: kotlin.Float!
+    public const final val floatPrimitiveField: kotlin.Float = 0.0.toFloat()
+    public final val integerField: kotlin.Int!
+    public final val integerFieldNull: kotlin.Int!
+    public const final val integerPrimitiveField: kotlin.Int = 0
+    public final val longField: kotlin.Long!
+    public final val longFieldNull: kotlin.Long!
+    public const final val longPrimitiveField: kotlin.Long = 0.toLong()
+    public final val shortField: kotlin.Short!
+    public final val shortFieldNull: kotlin.Short!
+    public const final val shortPrimitiveField: kotlin.Short = 0.toShort()
+    public const final val stringField: kotlin.String = "0"
+    public const final val stringFieldNull: kotlin.String!
+    public final val uByteField: kotlin.UByte!
+    public final val uIntField: kotlin.UInt!
+    public final val uLongField: kotlin.ULong!
+    public final val uShortField: kotlin.UShort!
+}

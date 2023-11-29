@@ -23706,6 +23706,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("noConstKt12248.kt")
+                public void testNoConstKt12248() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/noConstKt12248.kt");
+                }
+
+                @Test
                 @TestMetadata("stdlibConstFun.kt")
                 public void testStdlibConstFun() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/stdlibConstFun.kt");

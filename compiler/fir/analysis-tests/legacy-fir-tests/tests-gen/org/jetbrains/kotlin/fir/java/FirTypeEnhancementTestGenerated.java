@@ -1594,6 +1594,11 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
             runTest("compiler/testData/loadJava/compiledJava/static/StaticFinal.java");
         }
 
+        @TestMetadata("StaticFinalConstTypes.java")
+        public void testStaticFinalConstTypes() throws Exception {
+            runTest("compiler/testData/loadJava/compiledJava/static/StaticFinalConstTypes.java");
+        }
+
         @TestMetadata("StaticMembersFromParentClass.java")
         public void testStaticMembersFromParentClass() throws Exception {
             runTest("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentClass.java");
