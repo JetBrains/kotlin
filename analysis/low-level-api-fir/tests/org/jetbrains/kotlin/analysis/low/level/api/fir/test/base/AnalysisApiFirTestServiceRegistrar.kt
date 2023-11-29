@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
-import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
@@ -37,9 +36,5 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     @OptIn(TestInfrastructureInternals::class)
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         FirStandaloneServiceRegistrar.registerProjectModelServices(project, testServices.testConfiguration.rootDisposable)
-    }
-
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        FirStandaloneServiceRegistrar.registerApplicationServices(application)
     }
 }

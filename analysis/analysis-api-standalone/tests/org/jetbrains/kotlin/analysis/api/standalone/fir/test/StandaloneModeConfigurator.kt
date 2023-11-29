@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -41,6 +42,9 @@ object StandaloneModeConfigurator : AnalysisApiTestConfigurator() {
     }
 
     private val sourceConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+
+    override val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
+        get() = sourceConfigurator.applicationEnvironmentConfiguration
 
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
         get() = sourceConfigurator.serviceRegistrars + listOf(StandaloneModeTestServiceRegistrar)

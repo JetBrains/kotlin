@@ -10,10 +10,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.DefaultAnalysisApiLibraryTestApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
@@ -47,12 +48,14 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
         return TestModuleStructureFactory.createProjectStructureByTestStructure(moduleStructure, testServices, project)
     }
 
+    override val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
+        get() = DefaultAnalysisApiLibraryTestApplicationEnvironmentConfiguration
+
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> =
         listOf(
             AnalysisApiBaseTestServiceRegistrar,
             AnalysisApiDecompiledCodeTestServiceRegistrar,
             AnalysisApiFirTestServiceRegistrar,
-            AnalysisApiLibraryBaseTestServiceRegistrar,
         )
 }
 

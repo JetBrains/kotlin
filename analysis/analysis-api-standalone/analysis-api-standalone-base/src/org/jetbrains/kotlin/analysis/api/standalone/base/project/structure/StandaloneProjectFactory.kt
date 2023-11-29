@@ -19,10 +19,8 @@ import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
-import com.intellij.psi.impl.smartPointers.PsiClassReferenceTypePointerFactory
 import com.intellij.psi.impl.smartPointers.SmartPointerManagerImpl
 import com.intellij.psi.impl.smartPointers.SmartTypePointerManagerImpl
 import com.intellij.psi.search.GlobalSearchScope
@@ -33,14 +31,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSource
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
-import org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProviderCliImpl
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
 import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinFakeClsStubsCache
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
@@ -68,19 +59,15 @@ import java.nio.file.Paths
 object StandaloneProjectFactory {
     fun createProjectEnvironment(
         projectDisposable: Disposable,
-        applicationEnvironmentMode: KotlinCoreApplicationEnvironmentMode,
+        applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration,
         compilerConfiguration: CompilerConfiguration = CompilerConfiguration(),
         classLoader: ClassLoader = MockProject::class.java.classLoader,
     ): KotlinCoreProjectEnvironment {
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(
             projectDisposable = projectDisposable,
             compilerConfiguration,
-            applicationEnvironmentMode,
+            applicationEnvironmentConfiguration,
         )
-
-        registerApplicationExtensionPoints(applicationEnvironment, applicationEnvironment.parentDisposable)
-
-        registerApplicationServices(applicationEnvironment)
 
         return object : KotlinCoreProjectEnvironment(projectDisposable, applicationEnvironment) {
             init {
@@ -100,29 +87,6 @@ object StandaloneProjectFactory {
         }
     }
 
-    private fun registerApplicationServices(applicationEnvironment: KotlinCoreApplicationEnvironment) {
-        val application = applicationEnvironment.application
-        if (application.getServiceIfCreated(KotlinFakeClsStubsCache::class.java) != null) {
-            // application services already registered by som other threads, tests
-            return
-        }
-        KotlinCoreEnvironment.underApplicationLock {
-            if (application.getServiceIfCreated(KotlinFakeClsStubsCache::class.java) != null) {
-                // application services already registered by som other threads, tests
-                return
-            }
-            application.apply {
-                registerService(KotlinFakeClsStubsCache::class.java, KotlinFakeClsStubsCache::class.java)
-                registerService(ClsKotlinBinaryClassCache::class.java)
-                registerService(
-                    BuiltInsVirtualFileProvider::class.java,
-                    BuiltInsVirtualFileProviderCliImpl(applicationEnvironment.jarFileSystem as CoreJarFileSystem)
-                )
-                registerService(FileAttributeService::class.java, DummyFileAttributeService::class.java)
-            }
-        }
-    }
-
     private fun registerProjectServices(project: MockProject) {
         @Suppress("UnstableApiUsage")
         CoreApplicationEnvironment.registerExtensionPoint(
@@ -133,35 +97,6 @@ object StandaloneProjectFactory {
 
         project.apply {
             registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
-        }
-    }
-
-    private fun registerApplicationExtensionPoints(
-        applicationEnvironment: KotlinCoreApplicationEnvironment,
-        applicationDisposable: Disposable,
-    ) {
-        val applicationArea = applicationEnvironment.application.extensionArea
-
-        if (!applicationArea.hasExtensionPoint(AdditionalKDocResolutionProvider.EP_NAME)) {
-            KotlinCoreEnvironment.underApplicationLock {
-                if (applicationArea.hasExtensionPoint(AdditionalKDocResolutionProvider.EP_NAME)) return@underApplicationLock
-                CoreApplicationEnvironment.registerApplicationExtensionPoint(
-                    AdditionalKDocResolutionProvider.EP_NAME,
-                    AdditionalKDocResolutionProvider::class.java
-                )
-            }
-        }
-
-        if (!applicationArea.hasExtensionPoint(ClassTypePointerFactory.EP_NAME)) {
-            KotlinCoreEnvironment.underApplicationLock {
-                if (applicationArea.hasExtensionPoint(ClassTypePointerFactory.EP_NAME)) return@underApplicationLock
-                CoreApplicationEnvironment.registerApplicationExtensionPoint(
-                    ClassTypePointerFactory.EP_NAME,
-                    ClassTypePointerFactory::class.java
-                )
-                applicationArea.getExtensionPoint(ClassTypePointerFactory.EP_NAME)
-                    .registerExtension(PsiClassReferenceTypePointerFactory(), applicationDisposable)
-            }
         }
     }
 

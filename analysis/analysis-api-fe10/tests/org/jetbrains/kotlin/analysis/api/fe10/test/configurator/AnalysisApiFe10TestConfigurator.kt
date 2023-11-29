@@ -10,7 +10,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.DefaultAnalysisApiTestApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
@@ -41,6 +43,9 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
             useAdditionalService<KtModuleFactory> { KtSourceModuleFactory() }
         }
     }
+
+    override val applicationEnvironmentConfiguration: StandaloneApplicationEnvironmentConfiguration
+        get() = DefaultAnalysisApiTestApplicationEnvironmentConfiguration
 
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = listOf(
         AnalysisApiBaseTestServiceRegistrar,

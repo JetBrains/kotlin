@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
-import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.psi.PsiElementFinder
@@ -18,8 +17,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService
@@ -35,12 +34,6 @@ import org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport
 
 @OptIn(LLFirInternals::class, KtAnalysisApiInternals::class)
 object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
-    override fun registerApplicationServices(application: MockApplication) {
-        application.apply {
-
-        }
-    }
-
     override fun registerProjectExtensionPoints(project: MockProject) {
         IrGenerationExtension.registerExtensionPoint(project)
         FirExtensionRegistrarAdapter.registerExtensionPoint(project)

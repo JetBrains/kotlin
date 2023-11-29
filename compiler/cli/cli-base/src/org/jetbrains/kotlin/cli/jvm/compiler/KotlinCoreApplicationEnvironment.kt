@@ -26,22 +26,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.IdeaExtensionPoints.registerVersion
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 
-sealed interface KotlinCoreApplicationEnvironmentMode {
-    object Production : KotlinCoreApplicationEnvironmentMode
-
-    object UnitTest : KotlinCoreApplicationEnvironmentMode
-
-    companion object {
-        fun fromUnitTestModeFlag(isUnitTestMode: Boolean): KotlinCoreApplicationEnvironmentMode =
-            if (isUnitTestMode) UnitTest else Production
-    }
-}
-
 class KotlinCoreApplicationEnvironment private constructor(
     parentDisposable: Disposable,
-    environmentMode: KotlinCoreApplicationEnvironmentMode,
-) : JavaCoreApplicationEnvironment(parentDisposable, environmentMode == KotlinCoreApplicationEnvironmentMode.UnitTest) {
-
+    val configuration: KotlinCoreApplicationEnvironmentConfiguration,
+) : JavaCoreApplicationEnvironment(parentDisposable, configuration.isUnitTestMode) {
     init {
         registerApplicationService(JavaFileCodeStyleFacadeFactory::class.java, DummyJavaFileCodeStyleFacadeFactory())
         registerFileType(JavaClassFileType.INSTANCE, "sig")
@@ -55,7 +43,7 @@ class KotlinCoreApplicationEnvironment private constructor(
         val mock = super.createApplication(parentDisposable)
 
         /**
-         * We can't use [environmentMode] from the constructor to decide whether we're in unit test mode, because the corresponding property
+         * We can't use [configuration] from the constructor to decide whether we're in unit test mode, because the corresponding property
          * is not yet initialized when this function is called from the superclass constructor.
          */
         return if (mock.isUnitTestMode) {
@@ -91,22 +79,23 @@ class KotlinCoreApplicationEnvironment private constructor(
 
     companion object {
         @Deprecated(
-            message = "The `unitTestMode` flag is deprecated in favor of `KotlinCoreApplicationEnvironmentMode` configuration.",
-            replaceWith = ReplaceWith("create(parentDisposable, KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode))"),
+            message = "The `unitTestMode` flag is deprecated in favor of configuration with `KotlinCoreApplicationEnvironmentConfiguration`.",
+            replaceWith = ReplaceWith("create(parentDisposable, applicationEnvironmentConfiguration)"),
         )
         fun create(
             parentDisposable: Disposable,
             unitTestMode: Boolean,
         ): KotlinCoreApplicationEnvironment {
-            return create(parentDisposable, KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode))
+            return create(parentDisposable, DefaultKotlinCoreApplicationEnvironmentConfigurations.getByUnitTestMode(unitTestMode))
         }
 
         fun create(
             parentDisposable: Disposable,
-            environmentMode: KotlinCoreApplicationEnvironmentMode,
+            configuration: KotlinCoreApplicationEnvironmentConfiguration,
         ): KotlinCoreApplicationEnvironment {
-            val environment = KotlinCoreApplicationEnvironment(parentDisposable, environmentMode)
+            val environment = KotlinCoreApplicationEnvironment(parentDisposable, configuration)
             registerExtensionPoints()
+            configuration.configurators.forEach { it.configure(environment) }
             return environment
         }
 

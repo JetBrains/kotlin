@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 
-import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
@@ -15,9 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetim
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
-import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInDefinitionFile
-import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
@@ -98,11 +95,5 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(KotlinPackageProviderMerger::class.java, KotlinStaticPackageProviderMerger(project))
             registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)
         }
-    }
-
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        testServices.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, "kotlin_builtins")
-        testServices.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, "kotlin_metadata")
-        testServices.environmentManager.getApplicationEnvironment().registerFileType(KlibMetaFileType, "knm")
     }
 }

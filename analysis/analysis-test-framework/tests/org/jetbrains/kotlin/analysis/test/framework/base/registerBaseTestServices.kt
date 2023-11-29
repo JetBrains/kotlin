@@ -26,7 +26,7 @@ fun TestConfigurationBuilder.registerAnalysisApiBaseTestServices(
 ) {
     useAdditionalService<TestDisposableProvider>(::TestDisposableProviderImpl)
     useAdditionalService<AnalysisApiKtModuleProvider>(::AnalysisApiKtModuleProviderImpl)
-    useAdditionalService<AnalysisApiEnvironmentManager>(::AnalysisApiEnvironmentManagerImpl.bind(testDisposable))
+    useAdditionalService<AnalysisApiEnvironmentManager>(::AnalysisApiEnvironmentManagerImpl.bind(testDisposable, configurator))
     useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
     useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
 

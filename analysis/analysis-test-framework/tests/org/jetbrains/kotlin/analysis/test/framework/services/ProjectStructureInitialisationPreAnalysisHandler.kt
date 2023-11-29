@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services
 
-import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -22,12 +21,11 @@ class ProjectStructureInitialisationPreAnalysisHandler(
     override fun preprocessModuleStructure(moduleStructure: TestModuleStructure) {
         checkAllModulesHaveTheSameProject(moduleStructure)
 
+        // Initializing the environment will also configure the application environment, so application services will already be registered.
         testServices.environmentManager.initializeEnvironment()
 
         val project = testServices.environmentManager.getProject() as MockProject
-        val application = testServices.environmentManager.getApplication() as MockApplication
 
-        configurator.registerApplicationServices(application, testServices)
         createAndRegisterKtModules(moduleStructure, project)
         configurator.registerProjectExtensionPoints(project, testServices)
         configurator.registerProjectServices(project, testServices)

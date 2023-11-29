@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.DefaultStandaloneApplicationEnvironmentConfigurations
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.LLFirStandaloneLibrarySymbolProviderFactory
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.analysis.project.structure.impl.getPsiFilesFromPaths
 import org.jetbrains.kotlin.analysis.project.structure.impl.getSourceFilePaths
 import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -60,13 +60,9 @@ public class StandaloneAnalysisAPISessionBuilder(
     private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment =
         StandaloneProjectFactory.createProjectEnvironment(
             projectDisposable,
-            KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode),
+            DefaultStandaloneApplicationEnvironmentConfigurations.getByUnitTestMode(unitTestMode),
             classLoader = classLoader
         )
-
-    init {
-        FirStandaloneServiceRegistrar.registerApplicationServices(kotlinCoreProjectEnvironment.environment.application)
-    }
 
     public val application: Application = kotlinCoreProjectEnvironment.environment.application
 

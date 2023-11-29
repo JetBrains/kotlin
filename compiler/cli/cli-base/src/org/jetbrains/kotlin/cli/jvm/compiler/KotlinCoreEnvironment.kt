@@ -473,7 +473,7 @@ class KotlinCoreEnvironment private constructor(
                 createApplicationEnvironment(
                     parentDisposable,
                     configuration,
-                    KotlinCoreApplicationEnvironmentMode.UnitTest,
+                    DefaultKotlinCoreApplicationEnvironmentConfigurations.TEST,
                 )
             val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
             return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
@@ -505,7 +505,7 @@ class KotlinCoreEnvironment private constructor(
             val appEnv = createApplicationEnvironment(
                 projectDisposable,
                 configuration,
-                KotlinCoreApplicationEnvironmentMode.UnitTest,
+                DefaultKotlinCoreApplicationEnvironmentConfigurations.TEST,
             )
             return ProjectEnvironment(projectDisposable, appEnv, configuration)
         }
@@ -519,7 +519,7 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreApplicationEnvironment = getOrCreateApplicationEnvironment(
             projectDisposable,
             configuration,
-            KotlinCoreApplicationEnvironmentMode.Production,
+            DefaultKotlinCoreApplicationEnvironmentConfigurations.PRODUCTION,
         )
 
         fun getOrCreateApplicationEnvironmentForTests(
@@ -528,13 +528,13 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreApplicationEnvironment = getOrCreateApplicationEnvironment(
             projectDisposable,
             configuration,
-            KotlinCoreApplicationEnvironmentMode.UnitTest,
+            DefaultKotlinCoreApplicationEnvironmentConfigurations.TEST,
         )
 
         fun getOrCreateApplicationEnvironment(
             projectDisposable: Disposable,
             configuration: CompilerConfiguration,
-            environmentMode: KotlinCoreApplicationEnvironmentMode,
+            applicationEnvironmentConfiguration: KotlinCoreApplicationEnvironmentConfiguration,
         ): KotlinCoreApplicationEnvironment {
             synchronized(APPLICATION_LOCK) {
                 if (ourApplicationEnvironment == null) {
@@ -543,7 +543,7 @@ class KotlinCoreEnvironment private constructor(
                         createApplicationEnvironment(
                             disposable,
                             configuration,
-                            environmentMode,
+                            applicationEnvironmentConfiguration,
                         )
                     ourProjectCount = 0
                     Disposer.register(disposable, Disposable {
@@ -626,9 +626,9 @@ class KotlinCoreEnvironment private constructor(
         private fun createApplicationEnvironment(
             parentDisposable: Disposable,
             configuration: CompilerConfiguration,
-            environmentMode: KotlinCoreApplicationEnvironmentMode,
+            applicationEnvironmentConfiguration: KotlinCoreApplicationEnvironmentConfiguration,
         ): KotlinCoreApplicationEnvironment {
-            val applicationEnvironment = KotlinCoreApplicationEnvironment.create(parentDisposable, environmentMode)
+            val applicationEnvironment = KotlinCoreApplicationEnvironment.create(parentDisposable, applicationEnvironmentConfiguration)
 
             registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler.xml")
 
