@@ -112,6 +112,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BOUNDS_NOT_ALLOWE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BUILDER_INFERENCE_STUB_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR
@@ -2577,6 +2578,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "The type of a receiver hasn''t been inferred yet. Please specify type argument for generic parameter `{0}` of `{1}` explicitly",
             TO_STRING,
             TO_STRING
-        );
+        )
+        map.put(
+            BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION,
+            "Unstable inference behaviour with multiple lambdas. Please either specify the type argument for generic parameter `{0}` of `{1}` explicitly",
+            TO_STRING,
+            TO_STRING
+        )
     }
 }

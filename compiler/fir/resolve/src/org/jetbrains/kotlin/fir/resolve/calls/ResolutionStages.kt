@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
-import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
-import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
-import org.jetbrains.kotlin.fir.resolve.inference.hasBuilderInferenceAnnotation
+import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -686,8 +683,17 @@ internal object PostponedVariablesInitializerResolutionStage : ResolutionStage()
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val argumentMapping = candidate.argumentMapping ?: return
         if (candidate.typeArgumentMapping is TypeArgumentMapping.Mapped) return
-        for (parameter in argumentMapping.values) {
+
+        val atomsToMark = mutableSetOf<FirAnonymousFunction>()
+
+        for ((argument, parameter) in argumentMapping) {
             if (!parameter.hasBuilderInferenceAnnotation(context.session)) continue
+            val unwrapped = argument.unwrapArgument()
+            if (unwrapped is FirAnonymousFunctionExpression) {
+                atomsToMark.add(unwrapped.anonymousFunction)
+            }
+
+            // TODO: This is effectively dead-code, since UseBuilderInferenceOnlyIfNeeded is always enabled
             val type = parameter.returnTypeRef.coneType
             val receiverType = type.receiverType(callInfo.session) ?: continue
             val dontUseBuilderInferenceIfPossible =
@@ -703,6 +709,23 @@ internal object PostponedVariablesInitializerResolutionStage : ResolutionStage()
                 }
                 if (typeHasVariable) {
                     candidate.csBuilder.markPostponedVariable(freshVariable)
+                }
+            }
+        }
+
+        candidate.postponedAtoms.forEach { postponedAtomContainer ->
+            when (postponedAtomContainer) {
+                is ResolvedLambdaAtom -> {
+                    if (postponedAtomContainer.atom in atomsToMark) {
+                        postponedAtomContainer.isCorrespondingParameterAnnotatedWithBuilderInference = true
+                    }
+                }
+                is LambdaWithTypeVariableAsExpectedTypeAtom -> {
+                    // Although, one may annotate fun foo(@BuilderInference t: T)
+                    // it makes little sense
+                }
+                is ResolvedCallableReferenceAtom -> {
+                    // Builder inference doesn't apply to such atoms.
                 }
             }
         }

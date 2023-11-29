@@ -1770,6 +1770,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Name>("typeParameterName")
             parameter<Name>("containingDeclarationName")
         }
+        val BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION by error<PsiElement> {
+            parameter<Name>("typeParameterName")
+            parameter<Name>("containingDeclarationName")
+        }
     }
 }
 

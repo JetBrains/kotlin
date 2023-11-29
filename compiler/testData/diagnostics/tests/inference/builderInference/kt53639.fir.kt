@@ -12,7 +12,7 @@ data class Output(val source: InputWrapper<List<String>>)
 fun main2(input: InputWrapper<Unit>): Output {
     val output = input.doMapping(
         foo = { buildList { add("this is List<String>") } },
-        bar = { it.isNotEmpty() },
+        bar = <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ it.isNotEmpty() }<!>,
     )
 
     return Output(source = output)

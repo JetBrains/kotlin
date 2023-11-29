@@ -871,6 +871,7 @@ object FirErrors {
 
     // Builder inference
     val BUILDER_INFERENCE_STUB_RECEIVER by error2<PsiElement, Name, Name>()
+    val BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION by error2<PsiElement, Name, Name>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirErrorsDefaultMessages)

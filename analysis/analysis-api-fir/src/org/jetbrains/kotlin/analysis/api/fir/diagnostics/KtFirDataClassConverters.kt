@@ -4976,6 +4976,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION) { firDiagnostic ->
+        BuilderInferenceMultiLambdaRestrictionImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC) { firDiagnostic ->
         OverrideCannotBeStaticImpl(
             firDiagnostic as KtPsiDiagnostic,

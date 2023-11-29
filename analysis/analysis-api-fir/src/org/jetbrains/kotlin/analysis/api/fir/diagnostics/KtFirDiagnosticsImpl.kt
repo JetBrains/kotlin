@@ -4176,6 +4176,13 @@ internal class BuilderInferenceStubReceiverImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.BuilderInferenceStubReceiver
 
+internal class BuilderInferenceMultiLambdaRestrictionImpl(
+    override val typeParameterName: Name,
+    override val containingDeclarationName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.BuilderInferenceMultiLambdaRestriction
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

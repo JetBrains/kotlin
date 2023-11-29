@@ -77,6 +77,15 @@ class ResolvedLambdaAtom(
     fun replaceTypeVariableForLambdaReturnType(typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType) {
         this.typeVariableForLambdaReturnType = typeVariableForLambdaReturnType
     }
+
+    /**
+     * Set to true by resolution stage, if the corresponding parameter has BuilderInference annotation
+     * ```kotlin
+     *     fun foo(@BuilderInference b: Buildee<T>.() -> Unit) {}
+     *     fun test() = foo({ ... }) // Will be true for the lambda argument passed to b
+     * ```
+     */
+    var isCorrespondingParameterAnnotatedWithBuilderInference: Boolean = false
 }
 
 class LambdaWithTypeVariableAsExpectedTypeAtom(
