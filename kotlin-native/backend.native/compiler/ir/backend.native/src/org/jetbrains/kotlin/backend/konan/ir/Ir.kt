@@ -308,6 +308,7 @@ internal class KonanSymbols(
 
 
     val abstractList = irBuiltIns.findClass(Name.identifier("AbstractList"), "kotlin", "collections")!!
+    val abstractMutableList = irBuiltIns.findClass(Name.identifier("AbstractMutableList"), "kotlin", "collections")!!
 
     override val throwUninitializedPropertyAccessException = internalFunction("ThrowUninitializedPropertyAccessException")
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
+import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundsCheckSupport
 import org.jetbrains.kotlin.backend.konan.ir.BridgeDirections
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.ir.GlobalHierarchyAnalysisResult
@@ -82,6 +83,7 @@ internal class Context(
     val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
     val enumsSupport by lazy { EnumsSupport(mapping, irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(mapping, irFactory) }
+    val functionsWithoutBoundsCheckSupport by lazy { FunctionsWithoutBoundsCheckSupport(mapping, symbols, irBuiltIns, irFactory) }
 
     // TODO: Remove after adding special <userData> property to IrDeclaration.
     private val layoutBuilders = ConcurrentHashMap<IrClass, ClassLayoutBuilder>()

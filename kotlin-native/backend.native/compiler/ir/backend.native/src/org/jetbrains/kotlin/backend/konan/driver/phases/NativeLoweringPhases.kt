@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
+import org.jetbrains.kotlin.backend.konan.ir.BoundsCheckOptimizer
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.ir.ListAccessorsWithoutBoundsCheckLowering
 import org.jetbrains.kotlin.backend.konan.lower.*
@@ -451,7 +452,16 @@ private val listAccessorsWithoutBoundsCheckPhase = createFileLoweringPhase(
             ListAccessorsWithoutBoundsCheckLowering(context).runOnFilePostfix(irFile)
         },
         name = "ListAccessorsWithoutBoundsCheck",
-        description = "Returns insertion for Unit functions",
+        description = "Adds accessors without bounds check to lists from stdlib",
+)
+
+private val optimizeBoundsCheckPhase = createFileLoweringPhase(
+        { context, irFile ->
+            BoundsCheckOptimizer(context).runOnFilePostfix(irFile)
+        },
+        name = "OptimizeBoundsCheck",
+        description = "Lowers calls to noBoundsCheck { }",
+        prerequisite = setOf(listAccessorsWithoutBoundsCheckPhase)
 )
 
 private val bridgesPhase = createFileLoweringPhase(
@@ -617,6 +627,7 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         staticInitializersPhase,
         builtinOperatorPhase,
         listAccessorsWithoutBoundsCheckPhase,
+        optimizeBoundsCheckPhase,
         bridgesPhase,
         exportInternalAbiPhase.takeIf { context.config.produce.isCache },
         useInternalAbiPhase,

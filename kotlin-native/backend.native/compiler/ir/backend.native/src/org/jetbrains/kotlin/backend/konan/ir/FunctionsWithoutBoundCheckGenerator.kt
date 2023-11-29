@@ -5,18 +5,19 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.BinaryType
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
-import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.backend.konan.computeBinaryType
 import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -36,23 +37,27 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal class ListAccessorsWithoutBoundsCheckLowering(val context: KonanBackendContext) : ClassLoweringPass {
-    private val irBuiltIns = context.irBuiltIns
-    private val symbols = context.ir.symbols
-    private val irFactory = context.irFactory
-
-    private fun IrFunction.isGet() =
-            name == OperatorNameConventions.GET && valueParameters.singleOrNull()?.type == irBuiltIns.intType
-
-    private fun IrClass.getGet() = functions.single { it.isGet() }
-
-    private val noBoundsCheck = symbols.noBoundsCheck.owner
+internal class FunctionsWithoutBoundsCheckSupport(
+        private val mapping: NativeMapping,
+        symbols: KonanSymbols,
+        private val irBuiltIns: IrBuiltIns,
+        private val irFactory: IrFactory,
+) {
     private val abstractList = symbols.abstractList.owner
-    private val list = symbols.list.owner
-    private val listGet = list.getGet()
+    private val abstractMutableList = symbols.abstractMutableList.owner
 
-    private fun IrClass.getGetWithoutBoundsCheck(): IrSimpleFunction = context.mapping.listGetWithoutBoundsCheck.getOrPut(this) {
-        val get = getGet()
+    fun IrFunction.isGet() =
+            name == OperatorNameConventions.GET && dispatchReceiverParameter != null
+                    && valueParameters.singleOrNull()?.type == irBuiltIns.intType
+
+    fun IrClass.getGet() = functions.single { it.isGet() }
+
+    fun IrClass.needFunctionsWithoutBoundsCheck() =
+            this == abstractList || this == abstractMutableList
+                    || this.getAllSuperclasses().let { abstractList in it || abstractMutableList in it }
+
+    fun IrClass.getGetWithoutBoundsCheck(): IrSimpleFunction = mapping.listGetWithoutBoundsCheck.getOrPut(this) {
+        val get = this.getGet()
         irFactory.buildFun {
             name = KonanNameConventions.getWithoutBoundCheck
             modality = get.modality
@@ -67,41 +72,94 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: KonanBackend
             }
 
             overriddenSymbols = get.overriddenSymbols
-                    .filter { it != listGet.symbol }
-                    .map { it.owner.parentAsClass.getGetWithoutBoundsCheck().symbol }
+                    .map { it.owner.parentAsClass }
+                    .filter { it.needFunctionsWithoutBoundsCheck() }
+                    .map { it.getGetWithoutBoundsCheck().symbol }
         }
     }
+}
 
-    private val abstractListGetWithoutBoundsCheck = abstractList.getGetWithoutBoundsCheck()
+internal class BoundsCheckOptimizer(val context: Context) : BodyLoweringPass {
+    private val symbols = context.ir.symbols
+    private val noBoundsCheck = symbols.noBoundsCheck.owner
+    private val arrays = symbols.arrays.toSet()
+    private val functionsWithoutBoundsCheckSupport = context.functionsWithoutBoundsCheckSupport
+
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        val irBuilder = context.createIrBuilder(container.symbol)
+        irBody.transformChildren(object : IrElementTransformer<Boolean> {
+            override fun visitBlock(expression: IrBlock, data: Boolean) =
+                    super.visitBlock(expression, data || (expression as? IrReturnableBlock)?.inlineFunction == noBoundsCheck)
+
+            override fun visitCall(expression: IrCall, data: Boolean): IrElement {
+                expression.transformChildren(this, data)
+
+                if (data) {
+                    val callee = expression.symbol.owner
+                    with(functionsWithoutBoundsCheckSupport) {
+                        if (callee.isGet()) {
+                            val irClass = callee.parentAsClass
+                            val getWithoutBoundsCheck = when {
+                                irClass.symbol in arrays ->
+                                    irClass.functions.single { it.name == KonanNameConventions.getWithoutBoundCheck }
+                                irClass.needFunctionsWithoutBoundsCheck() ->
+                                    irClass.getGetWithoutBoundsCheck()
+                                else -> null
+                            }
+                            if (getWithoutBoundsCheck != null) {
+                                return irBuilder.at(expression)
+                                        .irCall(getWithoutBoundsCheck, superQualifierSymbol = expression.superQualifierSymbol).apply {
+                                            dispatchReceiver = expression.dispatchReceiver
+                                            putValueArgument(0, expression.getValueArgument(0))
+                                        }
+                            }
+                        }
+                    }
+                }
+
+                return expression
+            }
+        }, data = false)
+    }
+
+}
+
+internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : ClassLoweringPass {
+    private val irBuiltIns = context.irBuiltIns
+    private val symbols = context.ir.symbols
+    private val functionsWithoutBoundsCheckSupport = context.functionsWithoutBoundsCheckSupport
+
+    private val noBoundsCheck = symbols.noBoundsCheck.owner
+    private val abstractList = symbols.abstractList.owner
+
     private val checkElementIndex = abstractList.companionObject()!!.functions.single {
         it.name.asString() == "checkElementIndex"
                 && it.valueParameters.size == 2
                 && it.valueParameters.all { parameter -> parameter.type == irBuiltIns.intType }
     }
 
-    override fun lower(irClass: IrClass) {
-        if (irClass == abstractList) {
-            irClass.declarations.add(irClass.declarations.indexOf(irClass.getGet()) + 1, abstractListGetWithoutBoundsCheck)
-        } else if (abstractList in irClass.getAllSuperclasses()) {
+    override fun lower(irClass: IrClass) = with(functionsWithoutBoundsCheckSupport) {
+        if (irClass.needFunctionsWithoutBoundsCheck()) {
             val get = irClass.getGet()
             val getWithoutBoundsCheck = irClass.getGetWithoutBoundsCheck()
             irClass.declarations.add(irClass.declarations.indexOf(get) + 1, getWithoutBoundsCheck)
-            if (getWithoutBoundsCheck.isFakeOverride) return
-
-            getWithoutBoundsCheck.body = context.createIrBuilder(getWithoutBoundsCheck.symbol).run {
-                if (irClass.packageFqName?.asString()?.startsWith("kotlin.") == true)
-                    transformGetBody(get, getWithoutBoundsCheck)
-                else {
-                    // Unknown AbstractList inheritor: just conservatively delegate to get.
-                    irBlockBody {
-                        +irReturn(
-                                irCall(get).apply {
-                                    dispatchReceiver = irGet(getWithoutBoundsCheck.dispatchReceiverParameter!!)
-                                    putValueArgument(0, irGet(getWithoutBoundsCheck.valueParameters[0]))
-                                }
-                        )
-                    }
-                }
+            if (getWithoutBoundsCheck.modality != Modality.ABSTRACT && !getWithoutBoundsCheck.isFakeOverride) {
+                val irBuilder = context.createIrBuilder(getWithoutBoundsCheck.symbol)
+                val body = if (irClass.packageFqName?.asString()?.startsWith("kotlin.") == true)
+                    irBuilder.transformGetBody(get, getWithoutBoundsCheck)
+                else null
+                getWithoutBoundsCheck.body = body
+                        ?: irBuilder.run {
+                            // Unknown AbstractList inheritor: just conservatively delegate to get.
+                            irBlockBody {
+                                +irReturn(
+                                        irCall(get).apply {
+                                            dispatchReceiver = irGet(getWithoutBoundsCheck.dispatchReceiverParameter!!)
+                                            putValueArgument(0, irGet(getWithoutBoundsCheck.valueParameters[0]))
+                                        }
+                                )
+                            }
+                        }
             }
         }
     }
