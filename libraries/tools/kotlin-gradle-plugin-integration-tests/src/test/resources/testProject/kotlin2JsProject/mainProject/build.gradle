@@ -21,7 +21,8 @@ dependencies {
 }
 
 compileKotlin2Js.kotlinOptions.sourceMap = true
-compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/web/js/app.js"
+compileKotlin2Js.destinationDirectory = new File(projectDir, "web/js")
+compileKotlin2Js.kotlinOptions.moduleName = "app"
 compileKotlin2Js.kotlinOptions.suppressWarnings = true
 compileKotlin2Js.kotlinOptions.verbose = true
 

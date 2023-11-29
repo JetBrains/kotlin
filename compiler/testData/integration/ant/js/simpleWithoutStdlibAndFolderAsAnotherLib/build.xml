@@ -5,10 +5,6 @@
   <target name="build">
     <mkdir dir="${temp.library.path}"/>
 
-    <kotlin2js src="${library.path}" noStdlib="true" output="${temp.library.path}/jslib-example.js" metaInfo="true">
-      <compilerarg value="-Xforce-deprecated-legacy-compiler-usage"/>
-    </kotlin2js>
-
     <kotlin2js src="${test.data}/root1" noStdlib="true" output="${temp}/out.js" main="call">
       <libraries>
         <pathelement path="${temp.library.path}"/>

@@ -19,10 +19,9 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import java.io.File
 
-abstract class AbstractIncrementalK1JsLegacyMultiplatformJsCompilerRunnerTest : AbstractIncrementalK1JsLegacyCompilerRunnerTest() {
-    override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments {
-        return super.createCompilerArguments(destinationDir, testDir).apply {
-            multiPlatform = true
+abstract class AbstractIncrementalK1JsKlibCompilerRunnerWithFriendModulesDisabledTest : AbstractIncrementalK1JsKlibCompilerRunnerTest() {
+    override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
+        super.createCompilerArguments(destinationDir, testDir).apply {
+            friendModulesDisabled = true
         }
-    }
 }

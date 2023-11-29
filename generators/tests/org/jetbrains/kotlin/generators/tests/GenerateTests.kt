@@ -146,7 +146,7 @@ fun main(args: Array<String>) {
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalK1JsLegacyCompilerRunnerWithFriendModulesDisabledTest> {
+            testClass<AbstractIncrementalK1JsKlibCompilerRunnerWithFriendModulesDisabledTest> {
                 model("incremental/js/friendsModuleDisabled", extension = null, recursive = false)
             }
 
@@ -154,7 +154,7 @@ fun main(args: Array<String>) {
                 model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
                 model("incremental/mpp/jvmOnlyK1", extension = null, excludeParentDirs = true)
             }
-            testClass<AbstractIncrementalK1JsLegacyMultiplatformJsCompilerRunnerTest> {
+            testClass<AbstractIncrementalK1JsKlibMultiplatformJsCompilerRunnerTest> {
                 model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
             }
             //TODO: write a proper k2 multiplatform test runner KT-63183

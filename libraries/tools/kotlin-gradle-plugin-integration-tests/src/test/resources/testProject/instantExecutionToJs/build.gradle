@@ -21,7 +21,8 @@ dependencies {
 }
 
 tasks.named("compileKotlinJs", Kotlin2JsCompile) {
-    it.kotlinOptions.outputFile = "${buildDir}/kotlin2js/main/module.js"
+    it.destinationDirectory = new File(buildDir, "kotlin2js/main")
+    it.kotlinOptions.moduleName = "module"
     it.kotlinOptions.freeCompilerArgs += ["-Xir-produce-klib-dir", "-Xir-only"]
 }
 

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -27,10 +26,15 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
+import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
 
 abstract class AbstractJsProtoComparisonTest : AbstractProtoComparisonTest<ProtoData>() {
+    protected open val jsStdlibFile: File
+        get() = PathUtil.kotlinPathsForDistDirectoryForTests.jsStdLibKlibPath
+
     override fun expectedOutputFile(testDir: File): File =
         File(testDir, "result-js.out")
                 .takeIf { it.exists() }
@@ -47,11 +51,13 @@ abstract class AbstractJsProtoComparisonTest : AbstractProtoComparisonTest<Proto
         val messageCollector = TestMessageCollector()
         val outputItemsCollector = OutputItemsCollectorImpl()
         val args = K2JSCompilerArguments().apply {
-            outputFile = File(outputDir, "out.js").canonicalPath
-            metaInfo = true
+            this.outputDir = outputDir.normalize().absolutePath
+            moduleName = "out"
+            libraries = jsStdlibFile.absolutePath
+            irProduceKlibDir = true
+            irOnly = true
             main = K2JsArgumentConstants.NO_CALL
             freeArgs = ktFiles
-            forceDeprecatedLegacyCompilerUsage = true
             languageVersion = "1.9"
         }
 
