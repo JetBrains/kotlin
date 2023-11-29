@@ -8,11 +8,11 @@ public open [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/BaseClass.isSc
 
 public open [ResolvedTo(STATUS)] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): R|kotlin/Boolean| { LAZY_BLOCK }
 
-public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /IntermediateClass.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0, SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(STATUS)] name: R|@R|Anno|(str = <strcat>(String(object ), R|/constant|))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int| = STUB): R|kotlin/Boolean|
+public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /IntermediateClass.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0, SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(STATUS)] name: R|@R|Anno|(str = <strcat>(String(object ), R|/constant|))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Boolean|
 
-public open [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(STATUS)] name: R|@R|Anno|(str = <strcat>(String(object ), R|/constant|))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int| = STUB): R|kotlin/Boolean|
+public open [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(STATUS)] name: R|@R|Anno|(str = <strcat>(String(object ), R|/constant|))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Boolean|
 
-public open [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/BaseClass.anotherFunction] fun anotherFunction([ResolvedTo(STATUS)] name: R|@R|Anno|(LAZY_EXPRESSION)  SCHEME| = STUB): R|kotlin/Boolean|
+public open [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/BaseClass.anotherFunction] fun anotherFunction([ResolvedTo(STATUS)] name: R|@R|Anno|(LAZY_EXPRESSION)  SCHEME|): R|kotlin/Boolean|
 
 public open [ResolvedTo(STATUS)] fun anotherFunction([ResolvedTo(STATUS)] name: R|SCHEME| = LAZY_EXPRESSION): R|kotlin/Boolean| { LAZY_BLOCK }
 

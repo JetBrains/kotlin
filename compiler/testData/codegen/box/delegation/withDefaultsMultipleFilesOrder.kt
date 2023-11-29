@@ -1,5 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63879
-
 // FILE: lib.kt
 interface ResolutionScope {
     fun getContributedDescriptors(s: String = "OK"): String

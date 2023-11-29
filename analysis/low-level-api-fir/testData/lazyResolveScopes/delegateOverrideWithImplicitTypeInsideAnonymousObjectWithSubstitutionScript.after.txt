@@ -2,19 +2,19 @@ public open override [ResolvedTo(BODY_RESOLVE)] fun isSchemeFile([ResolvedTo(BOD
     ^isSchemeFile !=(R|<local>/name|, String(str))
 }
 
-public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/IntermediateClass.isSchemeFile] fun isSchemeFile([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence| = STUB): R|kotlin/Boolean|
+public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/IntermediateClass.isSchemeFile] fun isSchemeFile([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
 
-public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/BaseClass.isSchemeFile] fun isSchemeFile([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence| = STUB): R|kotlin/Boolean|
+public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/BaseClass.isSchemeFile] fun isSchemeFile([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
 
 public open [ResolvedTo(BODY_RESOLVE)] fun isSchemeFile([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence| = R|/genericCall|<R|kotlin/CharSequence|>()): R|kotlin/Boolean| {
     ^isSchemeFile Boolean(true)
 }
 
-public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /IntermediateClass.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0, SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence| = STUB): R|kotlin/Boolean|
+public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /IntermediateClass.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0, SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
 
-public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence| = STUB): R|kotlin/Boolean|
+public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
 
-public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/BaseClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence| = STUB): R|kotlin/Boolean|
+public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/BaseClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
 
 public open [ResolvedTo(BODY_RESOLVE)] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence| = R|/genericCall|<R|kotlin/CharSequence|>()): R|kotlin/Boolean| {
     ^anotherFunction Boolean(true)

@@ -135,7 +135,8 @@ object FirFakeOverrideGenerator {
         attributes = baseFunction.attributes.copy()
         typeParameters += configureAnnotationsTypeParametersAndSignature(
             session, baseFunction, newParameterTypes, newTypeParameters,
-            newReceiverType, newContextReceiverTypes, newReturnType, deferredReturnTypeCalculation, newSymbol
+            newReceiverType, newContextReceiverTypes, newReturnType, deferredReturnTypeCalculation, newSymbol,
+            copyDefaultValues = false,
         ).filterIsInstance<FirTypeParameter>()
         deprecationsProvider = baseFunction.deprecationsProvider
     }.apply {
@@ -181,7 +182,13 @@ object FirFakeOverrideGenerator {
             newContextReceiverTypes,
             newReturnType,
             deferredReturnTypeCalculation,
-            fakeOverrideSymbol
+            fakeOverrideSymbol,
+            // Copying default values here is important, because constructors don't
+            // override anything and we rely on this fact when mapping arguments
+            // during resolution.
+            // See: FirDefaultParametersResolver.declaresDefaultValue()
+            // See: testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.4.kt
+            copyDefaultValues = true,
         )
 
         dispatchReceiverType = newDispatchReceiverType
@@ -204,6 +211,7 @@ object FirFakeOverrideGenerator {
         newReturnType: ConeKotlinType?,
         deferredReturnTypeCalculation: CallableCopyDeferredReturnTypeCalculation?,
         symbolForOverride: FirFunctionSymbol<*>,
+        copyDefaultValues: Boolean = false,
     ): List<FirTypeParameterRef> {
         return when {
             baseFunction.typeParameters.isEmpty() -> {
@@ -216,6 +224,7 @@ object FirFakeOverrideGenerator {
                     newReturnType,
                     deferredReturnTypeCalculation,
                     origin,
+                    copyDefaultValues,
                 )
                 emptyList()
             }
@@ -243,6 +252,7 @@ object FirFakeOverrideGenerator {
                     copiedReturnType,
                     newCallableCopySubstitutionForTypeUpdater,
                     origin,
+                    copyDefaultValues,
                 )
                 copiedTypeParameters
             }
@@ -256,6 +266,7 @@ object FirFakeOverrideGenerator {
                     newReturnType,
                     deferredReturnTypeCalculation,
                     origin,
+                    copyDefaultValues,
                 )
                 newTypeParameters
             }
@@ -271,6 +282,7 @@ object FirFakeOverrideGenerator {
         newReturnType: ConeKotlinType?,
         deferredTypeCalculation: CallableCopyDeferredReturnTypeCalculation?,
         origin: FirDeclarationOrigin,
+        copyDefaultValues: Boolean = false,
     ) {
         checkStatusIsResolved(baseFunction)
         annotations += baseFunction.annotations
@@ -304,7 +316,8 @@ object FirFakeOverrideGenerator {
                 valueParameter.returnTypeRef.withReplacedConeType(newType),
                 origin,
                 fakeFunctionSymbol,
-                this@configureAnnotationsAndSignature.source ?: valueParameter.source
+                this@configureAnnotationsAndSignature.source ?: valueParameter.source,
+                copyDefaultValues,
             )
         }
 
@@ -322,18 +335,21 @@ object FirFakeOverrideGenerator {
         returnTypeRef: FirTypeRef,
         origin: FirDeclarationOrigin,
         containingFunctionSymbol: FirFunctionSymbol<*>,
-        source: KtSourceElement?
+        source: KtSourceElement?,
+        copyDefaultValues: Boolean = true,
     ): FirValueParameter = buildValueParameterCopy(original) {
         this.origin = origin
         this.source = source
         this.returnTypeRef = returnTypeRef
         symbol = FirValueParameterSymbol(original.name)
         this.containingFunctionSymbol = containingFunctionSymbol
-        defaultValue = defaultValue?.let {
-            buildExpressionStub {
-                coneTypeOrNull = returnTypeRef.coneTypeOrNull
+        defaultValue = defaultValue
+            ?.takeIf { copyDefaultValues }
+            ?.let {
+                buildExpressionStub {
+                    coneTypeOrNull = returnTypeRef.coneTypeOrNull
+                }
             }
-        }
 
         resolvePhase = origin.resolvePhaseForCopy
     }

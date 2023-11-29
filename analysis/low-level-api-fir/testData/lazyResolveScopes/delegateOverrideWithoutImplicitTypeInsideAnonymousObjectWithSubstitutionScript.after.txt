@@ -10,11 +10,11 @@ public open [ResolvedTo(BODY_RESOLVE)] fun isSchemeFile([ResolvedTo(BODY_RESOLVE
     ^isSchemeFile Boolean(true)
 }
 
-public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /IntermediateClass.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0, SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|@R|Anno|(str = <strcat>(String(object ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int| = STUB): R|kotlin/Boolean|
+public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /IntermediateClass.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0, SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|@R|Anno|(str = <strcat>(String(object ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|): R|kotlin/Boolean|
 
-public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|@R|Anno|(str = <strcat>(String(object ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int| = STUB): R|kotlin/Boolean|
+public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/IntermediateClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|@R|Anno|(str = <strcat>(String(object ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|): R|kotlin/Boolean|
 
-public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/BaseClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|@R|Anno|(str = <strcat>(String(super ), R|/constant|))  SCHEME| = STUB): R|kotlin/Boolean|
+public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/BaseClass.anotherFunction] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|@R|Anno|(str = <strcat>(String(super ), R|/constant|))  SCHEME|): R|kotlin/Boolean|
 
 public open [ResolvedTo(BODY_RESOLVE)] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|SCHEME| = R|/genericCall|<R|SCHEME|>()): R|kotlin/Boolean| {
     ^anotherFunction Boolean(true)
