@@ -181,6 +181,11 @@ public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuil
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/genericProperty.kt");
         }
 
+        @TestMetadata("incompletePropertyWithDelegate.kt")
+        public void testIncompletePropertyWithDelegate() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/incompletePropertyWithDelegate.kt");
+        }
+
         @TestMetadata("initBlockWithDeclarations.kt")
         public void testInitBlockWithDeclarations() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/initBlockWithDeclarations.kt");

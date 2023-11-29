@@ -53,6 +53,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
     }
 
     @Test
+    @TestMetadata("incompleteDelegation.kt")
+    public void testIncompleteDelegation() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/incompleteDelegation.kt");
+    }
+
+    @Test
     @TestMetadata("incompleteFor.kt")
     public void testIncompleteFor() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/incompleteFor.kt");

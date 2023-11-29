@@ -1976,6 +1976,7 @@ open class PsiRawFirBuilder(
                         val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                             val delegateFirExpression = extractDelegateExpression()
                             source = delegateFirExpression.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
+                                ?: this@toFirProperty.delegate?.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)
                             expression = delegateFirExpression
                         }
 
@@ -2042,6 +2043,7 @@ open class PsiRawFirBuilder(
                             val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                                 val delegateExpression = extractDelegateExpression()
                                 source = delegateExpression.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
+                                    ?: this@toFirProperty.delegate?.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)
                                 expression = delegateExpression
                             }
 
