@@ -51,7 +51,7 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker()
         }
     }
 
-    private fun isAllowedReflectionApi(name: Name, containingClassId: ClassId, context: CheckerContext): Boolean =
+    protected open fun isAllowedReflectionApi(name: Name, containingClassId: ClassId, context: CheckerContext): Boolean =
         name in ALLOWED_MEMBER_NAMES ||
                 containingClassId == K_CLASS && isAllowedKClassMember(name, context) ||
                 (name.asString() == "get" || name.asString() == "set") && containingClassId in K_PROPERTY_CLASSES ||

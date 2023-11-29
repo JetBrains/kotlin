@@ -182,6 +182,7 @@ object StandardNames {
         @JvmField val kMutablePropertyFqName: FqNameUnsafe = reflect("KMutableProperty")
         @JvmField val kProperty: ClassId = ClassId.topLevel(kPropertyFqName.toSafe())
         @JvmField val kDeclarationContainer: FqNameUnsafe = reflect("KDeclarationContainer")
+        @JvmField val findAssociatedObject: FqNameUnsafe = reflect("findAssociatedObject")
 
         @JvmField val uByteFqName: FqName = fqName("UByte")
         @JvmField val uShortFqName: FqName = fqName("UShort")

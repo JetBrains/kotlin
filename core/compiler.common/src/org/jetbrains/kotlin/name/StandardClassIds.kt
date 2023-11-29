@@ -93,6 +93,8 @@ object StandardClassIds {
 
     val constantAllowedTypes = primitiveTypes + unsignedTypes + String
 
+    val associatedObjectAnnotations = hashSetOf(Annotations.AssociatedObjectKey, Annotations.ExperimentalAssociatedObjects)
+
     val Continuation = "Continuation".coroutinesId()
 
     @Suppress("FunctionName")
@@ -189,6 +191,9 @@ object StandardClassIds {
 
         val OptionalExpectation = "OptionalExpectation".baseId()
         val ImplicitlyActualizedByJvmDeclaration = "ImplicitlyActualizedByJvmDeclaration".jvmId()
+
+        val AssociatedObjectKey = "AssociatedObjectKey".reflectId()
+        val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()
 
         object ParameterNames {
             val value = Name.identifier("value")
