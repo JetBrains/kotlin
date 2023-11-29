@@ -116,7 +116,7 @@ open class JvmIrCodegenFactory(
         val irProviders: List<IrProvider>,
         val extensions: JvmGeneratorExtensions,
         val backendExtension: JvmBackendExtension,
-        val pluginContext: IrPluginContext,
+        val pluginContext: IrPluginContext?,
         val notifyCodegenStart: () -> Unit
     ) : CodegenFactory.BackendInput
 
@@ -212,8 +212,8 @@ open class JvmIrCodegenFactory(
             psi2irContext.irBuiltIns,
             irLinker,
             messageLogger
-        )
-        if (pluginExtensions.isNotEmpty() && !ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
+        ).takeIf { !ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols }
+        if (pluginExtensions.isNotEmpty() && pluginContext != null) {
             for (extension in pluginExtensions) {
                 if (psi2irContext.configuration.generateBodies ||
                     @OptIn(FirIncompatiblePluginAPI::class) extension.shouldAlsoBeAppliedInKaptStubGenerationMode
