@@ -47,11 +47,16 @@ fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): 
     if (relativeClassFqName == null) return PackageResolutionResult.PackageOrClass(currentPackage, null, null)
 
     val classId = ClassId(currentPackage, relativeClassFqName, isLocal = false)
+
+    return resolveToPackageOrClass(symbolProvider, classId)
+}
+
+fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, classId: ClassId): PackageResolutionResult {
     val symbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return PackageResolutionResult.Error(
         ConeUnresolvedParentInImport(classId)
     )
 
-    return PackageResolutionResult.PackageOrClass(currentPackage, relativeClassFqName, symbol)
+    return PackageResolutionResult.PackageOrClass(classId.packageFqName, classId.relativeClassName, symbol)
 }
 
 sealed class PackageResolutionResult {

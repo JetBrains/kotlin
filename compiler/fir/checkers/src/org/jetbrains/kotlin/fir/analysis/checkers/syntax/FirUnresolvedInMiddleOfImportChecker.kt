@@ -11,13 +11,15 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getSourceForImportSegment
-import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedParentInImport
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
+import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
@@ -25,12 +27,19 @@ import org.jetbrains.kotlin.psi.KtFile
 object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFile, KtFile>() {
     override fun checkPsiOrLightTree(element: FirFile, source: KtSourceElement, context: CheckerContext, reporter: DiagnosticReporter) {
         for (import in element.imports) {
-            if (import is FirErrorImport) processErrorImport(import, context, reporter)
+            if (import is FirResolvedImport) processPossiblyUnresolvedImport(import, context, reporter)
         }
     }
 
-    private fun processErrorImport(import: FirErrorImport, context: CheckerContext, reporter: DiagnosticReporter) {
-        when (val diagnostic = import.diagnostic) {
+    private fun processPossiblyUnresolvedImport(import: FirResolvedImport, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (import.source?.kind?.shouldSkipErrorTypeReporting == true) return
+
+        val referencedClass = import.resolvedParentClassId ?: return
+
+        val importResolutionResult = resolveToPackageOrClass(context.session.symbolProvider, referencedClass)
+        if (importResolutionResult !is PackageResolutionResult.Error) return
+
+        when (val diagnostic = importResolutionResult.diagnostic) {
             is ConeUnresolvedParentInImport -> {
                 val source = import.source ?: return
 
