@@ -117,10 +117,6 @@ open class HostManager(
     fun isEnabled(target: KonanTarget) = enabled.contains(target)
 
     companion object {
-        @Deprecated("Use `hostOs` instead", ReplaceWith("HostManager.hostOs()"))
-        fun host_os(): String =
-            hostOs()
-
         fun hostOs(): String {
             val javaOsName = System.getProperty("os.name")
             return when {
@@ -155,10 +151,6 @@ open class HostManager(
                 MINGW_X64 -> "win32"
                 else -> throw TargetSupportException("Unknown host: $host.")
             }
-
-        @Deprecated("Use `hostArch` instead", ReplaceWith("HostManager.hostArch()"))
-        fun host_arch(): String =
-            hostArch()
 
         fun hostArch(): String =
             hostArchOrNull()
