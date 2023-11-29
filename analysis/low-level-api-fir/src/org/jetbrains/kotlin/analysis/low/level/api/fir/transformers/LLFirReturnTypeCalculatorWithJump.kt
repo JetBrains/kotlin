@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarg
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitBodyTargetResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirImplicitTypesLazyResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 internal class LLFirReturnTypeCalculatorWithJump(
     scopeSession: ScopeSession,
-    implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
+    implicitBodyResolveComputationSession: LLImplicitBodyResolveComputationSession,
     private val lockProvider: LLFirLockProvider,
     private val towerDataContextCollector: FirResolveContextCollector?,
 ) : ReturnTypeCalculatorWithJump(scopeSession, implicitBodyResolveComputationSession) {
@@ -39,7 +39,7 @@ internal class LLFirReturnTypeCalculatorWithJump(
             session = declaration.moduleData.session,
             scopeSession = scopeSession,
             firResolveContextCollector = towerDataContextCollector,
-            implicitBodyResolveComputationSession = implicitBodyResolveComputationSession,
+            llImplicitBodyResolveComputationSessionParameter = implicitBodyResolveComputationSession as LLImplicitBodyResolveComputationSession,
         )
 
         lockProvider.withGlobalPhaseLock(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {

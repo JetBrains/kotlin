@@ -40,24 +40,26 @@ internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePha
     }
 }
 
+internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComputationSession()
+
 internal class LLFirImplicitBodyTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
     session: FirSession,
     scopeSession: ScopeSession,
     firResolveContextCollector: FirResolveContextCollector?,
-    implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession? = null,
+    llImplicitBodyResolveComputationSessionParameter: LLImplicitBodyResolveComputationSession? = null,
 ) : LLFirAbstractBodyTargetResolver(
     target,
     lockProvider,
     scopeSession,
     FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-    implicitBodyResolveComputationSession = implicitBodyResolveComputationSession ?: ImplicitBodyResolveComputationSession(),
+    llImplicitBodyResolveComputationSession = llImplicitBodyResolveComputationSessionParameter ?: LLImplicitBodyResolveComputationSession(),
     isJumpingPhase = true,
 ) {
     override val transformer = object : FirImplicitAwareBodyResolveTransformer(
         session,
-        implicitBodyResolveComputationSession = this.implicitBodyResolveComputationSession,
+        implicitBodyResolveComputationSession = llImplicitBodyResolveComputationSession,
         phase = resolverPhase,
         implicitTypeOnly = true,
         scopeSession = scopeSession,
