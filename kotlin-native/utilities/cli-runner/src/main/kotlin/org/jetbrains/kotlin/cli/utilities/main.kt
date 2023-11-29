@@ -47,8 +47,16 @@ private fun setupClangEnv() {
     setEnv("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
 }
 
+/**
+ * Used via reflection in [org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunner] / [org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner]
+ */
+@Suppress("UNUSED")
 fun daemonMain(args: Array<String>) = inProcessMain(args, ::konancMainWithGradleRenderer)
 
+/**
+ * Used via reflection in [org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunner] / [org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner]
+ */
+@Suppress("UNUSED")
 fun daemonMainWithXcodeRenderer(args: Array<String>) = inProcessMain(args, ::konancMainWithXcodeRenderer)
 
 private fun inProcessMain(args: Array<String>, konancMain: (Array<String>) -> Unit) {
