@@ -1,0 +1,16 @@
+FILE: doubleSquareBracketsInBuilderArgument.kt
+    public final fun test(): R|kotlin/Unit| {
+        R|/build<CS errors: /build>#|<<ERROR TYPE REF: Cannot infer argument for type parameter PTV>>(<L> = build@fun R|Buildee<ERROR CLASS: Cannot infer argument for type parameter PTV>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ERROR_EXPR(CS errors: kotlin/arrayOf)
+        }
+        )
+    }
+    public final class Buildee<TV> : R|kotlin/Any| {
+        public constructor<TV>(): R|Buildee<TV>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <PTV> build(instructions: R|Buildee<PTV>.() -> kotlin/Unit|): R|Buildee<PTV>| {
+        ^build R|/Buildee.Buildee|<R|PTV|>().R|kotlin/apply|<R|Buildee<PTV>|>(R|<local>/instructions|)
+    }
