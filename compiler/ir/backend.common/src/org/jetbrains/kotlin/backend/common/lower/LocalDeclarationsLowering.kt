@@ -339,7 +339,9 @@ class LocalDeclarationsLowering(
                 }
 
             override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement =
-                (localContext as? LocalClassContext)?.constructorContext
+                (localContext as? LocalClassContext)
+                    ?.takeIf { declaration.parentAsClass == it.declaration }
+                    ?.constructorContext
                     ?.let { declaration.apply { transformChildrenVoid(FunctionBodiesRewriter(it)) } }
                     ?: visitMember(declaration)
                     ?: super.visitAnonymousInitializer(declaration)
