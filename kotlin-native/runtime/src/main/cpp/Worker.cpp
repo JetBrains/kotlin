@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <cstdint>
 #include <cstdlib>
 #include <deque>
 #include <set>
@@ -29,10 +30,10 @@
 #include "KAssert.h"
 #include "Memory.h"
 #include "Natives.h"
-#include "ObjCMMAPI.h"
 #include "Runtime.h"
 #include "Types.h"
 #include "Worker.h"
+#include "objc_support/AutoreleasePool.hpp"
 
 using namespace kotlin;
 
@@ -1036,9 +1037,7 @@ JobKind Worker::processQueueElement(bool blocking) {
       ObjHolder operationHolder, dummyHolder;
       KRef obj = DerefStablePointer(job.executeAfter.operation, operationHolder.slot());
       try {
-        #if KONAN_OBJC_INTEROP
-          konan::AutoreleasePool autoreleasePool;
-        #endif
+          objc_support::AutoreleasePool autoreleasePool;
           WorkerLaunchpad(obj, dummyHolder.slot());
       } catch(ExceptionObjHolder& e) {
         switch (exceptionHandling()) {
@@ -1062,9 +1061,7 @@ JobKind Worker::processQueueElement(bool blocking) {
       ObjHolder resultHolder;
       KRef argument = AdoptStablePointer(job.regularJob.argument, argumentHolder.slot());
       try {
-        #if KONAN_OBJC_INTEROP
-          konan::AutoreleasePool autoreleasePool;
-        #endif
+          objc_support::AutoreleasePool autoreleasePool;
           {
               CurrentFrameGuard guard;
               job.regularJob.function(argument, resultHolder.slot());

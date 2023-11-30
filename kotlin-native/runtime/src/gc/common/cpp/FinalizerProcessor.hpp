@@ -17,9 +17,9 @@
 #include "ScopedThread.hpp"
 #include "Utils.hpp"
 #include "Logging.hpp"
+#include "objc_support/AutoreleasePool.hpp"
 
 #if KONAN_OBJC_INTEROP
-#include "ObjCMMAPI.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreFoundation/CFRunLoop.h>
 #endif
@@ -100,9 +100,7 @@ private:
 
     void processSingle(FinalizerQueue&& queue, int64_t currentEpoch) noexcept {
         if (!FinalizerQueueTraits::isEmpty(queue)) {
-#if KONAN_OBJC_INTEROP
-            konan::AutoreleasePool autoreleasePool;
-#endif
+            objc_support::AutoreleasePool autoreleasePool;
             ThreadStateGuard guard(ThreadState::kRunnable);
             FinalizerQueueTraits::process(std::move(queue));
         }
@@ -150,7 +148,7 @@ private:
         }
 
         void body() override {
-            konan::AutoreleasePool autoreleasePool;
+            objc_support::AutoreleasePool autoreleasePool;
             auto mode = kCFRunLoopDefaultMode;
             CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource_, mode);
 

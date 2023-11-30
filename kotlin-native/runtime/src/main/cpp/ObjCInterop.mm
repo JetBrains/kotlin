@@ -335,14 +335,6 @@ id objc_allocWithZone(Class clazz);
 id objc_retain(id ptr);
 void objc_release(id ptr);
 
-konan::AutoreleasePool::AutoreleasePool()
-  : handle(objc_autoreleasePoolPush()) {}
-
-konan::AutoreleasePool::~AutoreleasePool() {
-  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative, true);
-  objc_autoreleasePoolPop(handle);
-}
-
 void* Kotlin_objc_autoreleasePoolPush() {
   return objc_autoreleasePoolPush();
 }
