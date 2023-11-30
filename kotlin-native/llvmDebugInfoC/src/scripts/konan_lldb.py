@@ -77,7 +77,7 @@ def _symbol_loaded_address(name, debugger = lldb.debugger):
     process = target.GetProcess()
     thread = process.GetSelectedThread()
     frame = thread.GetSelectedFrame()
-    candidates = list(filter(lambda x: x.name == name, frame.module.symbols))
+    candidates = frame.module.symbol[name]
     # take first
     for candidate in candidates:
         address = candidate.GetStartAddress().GetLoadAddress(target)
