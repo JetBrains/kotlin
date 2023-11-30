@@ -102,20 +102,6 @@ internal class KFunctionImpl private constructor(
         }.createValueClassAwareCallerIfNeeded(descriptor)
     }
 
-    private fun getDefaultImplsForValueClassOrNull(): FunctionDescriptor? {
-        if (
-            descriptor.valueParameters.none { it.declaresDefaultValue() } &&
-            descriptor.containingDeclaration.isValueClass() &&
-            Modifier.isStatic(caller.member!!.modifiers)
-        ) {
-            // firstOrNull is used to mimic the wrong behaviour of regular class reflection as KT-40327 is not fixed.
-            // The behaviours equality is currently backed by codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt. 
-            return descriptor.overriddenTreeAsSequence(useOriginal = false)
-                .firstOrNull { function -> function.valueParameters.any { it.declaresDefaultValue() } } as? FunctionDescriptor
-        }
-        return null
-    }
-
     override val defaultCaller: Caller<*>? by lazy(PUBLICATION) defaultCaller@{
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinFunction -> run {
@@ -161,6 +147,20 @@ internal class KFunctionImpl private constructor(
             }
             else -> null
         }?.createValueClassAwareCallerIfNeeded(descriptor, isDefault = true)
+    }
+
+    private fun getDefaultImplsForValueClassOrNull(): FunctionDescriptor? {
+        if (
+            descriptor.valueParameters.none { it.declaresDefaultValue() } &&
+            descriptor.containingDeclaration.isValueClass() &&
+            Modifier.isStatic(caller.member!!.modifiers)
+        ) {
+            // firstOrNull is used to mimic the wrong behaviour of regular class reflection as KT-40327 is not fixed.
+            // The behaviours equality is currently backed by codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt. 
+            return descriptor.overriddenTreeAsSequence(useOriginal = false)
+                .firstOrNull { function -> function.valueParameters.any { it.declaresDefaultValue() } } as? FunctionDescriptor
+        }
+        return null
     }
 
     private val boundReceiver

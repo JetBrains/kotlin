@@ -84,7 +84,7 @@ internal class KParameterImpl(
                             caller.parameterTypes.slice((slice.first - offset)..(slice.last - offset))
                         } else {
                             val slice = caller.getRealSlicesOfParameters(index)
-                            caller.parameterTypes.slice(slice).also { println() }
+                            caller.parameterTypes.slice(slice)
                         }
                         compoundType(*parameterTypes.toTypedArray())
                     }

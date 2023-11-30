@@ -45589,6 +45589,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("inlineClassInterfaceJvmDefault.kt")
+            public void testInlineClassInterfaceJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassInterfaceJvmDefault.kt");
+            }
+
+            @Test
             @TestMetadata("inlineClassMembers.kt")
             public void testInlineClassMembers() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassMembers.kt");
@@ -45655,6 +45661,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("mfvcInterface.kt")
+            public void testMfvcInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/mfvcInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("mfvcInterfaceJvmDefault.kt")
+            public void testMfvcInterfaceJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/mfvcInterfaceJvmDefault.kt");
+            }
+
+            @Test
             @TestMetadata("mfvcKt61304.kt")
             public void testMfvcKt61304() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/mfvcKt61304.kt");
@@ -45712,12 +45730,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("simpleTopLevelFunction.kt")
             public void testSimpleTopLevelFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/simpleTopLevelFunction.kt");
-            }
-
-            @Test
-            @TestMetadata("valueClassInterface.kt")
-            public void testValueClassInterface() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/callBy/valueClassInterface.kt");
             }
         }
 

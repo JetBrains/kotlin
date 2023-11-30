@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.runtime.structure.desc
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.multiFieldValueClassRepresentation
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -22,6 +24,7 @@ import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.defaultPrimitiveValue
@@ -287,21 +290,27 @@ private fun makeKotlinParameterTypes(
         }
     } else {
         val containingDeclaration = descriptor.containingDeclaration
-        val isOwner = member?.declaringClass?.kotlin?.isValue == true
         if (containingDeclaration is ClassDescriptor && containingDeclaration.isSpecificClass()) {
-            if (isOwner) { // Not containingDeclaration.isValue because it refers to IC/MFVC when the actual member is of DefaultImpls class.
-                kotlinParameterTypes.add(containingDeclaration.defaultType)
-            } else {
+            if (member?.isFromDefaultImpls() == true || member?.declaringClass?.isInterface == true) {
                 // hack to forbid unboxing dispatchReceiver if it is used upcasted
                 // kotlinParameterTypes are used to determine shifts and calls according to whether type is MFVC/IC or not.
-                // If it is MFVC/IC, boxes are unboxed. If isOwner is false, it means that the actual called member lies in DefaultImpls class
+                // If it is MFVC/IC, boxes are unboxed. If isOwner is false, it means that the actual called member lies in interface/DefaultImpls class
                 // which accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
                 kotlinParameterTypes.add(containingDeclaration.defaultType.makeNullable())
+            } else { // Not containingDeclaration.isValue because it refers to IC/MFVC when the actual member is of interface DefaultImpls class.
+                kotlinParameterTypes.add(containingDeclaration.defaultType)
             }
         }
     }
 
     descriptor.valueParameters.mapTo(kotlinParameterTypes, ValueParameterDescriptor::getType)
+}
+
+private fun Member.isFromDefaultImpls(): Boolean {
+    val clazz = declaringClass ?: return false
+    if (clazz.simpleName.endsWith("$${JvmAbi.DEFAULT_IMPLS_CLASS_NAME}")) return false
+    val descriptor = (clazz.enclosingClass?.kotlin as? KClassImpl)?.descriptor as? DeserializedClassDescriptor ?: return false
+    return descriptor.kind == ClassKind.INTERFACE && !JvmProtoBufUtil.isNewPlaceForBodyGeneration(descriptor.classProto)
 }
 
 internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(

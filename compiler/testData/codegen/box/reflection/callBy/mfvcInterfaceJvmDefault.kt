@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_REFLECT
 // LANGUAGE: +ValueClasses
+// !JVM_DEFAULT_MODE: disable
 
 
 import kotlin.test.assertEquals
