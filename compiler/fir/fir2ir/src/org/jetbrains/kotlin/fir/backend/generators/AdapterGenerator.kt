@@ -415,11 +415,26 @@ internal class AdapterGenerator(
 
         val samFirType = unwrappedArgument.resolvedType.let { it.removeExternalProjections() ?: it }
         val samType = samFirType.toIrType(ConversionTypeOrigin.DEFAULT)
+
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
-        return IrTypeOperatorCallImpl(
-            this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType,
-            castArgumentToFunctionalInterfaceForSamType(this, unwrappedArgument.expression.resolvedType, samFirType)
-        )
+        fun IrExpression.generateSamConversion(samType: IrType, firSamConversion: FirSamConversionExpression, samFirType: ConeKotlinType) =
+            IrTypeOperatorCallImpl(
+                this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType,
+                castArgumentToFunctionalInterfaceForSamType(this, firSamConversion.expression.resolvedType, samFirType)
+            )
+
+        return if (this is IrBlock && origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
+            // The IR for adapted callable references should be
+            // BLOCK ADAPTED_FUNCTION_REFERENCE(FUN ADAPTER_FOR_CALLABLE_REFERENCE, TYPE_OP SAM_CONVERSION(FUNCTION_REFERENCE))
+            // Therefore, we need to insert the cast as the last statement of the block, not around the block itself.
+            val lastIndex = statements.lastIndex
+            val samConversion = (statements[lastIndex] as IrExpression).generateSamConversion(samType, unwrappedArgument, samFirType)
+            statements[lastIndex] = samConversion
+            this.type = samConversion.type
+            this
+        } else {
+            generateSamConversion(samType, unwrappedArgument, samFirType)
+        }
     }
 
     // See org.jetbrains.kotlin.psi2ir.generators.ArgumentsGenerationUtilsKt.castArgumentToFunctionalInterfaceForSamType (K1 counterpart)
