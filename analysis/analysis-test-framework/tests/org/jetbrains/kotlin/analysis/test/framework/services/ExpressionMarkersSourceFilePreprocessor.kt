@@ -108,9 +108,12 @@ class ExpressionMarkerProvider : TestService {
 
     inline fun <reified P : KtElement> getElementOfTypeAtCaret(file: KtFile, caretTag: String? = null): P {
         val offset = getCaretPosition(file, caretTag)
-        return file.findElementAt(offset)
-            ?.parentOfType()
-            ?: error("No expression found at caret")
+        return file.findElementAt(offset)?.parentOfType() ?: error("No expression found at caret")
+    }
+
+    inline fun <reified P : KtElement> getElementOfTypeAtCaretOrNull(file: KtFile, caretTag: String? = null): P? {
+        val offset = getCaretPositionOrNull(file, caretTag) ?: return null
+        return file.findElementAt(offset)?.parentOfType()
     }
 
     inline fun <reified P : KtElement> getElementOfTypeAtCaretByDirective(

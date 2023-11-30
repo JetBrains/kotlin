@@ -142,6 +142,48 @@ public class FirIdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestGe
   }
 
   @Test
+  @TestMetadata("substitutionOverrideFunctionParameter.kt")
+  public void testSubstitutionOverrideFunctionParameter() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideFunctionParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverrideFunctionReturnType.kt")
+  public void testSubstitutionOverrideFunctionReturnType() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideFunctionReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverrideFunctionTransitive.kt")
+  public void testSubstitutionOverrideFunctionTransitive() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideFunctionTransitive.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverrideFunctionTransitiveSameType.kt")
+  public void testSubstitutionOverrideFunctionTransitiveSameType() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideFunctionTransitiveSameType.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverrideProperty.kt")
+  public void testSubstitutionOverrideProperty() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverridePropertyTransitive.kt")
+  public void testSubstitutionOverridePropertyTransitive() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverridePropertyTransitive.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverridePropertyTransitiveSameType.kt")
+  public void testSubstitutionOverridePropertyTransitiveSameType() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverridePropertyTransitiveSameType.kt");
+  }
+
+  @Test
   @TestMetadata("substitutionOverrideWithImplicitTypeInsideAnonymousObject.kt")
   public void testSubstitutionOverrideWithImplicitTypeInsideAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideWithImplicitTypeInsideAnonymousObject.kt");
