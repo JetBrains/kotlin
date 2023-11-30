@@ -14,7 +14,7 @@ val y: T = Y
 fun f() {
     bar()
     R.bar()
-    <!UNRESOLVED_REFERENCE!>B<!>.foo()
+    B.foo()
 }
 
 object M {

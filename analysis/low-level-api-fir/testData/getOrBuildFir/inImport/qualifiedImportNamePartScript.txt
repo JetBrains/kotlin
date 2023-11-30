@@ -1,5 +1,5 @@
 KT element: KtDotQualifiedExpression
-FIR element: FirImportImpl
+FIR element: FirResolvedImportImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:

@@ -81,7 +81,7 @@ object C {
 }
 
 fun foo() {
-    if (<!UNRESOLVED_REFERENCE!>i<!> == 3) <!UNRESOLVED_REFERENCE!>f<!>()
+    if (i == 3) f()
 }
 
 //FILE:d.kt

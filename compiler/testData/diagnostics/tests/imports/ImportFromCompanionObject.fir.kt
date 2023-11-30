@@ -63,9 +63,9 @@ package b
 import a.C1.<!CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON!>O<!>.*
 
 fun testErroneusAllUnderImportFromObject() {
-    <!UNRESOLVED_REFERENCE!>A<!>()
-    <!UNRESOLVED_REFERENCE!>B<!>
-    <!UNRESOLVED_REFERENCE!>bar<!>()
+    A()
+    B
+    bar()
 }
 
 // FILE: c.kt
