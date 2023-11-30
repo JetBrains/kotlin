@@ -306,6 +306,7 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
                     include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxTestGenerated.class")
                     include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenInlineTestGenerated.class")
                     include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxErrorTestGenerated.class")
+                    include("org/jetbrains/kotlin/js/test/ir/IrJsES6TypeScriptExportTestGenerated.class")
 
                     include("org/jetbrains/kotlin/incremental/JsIrES6InvalidationTestGenerated.class")
                 }
@@ -322,6 +323,7 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
                 exclude("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxTestGenerated.class")
                 exclude("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenInlineTestGenerated.class")
                 exclude("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxErrorTestGenerated.class")
+                exclude("org/jetbrains/kotlin/js/test/ir/IrJsES6TypeScriptExportTestGenerated.class")
 
                 exclude("org/jetbrains/kotlin/incremental/JsIrES6InvalidationTestGenerated.class")
             }

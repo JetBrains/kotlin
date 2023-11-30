@@ -107,6 +107,16 @@ open class AbstractIrJsTypeScriptExportTest : AbstractJsIrTest(
     }
 }
 
+open class AbstractIrJsES6TypeScriptExportTest : AbstractJsIrES6Test(
+    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
+    testGroupOutputDirPrefix = "es6-typescript-export/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        configureIrJsTypeScriptExportTest(builder)
+    }
+}
+
 private fun configureIrJsTypeScriptExportTest(builder: TestConfigurationBuilder) {
     with(builder) {
         defaultDirectives {

@@ -130,6 +130,10 @@ fun main(args: Array<String>) {
                 model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
             }
 
+            testClass<AbstractIrJsES6TypeScriptExportTest> {
+                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+            }
+
             testClass<AbstractJsIrLineNumberTest> {
                 model("lineNumbers/")
             }
