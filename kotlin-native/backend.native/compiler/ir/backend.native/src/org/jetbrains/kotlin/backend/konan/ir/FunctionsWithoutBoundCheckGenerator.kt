@@ -89,7 +89,7 @@ internal class BoundsCheckOptimizer(val context: Context) : BodyLoweringPass {
         val irBuilder = context.createIrBuilder(container.symbol)
         irBody.transformChildren(object : IrElementTransformer<Boolean> {
             override fun visitBlock(expression: IrBlock, data: Boolean) =
-                    super.visitBlock(expression, data || (expression as? IrReturnableBlock)?.inlineFunction == noBoundsCheck)
+                    super.visitBlock(expression, data || (expression as? IrReturnableBlock)?.inlineFunction?.originalFunction == noBoundsCheck)
 
             override fun visitCall(expression: IrCall, data: Boolean): IrElement {
                 expression.transformChildren(this, data)
@@ -145,11 +145,13 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
             irClass.declarations.add(irClass.declarations.indexOf(get) + 1, getWithoutBoundsCheck)
             if (getWithoutBoundsCheck.modality != Modality.ABSTRACT && !getWithoutBoundsCheck.isFakeOverride) {
                 val irBuilder = context.createIrBuilder(getWithoutBoundsCheck.symbol)
-                val body = if (irClass.packageFqName?.asString()?.startsWith("kotlin.") == true)
-                    irBuilder.transformGetBody(get, getWithoutBoundsCheck)
-                else null
-                getWithoutBoundsCheck.body = body
-                        ?: irBuilder.run {
+                val body = get.body
+                        .takeIf { (irClass.packageFqName?.asString()?.startsWith("kotlin.") == true) }
+                        ?.deepCopyWithVariables()
+                        ?.setDeclarationsParent(getWithoutBoundsCheck)
+                body?.transformGetBody(irBuilder, get, getWithoutBoundsCheck)
+                getWithoutBoundsCheck.body =
+                        body ?: irBuilder.run {
                             // Unknown AbstractList inheritor: just conservatively delegate to get.
                             irBlockBody {
                                 +irReturn(
@@ -164,9 +166,8 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
         }
     }
 
-    private fun DeclarationIrBuilder.transformGetBody(get: IrFunction, getWithoutBoundsCheck: IrFunction): IrBody? {
-        val body = get.body?.deepCopyWithVariables()
-        body?.transformChildren(object : IrElementTransformer<Boolean> {
+    private fun IrBody.transformGetBody(irBuilder: DeclarationIrBuilder, get: IrFunction, getWithoutBoundsCheck: IrFunction) {
+        transformChildren(object : IrElementTransformer<Boolean> {
             override fun visitReturn(expression: IrReturn, data: Boolean): IrExpression {
                 if (expression.returnTargetSymbol != get.symbol)
                     return super.visitReturn(expression, data)
@@ -174,7 +175,7 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
                 expression.transformChildren(this, data)
 
                 return if (data)
-                    at(expression).irReturn(expression.value)
+                    irBuilder.at(expression).irReturn(expression.value)
                 else {
                     val value = expression.value
                     val returnableBlockSymbol = IrReturnableBlockSymbolImpl()
@@ -183,7 +184,7 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
                             endOffset = value.endOffset,
                             type = value.type,
                             // This call has no arguments, which is fine since it's not used in K/N.
-                            inlineCall = irCall(noBoundsCheck.symbol, noBoundsCheck.returnType, listOf(value.type)),
+                            inlineCall = irBuilder.irCall(noBoundsCheck.symbol, noBoundsCheck.returnType, listOf(value.type)),
                             inlinedElement = noBoundsCheck,
                             origin = null,
                             statements = listOf(
@@ -195,7 +196,7 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
                                     )
                             )
                     )
-                    at(expression).irReturn(
+                    irBuilder.at(expression).irReturn(
                             IrReturnableBlockImpl(
                                     startOffset = value.startOffset,
                                     endOffset = value.endOffset,
@@ -212,8 +213,8 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
                 expression.transformChildren(this, data)
 
                 return when (val value = expression.symbol.owner) {
-                    get.dispatchReceiverParameter -> at(expression).irGet(getWithoutBoundsCheck.dispatchReceiverParameter!!)
-                    is IrValueParameter -> at(expression).irGet(getWithoutBoundsCheck.valueParameters[value.index])
+                    get.dispatchReceiverParameter -> irBuilder.at(expression).irGet(getWithoutBoundsCheck.dispatchReceiverParameter!!)
+                    is IrValueParameter -> irBuilder.at(expression).irGet(getWithoutBoundsCheck.valueParameters[value.index])
                     else -> expression
                 }
             }
@@ -227,8 +228,6 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
                 else -> super.visitCall(expression, data)
             }
         }, data = false)
-
-        return body
     }
 }
 
