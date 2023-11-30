@@ -50994,6 +50994,30 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("NullableFunctionTypeAsMemberImmutableProperty.kt")
+        public void testNullableFunctionTypeAsMemberImmutableProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsMemberImmutableProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("NullableFunctionTypeAsMemberImmutablePropertyFromConstructor.kt")
+        public void testNullableFunctionTypeAsMemberImmutablePropertyFromConstructor() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsMemberImmutablePropertyFromConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("NullableFunctionTypeAsPrimaryConstructorParameter.kt")
+        public void testNullableFunctionTypeAsPrimaryConstructorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsPrimaryConstructorParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("NullableFunctionTypeAsSecondaryConstructorParameter.kt")
+        public void testNullableFunctionTypeAsSecondaryConstructorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsSecondaryConstructorParameter.kt");
+        }
+
+        @Test
         @TestMetadata("propertyInitializationAfterSmartCast.kt")
         public void testPropertyInitializationAfterSmartCast() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/propertyInitializationAfterSmartCast.kt");

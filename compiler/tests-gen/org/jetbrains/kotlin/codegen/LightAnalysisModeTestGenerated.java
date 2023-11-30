@@ -41047,6 +41047,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/smartCasts/nullSmartCast.kt");
         }
 
+        @TestMetadata("NullableFunctionTypeAsMemberImmutableProperty.kt")
+        public void testNullableFunctionTypeAsMemberImmutableProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsMemberImmutableProperty.kt");
+        }
+
+        @TestMetadata("NullableFunctionTypeAsMemberImmutablePropertyFromConstructor.kt")
+        public void testNullableFunctionTypeAsMemberImmutablePropertyFromConstructor() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsMemberImmutablePropertyFromConstructor.kt");
+        }
+
+        @TestMetadata("NullableFunctionTypeAsPrimaryConstructorParameter.kt")
+        public void testNullableFunctionTypeAsPrimaryConstructorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsPrimaryConstructorParameter.kt");
+        }
+
+        @TestMetadata("NullableFunctionTypeAsSecondaryConstructorParameter.kt")
+        public void testNullableFunctionTypeAsSecondaryConstructorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsSecondaryConstructorParameter.kt");
+        }
+
         @TestMetadata("propertyInitializationAfterSmartCast.kt")
         public void testPropertyInitializationAfterSmartCast() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/propertyInitializationAfterSmartCast.kt");

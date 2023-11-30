@@ -32029,6 +32029,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("NullableFunctionTypeAsMemberMutableProperty.kt")
+            public void testNullableFunctionTypeAsMemberMutableProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/NullableFunctionTypeAsMemberMutableProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("NullableFunctionTypeAsMemberMutablePropertyFromConstructor.kt")
+            public void testNullableFunctionTypeAsMemberMutablePropertyFromConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/NullableFunctionTypeAsMemberMutablePropertyFromConstructor.kt");
+            }
+
+            @Test
             @TestMetadata("openInSealed.kt")
             public void testOpenInSealed() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/openInSealed.kt");
