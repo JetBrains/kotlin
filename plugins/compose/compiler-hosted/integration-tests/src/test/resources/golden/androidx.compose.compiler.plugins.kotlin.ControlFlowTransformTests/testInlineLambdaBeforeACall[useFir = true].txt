@@ -26,11 +26,14 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
     traceEventStart(<>, %changed, -1, <>)
   }
   %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "*<Test("...>")
+  sourceInformation(%composer, "")
   InlineNonComposable {
+    %composer.startReplaceableGroup(<>)
+    sourceInformation(%composer, "*<Test("...>")
     repeat(10) { it: Int ->
       Test("InsideInline", %composer, 0b0110)
     }
+    %composer.endReplaceableGroup()
   }
   %composer.endReplaceableGroup()
   val tmp0 = Test("AfterInline", %composer, 0b0110)
