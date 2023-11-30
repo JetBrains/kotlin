@@ -46,9 +46,13 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
     private val inlineLambdaToParameter = mutableMapOf<IrFunctionSymbol, IrValueParameter>()
+    private val inlineFunctionExpressions = mutableSetOf<IrExpression>()
 
     fun isInlineLambda(irFunction: IrFunction): Boolean =
         irFunction.symbol in inlineLambdaToParameter.keys
+
+    fun isInlineFunctionExpression(expression: IrExpression): Boolean =
+        expression in inlineFunctionExpressions
 
     fun preservesComposableScope(irFunction: IrFunction): Boolean =
         inlineLambdaToParameter[irFunction.symbol]?.let {
@@ -66,7 +70,7 @@ class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
                 declaration.acceptChildrenVoid(this)
                 val parent = declaration.parent as? IrFunction
                 if (parent?.isInlineFunctionCall(context) == true &&
-                    declaration.isInlineParameter()) {
+                    declaration.isInlinedFunction()) {
                     declaration.defaultValue?.expression?.unwrapLambda()?.let {
                         inlineLambdaToParameter[it] = declaration
                     }
@@ -78,8 +82,9 @@ class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
                 val function = expression.symbol.owner
                 if (function.isInlineFunctionCall(context)) {
                     for (parameter in function.valueParameters) {
-                        if (parameter.isInlineParameter()) {
+                        if (parameter.isInlinedFunction()) {
                             expression.getValueArgument(parameter.index)
+                                ?.also { inlineFunctionExpressions += it }
                                 ?.unwrapLambda()
                                 ?.let { inlineLambdaToParameter[it] = parameter }
                         }
@@ -119,7 +124,7 @@ private val IrStatementOrigin?.isLambdaBlockOrigin: Boolean
 
 // This is copied from JvmIrInlineUtils.kt in the Kotlin compiler, since we
 // need to check for synthetic composable functions.
-private fun IrValueParameter.isInlineParameter(): Boolean =
+private fun IrValueParameter.isInlinedFunction(): Boolean =
     index >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunction() ||
         type.isSyntheticComposableFunction()) &&
         // Parameters with default values are always nullable, so check the expression too.
