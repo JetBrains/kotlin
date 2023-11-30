@@ -755,23 +755,11 @@ object IrTree : AbstractTreeBuilder() {
                 "return valueArguments[index]",
             )
             printFunction(
-                "getValueArgumentOrThrow",
-                null,
-                expression.copy(nullable = false),
-                "return getValueArgument(index) ?: throw createCheckArgumentError(\"value\", index, valueArguments.size)",
-            )
-            printFunction(
                 "getTypeArgument",
                 null,
                 irTypeType.copy(nullable = true),
                 "checkArgumentSlotAccess(\"type\", index, typeArguments.size)",
                 "return typeArguments[index]",
-            )
-            printFunction(
-                "getTypeArgumentOrThrow",
-                null,
-                irTypeType.copy(nullable = false),
-                "return getTypeArgument(index) ?: throw createCheckArgumentError(\"type\", index, typeArguments.size)",
             )
             printFunction(
                 "putValueArgument",
