@@ -7,13 +7,9 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 
 
-import androidx.compose.runtime.DontMemoize
-
 @Composable
-@DontMemoize
-fun Test() {
-    val foo = Foo(0)
-    val lambda = { foo }
+fun Something() {
+    val x = unstable::method
 }
 
 //
@@ -21,17 +17,20 @@ fun Test() {
 // ------------------------------------------
 
 @Composable
-@DontMemoize
-fun Test(%composer: Composer?, %changed: Int) {
+fun Something(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)")
   if (%changed != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    val foo = Foo(0)
-    val lambda = {
-      foo
+    val x = <block>{
+      val tmp0 = unstable
+      %composer.startReplaceableGroup(<>)
+      val tmpCache = %composer.cache(%composer.changedInstance(tmp0)) {
+        tmp0::method
+      }
+      %composer.endReplaceableGroup()
+      tmpCache
     }
     if (isTraceInProgress()) {
       traceEventEnd()
@@ -40,6 +39,6 @@ fun Test(%composer: Composer?, %changed: Int) {
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    Test(%composer, updateChangedFlags(%changed or 0b0001))
+    Something(%composer, updateChangedFlags(%changed or 0b0001))
   }
 }

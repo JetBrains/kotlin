@@ -91,6 +91,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -991,12 +992,8 @@ class ComposerLambdaMemoization(
             calculation
         )
 
-        val fileName = currentFile
-            ?.fileEntry
-            ?.name
-            ?.let { PackagePartClassUtils.getFilePartShortName(it) }
-            ?: ""
-        val key = fileName.hashCode() + expression.startOffset
+        val fqName = currentFunctionContext?.declaration?.kotlinFqName?.asString()
+        val key = fqName.hashCode() + expression.startOffset
         // Wrap the cached expression in a replaceable group
         val cacheTmpVar = irTemporary(cache, "tmpCache")
         return cacheTmpVar.wrap(
