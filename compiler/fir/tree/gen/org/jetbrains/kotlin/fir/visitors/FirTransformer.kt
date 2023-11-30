@@ -451,14 +451,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformResolvedImport(resolvedImport, data)
     }
 
-    open fun transformErrorImport(errorImport: FirErrorImport, data: D): FirImport {
-        return transformElement(errorImport, data)
-    }
-
-    final override fun visitErrorImport(errorImport: FirErrorImport, data: D): FirImport {
-        return transformErrorImport(errorImport, data)
-    }
-
     open fun transformLoop(loop: FirLoop, data: D): FirStatement {
         return transformElement(loop, data)
     }

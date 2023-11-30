@@ -530,10 +530,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             )
         }
 
-        errorImport.configure {
-            +field("delegate", import)
-        }
-
         annotation.configure {
             +field("useSiteTarget", annotationUseSiteTargetType, nullable = true, withReplace = true)
             +field("annotationTypeRef", typeRef, withReplace = true).withTransform()

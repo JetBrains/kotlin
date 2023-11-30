@@ -182,9 +182,6 @@ abstract class FirVisitor<out R, in D> {
     open fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): R =
         visitElement(resolvedImport, data)
 
-    open fun visitErrorImport(errorImport: FirErrorImport, data: D): R =
-        visitElement(errorImport, data)
-
     open fun visitLoop(loop: FirLoop, data: D): R =
         visitElement(loop, data)
 

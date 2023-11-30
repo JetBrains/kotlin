@@ -451,14 +451,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(resolvedImport)
     }
 
-    final override fun visitErrorImport(errorImport: FirErrorImport, data: Nothing?) {
-        visitErrorImport(errorImport)
-    }
-
-    open fun visitErrorImport(errorImport: FirErrorImport) {
-        visitElement(errorImport)
-    }
-
     final override fun visitLoop(loop: FirLoop, data: Nothing?) {
         visitLoop(loop)
     }

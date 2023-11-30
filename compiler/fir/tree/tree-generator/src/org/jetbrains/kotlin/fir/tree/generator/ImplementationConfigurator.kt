@@ -72,10 +72,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(errorImport) {
-            delegateFields(listOf("aliasName", "importedFqName", "isAllUnder", "source"), "delegate")
-        }
-
         fun ImplementationContext.commonAnnotationConfig() {
             defaultEmptyList("annotations")
             default("coneTypeOrNull") {

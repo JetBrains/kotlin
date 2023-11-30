@@ -122,11 +122,6 @@ class ErrorNodeDiagnosticCollectorComponent(
         reportFirDiagnostic(errorResolvedQualifier.diagnostic, source, data)
     }
 
-    override fun visitErrorImport(errorImport: FirErrorImport, data: CheckerContext) {
-        val source = errorImport.source
-        reportFirDiagnostic(errorImport.diagnostic, source, data)
-    }
-
     override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: CheckerContext) {
         reportFirDiagnostic(errorPrimaryConstructor.diagnostic, errorPrimaryConstructor.source, data)
     }

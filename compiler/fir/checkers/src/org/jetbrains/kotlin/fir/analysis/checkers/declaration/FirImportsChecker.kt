@@ -44,7 +44,6 @@ object FirImportsChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.imports.forEach { import ->
             if (import.source?.kind?.shouldSkipErrorTypeReporting == true) return@forEach
-            if (import is FirErrorImport) return@forEach
             if (import.isAllUnder) {
                 if (import is FirResolvedImport) {
                     checkAllUnderFromObject(import, context, reporter)
