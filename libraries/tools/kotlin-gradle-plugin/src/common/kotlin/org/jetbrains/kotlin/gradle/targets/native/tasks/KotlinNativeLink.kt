@@ -240,6 +240,7 @@ constructor(
             args.multiPlatform = true
             args.noendorsedlibs = true
             args.nodefaultlibs = true
+            args.nostdlib = true
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
             args.generateTestRunner = processTests
             args.mainPackage = entryPoint

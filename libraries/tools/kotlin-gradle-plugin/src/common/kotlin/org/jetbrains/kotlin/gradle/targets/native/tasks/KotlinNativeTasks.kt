@@ -453,6 +453,7 @@ internal constructor(
             args.produce = outputKind.name.toLowerCaseAsciiOnly()
             args.metadataKlib = sharedCompilationData != null
             args.nodefaultlibs = true
+            args.nostdlib = true
             args.manifestFile = sharedCompilationData?.manifestFile?.absolutePath
             args.nopack = produceUnpackedKlib.get()
 

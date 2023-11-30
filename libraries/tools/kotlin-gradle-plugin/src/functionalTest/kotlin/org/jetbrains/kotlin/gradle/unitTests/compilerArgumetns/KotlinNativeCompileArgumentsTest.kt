@@ -200,7 +200,7 @@ class KotlinNativeCompileArgumentsTest {
     }
 
     @Test
-    fun `native compilation dependency files should contain native platform dependencies`() {
+    fun `native compilation dependency files should contain native platform dependencies and stdlib`() {
         val project = buildProjectWithMPP()
         project.repositories.mavenLocal()
         project.repositories.mavenCentralCacheRedirector()
@@ -211,9 +211,11 @@ class KotlinNativeCompileArgumentsTest {
         project.evaluate()
         val nativeCompilation = kotlin.linuxX64().compilations.main
 
-        val expectedDependencies = listOf("iconv", "posix", "zlib", "linux", "builtin").map {
+        val expectedPlatformDependencies = listOf("iconv", "posix", "zlib", "linux", "builtin").map {
             "org.jetbrains.kotlin.native.platform.$it"
         }.toSet()
+
+        val expectedDependencies = expectedPlatformDependencies + listOf("stdlib")
 
         val actualDependencies = nativeCompilation.compileDependencyFiles
             .map { it.name }
