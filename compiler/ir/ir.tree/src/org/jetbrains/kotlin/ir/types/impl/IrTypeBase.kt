@@ -21,9 +21,7 @@ abstract class IrTypeBase(val kotlinType: KotlinType?) : IrType(), IrTypeProject
     override val type: IrType get() = this
 
     override fun toString(): String {
-        return """
-            IrTypeBase(${kotlinType.toString()})
-        """.trimIndent()
+        return "IrTypeBase(${kotlinType.toString()})"
     }
 }
 
@@ -65,12 +63,6 @@ data object IrStarProjectionImpl : IrStarProjection
  */
 data object IrUninitializedType : IrType() {
     override val annotations: List<IrConstructorCall> = emptyList()
-
-    override fun toString(): String {
-        return """
-            IrUninitializedType
-        """.trimIndent()
-    }
 }
 
 internal class ReturnTypeIsNotInitializedException(function: IrFunction) : IllegalStateException(

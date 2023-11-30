@@ -68,7 +68,7 @@ fun IrExpression.isUnchanging(): Boolean =
 fun IrExpression.hasNoSideEffects(): Boolean =
     isUnchanging() || this is IrGetValue
 
-internal fun IrMemberAccessExpression<*>.createCheckArgumentError(kind: String, index: Int, total: Int) = AssertionError(
+internal fun IrMemberAccessExpression<*>.createCheckArgumentError(kind: String, index: Int, total: Int): AssertionError = AssertionError(
     "No such $kind argument slot in ${this::class.java.simpleName}: $index (total=$total)" +
             (symbol.signature?.let { ".\nSymbol: $it" } ?: "")
 )
