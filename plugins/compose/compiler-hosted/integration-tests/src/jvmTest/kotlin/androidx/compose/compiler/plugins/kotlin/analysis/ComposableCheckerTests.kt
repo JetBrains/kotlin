@@ -1576,4 +1576,42 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             """
         )
     }
+
+    @Test
+    fun testErrorInAnonymousFunctionPropertyInitializer() {
+        assumeTrue(!useFir)
+        check(
+            """
+                  import androidx.compose.runtime.Composable
+                  @Composable fun ComposableFunction() {}
+                  fun getMyClass(): Any {
+                      class MyClass {
+                          val property = <!COMPOSABLE_EXPECTED!>fun() {
+                              <!COMPOSABLE_INVOCATION!>ComposableFunction<!>()  // invocation
+                          }<!>
+                      }
+                      return MyClass()
+                  }
+            """
+        )
+    }
+
+    @Test
+    fun testErrorInAnonymousFunctionPropertyInitializerForK2() {
+        assumeTrue(useFir)
+        check(
+            """
+                  import androidx.compose.runtime.Composable
+                  @Composable fun ComposableFunction() {}
+                  fun getMyClass(): Any {
+                      class MyClass {
+                          val property = <!COMPOSABLE_EXPECTED!>fun()<!> {
+                              <!COMPOSABLE_INVOCATION!>ComposableFunction<!>()  // invocation
+                          }
+                      }
+                      return MyClass()
+                  }
+            """
+        )
+    }
 }
