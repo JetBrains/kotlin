@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -391,6 +388,33 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         project("kt-61652-CME-when-jupiter-is-applied-to-independet-project", gradleVersion) {
             resolveIdeDependencies(":app") {
                 assertOutputDoesNotContain("ConcurrentModificationException")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test resolve sources for dependency with multiple capabilities`(gradleVersion: GradleVersion) {
+        project("kt-63226-multiple-capabilities", gradleVersion) {
+            build(":producer:publish")
+
+            resolveIdeDependencies(":consumer") { dependencies ->
+                dependencies["jvmMain"].getOrFail(
+                    binaryCoordinates("test:producer:1.0")
+                        .withResolvedSourcesFile("producer-1.0-sources.jar")
+                )
+
+                // according to build.gradle.kts of test project jvmTest should have both artifacts from :producer
+                // one with regular capabilities
+                dependencies["jvmTest"].getOrFail(
+                    binaryCoordinates("test:producer:1.0")
+                        .withResolvedSourcesFile("producer-1.0-sources.jar")
+                )
+
+                // and another with foo capability
+                dependencies["jvmTest"].getOrFail(
+                    binaryCoordinates("test:producer:1.0")
+                        .withResolvedSourcesFile("producer-1.0-foo-sources.jar")
+                )
             }
         }
     }
