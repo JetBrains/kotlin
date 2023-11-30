@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.IdSignatureValues
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -301,6 +298,9 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
 
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean =
         this is BirClassSymbol && isClassWithFqName(StandardNames.FqNames.nothing)
+
+    override fun TypeConstructorMarker.isArrayConstructor(): Boolean =
+        this is BirClassSymbol && isClassWithFqName(StandardNames.FqNames.array)
 
     override fun SimpleTypeMarker.isSingleClassifierType() = true
 
