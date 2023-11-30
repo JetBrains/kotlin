@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -102,6 +105,7 @@ object FirSupertypesChecker : FirClassChecker() {
         }
 
         checkDelegationNotToInterface(declaration, context, reporter)
+        checkDelegationWithoutPrimaryConstructor(declaration, context, reporter)
 
         if (declaration is FirRegularClass && declaration.superTypeRefs.size > 1) {
             checkInconsistentTypeParameters(listOf(Pair(null, declaration.symbol)), context, reporter, declaration.source, true)
@@ -217,6 +221,29 @@ object FirSupertypesChecker : FirClassChecker() {
             startOffset = node.startOffset,
             endOffset = node.endOffset
         )
+    }
+
+
+    private fun checkDelegationWithoutPrimaryConstructor(
+        declaration: FirClass,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        if (declaration.isInterface) return
+        if (declaration.isExpect) return
+        val primaryConstructor = declaration.primaryConstructorIfAny(context.session)
+        if (primaryConstructor != null) return
+        for (subDeclaration in declaration.declarations) {
+            if (subDeclaration !is FirField) continue
+            if (subDeclaration.visibility == Visibilities.Private && subDeclaration.name.isDelegated) {
+                reporter.reportOn(
+                    subDeclaration.source,
+                    FirErrors.UNSUPPORTED,
+                    "Delegation without primary constructor is not supported",
+                    context
+                )
+            }
+        }
     }
 
 }
