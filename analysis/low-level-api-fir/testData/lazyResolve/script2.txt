@@ -482,14 +482,14 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] x: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(CONTRACTS)] val x: R|kotlin/Int?| = IntegerLiteral(1)
-            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int?|
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int?| = Int(1)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int?|
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val y: R|kotlin/Int| = R|/x|!!
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val z: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
@@ -505,8 +505,8 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
             R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val zz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {

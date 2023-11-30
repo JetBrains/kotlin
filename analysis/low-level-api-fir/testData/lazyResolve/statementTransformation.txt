@@ -158,11 +158,11 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-statementTransformation.kts>
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] val myProp: R|() -> kotlin/Unit| = [ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        public final [ResolvedTo(BODY_RESOLVE)] val myProp: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 
-            public [ResolvedTo(CONTRACTS)] get(): R|() -> kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|() -> kotlin/Unit|
 
         [ResolvedTo(BODY_RESOLVE)] init {
             R|/myProp|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function0.invoke>#|(<L> = [ResolvedTo(BODY_RESOLVE)] myProp@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {

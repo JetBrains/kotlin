@@ -32,6 +32,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondLevelFunction2.kts
                     R|/x| = R|<local>/foo|(R|<local>/prop|)
                 }
             }
+
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Int| = R|/x|
