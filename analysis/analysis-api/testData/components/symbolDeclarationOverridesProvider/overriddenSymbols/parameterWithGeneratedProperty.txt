@@ -1,4 +1,4 @@
 ALL:
-  B.B.p: String
+  /B.p: String
 DIRECT:
-  B.B.p: String
+  /B.p: String

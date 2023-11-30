@@ -1,5 +1,5 @@
 ALL:
-  C.foo(x: T): Unit
-  D.foo(x: F): Unit
+  /C.foo(x: T): Unit
+  /D.foo(x: F): Unit
 DIRECT:
-  C.foo(x: T): Unit
+  /C.foo(x: T): Unit
