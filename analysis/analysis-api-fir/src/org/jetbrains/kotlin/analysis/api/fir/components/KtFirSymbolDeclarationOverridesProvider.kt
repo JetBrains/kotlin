@@ -120,10 +120,16 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         callableSymbol: T,
         crossinline process: (FirTypeScope, FirDeclaration) -> Unit
     ) {
+        if (callableSymbol !is KtCallableSymbol) {
+            return
+        }
+
         require(callableSymbol is KtFirSymbol<*>)
+
         val containingDeclaration = with(analysisSession) {
-            (callableSymbol as? KtCallableSymbol)?.originalContainingClassForOverride
+            callableSymbol.getContainingSymbol() as? KtClassOrObjectSymbol
         } ?: return
+
         when (containingDeclaration) {
             is KtFirNamedClassOrObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
             is KtFirAnonymousObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)

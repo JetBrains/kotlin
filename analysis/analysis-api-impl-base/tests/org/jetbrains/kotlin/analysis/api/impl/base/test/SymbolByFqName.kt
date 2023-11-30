@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.CallableId
@@ -69,19 +71,35 @@ sealed class SymbolData {
     data class CallableData(val callableId: CallableId) : SymbolData() {
         override fun KtAnalysisSession.toSymbols(ktFile: KtFile): List<KtSymbol> {
             val classId = callableId.classId
+
             val symbols = if (classId == null) {
                 getTopLevelCallableSymbols(callableId.packageName, callableId.callableName).toList()
             } else {
-                val classSymbol =
-                    getClassOrObjectSymbolByClassId(classId)
-                        ?: error("Class $classId is not found")
-                classSymbol.getCombinedDeclaredMemberScope().getCallableSymbols(callableId.callableName)
-                    .toList()
+                val classSymbol = getClassOrObjectSymbolByClassId(classId) ?: error("Class $classId is not found")
+                findMatchingCallableSymbols(classSymbol)
             }
+
             if (symbols.isEmpty()) {
                 error("No callable with fqName $callableId found")
             }
+
             return symbols
+        }
+
+        context(KtAnalysisSession)
+        private fun findMatchingCallableSymbols(classSymbol: KtClassOrObjectSymbol): List<KtCallableSymbol> {
+            val declaredSymbols = classSymbol.getCombinedDeclaredMemberScope()
+                .getCallableSymbols(callableId.callableName).toList()
+
+            if (declaredSymbols.isNotEmpty()) {
+                return declaredSymbols
+            }
+
+            // Fake overrides are absent in the declared member scope
+            return classSymbol.getCombinedMemberScope()
+                .getCallableSymbols(callableId.callableName)
+                .filter { it.getContainingSymbol() == classSymbol }
+                .toList()
         }
     }
 

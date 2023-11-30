@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName.getSymbolDataFromFile
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.getSymbolOfType
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -24,11 +26,9 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
-        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(mainFile)
-
         val actual = executeOnPooledThreadInReadAction {
-            analyseForTest(declaration) {
-                val symbol = declaration.getSymbol() as KtCallableSymbol
+            analyseForTest(mainFile) {
+                val symbol = getCallableSymbol(mainFile, testServices)
                 val allOverriddenSymbols = symbol.getAllOverriddenSymbols().map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.getDirectlyOverriddenSymbols().map { renderSignature(it) }
                 buildString {
@@ -40,6 +40,17 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
             }
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+    }
+
+    private fun KtAnalysisSession.getCallableSymbol(mainFile: KtFile, testServices: TestServices): KtCallableSymbol {
+        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)
+        if (declaration != null) {
+            return declaration.getSymbolOfType<KtCallableSymbol>()
+        }
+
+        val symbolData = getSymbolDataFromFile(testDataPath)
+        val symbols = with(symbolData) { toSymbols(mainFile) }
+        return symbols.single() as KtCallableSymbol
     }
 
     private fun KtAnalysisSession.renderSignature(symbol: KtCallableSymbol): String = buildString {
