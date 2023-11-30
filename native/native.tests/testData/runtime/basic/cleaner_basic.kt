@@ -2,6 +2,11 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+// Ideally, this test must fail with gcType=NOOP with any cache mode.
+// KT-63944: unfortunately, GC flavours are silently not switched in presence of caches.
+// As soon the issue would be fixed, please remove `&& cacheMode=NO` from next line.
+// IGNORE_NATIVE: gcType=NOOP && cacheMode=NO
+
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, FreezingIsDeprecated::class,
         kotlin.native.runtime.NativeRuntimeApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
 
@@ -36,7 +41,6 @@ class FunBox(private val impl: () -> Unit) {
     }
 }
 
-@Test
 fun testCleanerLambda() {
     val called = AtomicBoolean(false);
     var funBoxWeak: WeakReference<FunBox>? = null
@@ -60,7 +64,6 @@ fun testCleanerLambda() {
     assertNull(funBoxWeak!!.value)
 }
 
-@Test
 fun testCleanerNonSharedLambda() {
     // Only for experimental MM.
     if (Platform.memoryModel != MemoryModel.EXPERIMENTAL) {
@@ -88,7 +91,6 @@ fun testCleanerNonSharedLambda() {
     assertNull(funBoxWeak!!.value)
 }
 
-@Test
 fun testCleanerAnonymousFunction() {
     val called = AtomicBoolean(false);
     var funBoxWeak: WeakReference<FunBox>? = null
@@ -112,7 +114,6 @@ fun testCleanerAnonymousFunction() {
     assertNull(funBoxWeak!!.value)
 }
 
-@Test
 fun testCleanerNonSharedAnonymousFunction() {
     // Only for experimental MM.
     if (Platform.memoryModel != MemoryModel.EXPERIMENTAL) {
@@ -140,7 +141,6 @@ fun testCleanerNonSharedAnonymousFunction() {
     assertNull(funBoxWeak!!.value)
 }
 
-@Test
 fun testCleanerFunctionReference() {
     val called = AtomicBoolean(false);
     var funBoxWeak: WeakReference<FunBox>? = null
@@ -164,7 +164,6 @@ fun testCleanerFunctionReference() {
     assertNull(funBoxWeak!!.value)
 }
 
-@Test
 fun testCleanerNonSharedFunctionReference() {
     // Only for experimental MM.
     if (Platform.memoryModel != MemoryModel.EXPERIMENTAL) {
@@ -192,7 +191,6 @@ fun testCleanerNonSharedFunctionReference() {
     assertNull(funBoxWeak!!.value)
 }
 
-@Test
 fun testCleanerFailWithNonShareableArgument() {
     // Only for legacy MM.
     if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
@@ -204,7 +202,6 @@ fun testCleanerFailWithNonShareableArgument() {
     }
 }
 
-@Test
 fun testCleanerCleansWithoutGC() {
     val called = AtomicBoolean(false);
     var funBoxWeak: WeakReference<FunBox>? = null
@@ -238,7 +235,6 @@ fun testCleanerCleansWithoutGC() {
 
 val globalInt = AtomicInt(0)
 
-@Test
 fun testCleanerWithInt() {
     var cleanerWeak: WeakReference<Cleaner>? = null
     {
@@ -258,7 +254,6 @@ fun testCleanerWithInt() {
 
 val globalPtr = AtomicNativePtr(NativePtr.NULL)
 
-@Test
 fun testCleanerWithNativePtr() {
     var cleanerWeak: WeakReference<Cleaner>? = null
     {
@@ -276,7 +271,6 @@ fun testCleanerWithNativePtr() {
     assertEquals(NativePtr.NULL + 42L, globalPtr.value)
 }
 
-@Test
 fun testCleanerWithException() {
     val called = AtomicBoolean(false);
     var funBoxWeak: WeakReference<FunBox>? = null
@@ -299,4 +293,20 @@ fun testCleanerWithException() {
     assertTrue(called.value)
     // Even though the block failed, the captured funBox is freed.
     assertNull(funBoxWeak!!.value)
+}
+
+fun box(): String {
+    testCleanerAnonymousFunction()
+    testCleanerLambda()
+    testCleanerCleansWithoutGC()
+    testCleanerFunctionReference()
+    testCleanerFailWithNonShareableArgument()
+    testCleanerNonSharedAnonymousFunction()
+    testCleanerNonSharedFunctionReference()
+    testCleanerNonSharedLambda()
+    testCleanerWithException()
+    testCleanerWithInt()
+    testCleanerWithNativePtr()
+
+    return "OK"
 }

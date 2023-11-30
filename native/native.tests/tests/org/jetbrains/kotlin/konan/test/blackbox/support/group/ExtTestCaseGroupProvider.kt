@@ -927,6 +927,7 @@ private fun Settings.isIgnoredWithIGNORE_BACKEND(directives: Directives): Boolea
 private val CACHE_MODE_NAMES = CacheMode.Alias.entries.map { it.name }
 private val TEST_MODE_NAMES = TestMode.entries.map { it.name }
 private val OPTIMIZATION_MODE_NAMES = OptimizationMode.entries.map { it.name }
+private val GC_TYPE_NAMES = GCType.entries.map { it.name }
 
 private fun Settings.isIgnoredWithNativeDirective(
     directives: Directives,
@@ -967,6 +968,7 @@ private fun Settings.isIgnoredWithNativeDirective(
                     ClassLevelProperty.TEST_MODE.shortName -> get<TestMode>().name to TEST_MODE_NAMES
                     ClassLevelProperty.OPTIMIZATION_MODE.shortName -> get<OptimizationMode>().name to OPTIMIZATION_MODE_NAMES
                     ClassLevelProperty.TEST_TARGET.shortName -> get<KotlinNativeTargets>().testTarget.name to null
+                    ClassLevelProperty.GC_TYPE.shortName -> get<GCType>().name to GC_TYPE_NAMES
                     else -> throw AssertionError("ClassLevelProperty name: $propName is not yet supported in $directiveGeneral* test directives.")
                 }
                 val valueFromTestDirective = matchResult.groups[2]?.value!!

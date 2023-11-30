@@ -3,12 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.basic.initializers8
-
 import kotlin.test.*
 
 var globalString = "abc"
 
-@Test fun runTest() {
+fun box(): String {
     assertEquals("abc", globalString)
+
+    return "OK"
 }

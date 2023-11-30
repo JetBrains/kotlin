@@ -3,17 +3,16 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.exceptions.throw_from_catch
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
-    assertFailsWith<IllegalStateException>("My another error") {
+fun box(): String {
+    assertFailsWith<IllegalStateException>("My error") {
         try {
             error("My error")
         } catch (e: Throwable) {
-            error("My another error")
+            throw e
         }
     }
+
+    return "OK"
 }

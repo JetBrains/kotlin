@@ -313,46 +313,6 @@ standaloneTest("runtime_basic_exit") {
     expectedExitStatus = 42
 }
 
-standaloneTest('enumEquals') {
-    useGoldenData = true
-    source = "runtime/basic/enum_equals.kt"
-    flags = ['-XXLanguage:-ProhibitComparisonOfIncompatibleEnums', '-e', 'runtime.basic.enum_equals.main']
-}
-
-standaloneTest("cleaner_basic") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_basic.kt"
-    flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-standaloneTest("collect_reference_field_values") {
-    enabled = !isNoopGC
-    source = "runtime/basic/collectReferenceFieldValues.kt"
-    flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-standaloneTest("cleaner_workers") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_workers.kt"
-    flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-standaloneTest("cleaner_in_main_with_checker") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_in_main_with_checker.kt"
-    useGoldenData = true
-}
-
-standaloneTest("cleaner_in_main_without_checker") {
-    source = "runtime/basic/cleaner_in_main_without_checker.kt"
-    useGoldenData = true
-}
-
-standaloneTest("cleaner_leak_without_checker") {
-    source = "runtime/basic/cleaner_leak_without_checker.kt"
-    useGoldenData = true
-}
-
 standaloneTest("cleaner_leak_with_checker") {
     enabled = !isNoopGC
     source = "runtime/basic/cleaner_leak_with_checker.kt"
@@ -360,21 +320,11 @@ standaloneTest("cleaner_leak_with_checker") {
     outputChecker = { s -> (s =~ /Cleaner (0x)?[0-9a-fA-F]+ was disposed during program exit/).find() }
 }
 
-standaloneTest("cleaner_in_tls_main_without_checker") {
-    source = "runtime/basic/cleaner_in_tls_main_without_checker.kt"
-}
-
 standaloneTest("cleaner_in_tls_main_with_checker") {
     enabled = !isNoopGC
     source = "runtime/basic/cleaner_in_tls_main_with_checker.kt"
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> (s =~ /Cleaner (0x)?[0-9a-fA-F]+ was disposed during program exit/).find() }
-}
-
-standaloneTest("cleaner_in_tls_worker") {
-    enabled = !isNoopGC
-    source = "runtime/basic/cleaner_in_tls_worker.kt"
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest('logging') {
@@ -691,41 +641,6 @@ linkTest("lib@name") {
     lib = "link/klib_name/lib.kt"
 }
 
-tasks.register("throw0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/throw0.kt"
-}
-
-tasks.register("statements0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/statements0.kt"
-}
-
-tasks.register("interface0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/interface0.kt"
-}
-
-tasks.register("catch1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/exceptions/catch1.kt"
-}
-
-tasks.register("catch2", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/exceptions/catch2.kt"
-}
-
-tasks.register("catch7", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/exceptions/catch7.kt"
-}
-
-tasks.register("extend_exception", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/exceptions/extend0.kt"
-}
-
 standaloneTest("check_stacktrace_format_coresymbolication") {
     disabled = !PlatformInfo.supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
@@ -849,14 +764,6 @@ standaloneTest("exception_in_global_init") {
     outputChecker = { s -> s.contains("Uncaught Kotlin exception:") && s.contains("FAIL") && !s.contains("in kotlin main") }
 }
 
-tasks.register("rethrow_exception", KonanLocalTest) {
-    source = "runtime/exceptions/rethrow.kt"
-}
-
-tasks.register("throw_from_catch", KonanLocalTest) {
-    source = "runtime/exceptions/throw_from_catch.kt"
-}
-
 standaloneTest("terminate") {
     expectedExitStatusChecker = { it != 0 }
     source = "runtime/exceptions/terminate.kt"
@@ -892,50 +799,8 @@ standaloneTest("runtime_basic_assert_disabled") {
     source = "runtime/basic/assert_failed.kt"
 }
 
-tasks.register("initializers0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/initializers0.kt"
-}
-
-
-tasks.register("initializers1", KonanLocalTest) {
-    useGoldenData = true
-    enabled = false
-    source = "runtime/basic/initializers1.kt"
-}
-
-
-standaloneTest("initializers2") {
-    useGoldenData = true
-
-    source = "runtime/basic/initializers2.kt"
-}
-
-tasks.register("initializers3", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/initializers3.kt"
-}
-
-tasks.register("initializers4", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/initializers4.kt"
-}
-
-tasks.register("initializers5", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/initializers5.kt"
-}
-
 tasks.register("initializers6", KonanLocalTest) {
     source = "runtime/basic/initializers6.kt"
-}
-
-tasks.register("initializers7", KonanLocalTest) {
-    source = "runtime/basic/initializers7.kt"
-}
-
-tasks.register("initializers8", KonanLocalTest) {
-    source = "runtime/basic/initializers8.kt"
 }
 
 tasks.register("memory_var1", KonanLocalTest) {

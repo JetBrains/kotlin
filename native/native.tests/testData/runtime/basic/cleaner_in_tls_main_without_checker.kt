@@ -4,19 +4,26 @@
  */
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
+import kotlin.test.*
+
+import kotlin.native.concurrent.*
 import kotlin.native.ref.Cleaner
 import kotlin.native.ref.createCleaner
 import kotlin.native.Platform
 
-fun main() {
+@ThreadLocal
+var tlsCleaner: Cleaner? = null
+
+fun box(): String {
     // Cleaner holds onto a finalization lambda. If it doesn't get executed,
     // the memory will leak. Suppress memory leak checker to check for cleaners
     // leak only.
     Platform.isMemoryLeakCheckerActive = false
-    Platform.isCleanersLeakCheckerActive = true
-    // This cleaner will run, because with the checker active this cleaner
-    // will get collected, block scheduled and executed before cleaners are disabled.
-    createCleaner(42) {
+    Platform.isCleanersLeakCheckerActive = false
+    // This cleaner won't be run
+    tlsCleaner = createCleaner(42) {
         println(it)
     }
+
+    return "OK"
 }

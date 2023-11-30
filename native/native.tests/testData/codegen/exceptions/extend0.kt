@@ -3,15 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.basic.initializers5
-
 import kotlin.test.*
 
-object A {
-    val a = 42
-    val b = A.a
-}
+class C : Exception("OK")
 
-@Test fun runTest() {
-    println(A.b)
+fun box(): String {
+    try {
+        throw C()
+    } catch (e: Throwable) {
+        println(e.message!!)
+    }
+    return "OK"
 }

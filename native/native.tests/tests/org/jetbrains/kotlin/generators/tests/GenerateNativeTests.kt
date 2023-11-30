@@ -39,6 +39,7 @@ fun main() {
                 model("codegen", targetBackend = TargetBackend.NATIVE)
                 model("datagen", targetBackend = TargetBackend.NATIVE)
                 model("lower", targetBackend = TargetBackend.NATIVE)
+                model("runtime", targetBackend = TargetBackend.NATIVE)
                 model("serialization", targetBackend = TargetBackend.NATIVE)
             }
             testClass<AbstractNativeCodegenBoxTest>(
@@ -51,6 +52,7 @@ fun main() {
                 model("codegen", targetBackend = TargetBackend.NATIVE)
                 model("datagen", targetBackend = TargetBackend.NATIVE)
                 model("lower", targetBackend = TargetBackend.NATIVE)
+                model("runtime", targetBackend = TargetBackend.NATIVE)
                 model("serialization", targetBackend = TargetBackend.NATIVE)
             }
         }

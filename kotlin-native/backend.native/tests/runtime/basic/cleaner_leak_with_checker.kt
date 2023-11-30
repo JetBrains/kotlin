@@ -20,4 +20,6 @@ fun main() {
     Platform.isCleanersLeakCheckerActive = true
     // Make sure cleaner is initialized.
     assertNotNull(globalCleaner)
+
+
 }

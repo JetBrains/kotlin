@@ -3,17 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.exceptions.rethtow
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
-    assertFailsWith<IllegalStateException>("My error") {
+fun box(): String {
+    assertFailsWith<IllegalStateException>("My another error") {
         try {
             error("My error")
         } catch (e: Throwable) {
-            throw e
+            error("My another error")
         }
     }
+    return "OK"
 }

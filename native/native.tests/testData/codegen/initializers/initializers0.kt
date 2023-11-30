@@ -2,8 +2,7 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
-package runtime.basic.initializers0
+// OUTPUT_DATA_FILE: initializers0.out
 
 import kotlin.test.*
 
@@ -34,12 +33,14 @@ class A {
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     println("main")
     A.foo()
     A.foo()
     A.AObj.foo()
     A.AObj.foo()
+
+    return "OK"
 }
 
 open class B(val a:Int, val b:Int) {

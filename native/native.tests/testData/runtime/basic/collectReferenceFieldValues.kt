@@ -2,6 +2,10 @@
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+// Ideally, this test must fail with gcType=NOOP with any cache mode.
+// KT-63944: unfortunately, GC flavours are silently not switched in presence of caches.
+// As soon the issue would be fixed, please remove `&& cacheMode=NO` from next line.
+// IGNORE_NATIVE: gcType=NOOP && cacheMode=NO
 
 import kotlin.native.internal.*
 import kotlin.test.*
@@ -35,7 +39,6 @@ class X(
     lateinit var r: IntArray
 }
 
-@Test
 fun `big class with mixed values`() {
     val lst = listOf(1, 2, 3)
     val ia = intArrayOf(1, 2, 3)
@@ -70,42 +73,48 @@ fun `big class with mixed values`() {
     assertContains(fields, BoxInt(5))
     assertContains(fields, BoxA(a6))}
 
-@Test
 fun `call on primitive`() {
     assertEquals(1.collectReferenceFieldValues(), emptyList<Any>())
     assertEquals(123456.collectReferenceFieldValues(), emptyList<Any>())
 }
 
-@Test
 fun `call on value over primitive class`() {
     assertEquals(BoxInt(1).collectReferenceFieldValues(), emptyList<Any>())
     assertEquals(BoxBoxInt(BoxInt(1)).collectReferenceFieldValues(), emptyList<Any>())
 }
 
-@Test
 fun `call on value class`() {
     val a1 = A(1)
     assertEquals(BoxA(a1).collectReferenceFieldValues(), listOf(a1))
     assertEquals(BoxBoxA(BoxA(a1)).collectReferenceFieldValues(), listOf(a1))
 }
 
-@Test
 fun `call on String`() {
     assertEquals("1234".collectReferenceFieldValues(), emptyList<Any>())
     assertEquals("".collectReferenceFieldValues(), emptyList<Any>())
 }
 
-@Test
 fun `call on primitive array`() {
     assertEquals(intArrayOf(1, 2, 3).collectReferenceFieldValues(), emptyList<Any>())
     assertEquals(intArrayOf().collectReferenceFieldValues(), emptyList<Any>())
 }
 
-@Test
 fun `call on array`() {
     assertEquals(arrayOf(1, 2, 3).collectReferenceFieldValues(), listOf<Any>(1, 2, 3))
     assertEquals(arrayOf(null, "10", null, 3).collectReferenceFieldValues(), listOf<Any>("10", 3))
     assertEquals(arrayOf<Any>().collectReferenceFieldValues(), emptyList<Any>())
     assertEquals(emptyArray<Any>().collectReferenceFieldValues(), emptyList<Any>())
     assertEquals(emptyArray<Any?>().collectReferenceFieldValues(), emptyList<Any>())
+}
+
+fun box(): String {
+    `big class with mixed values`()
+    `call on value over primitive class`()
+    `call on primitive`()
+    `call on array`()
+    `call on String`()
+    `call on value class`()
+    `call on primitive array`()
+
+    return "OK"
 }
