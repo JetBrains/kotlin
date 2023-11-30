@@ -31,11 +31,6 @@ dependencies {
 
 configureKotlinCompileTasksGradleCompatibility()
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" {}
-}
-
 publish()
 
 runtimeJar()
