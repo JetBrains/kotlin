@@ -3511,6 +3511,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("doubleSquareBracketsInBuilderArgument.kt")
+                public void testDoubleSquareBracketsInBuilderArgument() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/inference/builderInference/doubleSquareBracketsInBuilderArgument.kt");
+                }
+
+                @Test
                 @TestMetadata("ifInBuildMap.kt")
                 public void testIfInBuildMap() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/inference/builderInference/ifInBuildMap.kt");

@@ -2403,6 +2403,124 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("compiler/testData/codegen/box/builderInference/issues")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Issues extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIssues() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("kt43710.kt")
+            public void testKt43710() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt43710.kt");
+            }
+
+            @TestMetadata("kt47989a.kt")
+            public void testKt47989a() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt47989a.kt");
+            }
+
+            @TestMetadata("kt47989b.kt")
+            public void testKt47989b() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt47989b.kt");
+            }
+
+            @TestMetadata("kt49160a.kt")
+            public void testKt49160a() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt49160a.kt");
+            }
+
+            @TestMetadata("kt49160b.kt")
+            public void testKt49160b() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt49160b.kt");
+            }
+
+            @TestMetadata("kt49160c.kt")
+            public void testKt49160c() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt49160c.kt");
+            }
+
+            @TestMetadata("kt49160d.kt")
+            public void testKt49160d() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt49160d.kt");
+            }
+
+            @TestMetadata("kt49160e.kt")
+            public void testKt49160e() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt49160e.kt");
+            }
+
+            @TestMetadata("kt49263.kt")
+            public void testKt49263() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt49263.kt");
+            }
+
+            @TestMetadata("kt50453.kt")
+            public void testKt50453() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt50453.kt");
+            }
+
+            @TestMetadata("kt50827a.kt")
+            public void testKt50827a() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt50827a.kt");
+            }
+
+            @TestMetadata("kt50827b.kt")
+            public void testKt50827b() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt50827b.kt");
+            }
+
+            @TestMetadata("kt52757.kt")
+            public void testKt52757() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt52757.kt");
+            }
+
+            @TestMetadata("kt52838a.kt")
+            public void testKt52838a() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt52838a.kt");
+            }
+
+            @TestMetadata("kt52838b.kt")
+            public void testKt52838b() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt52838b.kt");
+            }
+
+            @TestMetadata("kt52838c.kt")
+            public void testKt52838c() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt52838c.kt");
+            }
+
+            @TestMetadata("kt53109.kt")
+            public void testKt53109() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt53109.kt");
+            }
+
+            @TestMetadata("kt53422a.kt")
+            public void testKt53422a() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt53422a.kt");
+            }
+
+            @TestMetadata("kt53422b.kt")
+            public void testKt53422b() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt53422b.kt");
+            }
+
+            @TestMetadata("kt53553.kt")
+            public void testKt53553() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt53553.kt");
+            }
+
+            @TestMetadata("kt53639.kt")
+            public void testKt53639() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt53639.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
