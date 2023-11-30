@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.ContextByDesignationCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassId
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassIdOrNull
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
@@ -64,7 +64,7 @@ internal object PersistenceContextCollector {
             is FirClassLikeDeclaration -> declaration.symbol.classId.isLocal
             is FirCallableDeclaration -> declaration.symbol.callableId.isLocal
             is FirDanglingModifierList -> declaration.containingClass()?.classId?.isLocal == true
-            is FirAnonymousInitializer -> declaration.containingClassId().isLocal
+            is FirAnonymousInitializer -> declaration.containingClassIdOrNull()?.isLocal == true
             is FirScript, is FirCodeFragment -> false
             else -> errorWithAttachment("Unsupported declaration ${declaration::class}") {
                 withFirEntry("declaration", declaration)

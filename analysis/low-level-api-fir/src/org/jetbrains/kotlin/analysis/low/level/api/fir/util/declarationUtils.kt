@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
@@ -171,17 +172,8 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
     return candidate?.takeIf { it.psi == this }
 }
 
-fun FirAnonymousInitializer.containingClassId(): ClassId {
-    val dispatchReceiverType = this.dispatchReceiverType
-    checkWithAttachment(
-        condition = dispatchReceiverType != null,
-        message = { "dispatchReceiverType for ${FirAnonymousInitializer::class.simpleName} modifier cannot be null" },
-    ) {
-        withFirEntry("initializer", this@containingClassId)
-    }
-
-    return dispatchReceiverType.lookupTag.classId
-}
+fun FirAnonymousInitializer.containingClassIdOrNull(): ClassId? =
+    (containingDeclarationSymbol as? FirClassSymbol<*>)?.classId
 
 val ORIGINAL_DECLARATION_KEY = com.intellij.openapi.util.Key<KtDeclaration>("ORIGINAL_DECLARATION_KEY")
 var KtDeclaration.originalDeclaration by UserDataProperty(ORIGINAL_DECLARATION_KEY)

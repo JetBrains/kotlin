@@ -400,6 +400,9 @@ open class PsiRawFirBuilder(
                 is KtDestructuringDeclaration -> {
                     buildErrorTopLevelDestructuringDeclaration(toFirSourceElement())
                 }
+                is KtClassInitializer -> {
+                    buildAnonymousInitializer(this, ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol)
+                }
                 else -> convert()
             }
         }
@@ -1310,6 +1313,7 @@ open class PsiRawFirBuilder(
                                         source = declarationSource
                                         body = firBlock
                                         declaration.extractAnnotationsTo(this)
+                                        containingDeclarationSymbol = scriptSymbol
                                     }
                                 )
                             }
@@ -2209,7 +2213,11 @@ open class PsiRawFirBuilder(
         }
 
         override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer, data: FirElement?): FirElement {
-            return buildAnonymousInitializer {
+            return buildAnonymousInitializer(initializer, null)
+        }
+
+        private fun buildAnonymousInitializer(initializer: KtAnonymousInitializer, containingDeclarationSymbol: FirBasedSymbol<*>?) =
+            buildAnonymousInitializer {
                 withContainerSymbol(symbol) {
                     source = initializer.toFirSourceElement()
                     moduleData = baseModuleData
@@ -2219,11 +2227,10 @@ open class PsiRawFirBuilder(
                             initializer.body.toFirBlock()
                         }
                     }
-                    dispatchReceiverType = context.dispatchReceiverTypesStack.lastOrNull()
+                    this.containingDeclarationSymbol = containingDeclarationSymbol
                     initializer.extractAnnotationsTo(this)
                 }
             }
-        }
 
         override fun visitProperty(property: KtProperty, data: FirElement?): FirElement {
             return property.toFirProperty(

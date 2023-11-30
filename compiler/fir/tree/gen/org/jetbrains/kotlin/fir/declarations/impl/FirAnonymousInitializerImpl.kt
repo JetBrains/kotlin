@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
@@ -34,7 +34,7 @@ internal class FirAnonymousInitializerImpl(
     override val attributes: FirDeclarationAttributes,
     override var body: FirBlock?,
     override val symbol: FirAnonymousInitializerSymbol,
-    override val dispatchReceiverType: ConeClassLikeType?,
+    override val containingDeclarationSymbol: FirBasedSymbol<*>?,
 ) : FirAnonymousInitializer() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 

@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousInitializerImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 
 @FirBuilderDsl
 class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
@@ -36,7 +36,7 @@ class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationConta
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     var body: FirBlock? = null
     var symbol: FirAnonymousInitializerSymbol = FirAnonymousInitializerSymbol()
-    var dispatchReceiverType: ConeClassLikeType? = null
+    var containingDeclarationSymbol: FirBasedSymbol<*>? = null
 
     override fun build(): FirAnonymousInitializer {
         return FirAnonymousInitializerImpl(
@@ -48,7 +48,7 @@ class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationConta
             attributes,
             body,
             symbol,
-            dispatchReceiverType,
+            containingDeclarationSymbol,
         )
     }
 

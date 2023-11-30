@@ -158,7 +158,7 @@ fun FirTypeRef.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol?
 fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? = when (this) {
     is FirCallableSymbol<*> -> containingClassLookupTag()?.toSymbol(session)
     is FirClassLikeSymbol<*> -> getContainingClassLookupTag()?.toSymbol(session)
-    is FirAnonymousInitializerSymbol -> dispatchReceiverType?.toSymbol(session) as? FirClassLikeSymbol<*>
+    is FirAnonymousInitializerSymbol -> containingDeclarationSymbol as? FirClassLikeSymbol<*>
     else -> null
 }
 

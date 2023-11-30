@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassId
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
@@ -21,10 +20,11 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -106,8 +106,8 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
         }
 
         is FirAnonymousInitializer -> {
-            val containingClassId = target.containingClassId()
-            if (containingClassId.isLocal) return null
+            val containingClassId = (target.containingDeclarationSymbol as? FirClassSymbol<*>)?.classId
+            if (containingClassId == null || containingClassId.isLocal) return null
             return collectDesignationPathWithContainingClass(target, containingClassId)
         }
 
@@ -293,8 +293,17 @@ fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignationWi
 }
 
 private fun FirDeclaration.scriptDesignation(): FirDesignationWithFile? {
-    if (this !is FirStatement || !isScriptDependentDeclaration) return null
-    val firFile = getContainingFile() ?: return null
-    val firScript = firFile.declarations.singleOrNull() as? FirScript ?: return null
-    return FirDesignationWithFile(path = emptyList(), firScript, firFile)
+    return when {
+        this is FirAnonymousInitializer -> {
+            val firScriptSymbol = (containingDeclarationSymbol as? FirScriptSymbol) ?: return null
+            val firFile = firScriptSymbol.fir.getContainingFile() ?: return null
+            FirDesignationWithFile(path = emptyList(), firScriptSymbol.fir, firFile)
+        }
+        isScriptDependentDeclaration -> {
+            val firFile = getContainingFile() ?: return null
+            val firScript = firFile.declarations.singleOrNull() as? FirScript ?: return null
+            FirDesignationWithFile(path = emptyList(), firScript, firFile)
+        }
+        else -> null
+    }
 }

@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class LightTreeRawFirDeclarationBuilder(
     session: FirSession,
@@ -136,7 +137,7 @@ class LightTreeRawFirDeclarationBuilder(
                 KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
                 DESTRUCTURING_DECLARATION -> container += convertDestructingDeclaration(node).toFirDestructingDeclaration(baseModuleData)
                 TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
-                CLASS_INITIALIZER -> container += convertAnonymousInitializer(node) as FirStatement
+                CLASS_INITIALIZER -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
                 else -> if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
             }
         }
@@ -891,7 +892,7 @@ class LightTreeRawFirDeclarationBuilder(
                 KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
                 TYPEALIAS -> container += convertTypeAlias(node)
                 OBJECT_DECLARATION -> container += convertClass(node)
-                CLASS_INITIALIZER -> container += convertAnonymousInitializer(node) //anonymousInitializer
+                CLASS_INITIALIZER -> container += convertAnonymousInitializer(node, classWrapper) //anonymousInitializer
                 SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper)
                 MODIFIER_LIST -> modifierLists += node
                 DESTRUCTURING_DECLARATION -> container += buildErrorTopLevelDestructuringDeclaration(node.toFirSourceElement())
@@ -1053,7 +1054,10 @@ class LightTreeRawFirDeclarationBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMemberDeclarationRest
      * at INIT keyword
      */
-    private fun convertAnonymousInitializer(anonymousInitializer: LighterASTNode): FirDeclaration {
+    private fun convertAnonymousInitializer(
+        anonymousInitializer: LighterASTNode,
+        classWrapper: ClassWrapper
+    ): FirDeclaration {
         val initializerSymbol = FirAnonymousInitializerSymbol()
         withContainerSymbol(initializerSymbol) {
             var firBlock: FirBlock? = null
@@ -1073,7 +1077,7 @@ class LightTreeRawFirDeclarationBuilder(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 body = firBlock ?: buildEmptyExpressionBlock()
-                dispatchReceiverType = context.dispatchReceiverTypesStack.lastOrNull()
+                containingDeclarationSymbol = classWrapper.classBuilder.ownerRegularOrAnonymousObjectSymbol
                 annotations += initializerAnnotations
             }
         }

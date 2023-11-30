@@ -474,7 +474,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         anonymousInitializer.configure {
             +body(nullable = true, withReplace = true)
             +symbol("FirAnonymousInitializerSymbol")
-            +field("dispatchReceiverType", coneClassLikeTypeType, nullable = true)
+            // the containing declaration is nullable, because it is not immediately clear how to obtain it in all places in the fir builder
+            // TODO: review and consider making not-nullable (KT-64195)
+            +field("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true).apply {
+                withBindThis = false
+            }
         }
 
         danglingModifierList.configure {
