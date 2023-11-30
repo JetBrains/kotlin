@@ -48,7 +48,8 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 class SourceFile(
     val name: String,
     val source: String,
-    private val ignoreParseErrors: Boolean = false
+    private val ignoreParseErrors: Boolean = false,
+    val path: String = ""
 ) {
     fun toKtFile(project: Project): KtFile {
         val shortName = name.substring(name.lastIndexOf('/') + 1).let {
@@ -60,7 +61,7 @@ class SourceFile(
             KotlinLanguage.INSTANCE,
             StringUtilRt.convertLineSeparators(source)
         ) {
-            override fun getPath(): String = "/$name"
+            override fun getPath(): String = "${this@SourceFile.path}/$name"
         }
 
         virtualFile.charset = StandardCharsets.UTF_8

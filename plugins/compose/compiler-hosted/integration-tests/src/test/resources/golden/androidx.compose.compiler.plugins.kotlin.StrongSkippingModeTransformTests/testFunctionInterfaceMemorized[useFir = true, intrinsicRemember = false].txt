@@ -3,10 +3,11 @@
 // ------------------------------------------
 
 import androidx.compose.runtime.Composable
-            import androidx.compose.runtime.NonRestartableComposable
-            import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
 
-            @Composable fun TestMemoizedFun(compute: TestFunInterface) {}
+
+@Composable fun TestMemoizedFun(compute: TestFunInterface) {}
 @Composable fun Test() {
     val capture = 0
     TestMemoizedFun {
@@ -53,13 +54,13 @@ fun Test(%composer: Composer?, %changed: Int) {
     }, %composer, 0b0110)
     TestMemoizedFun(<block>{
       %composer.startReplaceableGroup(<>)
-      val tmp0_group = %composer.cache(false) {
+      val tmpCache = %composer.cache(%composer.changed(capture)) {
         TestFunInterface { it: Int ->
           use(capture)
         }
       }
       %composer.endReplaceableGroup()
-      tmp0_group
+      tmpCache
     }, %composer, 0)
     if (isTraceInProgress()) {
       traceEventEnd()
