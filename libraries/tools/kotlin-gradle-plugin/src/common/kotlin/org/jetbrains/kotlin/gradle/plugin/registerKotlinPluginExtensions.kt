@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeConfigureBinariesS
 import org.jetbrains.kotlin.gradle.targets.native.SetupEmbedAndSignAppleFrameworkTaskSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizedCInteropApiElementsConfigurationsSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.internal.SetupCInteropApiElementsConfigurationSideEffect
+import org.jetbrains.kotlin.gradle.targets.native.internal.SetupKotlinNativePlatformDependenciesAndStdlib
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 
@@ -95,6 +96,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinCompilationProcessorSideEffect)
         register(project, KotlinCreateNativeCInteropTasksSideEffect)
         register(project, KotlinCreateCompilationArchivesTask)
+        register(project, SetupKotlinNativePlatformDependenciesAndStdlib)
     }
 
     KotlinTargetArtifact.extensionPoint.apply {

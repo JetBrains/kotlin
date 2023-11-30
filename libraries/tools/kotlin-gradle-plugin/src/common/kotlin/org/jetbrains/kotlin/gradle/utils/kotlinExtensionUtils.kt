@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.Project
+import org.jetbrains.kotlin.commonizer.KonanDistribution
+import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
@@ -27,3 +30,7 @@ internal fun KotlinProjectExtension.forAllTargets(action: (target: KotlinTarget)
         else -> error("Unexpected 'kotlin' extension $this")
     }
 }
+
+internal val Project.konanDistribution: KonanDistribution
+    get() = KonanDistribution(project.file(konanHome))
+

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradlePluginExtensionPoint
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.launch
 
 internal fun interface KotlinCompilationSideEffect {
     operator fun invoke(compilation: KotlinCompilation<*>)
@@ -21,6 +22,12 @@ internal inline fun <reified T : KotlinCompilation<*>> KotlinCompilationSideEffe
     crossinline effect: (T) -> Unit,
 ) = KotlinCompilationSideEffect { compilation ->
     if (compilation is T) effect(compilation)
+}
+
+internal inline fun <reified T : KotlinCompilation<*>> KotlinCompilationSideEffectCoroutine(
+    crossinline effect: suspend (T) -> Unit,
+) = KotlinCompilationSideEffect { compilation ->
+    if (compilation is T) compilation.project.launch { effect(compilation) }
 }
 
 internal fun KotlinTarget.runKotlinCompilationSideEffects() = compilations.all { compilation ->
