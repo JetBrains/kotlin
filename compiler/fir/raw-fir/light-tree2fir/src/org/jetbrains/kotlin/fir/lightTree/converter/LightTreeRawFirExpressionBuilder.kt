@@ -136,7 +136,7 @@ class LightTreeRawFirExpressionBuilder(
                 getAsFirExpression(content, "Empty parentheses")
             }
             PROPERTY_DELEGATE, INDICES, CONDITION, LOOP_RANGE ->
-                getAsFirExpression(expression.getExpressionInParentheses(), errorReason)
+                getAsFirExpression(expression.getChildExpression(), errorReason)
             THIS_EXPRESSION -> convertThisExpression(expression)
             SUPER_EXPRESSION -> convertSuperExpression(expression)
 

@@ -71,6 +71,8 @@ abstract class AbstractLightTreeRawFirBuilder(
 
     override fun LighterASTNode.getLabeledExpression() = getLastChildExpression()
 
+    fun LighterASTNode.getChildExpression() = getFirstChildExpression()
+
     private fun LighterASTNode.getFirstChildExpression(): LighterASTNode? {
         forEachChildren {
             if (it.isExpression()) return it
