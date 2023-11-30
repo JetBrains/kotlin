@@ -2869,6 +2869,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("noErrorTypeAfterCaptureApproximation.kt")
+        public void testNoErrorTypeAfterCaptureApproximation() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/noErrorTypeAfterCaptureApproximation.kt");
+        }
+
+        @Test
         @TestMetadata("OutBox.kt")
         public void testOutBox() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/OutBox.kt");

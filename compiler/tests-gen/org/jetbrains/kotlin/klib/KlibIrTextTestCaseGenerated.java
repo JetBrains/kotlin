@@ -2143,6 +2143,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/LocalSuspendFun.kt");
         }
 
+        @TestMetadata("noErrorTypeAfterCaptureApproximation.kt")
+        public void testNoErrorTypeAfterCaptureApproximation() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/noErrorTypeAfterCaptureApproximation.kt");
+        }
+
         @TestMetadata("readWriteProperty.kt")
         public void testReadWriteProperty() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/readWriteProperty.kt");

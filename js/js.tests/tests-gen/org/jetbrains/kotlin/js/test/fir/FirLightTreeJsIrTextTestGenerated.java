@@ -2461,6 +2461,12 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         }
 
         @Test
+        @TestMetadata("noErrorTypeAfterCaptureApproximation.kt")
+        public void testNoErrorTypeAfterCaptureApproximation() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/noErrorTypeAfterCaptureApproximation.kt");
+        }
+
+        @Test
         @TestMetadata("readWriteProperty.kt")
         public void testReadWriteProperty() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/readWriteProperty.kt");
