@@ -46,7 +46,7 @@ actual class Bar5 {
 }
 
 class Bar6 {
-    actual constructor()
+    <!ACTUAL_WITHOUT_EXPECT!>actual constructor()<!>
 }
 
 actual class Bar7 actual constructor(s: String) {

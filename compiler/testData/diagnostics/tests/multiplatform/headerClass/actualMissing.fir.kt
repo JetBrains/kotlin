@@ -9,5 +9,5 @@ expect class A {
 // FILE: jvm.kt
 
 class A {
-    actual fun foo() {}
+    actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
 }

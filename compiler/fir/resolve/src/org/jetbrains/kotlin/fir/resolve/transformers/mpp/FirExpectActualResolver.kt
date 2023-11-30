@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.ExpectForActualMatchingData
+import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
@@ -34,15 +34,15 @@ object FirExpectActualResolver {
                 is FirCallableSymbol<*> -> {
                     val callableId = actualSymbol.callableId
                     val classId = callableId.classId
-                    var expectContainingClass: FirRegularClassSymbol? = null
                     var actualContainingClass: FirRegularClassSymbol? = null
+                    var expectContainingClass: FirRegularClassSymbol? = null
                     val candidates = when {
                         classId != null -> {
-                            expectContainingClass = useSiteSession.dependenciesSymbolProvider.getClassLikeSymbolByClassId(classId)?.let {
-                                it.fullyExpandedClass(it.moduleData.session)
-                            }
                             actualContainingClass = useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)
                                 ?.fullyExpandedClass(useSiteSession)
+                            expectContainingClass = actualContainingClass?.fir?.expectForActual
+                                ?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)
+                                ?.singleOrNull() as? FirRegularClassSymbol
 
                             when (actualSymbol) {
                                 is FirConstructorSymbol -> expectContainingClass?.getConstructors(expectScopeSession)
