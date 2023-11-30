@@ -27,31 +27,6 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import java.io.File
 
-internal fun Project.setupKotlinNativePlatformDependencies() {
-    val kotlin = multiplatformExtensionOrNull ?: return
-
-    launch {
-        if (isPlatformIntegerCommonizationEnabled) {
-            kotlin.nativeRootSourceSets().forEach { sourceSet ->
-                dependencies.add(
-                    sourceSet.implementationConfigurationName,
-                    "$KOTLIN_MODULE_GROUP:$PLATFORM_INTEGERS_SUPPORT_LIBRARY:${getKotlinPluginVersion()}"
-                )
-            }
-        }
-    }
-}
-
-internal suspend fun KotlinMultiplatformExtension.nativeRootSourceSets(): Collection<KotlinSourceSet> {
-    val nativeSourceSets = sourceSets.filter { sourceSet -> sourceSet.internal.commonizerTarget.await() != null }
-    return nativeSourceSets.filter { sourceSet ->
-        val allVisibleSourceSets = sourceSet.dependsOn + getVisibleSourceSetsFromAssociateCompilations(sourceSet)
-        allVisibleSourceSets.none { dependency ->
-            dependency in nativeSourceSets
-        }
-    }
-}
-
 /**
  * Function signature needs to be kept stable since this is used during import
  * in IDEs (KotlinCommonizerModelBuilder) < 222

@@ -61,12 +61,6 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
         createTargetConfigurator().configureTarget(result)
 
-        SingleActionPerProject.run(project, "setUpKotlinNativePlatformDependencies") {
-            project.whenEvaluated {
-                project.setupKotlinNativePlatformDependencies()
-            }
-        }
-
         SingleActionPerProject.run(project, "setupCInteropDependencies") {
             project.setupCInteropCommonizerDependencies()
             project.setupCInteropPropagatedDependencies()

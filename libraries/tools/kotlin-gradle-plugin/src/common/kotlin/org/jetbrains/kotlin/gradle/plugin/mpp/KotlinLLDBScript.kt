@@ -16,9 +16,9 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.commonizer.toolsDir
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
-import org.jetbrains.kotlin.gradle.targets.native.internal.konanDistribution
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.gradle.utils.property
 import javax.inject.Inject
 
