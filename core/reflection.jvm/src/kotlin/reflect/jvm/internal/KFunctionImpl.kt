@@ -109,7 +109,7 @@ internal class KFunctionImpl private constructor(
                     throw KotlinReflectionInternalError("${descriptor.containingDeclaration} cannot have default arguments")
                 }
 
-                getDefaultImplsForValueClassOrNull()?.let { defaultImplsFunction ->
+                getFunctionWithDefaultParametersForValueClassOverride(descriptor)?.let { defaultImplsFunction ->
                     val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultImplsFunction) as KotlinFunction
                     return@run container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)
                 }
@@ -149,7 +149,7 @@ internal class KFunctionImpl private constructor(
         }?.createValueClassAwareCallerIfNeeded(descriptor, isDefault = true)
     }
 
-    private fun getDefaultImplsForValueClassOrNull(): FunctionDescriptor? {
+    private fun getFunctionWithDefaultParametersForValueClassOverride(descriptor: FunctionDescriptor): FunctionDescriptor? {
         if (
             descriptor.valueParameters.none { it.declaresDefaultValue() } &&
             descriptor.containingDeclaration.isValueClass() &&
