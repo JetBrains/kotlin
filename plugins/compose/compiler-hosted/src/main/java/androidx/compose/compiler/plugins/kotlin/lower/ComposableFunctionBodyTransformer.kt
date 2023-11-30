@@ -2781,6 +2781,9 @@ class ComposableFunctionBodyTransformer(
                     expression.transformChildrenVoid()
                 }
                 return if (captureScope.hasCapturedComposableCall) {
+                    // if the inlined lambda has composable calls, realize its coalescable groups
+                    // in the body to ensure that repeated invocations are not colliding.
+                    captureScope.realizeAllDirectChildren()
                     expression.asCoalescableGroup(captureScope)
                 } else {
                     expression
@@ -2809,7 +2812,7 @@ class ComposableFunctionBodyTransformer(
                     visitNormalComposableCall(expression)
                 }
             }
-            ComposeFqNames.key -> visitKeyCall(expression)
+            ComposeFqNames.key,
             DecoyFqNames.key -> visitKeyCall(expression)
             else -> visitNormalComposableCall(expression)
         }
@@ -3586,7 +3589,7 @@ class ComposableFunctionBodyTransformer(
             // If a loop contains composable calls but not a otherwise need a group per iteration
             // group, none of the children can be coalesced and must be realized as the second
             // iteration as composable calls at the end might end of overlapping slots with the
-            // start of the loop. See b/205590513 for details.
+            // start of the loop. See b/232007227 for details.
             loopScope.realizeAllDirectChildren()
             loop.asCoalescableGroup(loopScope)
         } else {
