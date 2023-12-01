@@ -233,7 +233,16 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
                 getFunctionWithDefaultParametersForValueClassOverride(descriptor)?.let { defaultImplsFunction ->
                     val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultImplsFunction) as KotlinFunction
                     return@rest container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)
-                        .let { "[found] ${jvmSignature.asString()} $defaultImplsFunction $it" }
+                        .let {
+                            """
+                                |[found]
+                                |${jvmSignature.asString()}
+                                |${replacingJvmSignature.asString()}
+                                |$defaultImplsFunction
+                                |$it
+                                |${container.members.joinToString("\n")}
+                                |""".trimMargin()
+                        }
                 }
                 container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc, !Modifier.isStatic(caller.member!!.modifiers))
                     .let { "[not found] ${jvmSignature.asString()} $it" }
