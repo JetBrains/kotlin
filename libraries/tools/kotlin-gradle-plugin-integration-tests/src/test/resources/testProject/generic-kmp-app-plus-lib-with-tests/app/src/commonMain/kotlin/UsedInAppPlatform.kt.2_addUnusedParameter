@@ -1,0 +1,1 @@
+fun appCommonFunForAppPlatform(delta: Double = 1.0) = 90

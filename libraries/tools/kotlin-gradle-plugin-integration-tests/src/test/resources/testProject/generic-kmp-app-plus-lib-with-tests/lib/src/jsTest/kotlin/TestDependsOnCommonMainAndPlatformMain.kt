@@ -5,7 +5,7 @@ class LibJsTest {
 
     @Test
     fun jsUtilReturns0() {
-        assertEquals(0, libJsPlatformUtil())
+        assertEquals(0, libJsPlatformUtil().toInt())
     }
 
     @Test

@@ -9,15 +9,13 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.relativizeTo
+import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import java.nio.file.Path
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.io.path.appendText
 
 /**
- * KmpIncrementalITBase is used as a "limited scope" for experimental test utils.
- * If some of them can be reused widely, consider moving them to KGPBaseTest
- * or the appropriate util package. //TODO: KT-63876
+ * Convenience class for KMP incremental compilation tests.
+ *
+ * Consider moving all general-purpose logic to `org.jetbrains.kotlin.gradle.testbase` package.
  */
 abstract class KmpIncrementalITBase : KGPBaseTest() {
 
@@ -27,9 +25,11 @@ abstract class KmpIncrementalITBase : KGPBaseTest() {
     protected open val gradleTask = "assemble"
     protected open val projectName = "generic-kmp-app-plus-lib-with-tests"
     protected open val mainCompileTasks = setOf(
+        ":app:compileCommonMainKotlinMetadata",
         ":app:compileKotlinJvm",
         ":app:compileKotlinJs",
         ":app:compileKotlinNative",
+        ":lib:compileCommonMainKotlinMetadata",
         ":lib:compileKotlinJvm",
         ":lib:compileKotlinJs",
         ":lib:compileKotlinNative",
@@ -48,30 +48,30 @@ abstract class KmpIncrementalITBase : KGPBaseTest() {
         return subProject(subproject).kotlinSourcesDir(srcDir).resolve(name)
     }
 
-    protected fun Path.addPrivateVal(): Path {
-        this@addPrivateVal.appendText("private val nothingMuch${changeCounter.incrementAndGet()} = 24")
-        return this@addPrivateVal
-    }
-
-    protected open fun BuildResult.assertSuccessOrUTD(allTasks: Set<String>, executedTasks: Set<String>) {
-        assertTasksExecuted(executedTasks)
-        assertTasksUpToDate(allTasks - executedTasks)
-    }
-
-    protected open fun TestProject.testCase(incrementalPath: Path? = null, executedTasks: Set<String>, assertions: BuildResult.() -> Unit = {}) {
+    protected open fun TestProject.checkIncrementalBuild(
+        tasksExpectedToExecute: Set<String>,
+        assertions: BuildResult.() -> Unit = {}
+    ) {
         build(gradleTask, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
-            assertSuccessOrUTD(
-                allTasks = mainCompileTasks,
-                executedTasks = executedTasks
-            )
-            incrementalPath?.let {
-                assertIncrementalCompilation(listOf(it).relativizeTo(projectPath))
-            }
+            assertTasksExecuted(tasksExpectedToExecute)
+            assertTasksUpToDate(mainCompileTasks - tasksExpectedToExecute)
             assertions()
         }
     }
 
-    companion object {
-        private val changeCounter = AtomicInteger(0)
+    protected open fun TestProject.multiStepCheckIncrementalBuilds(
+        incrementalPath: Path,
+        steps: List<String>,
+        tasksExpectedToExecuteOnEachStep: Set<String>,
+        afterEachStep: BuildResult.() -> Unit = {}
+    ) {
+        for (step in steps) {
+            incrementalPath.replaceWithVersion(step)
+            build(gradleTask, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertTasksExecuted(tasksExpectedToExecuteOnEachStep)
+                assertTasksUpToDate(mainCompileTasks - tasksExpectedToExecuteOnEachStep)
+                afterEachStep()
+            }
+        }
     }
 }

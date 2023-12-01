@@ -1,3 +1,3 @@
 class AppJvmUnusedClassWithDependencies {
-    val line = appCommonFunForAppPlatformAndAppCommonTest()
+    val line = appCommonFunForAppPlatform()
 }

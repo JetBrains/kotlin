@@ -1,3 +1,3 @@
 expect fun foo(): Any
 
-fun fooImpl() = secret
+fun fooImpl() = commonMainValue

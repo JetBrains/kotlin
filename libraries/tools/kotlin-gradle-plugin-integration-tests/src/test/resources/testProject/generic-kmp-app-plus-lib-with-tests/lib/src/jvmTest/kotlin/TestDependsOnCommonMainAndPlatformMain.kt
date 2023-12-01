@@ -5,7 +5,7 @@ class LibJvmTest {
 
     @Test
     fun jvmUtilReturns400() {
-        assertEquals(400, libJvmPlatformUtil())
+        assertEquals(400, libJvmPlatformUtil().toInt())
     }
 
     @Test

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.util
 import org.jetbrains.kotlin.gradle.testbase.createTempDirDeleteOnExit
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.copyTo
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
@@ -115,4 +116,10 @@ fun File.replaceText(regex: Regex, replacement: String) {
 
 fun Path.replaceFirst(oldValue: String, newValue: String) {
     writeText(readText().replaceFirst(oldValue, newValue))
+}
+
+fun Path.replaceWithVersion(versionSuffix: String): Path {
+    val otherVersion = resolveSibling("$fileName.$versionSuffix")
+    otherVersion.copyTo(this, overwrite = true)
+    return this
 }

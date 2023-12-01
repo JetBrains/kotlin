@@ -5,7 +5,7 @@ class LibNativeTest {
 
     @Test
     fun nativeUtilReturns800() {
-        assertEquals(800, libNativePlatformUtil())
+        assertEquals(800, libNativePlatformUtil().toInt())
     }
 
     @Test

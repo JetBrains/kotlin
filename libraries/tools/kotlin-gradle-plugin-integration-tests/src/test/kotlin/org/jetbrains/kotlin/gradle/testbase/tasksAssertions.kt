@@ -35,7 +35,12 @@ fun BuildResult.assertTasksExecuted(vararg tasks: String) {
     tasks.forEach { task ->
         assert(task(task)?.outcome == TaskOutcome.SUCCESS) {
             printBuildOutput()
-            "Task $task didn't have 'SUCCESS' state: ${task(task)?.outcome}"
+            """
+            Task $task didn't have 'SUCCESS' state: ${task(task)?.outcome}
+
+            Actual task states:
+            ${getActualTasksAsString()}
+            """.trimIndent()
         }
     }
 }
@@ -92,7 +97,12 @@ fun BuildResult.assertTasksUpToDate(vararg tasks: String) {
     tasks.forEach { task ->
         assert(task(task)?.outcome == TaskOutcome.UP_TO_DATE) {
             printBuildOutput()
-            "Task $task didn't have 'UP-TO-DATE' state: ${task(task)?.outcome}"
+            """
+            Task $task didn't have 'UP-TO-DATE' state: ${task(task)?.outcome}
+
+            Actual task states:
+            ${getActualTasksAsString()}
+            """.trimIndent()
         }
     }
 }
@@ -202,6 +212,13 @@ fun BuildResult.assertTasksInBuildOutput(
             "$it task should not be registered in $registeredTasks"
         }
     }
+}
+
+/**
+ * Returns printable list of tasks that actually executed.
+ */
+private fun BuildResult.getActualTasksAsString(): String {
+    return tasks.joinToString("\n") { "${it.path} - ${it.outcome}" }
 }
 
 /**

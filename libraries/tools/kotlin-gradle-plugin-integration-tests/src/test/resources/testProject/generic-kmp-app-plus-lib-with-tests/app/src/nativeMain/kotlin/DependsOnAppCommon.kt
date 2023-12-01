@@ -1,3 +1,3 @@
 class AppNativeUnusedClassWithDependencies {
-    val line = appCommonFunForAppPlatformAndAppCommonTest()
+    val line = appCommonFunForAppPlatform()
 }

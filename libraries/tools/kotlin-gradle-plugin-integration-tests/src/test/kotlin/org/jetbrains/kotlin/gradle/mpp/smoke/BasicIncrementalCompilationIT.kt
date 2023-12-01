@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.mpp.smoke
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
 /**
@@ -19,6 +20,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
 
     @DisplayName("Base test case - local change, local recompilation")
     @GradleTest
+    @TestMetadata("generic-kmp-app-plus-lib-with-tests")
     fun testStrictlyLocalChange(gradleVersion: GradleVersion): Unit = withProject(gradleVersion) {
         build("assemble")
 
@@ -26,84 +28,99 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
          * Step 1: touch app:common, no abi change
          */
 
-        testCase(
-            incrementalPath = resolvePath("app", "commonMain", "Unused.kt").addPrivateVal(),
-            executedTasks = setOf(
+        val sourceInAppCommon = resolvePath("app", "commonMain", "Unused.kt").addPrivateVal()
+        checkIncrementalBuild(
+            tasksExpectedToExecute = setOf(
+                ":app:compileCommonMainKotlinMetadata",
                 ":app:compileKotlinJvm",
                 ":app:compileKotlinJs",
                 ":app:compileKotlinNative"
             )
-        )
+        ) {
+            assertIncrementalCompilation(listOf(sourceInAppCommon).relativizeTo(projectPath))
+        }
 
         /**
          * Step 2: touch app:jvm, no abi change
          */
 
-        val appJvmClassKt = resolvePath("app", "jvmMain", "UnusedJvm.kt").addPrivateVal()
-        testCase(
-            incrementalPath = null, //TODO: it just doesn't print "Incremental compilation completed", why? (KT-63476)
-            executedTasks = setOf(":app:compileKotlinJvm")
+        val sourceInAppJvm = resolvePath("app", "jvmMain", "UnusedJvm.kt").addPrivateVal()
+        checkIncrementalBuild(
+            tasksExpectedToExecute = setOf(":app:compileKotlinJvm")
         ) {
-            assertCompiledKotlinSources(listOf(appJvmClassKt).relativizeTo(projectPath), output)
+            //TODO: it just doesn't print "Incremental compilation completed", why? (KT-63476)
+            assertCompiledKotlinSources(listOf(sourceInAppJvm).relativizeTo(projectPath), output)
         }
 
         /**
          * Step 3: touch app:js, no abi change
          */
 
-        testCase(
-            incrementalPath = resolvePath("app", "jsMain", "UnusedJs.kt").addPrivateVal(),
-            executedTasks = setOf(":app:compileKotlinJs"),
-        )
+        val sourceInAppJs = resolvePath("app", "jsMain", "UnusedJs.kt").addPrivateVal()
+        checkIncrementalBuild(
+            tasksExpectedToExecute = setOf(":app:compileKotlinJs"),
+        ) {
+            assertIncrementalCompilation(listOf(sourceInAppJs).relativizeTo(projectPath))
+        }
 
         /**
          * Step 4: touch app:native, no abi change
          */
 
         resolvePath("app", "nativeMain", "UnusedNative.kt").addPrivateVal()
-        testCase(
-            incrementalPath = null, // no native incremental compilation - see KT-62824
-            executedTasks = setOf(":app:compileKotlinNative"),
+        checkIncrementalBuild(
+            tasksExpectedToExecute = setOf(":app:compileKotlinNative"),
         )
 
         /**
          * Step 5: touch lib:common, no abi change
          */
 
-        testCase(
-            incrementalPath = resolvePath("lib", "commonMain", "UsedInLibPlatformTests.kt").addPrivateVal(),
-            executedTasks = mainCompileTasks // TODO: KT-62642 - bad compile avoidance here
-        )
+        val sourceInLibCommon = resolvePath("lib", "commonMain", "UsedInLibPlatformTests.kt").addPrivateVal()
+        checkIncrementalBuild(
+            tasksExpectedToExecute = mainCompileTasks // TODO: KT-62642 - bad compile avoidance here
+        ) {
+            assertIncrementalCompilation(listOf(sourceInLibCommon).relativizeTo(projectPath))
+        }
 
         /**
          * Step 6: touch lib:jvm, no abi change
          */
 
-        val libJvmUtilKt = resolvePath("lib", "jvmMain", "UsedInAppJvmAndLibTests.kt").addPrivateVal()
-        testCase(
-            incrementalPath = null, //TODO: it just doesn't print "Incremental compilation completed", why? (KT-63476)
-            executedTasks = setOf(":app:compileKotlinJvm", ":lib:compileKotlinJvm"),
+        val sourceInLibJvm = resolvePath("lib", "jvmMain", "UsedInAppJvmAndLibTests.kt").addPrivateVal()
+        checkIncrementalBuild(
+            tasksExpectedToExecute = setOf(
+                ":app:compileKotlinJvm",
+                ":lib:compileKotlinJvm"
+            ),
         ) {
-            assertCompiledKotlinSources(listOf(libJvmUtilKt).relativizeTo(projectPath), output)
+            assertCompiledKotlinSources(listOf(sourceInLibJvm).relativizeTo(projectPath), output)
         }
 
         /**
          * Step 7: touch lib:js, no abi change
          */
 
-        testCase(
-            incrementalPath = resolvePath("lib", "jsMain", "UsedInAppJsAndLibTests.kt").addPrivateVal(),
-            executedTasks = setOf(":app:compileKotlinJs", ":lib:compileKotlinJs"),
-        )
+        val sourceInLibJs = resolvePath("lib", "jsMain", "UsedInAppJsAndLibTests.kt").addPrivateVal()
+        checkIncrementalBuild(
+            tasksExpectedToExecute = setOf(
+                ":app:compileKotlinJs",
+                ":lib:compileKotlinJs"
+            ),
+        ) {
+            assertIncrementalCompilation(listOf(sourceInLibJs).relativizeTo(projectPath))
+        }
 
         /**
          * Step 8: touch lib:native, no abi change
          */
 
         resolvePath("lib", "nativeMain", "UsedInAppNativeAndLibTests.kt").addPrivateVal()
-        testCase(
-            incrementalPath = null,
-            executedTasks = setOf(":app:compileKotlinNative", ":lib:compileKotlinNative"),
+        checkIncrementalBuild(
+            tasksExpectedToExecute = setOf(
+                ":app:compileKotlinNative",
+                ":lib:compileKotlinNative"
+            ),
         )
     }
 }
