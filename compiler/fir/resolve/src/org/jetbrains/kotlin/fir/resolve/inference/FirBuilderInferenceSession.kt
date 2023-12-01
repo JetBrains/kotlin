@@ -285,8 +285,10 @@ class FirBuilderInferenceSession(
     ): Boolean {
         val substitutedConstraintWith =
             initialConstraint.substitute(callSubstitutor).substitute(nonFixedToVariablesSubstitutor, fixedTypeVariables)
-        val lower = substitutedConstraintWith.a // TODO: SUB
-        val upper = substitutedConstraintWith.b // TODO: SUB
+
+        // TODO: Invalid naming, it doesn't make sense in case of equality constraints
+        val lower = substitutedConstraintWith.a
+        val upper = substitutedConstraintWith.b
 
         if (commonSystem.isProperType(lower) && (lower == upper || commonSystem.isProperType(upper))) return false
 
@@ -310,6 +312,8 @@ class FirBuilderInferenceSession(
         val upperSubstituted = substitutor.safeSubstitute(resolutionContext.typeContext, this.b)
 
         if (lowerSubstituted == a && upperSubstituted == b) return this
+
+        // TODO: Missing check for ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound language feature
 
         return InitialConstraint(
             lowerSubstituted,
@@ -360,6 +364,11 @@ class FirBuilderInferenceSession(
 
 
         val a = a
+        // TODO: Remove this if.
+        //  The return in condition is actually unreachable in tests.
+        //  - Seems, that case was added due to usage of this function in delegate inference, that isn't present anymore
+        //  - While situation described below seems reasonable the condition seems highly ad-hoc
+        //  - Condition doesn't handle equality constraints correctly and assumes UPPER direction of constraint only
         // In situation when some type variable _T is fixed to Stub(_T)?,
         // we are not allowed just to substitute Stub(_T) with T because nullabilities are different here!
         // To compensate this, we have to substitute Stub(_T) <: SomeType constraint with T <: SomeType? adding nullability to upper type
