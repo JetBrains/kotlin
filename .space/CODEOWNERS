@@ -21,7 +21,6 @@
 # OWNER_LIST: Ilya.Goncharov
 # OWNER_LIST: Simon.Ogorodnik
 # OWNER_LIST: Alexander.Shabalin Aleksei.Glushko Sergey.Bogolepov Svyatoslav.Scherbina
-# OWNER_LIST: Stanislav.Erokhin
 # Kotlin Libraries
 # OWNER_LIST: A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev Filipp.Zhinkin
 
@@ -356,9 +355,9 @@
 /license/ "Kotlin Build Infrastructure"
 
 /native/ "Kotlin Native"
-/native/commonizer/ Stanislav.Erokhin
-/native/commonizer-api/ Stanislav.Erokhin
-/native/commonizer-embeddable/ Stanislav.Erokhin
+/native/commonizer/ "Kotlin Apple Ecosystem"
+/native/commonizer-api/ "Kotlin Apple Ecosystem"
+/native/commonizer-embeddable/ "Kotlin Apple Ecosystem"
 
 /plugins/allopen/ "Kotlin Compiler Core"
 /plugins/android-extensions/ "Kotlin Compiler Core"
