@@ -96,9 +96,9 @@ open fun replaceFirst(regex: kotlin.String!, replacement: kotlin.String!): kotli
 
 open fun replaceAll(regex: kotlin.String!, replacement: kotlin.String!): kotlin.String!
 
-open fun split(regex: kotlin.String!, limit: kotlin.Int): (kotlin.Array<kotlin.String!>..kotlin.Array<out kotlin.String!>?)
+open fun split(regex: kotlin.String!, limit: kotlin.Int): kotlin.Array<kotlin.String!>!
 
-open fun split(regex: kotlin.String!): (kotlin.Array<kotlin.String!>..kotlin.Array<out kotlin.String!>?)
+open fun split(regex: kotlin.String!): kotlin.Array<kotlin.String!>!
 
 open fun toLowerCase(locale: java.util.Locale!): kotlin.String!
 

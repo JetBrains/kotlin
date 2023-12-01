@@ -43,4 +43,8 @@ public class JavaClass extends SuperClass {
     public void hello() {
         System.out.println("hello");
     }
+
+    public <T> void method(Class<? extends T> ... classes) {
+
+    }
 }
