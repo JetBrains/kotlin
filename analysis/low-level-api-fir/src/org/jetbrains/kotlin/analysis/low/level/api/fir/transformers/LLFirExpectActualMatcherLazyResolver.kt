@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkExpectForActualIsResolved
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherTransformer
@@ -29,8 +31,12 @@ internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirReso
     }
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
-        if (target !is FirMemberDeclaration || !target.canHaveExpectCounterPart()) return
-        checkExpectForActualIsResolved(target)
+        if (target.moduleData.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
+            target is FirMemberDeclaration &&
+            target.canHaveExpectCounterPart()
+        ) {
+            checkExpectForActualIsResolved(target)
+        }
     }
 }
 
@@ -40,6 +46,8 @@ private class LLFirExpectActualMatchingTargetResolver(
     session: FirSession,
     scopeSession: ScopeSession,
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
+    private val enabled = session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+
     private val transformer = object : FirExpectActualMatcherTransformer(session, scopeSession) {
         override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
             transformMemberDeclaration(regularClass)
@@ -48,9 +56,9 @@ private class LLFirExpectActualMatchingTargetResolver(
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        if (target !is FirMemberDeclaration) return
-        if (!target.canHaveExpectCounterPart()) return
-        transformer.transformMemberDeclaration(target)
+        if (enabled && target is FirMemberDeclaration && target.canHaveExpectCounterPart()) {
+            transformer.transformMemberDeclaration(target)
+        }
     }
 }
 
