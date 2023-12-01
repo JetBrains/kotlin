@@ -6,16 +6,16 @@
 package kotlinx.metadata.klib.impl
 
 import kotlinx.metadata.klib.*
-import kotlin.metadata.*
-import kotlin.metadata.internal.*
-import kotlin.metadata.internal.common.KmModuleFragment
-import kotlin.metadata.internal.extensions.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.StringTableImpl
+import kotlin.metadata.*
+import kotlin.metadata.internal.*
+import kotlin.metadata.internal.common.KmModuleFragment
+import kotlin.metadata.internal.extensions.*
 
 internal class KlibMetadataExtensions : MetadataExtensions {
 
@@ -154,7 +154,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class.Builder, c: WriteContext) {
-        for (annotation in kmClass.annotations) {
+        for (annotation in kmClass.klibAnnotations) {
             proto.addExtension(KlibMetadataProtoBuf.classAnnotation, annotation.writeAnnotation(c.strings).build())
         }
 
@@ -210,7 +210,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeFunctionExtensions(kmFunction: KmFunction, proto: ProtoBuf.Function.Builder, c: WriteContext) {
-        for (annotation in kmFunction.annotations) {
+        for (annotation in kmFunction.klibAnnotations) {
             proto.addExtension(KlibMetadataProtoBuf.functionAnnotation, annotation.writeAnnotation(c.strings).build())
         }
 
@@ -224,13 +224,13 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     }
 
     override fun writePropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property.Builder, c: WriteContext) {
-        for (annotation in kmProperty.annotations) {
+        for (annotation in kmProperty.klibAnnotations) {
             proto.addExtension(KlibMetadataProtoBuf.propertyAnnotation, annotation.writeAnnotation(c.strings).build())
         }
-        for (annotation in kmProperty.getterAnnotations) {
+        for (annotation in kmProperty.klibGetterAnnotations) {
             proto.addExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, annotation.writeAnnotation(c.strings).build())
         }
-        for (annotation in kmProperty.setterAnnotations) {
+        for (annotation in kmProperty.klibSetterAnnotations) {
             proto.addExtension(KlibMetadataProtoBuf.propertySetterAnnotation, annotation.writeAnnotation(c.strings).build())
         }
 
@@ -248,7 +248,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor.Builder, c: WriteContext) {
-        for (annotation in kmConstructor.annotations) {
+        for (annotation in kmConstructor.klibAnnotations) {
             proto.addExtension(KlibMetadataProtoBuf.constructorAnnotation, annotation.writeAnnotation(c.strings).build())
         }
 
@@ -280,7 +280,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeValueParameterExtensions(valueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter.Builder, c: WriteContext) {
-        valueParameter.annotations.forEach { annotation ->
+        for (annotation in valueParameter.klibAnnotations) {
             proto.addExtension(KlibMetadataProtoBuf.parameterAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }

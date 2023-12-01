@@ -120,7 +120,7 @@ internal class ModuleMetadataEmitter(
             val elements = KmElements(children.mapNotNull { it.accept(this, classVisitingContext) })
             val kmClass = data.withMappingExtensions {
                 KmClass().also { km ->
-                    element.annotations.mapTo(km.annotations) { it.map() }
+                    element.annotations.mapTo(km.klibAnnotations) { it.map() }
                     km.modifiersFrom(element)
                     km.name = element.classifier.fqNameSerialized
                     element.superClassInit?.let { km.supertypes += it.type.map() }
@@ -165,7 +165,7 @@ internal class ModuleMetadataEmitter(
                         km.receiverParameterType = function.receiver?.type?.map()
                         function.typeParameters.mapTo(km.typeParameters) { it.map() }
                         function.parameters.mapTo(km.valueParameters) { it.map() }
-                        function.annotations.mapTo(km.annotations) { it.map() }
+                        function.annotations.mapTo(km.klibAnnotations) { it.map() }
                         km.returnType = function.returnType.map()
                     }
                 }
@@ -185,16 +185,16 @@ internal class ModuleMetadataEmitter(
                         km.modifiersFrom(property)
                         km.getter.getterModifiersFrom(property)
                         km.setter = setterFrom(property)
-                        property.annotations.mapTo(km.annotations) { it.map() }
+                        property.annotations.mapTo(km.klibAnnotations) { it.map() }
                         km.receiverParameterType = property.receiverType?.map()
                         km.returnType = property.type.map()
                         val kind = property.kind
                         if (kind is PropertyStub.Kind.Var) {
-                            kind.setter.annotations.mapTo(km.setterAnnotations) { it.map() }
+                            kind.setter.annotations.mapTo(km.klibSetterAnnotations) { it.map() }
                             // TODO: Maybe it's better to explicitly add setter parameter in stub.
                             km.setterParameter = FunctionParameterStub("value", property.type).map()
                         }
-                        km.getterAnnotations += when (kind) {
+                        km.klibGetterAnnotations += when (kind) {
                             is PropertyStub.Kind.Val -> kind.getter.annotations.map { it.map() }
                             is PropertyStub.Kind.Var -> kind.getter.annotations.map { it.map() }
                             is PropertyStub.Kind.Constant -> emptyList()
@@ -210,7 +210,7 @@ internal class ModuleMetadataEmitter(
                     KmConstructor().apply {
                         modifiersFrom(constructorStub)
                         constructorStub.parameters.mapTo(valueParameters, { it.map() })
-                        constructorStub.annotations.mapTo(annotations, { it.map() })
+                        constructorStub.annotations.mapTo(klibAnnotations, { it.map() })
                     }
                 }
 
@@ -516,7 +516,7 @@ private class MappingExtensions(
                 } else {
                     km.type = kmType
                 }
-                annotations.mapTo(km.annotations, { it.map() })
+                annotations.mapTo(km.klibAnnotations, { it.map() })
             }
 
     fun TypeParameterStub.map(): KmTypeParameter =

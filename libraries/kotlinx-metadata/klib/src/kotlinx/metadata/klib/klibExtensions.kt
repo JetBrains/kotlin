@@ -9,7 +9,7 @@ import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.impl.klibExtensions
 
-val KmFunction.annotations: MutableList<KmAnnotation>
+val KmFunction.klibAnnotations: MutableList<KmAnnotation>
     get() = klibExtensions.annotations
 
 var KmFunction.uniqId: UniqId?
@@ -24,7 +24,7 @@ var KmFunction.file: KlibSourceFile?
         klibExtensions.file = value
     }
 
-val KmClass.annotations: MutableList<KmAnnotation>
+val KmClass.klibAnnotations: MutableList<KmAnnotation>
     get() = klibExtensions.annotations
 
 var KmClass.uniqId: UniqId?
@@ -42,13 +42,13 @@ var KmClass.file: KlibSourceFile?
 val KmClass.klibEnumEntries: MutableList<KlibEnumEntry>
     get() = klibExtensions.enumEntries
 
-val KmProperty.annotations: MutableList<KmAnnotation>
+val KmProperty.klibAnnotations: MutableList<KmAnnotation>
     get() = klibExtensions.annotations
 
-val KmProperty.setterAnnotations: MutableList<KmAnnotation>
+val KmProperty.klibSetterAnnotations: MutableList<KmAnnotation>
     get() = klibExtensions.setterAnnotations
 
-val KmProperty.getterAnnotations: MutableList<KmAnnotation>
+val KmProperty.klibGetterAnnotations: MutableList<KmAnnotation>
     get() = klibExtensions.getterAnnotations
 
 var KmProperty.uniqId: UniqId?
@@ -72,7 +72,7 @@ var KmProperty.compileTimeValue: KmAnnotationArgument?
 val KmType.annotations: MutableList<KmAnnotation>
     get() = klibExtensions.annotations
 
-val KmConstructor.annotations: MutableList<KmAnnotation>
+val KmConstructor.klibAnnotations: MutableList<KmAnnotation>
     get() = klibExtensions.annotations
 
 var KmConstructor.uniqId: UniqId?
@@ -114,5 +114,5 @@ var KmTypeAlias.uniqId: UniqId?
         klibExtensions.uniqId = value
     }
 
-val KmValueParameter.annotations: MutableList<KmAnnotation>
+val KmValueParameter.klibAnnotations: MutableList<KmAnnotation>
     get() = klibExtensions.annotations
