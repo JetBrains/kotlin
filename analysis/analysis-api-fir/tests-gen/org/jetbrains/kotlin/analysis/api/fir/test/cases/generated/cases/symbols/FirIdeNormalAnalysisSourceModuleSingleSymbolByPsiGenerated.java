@@ -202,6 +202,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends 
         runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsWithTypeAlias.kt");
     }
 
+    @Test
+    @TestMetadata("valueClass.kt")
+    public void testValueClass() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/valueClass.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts")
     @TestDataPath("$PROJECT_ROOT")

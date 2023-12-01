@@ -42,7 +42,7 @@ internal class KtFe10DescNamedClassOrObjectSymbol(
         get() = withValidityAssertion { descriptor.isData }
 
     override val isInline: Boolean
-        get() = withValidityAssertion { descriptor.isInline }
+        get() = withValidityAssertion { descriptor.isInline || descriptor.isValue }
 
     override val isFun: Boolean
         get() = withValidityAssertion { descriptor.isFun }
