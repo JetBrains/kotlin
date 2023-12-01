@@ -31,6 +31,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/WithGeneratedCompanion.Companion
+  getContainingFileSymbol: null
+  getContainingJvmClassName: test/WithGeneratedCompanion$Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -82,6 +84,8 @@ KtFunctionSymbol:
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Any
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -90,6 +94,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Any
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -126,6 +132,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Any
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -162,6 +170,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Any
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -185,5 +195,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Private
+  getContainingFileSymbol: null
+  getContainingJvmClassName: test/WithGeneratedCompanion$Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

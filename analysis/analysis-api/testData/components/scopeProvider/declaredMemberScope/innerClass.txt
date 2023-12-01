@@ -23,6 +23,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(innerClass.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -47,5 +48,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(innerClass.kt)
+  getContainingJvmClassName: test/B
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -23,6 +23,7 @@ KtFunctionSymbol:
                     type: kotlin/Unit
                 ]
                 type: kotlin/Function0<kotlin/Unit>
+              getContainingFileSymbol: KtFileSymbol(referenceReceiverInContract.kt)
               getContainingModule: KtSourceModule "Sources of main"
               deprecationStatus: null
       occurrencesRange: EXACTLY_ONCE
@@ -55,6 +56,7 @@ KtFunctionSymbol:
           type: kotlin/Unit
       ]
       type: kotlin/Function0<kotlin/Unit>
+    getContainingFileSymbol: KtFileSymbol(referenceReceiverInContract.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
@@ -65,5 +67,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(referenceReceiverInContract.kt)
+  getContainingJvmClassName: ReferenceReceiverInContractKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

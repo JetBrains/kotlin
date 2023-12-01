@@ -19,6 +19,7 @@ KtAnonymousObjectSymbol:
   ]
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(anonymousObjectInInvalidPosition.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

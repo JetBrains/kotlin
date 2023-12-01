@@ -40,5 +40,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(booleanConstReferenceInImplies.kt)
+  getContainingJvmClassName: BooleanConstReferenceInImpliesKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

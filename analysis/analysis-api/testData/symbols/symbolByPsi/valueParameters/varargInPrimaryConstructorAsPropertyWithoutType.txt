@@ -42,6 +42,8 @@ KtConstructorSymbol:
             type: kotlin/Array<out ERROR CLASS: Incomplete code>
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
+          getContainingJvmClassName: Foo
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /Foo.ints
@@ -75,6 +77,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: Foo
+          getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
+          getContainingJvmClassName: Foo
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -111,6 +115,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: Foo
+        getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
+        getContainingJvmClassName: Foo
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -131,10 +137,14 @@ KtConstructorSymbol:
         type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
+      getContainingJvmClassName: Foo
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
+  getContainingJvmClassName: Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -163,6 +173,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

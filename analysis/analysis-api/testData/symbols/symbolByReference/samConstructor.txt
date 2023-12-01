@@ -39,8 +39,12 @@ KtSamConstructorSymbol:
         type: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
+  getContainingFileSymbol: null
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

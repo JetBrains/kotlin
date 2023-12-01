@@ -45,6 +45,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/collections/List
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -57,5 +59,7 @@ KtFunctionSymbol:
         type: E
     ]
     type: kotlin/collections/List<E>
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/collections/List
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null

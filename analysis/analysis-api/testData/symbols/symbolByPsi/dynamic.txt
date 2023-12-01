@@ -14,6 +14,8 @@ KtKotlinPropertySymbol:
       type: dynamic
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+    getContainingJvmClassName: Foo
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /Foo.p
@@ -42,6 +44,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: Foo
+    getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+    getContainingJvmClassName: Foo
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -73,6 +77,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Foo
+  getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+  getContainingJvmClassName: Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -94,6 +100,8 @@ KtAnonymousFunctionSymbol:
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: []
+  getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -143,6 +151,8 @@ KtFunctionSymbol:
         type: dynamic
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+      getContainingJvmClassName: Foo
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -151,6 +161,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Foo
+  getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+  getContainingJvmClassName: Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -179,6 +191,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(dynamic.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

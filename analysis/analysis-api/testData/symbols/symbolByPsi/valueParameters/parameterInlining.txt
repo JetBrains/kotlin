@@ -51,6 +51,8 @@ KtFunctionSymbol:
         type: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(parameterInlining.kt)
+      getContainingJvmClassName: ParameterInliningKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -78,6 +80,8 @@ KtFunctionSymbol:
         type: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(parameterInlining.kt)
+      getContainingJvmClassName: ParameterInliningKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -105,9 +109,13 @@ KtFunctionSymbol:
         type: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(parameterInlining.kt)
+      getContainingJvmClassName: ParameterInliningKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(parameterInlining.kt)
+  getContainingJvmClassName: ParameterInliningKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

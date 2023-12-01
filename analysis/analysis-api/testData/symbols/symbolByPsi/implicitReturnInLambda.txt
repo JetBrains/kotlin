@@ -13,6 +13,8 @@ KtLocalVariableSymbol:
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -51,9 +53,13 @@ KtAnonymousFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
+  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -81,6 +87,8 @@ KtLocalVariableSymbol:
     type: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -99,6 +107,8 @@ KtLocalVariableSymbol:
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -137,9 +147,13 @@ KtAnonymousFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
+  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -167,6 +181,8 @@ KtLocalVariableSymbol:
     type: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -185,6 +201,8 @@ KtLocalVariableSymbol:
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -223,9 +241,13 @@ KtAnonymousFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
+  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -258,6 +280,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingJvmClassName: ImplicitReturnInLambdaKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -318,9 +342,13 @@ KtFunctionSymbol:
         type: kotlin/Function1<kotlin/Int, kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+      getContainingJvmClassName: ImplicitReturnInLambdaKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Private
+  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingJvmClassName: ImplicitReturnInLambdaKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

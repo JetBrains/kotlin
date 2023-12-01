@@ -19,6 +19,8 @@ KtJavaFieldSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -44,6 +46,8 @@ KtJavaFieldSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -80,6 +84,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -105,6 +111,8 @@ KtJavaFieldSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -138,6 +146,8 @@ KtSyntheticJavaPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: java/lang/String
+    getContainingFileSymbol: null
+    getContainingJvmClassName: java/lang/String
     getContainingModule: KtSdkModule "SDK jdk"
     deprecationStatus: null
   hasBackingField: true
@@ -168,6 +178,8 @@ KtSyntheticJavaPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -208,6 +220,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -259,6 +273,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -267,6 +283,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -318,6 +336,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -326,6 +346,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -377,6 +399,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -399,6 +423,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -407,6 +433,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -458,6 +486,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -480,6 +510,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -488,6 +520,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -538,6 +572,8 @@ KtFunctionSymbol:
         type: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -560,6 +596,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -568,6 +606,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -619,6 +659,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -641,6 +683,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -662,6 +706,8 @@ KtFunctionSymbol:
         type: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -684,6 +730,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -692,6 +740,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -746,6 +796,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -768,6 +820,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -789,6 +843,8 @@ KtFunctionSymbol:
         type: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -811,6 +867,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -819,6 +877,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
@@ -868,6 +928,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -876,6 +938,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -925,6 +989,8 @@ KtFunctionSymbol:
         type: java/nio/charset/Charset!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -933,6 +999,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -968,6 +1036,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1019,6 +1089,8 @@ KtFunctionSymbol:
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1027,6 +1099,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1077,6 +1151,8 @@ KtFunctionSymbol:
         type: java/lang/StringBuffer!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1085,6 +1161,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1135,6 +1213,8 @@ KtFunctionSymbol:
         type: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1143,6 +1223,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1193,6 +1275,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1201,6 +1285,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1251,6 +1337,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1259,6 +1347,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1309,6 +1399,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1317,6 +1409,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1368,6 +1462,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -1389,6 +1485,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -1411,6 +1509,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -1433,6 +1533,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1441,6 +1543,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1492,6 +1596,8 @@ KtFunctionSymbol:
         type: kotlin/Boolean
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -1514,6 +1620,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -1535,6 +1643,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -1557,6 +1667,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -1579,6 +1691,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1587,6 +1701,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1637,6 +1753,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -1659,6 +1777,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1667,6 +1787,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1717,6 +1839,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1725,6 +1849,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1775,6 +1901,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1783,6 +1911,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1819,6 +1949,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1870,6 +2002,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1878,6 +2012,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -1929,6 +2065,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -1951,6 +2089,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -1959,6 +2099,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2009,6 +2151,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2017,6 +2161,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2067,6 +2213,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -2089,6 +2237,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2097,6 +2247,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2148,6 +2300,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -2170,6 +2324,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2178,6 +2334,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2229,6 +2387,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2237,6 +2397,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2288,6 +2450,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -2310,6 +2474,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2318,6 +2484,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2368,6 +2536,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2376,6 +2546,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2426,6 +2598,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -2448,6 +2622,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2456,6 +2632,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2507,6 +2685,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -2529,6 +2709,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2537,6 +2719,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2587,6 +2771,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2595,6 +2781,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2645,6 +2833,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -2667,6 +2857,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2675,6 +2867,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2726,6 +2920,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -2748,6 +2944,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2756,6 +2954,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2805,6 +3005,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2813,6 +3015,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2863,6 +3067,8 @@ KtFunctionSymbol:
         type: kotlin/Char
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -2885,6 +3091,8 @@ KtFunctionSymbol:
         type: kotlin/Char
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2893,6 +3101,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -2942,6 +3152,8 @@ KtFunctionSymbol:
         type: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -2963,6 +3175,8 @@ KtFunctionSymbol:
         type: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -2971,6 +3185,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3021,6 +3237,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -3029,6 +3247,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3079,6 +3299,8 @@ KtFunctionSymbol:
         type: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -3087,6 +3309,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3136,6 +3360,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -3157,6 +3383,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -3165,6 +3393,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3214,6 +3444,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -3235,6 +3467,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -3243,6 +3477,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3292,6 +3528,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -3314,6 +3552,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -3322,6 +3562,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3371,6 +3613,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -3379,6 +3623,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3428,6 +3674,8 @@ KtFunctionSymbol:
         type: java/util/Locale!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -3436,6 +3684,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3471,6 +3721,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3520,6 +3772,8 @@ KtFunctionSymbol:
         type: java/util/Locale!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -3528,6 +3782,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3563,6 +3819,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3598,6 +3856,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3634,6 +3894,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3669,6 +3931,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3704,6 +3968,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3755,6 +4021,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
@@ -3763,6 +4031,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3803,6 +4073,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Private
+  getContainingFileSymbol: null
   getContainingModule: KtSdkModule "SDK jdk"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -3827,6 +4098,8 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3868,10 +4141,14 @@ KtConstructorSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3913,10 +4190,14 @@ KtConstructorSymbol:
         type: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -3958,6 +4239,8 @@ KtConstructorSymbol:
         type: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -3980,6 +4263,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4002,10 +4287,14 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -4047,6 +4336,8 @@ KtConstructorSymbol:
         type: kotlin/IntArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4069,6 +4360,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4091,10 +4384,14 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -4139,6 +4436,8 @@ KtConstructorSymbol:
         type: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4161,6 +4460,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4183,6 +4484,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4205,10 +4508,14 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
@@ -4253,6 +4560,8 @@ KtConstructorSymbol:
         type: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4275,10 +4584,14 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
@@ -4320,6 +4633,8 @@ KtConstructorSymbol:
         type: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4342,6 +4657,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4364,6 +4681,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4385,10 +4704,14 @@ KtConstructorSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -4430,6 +4753,8 @@ KtConstructorSymbol:
         type: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4452,6 +4777,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4474,6 +4801,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4495,10 +4824,14 @@ KtConstructorSymbol:
         type: java/nio/charset/Charset!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -4540,6 +4873,8 @@ KtConstructorSymbol:
         type: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4561,10 +4896,14 @@ KtConstructorSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -4606,6 +4945,8 @@ KtConstructorSymbol:
         type: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4627,10 +4968,14 @@ KtConstructorSymbol:
         type: java/nio/charset/Charset!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -4672,6 +5017,8 @@ KtConstructorSymbol:
         type: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4694,6 +5041,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4716,10 +5065,14 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -4761,10 +5114,14 @@ KtConstructorSymbol:
         type: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -4806,10 +5163,14 @@ KtConstructorSymbol:
         type: java/lang/StringBuffer!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -4851,10 +5212,14 @@ KtConstructorSymbol:
         type: java/lang/StringBuilder!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -4896,6 +5261,8 @@ KtConstructorSymbol:
         type: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4918,10 +5285,14 @@ KtConstructorSymbol:
         type: kotlin/Boolean
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: PackageVisibility
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
@@ -4967,6 +5338,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -4989,6 +5362,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -5010,9 +5385,13 @@ KtConstructorSymbol:
         type: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/lang/String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: PackageVisibility
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)

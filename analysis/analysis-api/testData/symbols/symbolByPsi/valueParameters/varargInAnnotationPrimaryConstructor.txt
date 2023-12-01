@@ -37,10 +37,14 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructor.kt)
+      getContainingJvmClassName: Foo
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructor.kt)
+  getContainingJvmClassName: Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -69,6 +73,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructor.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
   deprecationStatus: null

@@ -57,6 +57,8 @@ KtFunctionSymbol:
         type: kotlin/Function2<kotlin/Int, ERROR CLASS: Symbol not found for p2, ERROR CLASS: Incomplete code>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(parameterNotFunctionalType.kt)
+      getContainingJvmClassName: ParameterNotFunctionalTypeKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -78,9 +80,13 @@ KtFunctionSymbol:
         type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(parameterNotFunctionalType.kt)
+      getContainingJvmClassName: ParameterNotFunctionalTypeKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(parameterNotFunctionalType.kt)
+  getContainingJvmClassName: ParameterNotFunctionalTypeKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

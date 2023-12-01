@@ -34,6 +34,8 @@ KtFunctionSymbol:
                     type: kotlin/Any?
                   symbolKind: LOCAL
                   typeParameters: []
+                  getContainingFileSymbol: KtFileSymbol(returnsNotNullContract.kt)
+                  getContainingJvmClassName: ReturnsNotNullContractKt
                   getContainingModule: KtSourceModule "Sources of main"
                   deprecationStatus: null
           isNegated: true
@@ -81,9 +83,13 @@ KtFunctionSymbol:
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(returnsNotNullContract.kt)
+      getContainingJvmClassName: ReturnsNotNullContractKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(returnsNotNullContract.kt)
+  getContainingJvmClassName: ReturnsNotNullContractKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

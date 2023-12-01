@@ -23,6 +23,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(propertyWithDelegateAndAnnotations.kt)
+    getContainingJvmClassName: PropertyWithDelegateAndAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /lazyProperty
@@ -48,6 +50,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(propertyWithDelegateAndAnnotations.kt)
+    getContainingJvmClassName: PropertyWithDelegateAndAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
@@ -76,6 +80,8 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(propertyWithDelegateAndAnnotations.kt)
+  getContainingJvmClassName: PropertyWithDelegateAndAnnotationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

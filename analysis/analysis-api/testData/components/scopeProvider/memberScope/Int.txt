@@ -49,6 +49,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -57,6 +59,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -111,6 +115,8 @@ KtFunctionSymbol:
         type: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -119,6 +125,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -173,6 +181,8 @@ KtFunctionSymbol:
         type: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -181,6 +191,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -235,6 +247,8 @@ KtFunctionSymbol:
         type: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -243,6 +257,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -297,6 +313,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -305,6 +323,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -359,6 +379,8 @@ KtFunctionSymbol:
         type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -367,6 +389,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -421,6 +445,8 @@ KtFunctionSymbol:
         type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -429,6 +455,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -465,6 +493,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -519,6 +549,8 @@ KtFunctionSymbol:
         type: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -527,6 +559,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -581,6 +615,8 @@ KtFunctionSymbol:
         type: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -589,6 +625,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -643,6 +681,8 @@ KtFunctionSymbol:
         type: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -651,6 +691,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -705,6 +747,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -713,6 +757,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -767,6 +813,8 @@ KtFunctionSymbol:
         type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -775,6 +823,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -829,6 +879,8 @@ KtFunctionSymbol:
         type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -837,6 +889,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -891,6 +945,8 @@ KtFunctionSymbol:
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -899,6 +955,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -935,6 +993,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -974,6 +1034,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1028,6 +1090,8 @@ KtFunctionSymbol:
         type: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1036,6 +1100,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1090,6 +1156,8 @@ KtFunctionSymbol:
         type: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1098,6 +1166,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1152,6 +1222,8 @@ KtFunctionSymbol:
         type: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1160,6 +1232,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1214,6 +1288,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1222,6 +1298,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1276,6 +1354,8 @@ KtFunctionSymbol:
         type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1284,6 +1364,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1338,6 +1420,8 @@ KtFunctionSymbol:
         type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1346,6 +1430,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1400,6 +1486,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1408,6 +1496,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1462,6 +1552,8 @@ KtFunctionSymbol:
         type: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1470,6 +1562,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1524,6 +1618,8 @@ KtFunctionSymbol:
         type: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1532,6 +1628,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1586,6 +1684,8 @@ KtFunctionSymbol:
         type: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1594,6 +1694,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1648,6 +1750,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1656,6 +1760,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1710,6 +1816,8 @@ KtFunctionSymbol:
         type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1718,6 +1826,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1772,6 +1882,8 @@ KtFunctionSymbol:
         type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1780,6 +1892,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1831,6 +1945,8 @@ KtFunctionSymbol:
         type: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1839,6 +1955,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1890,6 +2008,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1898,6 +2018,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1949,6 +2071,8 @@ KtFunctionSymbol:
         type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -1957,6 +2081,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2008,6 +2134,8 @@ KtFunctionSymbol:
         type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2016,6 +2144,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2072,6 +2202,8 @@ KtFunctionSymbol:
         type: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2080,6 +2212,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2136,6 +2270,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2144,6 +2280,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2200,6 +2338,8 @@ KtFunctionSymbol:
         type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2208,6 +2348,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2264,6 +2406,8 @@ KtFunctionSymbol:
         type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2272,6 +2416,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2328,6 +2474,8 @@ KtFunctionSymbol:
         type: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2336,6 +2484,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2392,6 +2542,8 @@ KtFunctionSymbol:
         type: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2400,6 +2552,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2456,6 +2610,8 @@ KtFunctionSymbol:
         type: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2464,6 +2620,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2520,6 +2678,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2528,6 +2688,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2584,6 +2746,8 @@ KtFunctionSymbol:
         type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2592,6 +2756,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2648,6 +2814,8 @@ KtFunctionSymbol:
         type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2656,6 +2824,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2710,6 +2880,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2718,6 +2890,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2772,6 +2946,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2780,6 +2956,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2834,6 +3012,8 @@ KtFunctionSymbol:
         type: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2842,6 +3022,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2896,6 +3078,8 @@ KtFunctionSymbol:
         type: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2904,6 +3088,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2958,6 +3144,8 @@ KtFunctionSymbol:
         type: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -2966,6 +3154,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3020,6 +3210,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -3028,6 +3220,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3082,6 +3276,8 @@ KtFunctionSymbol:
         type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -3090,6 +3286,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3144,6 +3342,8 @@ KtFunctionSymbol:
         type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -3152,6 +3352,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3191,6 +3393,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3230,6 +3434,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3269,6 +3475,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3308,6 +3516,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3347,6 +3557,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3386,6 +3598,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3425,6 +3639,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3464,6 +3680,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3503,6 +3721,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3542,6 +3762,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3596,6 +3818,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -3604,6 +3828,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3658,6 +3884,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/Int
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -3666,6 +3894,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3702,6 +3932,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Any
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3730,6 +3962,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: null
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -3754,5 +3987,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Private
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null

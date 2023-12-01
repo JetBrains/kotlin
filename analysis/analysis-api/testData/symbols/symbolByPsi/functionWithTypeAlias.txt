@@ -23,6 +23,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -41,6 +42,7 @@ KtTypeAliasSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -92,10 +94,14 @@ KtFunctionSymbol:
         type: TypeAlias
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+      getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+  getContainingJvmClassName: FunctionWithTypeAliasKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -147,9 +153,13 @@ KtFunctionSymbol:
         type: A
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+      getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+  getContainingJvmClassName: FunctionWithTypeAliasKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

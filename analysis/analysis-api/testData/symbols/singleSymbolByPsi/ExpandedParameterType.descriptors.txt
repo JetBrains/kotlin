@@ -46,9 +46,13 @@ KtFunctionSymbol:
         type: SecondAlias
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(ExpandedParameterType.kt)
+      getContainingJvmClassName: ExpandedParameterTypeKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(ExpandedParameterType.kt)
+  getContainingJvmClassName: ExpandedParameterTypeKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

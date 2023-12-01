@@ -39,6 +39,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: null
   getContainingModule: KtSdkModule "SDK jdk"
   annotationApplicableTargets: null
   deprecationStatus: null

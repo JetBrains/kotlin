@@ -20,6 +20,8 @@ KtKotlinPropertySymbol:
       type: kotlin/enums/EnumEntries<MyKotlinEnum>
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(enumEntries.kt)
+    getContainingJvmClassName: MyKotlinEnum
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyKotlinEnum.entries
@@ -50,6 +52,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(enumEntries.kt)
+    getContainingJvmClassName: MyKotlinEnum
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
@@ -83,6 +87,8 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(enumEntries.kt)
+  getContainingJvmClassName: MyKotlinEnum
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

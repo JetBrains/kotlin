@@ -40,6 +40,8 @@ KtPropertySetterSymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(setterWithAnnotations.kt)
+    getContainingJvmClassName: null
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   receiverParameter: null
@@ -75,9 +77,13 @@ KtPropertySetterSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(setterWithAnnotations.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(setterWithAnnotations.kt)
+  getContainingJvmClassName: SetterWithAnnotationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

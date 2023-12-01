@@ -6,6 +6,7 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -36,6 +37,7 @@ KtNamedClassOrObjectSymbol:
     KtTypeParameterSymbol(T)
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -59,6 +61,7 @@ KtTypeAliasSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -81,6 +84,7 @@ KtTypeAliasSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -103,6 +107,7 @@ KtTypeAliasSymbol:
   symbolKind: LOCAL
   typeParameters: []
   visibility: Local
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -125,6 +130,7 @@ KtTypeAliasSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -147,6 +153,7 @@ KtTypeAliasSymbol:
   symbolKind: LOCAL
   typeParameters: []
   visibility: Local
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -169,6 +176,7 @@ KtTypeAliasSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -205,6 +213,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: LocalClass
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -233,6 +243,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: LOCAL
   typeParameters: []
   visibility: Local
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -270,6 +281,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: LocalClass
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -298,6 +311,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: LOCAL
   typeParameters: []
   visibility: Local
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -335,6 +349,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: A
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
+  getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -363,6 +379,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

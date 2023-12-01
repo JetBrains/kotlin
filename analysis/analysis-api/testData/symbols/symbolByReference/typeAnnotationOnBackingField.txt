@@ -20,5 +20,7 @@ KtBackingFieldSymbol:
     type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(typeAnnotationOnBackingField.kt)
+  getContainingJvmClassName: TypeAnnotationOnBackingFieldKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

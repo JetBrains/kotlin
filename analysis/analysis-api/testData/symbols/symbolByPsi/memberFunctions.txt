@@ -31,6 +31,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: A
+  getContainingFileSymbol: KtFileSymbol(memberFunctions.kt)
+  getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -67,6 +69,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: A
+  getContainingFileSymbol: KtFileSymbol(memberFunctions.kt)
+  getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -95,6 +99,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(memberFunctions.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

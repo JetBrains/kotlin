@@ -12,5 +12,6 @@ KtReceiverParameterSymbol:
     ]
     ownTypeArguments: []
     type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+  getContainingFileSymbol: KtFileSymbol(propertyReceiverParameter.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -32,6 +32,7 @@ KtFunctionSymbol:
       ]
       ownTypeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Int
+    getContainingFileSymbol: KtFileSymbol(functionReceiverParameter.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
@@ -42,5 +43,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(functionReceiverParameter.kt)
+  getContainingJvmClassName: FunctionReceiverParameterKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

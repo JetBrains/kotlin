@@ -15,6 +15,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
+    getContainingJvmClassName: test/E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: test/E.foo
@@ -44,6 +46,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: test/E
+    getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
+    getContainingJvmClassName: test/E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -76,6 +80,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
+  getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
+  getContainingJvmClassName: test/E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -116,6 +122,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
+  getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
+  getContainingJvmClassName: test/E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -139,5 +147,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Private
+  getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
+  getContainingJvmClassName: test/E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

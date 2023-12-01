@@ -2,6 +2,7 @@ FILE SYMBOL:
 KtFileSymbol:
   annotationsList: []
   origin: SOURCE
+  getContainingFileSymbol: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -38,6 +39,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(simpleFileScope.kt)
+  getContainingJvmClassName: SimpleFileScopeKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -58,6 +61,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(simpleFileScope.kt)
+    getContainingJvmClassName: SimpleFileScopeKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /testVal
@@ -83,6 +88,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(simpleFileScope.kt)
+    getContainingJvmClassName: SimpleFileScopeKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -111,6 +118,8 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(simpleFileScope.kt)
+  getContainingJvmClassName: SimpleFileScopeKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -147,6 +156,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(simpleFileScope.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -176,6 +186,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(simpleFileScope.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

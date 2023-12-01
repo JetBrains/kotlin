@@ -14,6 +14,9 @@ KtEnumEntrySymbol:
     type: kotlin/LazyThreadSafetyMode
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  getContainingFileSymbol: null
+  getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescEnumEntrySymbol
+
   getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescEnumEntrySymbol
 
   deprecationStatus: null

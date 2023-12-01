@@ -7,5 +7,6 @@ KtDestructuringDeclarationSymbol:
   origin: SOURCE
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(destructuringDeclarationInLambda.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

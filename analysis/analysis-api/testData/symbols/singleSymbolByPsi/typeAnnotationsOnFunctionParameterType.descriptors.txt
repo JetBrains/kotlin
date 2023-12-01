@@ -53,9 +53,13 @@ KtFunctionSymbol:
         type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnFunctionParameterType.kt)
+      getContainingJvmClassName: TypeAnnotationsOnFunctionParameterTypeKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnFunctionParameterType.kt)
+  getContainingJvmClassName: TypeAnnotationsOnFunctionParameterTypeKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

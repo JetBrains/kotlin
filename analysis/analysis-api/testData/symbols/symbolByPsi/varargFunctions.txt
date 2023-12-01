@@ -46,10 +46,14 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+      getContainingJvmClassName: VarargFunctionsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+  getContainingJvmClassName: VarargFunctionsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -101,10 +105,14 @@ KtFunctionSymbol:
         type: kotlin/Float?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+      getContainingJvmClassName: VarargFunctionsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+  getContainingJvmClassName: VarargFunctionsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -156,10 +164,14 @@ KtFunctionSymbol:
         type: kotlin/Any
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+      getContainingJvmClassName: VarargFunctionsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+  getContainingJvmClassName: VarargFunctionsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -210,9 +222,13 @@ KtFunctionSymbol:
         type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+      getContainingJvmClassName: VarargFunctionsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+  getContainingJvmClassName: VarargFunctionsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

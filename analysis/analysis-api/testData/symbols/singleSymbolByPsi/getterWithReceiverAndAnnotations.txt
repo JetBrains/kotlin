@@ -29,6 +29,7 @@ KtPropertyGetterSymbol:
       ]
       ownTypeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+    getContainingFileSymbol: KtFileSymbol(getterWithReceiverAndAnnotations.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
@@ -39,5 +40,7 @@ KtPropertyGetterSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(getterWithReceiverAndAnnotations.kt)
+  getContainingJvmClassName: GetterWithReceiverAndAnnotationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

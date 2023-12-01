@@ -15,6 +15,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+    getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /Abc.firstProperty
@@ -44,6 +46,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: Abc
+    getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+    getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -76,6 +80,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -100,6 +106,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Double
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+    getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /Abc.secondProperty
@@ -129,6 +137,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: Abc
+    getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+    getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -161,6 +171,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -185,6 +197,8 @@ KtKotlinPropertySymbol:
       type: kotlin/String
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+    getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /Abc.thirdProperty
@@ -214,6 +228,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: Abc
+    getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+    getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -246,6 +262,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -286,6 +304,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -306,6 +326,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Long
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+    getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /Abc.bodyProperty
@@ -330,6 +352,7 @@ KtKotlinPropertySymbol:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
+      getContainingFileSymbol: KtFileSymbol(dataClass.kt)
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KtUsualClassType:
@@ -340,6 +363,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+    getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
@@ -367,6 +392,7 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
+    getContainingFileSymbol: KtFileSymbol(dataClass.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
@@ -381,6 +407,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -421,6 +449,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -457,6 +487,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -493,6 +525,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -544,6 +578,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+      getContainingJvmClassName: Abc
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -566,6 +602,8 @@ KtFunctionSymbol:
         type: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+      getContainingJvmClassName: Abc
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -588,6 +626,8 @@ KtFunctionSymbol:
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+      getContainingJvmClassName: Abc
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -596,6 +636,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -647,6 +689,8 @@ KtFunctionSymbol:
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+      getContainingJvmClassName: Abc
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -655,6 +699,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -691,6 +737,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -727,6 +775,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Abc
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -770,6 +820,8 @@ KtConstructorSymbol:
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+          getContainingJvmClassName: Abc
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /Abc.firstProperty
@@ -799,6 +851,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: Abc
+          getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+          getContainingJvmClassName: Abc
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -831,6 +885,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: Abc
+        getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+        getContainingJvmClassName: Abc
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -852,6 +908,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+      getContainingJvmClassName: Abc
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -875,6 +933,8 @@ KtConstructorSymbol:
             type: kotlin/Double
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+          getContainingJvmClassName: Abc
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /Abc.secondProperty
@@ -904,6 +964,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: Abc
+          getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+          getContainingJvmClassName: Abc
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -936,6 +998,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: Abc
+        getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+        getContainingJvmClassName: Abc
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -957,6 +1021,8 @@ KtConstructorSymbol:
         type: kotlin/Double
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+      getContainingJvmClassName: Abc
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -980,6 +1046,8 @@ KtConstructorSymbol:
             type: kotlin/String
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+          getContainingJvmClassName: Abc
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /Abc.thirdProperty
@@ -1009,6 +1077,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: Abc
+          getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+          getContainingJvmClassName: Abc
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -1041,6 +1111,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: Abc
+        getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+        getContainingJvmClassName: Abc
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -1062,9 +1134,13 @@ KtConstructorSymbol:
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+      getContainingJvmClassName: Abc
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(dataClass.kt)
+  getContainingJvmClassName: Abc
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -14,6 +14,8 @@ KtEnumEntrySymbol:
     type: test/E
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingJvmClassName: test/E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -33,6 +35,8 @@ KtEnumEntrySymbol:
     type: test/E
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingJvmClassName: test/E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -53,6 +57,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int?
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+    getContainingJvmClassName: test/E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: test/E.foo
@@ -82,6 +88,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: test/E
+    getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+    getContainingJvmClassName: test/E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
@@ -114,6 +122,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
+  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingJvmClassName: test/E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -154,6 +164,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
+  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingJvmClassName: test/E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -191,6 +203,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingJvmClassName: test/E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -242,10 +256,14 @@ KtFunctionSymbol:
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+      getContainingJvmClassName: test/E
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingJvmClassName: test/E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -280,6 +298,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+    getContainingJvmClassName: test/E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
@@ -313,6 +333,8 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingJvmClassName: test/E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -340,5 +362,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Private
+  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingJvmClassName: test/E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

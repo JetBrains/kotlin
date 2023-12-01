@@ -25,6 +25,7 @@ KtNamedClassOrObjectSymbol:
     KtTypeParameterSymbol(T)
   ]
   visibility: Public
+  getContainingFileSymbol: null
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   annotationApplicableTargets: null
   deprecationStatus: null

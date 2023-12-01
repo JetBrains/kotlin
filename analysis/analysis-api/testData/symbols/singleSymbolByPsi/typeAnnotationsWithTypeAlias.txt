@@ -34,5 +34,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotationsWithTypeAlias.kt)
+  getContainingJvmClassName: TypeAnnotationsWithTypeAliasKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

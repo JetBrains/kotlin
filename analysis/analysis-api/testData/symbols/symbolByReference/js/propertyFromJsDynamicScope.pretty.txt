@@ -1,1 +1,1 @@
-var dynamicPropertyAcess: dynamic
+var dynamicPropertyAccess: dynamic

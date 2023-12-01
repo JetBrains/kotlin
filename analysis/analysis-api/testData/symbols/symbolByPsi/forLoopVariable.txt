@@ -13,6 +13,8 @@ KtLocalVariableSymbol:
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(forLoopVariable.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -45,5 +47,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(forLoopVariable.kt)
+  getContainingJvmClassName: ForLoopVariableKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -28,6 +28,8 @@ KtSyntheticJavaPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: Derived
+    getContainingFileSymbol: null
+    getContainingJvmClassName: Derived
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -82,6 +84,8 @@ KtSyntheticJavaPropertySymbol:
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(Derived.kt)
+      getContainingJvmClassName: Derived
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
@@ -112,6 +116,8 @@ KtSyntheticJavaPropertySymbol:
           type: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
+        getContainingFileSymbol: KtFileSymbol(Derived.kt)
+        getContainingJvmClassName: Derived
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
     ]
@@ -120,6 +126,8 @@ KtSyntheticJavaPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: Derived
+    getContainingFileSymbol: null
+    getContainingJvmClassName: Derived
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: CLASS_MEMBER
@@ -129,6 +137,8 @@ KtSyntheticJavaPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Derived
+  getContainingFileSymbol: null
+  getContainingJvmClassName: Derived
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

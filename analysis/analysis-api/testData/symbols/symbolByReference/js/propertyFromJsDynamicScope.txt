@@ -19,7 +19,7 @@ KtKotlinPropertySymbol:
   isStatic: false
   isVal: false
   modality: FINAL
-  name: dynamicPropertyAcess
+  name: dynamicPropertyAccess
   origin: JS_DYNAMIC
   receiverParameter: null
   returnType: KtDynamicType:
@@ -32,9 +32,11 @@ KtKotlinPropertySymbol:
   getDispatchReceiver(): KtDynamicType:
     annotationsList: []
     type: dynamic
+  getContainingFileSymbol: null
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getDynamicPropertyAcess
-  javaSetterName: setDynamicPropertyAcess
+  javaGetterName: getDynamicPropertyAccess
+  javaSetterName: setDynamicPropertyAccess
   setterDeprecationStatus: null

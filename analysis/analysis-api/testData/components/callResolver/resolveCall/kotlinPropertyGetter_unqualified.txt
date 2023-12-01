@@ -19,5 +19,5 @@ KtSuccessCallInfo:
         symbol = val i: kotlin.Int
         callableIdIfNonLocal = /A.i
     simpleAccess = Read:
-      
+
     typeArgumentsMapping = {}

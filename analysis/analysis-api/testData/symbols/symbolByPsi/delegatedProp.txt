@@ -15,6 +15,8 @@ KtKotlinPropertySymbol:
       type: kotlin/String
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(delegatedProp.kt)
+    getContainingJvmClassName: DelegatedPropKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /delegatedProp
@@ -40,6 +42,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(delegatedProp.kt)
+    getContainingJvmClassName: DelegatedPropKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
@@ -96,6 +100,8 @@ KtKotlinPropertySymbol:
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(delegatedProp.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
@@ -126,15 +132,21 @@ KtKotlinPropertySymbol:
           type: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
+        getContainingFileSymbol: KtFileSymbol(delegatedProp.kt)
+        getContainingJvmClassName: null
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
     ]
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(delegatedProp.kt)
+    getContainingJvmClassName: DelegatedPropKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(delegatedProp.kt)
+  getContainingJvmClassName: DelegatedPropKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

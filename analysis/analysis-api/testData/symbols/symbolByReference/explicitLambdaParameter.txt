@@ -18,5 +18,7 @@ KtValueParameterSymbol:
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(explicitLambdaParameter.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -46,9 +46,13 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(vararg.kt)
+      getContainingJvmClassName: VarargKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(vararg.kt)
+  getContainingJvmClassName: VarargKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

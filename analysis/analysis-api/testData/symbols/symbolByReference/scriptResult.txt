@@ -24,6 +24,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(scriptResult.kts)
+    getContainingJvmClassName: null
     getContainingModule: KtScriptModule "Script scriptResult.kts"
     deprecationStatus: null
   hasBackingField: true
@@ -52,6 +54,8 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(scriptResult.kts)
+  getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script scriptResult.kts"
   deprecationStatus: null
   getterDeprecationStatus: null

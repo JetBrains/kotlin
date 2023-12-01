@@ -18,5 +18,7 @@ KtValueParameterSymbol:
     type: X
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(destructuringDeclarationParameterInLambda.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -23,6 +23,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -52,6 +53,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -92,6 +94,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
+  getContainingJvmClassName: SimilarSignaturesKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -131,6 +135,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
+  getContainingJvmClassName: SimilarSignaturesKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -176,6 +182,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
+  getContainingJvmClassName: SimilarSignaturesKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -221,5 +229,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
+  getContainingJvmClassName: SimilarSignaturesKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -21,6 +21,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+    getContainingJvmClassName: PropertyWithAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /prop
@@ -49,6 +51,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+    getContainingJvmClassName: PropertyWithAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -111,6 +115,8 @@ KtKotlinPropertySymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
@@ -144,15 +150,21 @@ KtKotlinPropertySymbol:
           type: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
+        getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+        getContainingJvmClassName: null
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
     ]
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+    getContainingJvmClassName: PropertyWithAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+  getContainingJvmClassName: PropertyWithAnnotationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

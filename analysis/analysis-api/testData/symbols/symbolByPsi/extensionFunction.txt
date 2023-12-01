@@ -26,6 +26,7 @@ KtFunctionSymbol:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/String
+    getContainingFileSymbol: KtFileSymbol(extensionFunction.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
@@ -36,5 +37,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(extensionFunction.kt)
+  getContainingJvmClassName: ExtensionFunctionKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

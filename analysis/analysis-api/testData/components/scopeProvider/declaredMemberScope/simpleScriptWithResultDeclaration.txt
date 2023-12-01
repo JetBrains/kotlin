@@ -51,10 +51,14 @@ KtFunctionSymbol:
         type: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(simpleScriptWithResultDeclaration.kts)
+      getContainingJvmClassName: null
       getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(simpleScriptWithResultDeclaration.kts)
+  getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null
 
@@ -84,6 +88,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(simpleScriptWithResultDeclaration.kts)
+    getContainingJvmClassName: null
     getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
     deprecationStatus: null
   hasBackingField: true
@@ -112,6 +118,8 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(simpleScriptWithResultDeclaration.kts)
+  getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null
   getterDeprecationStatus: null

@@ -39,6 +39,8 @@ KtFunctionSymbol:
                         type: kotlin/Any?
                       symbolKind: LOCAL
                       typeParameters: []
+                      getContainingFileSymbol: KtFileSymbol(booleanExprContract.kt)
+                      getContainingJvmClassName: BooleanExprContractKt
                       getContainingModule: KtSourceModule "Sources of main"
                       deprecationStatus: null
               isNegated: false
@@ -67,6 +69,8 @@ KtFunctionSymbol:
                         type: kotlin/Any?
                       symbolKind: LOCAL
                       typeParameters: []
+                      getContainingFileSymbol: KtFileSymbol(booleanExprContract.kt)
+                      getContainingJvmClassName: BooleanExprContractKt
                       getContainingModule: KtSourceModule "Sources of main"
                       deprecationStatus: null
               isNegated: true
@@ -115,6 +119,8 @@ KtFunctionSymbol:
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(booleanExprContract.kt)
+      getContainingJvmClassName: BooleanExprContractKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -137,9 +143,13 @@ KtFunctionSymbol:
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(booleanExprContract.kt)
+      getContainingJvmClassName: BooleanExprContractKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(booleanExprContract.kt)
+  getContainingJvmClassName: BooleanExprContractKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -20,6 +20,7 @@ KtFunctionSymbol:
                 annotationsList: []
                 ownTypeArguments: []
                 type: kotlin/Boolean
+              getContainingFileSymbol: KtFileSymbol(referenceBooleanReceiverInContract.kt)
               getContainingModule: KtSourceModule "Sources of main"
               deprecationStatus: null
   ]
@@ -46,6 +47,7 @@ KtFunctionSymbol:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Boolean
+    getContainingFileSymbol: KtFileSymbol(referenceBooleanReceiverInContract.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
@@ -56,5 +58,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(referenceBooleanReceiverInContract.kt)
+  getContainingJvmClassName: ReferenceBooleanReceiverInContractKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

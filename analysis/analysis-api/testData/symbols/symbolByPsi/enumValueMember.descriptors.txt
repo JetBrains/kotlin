@@ -38,6 +38,8 @@ KtConstructorSymbol:
             type: kotlin/String
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+          getContainingJvmClassName: Style
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /Style.value
@@ -67,6 +69,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: Style
+          getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+          getContainingJvmClassName: Style
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -99,6 +103,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: Style
+        getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+        getContainingJvmClassName: Style
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -120,10 +126,14 @@ KtConstructorSymbol:
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+      getContainingJvmClassName: Style
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Private
+  getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+  getContainingJvmClassName: Style
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -144,6 +154,8 @@ KtKotlinPropertySymbol:
       type: kotlin/String
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+    getContainingJvmClassName: null
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: null
@@ -173,6 +185,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: Style.SHEET
+    getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+    getContainingJvmClassName: null
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
@@ -205,6 +219,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Style.SHEET
+  getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -228,6 +244,8 @@ KtEnumEntrySymbol:
     type: Style
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+  getContainingJvmClassName: Style
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -248,6 +266,8 @@ KtKotlinPropertySymbol:
       type: kotlin/String
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+    getContainingJvmClassName: Style
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /Style.exitAnimation
@@ -277,6 +297,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: Style
+    getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+    getContainingJvmClassName: Style
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
@@ -309,6 +331,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: Style
+  getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
+  getContainingJvmClassName: Style
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -346,6 +370,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

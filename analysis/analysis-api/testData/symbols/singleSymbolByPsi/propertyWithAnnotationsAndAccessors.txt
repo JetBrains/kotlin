@@ -21,6 +21,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(propertyWithAnnotationsAndAccessors.kt)
+    getContainingJvmClassName: PropertyWithAnnotationsAndAccessorsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /x
@@ -51,6 +53,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(propertyWithAnnotationsAndAccessors.kt)
+    getContainingJvmClassName: PropertyWithAnnotationsAndAccessorsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -117,6 +121,8 @@ KtKotlinPropertySymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(propertyWithAnnotationsAndAccessors.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
@@ -152,15 +158,21 @@ KtKotlinPropertySymbol:
           type: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
+        getContainingFileSymbol: KtFileSymbol(propertyWithAnnotationsAndAccessors.kt)
+        getContainingJvmClassName: null
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
     ]
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(propertyWithAnnotationsAndAccessors.kt)
+    getContainingJvmClassName: PropertyWithAnnotationsAndAccessorsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(propertyWithAnnotationsAndAccessors.kt)
+  getContainingJvmClassName: PropertyWithAnnotationsAndAccessorsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

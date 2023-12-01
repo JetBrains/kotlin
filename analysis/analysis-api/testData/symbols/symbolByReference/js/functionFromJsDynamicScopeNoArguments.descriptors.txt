@@ -1,0 +1,59 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: true
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: dynamicFunctionCall
+  origin: JS_DYNAMIC
+  receiverParameter: null
+  returnType: KtDynamicType:
+    annotationsList: []
+    type: dynamic
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: true
+      name: args
+      origin: JS_DYNAMIC
+      receiverParameter: null
+      returnType: KtDynamicType:
+        annotationsList: []
+        type: dynamic
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: null
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getDispatchReceiver(): KtDynamicType:
+    annotationsList: []
+    type: dynamic
+  getContainingFileSymbol: KtFileSymbol(functionFromJsDynamicScopeNoArguments.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
