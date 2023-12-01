@@ -80,10 +80,8 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     private val irBuiltIns: IrBuiltIns,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     private val fakeOverrideDeclarationTable: DeclarationTable,
-    friendModules: Map<String, Collection<String>>,
     unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy,
 ) : FakeOverrideBuilderStrategy(
-    friendModules = friendModules,
     unimplementedOverridesStrategy = unimplementedOverridesStrategy
 ) {
 
@@ -246,7 +244,6 @@ class IrLinkerFakeOverrideProvider(
     symbolTable: SymbolTable,
     mangler: KotlinMangler.IrMangler,
     typeSystem: IrTypeSystemContext,
-    friendModules: Map<String, Collection<String>>,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: DeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
@@ -262,7 +259,6 @@ class IrLinkerFakeOverrideProvider(
             typeSystem.irBuiltIns,
             partialLinkageSupport,
             fakeOverrideDeclarationTable,
-            friendModules,
             if (partialLinkageSupport.isEnabled)
                 ImplementAsErrorThrowingStubs(partialLinkageSupport)
             else

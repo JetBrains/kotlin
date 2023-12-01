@@ -20,11 +20,9 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 
 
 internal class Fir2IrFakeOverrideStrategy(
-    friendModules: Map<String, List<String>>,
     val symbolTable: SymbolTable,
     val mangler: KotlinMangler.IrMangler
 ) : FakeOverrideBuilderStrategy(
-    friendModules = friendModules,
     unimplementedOverridesStrategy = ProcessAsFakeOverrides
 ) {
     private val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)

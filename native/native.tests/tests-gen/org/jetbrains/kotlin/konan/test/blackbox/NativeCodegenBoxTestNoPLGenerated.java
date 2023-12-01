@@ -27342,6 +27342,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                     runTest("compiler/testData/codegen/box/multiplatform/k2/internalOverride.kt");
                 }
 
+                @Test
+                @TestMetadata("internalOverride2.kt")
+                public void testInternalOverride2() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/internalOverride2.kt");
+                }
+
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
                 @TestDataPath("$PROJECT_ROOT")

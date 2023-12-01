@@ -268,7 +268,6 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
             symbolTable = symbolTable,
             mangler = KonanManglerIr,
             typeSystem = IrTypeSystemContextImpl(builtIns),
-            friendModules = emptyMap(),
             partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
         )
         override val translationPluginContext: TranslationPluginContext

@@ -126,22 +126,12 @@ internal fun PsiToIrContext.psiToIr(
                 get() = generatorContext.irBuiltIns
         }
 
-        val friendModules = config.resolvedLibraries.getFullList()
-                .filter { it.libraryFile in config.friendModuleFiles }
-                .map { it.uniqueName }
-
-        val friendModulesMap = (
-                listOf(moduleDescriptor.name.asStringStripSpecialMarkers()) +
-                        config.resolve.includedLibraries.map { it.uniqueName }
-                ).associateWith { friendModules }
-
         KonanIrLinker(
                 currentModule = moduleDescriptor,
                 translationPluginContext = translationContext,
                 messageLogger = messageLogger,
                 builtIns = generatorContext.irBuiltIns,
                 symbolTable = symbolTable,
-                friendModules = friendModulesMap,
                 forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,
                 stubGenerator = stubGenerator,
                 cenumsProvider = irProviderForCEnumsAndCStructs,

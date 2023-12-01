@@ -1279,7 +1279,6 @@ val IrFunction.allParametersCount: Int
     get() = if (this is IrConstructor) explicitParametersCount + 1 else explicitParametersCount
 
 private object BindToNewEmptySymbols : FakeOverrideBuilderStrategy(
-    friendModules = emptyMap(), // TODO: this is probably not correct. Should be fixed by KT-61384. But it's not important for current usages
     unimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 ) {
     override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {

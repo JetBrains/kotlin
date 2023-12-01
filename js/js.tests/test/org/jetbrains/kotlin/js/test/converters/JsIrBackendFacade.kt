@@ -215,14 +215,10 @@ class JsIrBackendFacade(
 
         val moduleDescriptor = testServices.moduleDescriptorProvider.getModuleDescriptor(module)
         val mainModuleLib = testServices.libraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
-        val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
-            .map { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
-        val friendModules = mapOf(mainModuleLib.uniqueName to friendLibraries.map { it.uniqueName })
 
         return getIrModuleInfoForKlib(
             moduleDescriptor,
             sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)) + mainModuleLib,
-            friendModules,
             filesToLoad,
             configuration,
             symbolTable,

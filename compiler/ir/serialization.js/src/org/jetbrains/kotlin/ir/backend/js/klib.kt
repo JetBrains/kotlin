@@ -213,8 +213,6 @@ fun loadIr(
         is MainModule.SourceFiles -> {
             assert(filesToLoad == null)
             val psi2IrContext = preparePsi2Ir(depsDescriptors, errorPolicy, symbolTable, partialLinkageEnabled)
-            val friendModules =
-                mapOf(psi2IrContext.moduleDescriptor.name.asString() to depsDescriptors.friendDependencies.map { it.uniqueName })
 
             return getIrModuleInfoForSourceFiles(
                 psi2IrContext,
@@ -222,7 +220,6 @@ fun loadIr(
                 configuration,
                 mainModule.files,
                 sortDependencies(depsDescriptors.moduleDependencies),
-                friendModules,
                 symbolTable,
                 messageLogger,
                 loadFunctionInterfacesIntoStdlib,
@@ -235,12 +232,10 @@ fun loadIr(
                 ?: error("No module with ${mainModule.libPath} found")
             val moduleDescriptor = depsDescriptors.getModuleDescriptor(mainModuleLib)
             val sortedDependencies = sortDependencies(depsDescriptors.moduleDependencies)
-            val friendModules = mapOf(mainModuleLib.uniqueName to depsDescriptors.friendDependencies.map { it.uniqueName })
 
             return getIrModuleInfoForKlib(
                 moduleDescriptor,
                 sortedDependencies,
-                friendModules,
                 filesToLoad,
                 configuration,
                 symbolTable,
@@ -255,7 +250,6 @@ fun loadIr(
 fun getIrModuleInfoForKlib(
     moduleDescriptor: ModuleDescriptor,
     sortedDependencies: Collection<KotlinLibrary>,
-    friendModules: Map<String, List<String>>,
     filesToLoad: Set<String>?,
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
@@ -280,8 +274,7 @@ fun getIrModuleInfoForKlib(
             messageLogger = messageLogger
         ),
         translationPluginContext = null,
-        icData = null,
-        friendModules = friendModules
+        icData = null
     )
 
     val deserializedModuleFragmentsToLib = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, filesToLoad, mapping)
@@ -319,7 +312,6 @@ fun getIrModuleInfoForSourceFiles(
     configuration: CompilerConfiguration,
     files: List<KtFile>,
     allSortedDependencies: Collection<KotlinLibrary>,
-    friendModules: Map<String, List<String>>,
     symbolTable: SymbolTable,
     messageLogger: IrMessageLogger,
     loadFunctionInterfacesIntoStdlib: Boolean,
@@ -345,7 +337,6 @@ fun getIrModuleInfoForSourceFiles(
         ),
         translationPluginContext = feContext,
         icData = null,
-        friendModules = friendModules,
     )
     val deserializedModuleFragmentsToLib = deserializeDependencies(allSortedDependencies, irLinker, null, null, mapping)
     val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()

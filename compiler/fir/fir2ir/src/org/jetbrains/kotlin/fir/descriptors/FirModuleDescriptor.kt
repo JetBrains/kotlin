@@ -36,10 +36,21 @@ class FirModuleDescriptor private constructor(
 
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
         if (targetModule !is FirModuleDescriptor) return false
-        return when (targetModule.moduleData) {
-            this.moduleData,
-            in moduleData.friendDependencies,
-            in moduleData.dependsOnDependencies -> true
+        return when {
+            targetModule.moduleData == this.moduleData -> true
+            targetModule.moduleData in moduleData.friendDependencies -> true
+            targetModule.moduleData in moduleData.dependsOnDependencies -> true
+            /**
+             * This condition allows common module to see internal methods of platform module.
+             *
+             * Although this is incorrect during resolution, as common module can't see the platform at all,
+             * this is not harmful, as resolution doesn't work with ModuleDescriptors at all.
+             *
+             * On the other hand, during an actualization process, which uses module descriptor this is more correct,
+             * as you can call or override internal member of a platform soruce set via actualization of something in
+             * a common module to it.
+             */
+            moduleData in targetModule.moduleData.dependsOnDependencies -> true
             else -> false
         }
     }

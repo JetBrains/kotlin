@@ -678,13 +678,6 @@ class Fir2IrConverter(
             return (evaluated as? IrProperty)?.tryToGetConst()?.asString()
         }
 
-        // TODO: drop this function in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384
-        private fun friendModulesMap(session: FirSession) = mapOf(
-            session.moduleData.name.asStringStripSpecialMarkers() to session.moduleData.friendDependencies.map {
-                it.name.asStringStripSpecialMarkers()
-            }
-        )
-
         fun createIrModuleFragment(
             session: FirSession,
             scopeSession: ScopeSession,
@@ -707,7 +700,7 @@ class Fir2IrConverter(
                 { irBuiltins ->
                     IrFakeOverrideBuilder(
                         typeContextProvider(irBuiltins),
-                        Fir2IrFakeOverrideStrategy(friendModulesMap(session), commonMemberStorage.symbolTable, irMangler),
+                        Fir2IrFakeOverrideStrategy(commonMemberStorage.symbolTable, irMangler),
                         fir2IrExtensions.externalOverridabilityConditions
                     )
                 },

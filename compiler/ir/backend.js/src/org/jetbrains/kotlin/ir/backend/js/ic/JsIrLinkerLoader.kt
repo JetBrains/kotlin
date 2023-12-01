@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
@@ -148,8 +147,7 @@ internal class JsIrLinkerLoader(
                 builtIns = irBuiltIns,
                 messageLogger = messageLogger
             ),
-            translationPluginContext = null,
-            friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
+            translationPluginContext = null
         )
         return LinkerContext(symbolTable, typeTranslator, irBuiltIns, linker)
     }
