@@ -105,11 +105,13 @@ abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFi
     protected fun classLoader(
         sources: Map<String, String>,
         additionalPaths: List<File>,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
+        forcedFirSetting: Boolean? = null
     ): GeneratedClassLoader {
         val loader = createClassLoader(
             sources.map { (fileName, source) -> SourceFile(fileName, source) },
-            additionalPaths = additionalPaths
+            additionalPaths = additionalPaths,
+            forcedFirSetting = forcedFirSetting
         )
         if (dumpClasses) dumpClasses(loader)
         return loader

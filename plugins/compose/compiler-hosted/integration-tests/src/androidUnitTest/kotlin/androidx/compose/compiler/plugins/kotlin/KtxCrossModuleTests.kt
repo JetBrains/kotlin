@@ -1210,16 +1210,58 @@ class KtxCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    // Ensure that compose code compiled with K1 can be read by K2 and the other way around.
+    // We do that by forcing the useFir flag to be to opposite of the global flag for the
+    // library module.
+    //
+    // Regression test case for b/312268756.
+    @Test
+    fun testCompatibilityK1andK2() {
+        compile(
+            flipLibraryFirSetting = true,
+            modules = mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                    package base
+
+                    import androidx.compose.runtime.Composable
+
+                    @Composable
+                    fun foo(body: @Composable () -> Unit) {
+                      body()
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                    package main
+
+                    import androidx.compose.runtime.Composable
+                    import base.foo
+
+                    @Composable
+                    fun bar() {
+                      foo() {
+                      }
+                    }
+                    """
+                )
+            )
+        )
+    }
+
     private fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,
+        flipLibraryFirSetting: Boolean = false,
         validate: ((String) -> Unit)? = null
     ): List<OutputFile> {
         val libraryClasses = modules.filter { it.key != "Main" }.flatMap {
             classLoader(
                 it.value,
                 listOf(classesDirectory.root),
-                dumpClasses
+                dumpClasses,
+                if (flipLibraryFirSetting) !useFir else useFir
             ).allGeneratedFiles.also { outputFiles ->
                 // Write the files to the class directory so they can be used by the next module
                 // and the application

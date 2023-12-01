@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -110,15 +112,28 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
 
     private fun createCompilerFacade(
         additionalPaths: List<File> = listOf(),
+        forcedFirSetting: Boolean? = null,
         registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null
     ) = KotlinCompilerFacade.create(
         testRootDisposable,
         updateConfiguration = {
+            val enableFir = if (forcedFirSetting != null) forcedFirSetting else useFir
             val languageVersion =
-                if (useFir) LanguageVersion.KOTLIN_2_0 else LanguageVersion.KOTLIN_1_9
+                if (enableFir) {
+                    LanguageVersion.KOTLIN_2_0
+                } else {
+                    LanguageVersion.KOTLIN_1_9
+                }
+            // For tests, allow unstable artifacts compiled with a pre-release compiler
+            // as input to stable compilations.
+            val analysisFlags: Map<AnalysisFlag<*>, Any?> = mapOf(
+                AnalysisFlags.allowUnstableDependencies to true,
+                AnalysisFlags.skipPrereleaseCheck to true
+            )
             languageVersionSettings = LanguageVersionSettingsImpl(
                 languageVersion,
                 ApiVersion.createByLanguageVersion(languageVersion),
+                analysisFlags
             )
             updateConfiguration()
             addJvmClasspathRoots(additionalPaths)
@@ -150,12 +165,14 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
         additionalPaths: List<File> = listOf(),
         registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null
     ): IrModuleFragment =
-        createCompilerFacade(additionalPaths, registerExtensions).compileToIr(sourceFiles)
+        createCompilerFacade(additionalPaths, registerExtensions = registerExtensions)
+            .compileToIr(sourceFiles)
 
     protected fun createClassLoader(
         platformSourceFiles: List<SourceFile>,
         commonSourceFiles: List<SourceFile> = listOf(),
-        additionalPaths: List<File> = listOf()
+        additionalPaths: List<File> = listOf(),
+        forcedFirSetting: Boolean? = null
     ): GeneratedClassLoader {
         val classLoader = URLClassLoader(
             (additionalPaths + defaultClassPath).map {
@@ -164,7 +181,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
             null
         )
         return GeneratedClassLoader(
-            createCompilerFacade(additionalPaths)
+            createCompilerFacade(additionalPaths, forcedFirSetting)
                 .compile(platformSourceFiles, commonSourceFiles).factory,
             classLoader
         )
