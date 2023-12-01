@@ -13,7 +13,7 @@ fun main() {
             override fun foo(): MutableList<String> = <!RETURN_TYPE_MISMATCH!>this@buildList<!>
         }
     }
-    <!NEW_INFERENCE_ERROR!>buildList {
+    <!TYPE_MISMATCH!>buildList {
         add(3)
         val x: String = <!INITIALIZER_TYPE_MISMATCH!>get(0)<!>
     }<!>
@@ -26,7 +26,7 @@ fun main() {
         add(y)
         val x: MutableList<String> = <!INITIALIZER_TYPE_MISMATCH!>this@buildList<!>
     }
-    <!NEW_INFERENCE_ERROR!>buildList {
+    <!TYPE_MISMATCH!>buildList {
         add("")
         val x: StringBuilder = <!INITIALIZER_TYPE_MISMATCH!>get(0)<!>
     }<!>

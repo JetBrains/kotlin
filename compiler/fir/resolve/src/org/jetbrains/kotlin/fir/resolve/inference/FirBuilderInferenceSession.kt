@@ -174,11 +174,6 @@ class FirBuilderInferenceSession(
             if (hasConstraints) effectivelyEmptyCommonSystem = false
         }
 
-        // TODO: add diagnostics holder
-//        for (diagnostic in diagnostics) {
-//            commonSystem.addError(diagnostic)
-//        }
-
         return commonSystem to effectivelyEmptyCommonSystem
     }
 
@@ -252,11 +247,9 @@ class FirBuilderInferenceSession(
             receiver.updateTypeInBuilderInference(substitutor.substituteOrSelf(receiver.type))
         }
 
-        // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
         val completionResultsWriter = components.callCompleter.createCompletionResultsWriter(substitutor)
         for ((call, _) in partiallyResolvedCalls) {
             call.transformSingle(completionResultsWriter, null)
-            // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
         }
     }
 
@@ -307,12 +300,15 @@ class FirBuilderInferenceSession(
         substitutor: TypeSubstitutorMarker,
         fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     ): InitialConstraint {
-        val substituted = substitute(substitutor)
+        // TODO: invalid naming. It doesn't make sense case of equality constraints
+        val substitutedLowerType = substitutor.safeSubstitute(resolutionContext.typeContext, this.a)
+        val substitutedUpperType = substitutor.safeSubstitute(resolutionContext.typeContext, this.b)
+
         val a = a
         // In situation when some type variable _T is fixed to Stub(_T)?,
         // we are not allowed just to substitute Stub(_T) with T because nullabilities are different here!
         // To compensate this, we have to substitute Stub(_T) <: SomeType constraint with T <: SomeType? adding nullability to upper type
-        if (a is ConeStubTypeForChainInference && substituted.a !is ConeStubTypeForChainInference) {
+        if (a is ConeStubTypeForChainInference && substitutedLowerType !is ConeStubTypeForChainInference) {
             val constructor = a.constructor
             val fixedTypeVariableType = fixedTypeVariables[constructor.variable.typeConstructor]
             if (fixedTypeVariableType is ConeStubTypeForChainInference &&
@@ -320,14 +316,19 @@ class FirBuilderInferenceSession(
                 fixedTypeVariableType.isMarkedNullable
             ) {
                 return InitialConstraint(
-                    substituted.a,
-                    (substituted.b as ConeKotlinType).withNullability(ConeNullability.NULLABLE, resolutionContext.typeContext),
-                    substituted.constraintKind,
-                    substituted.position
+                    substitutedLowerType,
+                    (substitutedUpperType as ConeKotlinType).withNullability(ConeNullability.NULLABLE, resolutionContext.typeContext),
+                    constraintKind,
+                    position
                 )
             }
         }
-        return substituted
+        return InitialConstraint(
+            substitutedLowerType,
+            substitutedUpperType,
+            constraintKind,
+            position
+        )
     }
 }
 
