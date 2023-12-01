@@ -98,11 +98,11 @@ class BodyResolveContext(
     var insideClassHeader: Boolean = false
 
     @OptIn(PrivateForInline::class)
-    inline fun insideClassHeader(action: () -> Unit) {
+    inline fun withClassHeader(clazz: FirRegularClass, action: () -> Unit) {
         val old = insideClassHeader
         insideClassHeader = true
         try {
-            action()
+            withContainer(clazz, action)
         } finally {
             insideClassHeader = old
         }

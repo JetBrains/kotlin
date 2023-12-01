@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -185,7 +184,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass {
-        context.insideClassHeader {
+        context.withClassHeader(regularClass) {
             regularClass.transformAnnotations(this, ResolutionMode.ContextIndependent)
             regularClass.transformTypeParameters(this, ResolutionMode.ContextIndependent)
             regularClass.transformSuperTypeRefs(this, ResolutionMode.ContextIndependent)

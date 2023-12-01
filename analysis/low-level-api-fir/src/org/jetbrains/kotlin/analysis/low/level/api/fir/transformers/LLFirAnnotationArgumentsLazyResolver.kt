@@ -88,7 +88,7 @@ private class LLFirAnnotationArgumentsTargetResolver(
         when {
             target is FirRegularClass -> {
                 val declarationTransformer = transformer.declarationsTransformer
-                declarationTransformer.context.insideClassHeader {
+                declarationTransformer.context.withClassHeader(target) {
                     target.transformAnnotations(declarationTransformer, ResolutionMode.ContextIndependent)
                     target.transformTypeParameters(declarationTransformer, ResolutionMode.ContextIndependent)
                     target.transformSuperTypeRefs(declarationTransformer, ResolutionMode.ContextIndependent)
