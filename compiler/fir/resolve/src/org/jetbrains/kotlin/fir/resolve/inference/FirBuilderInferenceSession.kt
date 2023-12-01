@@ -156,6 +156,9 @@ class FirBuilderInferenceSession(
     }
 
     private fun buildCommonSystem(initialStorage: ConstraintStorage): Pair<NewConstraintSystemImpl, Boolean> {
+        // TODO(KT-64034): Missing handling of parent builder inference sessions
+        //  - See [org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession.initializeCommonSystem]
+
         val commonSystem = components.session.inferenceComponents.createConstraintSystem()
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
@@ -278,8 +281,10 @@ class FirBuilderInferenceSession(
     ): Boolean {
         val substitutedConstraintWith =
             initialConstraint.substitute(callSubstitutor).substitute(nonFixedToVariablesSubstitutor, fixedTypeVariables)
-        val lower = substitutedConstraintWith.a // TODO: SUB
-        val upper = substitutedConstraintWith.b // TODO: SUB
+
+        // TODO(KT-64031): Invalid naming, it doesn't make sense in case of equality constraints
+        val lower = substitutedConstraintWith.a
+        val upper = substitutedConstraintWith.b
 
         if (commonSystem.isProperType(lower) && (lower == upper || commonSystem.isProperType(upper))) return false
 
@@ -299,10 +304,13 @@ class FirBuilderInferenceSession(
     }
 
     private fun InitialConstraint.substitute(substitutor: TypeSubstitutorMarker): InitialConstraint {
+        // TODO(KT-64031): Invalid naming, it doesn't make sense in case of equality constraints
         val lowerSubstituted = substitutor.safeSubstitute(resolutionContext.typeContext, this.a)
         val upperSubstituted = substitutor.safeSubstitute(resolutionContext.typeContext, this.b)
 
         if (lowerSubstituted == a && upperSubstituted == b) return this
+
+        // TODO(KT-64033): Missing check for ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound language feature
 
         return InitialConstraint(
             lowerSubstituted,
@@ -341,7 +349,7 @@ class FirBuilderInferenceSession(
             }
         }
 
-        // TODO: invalid naming. It doesn't make sense case of equality constraints
+        // TODO(KT-64031): invalid naming. It doesn't make sense in case of equality constraints
         val substitutedLowerType = substitutor.safeSubstitute(
             resolutionContext.typeContext,
             capTypesSubstitutor.safeSubstitute(resolutionContext.typeContext, this.a)
@@ -353,6 +361,11 @@ class FirBuilderInferenceSession(
 
 
         val a = a
+        // TODO(KT-64028): Remove this if.
+        //  The return in condition is actually unreachable in tests.
+        //  - Seems, that case was added due to usage of this function in delegate inference, that isn't present anymore
+        //  - While situation described below seems reasonable the condition seems highly ad-hoc
+        //  - Condition doesn't handle equality constraints correctly and assumes UPPER (KT-64031) direction of constraint only
         // In situation when some type variable _T is fixed to Stub(_T)?,
         // we are not allowed just to substitute Stub(_T) with T because nullabilities are different here!
         // To compensate this, we have to substitute Stub(_T) <: SomeType constraint with T <: SomeType? adding nullability to upper type
