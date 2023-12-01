@@ -8,7 +8,6 @@
 #include "CompilerConstants.hpp"
 #include "Exceptions.h"
 #include "KAssert.h"
-#include "MainQueueProcessor.hpp"
 #include "Memory.h"
 #include "Logging.hpp"
 #include "ObjCExportInit.h"
@@ -171,9 +170,6 @@ bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
     konan::consoleInit();
     logging::OnRuntimeInit();
     initGlobalMemory();
-    if (compiler::objcDisposeOnMain()) {
-        initializeMainQueueProcessor();
-    }
 #if KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_initialize();
 #endif

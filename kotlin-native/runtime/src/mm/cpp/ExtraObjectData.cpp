@@ -5,7 +5,6 @@
 
 #include "ExtraObjectData.hpp"
 
-#include "MainQueueProcessor.hpp"
 #include "PointerBits.h"
 #include "ThreadData.hpp"
 
@@ -53,13 +52,7 @@ void mm::ExtraObjectData::UnlinkFromBaseObject() noexcept {
 void mm::ExtraObjectData::ReleaseAssociatedObject() noexcept {
 #ifdef KONAN_OBJC_INTEROP
     if (void* associatedObject = associatedObject_) {
-        if (getFlag(FLAGS_RELEASE_ON_MAIN_QUEUE) && isMainQueueProcessorAvailable()) {
-            runOnMainQueue(associatedObject, [](void* obj) {
-                Kotlin_ObjCExport_releaseAssociatedObject(obj);
-            });
-        } else {
-            Kotlin_ObjCExport_releaseAssociatedObject(associatedObject);
-        }
+        Kotlin_ObjCExport_releaseAssociatedObject(associatedObject);
         associatedObject_ = nullptr;
     }
 #endif
