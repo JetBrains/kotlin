@@ -199,6 +199,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val valueParameterCheckers: Set<FirValueParameterChecker>
         get() = setOf(
             FirValueParameterDefaultValueTypeMismatchChecker,
+            FirMissingDependencyClassForParameterChecker,
         )
 
     override val enumEntryCheckers: Set<FirEnumEntryChecker>

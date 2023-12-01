@@ -456,7 +456,10 @@ abstract class AbstractTypeApproximator(
         val typeConstructor = type.typeConstructor()
         if (typeConstructor.parametersCount() != type.argumentsCount()) {
             return if (conf.errorType) {
-                createErrorType("Inconsistent type: $type (parameters.size = ${typeConstructor.parametersCount()}, arguments.size = ${type.argumentsCount()})")
+                createErrorType(
+                    "Inconsistent type: $type (parameters.size = ${typeConstructor.parametersCount()}, arguments.size = ${type.argumentsCount()})",
+                    type
+                )
             } else type.defaultResult(toSuper)
         }
 
@@ -490,7 +493,8 @@ abstract class AbstractTypeApproximator(
                     return if (conf.errorType) {
                         createErrorType(
                             "Inconsistent type: $type ($index parameter has declared variance: ${parameter.getVariance()}, " +
-                                    "but argument variance is ${argument.getVariance()})"
+                                    "but argument variance is ${argument.getVariance()})",
+                            type
                         )
                     } else type.defaultResult(toSuper)
                 }

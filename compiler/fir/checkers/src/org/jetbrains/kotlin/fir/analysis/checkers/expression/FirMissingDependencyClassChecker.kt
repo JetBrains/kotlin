@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 /**
  * @see org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker
  */
-object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker() {
+object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(), FirMissingDependencyClassProxy {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val calleeReference = expression.calleeReference
 
@@ -29,33 +30,21 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker() 
         if (calleeReference.isError() && calleeReference.diagnostic !is ConeDiagnosticWithSingleCandidate) return
 
         val missingTypes = mutableSetOf<ConeKotlinType>()
-        fun consider(type: ConeKotlinType) {
-            var hasError = false
-            var hasMissingClass = false
-            type.forEachClassLikeType {
-                when (it) {
-                    is ConeErrorType -> hasError = true
-                    else -> hasMissingClass = hasMissingClass || it.lookupTag.toSymbol(context.session) == null
-                }
-            }
-
-            if (hasMissingClass && !hasError) {
-                val reportedType = type.withNullability(ConeNullability.NOT_NULL, context.session.typeContext).withArguments(emptyArray())
-                missingTypes.add(reportedType)
-            }
-        }
 
         val symbol = calleeReference.toResolvedCallableSymbol() ?: return
-        consider(symbol.resolvedReturnTypeRef.coneType)
-        symbol.resolvedReceiverTypeRef?.coneType?.let(::consider)
-        (symbol as? FirFunctionSymbol<*>)?.valueParameterSymbols?.forEach { consider(it.resolvedReturnTypeRef.coneType) }
-
-        for (missingType in missingTypes) {
-            reporter.reportOn(expression.source, FirErrors.MISSING_DEPENDENCY_CLASS, missingType, context)
+        considerType(symbol.resolvedReturnTypeRef.coneType, missingTypes, context)
+        symbol.resolvedReceiverTypeRef?.coneType?.let {
+            considerType(it, missingTypes, context)
         }
+        (symbol as? FirFunctionSymbol<*>)?.valueParameterSymbols?.forEach {
+            considerType(it.resolvedReturnTypeRef.coneType, missingTypes, context)
+        }
+        reportMissingTypes(expression.source, missingTypes, context, reporter)
     }
+}
 
-    private fun ConeKotlinType.forEachClassLikeType(action: (ConeClassLikeType) -> Unit) {
+internal interface FirMissingDependencyClassProxy {
+    fun ConeKotlinType.forEachClassLikeType(action: (ConeClassLikeType) -> Unit) {
         when (this) {
             is ConeFlexibleType -> {
                 lowerBound.forEachClassLikeType(action)
@@ -66,6 +55,40 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker() 
             is ConeIntersectionType -> intersectedTypes.forEach { it.forEachClassLikeType(action) }
             is ConeClassLikeType -> action(this)
             else -> {} // Ignore all type parameters.
+        }
+    }
+
+    fun considerType(type: ConeKotlinType, missingTypes: MutableSet<ConeKotlinType>, context: CheckerContext) {
+        var hasError = false
+        var hasMissingClass = false
+        type.forEachClassLikeType {
+            when (it) {
+                is ConeErrorType -> {
+                    val delegatedType = it.delegatedType
+                    if (delegatedType == null) {
+                        hasError = true
+                    } else {
+                        considerType(delegatedType, missingTypes, context)
+                    }
+                }
+                else -> hasMissingClass = hasMissingClass || it.lookupTag.toSymbol(context.session) == null
+            }
+        }
+
+        if (hasMissingClass && !hasError) {
+            val reportedType = type.withNullability(ConeNullability.NOT_NULL, context.session.typeContext).withArguments(emptyArray())
+            missingTypes.add(reportedType)
+        }
+    }
+
+    fun reportMissingTypes(
+        source: KtSourceElement?,
+        missingTypes: MutableSet<ConeKotlinType>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        for (missingType in missingTypes) {
+            reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS, missingType, context)
         }
     }
 }

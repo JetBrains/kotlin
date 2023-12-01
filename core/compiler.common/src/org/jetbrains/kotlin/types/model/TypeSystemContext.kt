@@ -87,7 +87,7 @@ interface TypeSystemTypeFactoryContext: TypeSystemBuiltInsContext {
     fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker
     fun createStarProjection(typeParameter: TypeParameterMarker): TypeArgumentMarker
 
-    fun createErrorType(debugName: String): SimpleTypeMarker
+    fun createErrorType(debugName: String, delegatedType: SimpleTypeMarker?): SimpleTypeMarker
     fun createUninferredType(constructor: TypeConstructorMarker): KotlinTypeMarker
 }
 

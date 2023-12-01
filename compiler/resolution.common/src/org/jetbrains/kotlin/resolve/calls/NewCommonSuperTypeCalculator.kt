@@ -82,7 +82,7 @@ object NewCommonSuperTypeCalculator {
         stateStubTypesNotEqual: TypeCheckerState
     ): SimpleTypeMarker {
         if (types.any { it.isError() }) {
-            return createErrorType("CST(${types.joinToString()}")
+            return createErrorType("CST(${types.joinToString()}", delegatedType = null)
         }
 
         // i.e. result type also should be marked nullable

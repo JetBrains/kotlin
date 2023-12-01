@@ -384,8 +384,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return isContainedInInvariantOrContravariantPositions
     }
 
-    override fun createErrorType(debugName: String): ConeErrorType {
-        return ConeErrorType(ConeIntermediateDiagnostic(debugName))
+    override fun createErrorType(debugName: String, delegatedType: SimpleTypeMarker?): ConeErrorType {
+        return ConeErrorType(ConeIntermediateDiagnostic(debugName), delegatedType = delegatedType as ConeKotlinType?)
     }
 
     override fun createUninferredType(constructor: TypeConstructorMarker): KotlinTypeMarker {
@@ -434,9 +434,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
-        if (this is ErrorTypeConstructor) return createErrorType(reason)
-        if (this is ConeClassLikeLookupTag) return createErrorType("Not found classifier: $classId")
-        return createErrorType("Unknown reason")
+        if (this is ErrorTypeConstructor) return createErrorType(reason, delegatedType = null)
+        if (this is ConeClassLikeLookupTag) return createErrorType("Not found classifier: $classId", delegatedType = null)
+        return createErrorType("Unknown reason", delegatedType = null)
     }
 
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {

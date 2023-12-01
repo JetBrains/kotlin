@@ -187,8 +187,8 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
                 is ConeErrorType -> ConeErrorType(
                     diagnostic,
                     isUninferredParameter,
-                    newArguments as Array<ConeTypeProjection>,
-                    attributes
+                    typeArguments = newArguments as Array<ConeTypeProjection>,
+                    attributes = attributes
                 )
                 else -> errorWithAttachment("Unknown class-like type to substitute, ${this::class}") {
                     withConeTypeEntry("type", this@substituteArguments)

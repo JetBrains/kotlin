@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 class TypeApproximatorForMetadataSerializer(session: FirSession) :
     AbstractTypeApproximator(session.typeContext, session.languageVersionSettings) {
 
-    override fun createErrorType(debugName: String): SimpleTypeMarker {
+    override fun createErrorType(debugName: String, delegatedType: SimpleTypeMarker?): SimpleTypeMarker {
         return ConeErrorType(ConeIntermediateDiagnostic(debugName))
     }
 }

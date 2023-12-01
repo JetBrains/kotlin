@@ -1,0 +1,7 @@
+/Call.kt:(253,262): error: Cannot access class 'com.result.B'. Check your module classpath for missing or conflicting dependencies.
+
+/Call.kt:(294,296): error: Cannot access class 'com.result.B'. Check your module classpath for missing or conflicting dependencies.
+
+/Call.kt:(346,355): error: Cannot access class 'com.result.Owner.Nested.VeryNested'. Check your module classpath for missing or conflicting dependencies.
+
+/Call.kt:(383,389): error: Unresolved reference 'result'.

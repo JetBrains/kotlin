@@ -597,7 +597,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun SimpleTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker {
         require(this is SimpleType, this::errorMessage)
-        @Suppress("UNCHECKED_CAST")
         return this.replaceArgumentsByExistingArgumentsWith(replacement)
     }
 
@@ -714,7 +713,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return captureFromExpressionInternal(type as UnwrappedType)
     }
 
-    override fun createErrorType(debugName: String): SimpleTypeMarker {
+    override fun createErrorType(debugName: String, delegatedType: SimpleTypeMarker?): SimpleTypeMarker {
         return ErrorUtils.createErrorType(ErrorTypeKind.RESOLUTION_ERROR_TYPE, debugName)
     }
 
@@ -922,8 +921,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override val isK2: Boolean
         get() = false
-
-    class WA // Workaround for KT-52313
 }
 
 fun TypeVariance.convertVariance(): Variance {
