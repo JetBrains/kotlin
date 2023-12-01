@@ -26,6 +26,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -62,6 +64,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -83,6 +87,8 @@ KtJavaFieldSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -111,6 +117,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: null
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -140,6 +147,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: null
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -164,5 +172,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

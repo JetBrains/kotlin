@@ -23,6 +23,7 @@ KtSyntheticJavaPropertySymbol:
         annotationsList: []
         ownTypeArguments: []
         type: JavaClass
+      getContainingFileSymbol: null
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10ReceiverParameterSymbol
 
       deprecationStatus: null
@@ -34,6 +35,9 @@ KtSyntheticJavaPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: null
+    getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescPropertyGetterSymbol
+
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescPropertyGetterSymbol
 
     deprecationStatus: null
@@ -60,6 +64,7 @@ KtSyntheticJavaPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: JavaClass
+    getContainingFileSymbol: null
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10ReceiverParameterSymbol
 
     deprecationStatus: null
@@ -71,6 +76,9 @@ KtSyntheticJavaPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescSyntheticJavaPropertySymbol
+
   getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescSyntheticJavaPropertySymbol
 
   deprecationStatus: null

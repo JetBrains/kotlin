@@ -40,5 +40,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(contextReceiversOnFunction.kt)
+  getContainingJvmClassName: ContextReceiversOnFunctionKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

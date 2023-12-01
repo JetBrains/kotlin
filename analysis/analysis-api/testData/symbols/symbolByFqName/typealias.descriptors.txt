@@ -28,5 +28,6 @@ KtTypeAliasSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Private
+  getContainingFileSymbol: null
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

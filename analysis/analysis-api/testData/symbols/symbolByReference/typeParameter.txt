@@ -9,5 +9,6 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
+  getContainingFileSymbol: KtFileSymbol(typeParameter.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

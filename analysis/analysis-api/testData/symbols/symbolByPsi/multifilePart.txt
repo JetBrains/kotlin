@@ -27,6 +27,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+  getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -58,6 +60,7 @@ KtFunctionSymbol:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/String
+    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
@@ -68,6 +71,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+  getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -88,6 +93,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+    getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /x
@@ -113,6 +120,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+    getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -141,6 +150,8 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+  getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -165,6 +176,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+    getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /y
@@ -189,6 +202,7 @@ KtKotlinPropertySymbol:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
+      getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KtUsualClassType:
@@ -199,6 +213,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+    getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
@@ -226,6 +242,7 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
+    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
@@ -236,6 +253,8 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+  getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

@@ -38,6 +38,8 @@ KtConstructorSymbol:
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(classPrimaryConstructor.kt)
+          getContainingJvmClassName: A
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /A.a
@@ -67,6 +69,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: A
+          getContainingFileSymbol: KtFileSymbol(classPrimaryConstructor.kt)
+          getContainingJvmClassName: A
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -99,6 +103,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: A
+        getContainingFileSymbol: KtFileSymbol(classPrimaryConstructor.kt)
+        getContainingJvmClassName: A
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -120,6 +126,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(classPrimaryConstructor.kt)
+      getContainingJvmClassName: A
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -142,10 +150,14 @@ KtConstructorSymbol:
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(classPrimaryConstructor.kt)
+      getContainingJvmClassName: A
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(classPrimaryConstructor.kt)
+  getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -174,6 +186,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(classPrimaryConstructor.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

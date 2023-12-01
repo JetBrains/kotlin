@@ -51,11 +51,14 @@ KtFunctionSymbol:
         type: T
       symbolKind: LOCAL
       typeParameters: []
-      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
-
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/collections/CollectionsKt
+      getContainingModule: KtLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/collections/CollectionsKt
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
@@ -97,6 +100,8 @@ KtFunctionSymbol:
   ]
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/collections/CollectionsKt
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
@@ -153,10 +158,13 @@ KtFunctionSymbol:
         type: T
       symbolKind: LOCAL
       typeParameters: []
-      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
-
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin/collections/CollectionsKt
+      getContainingModule: KtLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin/collections/CollectionsKt
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

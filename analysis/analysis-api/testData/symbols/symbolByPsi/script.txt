@@ -27,6 +27,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(script.kts)
+  getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script script.kts"
   deprecationStatus: null
 
@@ -47,6 +49,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(script.kts)
+    getContainingJvmClassName: null
     getContainingModule: KtScriptModule "Script script.kts"
     deprecationStatus: null
   callableIdIfNonLocal: /b
@@ -72,6 +76,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(script.kts)
+    getContainingJvmClassName: null
     getContainingModule: KtScriptModule "Script script.kts"
     deprecationStatus: null
   hasBackingField: true
@@ -100,6 +106,8 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(script.kts)
+  getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script script.kts"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -140,6 +148,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: C
+  getContainingFileSymbol: KtFileSymbol(script.kts)
+  getContainingJvmClassName: C
   getContainingModule: KtScriptModule "Script script.kts"
   deprecationStatus: null
 
@@ -160,6 +170,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Unit
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(script.kts)
+    getContainingJvmClassName: C
     getContainingModule: KtScriptModule "Script script.kts"
     deprecationStatus: null
   callableIdIfNonLocal: /C.prop
@@ -189,6 +201,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: C
+    getContainingFileSymbol: KtFileSymbol(script.kts)
+    getContainingJvmClassName: C
     getContainingModule: KtScriptModule "Script script.kts"
     deprecationStatus: null
   hasBackingField: true
@@ -221,6 +235,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: C
+  getContainingFileSymbol: KtFileSymbol(script.kts)
+  getContainingJvmClassName: C
   getContainingModule: KtScriptModule "Script script.kts"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -253,6 +269,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(script.kts)
   getContainingModule: KtScriptModule "Script script.kts"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -262,5 +279,6 @@ KtScriptSymbol:
   name: <script-script.kts>
   origin: SOURCE
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(script.kts)
   getContainingModule: KtScriptModule "Script script.kts"
   deprecationStatus: null

@@ -44,6 +44,8 @@ KtFunctionSymbol:
         type: dynamic
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -51,5 +53,7 @@ KtFunctionSymbol:
   getDispatchReceiver(): KtDynamicType:
     annotationsList: []
     type: dynamic
+  getContainingFileSymbol: null
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

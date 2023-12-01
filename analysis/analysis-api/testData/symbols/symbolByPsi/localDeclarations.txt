@@ -13,6 +13,8 @@ KtLocalVariableSymbol:
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(localDeclarations.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -45,6 +47,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Local
+  getContainingFileSymbol: KtFileSymbol(localDeclarations.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -73,6 +77,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: LOCAL
   typeParameters: []
   visibility: Local
+  getContainingFileSymbol: KtFileSymbol(localDeclarations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -106,5 +111,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(localDeclarations.kt)
+  getContainingJvmClassName: LocalDeclarationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -23,6 +23,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(similarGenericSignature.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -40,6 +41,7 @@ KtTypeParameterSymbol:
       type: A
   ]
   variance: INVARIANT
+  getContainingFileSymbol: KtFileSymbol(similarGenericSignature.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -91,10 +93,14 @@ KtFunctionSymbol:
         type: J
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(similarGenericSignature.kt)
+      getContainingJvmClassName: SimilarGenericSignatureKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(similarGenericSignature.kt)
+  getContainingJvmClassName: SimilarGenericSignatureKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -106,6 +112,7 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
+  getContainingFileSymbol: KtFileSymbol(similarGenericSignature.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -157,9 +164,13 @@ KtFunctionSymbol:
         type: T
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(similarGenericSignature.kt)
+      getContainingJvmClassName: SimilarGenericSignatureKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(similarGenericSignature.kt)
+  getContainingJvmClassName: SimilarGenericSignatureKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

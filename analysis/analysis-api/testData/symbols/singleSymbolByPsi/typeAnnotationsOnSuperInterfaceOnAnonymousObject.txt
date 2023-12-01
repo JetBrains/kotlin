@@ -21,6 +21,7 @@ KtAnonymousObjectSymbol:
   ]
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnSuperInterfaceOnAnonymousObject.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

@@ -31,6 +31,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass.FirstEntry
+  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -50,6 +52,8 @@ KtEnumEntrySymbol:
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -69,6 +73,8 @@ KtEnumEntrySymbol:
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -105,6 +111,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass.ThirdEntry
+  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -156,6 +164,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -164,6 +174,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass.ThirdEntry
+  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -183,6 +195,8 @@ KtEnumEntrySymbol:
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -216,6 +230,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

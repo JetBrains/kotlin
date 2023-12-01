@@ -39,7 +39,10 @@ KtFunctionSymbol:
         type: E
     ]
     type: kotlin/collections/List<E>
-  getContainingModule: Could not render due to java.lang.NullPointerException: null cannot be cast to non-null type org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+  getContainingFileSymbol: null
+  getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+
+  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
   deprecationStatus: null
 
@@ -95,7 +98,10 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
+      getContainingFileSymbol: null
+      getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+
+      getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
       deprecationStatus: null
   ]
@@ -108,6 +114,9 @@ KtFunctionSymbol:
         type: E
     ]
     type: kotlin/collections/List<E>
-  getContainingModule: Could not render due to java.lang.NullPointerException: null cannot be cast to non-null type org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+  getContainingFileSymbol: null
+  getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+
+  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
   deprecationStatus: null

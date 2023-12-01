@@ -37,6 +37,8 @@ KtPropertySetterSymbol:
       type: @R|Anno4|() @R|Anno2|() @R|Anno1|()  @R|Anno4|()  SecondTypeAlias
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt)
+    getContainingJvmClassName: null
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   receiverParameter: null
@@ -74,9 +76,13 @@ KtPropertySetterSymbol:
         type: @R|Anno4|() @R|Anno2|() @R|Anno1|()  @R|Anno4|()  SecondTypeAlias
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt)
+  getContainingJvmClassName: TypeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotationKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

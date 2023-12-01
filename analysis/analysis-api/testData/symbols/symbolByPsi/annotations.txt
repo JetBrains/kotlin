@@ -38,6 +38,8 @@ KtConstructorSymbol:
             type: kotlin/String
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(annotations.kt)
+          getContainingJvmClassName: Anno
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /Anno.param1
@@ -67,6 +69,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: Anno
+          getContainingFileSymbol: KtFileSymbol(annotations.kt)
+          getContainingJvmClassName: Anno
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -99,6 +103,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: Anno
+        getContainingFileSymbol: KtFileSymbol(annotations.kt)
+        getContainingJvmClassName: Anno
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -120,6 +126,8 @@ KtConstructorSymbol:
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(annotations.kt)
+      getContainingJvmClassName: Anno
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -143,6 +151,8 @@ KtConstructorSymbol:
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(annotations.kt)
+          getContainingJvmClassName: Anno
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /Anno.param2
@@ -172,6 +182,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: Anno
+          getContainingFileSymbol: KtFileSymbol(annotations.kt)
+          getContainingJvmClassName: Anno
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -204,6 +216,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: Anno
+        getContainingFileSymbol: KtFileSymbol(annotations.kt)
+        getContainingJvmClassName: Anno
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -225,10 +239,14 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(annotations.kt)
+      getContainingJvmClassName: Anno
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(annotations.kt)
+  getContainingJvmClassName: Anno
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -257,6 +275,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(annotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
   deprecationStatus: null
@@ -297,6 +316,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: X
+  getContainingFileSymbol: KtFileSymbol(annotations.kt)
+  getContainingJvmClassName: X
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -328,6 +349,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(annotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

@@ -31,5 +31,7 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -20,4 +20,3 @@ scopes:
       class A
     callables: 0
     constructors: 0
-

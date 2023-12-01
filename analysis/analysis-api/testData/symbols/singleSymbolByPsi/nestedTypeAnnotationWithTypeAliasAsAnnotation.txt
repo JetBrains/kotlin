@@ -25,6 +25,7 @@ KtFunctionSymbol:
     type: KtTypeParameterType:
       annotationsList: []
       type: T
+    getContainingFileSymbol: KtFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
@@ -49,5 +50,7 @@ KtFunctionSymbol:
   ]
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
+  getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasAsAnnotationKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

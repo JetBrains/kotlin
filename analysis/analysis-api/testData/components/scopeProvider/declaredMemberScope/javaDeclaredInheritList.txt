@@ -45,6 +45,8 @@ KtFunctionSymbol:
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: JavaClass
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -53,6 +55,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -103,6 +107,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: JavaClass
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -111,6 +117,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -134,5 +142,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: PackageVisibility
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

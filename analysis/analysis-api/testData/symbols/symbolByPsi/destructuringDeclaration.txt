@@ -38,6 +38,8 @@ KtConstructorSymbol:
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+          getContainingJvmClassName: P
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /P.x
@@ -67,6 +69,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: P
+          getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+          getContainingJvmClassName: P
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -99,6 +103,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: P
+        getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+        getContainingJvmClassName: P
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -120,6 +126,8 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+      getContainingJvmClassName: P
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -143,6 +151,8 @@ KtConstructorSymbol:
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+          getContainingJvmClassName: P
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /P.y
@@ -172,6 +182,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: P
+          getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+          getContainingJvmClassName: P
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -204,6 +216,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: P
+        getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+        getContainingJvmClassName: P
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -225,10 +239,14 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+      getContainingJvmClassName: P
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+  getContainingJvmClassName: P
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -257,6 +275,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -276,6 +295,8 @@ KtLocalVariableSymbol:
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -294,6 +315,8 @@ KtLocalVariableSymbol:
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -326,5 +349,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(destructuringDeclaration.kt)
+  getContainingJvmClassName: DestructuringDeclarationKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -27,6 +27,8 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(topLevelFunctions.kt)
+  getContainingJvmClassName: TopLevelFunctionsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -59,5 +61,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(topLevelFunctions.kt)
+  getContainingJvmClassName: TopLevelFunctionsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

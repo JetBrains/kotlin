@@ -31,6 +31,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/KotlinClass
+  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+  getContainingJvmClassName: test/KotlinClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -51,6 +53,8 @@ KtKotlinPropertySymbol:
       type: kotlin/String
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+    getContainingJvmClassName: test/KotlinClass
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: test/KotlinClass.bar
@@ -80,6 +84,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: test/KotlinClass
+    getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+    getContainingJvmClassName: test/KotlinClass
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -112,6 +118,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/KotlinClass
+  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+  getContainingJvmClassName: test/KotlinClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -144,6 +152,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -173,6 +182,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -202,6 +212,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -226,5 +237,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+  getContainingJvmClassName: test/KotlinClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

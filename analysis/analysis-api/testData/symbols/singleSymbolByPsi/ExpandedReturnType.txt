@@ -27,5 +27,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(ExpandedReturnType.kt)
+  getContainingJvmClassName: ExpandedReturnTypeKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

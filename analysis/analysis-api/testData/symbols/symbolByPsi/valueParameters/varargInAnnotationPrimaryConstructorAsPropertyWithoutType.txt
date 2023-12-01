@@ -42,6 +42,8 @@ KtConstructorSymbol:
             type: kotlin/Array<out ERROR CLASS: Incomplete code>
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt)
+          getContainingJvmClassName: Foo
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /Foo.ints
@@ -75,6 +77,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: Foo
+          getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt)
+          getContainingJvmClassName: Foo
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -111,6 +115,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: Foo
+        getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt)
+        getContainingJvmClassName: Foo
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -131,10 +137,14 @@ KtConstructorSymbol:
         type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt)
+      getContainingJvmClassName: Foo
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt)
+  getContainingJvmClassName: Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -163,6 +173,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
   deprecationStatus: null

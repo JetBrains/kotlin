@@ -13,5 +13,7 @@ KtBackingFieldSymbol:
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(accessorField.kt)
+  getContainingJvmClassName: AccessorFieldKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

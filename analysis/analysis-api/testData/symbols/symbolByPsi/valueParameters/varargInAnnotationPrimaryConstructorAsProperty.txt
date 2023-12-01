@@ -38,6 +38,8 @@ KtConstructorSymbol:
             type: kotlin/IntArray
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
+          getContainingJvmClassName: Foo
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /Foo.ints
@@ -67,6 +69,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: Foo
+          getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
+          getContainingJvmClassName: Foo
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -99,6 +103,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: Foo
+        getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
+        getContainingJvmClassName: Foo
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -120,10 +126,14 @@ KtConstructorSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
+      getContainingJvmClassName: Foo
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
+  getContainingJvmClassName: Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -152,6 +162,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
   deprecationStatus: null

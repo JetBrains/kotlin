@@ -6,6 +6,7 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
+  getContainingFileSymbol: KtFileSymbol(functionWithTypeParams.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -58,9 +59,13 @@ KtFunctionSymbol:
         type: X
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(functionWithTypeParams.kt)
+      getContainingJvmClassName: FunctionWithTypeParamsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(functionWithTypeParams.kt)
+  getContainingJvmClassName: FunctionWithTypeParamsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -15,6 +15,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.property
@@ -44,6 +46,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: MyClass.Companion
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -76,6 +80,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyClass.Companion
+  getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+  getContainingJvmClassName: MyClass$Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -100,6 +106,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.constProperty
@@ -129,6 +137,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: MyClass.Companion
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -161,6 +171,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyClass.Companion
+  getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+  getContainingJvmClassName: MyClass$Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -188,6 +200,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.staticProperty
@@ -217,6 +231,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: MyClass.Companion
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -249,6 +265,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyClass.Companion
+  getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+  getContainingJvmClassName: MyClass$Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -276,6 +294,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.fieldProperty
@@ -305,6 +325,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: MyClass.Companion
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -337,6 +359,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyClass.Companion
+  getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+  getContainingJvmClassName: MyClass$Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -361,6 +385,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.variable
@@ -390,6 +416,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: MyClass.Companion
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -446,6 +474,8 @@ KtKotlinPropertySymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
@@ -476,6 +506,8 @@ KtKotlinPropertySymbol:
           type: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
+        getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+        getContainingJvmClassName: null
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
     ]
@@ -484,6 +516,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: MyClass.Companion
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: CLASS_MEMBER
@@ -493,6 +527,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyClass.Companion
+  getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+  getContainingJvmClassName: MyClass$Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -520,6 +556,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.staticVariable
@@ -549,6 +587,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: MyClass.Companion
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -605,6 +645,8 @@ KtKotlinPropertySymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
@@ -635,6 +677,8 @@ KtKotlinPropertySymbol:
           type: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
+        getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+        getContainingJvmClassName: null
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
     ]
@@ -643,6 +687,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: MyClass.Companion
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: CLASS_MEMBER
@@ -652,6 +698,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyClass.Companion
+  getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+  getContainingJvmClassName: MyClass$Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -679,6 +727,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.fieldVariable
@@ -708,6 +758,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: MyClass.Companion
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -764,6 +816,8 @@ KtKotlinPropertySymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
@@ -794,6 +848,8 @@ KtKotlinPropertySymbol:
           type: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
+        getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+        getContainingJvmClassName: null
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
     ]
@@ -802,6 +858,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: MyClass.Companion
+    getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+    getContainingJvmClassName: MyClass$Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: CLASS_MEMBER
@@ -811,6 +869,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyClass.Companion
+  getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
+  getContainingJvmClassName: MyClass$Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -843,6 +903,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -872,6 +933,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

@@ -18,5 +18,7 @@ KtLocalVariableSymbol:
     type: kotlin/Array<kotlin/String>
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(scriptArgument.kts)
+  getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script scriptArgument.kts"
   deprecationStatus: null

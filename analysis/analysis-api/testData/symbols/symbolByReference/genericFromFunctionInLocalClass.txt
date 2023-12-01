@@ -30,5 +30,7 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: <local>/Base<Outer>
+  getContainingFileSymbol: KtFileSymbol(genericFromFunctionInLocalClass.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

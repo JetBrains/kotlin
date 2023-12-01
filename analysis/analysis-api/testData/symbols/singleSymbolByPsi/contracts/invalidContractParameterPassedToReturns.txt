@@ -49,6 +49,8 @@ KtFunctionSymbol:
         type: kotlin/Any
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(invalidContractParameterPassedToReturns.kt)
+      getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -71,9 +73,13 @@ KtFunctionSymbol:
         type: kotlin/Boolean
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(invalidContractParameterPassedToReturns.kt)
+      getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(invalidContractParameterPassedToReturns.kt)
+  getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -34,6 +34,8 @@ KtFunctionSymbol:
                     type: kotlin/Any
                   symbolKind: LOCAL
                   typeParameters: []
+                  getContainingFileSymbol: KtFileSymbol(isInstancePredicateContract.kt)
+                  getContainingJvmClassName: IsInstancePredicateContractKt
                   getContainingModule: KtSourceModule "Sources of main"
                   deprecationStatus: null
           type:
@@ -86,9 +88,13 @@ KtFunctionSymbol:
         type: kotlin/Any
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(isInstancePredicateContract.kt)
+      getContainingJvmClassName: IsInstancePredicateContractKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(isInstancePredicateContract.kt)
+  getContainingJvmClassName: IsInstancePredicateContractKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

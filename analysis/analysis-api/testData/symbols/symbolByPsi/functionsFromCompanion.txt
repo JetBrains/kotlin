@@ -46,6 +46,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(functionsFromCompanion.kt)
+      getContainingJvmClassName: MyClass$Companion
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -54,6 +56,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyClass.Companion
+  getContainingFileSymbol: KtFileSymbol(functionsFromCompanion.kt)
+  getContainingJvmClassName: MyClass$Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -93,6 +97,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyClass.Companion
+  getContainingFileSymbol: KtFileSymbol(functionsFromCompanion.kt)
+  getContainingJvmClassName: MyClass$Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -121,6 +127,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(functionsFromCompanion.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -150,6 +157,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(functionsFromCompanion.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

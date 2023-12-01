@@ -31,6 +31,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: <anonymous>
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -67,6 +69,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: <anonymous>
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -86,6 +90,8 @@ KtEnumEntrySymbol:
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -122,6 +128,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: <anonymous>
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -142,6 +150,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+    getContainingJvmClassName: null
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: null
@@ -167,6 +177,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+    getContainingJvmClassName: null
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
@@ -199,6 +211,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: <anonymous>
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -222,6 +236,8 @@ KtEnumEntrySymbol:
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -258,6 +274,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: <anonymous>
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -309,6 +327,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+      getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -317,6 +337,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: <anonymous>
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -336,6 +358,8 @@ KtEnumEntrySymbol:
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -372,6 +396,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -423,6 +449,8 @@ KtFunctionSymbol:
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+      getContainingJvmClassName: MyEnumClass
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -431,6 +459,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -451,6 +481,8 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+    getContainingJvmClassName: MyEnumClass
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyEnumClass.i
@@ -480,6 +512,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: MyEnumClass
+    getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+    getContainingJvmClassName: MyEnumClass
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -512,6 +546,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
+  getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -549,6 +585,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(enumEntryOverride.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

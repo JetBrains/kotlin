@@ -31,6 +31,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/C
+  getContainingFileSymbol: KtFileSymbol(class.kt)
+  getContainingJvmClassName: test/C
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -51,6 +53,8 @@ KtKotlinPropertySymbol:
       type: kotlin/String
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(class.kt)
+    getContainingJvmClassName: test/C
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: test/C.bar
@@ -80,6 +84,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: test/C
+    getContainingFileSymbol: KtFileSymbol(class.kt)
+    getContainingJvmClassName: test/C
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -112,6 +118,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: test/C
+  getContainingFileSymbol: KtFileSymbol(class.kt)
+  getContainingJvmClassName: test/C
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -139,5 +147,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(class.kt)
+  getContainingJvmClassName: test/C
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

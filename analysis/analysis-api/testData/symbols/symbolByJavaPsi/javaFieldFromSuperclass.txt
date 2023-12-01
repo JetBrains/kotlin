@@ -19,5 +19,7 @@ KtJavaFieldSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: SuperClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: SuperClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

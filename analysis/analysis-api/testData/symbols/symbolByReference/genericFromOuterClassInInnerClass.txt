@@ -34,5 +34,7 @@ KtFunctionSymbol:
         type: T
     ]
     type: test/TopLevel.Base<T, Outer>
+  getContainingFileSymbol: KtFileSymbol(genericFromOuterClassInInnerClass.kt)
+  getContainingJvmClassName: test/TopLevel$Base
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -10,6 +10,7 @@ KtTypeParameterSymbol:
       type: ERROR_TYPE
   ]
   variance: INVARIANT
+  getContainingFileSymbol: KtFileSymbol(typeParameters.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -28,6 +29,8 @@ KtLocalVariableSymbol:
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
+  getContainingFileSymbol: KtFileSymbol(typeParameters.kt)
+  getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -60,5 +63,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeParameters.kt)
+  getContainingJvmClassName: TypeParametersKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

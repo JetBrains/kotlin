@@ -24,5 +24,7 @@ KtPropertyGetterSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(getterWithAnnotations.kt)
+  getContainingJvmClassName: GetterWithAnnotationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

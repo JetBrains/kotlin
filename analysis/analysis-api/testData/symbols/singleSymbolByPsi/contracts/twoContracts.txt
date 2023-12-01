@@ -39,6 +39,8 @@ KtFunctionSymbol:
                         type: kotlin/Any?
                       symbolKind: LOCAL
                       typeParameters: []
+                      getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+                      getContainingJvmClassName: TwoContractsKt
                       getContainingModule: KtSourceModule "Sources of main"
                       deprecationStatus: null
               isNegated: false
@@ -67,6 +69,8 @@ KtFunctionSymbol:
                         type: kotlin/Any?
                       symbolKind: LOCAL
                       typeParameters: []
+                      getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+                      getContainingJvmClassName: TwoContractsKt
                       getContainingModule: KtSourceModule "Sources of main"
                       deprecationStatus: null
               isNegated: true
@@ -100,6 +104,8 @@ KtFunctionSymbol:
                 type: kotlin/Function0<kotlin/Unit>
               symbolKind: LOCAL
               typeParameters: []
+              getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+              getContainingJvmClassName: TwoContractsKt
               getContainingModule: KtSourceModule "Sources of main"
               deprecationStatus: null
       occurrencesRange: EXACTLY_ONCE
@@ -147,6 +153,8 @@ KtFunctionSymbol:
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+      getContainingJvmClassName: TwoContractsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -169,6 +177,8 @@ KtFunctionSymbol:
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+      getContainingJvmClassName: TwoContractsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -196,9 +206,13 @@ KtFunctionSymbol:
         type: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+      getContainingJvmClassName: TwoContractsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+  getContainingJvmClassName: TwoContractsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

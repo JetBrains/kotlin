@@ -6,6 +6,7 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
+  getContainingFileSymbol: KtFileSymbol(typeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -36,6 +37,7 @@ KtNamedClassOrObjectSymbol:
     KtTypeParameterSymbol(T)
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -48,6 +50,7 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
+  getContainingFileSymbol: KtFileSymbol(typeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -71,5 +74,6 @@ KtTypeAliasSymbol:
     KtTypeParameterSymbol(Z)
   ]
   visibility: Private
+  getContainingFileSymbol: KtFileSymbol(typeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

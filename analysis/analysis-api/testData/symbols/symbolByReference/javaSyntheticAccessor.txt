@@ -28,6 +28,8 @@ KtSyntheticJavaPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: JavaClass
+    getContainingFileSymbol: null
+    getContainingJvmClassName: JavaClass
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -58,6 +60,8 @@ KtSyntheticJavaPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

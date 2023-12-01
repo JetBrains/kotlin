@@ -36,6 +36,8 @@ KtConstructorSymbol:
         type: JavaClass!
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: JavaClass$InnerClass
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -44,5 +46,7 @@ KtConstructorSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass$InnerClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

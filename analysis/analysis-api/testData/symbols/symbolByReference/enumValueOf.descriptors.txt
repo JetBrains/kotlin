@@ -46,9 +46,13 @@ KtFunctionSymbol:
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(enumValueOf.kt)
+      getContainingJvmClassName: MyKotlinEnum
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(enumValueOf.kt)
+  getContainingJvmClassName: MyKotlinEnum
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

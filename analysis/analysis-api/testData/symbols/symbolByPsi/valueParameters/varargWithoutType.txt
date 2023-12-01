@@ -45,9 +45,13 @@ KtFunctionSymbol:
         type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(varargWithoutType.kt)
+      getContainingJvmClassName: VarargWithoutTypeKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(varargWithoutType.kt)
+  getContainingJvmClassName: VarargWithoutTypeKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

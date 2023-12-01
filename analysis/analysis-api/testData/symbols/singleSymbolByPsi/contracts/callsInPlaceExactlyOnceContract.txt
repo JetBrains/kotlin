@@ -35,6 +35,8 @@ KtFunctionSymbol:
                 type: kotlin/Function0<kotlin/Unit>
               symbolKind: LOCAL
               typeParameters: []
+              getContainingFileSymbol: KtFileSymbol(callsInPlaceExactlyOnceContract.kt)
+              getContainingJvmClassName: CallsInPlaceExactlyOnceContractKt
               getContainingModule: KtSourceModule "Sources of main"
               deprecationStatus: null
       occurrencesRange: EXACTLY_ONCE
@@ -87,9 +89,13 @@ KtFunctionSymbol:
         type: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(callsInPlaceExactlyOnceContract.kt)
+      getContainingJvmClassName: CallsInPlaceExactlyOnceContractKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(callsInPlaceExactlyOnceContract.kt)
+  getContainingJvmClassName: CallsInPlaceExactlyOnceContractKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

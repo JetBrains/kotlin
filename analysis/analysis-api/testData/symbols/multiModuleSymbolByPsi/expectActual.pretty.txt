@@ -47,4 +47,3 @@ class D
 fun baz()
 
 var m: kotlin.Int
-

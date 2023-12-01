@@ -14,4 +14,3 @@ fun fromSuper(): O
 fun equals(other: kotlin.Any?): kotlin.Boolean
 fun hashCode(): kotlin.Int
 fun toString(): kotlin.String
-

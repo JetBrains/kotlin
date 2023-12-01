@@ -26,6 +26,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [TYPE]
   deprecationStatus: null
@@ -58,6 +59,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [TYPE]
   deprecationStatus: null
@@ -90,6 +92,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [TYPE]
   deprecationStatus: null
@@ -122,6 +125,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [TYPE]
   deprecationStatus: null
@@ -166,6 +170,8 @@ KtConstructorSymbol:
             type: kotlin/String
           symbolKind: LOCAL
           typeParameters: []
+          getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+          getContainingJvmClassName: Anno5
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableIdIfNonLocal: /Anno5.s
@@ -195,6 +201,8 @@ KtConstructorSymbol:
             annotationsList: []
             ownTypeArguments: []
             type: Anno5
+          getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+          getContainingJvmClassName: Anno5
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -227,6 +235,8 @@ KtConstructorSymbol:
           annotationsList: []
           ownTypeArguments: []
           type: Anno5
+        getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+        getContainingJvmClassName: Anno5
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -248,10 +258,14 @@ KtConstructorSymbol:
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+      getContainingJvmClassName: Anno5
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingJvmClassName: Anno5
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -283,6 +297,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [TYPE]
   deprecationStatus: null
@@ -312,6 +327,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -370,6 +386,8 @@ KtFunctionSymbol:
         type: @R|Anno2|()  I
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+      getContainingJvmClassName: X
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -378,6 +396,8 @@ KtFunctionSymbol:
     annotationsList: []
     ownTypeArguments: []
     type: X
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingJvmClassName: X
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -401,6 +421,8 @@ KtKotlinPropertySymbol:
       type: @R|Anno4|()  I
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+    getContainingJvmClassName: X
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /X.x
@@ -433,6 +455,8 @@ KtKotlinPropertySymbol:
       annotationsList: []
       ownTypeArguments: []
       type: X
+    getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+    getContainingJvmClassName: X
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -468,6 +492,8 @@ KtKotlinPropertySymbol:
     annotationsList: []
     ownTypeArguments: []
     type: X
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingJvmClassName: X
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -507,6 +533,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
@@ -519,6 +546,7 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -549,6 +577,7 @@ KtFunctionSymbol:
     type: KtTypeParameterType:
       annotationsList: []
       type: T
+    getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
@@ -568,6 +597,8 @@ KtFunctionSymbol:
   ]
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingJvmClassName: TypeAnnotationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -579,6 +610,7 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -609,6 +641,7 @@ KtFunctionSymbol:
     type: KtTypeParameterType:
       annotationsList: []
       type: T
+    getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
@@ -633,5 +666,7 @@ KtFunctionSymbol:
   ]
   valueParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingJvmClassName: TypeAnnotationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

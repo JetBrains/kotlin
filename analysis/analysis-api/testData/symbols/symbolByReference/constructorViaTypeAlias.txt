@@ -42,9 +42,13 @@ KtConstructorSymbol:
         type: ft<kotlin/collections/MutableCollection<out ft<E & Any, E?>>, kotlin/collections/Collection<out ft<E & Any, E?>>?>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java/util/ArrayList
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java/util/ArrayList
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null

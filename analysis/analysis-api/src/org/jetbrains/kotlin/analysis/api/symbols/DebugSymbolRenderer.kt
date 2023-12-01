@@ -71,7 +71,6 @@ public class DebugSymbolRenderer(
 
             KtSymbolContainingDeclarationProviderMixIn::class
                 .declaredMemberExtensionFunctions
-                .filter { it.name == "getContainingModule" }
                 .filterNot {
                     // Rendering a containing symbol is prone to stack overflow.
                     // * function symbol will render its value parameter symbol(s)

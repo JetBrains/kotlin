@@ -39,9 +39,14 @@ KtSamConstructorSymbol:
         type: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
+
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
 
       deprecationStatus: null
   ]
+  getContainingFileSymbol: null
+  getContainingJvmClassName: null
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null

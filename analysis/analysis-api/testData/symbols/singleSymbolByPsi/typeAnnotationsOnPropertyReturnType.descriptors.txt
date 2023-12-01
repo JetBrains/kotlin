@@ -22,6 +22,8 @@ KtKotlinPropertySymbol:
       type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
     symbolKind: LOCAL
     typeParameters: []
+    getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnPropertyReturnType.kt)
+    getContainingJvmClassName: TypeAnnotationsOnPropertyReturnTypeKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /foo
@@ -54,6 +56,8 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
+    getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnPropertyReturnType.kt)
+    getContainingJvmClassName: TypeAnnotationsOnPropertyReturnTypeKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -89,6 +93,8 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnPropertyReturnType.kt)
+  getContainingJvmClassName: TypeAnnotationsOnPropertyReturnTypeKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
