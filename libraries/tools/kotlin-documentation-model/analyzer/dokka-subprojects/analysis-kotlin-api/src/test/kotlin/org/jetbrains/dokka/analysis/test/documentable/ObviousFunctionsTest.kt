@@ -121,13 +121,24 @@ class ObviousFunctionsTest {
             assertNotNull(enum)
             assertEquals("Enum", enum.name)
 
+            val javaVersion = when (val specVersion = System.getProperty("java.specification.version")) {
+                "1.8" -> 8
+                else -> specVersion.toInt()
+            }
+
+            // inherited from java enum
+            val jdkEnumInheritedFunctions = when {
+                // starting from JDK 18, 'finalize' is not available (finalization is deprecated in JDK 18)
+                javaVersion >= 18 -> setOf("clone", "getDeclaringClass", "describeConstable")
+                // starting from JDK 12, there is a new member in enum 'describeConstable'
+                javaVersion >= 12 -> setOf("clone", "getDeclaringClass", "describeConstable", "finalize")
+                else -> setOf("clone", "getDeclaringClass", "finalize")
+            }
+
             assertObviousFunctions(
                 expectedObviousFunctions = emptySet(),
-                expectedNonObviousFunctions = setOf(
-                    "compareTo", "equals", "hashCode", "toString",
-                    // inherited from java enum
-                    "clone", "finalize", "getDeclaringClass"
-                ),
+                expectedNonObviousFunctions = setOf("compareTo", "equals", "hashCode", "toString") +
+                        jdkEnumInheritedFunctions,
                 actualFunctions = enum.functions
             )
         }
