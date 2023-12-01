@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlin.metadata.*
-import kotlin.metadata.Modality as KmModality
-import kotlin.metadata.Visibility as KmVisibility
-import kotlin.metadata.ClassKind as KmClassKind
+import kotlinx.metadata.klib.*
 import kotlinx.metadata.klib.annotations
 import kotlinx.metadata.klib.compileTimeValue
-import kotlinx.metadata.klib.getterAnnotations
-import kotlinx.metadata.klib.setterAnnotations
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.Variance
+import kotlin.metadata.*
+import kotlin.metadata.ClassKind as KmClassKind
+import kotlin.metadata.Modality as KmModality
+import kotlin.metadata.Visibility as KmVisibility
 
 object CirDeserializers {
     private fun annotations(
@@ -100,7 +99,7 @@ object CirDeserializers {
         } else CirConstantValue.NullValue
 
         return CirProperty(
-            annotations = annotations(source.hasAnnotations, typeResolver, source::annotations),
+            annotations = annotations(source.hasAnnotations, typeResolver, source::klibAnnotations),
             name = name,
             typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
             visibility = visibility(source.visibility),
@@ -123,7 +122,7 @@ object CirDeserializers {
 
     private fun propertyGetter(source: KmProperty, typeResolver: CirTypeResolver): CirPropertyGetter? {
         val isDefault = !source.getter.isNotDefault
-        val annotations = annotations(source.getter.hasAnnotations, typeResolver, source::getterAnnotations)
+        val annotations = annotations(source.getter.hasAnnotations, typeResolver, source::klibGetterAnnotations)
 
         if (isDefault && annotations.isEmpty())
             return CirPropertyGetter.DEFAULT_NO_ANNOTATIONS
@@ -139,9 +138,9 @@ object CirDeserializers {
         val setter = source.setter ?: return null
 
         return CirPropertySetter.createInterned(
-            annotations = annotations(source.setter?.hasAnnotations == true, typeResolver, source::setterAnnotations),
+            annotations = annotations(source.setter?.hasAnnotations == true, typeResolver, source::klibSetterAnnotations),
             parameterAnnotations = source.setterParameter?.let { setterParameter ->
-                annotations(setterParameter.hasAnnotations, typeResolver, setterParameter::annotations)
+                annotations(setterParameter.hasAnnotations, typeResolver, setterParameter::klibAnnotations)
             }.orEmpty(),
             visibility = visibility(setter.visibility),
             isDefault = !setter.isNotDefault,
@@ -160,7 +159,7 @@ object CirDeserializers {
 
     fun function(name: CirName, source: KmFunction, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirFunction =
         CirFunction(
-            annotations = annotations(source.hasAnnotations, typeResolver, source::annotations),
+            annotations = annotations(source.hasAnnotations, typeResolver, source::klibAnnotations),
             name = name,
             typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
             visibility = visibility(source.visibility),
@@ -183,7 +182,7 @@ object CirDeserializers {
 
     private fun valueParameter(source: KmValueParameter, typeResolver: CirTypeResolver): CirValueParameter =
         CirValueParameter.createInterned(
-            annotations = annotations(source.hasAnnotations, typeResolver, source::annotations),
+            annotations = annotations(source.hasAnnotations, typeResolver, source::klibAnnotations),
             name = CirName.create(source.name),
             returnType = type(source.type, typeResolver),
             varargElementType = source.varargElementType?.let { type(it, typeResolver) },
@@ -243,7 +242,7 @@ object CirDeserializers {
     }
 
     fun clazz(name: CirName, source: KmClass, typeResolver: CirTypeResolver): CirClass = CirClass.create(
-        annotations = annotations(source.hasAnnotations, typeResolver, source::annotations),
+        annotations = annotations(source.hasAnnotations, typeResolver, source::klibAnnotations),
         name = name,
         typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
         supertypes = source.filteredSupertypes.compactMap { type(it, typeResolver) },
@@ -300,7 +299,7 @@ object CirDeserializers {
 
     fun constructor(source: KmConstructor, containingClass: CirContainingClass, typeResolver: CirTypeResolver): CirClassConstructor =
         CirClassConstructor.create(
-            annotations = annotations(source.hasAnnotations, typeResolver, source::annotations),
+            annotations = annotations(source.hasAnnotations, typeResolver, source::klibAnnotations),
             typeParameters = emptyList(), // TODO: nowhere to read constructor type parameters from
             visibility = visibility(source.visibility),
             containingClass = containingClass,

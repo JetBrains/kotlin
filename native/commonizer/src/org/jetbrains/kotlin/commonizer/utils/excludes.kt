@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer.utils
 
+import kotlinx.metadata.klib.klibAnnotations
 import kotlin.metadata.*
-import kotlinx.metadata.klib.annotations
 
 internal const val KNI_BRIDGE_FUNCTION_PREFIX = "kniBridge"
 
@@ -16,7 +16,7 @@ internal inline fun KmFunction.isKniBridgeFunction() =
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun KmFunction.isTopLevelDeprecatedFunction(isTopLevel: Boolean) =
-    isTopLevel && annotations.any { it.className == DEPRECATED_ANNOTATION_FULL_NAME }
+    isTopLevel && klibAnnotations.any { it.className == DEPRECATED_ANNOTATION_FULL_NAME }
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun KmProperty.isFakeOverride() = this.kind == MemberKind.FAKE_OVERRIDE

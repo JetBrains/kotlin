@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.commonizer.utils
 
 import kotlinx.metadata.klib.KlibModuleMetadata
-import kotlinx.metadata.klib.annotations
+import kotlinx.metadata.klib.klibAnnotations
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator
@@ -95,7 +95,7 @@ private val FILTER_OUT_ACCEPTABLE_MISMATCHES: (Mismatch) -> Boolean = { mismatch
                 if (mismatch.name == "HAS_ANNOTATIONS"
                     && mismatch.valueA == true
                     && mismatch.valueB == false
-                    && (mismatch.path.last() as? PathElement.Property)?.propertyA?.annotations.isNullOrEmpty()
+                    && (mismatch.path.last() as? PathElement.Property)?.propertyA?.klibAnnotations.isNullOrEmpty()
                 ) {
                     // backing or delegate field annotations were not serialized (KT-44625) but the corresponding flag was raised, it's OK
                     isAcceptableMismatch = true
