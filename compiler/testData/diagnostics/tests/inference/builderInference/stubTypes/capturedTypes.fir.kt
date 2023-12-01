@@ -26,7 +26,7 @@ fun <K> captureIn(x: Inv<out K>): K = null as K
 fun <K> capture(x: Inv<K>): K = null as K
 
 fun main() {
-    <!NEW_INFERENCE_ERROR!>build {
+    build {
         emit("")
         getInv()
         captureOut(getInv())
@@ -35,7 +35,7 @@ fun main() {
         // K is fixed into CapturedType(out NotFixed: TypeVariable(R))
         capture(getOut())
         ""
-    }<!>
+    }
     build {
         emit("")
         // K is fixed into CapturedType(in NotFixed: TypeVariable(R))
