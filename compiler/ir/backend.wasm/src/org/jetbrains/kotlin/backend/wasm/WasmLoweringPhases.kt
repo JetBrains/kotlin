@@ -450,6 +450,13 @@ private val autoboxingTransformerPhase = makeIrModulePhase<WasmBackendContext>(
     description = "Insert box/unbox intrinsics"
 )
 
+private val inlineClassFieldUsageLoweringPhase = makeIrModulePhase(
+    { InlineClassLowering(it).inlineClassUsageOptimizationLowering },
+    name = "InlineClassFieldUsageLowering",
+    description = "[Optimization] Handle inline class field usages",
+    prerequisite = setOf(autoboxingTransformerPhase)
+)
+
 private val staticMembersLoweringPhase = makeIrModulePhase(
     ::StaticMembersLowering,
     name = "StaticMembersLowering",
@@ -710,6 +717,8 @@ val loweringList = listOf(
     builtInsLoweringPhase0,
 
     autoboxingTransformerPhase,
+
+    inlineClassFieldUsageLoweringPhase,
 
     objectUsageLoweringPhase,
     purifyObjectInstanceGettersLoweringPhase,

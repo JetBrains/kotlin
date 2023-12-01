@@ -31,6 +31,12 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
     private fun isClassInlineLike(irClass: IrClass): Boolean = context.inlineClassesUtils.isClassInlineLike(irClass)
 
+    private val IrSimpleFunction.isInlineClassFieldAccessor: Boolean
+        get() = correspondingPropertySymbol?.owner?.backingField != null
+
+    private val IrSimpleFunction.shouldBeReplacedWithStaticMethod: Boolean
+        get() = !isStaticMethodOfClass && isReal && !isInlineClassFieldAccessor
+
     val inlineClassDeclarationLowering = object : DeclarationTransformer {
 
         override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -59,8 +65,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
         private fun transformMethodFlat(function: IrSimpleFunction): List<IrDeclaration>? {
             // TODO: Support fake-overridden methods without boxing
-            if (function.isStaticMethodOfClass || !function.isReal)
-                return null
+            if (!function.shouldBeReplacedWithStaticMethod) return null
 
             val staticMethod = getOrCreateStaticMethod(function)
 
@@ -309,7 +314,15 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                             val typeParameters = extractTypeParameters(function.parentAsClass) + function.typeParameters
                             for ((index, typeParameter) in typeParameters.withIndex()) {
-                                putTypeArgument(index, IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList()))
+                                putTypeArgument(
+                                    index,
+                                    IrSimpleTypeImpl(
+                                        typeParameter.symbol,
+                                        SimpleTypeNullability.NOT_SPECIFIED,
+                                        emptyList(),
+                                        emptyList()
+                                    )
+                                )
                             }
                         }
                     )
@@ -332,6 +345,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                 override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                     expression.transformChildrenVoid(this)
                     val function = expression.symbol.owner
+
                     if (!isClassInlineLike(function.parentAsClass)) {
                         return expression
                     }
@@ -342,11 +356,8 @@ class InlineClassLowering(val context: CommonBackendContext) {
                 override fun visitCall(expression: IrCall): IrExpression {
                     expression.transformChildrenVoid(this)
                     val function: IrSimpleFunction = expression.symbol.owner
-                    if (function.parent !is IrClass ||
-                        function.isStaticMethodOfClass ||
-                        !isClassInlineLike(function.parentAsClass) ||
-                        !function.isReal
-                    ) {
+
+                    if (function.parent !is IrClass || !isClassInlineLike(function.parentAsClass) || !function.shouldBeReplacedWithStaticMethod) {
                         return expression
                     }
 
@@ -365,6 +376,26 @@ class InlineClassLowering(val context: CommonBackendContext) {
                         !isClassInlineLike(klass) -> expression
                         else -> irCall(expression, getOrCreateStaticMethod(function))
                     }
+                }
+            })
+        }
+    }
+
+
+    val inlineClassUsageOptimizationLowering = object : BodyLoweringPass {
+        override fun lower(irBody: IrBody, container: IrDeclaration) {
+            irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+                override fun visitCall(expression: IrCall): IrExpression {
+                    expression.transformChildrenVoid(this)
+
+                    val function: IrSimpleFunction = expression.symbol.owner
+                    val parentClass = function.parentClassOrNull
+
+                    val backingField = function.correspondingPropertySymbol?.owner?.backingField
+                        ?.takeIf { parentClass != null && context.inlineClassesUtils.isClassInlineLike(parentClass) }
+                        ?: return expression
+
+                    return context.createIrBuilder(expression.symbol).irGetField(expression.dispatchReceiver, backingField)
                 }
             })
         }
