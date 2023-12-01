@@ -9,12 +9,16 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
+import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.types.asSimpleType
+import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.coroutines.Continuation
 import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.JvmFunctionSignature.KotlinFunction
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.getMfvcUnboxMethods
 import kotlin.reflect.jvm.javaType
@@ -209,7 +213,33 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
             }
         }
 
-        val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $descriptor ${(descriptor as? FunctionDescriptor?)?.let { RuntimeTypeMapper.mapSignature(it).asString() } ?: ""}")
+        fun getFunctionWithDefaultParametersForValueClassOverride(descriptor: FunctionDescriptor): FunctionDescriptor? {
+            if (
+                descriptor.valueParameters.none { it.declaresDefaultValue() } &&
+                descriptor.containingDeclaration.isValueClass() &&
+                Modifier.isStatic(caller.member!!.modifiers)
+            ) {
+                // firstOrNull is used to mimic the wrong behaviour of regular class reflection as KT-40327 is not fixed.
+                // The behaviours equality is currently backed by codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt. 
+                return descriptor.overriddenTreeAsSequence(useOriginal = false)
+                    .firstOrNull { function -> function.valueParameters.any { it.declaresDefaultValue() } } as? FunctionDescriptor
+            }
+            return null
+        }
+
+        val caller = defaultCaller ?: run {
+            val rest = (descriptor as? FunctionDescriptor?)?.let rest@{ descriptor ->
+                val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor) as KotlinFunction? ?: return@rest null
+                getFunctionWithDefaultParametersForValueClassOverride(descriptor)?.let { defaultImplsFunction ->
+                    val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultImplsFunction) as KotlinFunction
+                    return@rest container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)
+                        .let { "[found] ${jvmSignature.asString()} $defaultImplsFunction $it" }
+                }
+                container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc, !Modifier.isStatic(caller.member!!.modifiers))
+                    .let { "[not found] ${jvmSignature.asString()} $it" }
+            }
+            throw KotlinReflectionInternalError("This callable does not support a default call: $descriptor ${rest ?: ""}")
+        }
 
         @Suppress("UNCHECKED_CAST")
         return reflectionCall {

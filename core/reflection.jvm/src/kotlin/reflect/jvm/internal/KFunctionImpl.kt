@@ -111,7 +111,7 @@ internal class KFunctionImpl private constructor(
 
                 getFunctionWithDefaultParametersForValueClassOverride(descriptor)?.let { defaultImplsFunction ->
                     val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultImplsFunction) as KotlinFunction
-                    return@run container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true).also { println("c: $it") }
+                    return@run container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)
                 }
                 container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc, !Modifier.isStatic(caller.member!!.modifiers))
             }
