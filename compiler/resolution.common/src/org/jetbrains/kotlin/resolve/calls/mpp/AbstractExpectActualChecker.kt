@@ -373,19 +373,20 @@ object AbstractExpectActualChecker {
             // "parameters" checks are required only for functions, because only functions can have parameters
             actualDeclaration is FunctionSymbolMarker && expectDeclaration is FunctionSymbolMarker
         ) {
-            val expectOverriddenDeclarations =
-                expectDeclaration.allRecursivelyOverriddenDeclarationsIncludingSelf(expectContainingClass).toSet()
-            val actualOverriddenDeclarations =
-                actualDeclaration.allRecursivelyOverriddenDeclarationsIncludingSelf(actualContainingClass).toSet()
             if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitDefaultArgumentsInExpectActualizedByFakeOverride) &&
+                // If expect declaration is a fake-override then default params came from common
+                // supertypes of actual class and expect class. It's a valid code.
+                !expectDeclaration.isFakeOverride(expectContainingClass) &&
                 (actualDeclaration.isFakeOverride(actualContainingClass) || actualDeclaration.isDelegatedMember) &&
-                // If default params came from common supertypes of actual class and expect class then it's a valid code.
-                // Here we filter out such default params.
-                (expectOverriddenDeclarations - actualOverriddenDeclarations).flatMap { it.valueParameters }
-                    .any { it.hasDefaultValueNonRecursive }
+                expectDeclaration.valueParameters.any { it.hasDefaultValueNonRecursive }
             ) {
                 return ExpectActualCheckingCompatibility.DefaultArgumentsInExpectActualizedByFakeOverride
             }
+
+            val expectOverriddenDeclarations =
+                expectDeclaration.allRecursivelyOverriddenDeclarationsIncludingSelf(expectContainingClass).toSet()
+            val actualOverriddenDeclarations =
+                actualDeclaration.allRecursivelyOverriddenDeclarationsIncludingSelf(actualContainingClass)
 
             // Actual annotation constructors can have default argument values; their consistency with arguments in the expected annotation
             // is checked in ExpectedActualDeclarationChecker.checkAnnotationConstructors

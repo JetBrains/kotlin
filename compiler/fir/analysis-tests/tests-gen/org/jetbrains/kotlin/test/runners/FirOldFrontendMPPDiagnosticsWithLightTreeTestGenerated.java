@@ -314,6 +314,18 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("kt63860.kt")
+    public void testKt63860() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/kt63860.kt");
+    }
+
+    @Test
+    @TestMetadata("kt63860_2.kt")
+    public void testKt63860_2() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/kt63860_2.kt");
+    }
+
+    @Test
     @TestMetadata("manyImplMemberNotImplemented.kt")
     public void testManyImplMemberNotImplemented() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/manyImplMemberNotImplemented.kt");
