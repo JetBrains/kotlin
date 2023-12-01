@@ -69,7 +69,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     ): SimpleTypeMarker {
         val attributesList = attributes?.filterIsInstanceTo<ConeAttribute<*>, MutableList<ConeAttribute<*>>>(mutableListOf())
         val coneAttributes: ConeAttributes = if (isExtensionFunction) {
-            require(constructor is ConeClassLikeLookupTag && constructor.isSomeFunctionType(session))
+            require(constructor is ConeClassLikeLookupTag)
             // We don't want to create new instance of ConeAttributes which
             //   contains only CompilerConeAttributes.ExtensionFunctionType
             //   to avoid memory consumption

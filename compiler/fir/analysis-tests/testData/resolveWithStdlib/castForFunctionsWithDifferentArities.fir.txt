@@ -1,0 +1,12 @@
+FILE: castForFunctionsWithDifferentArities.kt
+    public final fun test(b: R|kotlin/Boolean|, block1: R|kotlin/Any.() -> kotlin/Unit|, block2: R|(kotlin/Any.(kotlin/Any?) -> kotlin/Unit)?|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b| ->  {
+                R|kotlin/requireNotNull|<R|kotlin/Any.() -> kotlin/Unit|>(R|<local>/block1|)
+            }
+            else ->  {
+                R|kotlin/requireNotNull|<R|kotlin/Any.(kotlin/Any?) -> kotlin/Unit|>(R|<local>/block2|)
+            }
+        }
+
+    }
