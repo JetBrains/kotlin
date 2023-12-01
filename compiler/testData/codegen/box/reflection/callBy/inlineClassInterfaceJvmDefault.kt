@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// !JVM_DEFAULT_MODE: disable
+// !JVM_DEFAULT_MODE: all
 
 
 import kotlin.test.assertEquals

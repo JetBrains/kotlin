@@ -294,10 +294,10 @@ private fun makeKotlinParameterTypes(
             if (member?.isFromDefaultImpls() == true || member?.declaringClass?.isInterface == true) {
                 // hack to forbid unboxing dispatchReceiver if it is used upcasted
                 // kotlinParameterTypes are used to determine shifts and calls according to whether type is MFVC/IC or not.
-                // If it is MFVC/IC, boxes are unboxed. If isOwner is false, it means that the actual called member lies in interface/DefaultImpls class
-                // which accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
+                // If it is a MFVC/IC, boxes are unboxed. If the actual called member lies in the interface/DefaultImpls class,
+                // it accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
                 kotlinParameterTypes.add(containingDeclaration.defaultType.makeNullable())
-            } else { // Not containingDeclaration.isValue because it refers to IC/MFVC when the actual member is of interface DefaultImpls class.
+            } else {
                 kotlinParameterTypes.add(containingDeclaration.defaultType)
             }
         }

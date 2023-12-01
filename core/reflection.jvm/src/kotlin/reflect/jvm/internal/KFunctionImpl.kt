@@ -168,7 +168,7 @@ internal class KFunctionImpl private constructor(
 
     // boundReceiver is unboxed receiver when the receiver is inline class.
     // However, when the expected dispatch receiver type is an interface,
-    // the member belongs to DefaultImpls, so the receiver should not be unboxed.
+    // the member belongs to the interface/DefaultImpls, so the receiver should not be unboxed.
     private fun useBoxedBoundReceiver(member: Method) =
         descriptor.dispatchReceiverParameter?.type?.isInlineClassType() == true && member.parameterTypes.firstOrNull()?.isInterface == true
 
