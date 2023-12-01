@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
@@ -34,7 +33,7 @@ internal abstract class LLFirAbstractBodyTargetResolver(
 ) : LLFirTargetResolver(resolveTarget, lockProvider, resolvePhase, isJumpingPhase) {
     protected fun createReturnTypeCalculator(
         firResolveContextCollector: FirResolveContextCollector?,
-    ): ReturnTypeCalculator = LLFirReturnTypeCalculatorWithJump(
+    ): LLFirReturnTypeCalculatorWithJump = LLFirReturnTypeCalculatorWithJump(
         scopeSession,
         implicitBodyResolveComputationSession,
         lockProvider,

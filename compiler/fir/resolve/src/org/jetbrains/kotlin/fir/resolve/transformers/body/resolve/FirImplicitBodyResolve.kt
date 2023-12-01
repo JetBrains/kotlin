@@ -88,7 +88,7 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
         components.scopeSession,
         implicitBodyResolveComputationSession,
         designationMap,
-        nonLocalDeclarationResolver = currentReturnTypeCalculator,
+        outerTransformer = components.transformer,
     )
 
     val newContext = components.context.createSnapshotForLocalClasses(returnTypeCalculator, targetedClasses)
@@ -103,8 +103,9 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
         implicitTypeOnly = false,
         returnTypeCalculator,
         outerBodyResolveContext = newContext,
-        firResolveContextCollector = firResolveContextCollector
+        firResolveContextCollector = firResolveContextCollector,
     )
+
     return this.transform(transformer, resolutionMode)
 }
 
@@ -114,7 +115,7 @@ open class FirImplicitAwareBodyResolveTransformer(
     private val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
     phase: FirResolvePhase,
     implicitTypeOnly: Boolean,
-    returnTypeCalculator: ReturnTypeCalculator,
+    returnTypeCalculator: ReturnTypeCalculatorWithJump,
     outerBodyResolveContext: BodyResolveContext? = null,
     firResolveContextCollector: FirResolveContextCollector? = null,
 ) : FirBodyResolveTransformer(
@@ -183,7 +184,7 @@ open class ReturnTypeCalculatorWithJump(
     protected val scopeSession: ScopeSession,
     val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
     val designationMapForLocalClasses: Map<FirCallableDeclaration, List<FirClassLikeDeclaration>> = mapOf(),
-    private val nonLocalDeclarationResolver: ReturnTypeCalculatorWithJump? = null,
+    val outerTransformer: FirAbstractBodyResolveTransformerDispatcher? = null,
 ) : ReturnTypeCalculator() {
     override val callableCopyTypeCalculator: CallableCopyTypeCalculator = CallableCopyTypeCalculatorWithJump()
 
@@ -292,7 +293,9 @@ open class ReturnTypeCalculatorWithJump(
         val (designation, outerBodyResolveContext) = if (declaration in designationMapForLocalClasses) {
             designationMapForLocalClasses.getValue(declaration) to outerBodyResolveContext
         } else {
-            nonLocalDeclarationResolver?.let { return it.resolveDeclaration(declaration) }
+            (outerTransformer?.returnTypeCalculator as? ReturnTypeCalculatorWithJump)?.resolveDeclaration(declaration)?.let {
+                return it
+            }
 
             val provider = session.firProvider
             val file = provider.getFirCallableContainerFile(symbol)
@@ -349,7 +352,7 @@ open class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
     session: FirSession,
     scopeSession: ScopeSession,
     implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
-    returnTypeCalculator: ReturnTypeCalculator,
+    returnTypeCalculator: ReturnTypeCalculatorWithJump,
     outerBodyResolveContext: BodyResolveContext? = null
 ) : FirImplicitAwareBodyResolveTransformer(
     session,
