@@ -198,11 +198,12 @@ public:
         gc::processWeaks<ProcessWeakTraits>(gc::GCHandle::getByEpoch(0), specialRefRegistry_);
         alloc::SweepExtraObjects<SweepTraits>(gc::GCHandle::getByEpoch(0), extraObjectFactory_);
         auto finalizers = alloc::Sweep<SweepTraits>(gc::GCHandle::getByEpoch(0), objectFactory_);
+        finalizers.mergeIntoRegular();
         std::vector<ObjHeader*> objects;
-        for (auto node : finalizers.IterForTests()) {
+        for (auto node : finalizers.regular.IterForTests()) {
             objects.push_back(node.GetObjHeader());
         }
-        finalizers_.push_back(std::move(finalizers));
+        finalizers_.push_back(std::move(finalizers.regular));
         return objects;
     }
 

@@ -181,17 +181,21 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     // also sweeps extraObjects
     auto finalizerQueue = allocator_.impl().heap().Sweep(gcHandle);
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
-        finalizerQueue.TransferAllFrom(thread.allocator().impl().alloc().ExtractFinalizerQueue());
+        finalizerQueue.mergeFrom(thread.allocator().impl().alloc().ExtractFinalizerQueue());
     }
-    finalizerQueue.TransferAllFrom(allocator_.impl().heap().ExtractFinalizerQueue());
+    finalizerQueue.mergeFrom(allocator_.impl().heap().ExtractFinalizerQueue());
 #endif
     scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes() + threadCount * allocator_.estimateOverheadPerThread());
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();
 
+    if (!mainThreadFinalizerProcessor_.available()) {
+        finalizerQueue.mergeIntoRegular();
+    }
     // This may start a new thread. On some pthreads implementations, this may block waiting for concurrent thread
     // destructors running. So, it must ensured that no locks are held by this point.
     // TODO: Consider having an always on sleeping finalizer thread.
-    finalizerProcessor_.ScheduleTasks(std::move(finalizerQueue), epoch);
+    finalizerProcessor_.ScheduleTasks(std::move(finalizerQueue.regular), epoch);
+    mainThreadFinalizerProcessor_.schedule(std::move(finalizerQueue.mainThread), epoch);
 }

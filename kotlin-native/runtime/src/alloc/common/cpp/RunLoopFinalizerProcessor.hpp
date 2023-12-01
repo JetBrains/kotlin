@@ -18,6 +18,8 @@
 
 namespace kotlin::alloc {
 
+// Configuration for `RunLoopFinalizerProcessor`
+// When updating the default values, do not forget to update stdlib API docs.
 struct RunLoopFinalizerProcessorConfig {
     // How long can finalizers be processed in a single task. If some finalizer takes too long, the entire
     // batch of `batchSize` will overshoot this target.
@@ -27,7 +29,7 @@ struct RunLoopFinalizerProcessorConfig {
     // This cannot be too small to allow the attached run loop process other tasks (not from this finalizer processor).
     std::chrono::nanoseconds minTimeBetweenTasks = std::chrono::milliseconds(1);
     // How many finalizers are processed in a single batch in a single autoreleasepool.
-    size_t batchSize = 100;
+    uint64_t batchSize = 100;
 };
 
 #if KONAN_HAS_FOUNDATION_FRAMEWORK
@@ -109,7 +111,7 @@ private:
             }
         }
         steady_clock::time_point deadline;
-        size_t batchCount;
+        uint64_t batchCount;
         {
             std::unique_lock guard(configMutex_);
             RuntimeLogDebug(
@@ -118,14 +120,14 @@ private:
             deadline = startTime + config_.maxTimeInTask;
             batchCount = config_.batchSize;
         }
-        size_t processedCount = 0;
+        uint64_t processedCount = 0;
         while (true) {
             auto now = steady_clock::now();
             if (now > deadline) {
                 // Finalization is being run too long. Stop processing and reschedule until the next allowed time.
                 std::unique_lock guard(configMutex_);
                 RuntimeLogDebug(
-                        {kTagGC}, "Processing %zu finalizers on a run loop has taken %" PRId64 " ms. Stopping for %" PRId64 "ms.",
+                        {kTagGC}, "Processing %" PRIu64 " finalizers on a run loop has taken %" PRId64 " ms. Stopping for %" PRId64 "ms.",
                         processedCount, std::chrono::duration_cast<milliseconds>(now - startTime).count().value,
                         std::chrono::duration_cast<std::chrono::milliseconds>(config_.minTimeBetweenTasks).count());
                 timer_.setNextFiring(config_.minTimeBetweenTasks);
@@ -134,7 +136,7 @@ private:
             }
             {
                 objc_support::AutoreleasePool autoreleasePool;
-                for (size_t i = 0; i < batchCount; ++i) {
+                for (uint64_t i = 0; i < batchCount; ++i) {
                     // There's no point checking `deadline` here since the majority of the time will probably
                     // be spent in `AutoreleasePool` destructor.
                     if (!FinalizerQueueTraits::processSingle(currentQueue_.queue)) {
@@ -154,7 +156,7 @@ private:
                 // would definitely have to wait long enough to see the updated lastProcessTimestamp_.
                 lastProcessTimestamp_ = steady_clock::now();
                 RuntimeLogDebug(
-                        {kTagGC}, "Processing %zu finalizers on a run loop has finished in %" PRId64 "ms.", processedCount,
+                        {kTagGC}, "Processing %" PRIu64 " finalizers on a run loop has finished in %" PRId64 "ms.", processedCount,
                         std::chrono::duration_cast<milliseconds>(lastProcessTimestamp_ - startTime).count().value);
                 return;
             }

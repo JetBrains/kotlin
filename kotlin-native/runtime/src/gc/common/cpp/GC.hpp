@@ -12,6 +12,7 @@
 #include "ExtraObjectData.hpp"
 #include "GCScheduler.hpp"
 #include "ReferenceOps.hpp"
+#include "RunLoopFinalizerProcessor.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -77,6 +78,9 @@ public:
     int64_t Schedule() noexcept;
     void WaitFinished(int64_t epoch) noexcept;
     void WaitFinalizers(int64_t epoch) noexcept;
+
+    void configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept;
+    bool mainThreadFinalizerProcessorAvailable() noexcept;
 
 private:
     std::unique_ptr<Impl> impl_;

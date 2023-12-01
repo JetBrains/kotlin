@@ -438,6 +438,47 @@ extern "C" void Kotlin_native_internal_GC_setCyclicCollector(ObjHeader* gc, bool
     // Nothing to do.
 }
 
+extern "C" KBoolean Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_isAvailable(ObjHeader* gc) {
+    return mm::GlobalData::Instance().gc().mainThreadFinalizerProcessorAvailable();
+}
+
+extern "C" KLong Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getMaxTimeInTask(ObjHeader* gc) {
+    KLong result;
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor([&](auto& config) noexcept -> void {
+        result = std::chrono::duration_cast<std::chrono::microseconds>(config.maxTimeInTask).count();
+    });
+    return result;
+}
+
+extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setMaxTimeInTask(ObjHeader* gc, KLong value) {
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor(
+            [=](auto& config) noexcept -> void { config.maxTimeInTask = std::chrono::microseconds(value); });
+}
+
+extern "C" KLong Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getMinTimeBetweenTasks(ObjHeader* gc) {
+    KLong result;
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor([&](auto& config) noexcept -> void {
+        result = std::chrono::duration_cast<std::chrono::microseconds>(config.minTimeBetweenTasks).count();
+    });
+    return result;
+}
+
+extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setMinTimeBetweenTasks(ObjHeader* gc, KLong value) {
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor(
+            [=](auto& config) noexcept -> void { config.minTimeBetweenTasks = std::chrono::microseconds(value); });
+}
+
+extern "C" KULong Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getBatchSize(ObjHeader* gc) {
+    KULong result;
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor(
+            [&](auto& config) noexcept -> void { result = config.batchSize; });
+    return result;
+}
+
+extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setBatchSize(ObjHeader* gc, KULong value) {
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor([=](auto& config) noexcept -> void { config.batchSize = value; });
+}
+
 extern "C" bool Kotlin_Any_isShareable(ObjHeader* thiz) {
     // TODO: Remove when legacy MM is gone.
     return true;

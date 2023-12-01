@@ -489,6 +489,40 @@ TEST(ObjectFactoryStorageTest, MoveAll) {
     EXPECT_THAT(consumer.size(), 3);
 }
 
+TEST(ObjectFactoryStorageTest, Pop) {
+    ObjectFactoryStorageRegular storage;
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
+    Consumer<ObjectFactoryStorageRegular> consumer;
+
+    producer.Insert<int>(1);
+    producer.Insert<int>(2);
+    producer.Insert<int>(3);
+
+    producer.Publish();
+
+    {
+        auto iter = storage.LockForIter();
+        for (auto it = iter.begin(); it != iter.end();) {
+            iter.MoveAndAdvance(consumer, it, ObjectFactoryStorageRegular::Node::GetSizeForDataSize(sizeof(int)));
+        }
+    }
+
+    std::vector<int> popped;
+    while (auto element = consumer.Pop()) {
+        popped.push_back(element->Data<int>());
+    }
+
+    auto actual = Collect<int>(storage);
+    auto actualConsumer = Collect<int, alignof(void*)>(consumer);
+
+    EXPECT_THAT(actual, testing::IsEmpty());
+    EXPECT_THAT(actualConsumer, testing::IsEmpty());
+    EXPECT_THAT(popped, testing::ElementsAre(1, 2, 3));
+    EXPECT_THAT(storage.GetSizeUnsafe(), 0);
+    EXPECT_THAT(producer.size(), 0);
+    EXPECT_THAT(consumer.size(), 0);
+}
+
 TEST(ObjectFactoryStorageTest, MergeWith) {
     ObjectFactoryStorageRegular storage;
     Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());

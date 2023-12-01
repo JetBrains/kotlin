@@ -17,7 +17,6 @@ namespace {
 using Data = typename kotlin::mm::ExtraObjectData;
 using Cell = typename kotlin::alloc::ExtraObjectCell;
 using Page = typename kotlin::alloc::ExtraObjectPage;
-using Queue = typename kotlin::alloc::AtomicStack<Cell>;
 
 Data* alloc(Page* page) {
     Data* ptr = page->TryAllocate();
@@ -40,7 +39,7 @@ TEST(CustomAllocTest, ExtraObjectPageConsequtiveAlloc) {
 
 TEST(CustomAllocTest, ExtraObjectPageSweepEmptyPage) {
     Page* page = Page::Create(0);
-    Queue finalizerQueue;
+    kotlin::alloc::FinalizerQueue finalizerQueue;
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweepExtraObjects();
     EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
@@ -57,7 +56,7 @@ TEST(CustomAllocTest, ExtraObjectPageSweepFullFinalizedPage) {
         ++count;
     }
     EXPECT_EQ(count, EXTRA_OBJECT_COUNT);
-    Queue finalizerQueue;
+    kotlin::alloc::FinalizerQueue finalizerQueue;
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweepExtraObjects();
     EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));

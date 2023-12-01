@@ -17,6 +17,7 @@
 #include "GCState.hpp"
 #include "GCStatistics.hpp"
 #include "IntrusiveList.hpp"
+#include "MainThreadFinalizerProcessor.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "ObjectData.hpp"
 #include "ParallelMark.hpp"
@@ -72,6 +73,9 @@ public:
     void reconfigure(std::size_t maxParallelism, bool mutatorsCooperate, size_t auxGCThreads) noexcept;
 
     GCStateHolder& state() noexcept { return state_; }
+    alloc::MainThreadFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& mainThreadFinalizerProcessor() noexcept {
+        return mainThreadFinalizerProcessor_;
+    }
 
 private:
     void mainGCThreadBody();
@@ -82,7 +86,8 @@ private:
     gcScheduler::GCScheduler& gcScheduler_;
 
     GCStateHolder state_;
-    FinalizerProcessor<alloc::FinalizerQueue, alloc::FinalizerQueueTraits> finalizerProcessor_;
+    FinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> finalizerProcessor_;
+    alloc::MainThreadFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> mainThreadFinalizerProcessor_;
 
     mark::ParallelMark markDispatcher_;
     ScopedThread mainThread_;

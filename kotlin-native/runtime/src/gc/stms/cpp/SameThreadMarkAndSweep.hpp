@@ -15,6 +15,7 @@
 #include "GCState.hpp"
 #include "GlobalData.hpp"
 #include "IntrusiveList.hpp"
+#include "MainThreadFinalizerProcessor.hpp"
 #include "ObjectData.hpp"
 #include "Types.h"
 #include "Utils.hpp"
@@ -49,6 +50,9 @@ public:
     bool FinalizersThreadIsRunning() noexcept;
 
     GCStateHolder& state() noexcept { return state_; }
+    alloc::MainThreadFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& mainThreadFinalizerProcessor() noexcept {
+        return mainThreadFinalizerProcessor_;
+    }
 
 private:
     void PerformFullGC(int64_t epoch) noexcept;
@@ -58,7 +62,8 @@ private:
 
     GCStateHolder state_;
     ScopedThread gcThread_;
-    FinalizerProcessor<alloc::FinalizerQueue, alloc::FinalizerQueueTraits> finalizerProcessor_;
+    FinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> finalizerProcessor_;
+    alloc::MainThreadFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> mainThreadFinalizerProcessor_;
 
     MarkQueue markQueue_;
 };

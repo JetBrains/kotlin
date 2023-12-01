@@ -5,10 +5,11 @@
 
 #pragma once
 
+#include "ExtraObjectDataFactory.hpp"
 #include "FinalizerHooks.hpp"
 #include "GC.hpp"
 #include "GCStatistics.hpp"
-#include "ExtraObjectDataFactory.hpp"
+#include "SegregatedFinalizerQueue.hpp"
 
 namespace kotlin::alloc {
 
@@ -43,8 +44,9 @@ void SweepExtraObjects(gc::GCHandle handle, typename Traits::ExtraObjectsFactory
 }
 
 template <typename Traits>
-typename Traits::ObjectFactory::FinalizerQueue Sweep(gc::GCHandle handle, typename Traits::ObjectFactory::Iterable& objectFactoryIter) noexcept {
-    typename Traits::ObjectFactory::FinalizerQueue finalizerQueue;
+SegregatedFinalizerQueue<typename Traits::ObjectFactory::FinalizerQueue> Sweep(
+        gc::GCHandle handle, typename Traits::ObjectFactory::Iterable& objectFactoryIter) noexcept {
+    SegregatedFinalizerQueue<typename Traits::ObjectFactory::FinalizerQueue> finalizerQueue;
     auto sweepHandle = handle.sweep();
 
     for (auto it = objectFactoryIter.begin(); it != objectFactoryIter.end();) {
@@ -56,7 +58,12 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(gc::GCHandle handle, typena
         }
         sweepHandle.addSweptObject();
         if (HasFinalizers(objHeader)) {
-            objectFactoryIter.MoveAndAdvance(finalizerQueue, it);
+            auto* extraObject = mm::ExtraObjectData::Get(objHeader);
+            if (compiler::objcDisposeOnMain() && extraObject->getFlag(mm::ExtraObjectData::FLAGS_RELEASE_ON_MAIN_QUEUE)) {
+                objectFactoryIter.MoveAndAdvance(finalizerQueue.mainThread, it);
+            } else {
+                objectFactoryIter.MoveAndAdvance(finalizerQueue.regular, it);
+            }
         } else {
             objectFactoryIter.EraseAndAdvance(it);
         }
@@ -66,7 +73,8 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(gc::GCHandle handle, typena
 }
 
 template <typename Traits>
-typename Traits::ObjectFactory::FinalizerQueue Sweep(gc::GCHandle handle, typename Traits::ObjectFactory& objectFactory) noexcept {
+SegregatedFinalizerQueue<typename Traits::ObjectFactory::FinalizerQueue> Sweep(
+        gc::GCHandle handle, typename Traits::ObjectFactory& objectFactory) noexcept {
     auto iter = objectFactory.LockForIter();
     return Sweep<Traits>(handle, iter);
 }

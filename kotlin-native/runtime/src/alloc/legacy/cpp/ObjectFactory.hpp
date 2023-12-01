@@ -325,6 +325,20 @@ public:
             AssertCorrect();
         }
 
+        unique_ptr<Node> Pop() noexcept {
+            AssertCorrect();
+            auto result = std::move(root_);
+            if (result) {
+                --size_;
+                root_ = std::move(result->next_);
+                if (last_ == result.get()) {
+                    last_ = nullptr;
+                }
+            }
+            AssertCorrect();
+            return result;
+        }
+
     private:
         friend class ObjectFactoryStorage;
 
@@ -679,9 +693,14 @@ public:
             }
         }
 
-        void MergeWith(FinalizerQueue &&other) {
-            consumer_.MergeWith(std::move(other.consumer_));
+        bool FinalizeSingle() noexcept {
+            if (auto node = consumer_.Pop()) {
+                RunFinalizers(NodeRef(*node).GetObjHeader());
+            }
+            return false;
         }
+
+        void TransferAllFrom(FinalizerQueue&& other) { consumer_.MergeWith(std::move(other.consumer_)); }
 
         Iterable IterForTests() noexcept { return Iterable(*this); }
 
@@ -694,9 +713,11 @@ public:
     struct FinalizerQueueTraits {
         static bool isEmpty(const FinalizerQueue& queue) noexcept { return queue.size() == 0; }
 
-        static void add(FinalizerQueue& into, FinalizerQueue from) noexcept { into.MergeWith(std::move(from)); }
+        static void add(FinalizerQueue& into, FinalizerQueue from) noexcept { into.TransferAllFrom(std::move(from)); }
 
         static void process(FinalizerQueue queue) noexcept { queue.Finalize(); }
+
+        static bool processSingle(FinalizerQueue& queue) noexcept { return queue.FinalizeSingle(); }
     };
 
     class Iterable {

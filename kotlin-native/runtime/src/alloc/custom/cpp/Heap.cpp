@@ -80,7 +80,7 @@ ExtraObjectPage* Heap::GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexce
 
 void Heap::AddToFinalizerQueue(FinalizerQueue queue) noexcept {
     std::unique_lock guard(pendingFinalizerQueueMutex_);
-    pendingFinalizerQueue_.TransferAllFrom(std::move(queue));
+    pendingFinalizerQueue_.mergeFrom(std::move(queue));
 }
 
 FinalizerQueue Heap::ExtractFinalizerQueue() noexcept {

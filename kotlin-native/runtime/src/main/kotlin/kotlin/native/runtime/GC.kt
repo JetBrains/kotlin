@@ -321,6 +321,111 @@ public object GC {
     @Deprecated("No-op in modern GC implementation")
     public external fun findCycle(root: Any): Array<Any>?
 
+    /**
+     * This objects allows to customize the behavior of the finalizer processor that runs on the main thread.
+     *
+     * On Apple platforms Kotlin/Native releases ObjC/Swift objects that were passed to Kotlin when it processes the finalizers after GC.
+     * Kotlin/Native can also utilize main run loop to release objects that were passed to Kotlin on the main thread. This can be turned
+     * off by setting `objcDisposeOnMain` binary option to `false`.
+     * For more information, see [iOS integration](https://kotlinlang.org/docs/native-ios-integration.html#deinitializers).
+     *
+     * This finalizer processor works as follows:
+     * - Finalizers that must be run on the main thread get scheduled by the GC after the main GC phase is finished
+     * - A task will be posted on the main run loop in which the scheduled finalizers will start processing
+     * - Finalizers will be processed inside an `autoreleasepool` in batches of size [batchSize]
+     * - If at some point during task the processor detected that more than [maxTimeInTask] has passed, it will
+     *   stop and post another task to the main thread to continue processing finalizers later. Note that if some
+     *   finalizer takes a very long time, the task will still process the entire [batchSize] and may significantly overflow [maxTimeInTask]
+     * - It's guaranteed that the time interval between tasks is at least [minTimeBetweenTasks].
+     *
+     * [maxTimeInTask] and [minTimeBetweenTasks] allow other tasks posted on the main thread (e.g. UI events) be processed without
+     * significant delays.
+     */
+    public object MainThreadFinalizerProcessor {
+        /**
+         * `true` if Kotlin/Native will use [MainThreadFinalizerProcessor] to process finalizers.
+         *
+         * __Note__: at the very start of the program this will be `false`, but may turn `true` later, if Kotlin/Native determines that the
+         * main run loop is being processed.
+         */
+        public val available: Boolean
+            get() = isAvailable()
+
+        /**
+         * How much time can each task take.
+         *
+         * There is no guarantee that the task will be completed under this time, this is only a hint.
+         *
+         * Setting this value too high makes some other main thread tasks (e.g. UI events) be processed with high delays.
+         * Setting this value too low makes ObjC/Swift objects be released with high delays which contributes to memory usage.
+         *
+         * Default: 5ms
+         *
+         * @throws [IllegalArgumentException] when value is negative.
+         */
+        public var maxTimeInTask: Duration
+            get() = getMaxTimeInTask().microseconds
+            set(value) {
+                require(!value.isNegative()) { "mainThreadMaxTimeInTask must not be negative: $value" }
+                setMaxTimeInTask(value.inWholeMicroseconds)
+            }
+
+        /**
+         * The minimum interval between two tasks.
+         *
+         * Setting this value too high makes ObjC/Swift objects be released with high delays which contributes to memory usage.
+         * Setting this value too low makes some other main thread tasks (e.g. UI events) be processed with high delays.
+         *
+         * Default: 10ms
+         *
+         * @throws [IllegalArgumentException] when value is negative.
+         */
+        public var minTimeBetweenTasks: Duration
+            get() = getMinTimeBetweenTasks().microseconds
+            set(value) {
+                require(!value.isNegative()) { "mainThreadMinTimeBetweenTasks must not be negative: $value" }
+                setMinTimeBetweenTasks(value.inWholeMicroseconds)
+            }
+
+        /**
+         * How many finalizers will be processed inside a single `autoreleasepool`.
+         *
+         * Setting this value too high makes it more likely that [maxTimeInTask] will not be respected.
+         * Setting this value too low makes each single finalizer take more time and so fewer finalizers will be processed in one task.
+         *
+         * Default: 100
+         *
+         * @throws [IllegalArgumentException] when value is 0.
+         */
+        public var batchSize: ULong
+            get() = getBatchSize()
+            set(value) {
+                require(value > 0U) { "mainThreadBatchSize must not be 0" }
+                setBatchSize(value)
+            }
+
+        @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_isAvailable")
+        private external fun isAvailable(): Boolean
+
+        @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getMaxTimeInTask")
+        private external fun getMaxTimeInTask(): Long
+
+        @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setMaxTimeInTask")
+        private external fun setMaxTimeInTask(value: Long)
+
+        @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getMinTimeBetweenTasks")
+        private external fun getMinTimeBetweenTasks(): Long
+
+        @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setMinTimeBetweenTasks")
+        private external fun setMinTimeBetweenTasks(value: Long)
+
+        @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getBatchSize")
+        private external fun getBatchSize(): ULong
+
+        @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setBatchSize")
+        private external fun setBatchSize(value: ULong)
+    }
+
     @GCUnsafeCall("Kotlin_native_internal_GC_getThreshold")
     private external fun getThreshold(): Int
 
