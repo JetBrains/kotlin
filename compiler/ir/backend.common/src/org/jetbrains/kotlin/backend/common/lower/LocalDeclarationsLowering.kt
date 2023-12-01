@@ -339,12 +339,14 @@ class LocalDeclarationsLowering(
                 }
 
             override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement =
-                (localContext as? LocalClassContext)
-                    ?.takeIf { declaration.parentAsClass == it.declaration }
-                    ?.constructorContext
-                    ?.let { declaration.apply { transformChildrenVoid(FunctionBodiesRewriter(it)) } }
-                    ?: visitMember(declaration)
-                    ?: super.visitAnonymousInitializer(declaration)
+                if (localContext is LocalClassContext && declaration.parent == localContext.declaration) {
+                    localContext.constructorContext?.let { declaration.apply { transformChildrenVoid(FunctionBodiesRewriter(it)) } }
+                        ?: visitMember(declaration)
+                        ?: error("Expect that visitMember will translate the declaration")
+                } else {
+                    super.visitAnonymousInitializer(declaration)
+                }
+
 
             private fun visitMember(declaration: IrDeclaration): IrStatement? =
                 if (localContext is LocalClassContext && declaration.parent == localContext.declaration) {

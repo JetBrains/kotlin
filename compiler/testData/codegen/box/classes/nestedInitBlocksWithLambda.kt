@@ -32,6 +32,8 @@ class CompilerBug2(result: String) {
                 init {
                     doSomething { completed(result) }
                 }
+
+                constructor() {}
             }
 
             Foo()

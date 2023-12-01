@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.util.ir2string
-import org.jetbrains.kotlin.ir.util.isLocal
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 data class Closure(val capturedValues: List<IrValueSymbol>, val capturedTypeParameters: List<IrTypeParameter>)
@@ -263,6 +261,24 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             declaration.acceptChildren(this, closureBuilder)
 
             includeInParent(closureBuilder)
+        }
+
+        override fun visitConstructor(declaration: IrConstructor, data: ClosureBuilder?) {
+            val closureBuilder = declaration.closureBuilder
+
+            declaration.acceptChildren(this, closureBuilder)
+
+            declaration.constructedClass.declarations.forEach {
+                if (it is IrAnonymousInitializer) it.acceptChildren(this, closureBuilder)
+            }
+
+            includeInParent(closureBuilder)
+        }
+
+        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: ClosureBuilder?) {
+            if (!declaration.parentAsClass.constructors.any()) {
+                super.visitAnonymousInitializer(declaration, data)
+            }
         }
 
         override fun visitTypeParameter(declaration: IrTypeParameter, data: ClosureBuilder?) {
