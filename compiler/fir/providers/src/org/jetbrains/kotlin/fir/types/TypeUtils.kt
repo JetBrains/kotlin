@@ -533,32 +533,43 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
     fun findCorrespondingCapturedArgumentsForType(type: ConeKotlinType) =
         capturedArgumentsByComponents.find { typeToCapture -> typeToCapture.isSuitableForType(type, this) }?.capturedArguments
 
-    fun replaceArgumentsWithCapturedArgumentsByIntersectionComponents(typeToReplace: ConeSimpleKotlinType): List<ConeKotlinType> {
+    fun replaceArgumentsWithCapturedArgumentsByIntersectionComponents(typeToReplace: ConeSimpleKotlinType): List<ConeKotlinType>? {
         return if (typeToReplace is ConeIntersectionType) {
             typeToReplace.intersectedTypes.map { componentType ->
                 val capturedArguments = findCorrespondingCapturedArgumentsForType(componentType)
                     ?: return@map componentType
                 componentType.withArguments(capturedArguments)
-            }
+            }.takeUnless { it == typeToReplace.intersectedTypes }
         } else {
             val capturedArguments = findCorrespondingCapturedArgumentsForType(typeToReplace)
-                ?: return listOf(typeToReplace)
+                ?: return null
             listOf(typeToReplace.withArguments(capturedArguments))
         }
     }
 
     return when (type) {
         is ConeFlexibleType -> {
-            val lowerIntersectedType = intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.lowerBound))
-                .withNullability(ConeNullability.create(type.lowerBound.isMarkedNullable), this)
-            val upperIntersectedType = intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.upperBound))
-                .withNullability(ConeNullability.create(type.upperBound.isMarkedNullable), this)
+            // Flexible types can either have projections in both bounds or just the upper bound (raw types and arrays).
+            // Since the scope of flexible types is built from the lower bound, we don't gain any safety from only capturing the
+            // upper bound.
+            // At the same time, capturing of raw(-like) types leads to issues like KT-63982 or breaks tests like
+            // testData/codegen/box/reflection/typeOf/rawTypes_after.kt.
+            // Therefore, we return null if nothing was captured for either bound.
+
+            val lowerIntersectedType =
+                intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.lowerBound) ?: return null)
+                    .withNullability(ConeNullability.create(type.lowerBound.isMarkedNullable), this)
+            val upperIntersectedType =
+                intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.upperBound) ?: return null)
+                    .withNullability(ConeNullability.create(type.upperBound.isMarkedNullable), this)
 
             ConeFlexibleType(lowerIntersectedType.coneLowerBoundIfFlexible(), upperIntersectedType.coneUpperBoundIfFlexible())
         }
 
         is ConeSimpleKotlinType -> {
-            intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type)).withNullability(type.isMarkedNullable) as ConeKotlinType
+            intersectTypes(
+                replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type) ?: return null
+            ).withNullability(type.isMarkedNullable) as ConeKotlinType
         }
     }
 }

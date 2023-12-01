@@ -16431,6 +16431,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt63982.kt")
+            public void testKt63982() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt63982.kt");
+            }
+
+            @Test
             @TestMetadata("lambdaArgumentWithLabel.kt")
             public void testLambdaArgumentWithLabel() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/lambdaArgumentWithLabel.kt");
