@@ -17005,6 +17005,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                     }
 
                     @Test
+                    @TestMetadata("capturedTypesId.kt")
+                    public void testCapturedTypesId() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/capturedTypesId.kt");
+                    }
+
+                    @Test
                     @TestMetadata("commonSuperType.kt")
                     public void testCommonSuperType() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperType.kt");
