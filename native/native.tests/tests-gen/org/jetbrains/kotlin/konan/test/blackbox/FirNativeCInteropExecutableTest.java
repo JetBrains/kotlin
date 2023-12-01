@@ -29,8 +29,98 @@ public class FirNativeCInteropExecutableTest extends AbstractNativeCInteropExecu
     }
 
     @Test
-    @TestMetadata("KT-63048")
-    public void testKT_63048() throws Exception {
-        runTest("native/native.tests/testData/CInterop/executable/KT-63048/");
+    @TestMetadata("arrayPointers")
+    public void testArrayPointers() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/arrayPointers/");
+    }
+
+    @Test
+    @TestMetadata("auxiliarySources")
+    public void testAuxiliarySources() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/auxiliarySources/");
+    }
+
+    @Test
+    @TestMetadata("bitfields")
+    public void testBitfields() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/bitfields/");
+    }
+
+    @Test
+    @TestMetadata("callbacksAndVarargs")
+    public void testCallbacksAndVarargs() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/callbacksAndVarargs/");
+    }
+
+    @Test
+    @TestMetadata("enums")
+    public void testEnums() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/enums/");
+    }
+
+    @Test
+    @TestMetadata("forwardDeclarations")
+    public void testForwardDeclarations() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/forwardDeclarations/");
+    }
+
+    @Test
+    @TestMetadata("funptr")
+    public void testFunptr() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/funptr/");
+    }
+
+    @Test
+    @TestMetadata("globals")
+    public void testGlobals() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/globals/");
+    }
+
+    @Test
+    @TestMetadata("incompleteTypes")
+    public void testIncompleteTypes() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/incompleteTypes/");
+    }
+
+    @Test
+    @TestMetadata("kt43265")
+    public void testKt43265() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/kt43265/");
+    }
+
+    @Test
+    @TestMetadata("kt44283")
+    public void testKt44283() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/kt44283/");
+    }
+
+    @Test
+    @TestMetadata("kt54284")
+    public void testKt54284() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/kt54284/");
+    }
+
+    @Test
+    @TestMetadata("kt54284_fmodules")
+    public void testKt54284_fmodules() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/kt54284_fmodules/");
+    }
+
+    @Test
+    @TestMetadata("kt63048")
+    public void testKt63048() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/kt63048/");
+    }
+
+    @Test
+    @TestMetadata("leakMemoryWithRunningThreadUnchecked")
+    public void testLeakMemoryWithRunningThreadUnchecked() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/leakMemoryWithRunningThreadUnchecked/");
+    }
+
+    @Test
+    @TestMetadata("toKString")
+    public void testToKString() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/toKString/");
     }
 }

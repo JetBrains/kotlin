@@ -3372,28 +3372,12 @@ createInterop("sockets") {
     it.defFile 'interop/basics/sockets.def'
 }
 
-createInterop("bitfields") {
-    it.defFile 'interop/basics/bitfields.def'
-}
-
-createInterop("cglobals") {
-    it.defFile 'interop/basics/cglobals.def'
-}
-
-createInterop("cfunptr") {
-    it.defFile 'interop/basics/cfunptr.def'
-}
-
 createInterop("cmacros") {
     it.defFile 'interop/basics/cmacros.def'
 }
 
 createInterop("cunsupported") {
     it.defFile 'interop/basics/cunsupported.def'
-}
-
-createInterop("ctoKString") {
-    it.defFile 'interop/basics/ctoKString.def'
 }
 
 createInterop("ctypes") {
@@ -3416,10 +3400,6 @@ createInterop("cstructs") {
     it.defFile 'interop/basics/cstructs.def'
 }
 
-createInterop("ccallbacksAndVarargs") {
-    it.defFile 'interop/basics/ccallbacksAndVarargs.def'
-}
-
 createInterop("cmangling") {
     it.defFile 'interop/basics/mangling.def'
 }
@@ -3440,34 +3420,12 @@ createInterop("cunion") {
     it.defFile 'interop/basics/cunion.def'
 }
 
-createInterop("cenums") {
-    it.defFile 'interop/basics/cenums.def'
-}
-
-createInterop("carrayPointers") {
-    it.defFile 'interop/basics/carrayPointers.def'
-}
-
-createInterop("auxiliaryCppSources") {
-    // We need to provide empty def file to create correct `KonanInteropTask`.
-    it.defFile 'interop/auxiliary_sources/auxiliaryCppSources.def'
-    it.headers "$projectDir/interop/auxiliary_sources/name.h"
-    it.extraOpts "-Xcompile-source", "$projectDir/interop/auxiliary_sources/name.cpp"
-    it.extraOpts "-Xsource-compiler-option", "-std=c++17"
-}
-
 createInterop("concurrentTerminate") {
     it.defFile 'interop/concurrentTerminate/concurrentTerminate.def'
     it.headers "$projectDir/interop/concurrentTerminate/async.h"
     // TODO: Using `-Xcompile-source` does not imply dependency on that source, so the task will no re-run when the source is updated.
     it.extraOpts "-Xcompile-source", "$projectDir/interop/concurrentTerminate/async.cpp"
     it.extraOpts "-Xsource-compiler-option", "-std=c++17"
-}
-
-createInterop("incomplete_types") {
-    it.defFile 'interop/incomplete_types/library.def'
-    it.headers "$projectDir/interop/incomplete_types/library.h"
-    it.extraOpts "-Xcompile-source", "$projectDir/interop/incomplete_types/library.cpp"
 }
 
 createInterop("embedStaticLibraries") {
@@ -3494,25 +3452,8 @@ createInterop("embedStaticLibraries") {
     it.extraOpts '-staticLibrary', "2.a"
 }
 
-createInterop("kt43265") {
-    it.defFile 'interop/kt43265/kt43265.def'
-}
-
-createInterop("kt44283") {
-    it.defFile 'interop/kt44283/kt44283.def'
-}
-
 createInterop("kt51925") {
     it.defFile 'interop/kt51925/kt51925.def'
-}
-
-createInterop("kt54284") {
-    it.defFile 'interop/kt54284/kt54284.def'
-}
-
-createInterop("kt54284_fmodules") {
-    it.defFile 'interop/kt54284/kt54284.def'
-    it.extraOpts '-compiler-option', '-fmodules'
 }
 
 createInterop("kt43502") {
@@ -3564,10 +3505,6 @@ createInterop("workerSignals") {
     it.defFile "interop/workerSignals/workerSignals.def"
     it.headers "$projectDir/interop/workerSignals/workerSignals.h"
     it.extraOpts "-Xcompile-source", "$projectDir/interop/workerSignals/workerSignals.cpp"
-}
-
-createInterop("cForwardDeclarations") {
-    it.defFile "interop/forwardDeclarations/cForwardDeclarations.def"
 }
 
 createInterop("cForwardDeclarationsTwoLibs1") {
@@ -3836,23 +3773,6 @@ standaloneTest("interop5") {
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
-interopTest("interop_bitfields") {
-    disabled = isAggressiveGC // TODO: Investigate why too slow
-    source = "interop/basics/bf.kt"
-    interop = 'bitfields'
-}
-
-interopTest("interop_funptr") {
-    useGoldenData = true
-    source = "interop/basics/funptr.kt"
-    interop = 'cfunptr'
-}
-
-interopTest("interop_globals") {
-    source = "interop/basics/globals.kt"
-    interop = 'cglobals'
-}
-
 interopTest("interop_macros") {
     source = "interop/basics/macros.kt"
     interop = 'cmacros'
@@ -3861,11 +3781,6 @@ interopTest("interop_macros") {
 interopTest("interop_unsupported") {
     source = "interop/basics/unsupported.kt"
     interop = 'cunsupported'
-}
-
-interopTest("interop_toKString") {
-    source = "interop/basics/toKString.kt"
-    interop = 'ctoKString'
 }
 
 interopTest("interop_types") {
@@ -3903,21 +3818,11 @@ interopTest("interop_mangling_keywords2") {
     interop = 'cmangling_keywords2'
 }
 
-interopTest("interop_auxiliarySources") {
-    source = "interop/auxiliary_sources/main.kt"
-    interop = 'auxiliaryCppSources'
-}
-
 interopTest("interop_concurrentTerminate") {
     source = "interop/concurrentTerminate/main.kt"
     interop = 'concurrentTerminate'
     outputChecker = { str -> str.endsWith("Reporting error!\n") }
     expectedExitStatus = 99
-}
-
-interopTest("interop_incompleteTypes") {
-    source = "interop/incomplete_types/main.kt"
-    interop = 'incomplete_types'
 }
 
 interopTest("interop_embedStaticLibraries") {
@@ -3933,11 +3838,6 @@ interopTest("interop_values") {
 interopTest("interop_structs") {
     source = "interop/basics/structs.kt"
     interop = 'cstructs'
-}
-
-interopTest("interop_callbacksAndVarargs") {
-    source = "interop/basics/callbacksAndVarargs.kt"
-    interop = 'ccallbacksAndVarargs'
 }
 
 interopTest("interop_threadStates") {
@@ -3982,39 +3882,6 @@ interopTest("interop_union") {
     source = "interop/basics/union.kt"
 }
 
-interopTest("interop_enums") {
-    interop = 'cenums'
-    flags = ['-XXLanguage:+EnumEntries']
-    source = "interop/basics/enums.kt"
-}
-
-interopTest("interop_array_pointers") {
-    interop = 'carrayPointers'
-    source = "interop/basics/arrayPointers.kt"
-}
-
-interopTest("interop_kt43265") {
-    interop = 'kt43265'
-    source = "interop/kt43265/usage.kt"
-}
-
-interopTest("interop_kt44283") {
-    disabled = project.globalTestArgs.contains('-opt') // Incompatible with -g.
-    flags = ['-g']
-    interop = 'kt44283'
-    source = "interop/kt44283/main.kt"
-}
-
-interopTest("interop_kt54284") {
-    interop = 'kt54284'
-    source = "interop/kt54284/main.kt"
-}
-
-interopTest("interop_kt54284_fmodules") {
-    interop = 'kt54284_fmodules'
-    source = "interop/kt54284/main.kt"
-}
-
 // TODO: This test should be run with caches on.
 interopTest("interop_kt51925") {
     interop = 'kt51925'
@@ -4036,11 +3903,6 @@ dynamicTest("interop_kt43502") {
     source = "interop/kt43502/main.kt"
     cSource = "$projectDir/interop/kt43502/main.c"
     useGoldenData = true
-}
-
-interopTest("interop_leakMemoryWithRunningThreadUnchecked") {
-    interop = 'leakMemoryWithRunningThread'
-    source = "interop/leakMemoryWithRunningThread/unchecked.kt"
 }
 
 interopTest("interop_leakMemoryWithRunningThreadChecked") {
@@ -4100,11 +3962,6 @@ interopTest("interop_workerSignals") {
     disabled = project.testTarget == 'mingw_x64' // cross-thread signalling does not work on Windows
     source = "interop/workerSignals/workerSignals.kt"
     interop = "workerSignals"
-}
-
-interopTest("interop_forwardDeclarations") {
-    source = "interop/forwardDeclarations/forwardDeclarations.kt"
-    interop = "cForwardDeclarations"
 }
 
 interopTest("interop_forwardDeclarationsTwoLibs") {

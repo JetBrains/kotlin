@@ -20,24 +20,41 @@ import java.io.File
 abstract class AbstractNativeCInteropExecutableTest : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testDataDir: String) {
-        val defFile = File(testDataDir, "library.def")
+        val testName = File(testDataDir).name
+        val defFile = File(testDataDir, "$testName.def")
         muteCInteropTestIfNecessary(defFile, targets.testTarget)
 
-        val mFile = File(testDataDir, "library.m")
-        val ktFile = File(testDataDir, "usage.kt")
+        val interopSourceFileM = File(testDataDir, "$testName.m")
+        val interopSourceFileCPP = File(testDataDir, "$testName.cpp")
+        val interopSourceFile = when {
+            interopSourceFileM.exists() -> interopSourceFileM
+            interopSourceFileCPP.exists() -> interopSourceFileCPP
+            else -> null
+        }
+        val ktFile = File(testDataDir, "$testName.kt")
 
+        val compilerArgs = buildList {
+            add("-compiler-option")
+            add("-I$testDataDir")
+            val auxHeader = File(testDataDir, "$testName.aux.h")
+            if (auxHeader.exists()) {
+                add("-header")
+                add(auxHeader.absolutePath)
+            }
+            interopSourceFile?.let {
+                add("-Xcompile-source")
+                add(it.absolutePath)
+                add("-Xsource-compiler-option")
+                add("-fobjc-arc")
+                add("-Xsource-compiler-option")
+                add("-DNS_FORMAT_ARGUMENT(A)=")
+            }
+        }
         val library = cinteropToLibrary(
             targets = targets,
             defFile = defFile,
             outputDir = buildDir,
-            freeCompilerArgs = TestCompilerArgs(
-                listOf(
-                    "-compiler-option", "-I$testDataDir",
-                    "-Xcompile-source", mFile.absolutePath,
-                    "-Xsource-compiler-option", "-fobjc-arc",
-                    "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)=",
-                )
-            )
+            freeCompilerArgs = TestCompilerArgs(compilerArgs)
         ).assertSuccess().resultingArtifact
 
         val testCase = generateTestCaseWithSingleFile(
