@@ -23694,6 +23694,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("kClassInEquals.kt")
+                public void testKClassInEquals() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/kClassInEquals.kt");
+                }
+
+                @Test
+                @TestMetadata("kClassInStringConcatenation.kt")
+                public void testKClassInStringConcatenation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/kClassInStringConcatenation.kt");
+                }
+
+                @Test
                 @TestMetadata("kotlinJavaCycle.kt")
                 public void testKotlinJavaCycle() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/kotlinJavaCycle.kt");
