@@ -43,8 +43,7 @@ internal class FunctionsWithoutBoundsCheckSupport(
         private val irBuiltIns: IrBuiltIns,
         private val irFactory: IrFactory,
 ) {
-    private val abstractList = symbols.abstractList.owner
-    private val abstractMutableList = symbols.abstractMutableList.owner
+    private val list = symbols.list.owner
 
     fun IrFunction.isGet() =
             name == OperatorNameConventions.GET && dispatchReceiverParameter != null
@@ -53,8 +52,7 @@ internal class FunctionsWithoutBoundsCheckSupport(
     fun IrClass.getGet() = functions.single { it.isGet() }
 
     fun IrClass.needFunctionsWithoutBoundsCheck() =
-            this == abstractList || this == abstractMutableList
-                    || this.getAllSuperclasses().let { abstractList in it || abstractMutableList in it }
+            this == list || list in this.getAllSuperclasses()
 
     fun IrClass.getGetWithoutBoundsCheck(): IrSimpleFunction = mapping.listGetWithoutBoundsCheck.getOrPut(this) {
         val get = this.getGet()
@@ -71,10 +69,10 @@ internal class FunctionsWithoutBoundsCheckSupport(
                 type = irBuiltIns.intType
             }
 
-            overriddenSymbols = get.overriddenSymbols
-                    .map { it.owner.parentAsClass }
-                    .filter { it.needFunctionsWithoutBoundsCheck() }
-                    .map { it.getGetWithoutBoundsCheck().symbol }
+            overriddenSymbols = get.overriddenSymbols.map { it.owner.parentAsClass.getGetWithoutBoundsCheck().symbol }
+
+            val parentDeclarations = this@getGetWithoutBoundsCheck.declarations
+            parentDeclarations.add(parentDeclarations.indexOf(get) + 1, this)
         }
     }
 }
@@ -142,7 +140,6 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
         if (irClass.needFunctionsWithoutBoundsCheck()) {
             val get = irClass.getGet()
             val getWithoutBoundsCheck = irClass.getGetWithoutBoundsCheck()
-            irClass.declarations.add(irClass.declarations.indexOf(get) + 1, getWithoutBoundsCheck)
             if (getWithoutBoundsCheck.modality != Modality.ABSTRACT && !getWithoutBoundsCheck.isFakeOverride) {
                 val irBuilder = context.createIrBuilder(getWithoutBoundsCheck.symbol)
                 val body = get.body
@@ -152,10 +149,10 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
                 body?.transformGetBody(irBuilder, get, getWithoutBoundsCheck)
                 getWithoutBoundsCheck.body =
                         body ?: irBuilder.run {
-                            // Unknown AbstractList inheritor: just conservatively delegate to get.
+                            // Unknown List inheritor: just conservatively delegate to get.
                             irBlockBody {
                                 +irReturn(
-                                        irCall(get).apply {
+                                        irCall(get, superQualifierSymbol = irClass.symbol).apply {
                                             dispatchReceiver = irGet(getWithoutBoundsCheck.dispatchReceiverParameter!!)
                                             putValueArgument(0, irGet(getWithoutBoundsCheck.valueParameters[0]))
                                         }
