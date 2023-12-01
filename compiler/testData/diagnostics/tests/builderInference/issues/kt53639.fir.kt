@@ -3,8 +3,8 @@
 
 fun test() {
     val buildee = initializeAndBuild(
-        { build { setTypeVariable(TargetType()) } },
-        { placeholderExtensionInvokeOnBuildee() },
+        { build <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ setTypeVariable(TargetType()) }<!> },
+        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ placeholderExtensionInvokeOnBuildee() }<!>,
     )
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
