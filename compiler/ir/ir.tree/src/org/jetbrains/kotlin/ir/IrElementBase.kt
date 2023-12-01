@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -30,4 +31,6 @@ abstract class IrElementBase : IrElement {
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         // No children by default
     }
+
+    override fun toString(): String = render()
 }

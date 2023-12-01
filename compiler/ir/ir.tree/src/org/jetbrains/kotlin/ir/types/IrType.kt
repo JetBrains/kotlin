@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrTypeBase
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.mpp.TypeRefMarker
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -28,6 +29,8 @@ abstract class IrType : KotlinTypeMarker, TypeRefMarker, IrAnnotationContainer {
     abstract override fun equals(other: Any?): Boolean
 
     abstract override fun hashCode(): Int
+
+    override fun toString(): String = render()
 }
 
 abstract class IrErrorType(
