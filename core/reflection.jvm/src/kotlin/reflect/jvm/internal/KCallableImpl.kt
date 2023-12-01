@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.types.asSimpleType
@@ -208,7 +209,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
             }
         }
 
-        val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $descriptor")
+        val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $descriptor ${(descriptor as? FunctionDescriptor?)?.let { RuntimeTypeMapper.mapSignature(it).asString() } ?: ""}")
 
         @Suppress("UNCHECKED_CAST")
         return reflectionCall {

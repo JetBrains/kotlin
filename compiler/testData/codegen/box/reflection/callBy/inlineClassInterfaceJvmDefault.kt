@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // !JVM_DEFAULT_MODE: all
-// IGNORE_BACKEND: ANDROID
 
 
 import kotlin.test.assertEquals
