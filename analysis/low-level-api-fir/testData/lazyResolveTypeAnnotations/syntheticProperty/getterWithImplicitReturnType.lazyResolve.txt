@@ -109,8 +109,8 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     }
 
 ANNOTATION_ARGUMENTS:
-TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] val something: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  kotlin/Int>|
-    @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  kotlin/Int>| {
+TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] val something: R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>|
+    @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
         ^getSomething R|/expectType|()
     }
 
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(CONTRACTS)] fun expectType(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  kotlin/Int>| {
+    public final [ResolvedTo(CONTRACTS)] fun expectType(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
         ^expectType IntegerLiteral(42)
     }
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -134,15 +134,15 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  kotlin/Int>| {
+        @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
             ^getSomething R|/expectType|()
         }
 
     }
 
 BODY_RESOLVE:
-TARGET: public open override [<synthetic> BODY_RESOLVE] val something: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  kotlin/Int>|
-    @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|)) public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  kotlin/Int>| {
+TARGET: public open override [<synthetic> BODY_RESOLVE] val something: R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>|
+    @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|)) public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
         ^getSomething R|/expectType|()
     }
 
@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(CONTRACTS)] fun expectType(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  kotlin/Int>| {
+    public final [ResolvedTo(CONTRACTS)] fun expectType(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
         ^expectType IntegerLiteral(42)
     }
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|)) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  kotlin/Int>| {
+        @R|Anno|[Types](position = <strcat>(String(getSomething ), R|/prop|)) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested return type ), prop#))  kotlin/Int>| {
             ^getSomething R|/expectType|()
         }
 

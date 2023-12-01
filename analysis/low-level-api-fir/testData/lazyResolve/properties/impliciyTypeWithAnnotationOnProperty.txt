@@ -188,48 +188,48 @@ FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.number] number: R|kotlin/Int|): R|Anno| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val number: R|kotlin/Int| = R|<local>/number|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val value: R|kotlin/Int| = Int(0)
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(number = R|/value|)  kotlin/String| {
+    public? final? const [ResolvedTo(RAW_FIR)] val value: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(value#)  kotlin/String| {
         ^typeWithAnnotation String()
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|@R|Anno|(number = R|/value|)  kotlin/String|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(number = R|/value|)  kotlin/String| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|@R|Anno|(value#)  kotlin/String|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(value#)  kotlin/String| {
             ^ R|/typeWithAnnotation|()
         }
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|Anno|(number = R|/value|)  kotlin/String|): R|kotlin/Unit| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|Anno|(value#)  kotlin/String|): R|kotlin/Unit| {
         }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.number] number: R|kotlin/Int|): R|Anno| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val number: R|kotlin/Int| = R|<local>/number|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val value: R|kotlin/Int| = Int(0)
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(number = R|/value|)  kotlin/String| {
+    public? final? const [ResolvedTo(RAW_FIR)] val value: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(value#)  kotlin/String| {
         ^typeWithAnnotation String()
     }
-    public final [ResolvedTo(BODY_RESOLVE)] var resolveMe: R|@R|Anno|(number = R|/value|)  kotlin/String|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(number = R|/value|)  kotlin/String| {
+    public final [ResolvedTo(BODY_RESOLVE)] var resolveMe: R|@R|Anno|(value#)  kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(value#)  kotlin/String| {
             ^ R|/typeWithAnnotation|()
         }
-        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|Anno|(number = R|/value|)  kotlin/String|): R|kotlin/Unit| {
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|Anno|(value#)  kotlin/String|): R|kotlin/Unit| {
         }
 
 FILE RAW TO BODY:

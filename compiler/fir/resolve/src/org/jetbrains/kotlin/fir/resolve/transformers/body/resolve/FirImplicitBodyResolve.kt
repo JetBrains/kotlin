@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.FirRegularTowerDataContexts
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -127,6 +129,11 @@ open class FirImplicitAwareBodyResolveTransformer(
     outerBodyResolveContext,
     firResolveContextCollector
 ) {
+    override fun transformForeignAnnotationCall(symbol: FirBasedSymbol<*>, annotationCall: FirAnnotationCall): FirAnnotationCall {
+        val outerTransformer = (returnTypeCalculator as ReturnTypeCalculatorWithJump).outerTransformer
+        return outerTransformer?.transformForeignAnnotationCall(symbol, annotationCall) ?: annotationCall
+    }
+
     /**
      * This is required to avoid transformations of class annotations
      */

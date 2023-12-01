@@ -1,36 +1,36 @@
-@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
+@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?
   context -> FirNamedFunctionSymbol <local>/doo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
+@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>
   context -> FirNamedFunctionSymbol <local>/doo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
+@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int
   context -> FirNamedFunctionSymbol <local>/doo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
+@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
+@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
+@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
+@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?
   context -> FirNamedFunctionSymbol <local>/baz
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
+@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>
   context -> FirNamedFunctionSymbol <local>/baz
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
+@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int
   context -> FirNamedFunctionSymbol <local>/baz
   anchor -> [FirNamedFunctionSymbol util/bar]
 
@@ -82,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(CONTRACTS)] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
+    public final [ResolvedTo(CONTRACTS)] fun bar(): R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?| {
         ^bar Null(null)
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
@@ -93,15 +93,15 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
                     super<R|kotlin/Any|>()
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] fun doo(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
+                public final [ResolvedTo(BODY_RESOLVE)] fun doo(): R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?| {
                     ^doo this@R|<local>/OuterIntoLocal|.R|<local>/foo|()
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
+                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?| {
                     ^foo R|util/bar|()
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] fun baz(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
+                public final [ResolvedTo(BODY_RESOLVE)] fun baz(): R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?| {
                     ^baz this@R|<local>/OuterIntoLocal|.R|<local>/foo|()
                 }
 
