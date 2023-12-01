@@ -125,7 +125,7 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
         needFatFramework -> locateOrRegisterTask<FatFrameworkTask>(frameworkTaskName) { task ->
             task.description = "Packs $frameworkBuildType fat framework for Xcode"
             task.baseName = framework.baseName
-            task.destinationDir = appleFrameworkDir(envFrameworkSearchDir)
+            task.destinationDirProperty.convention(appleFrameworkDir(envFrameworkSearchDir))
             task.isEnabled = frameworkBuildType == envBuildType
         }.also {
             it.configure { task -> task.from(framework) }

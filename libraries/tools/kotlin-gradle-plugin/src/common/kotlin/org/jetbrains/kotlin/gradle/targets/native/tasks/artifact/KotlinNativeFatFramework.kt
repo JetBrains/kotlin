@@ -91,7 +91,7 @@ class KotlinNativeFatFrameworkImpl(
                 lowerCamelCaseName("assemble", artifactName, buildType.visibleName, "FatFramework")
             ) {
                 it.baseName = artifactName
-                it.destinationDir = project.buildDir.resolve("$outDir/${buildType.getName()}")
+                it.destinationDirProperty.set(project.layout.buildDirectory.dir("$outDir/${buildType.getName()}"))
             }
             parentTask.dependsOn(fatTask)
 

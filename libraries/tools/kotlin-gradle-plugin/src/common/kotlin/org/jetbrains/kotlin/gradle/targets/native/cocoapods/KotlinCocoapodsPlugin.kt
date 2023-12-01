@@ -209,7 +209,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         val fatFrameworkTask = project.registerTask<FatFrameworkTask>("fatFramework") { task ->
             task.group = TASK_GROUP
             task.description = "Creates a fat framework for requested architectures"
-            task.destinationDir = project.layout.cocoapodsBuildDirs.fatFramework(requestedBuildType).getFile()
+            task.destinationDirProperty.set(project.layout.cocoapodsBuildDirs.fatFramework(requestedBuildType))
 
             fatTargets.forEach { (_, targets) ->
                 targets.singleOrNull()?.let {
@@ -767,8 +767,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                             lowerCamelCaseName(POD_FRAMEWORK_PREFIX, buildType.getName(), appleTarget.targetName, "FatFramework")
                         val fatFrameworkTask = locateOrRegisterTask<FatFrameworkTask>(fatFrameworkTaskName) { fatTask ->
                             fatTask.baseName = framework.baseName
-                            fatTask.destinationDir =
+                            fatTask.destinationDirProperty.set(
                                 XCFrameworkTask.fatFrameworkDir(this, fatTask.fatFrameworkName, buildType, appleTarget)
+                            )
                             fatTask.onlyIf {
                                 fatTask.frameworks.size > 1
                             }

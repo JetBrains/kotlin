@@ -7,8 +7,10 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -123,6 +126,7 @@ internal constructor(
     private val execOperations: ExecOperations,
     private val fileOperations: FileSystemOperations,
     private val objectFactory: ObjectFactory,
+    projectLayout: ProjectLayout,
 ) : DefaultTask() {
     init {
         onlyIf { HostManager.hostIsMac }
@@ -144,11 +148,19 @@ internal constructor(
     @Input
     var baseName: String = project.name
 
+    @OutputDirectory
+    val destinationDirProperty: DirectoryProperty = objectFactory
+        .directoryProperty()
+        .convention(projectLayout.buildDirectory.dir("fat-framework"))
+
     /**
      * A parent directory for the fat framework.
      */
-    @OutputDirectory
-    var destinationDir: File = project.buildDir.resolve("fat-framework")
+    @get:Internal
+    @Deprecated("please use destinationDirProperty", replaceWith = ReplaceWith("destinationDirProperty"))
+    var destinationDir: File
+        get() = destinationDirProperty.get().asFile
+        set(value) = destinationDirProperty.set(value)
 
     @get:Internal
     val fatFrameworkName: String
@@ -156,7 +168,7 @@ internal constructor(
 
     @get:Internal
     val fatFramework: File
-        get() = destinationDir.resolve(fatFrameworkName + ".framework")
+        get() = destinationDirProperty.file(fatFrameworkName + ".framework").getFile()
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories

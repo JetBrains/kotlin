@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.existsCompat
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -139,7 +142,7 @@ private fun Project.registerAssembleFatForXCFrameworkTask(
     )
 
     return registerTask(taskName) { task ->
-        task.destinationDir = XCFrameworkTask.fatFrameworkDir(project, xcFrameworkName, buildType, appleTarget)
+        task.destinationDirProperty.set(XCFrameworkTask.fatFrameworkDir(project, xcFrameworkName, buildType, appleTarget))
         task.onlyIf {
             task.frameworks.size > 1
         }
@@ -197,7 +200,7 @@ internal constructor(
      */
     @get:Internal  // We take it into account as an input in the buildType and baseName properties.
     protected val fatFrameworksDir: File
-        get() = fatFrameworkDir(projectBuildDir, xcFrameworkName.get(), buildType)
+        get() = fatFrameworkDir(projectLayout.buildDirectory, xcFrameworkName.get(), buildType).getFile()
 
     @get:OutputDirectory
     protected val outputXCFrameworkFile: File
@@ -263,10 +266,10 @@ internal constructor(
                 else -> null
             }
         }
-        createXCFramework(frameworksForXCFramework, outputXCFrameworkFile, buildType)
+        createXCFramework(frameworksForXCFramework, outputXCFrameworkFile)
     }
 
-    private fun createXCFramework(frameworkFiles: List<FrameworkDescriptor>, output: File, buildType: NativeBuildType) {
+    private fun createXCFramework(frameworkFiles: List<FrameworkDescriptor>, output: File) {
         if (output.exists()) output.deleteRecursively()
 
         val cmdArgs = mutableListOf("xcodebuild", "-create-xcframework")
@@ -292,20 +295,20 @@ internal constructor(
             xcFrameworkName: String,
             buildType: NativeBuildType,
             appleTarget: AppleTarget? = null
-        ) = fatFrameworkDir(project.buildDir, xcFrameworkName, buildType, appleTarget)
+        ): Provider<Directory> = fatFrameworkDir(project.layout.buildDirectory, xcFrameworkName, buildType, appleTarget)
 
         fun fatFrameworkDir(
-            buildDir: File,
+            buildDir: DirectoryProperty,
             xcFrameworkName: String,
             buildType: NativeBuildType,
             appleTarget: AppleTarget? = null
-        ) = buildDir
-            .resolve(xcFrameworkName.asValidFrameworkName() + "XCFrameworkTemp")
-            .resolve("fatframework")
-            .resolve(buildType.getName())
-            .resolveIfNotNull(appleTarget?.targetName)
+        ): Provider<Directory> = buildDir.map {
+            it.dir(xcFrameworkName.asValidFrameworkName() + "XCFrameworkTemp")
+                .dir("fatframework")
+                .dir(buildType.getName())
+                .dirIfNotNull(appleTarget?.targetName)
+        }
 
-
-        private fun File.resolveIfNotNull(relative: String?): File = if (relative == null) this else this.resolve(relative)
+        private fun Directory.dirIfNotNull(relative: String?): Directory = if (relative == null) this else this.dir(relative)
     }
 }

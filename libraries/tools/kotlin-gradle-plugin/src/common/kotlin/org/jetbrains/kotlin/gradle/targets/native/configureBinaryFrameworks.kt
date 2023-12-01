@@ -112,7 +112,7 @@ private fun Project.createFatFramework(groupDescription: FrameworkGroupDescripti
     } else {
         tasks.register(fatFrameworkTaskName, FatFrameworkTask::class.java) {
             it.baseName = groupDescription.baseName
-            it.destinationDir = it.destinationDir.resolve(groupDescription.buildType.name.toLowerCaseAsciiOnly())
+            it.destinationDirProperty.set(it.destinationDirProperty.dir(groupDescription.buildType.name.toLowerCaseAsciiOnly()))
         }
     }
 
