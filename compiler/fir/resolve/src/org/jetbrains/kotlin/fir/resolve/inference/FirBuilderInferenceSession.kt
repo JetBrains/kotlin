@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -20,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeBuilderInferenceSubstitutionConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.replaceStubsAndTypeVariablesToErrors
@@ -235,6 +234,23 @@ class FirBuilderInferenceSession(
         return introducedConstraint
     }
 
+    private fun extractCommonCapturedTypes(lower: ConeKotlinType, upper: ConeKotlinType): List<ConeCapturedType> {
+        val extractedCapturedTypes = mutableSetOf<ConeCapturedType>().also { extractCapturedTypesTo(lower, it) }
+        return extractedCapturedTypes.filter { capturedType ->
+            upper.contains { it is ConeCapturedType && it.constructor === capturedType.constructor }
+        }
+    }
+
+    private fun extractCapturedTypesTo(type: ConeKotlinType, to: MutableSet<ConeCapturedType>) {
+        if (type is ConeCapturedType) {
+            to.add(type)
+        }
+        for (typeArgument in type.typeArguments) {
+            if (typeArgument !is ConeKotlinTypeProjection) continue
+            extractCapturedTypesTo(typeArgument.type, to)
+        }
+    }
+
     private fun getResultingSubstitutor(commonSystem: NewConstraintSystemImpl): ConeSubstitutor {
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
         val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor() as ConeSubstitutor
@@ -304,12 +320,44 @@ class FirBuilderInferenceSession(
     }
 
     private fun InitialConstraint.substitute(
-        substitutor: TypeSubstitutorMarker,
+        substitutor: ConeSubstitutor,
         fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     ): InitialConstraint {
+        require(constraintKind != ConstraintKind.LOWER)
+
+        // TODO: This function assumes types passed in lower, upper order which isn't true for equality constraints (KT-63996)
+        val commonCapTypes = extractCommonCapturedTypes(lower = a as ConeKotlinType, upper = b as ConeKotlinType)
+
+        // TODO: This logic tries to work-around the problem with type substitution consistency in captured types (KT-XXXXX)
+        //  In order to preserve consistency we collect captured types from both a and b and substitute them collectively
+        //  E.g:
+        //  substitutor = { B => W }
+        //  a = C<CapturedType(out B)_0>, b = D<CapturedType(out B)_0>
+        //  commonCapTypes = [CapturedType(out B)_0]
+        //  capTypesSubstitutor = { CapturedTypeConstructor_0 => CapturedType(out W)_1 }
+        //  substitutedLowerType = C<CapturedType(out W)_1>
+        //  substitutedUpperType = D<CapturedType(out W)_1>
+        val substitutedCommonCapType = commonCapTypes.associate {
+            it.constructor to substitutor.substituteOrSelf(it)
+        }
+
+        val capTypesSubstitutor = object : AbstractConeSubstitutor(resolutionContext.typeContext) {
+            override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+                if (type !is ConeCapturedType) return null
+                return substitutedCommonCapType[type.constructor]
+            }
+        }
+
         // TODO: invalid naming. It doesn't make sense case of equality constraints
-        val substitutedLowerType = substitutor.safeSubstitute(resolutionContext.typeContext, this.a)
-        val substitutedUpperType = substitutor.safeSubstitute(resolutionContext.typeContext, this.b)
+        val substitutedLowerType = substitutor.safeSubstitute(
+            resolutionContext.typeContext,
+            capTypesSubstitutor.safeSubstitute(resolutionContext.typeContext, this.a)
+        )
+        val substitutedUpperType = substitutor.safeSubstitute(
+            resolutionContext.typeContext,
+            capTypesSubstitutor.safeSubstitute(resolutionContext.typeContext, this.b)
+        )
+
 
         val a = a
         // In situation when some type variable _T is fixed to Stub(_T)?,
