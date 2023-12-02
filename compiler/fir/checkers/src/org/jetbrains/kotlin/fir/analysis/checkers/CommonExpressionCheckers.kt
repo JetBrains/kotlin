@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyQuali
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyResolvedQualifierChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyVariableAssignmentChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
-import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirCommaInWhenConditionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirConfusingWhenBranchSyntaxChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirUnderscoredTypeArgumentSyntaxChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
 
 object CommonExpressionCheckers : ExpressionCheckers() {
     override val annotationCallCheckers: Set<FirAnnotationCallChecker>
@@ -27,6 +25,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirDeprecationChecker,
             FirRecursiveProblemChecker,
             FirOptInUsageAccessChecker,
+            FirPrefixAndSuffixSyntaxChecker,
         )
 
     override val throwExpressionCheckers: Set<FirThrowExpressionChecker>

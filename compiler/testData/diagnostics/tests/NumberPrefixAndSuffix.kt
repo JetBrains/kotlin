@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER -USELESS_CAST
 
 infix fun Any?.foo(a: Any) {}
