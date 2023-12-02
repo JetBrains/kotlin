@@ -1,4 +1,5 @@
 // ISSUE: KT-60291
+// FIR_IDENTICAL
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {

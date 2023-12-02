@@ -1,11 +1,8 @@
 // ISSUE: KT-60291
 
 // IGNORE_LIGHT_ANALYSIS
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANY
 // REASON: red code (see corresponding diagnostic test)
-
-// IGNORE_BACKEND_K2: NATIVE, WASM, JS_IR, JS_IR_ES6
-// REASON: compile-time failure (org.jetbrains.kotlin.backend.common.linkage.issues.IrDisallowedErrorNode: Class found but error nodes are not allowed)
 
 fun box(): String {
     if (true)

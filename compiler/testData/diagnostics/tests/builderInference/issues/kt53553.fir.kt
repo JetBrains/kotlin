@@ -3,12 +3,12 @@
 
 fun test() {
     val buildee = parallelBuild(
-        {
+        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{
             consumeTargetTypeBase(it)
-        },
-        {
+        }<!>,
+        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{
             consumeTargetType(it)
-        }
+        }<!>
     )
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
