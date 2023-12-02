@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 public abstract class KtSymbolContainingDeclarationProvider : KtAnalysisSessionComponent() {
     public abstract fun getContainingDeclaration(symbol: KtSymbol): KtDeclarationSymbol?
 
     public abstract fun getContainingFileSymbol(symbol: KtSymbol): KtFileSymbol?
 
-    public abstract fun getContainingJvmClassName(symbol: KtCallableSymbol): JvmClassName?
+    public abstract fun getContainingJvmClassName(symbol: KtCallableSymbol): String?
 
     public abstract fun getContainingModule(symbol: KtSymbol): KtModule
 }
@@ -36,20 +35,23 @@ public interface KtSymbolContainingDeclarationProviderMixIn : KtAnalysisSessionM
     /**
      * Returns containing [KtFile] as [KtFileSymbol]
      *
-     * Caveat: returns null if the given symbol is already [KtFileSymbol], since there is no containing file.
+     * Caveat: returns `null` if the given symbol is already [KtFileSymbol], since there is no containing file.
+     *  Similarly, no containing file for libraries and Java, hence `null`.
      */
     public fun KtSymbol.getContainingFileSymbol(): KtFileSymbol? =
         withValidityAssertion { analysisSession.containingDeclarationProvider.getContainingFileSymbol(this) }
 
     /**
-     * Returns containing class's [JvmClassName] if any for [KtCallableSymbol]
+     * Returns containing JVM class name for [KtCallableSymbol]
      *
      *   even for deserialized callables! (which is useful to look up the containing facade in [PsiElement])
      *   for regular, non-local callables from source, it is a mere conversion of [ClassId] inside [CallableId]
      *
-     * Note that this API is applicable for common or JVM modules only.
+     * The returned JVM class name is of fully qualified name format, e.g., foo.bar.Baz.Companion
+     *
+     * Note that this API is applicable for common or JVM modules only, and returns `null` for non-JVM modules.
      */
-    public fun KtCallableSymbol.getContainingJvmClassName(): JvmClassName? =
+    public fun KtCallableSymbol.getContainingJvmClassName(): String? =
         withValidityAssertion { analysisSession.containingDeclarationProvider.getContainingJvmClassName(this) }
 
     public fun KtSymbol.getContainingModule(): KtModule =

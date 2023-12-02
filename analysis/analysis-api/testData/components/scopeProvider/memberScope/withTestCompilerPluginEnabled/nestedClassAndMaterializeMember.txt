@@ -32,7 +32,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/MyClass
   getContainingFileSymbol: null
-  getContainingJvmClassName: test/MyClass
+  getContainingJvmClassName: test.MyClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -85,7 +85,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin/Any
+      getContainingJvmClassName: kotlin.Any
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -95,7 +95,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -133,7 +133,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -171,7 +171,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -226,6 +226,6 @@ KtConstructorSymbol:
   valueParameters: []
   visibility: Public
   getContainingFileSymbol: KtFileSymbol(nestedClassAndMaterializeMember.kt)
-  getContainingJvmClassName: test/MyClass
+  getContainingJvmClassName: test.MyClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

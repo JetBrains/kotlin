@@ -19,6 +19,6 @@ KtConstructorSymbol:
   valueParameters: []
   visibility: Private
   getContainingFileSymbol: KtFileSymbol(enumClass.kt)
-  getContainingJvmClassName: test/E
+  getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

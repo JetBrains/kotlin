@@ -52,13 +52,13 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin/collections/CollectionsKt
+      getContainingJvmClassName: kotlin.collections.CollectionsKt
       getContainingModule: KtLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/collections/CollectionsKt
+  getContainingJvmClassName: kotlin.collections.CollectionsKt
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
@@ -101,7 +101,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/collections/CollectionsKt
+  getContainingJvmClassName: kotlin.collections.CollectionsKt
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
@@ -159,12 +159,12 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin/collections/CollectionsKt
+      getContainingJvmClassName: kotlin.collections.CollectionsKt
       getContainingModule: KtLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/collections/CollectionsKt
+  getContainingJvmClassName: kotlin.collections.CollectionsKt
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

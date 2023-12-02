@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -44,10 +45,10 @@ internal fun checkContainingJvmClassName(
             null
         ktClass != null ->
             // member
-            ktClass.getClassId()?.let { JvmClassName.byClassId(it) }
+            ktClass.getClassId()?.asFqNameString()
         else ->
             // top-level
-            JvmClassName.byFqNameWithoutInnerClasses(ktFile.javaFileFacadeFqName)
+            ktFile.javaFileFacadeFqName.asString()
     }
     val actualClassName = symbol.getContainingJvmClassName()
     testServices.assertions.assertEquals(expectedClassName, actualClassName) {

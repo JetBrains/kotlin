@@ -47,7 +47,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: test/Serializer
+      getContainingJvmClassName: test.Serializer
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -57,7 +57,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/Serializer
   getContainingFileSymbol: null
-  getContainingJvmClassName: test/Serializer
+  getContainingJvmClassName: test.Serializer
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -110,7 +110,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: test/Serializer
+      getContainingJvmClassName: test.Serializer
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -120,7 +120,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/Serializer
   getContainingFileSymbol: null
-  getContainingJvmClassName: test/Serializer
+  getContainingJvmClassName: test.Serializer
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -173,7 +173,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin/Any
+      getContainingJvmClassName: kotlin.Any
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -183,7 +183,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -221,7 +221,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -259,7 +259,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -284,6 +284,6 @@ KtConstructorSymbol:
   valueParameters: []
   visibility: Public
   getContainingFileSymbol: KtFileSymbol(customSerlializable.kt)
-  getContainingJvmClassName: test/Serializer
+  getContainingJvmClassName: test.Serializer
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

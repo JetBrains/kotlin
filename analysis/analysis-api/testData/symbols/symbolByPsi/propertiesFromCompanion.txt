@@ -16,7 +16,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.property
@@ -47,7 +47,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -81,7 +81,7 @@ KtKotlinPropertySymbol:
     ownTypeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-  getContainingJvmClassName: MyClass$Companion
+  getContainingJvmClassName: MyClass.Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -107,7 +107,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.constProperty
@@ -138,7 +138,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -172,7 +172,7 @@ KtKotlinPropertySymbol:
     ownTypeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-  getContainingJvmClassName: MyClass$Companion
+  getContainingJvmClassName: MyClass.Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -201,7 +201,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.staticProperty
@@ -232,7 +232,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -266,7 +266,7 @@ KtKotlinPropertySymbol:
     ownTypeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-  getContainingJvmClassName: MyClass$Companion
+  getContainingJvmClassName: MyClass.Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -295,7 +295,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.fieldProperty
@@ -326,7 +326,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -360,7 +360,7 @@ KtKotlinPropertySymbol:
     ownTypeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-  getContainingJvmClassName: MyClass$Companion
+  getContainingJvmClassName: MyClass.Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -386,7 +386,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.variable
@@ -417,7 +417,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -517,7 +517,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: CLASS_MEMBER
@@ -528,7 +528,7 @@ KtKotlinPropertySymbol:
     ownTypeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-  getContainingJvmClassName: MyClass$Companion
+  getContainingJvmClassName: MyClass.Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -557,7 +557,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.staticVariable
@@ -588,7 +588,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -688,7 +688,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: CLASS_MEMBER
@@ -699,7 +699,7 @@ KtKotlinPropertySymbol:
     ownTypeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-  getContainingJvmClassName: MyClass$Companion
+  getContainingJvmClassName: MyClass.Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -728,7 +728,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.fieldVariable
@@ -759,7 +759,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -859,7 +859,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-    getContainingJvmClassName: MyClass$Companion
+    getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: CLASS_MEMBER
@@ -870,7 +870,7 @@ KtKotlinPropertySymbol:
     ownTypeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KtFileSymbol(propertiesFromCompanion.kt)
-  getContainingJvmClassName: MyClass$Companion
+  getContainingJvmClassName: MyClass.Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

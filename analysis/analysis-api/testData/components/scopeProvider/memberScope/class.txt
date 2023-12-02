@@ -32,7 +32,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/C
   getContainingFileSymbol: KtFileSymbol(class.kt)
-  getContainingJvmClassName: test/C
+  getContainingJvmClassName: test.C
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -54,7 +54,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KtFileSymbol(class.kt)
-    getContainingJvmClassName: test/C
+    getContainingJvmClassName: test.C
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: test/C.bar
@@ -85,7 +85,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: test/C
     getContainingFileSymbol: KtFileSymbol(class.kt)
-    getContainingJvmClassName: test/C
+    getContainingJvmClassName: test.C
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -119,7 +119,7 @@ KtKotlinPropertySymbol:
     ownTypeArguments: []
     type: test/C
   getContainingFileSymbol: KtFileSymbol(class.kt)
-  getContainingJvmClassName: test/C
+  getContainingJvmClassName: test.C
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -161,7 +161,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/A
   getContainingFileSymbol: KtFileSymbol(class.kt)
-  getContainingJvmClassName: test/A
+  getContainingJvmClassName: test.A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -183,7 +183,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KtFileSymbol(class.kt)
-    getContainingJvmClassName: test/A
+    getContainingJvmClassName: test.A
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: test/A.x
@@ -214,7 +214,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: test/A
     getContainingFileSymbol: KtFileSymbol(class.kt)
-    getContainingJvmClassName: test/A
+    getContainingJvmClassName: test.A
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -248,7 +248,7 @@ KtKotlinPropertySymbol:
     ownTypeArguments: []
     type: test/A
   getContainingFileSymbol: KtFileSymbol(class.kt)
-  getContainingJvmClassName: test/A
+  getContainingJvmClassName: test.A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -305,7 +305,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin/Any
+      getContainingJvmClassName: kotlin.Any
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -315,7 +315,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -353,7 +353,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -391,7 +391,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -566,6 +566,6 @@ KtConstructorSymbol:
   valueParameters: []
   visibility: Public
   getContainingFileSymbol: KtFileSymbol(class.kt)
-  getContainingJvmClassName: test/C
+  getContainingJvmClassName: test.C
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

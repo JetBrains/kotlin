@@ -47,7 +47,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(functionsFromCompanion.kt)
-      getContainingJvmClassName: MyClass$Companion
+      getContainingJvmClassName: MyClass.Companion
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -57,7 +57,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KtFileSymbol(functionsFromCompanion.kt)
-  getContainingJvmClassName: MyClass$Companion
+  getContainingJvmClassName: MyClass.Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -98,7 +98,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KtFileSymbol(functionsFromCompanion.kt)
-  getContainingJvmClassName: MyClass$Companion
+  getContainingJvmClassName: MyClass.Companion
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
