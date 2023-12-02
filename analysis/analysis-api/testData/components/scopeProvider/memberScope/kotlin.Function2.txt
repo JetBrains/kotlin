@@ -45,7 +45,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin/Function2
+      getContainingJvmClassName: kotlin.Function2
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -68,7 +68,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin/Function2
+      getContainingJvmClassName: kotlin.Function2
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -88,7 +88,7 @@ KtFunctionSymbol:
     ]
     type: kotlin/Function2<P1, P2, R>
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Function2
+  getContainingJvmClassName: kotlin.Function2
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -141,7 +141,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin/Any
+      getContainingJvmClassName: kotlin.Any
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -151,7 +151,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -189,7 +189,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -227,6 +227,6 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null

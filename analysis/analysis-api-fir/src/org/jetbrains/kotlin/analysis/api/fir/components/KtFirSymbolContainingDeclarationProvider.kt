@@ -33,11 +33,11 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLe
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KtFirSymbolContainingDeclarationProvider(
@@ -121,7 +121,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
         return firSymbolBuilder.buildFileSymbol(firFileSymbol)
     }
 
-    override fun getContainingJvmClassName(symbol: KtCallableSymbol): JvmClassName? {
+    override fun getContainingJvmClassName(symbol: KtCallableSymbol): String? {
         val platform = getContainingModule(symbol).platform
         if (!platform.isCommon() && !platform.isJvm()) return null
 
@@ -137,17 +137,19 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
         val firSymbol = containingSymbolOrSelf.firSymbol
 
-        firSymbol.jvmClassNameIfDeserialized()?.let { return it }
+        firSymbol.jvmClassNameIfDeserialized()?.let {
+            return it.fqNameForClassNameWithoutDollars.asString()
+        }
 
         return if (containingSymbolOrSelf.symbolKind == KtSymbolKind.TOP_LEVEL) {
             (firSymbol.fir.getContainingFile()?.psi as? KtFile)
                 ?.takeUnless { it.isScript() }
-                ?.let { JvmClassName.byFqNameWithoutInnerClasses(it.javaFileFacadeFqName) }
+                ?.javaFileFacadeFqName?.asString()
         } else {
             val classId = (containingSymbolOrSelf as? KtConstructorSymbol)?.containingClassIdIfNonLocal
                 ?: containingSymbolOrSelf.callableIdIfNonLocal?.classId
             classId?.takeUnless { it.shortClassName.isSpecial }
-                ?.let { JvmClassName.byClassId(it) }
+                ?.asFqNameString()
         }
     }
 

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -92,7 +93,7 @@ internal class KtFe10SymbolContainingDeclarationProvider(
         }
     }
 
-    override fun getContainingJvmClassName(symbol: KtCallableSymbol): JvmClassName? {
+    override fun getContainingJvmClassName(symbol: KtCallableSymbol): String? {
         val platform = getContainingModule(symbol).platform
         if (!platform.isCommon() && !platform.isJvm()) return null
 
@@ -103,18 +104,18 @@ internal class KtFe10SymbolContainingDeclarationProvider(
                     is FacadeClassSource -> containerSource.facadeClassName ?: containerSource.className
                     is KotlinJvmBinarySourceElement -> JvmClassName.byClassId(containerSource.binaryClass.classId)
                     else -> null
-                }
+                }?.fqNameForClassNameWithoutDollars?.asString()
             }
             else -> {
                 return if (containingSymbolOrSelf.symbolKind == KtSymbolKind.TOP_LEVEL) {
                     descriptor?.let(DescriptorToSourceUtils::getContainingFile)
                         ?.takeUnless { it.isScript() }
-                        ?.let { JvmClassName.byFqNameWithoutInnerClasses(it.javaFileFacadeFqName) }
+                        ?.javaFileFacadeFqName?.asString()
                 } else {
                     val classId = (containingSymbolOrSelf as? KtConstructorSymbol)?.containingClassIdIfNonLocal
                         ?: (containingSymbolOrSelf as? KtCallableSymbol)?.callableIdIfNonLocal?.classId
                     classId?.takeUnless { it.shortClassName.isSpecial }
-                        ?.let { JvmClassName.byClassId(it) }
+                        ?.asFqNameString()
                 }
             }
         }

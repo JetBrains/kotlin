@@ -16,7 +16,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
-    getContainingJvmClassName: test/E
+    getContainingJvmClassName: test.E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableIdIfNonLocal: test/E.foo
@@ -47,7 +47,7 @@ KtKotlinPropertySymbol:
       ownTypeArguments: []
       type: test/E
     getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
-    getContainingJvmClassName: test/E
+    getContainingJvmClassName: test.E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -81,7 +81,7 @@ KtKotlinPropertySymbol:
     ownTypeArguments: []
     type: test/E
   getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
-  getContainingJvmClassName: test/E
+  getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -123,7 +123,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/E
   getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
-  getContainingJvmClassName: test/E
+  getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -165,7 +165,7 @@ KtFunctionSymbol:
     ]
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Enum
+  getContainingJvmClassName: kotlin.Enum
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -218,7 +218,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
-      getContainingJvmClassName: test/E
+      getContainingJvmClassName: test.E
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -228,7 +228,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/E
   getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
-  getContainingJvmClassName: test/E
+  getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -281,7 +281,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin/Enum
+      getContainingJvmClassName: kotlin.Enum
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -295,7 +295,7 @@ KtFunctionSymbol:
     ]
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Enum
+  getContainingJvmClassName: kotlin.Enum
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -337,7 +337,7 @@ KtFunctionSymbol:
     ]
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Enum
+  getContainingJvmClassName: kotlin.Enum
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -379,7 +379,7 @@ KtFunctionSymbol:
     ]
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Enum
+  getContainingJvmClassName: kotlin.Enum
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -404,7 +404,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: null
-    getContainingJvmClassName: kotlin/Enum
+    getContainingJvmClassName: kotlin.Enum
     getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
     deprecationStatus: null
   callableIdIfNonLocal: kotlin/Enum.name
@@ -445,7 +445,7 @@ KtKotlinPropertySymbol:
     ]
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Enum
+  getContainingJvmClassName: kotlin.Enum
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -471,7 +471,7 @@ KtKotlinPropertySymbol:
     symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: null
-    getContainingJvmClassName: kotlin/Enum
+    getContainingJvmClassName: kotlin.Enum
     getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
     deprecationStatus: null
   callableIdIfNonLocal: kotlin/Enum.ordinal
@@ -512,7 +512,7 @@ KtKotlinPropertySymbol:
     ]
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Enum
+  getContainingJvmClassName: kotlin.Enum
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -553,7 +553,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/E
   getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
-  getContainingJvmClassName: test/E
+  getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -595,7 +595,7 @@ KtFunctionSymbol:
     ]
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Enum
+  getContainingJvmClassName: kotlin.Enum
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -650,6 +650,6 @@ KtConstructorSymbol:
   valueParameters: []
   visibility: Private
   getContainingFileSymbol: KtFileSymbol(enumClassWithFinalMembers.kt)
-  getContainingJvmClassName: test/E
+  getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -49,6 +49,6 @@ KtConstructorSymbol:
   valueParameters: []
   visibility: Public
   getContainingFileSymbol: KtFileSymbol(innerClass.kt)
-  getContainingJvmClassName: test/B
+  getContainingJvmClassName: test.B
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

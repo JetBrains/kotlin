@@ -15,7 +15,7 @@ KtEnumEntrySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingFileSymbol: KtFileSymbol(enumClass.kt)
-  getContainingJvmClassName: test/E
+  getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -36,7 +36,7 @@ KtEnumEntrySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingFileSymbol: KtFileSymbol(enumClass.kt)
-  getContainingJvmClassName: test/E
+  getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -75,7 +75,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getContainingFileSymbol: KtFileSymbol(enumClass.kt)
-  getContainingJvmClassName: test/E
+  getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -128,13 +128,13 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(enumClass.kt)
-      getContainingJvmClassName: test/E
+      getContainingJvmClassName: test.E
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KtFileSymbol(enumClass.kt)
-  getContainingJvmClassName: test/E
+  getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -170,7 +170,7 @@ KtKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getContainingFileSymbol: KtFileSymbol(enumClass.kt)
-    getContainingJvmClassName: test/E
+    getContainingJvmClassName: test.E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
@@ -205,7 +205,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KtFileSymbol(enumClass.kt)
-  getContainingJvmClassName: test/E
+  getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

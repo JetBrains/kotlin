@@ -36,7 +36,7 @@ KtFunctionSymbol:
     ]
     type: test/Base<T>
   getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-  getContainingJvmClassName: test/Base
+  getContainingJvmClassName: test.Base
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -78,7 +78,7 @@ KtFunctionSymbol:
     ]
     type: test/Base<T>
   getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-  getContainingJvmClassName: test/Base
+  getContainingJvmClassName: test.Base
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -131,7 +131,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-      getContainingJvmClassName: test/ClassWithGenericBase
+      getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -141,7 +141,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/ClassWithGenericBase
   getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-  getContainingJvmClassName: test/ClassWithGenericBase
+  getContainingJvmClassName: test.ClassWithGenericBase
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -194,7 +194,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-      getContainingJvmClassName: test/ClassWithGenericBase
+      getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -204,7 +204,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/ClassWithGenericBase
   getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-  getContainingJvmClassName: test/ClassWithGenericBase
+  getContainingJvmClassName: test.ClassWithGenericBase
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -258,7 +258,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-      getContainingJvmClassName: test/Base
+      getContainingJvmClassName: test.Base
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -272,7 +272,7 @@ KtFunctionSymbol:
     ]
     type: test/Base<T>
   getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-  getContainingJvmClassName: test/Base
+  getContainingJvmClassName: test.Base
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -326,7 +326,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-      getContainingJvmClassName: test/Base
+      getContainingJvmClassName: test.Base
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -340,7 +340,7 @@ KtFunctionSymbol:
     ]
     type: test/Base<T>
   getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-  getContainingJvmClassName: test/Base
+  getContainingJvmClassName: test.Base
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -395,7 +395,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-      getContainingJvmClassName: test/ClassWithGenericBase
+      getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -418,7 +418,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-      getContainingJvmClassName: test/ClassWithGenericBase
+      getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -428,7 +428,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/ClassWithGenericBase
   getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-  getContainingJvmClassName: test/ClassWithGenericBase
+  getContainingJvmClassName: test.ClassWithGenericBase
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -483,7 +483,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-      getContainingJvmClassName: test/ClassWithGenericBase
+      getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KtValueParameterSymbol:
@@ -506,7 +506,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-      getContainingJvmClassName: test/ClassWithGenericBase
+      getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
@@ -516,7 +516,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: test/ClassWithGenericBase
   getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-  getContainingJvmClassName: test/ClassWithGenericBase
+  getContainingJvmClassName: test.ClassWithGenericBase
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -569,7 +569,7 @@ KtFunctionSymbol:
       symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin/Any
+      getContainingJvmClassName: kotlin.Any
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
@@ -579,7 +579,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -617,7 +617,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -655,7 +655,7 @@ KtFunctionSymbol:
     ownTypeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin/Any
+  getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -680,6 +680,6 @@ KtConstructorSymbol:
   valueParameters: []
   visibility: Public
   getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
-  getContainingJvmClassName: test/ClassWithGenericBase
+  getContainingJvmClassName: test.ClassWithGenericBase
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
