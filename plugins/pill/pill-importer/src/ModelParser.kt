@@ -14,7 +14,6 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.SingleParentCopySpec
 import org.gradle.api.provider.Property
@@ -223,15 +222,7 @@ class ModelParser(private val modulePrefix: String, private val globalExcludedDi
 
         for (sourceSet in gradleSourceSets) {
             val kotlinCompileTask = kotlinTasksBySourceSet[sourceSet.name]
-
-            fun Any.getKotlin(): SourceDirectorySet {
-                val kotlinMethod = javaClass.getMethod("getKotlin")
-                kotlinMethod.isAccessible = true
-                return kotlinMethod(this) as SourceDirectorySet
-            }
-
-            val kotlinSourceDirectories = (sourceSet as HasConvention).convention
-                .plugins["kotlin"]?.getKotlin()?.srcDirs ?: emptySet()
+            val kotlinSourceDirectories = (sourceSet.extensions.findByName("kotlin") as? SourceDirectorySet)?.srcDirs ?: emptySet()
 
             val sourceDirectories = (sourceSet.java.sourceDirectories.files + kotlinSourceDirectories).toList()
 
