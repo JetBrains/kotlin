@@ -25,29 +25,21 @@ import org.gradle.kotlin.dsl.findByType
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.pill.model.POrderRoot.*
 import org.jetbrains.kotlin.pill.model.PSourceRoot.*
-import org.jetbrains.kotlin.pill.PillExtensionMirror.*
 import org.jetbrains.kotlin.pill.model.*
 import java.io.File
 import java.util.*
-import kotlin.collections.HashMap
 
 typealias OutputDir = String
 typealias GradleProjectPath = String
 
-class ModelParser(private val variant: Variant, private val modulePrefix: String) {
+class ModelParser(private val modulePrefix: String) {
     fun parse(project: Project): PProject {
         if (project != project.rootProject) {
             error("$project is not a root project")
         }
 
-        fun Project.matchesSelectedVariant(): Boolean {
-            val extension = this.findPillExtensionMirror() ?: return true
-            val projectVariant = extension.variant ?: Variant.BASE
-            return projectVariant in variant.includes
-        }
-
         val (includedProjects, excludedProjects) = project.allprojects
-            .partition { it.plugins.hasPlugin("jps-compatible") && it.matchesSelectedVariant() }
+            .partition { it.plugins.hasPlugin("jps-compatible") }
 
         val modules = includedProjects.flatMap { parseModules(it, excludedProjects) }
         val artifacts = parseArtifacts(project)

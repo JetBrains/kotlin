@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.pill.model.POrderRoot
 import org.jetbrains.kotlin.pill.model.PProject
 import java.io.File
 import java.util.*
-import kotlin.collections.HashMap
 
 const val EMBEDDED_CONFIGURATION_NAME = "embedded"
 
@@ -90,17 +89,10 @@ class JpsCompatiblePluginTasks(
     fun pill() {
         initEnvironment(rootProject)
 
-        val variantOptionValue = System.getProperty("pill.variant", "base").uppercase(Locale.US)
-        val variant = PillExtensionMirror.Variant.values().firstOrNull { it.name == variantOptionValue }
-            ?: run {
-                rootProject.logger.error("Invalid variant name: $variantOptionValue")
-                return
-            }
-
-        rootProject.logger.lifecycle("Pill: Setting up project for the '${variant.name.lowercase(Locale.US)}' variant...")
+        rootProject.logger.lifecycle("Pill: Setting up project...")
 
         val modulePrefix = System.getProperty("pill.module.prefix", "")
-        val modelParser = ModelParser(variant, modulePrefix)
+        val modelParser = ModelParser(modulePrefix)
 
         val dependencyPatcher = DependencyPatcher(rootProject)
         val dependencyMappers = listOf(dependencyPatcher, ::attachPlatformSources, ::attachAsmSources)

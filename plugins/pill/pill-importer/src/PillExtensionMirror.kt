@@ -8,16 +8,7 @@ package org.jetbrains.kotlin.pill
 import java.io.File
 import org.gradle.api.Project
 
-open class PillExtensionMirror(variant: String?, val excludedDirs: List<File>) {
-    val variant = if (variant == null) null else Variant.valueOf(variant)
-
-    enum class Variant(includesFactory: () -> Set<Variant>) {
-        BASE({ setOf(BASE) }), // Includes only compiler (default)
-        FULL({ setOf(BASE, FULL) }); // Includes compiler and Gradle plugin
-
-        val includes by lazy { includesFactory() }
-    }
-}
+open class PillExtensionMirror(val excludedDirs: List<File>)
 
 fun Project.findPillExtensionMirror(): PillExtensionMirror? {
     val ext = extensions.findByName("pill") ?: return null
@@ -25,10 +16,8 @@ fun Project.findPillExtensionMirror(): PillExtensionMirror? {
     @Suppress("UNCHECKED_CAST")
     val serialized = ext::class.java.getMethod("serialize").invoke(ext) as Map<String, Any>
 
-    val variant = serialized["variant"] as String?
-
     @Suppress("UNCHECKED_CAST")
     val excludedDirs = serialized["excludedDirs"] as List<File>
 
-    return PillExtensionMirror(variant, excludedDirs)
+    return PillExtensionMirror(excludedDirs)
 }
