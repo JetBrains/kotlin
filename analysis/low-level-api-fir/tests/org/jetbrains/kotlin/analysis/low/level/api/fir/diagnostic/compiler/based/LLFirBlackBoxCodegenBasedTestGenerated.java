@@ -35639,6 +35639,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
                 }
 
                 @Test
+                @TestMetadata("valueClassOfExpectClass.kt")
+                public void testValueClassOfExpectClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/valueClassOfExpectClass.kt");
+                }
+
+                @Test
                 @TestMetadata("valueClasses.kt")
                 public void testValueClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/valueClasses.kt");

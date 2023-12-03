@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
-import org.jetbrains.kotlin.ir.util.SymbolRemapper
-import org.jetbrains.kotlin.ir.util.SymbolRenamer
-import org.jetbrains.kotlin.ir.util.TypeRemapper
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbol, IrSymbol>) : SymbolRemapper {
@@ -100,6 +98,9 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             it.superTypes = it.superTypes.map { superType -> superType.remapType() }
             it.transformChildren(this, null)
             it.transformAnnotations(declaration)
+            it.valueClassRepresentation = it.valueClassRepresentation?.mapUnderlyingType { type ->
+                type.remapType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: ${it.render()}")
+            }
         }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) = (visitFunction(declaration) as IrSimpleFunction).also {
