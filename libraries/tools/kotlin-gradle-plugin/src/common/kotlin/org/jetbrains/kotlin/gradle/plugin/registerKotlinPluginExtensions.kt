@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.gradle.targets.native.ConfigureFrameworkExportSideEf
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeConfigureBinariesSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.SetupEmbedAndSignAppleFrameworkTaskSideEffect
-import org.jetbrains.kotlin.gradle.targets.native.internal.AddKotlinPlatformIntegersSupportLibrary
-import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizedCInteropApiElementsConfigurationsSetupAction
-import org.jetbrains.kotlin.gradle.targets.native.internal.SetupCInteropApiElementsConfigurationSideEffect
-import org.jetbrains.kotlin.gradle.targets.native.internal.SetupKotlinNativePlatformDependenciesAndStdlib
+import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 
@@ -49,6 +46,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, UserDefinedAttributesSetupAction)
         register(project, CustomizeKotlinDependenciesSetupAction)
         register(project, AddKotlinPlatformIntegersSupportLibrary)
+        register(project, SetupKotlinNativePlatformDependenciesForLegacyImport)
 
 
         if (isJvm || isMultiplatform) {

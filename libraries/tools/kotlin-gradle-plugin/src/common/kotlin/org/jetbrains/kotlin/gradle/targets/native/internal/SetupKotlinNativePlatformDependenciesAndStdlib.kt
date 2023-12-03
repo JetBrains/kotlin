@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffectCoroutine
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import java.io.File
@@ -26,13 +29,23 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib =
 
         val stdlib = project.files(project.konanDistribution.stdlib)
         compilation.compileDependencyFiles += stdlib
-
-        val defaultSourceSet = compilation.defaultSourceSet
-        if (defaultSourceSet is DefaultKotlinSourceSet) {
-            defaultSourceSet.addDependencyForLegacyImport(nativeDistributionDependencies)
-            defaultSourceSet.addDependencyForLegacyImport(stdlib)
-        }
     }
+
+internal val SetupKotlinNativePlatformDependenciesForLegacyImport = KotlinProjectSetupCoroutine {
+    val multiplatform = multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
+    val sourceSets = multiplatform
+        .awaitSourceSets()
+        .filter { it.isNativeSourceSet.await() }
+        .filterIsInstance<DefaultKotlinSourceSet>()
+
+    val stdlib = project.files(project.konanDistribution.stdlib)
+    sourceSets.forEach { sourceSet ->
+        val commonizerTarget = sourceSet.commonizerTarget.await() ?: return@forEach
+        val nativeDistributionDependencies = getNativeDistributionDependencies(commonizerTarget)
+        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies)
+        sourceSet.addDependencyForLegacyImport(stdlib)
+    }
+}
 
 internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget): FileCollection {
     return when (target) {
