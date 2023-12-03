@@ -32,7 +32,7 @@ import java.util.*
 typealias OutputDir = String
 typealias GradleProjectPath = String
 
-class ModelParser(private val modulePrefix: String) {
+class ModelParser(private val modulePrefix: String, private val globalExcludedDirectories: List<File>) {
     fun parse(project: Project): PProject {
         if (project != project.rootProject) {
             error("$project is not a root project")
@@ -182,7 +182,7 @@ class ModelParser(private val modulePrefix: String) {
             forTests = false,
             rootDirectory = project.projectDir,
             moduleFile = mainModuleFileRelativePath,
-            contentRoots = listOf(PContentRoot(project.projectDir, listOf(), getExcludedDirs(project, excludedProjects))),
+            contentRoots = listOf(PContentRoot(project.projectDir, listOf(), computeAllExcludedDirectories(project, excludedProjects))),
             orderRoots = emptyList(),
             javaLanguageVersion = null,
             kotlinOptions = null,
@@ -199,14 +199,13 @@ class ModelParser(private val modulePrefix: String) {
         return javaToolchainService.launcherFor(javaPluginExtension.toolchain).orNull?.metadata?.languageVersion?.asInt()
     }
 
-    private fun getExcludedDirs(project: Project, excludedProjects: List<Project>): List<File> {
-        fun getJavaExcludedDirs() = project.plugins.findPlugin(IdeaPlugin::class.java)
-            ?.model?.module?.excludeDirs?.toList() ?: emptyList()
+    private fun computeAllExcludedDirectories(project: Project, excludedProjects: List<Project>): List<File> {
+        val javaExcludedDirectories = project.plugins.findPlugin(IdeaPlugin::class.java)
+            ?.model?.module?.excludeDirs?.toList().orEmpty()
 
-        fun getPillExcludedDirs() = project.findPillExtensionMirror()?.excludedDirs ?: emptyList()
+        val excludedProjectDirectories = if (project == project.rootProject) excludedProjects.map { it.buildDir } else emptyList()
 
-        return getPillExcludedDirs() + getJavaExcludedDirs() + project.buildDir +
-                (if (project == project.rootProject) excludedProjects.map { it.buildDir } else emptyList())
+        return globalExcludedDirectories + javaExcludedDirectories + project.buildDir + excludedProjectDirectories
     }
 
     private fun parseSourceSets(project: Project): List<PSourceSet> {

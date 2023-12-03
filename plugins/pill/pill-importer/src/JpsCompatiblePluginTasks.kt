@@ -70,6 +70,8 @@ class JpsCompatiblePluginTasks(
             Regex("kotlin_test_wasm_js_[\\d_]+_SNAPSHOT\\.xml"),
             Regex("kotlin_dom_api_compat_[\\d_]+_SNAPSHOT\\.xml")
         )
+
+        private val EXCLUDED_DIRECTORY_PATHS = listOf("out")
     }
 
     private lateinit var projectDir: File
@@ -92,7 +94,8 @@ class JpsCompatiblePluginTasks(
         rootProject.logger.lifecycle("Pill: Setting up project...")
 
         val modulePrefix = System.getProperty("pill.module.prefix", "")
-        val modelParser = ModelParser(modulePrefix)
+        val globalExcludedDirectories = EXCLUDED_DIRECTORY_PATHS.map { File(rootProject.projectDir, it) }
+        val modelParser = ModelParser(modulePrefix, globalExcludedDirectories)
 
         val dependencyPatcher = DependencyPatcher(rootProject)
         val dependencyMappers = listOf(dependencyPatcher, ::attachPlatformSources, ::attachAsmSources)
