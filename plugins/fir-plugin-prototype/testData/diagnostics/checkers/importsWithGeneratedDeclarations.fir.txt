@@ -1,0 +1,36 @@
+FILE: test_NestedClassAndMaterializeMember.kt
+    package test
+
+    @R|org/jetbrains/kotlin/fir/plugin/NestedClassAndMaterializeMember|() public final class MyClassWithNested : R|kotlin/Any| {
+        public constructor(): R|test/MyClassWithNested| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun materialize(): R|test/MyClassWithNested|
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|test/MyClassWithNested.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: test_CompanionWithFoo.kt
+    package test
+
+    @R|org/jetbrains/kotlin/fir/plugin/CompanionWithFoo|() public final class MyClassWithCompanion : R|kotlin/Any| {
+        public constructor(): R|test/MyClassWithCompanion| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun foo(): R|kotlin/Int|
+
+            private constructor(): R|test/MyClassWithCompanion.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
