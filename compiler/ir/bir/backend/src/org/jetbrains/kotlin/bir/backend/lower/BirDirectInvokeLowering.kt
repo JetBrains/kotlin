@@ -11,14 +11,7 @@ import org.jetbrains.kotlin.bir.backend.builders.birBodyScope
 import org.jetbrains.kotlin.bir.backend.builders.build
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.utils.asInlinableFunctionReference
-import org.jetbrains.kotlin.bir.declarations.BirConstructor
-import org.jetbrains.kotlin.bir.declarations.BirDeclarationParent
-import org.jetbrains.kotlin.bir.declarations.BirFunction
-import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
-import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
-import org.jetbrains.kotlin.bir.declarations.BirValueDeclaration
-import org.jetbrains.kotlin.bir.declarations.BirValueParameter
-import org.jetbrains.kotlin.bir.declarations.BirVariable
+import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirBlock
 import org.jetbrains.kotlin.bir.expressions.BirBody
 import org.jetbrains.kotlin.bir.expressions.BirCall
@@ -31,6 +24,7 @@ import org.jetbrains.kotlin.bir.expressions.BirValueAccessExpression
 import org.jetbrains.kotlin.bir.expressions.impl.BirCallImpl
 import org.jetbrains.kotlin.bir.expressions.impl.BirConstructorCallImpl
 import org.jetbrains.kotlin.bir.expressions.impl.BirReturnableBlockImpl
+import org.jetbrains.kotlin.bir.getBackReferences
 import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
 import org.jetbrains.kotlin.bir.util.ancestors
 import org.jetbrains.kotlin.bir.util.dump
@@ -46,8 +40,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 context(JvmBirBackendContext)
 class BirDirectInvokeLowering : BirLoweringPhase() {
-    private val valueAccesses = registerBackReferencesKey<BirValueAccessExpression> { recordReference(it.symbol) }
-    private val returnTargets = registerBackReferencesKey<BirReturn> { recordReference(it.returnTargetSymbol.owner) }
+    private val valueAccesses = registerBackReferencesKey<BirValueAccessExpression, BirValueDeclaration> { recordReference(it.symbol) }
+    private val returnTargets = registerBackReferencesKey<BirReturn, BirSymbolOwner> { recordReference(it.returnTargetSymbol.owner) }
     private val invokeCalls = registerIndexKey<BirCall>(false) {
         it.dispatchReceiver != null && it.symbol.owner.name == OperatorNameConventions.INVOKE
     }

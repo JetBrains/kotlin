@@ -205,13 +205,13 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         }
     }
 
-    final override fun <E : BirElement> getBackReferences(key: BirElementBackReferencesKey<E>): List<E> {
+    internal fun <R : BirElement> getBackReferences(key: BirElementBackReferencesKey<*, R>): List<BirElementBase> {
         root?.flushElementsWithInvalidatedIndexBuffer()
         require(attachedToTree) { "Element must be attached to tree" }
 
         val array: Array<BirElementBase?>
         when (val elementsOrSingle = backReferences) {
-            null -> return emptyList()
+            null -> return emptyList<BirElementBase>()
             is BirElementBase -> array = arrayOf(elementsOrSingle)
             else -> {
                 @Suppress("UNCHECKED_CAST")
@@ -244,7 +244,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
             }
         }
 
-        return results as List<E>
+        return results
     }
 
 
