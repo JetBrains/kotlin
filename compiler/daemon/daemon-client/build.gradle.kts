@@ -19,6 +19,7 @@ val nativePlatformVariants = listOf(
 )
 
 dependencies {
+    api(kotlinStdlib())
     compileOnly(project(":daemon-common"))
     compileOnly(commonDependency("net.rubygrapefruit", "native-platform"))
 
@@ -27,6 +28,13 @@ dependencies {
     nativePlatformVariants.forEach {
         embedded(commonDependency("net.rubygrapefruit", "native-platform", "-$it"))
     }
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+}
+
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform()
 }
 
 configureKotlinCompileTasksGradleCompatibility()

@@ -9,6 +9,12 @@ import java.util.*
 
 
 internal class LimitedLinkedList<E>(private val limit: Int) : LinkedList<E>() {
+    init {
+        require(limit > 0) {
+            "The limit shall be > 0. Other values does not make any sense"
+        }
+    }
+
     override fun add(element: E): Boolean {
         val added = super.add(element)
         while (added && size > limit) {
