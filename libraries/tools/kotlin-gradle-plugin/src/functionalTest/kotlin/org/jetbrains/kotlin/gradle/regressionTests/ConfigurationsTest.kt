@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.gradle.utils.toMap
 import java.util.*
 import kotlin.test.*
@@ -144,6 +144,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         project.evaluate()
 
         project.configurations
+            .filter { it.isCanBeConsumed }
             .filter { configuration ->
                 configuration.attributes.contains(KotlinPlatformType.attribute) ||
                         configuration.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name in KotlinUsages.values

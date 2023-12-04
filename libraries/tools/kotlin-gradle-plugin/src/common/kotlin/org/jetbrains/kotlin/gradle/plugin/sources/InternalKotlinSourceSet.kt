@@ -23,6 +23,9 @@ internal interface InternalKotlinSourceSet : KotlinSourceSet {
     val dependsOnClosure: ObservableSet<KotlinSourceSet>
     val withDependsOnClosure: ObservableSet<KotlinSourceSet>
     val compilations: MutableObservableSet<KotlinCompilation<*>>
+
+    /** Configuration that resolves into sources variants of all Source Set dependencies */
+    val dependencySourcesConfigurationName: String
 }
 
 internal suspend fun InternalKotlinSourceSet.awaitPlatformCompilations(): Set<KotlinCompilation<*>> {
