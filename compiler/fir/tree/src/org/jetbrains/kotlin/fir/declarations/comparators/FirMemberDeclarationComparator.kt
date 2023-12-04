@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations.comparators
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeRefComparator
@@ -16,11 +15,11 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
     object TypeAndNameComparator : Comparator<FirMemberDeclaration> {
         private val FirMemberDeclaration.priority: Int
             get() = when (this) {
-                is FirEnumEntry -> 7
-                is FirConstructor -> 6
-                is FirProperty -> 5
-                is FirField -> 4
-                is FirFunction -> 3
+                is FirEnumEntry -> 9
+                is FirConstructor -> 8
+                is FirProperty -> receiverParameter?.let { 6 } ?: 7
+                is FirField -> 5
+                is FirFunction -> receiverParameter?.let { 3 } ?: 4
                 is FirClass -> 2
                 is FirTypeAlias -> 1
                 is FirErrorProperty -> 0
@@ -28,49 +27,43 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
                 is FirBackingField -> 0
             }
 
-        override fun compare(a: FirMemberDeclaration, b: FirMemberDeclaration): Int {
-            val priorityDiff = a.priority - b.priority
-            if (priorityDiff != 0) {
-                return priorityDiff
-            }
-            // Never reorder enum entries.
-            if (a is FirEnumEntry) {
-                require(b is FirEnumEntry) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
-                }
+        fun compareInternal(a: FirMemberDeclaration, b: FirMemberDeclaration): Int? {
+            // Declarations with higher priority must go first.
+            ifNotEqual(b.priority, a.priority) { return it }
+            if (a is FirEnumEntry && b is FirEnumEntry) {
+                // Never reorder enum entries.
                 return 0
             }
+            ifNotEqual(a.nameOrSpecialName, b.nameOrSpecialName) { return it }
 
-            return a.nameOrSpecialName.compareTo(b.nameOrSpecialName)
+            // Might be equal
+            return null
         }
+
+        override fun compare(a: FirMemberDeclaration, b: FirMemberDeclaration): Int = compareInternal(a, b) ?: 0
     }
 
     override fun compare(a: FirMemberDeclaration, b: FirMemberDeclaration): Int {
-        if (a is FirCallableDeclaration && b is FirCallableDeclaration) {
-            return FirCallableDeclarationComparator.compare(a, b)
-        }
-
-        val typeAndNameDiff = TypeAndNameComparator.compare(a, b)
-        if (typeAndNameDiff != 0) {
-            return typeAndNameDiff
-        }
-
-        // Note that names are already compared. Check other details per kind.
-        when (a) {
-            is FirClass -> {
-                require(b is FirClass) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
-                }
-                return a.classId.packageFqName.asString().compareTo(b.classId.packageFqName.asString())
+        when {
+            a is FirCallableDeclaration && b is FirCallableDeclaration -> {
+                return FirCallableDeclarationComparator.compare(a, b)
             }
-            is FirTypeAlias -> {
-                require(b is FirTypeAlias) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+            a is FirTypeAlias && b is FirTypeAlias -> {
+                TypeAndNameComparator.compareInternal(a, b)?.let { return it }
+                FirTypeRefComparator.compare(a.expandedTypeRef, b.expandedTypeRef).let {
+                    if (it != 0) return it
                 }
-                return FirTypeRefComparator.compare(a.expandedTypeRef, b.expandedTypeRef)
             }
-            else ->
+            a is FirClass && b is FirClass -> {
+                TypeAndNameComparator.compareInternal(a, b)?.let { return it }
+                ifNotEqual(a.classKind.ordinal, b.classKind.ordinal) { return it }
+                ifNotEqual(a.status.isCompanion, b.status.isCompanion) { return it }
+            }
+            else -> {
                 error("Unsupported member declaration comparison: ${a.render()} v.s. ${b.render()}")
+            }
         }
+        ifRendersNotEqual(a, b) { return it }
+        return a.moduleData.name.compareTo(b.moduleData.name)
     }
 }
