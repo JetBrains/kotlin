@@ -27,6 +27,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.UtilsKt
 import java.util.concurrent.ConcurrentHashMap
 import plugins.KotlinBuildPublishingPluginKt
+import java.security.MessageDigest
 
 buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
@@ -556,6 +557,37 @@ configure([bundleRegular, bundlePrebuilt]) {
         archiveExtension.set('tar.gz')
         compression = Compression.GZIP
     }
+
+    // Calculating SHA-256 checksums for bundle artifacts
+    def archiveExtension = PlatformInfo.isWindows() ? 'zip' : 'tar.gz'
+    def checksumFile = archiveBaseName.zip(archiveVersion) { name, version -> file("${buildDir}/${name}-${version}.${archiveExtension}.sha256") }
+    outputs.file(checksumFile).withPropertyName("checksumFile")
+
+    doLast {
+        File bundleFile = archiveFile.get().asFile
+        if (bundleFile.exists()) {
+            String checksum = calculateChecksum(bundleFile, "SHA-256")
+            checksumFile.get().write(checksum)
+        }
+    }
+}
+
+def calculateChecksum(File file, String algorithm) {
+    MessageDigest digest = MessageDigest.getInstance(algorithm)
+    FileInputStream fis = new FileInputStream(file)
+    byte[] byteArray = new byte[1024]
+    int bytesCount
+    while ((bytesCount = fis.read(byteArray)) != -1) {
+        digest.update(byteArray, 0, bytesCount)
+    }
+    fis.close()
+    byte[] bytes = digest.digest()
+
+    StringBuilder sb = new StringBuilder()
+    for (byte aByte : bytes) {
+        sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1))
+    }
+    return sb.toString()
 }
 
 tasks.register("tc-dist", (PlatformInfo.isWindows()) ? Zip : Tar) {
@@ -734,14 +766,19 @@ publishing {
                 def bundleArchives = bundlesLocationFiles
                         .findAll { it.name.startsWith("kotlin-native") && !it.name.contains("prebuilt") && !it.name.endsWith("spdx.json") }
                 def bundleConfigs = createConfigurations(bundleArchives)
+                def archiveExtension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
                 bundleConfigs.forEach { target, file ->
                     mvn.artifact(file) {
                         classifier = platformName(target)
-                        extension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
+                        extension = archiveExtension
                     }
                     mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-${platformName(target)}-${kotlinVersion}.spdx.json") {
                         classifier = platformName(target)
                         extension = "spdx.json"
+                    }
+                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-${platformName(target)}-${kotlinVersion}.${archiveExtension}.sha256") {
+                        classifier = platformName(target)
+                        extension = "sha256"
                     }
                 }
             } else {
@@ -767,14 +804,19 @@ publishing {
                 def prebuiltBundleArchives = bundlesLocationFiles
                         .findAll { it.name.startsWith("kotlin-native-prebuilt") && !it.name.endsWith("spdx.json") }
                 def bundlePrebuiltConfigs = createConfigurations(prebuiltBundleArchives)
+                def archiveExtension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
                 bundlePrebuiltConfigs.forEach { target, file ->
                     mvn.artifact(file) {
                         classifier = platformName(target)
-                        extension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
+                        extension = archiveExtension
                     }
                     mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-prebuilt-${platformName(target)}-${kotlinVersion}.spdx.json") {
                         classifier = platformName(target)
                         extension = "spdx.json"
+                    }
+                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-${platformName(target)}-${kotlinVersion}.${archiveExtension}.sha256") {
+                        classifier = platformName(target)
+                        extension = "sha256"
                     }
                 }
             } else {
