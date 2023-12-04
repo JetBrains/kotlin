@@ -136,6 +136,8 @@ fun Project.configureKotlinCompilationOptions() {
             ":kotlin-stdlib-jvm-minimal-for-test",
             ":kotlin-stdlib-js-ir-minimal-for-test",
             ":kotlin-dom-api-compat",
+            ":kotlinx-metadata",
+            ":kotlinx-metadata-jvm",
         )
 
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
