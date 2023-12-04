@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.kotlinNativeDist
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {

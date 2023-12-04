@@ -5,6 +5,7 @@ description = "kotlinp"
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 val kotlinpAsmVersion = "9.0"

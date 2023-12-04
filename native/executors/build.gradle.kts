@@ -10,6 +10,14 @@ plugins {
     kotlin("jvm")
 }
 
+val isNativeBuildToolsProject = rootProject.name == "native-build-tools"
+
+if (!isNativeBuildToolsProject) {
+    // The module is shared between the main project and 'native-build-tools',
+    // in which there is no 'jps-compatible' plugin configured.
+    apply(plugin = "jps-compatible")
+}
+
 repositories {
     mavenCentral()
 }
@@ -29,7 +37,7 @@ dependencies {
 
     // KT-61897: Workaround for https://github.com/gradle/gradle/issues/26358
     // (wrong conflict resolution, causing selection of not the latest version of `:kotlin-util-klib` module)
-    if (rootProject.name == "native-build-tools") {
+    if (isNativeBuildToolsProject) {
         implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
     } else {
         implementation(project(":native:kotlin-native-utils"))
