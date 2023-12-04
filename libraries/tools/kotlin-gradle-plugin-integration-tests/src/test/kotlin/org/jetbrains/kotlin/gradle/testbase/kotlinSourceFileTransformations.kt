@@ -11,11 +11,21 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.io.path.appendText
 
 
+/**
+ * Appends top-level `private val` to the content of the file.
+ * Throws SecurityException or IOException, if append failed.
+ * Every call to [addPrivateVal] or [addPublicVal] generates a new value name.
+ */
 fun Path.addPrivateVal(): Path {
     appendText("\nprivate val integerValue${changeCounter.incrementAndGet()} = 24\n")
     return this
 }
 
+/**
+ * Appends top-level `public val` to the content of the file.
+ * Throws SecurityException or IOException, if append failed.
+ * Every call to [addPrivateVal] or [addPublicVal] generates a new value name.
+ */
 fun Path.addPublicVal(): Path {
     appendText("\nval integerValue${changeCounter.incrementAndGet()} = 25\n")
     return this
