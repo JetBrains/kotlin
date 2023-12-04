@@ -76,7 +76,6 @@ internal fun optimizationPipelinePass(name: String, description: String, pipelin
             }
         }
 
-
 internal val MandatoryBitcodeLLVMPostprocessingPhase = optimizationPipelinePass(
         name = "MandatoryBitcodeLLVMPostprocessingPhase",
         description = "Mandatory bitcode llvm postprocessing",
@@ -85,7 +84,7 @@ internal val MandatoryBitcodeLLVMPostprocessingPhase = optimizationPipelinePass(
 
 internal val ModuleBitcodeOptimizationPhase = optimizationPipelinePass(
         name = "ModuleBitcodeOptimization",
-        description = "Optimize bitcode",
+        description = "Optimize bitcode with new PM",
         pipeline = ::ModuleOptimizationPipeline,
 )
 
@@ -93,12 +92,6 @@ internal val LTOBitcodeOptimizationPhase = optimizationPipelinePass(
         name = "LTOBitcodeOptimization",
         description = "Runs llvm lto pipeline",
         pipeline = ::LTOOptimizationPipeline
-)
-
-internal val ThreadSanitizerPhase = optimizationPipelinePass(
-        name = "ThreadSanitizer",
-        description = "Prepare to run with thread sanitizer",
-        pipeline = ::ThreadSanitizerPipeline,
 )
 
 internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
@@ -159,7 +152,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         it.runPhase(ModuleBitcodeOptimizationPhase, module)
         it.runPhase(LTOBitcodeOptimizationPhase, module)
         when (context.config.sanitizer) {
-            SanitizerKind.THREAD -> it.runPhase(ThreadSanitizerPhase, module)
+            SanitizerKind.THREAD -> context.reportCompilationError("Thread sanitizer is not supported yet")
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
             null -> {}
         }
