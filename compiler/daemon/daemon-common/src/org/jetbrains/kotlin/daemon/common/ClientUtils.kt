@@ -63,7 +63,7 @@ fun walkDaemons(
         .map { Pair(it, portExtractor(it.name)) }
         .filter { (file, port) -> port != null && filter(file, port) }
         .mapNotNull { (file, port) ->
-            assert(port!! in 1..<MAX_PORT_NUMBER)
+            assert(port!! in COMPILE_DAEMON_PORTS_RANGE_START..<COMPILE_DAEMON_PORTS_RANGE_END)
             val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
             report(DaemonReportCategory.DEBUG, "found daemon on port $port ($relativeAge ms old), trying to connect")
             val daemon = tryConnectToDaemon(port, report)
