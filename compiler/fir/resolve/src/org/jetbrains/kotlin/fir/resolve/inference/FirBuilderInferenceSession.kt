@@ -280,7 +280,7 @@ class FirBuilderInferenceSession(
         fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>,
     ): Boolean {
         val substitutedConstraintWith =
-            initialConstraint.substitute(callSubstitutor).substitute(nonFixedToVariablesSubstitutor, fixedTypeVariables)
+            initialConstraint.substitute(callSubstitutor).substituteNonFixedToVariables(nonFixedToVariablesSubstitutor, fixedTypeVariables)
 
         // TODO(KT-64031): Invalid naming, it doesn't make sense in case of equality constraints
         val lower = substitutedConstraintWith.a
@@ -320,8 +320,8 @@ class FirBuilderInferenceSession(
         )
     }
 
-    private fun InitialConstraint.substitute(
-        substitutor: ConeSubstitutor,
+    private fun InitialConstraint.substituteNonFixedToVariables(
+        nonFixedToVariablesSubstitutor: ConeSubstitutor,
         fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     ): InitialConstraint {
         require(constraintKind != ConstraintKind.LOWER)
@@ -339,7 +339,7 @@ class FirBuilderInferenceSession(
         //  substitutedLowerType = C<CapturedType(out W)_1>
         //  substitutedUpperType = D<CapturedType(out W)_1>
         val substitutedCommonCapType = commonCapTypes.associate {
-            it.constructor to substitutor.substituteOrSelf(it)
+            it.constructor to nonFixedToVariablesSubstitutor.substituteOrSelf(it)
         }
 
         val capTypesSubstitutor = object : AbstractConeSubstitutor(resolutionContext.typeContext) {
@@ -350,11 +350,11 @@ class FirBuilderInferenceSession(
         }
 
         // TODO(KT-64031): invalid naming. It doesn't make sense in case of equality constraints
-        val substitutedLowerType = substitutor.safeSubstitute(
+        val substitutedLowerType = nonFixedToVariablesSubstitutor.safeSubstitute(
             resolutionContext.typeContext,
             capTypesSubstitutor.safeSubstitute(resolutionContext.typeContext, this.a)
         )
-        val substitutedUpperType = substitutor.safeSubstitute(
+        val substitutedUpperType = nonFixedToVariablesSubstitutor.safeSubstitute(
             resolutionContext.typeContext,
             capTypesSubstitutor.safeSubstitute(resolutionContext.typeContext, this.b)
         )
