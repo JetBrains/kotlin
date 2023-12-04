@@ -376,17 +376,8 @@ class FirCallCompleter(
             )
 
             transformer.context.withAnonymousFunctionTowerDataContext(lambdaArgument.symbol) {
-                for (implicitReceiverValue in transformer.context.towerDataContext.implicitReceiverStack) {
-                    val newType = currentSubstitutor.substituteOrNull(implicitReceiverValue.type) ?: continue
-                    // TODO: recreate implicit receivers?
-                    @Suppress("DEPRECATION_ERROR")
-                    implicitReceiverValue.updateTypeInBuilderInference(newType)
-                }
-
                 val builderInferenceSession =
-                    // TODO: Think of delegation+PCLA combination
-                    runIf(notFixedTypeVariablesInInputTypes.isNotEmpty() /*&& transformer.context.inferenceSession !is FirBuilderInferenceSession2*/) {
-
+                    runIf(notFixedTypeVariablesInInputTypes.isNotEmpty()) {
                         candidate.pclaLambdas += lambdaArgument
 
                         FirBuilderInferenceSession2(candidate, session.inferenceComponents)
