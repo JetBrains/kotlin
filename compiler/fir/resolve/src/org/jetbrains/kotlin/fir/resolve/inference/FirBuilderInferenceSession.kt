@@ -307,12 +307,22 @@ class FirBuilderInferenceSession(
         if (substitutedA == a && substitutedB == b) return this
 
         // TODO(KT-64033): Missing check for ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound language feature
+        val isInferringIntoUpperBoundsForbidden = session.languageVersionSettings.supportsFeature(
+            LanguageFeature.ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
+        )
+        val isFromNotSubstitutedDeclaredUpperBound = substitutedB == b && position is DeclaredUpperBoundConstraintPosition<*>
+
+        val resultingPosition = if (isFromNotSubstitutedDeclaredUpperBound && isInferringIntoUpperBoundsForbidden) {
+            position
+        } else {
+            ConeBuilderInferenceSubstitutionConstraintPosition(this)
+        }
 
         return InitialConstraint(
             substitutedA,
             substitutedB,
             this.constraintKind,
-            ConeBuilderInferenceSubstitutionConstraintPosition(this)
+            resultingPosition
         )
     }
 
