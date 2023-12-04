@@ -320,6 +320,21 @@ class FirBuilderInferenceSession(
         )
     }
 
+    /**
+     * This function substitutes stub types in constraint with the corresponding type variable
+     * Please make sure to pass correct {Stub(Tv) => Tv} substitutor
+     *
+     * E.g.:
+     * ```
+     * nonFixedToVariablesSubstitutor = {Stub(Tv) => Tv, Stub(Ov) => Ov}
+     * constraint: A<Stub(Tv)> <: B<Stub(Ov)> -> A<Tv> <: B<Ov>
+     * ```
+     *
+     * The main reason for this function's existence is the custom handling of captured types.
+     * See KT-64027
+     *
+     * @return Constraint, substituted according to the [nonFixedToVariablesSubstitutor]
+     */
     private fun InitialConstraint.substituteNonFixedToVariables(
         nonFixedToVariablesSubstitutor: ConeSubstitutor,
         fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
