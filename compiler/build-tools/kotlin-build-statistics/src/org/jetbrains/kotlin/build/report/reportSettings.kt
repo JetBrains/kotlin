@@ -10,10 +10,11 @@ import java.io.Serializable
 
 data class FileReportSettings(
     val buildReportDir: File,
+    val changedFileListPerLimit: Int? = null,
     val includeMetricsInReport: Boolean = false,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 0
+        const val serialVersionUID: Long = 1
     }
 }
 

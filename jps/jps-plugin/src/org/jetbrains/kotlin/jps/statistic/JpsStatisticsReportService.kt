@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.*
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinLogger
 import org.jetbrains.kotlin.jps.build.KotlinChunk
-import org.jetbrains.kotlin.jps.build.KotlinCompileContext
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -30,6 +29,8 @@ internal val statisticsReportServiceKey = GlobalContextKey<JpsStatisticsReportSe
 
 sealed class JpsStatisticsReportService {
     companion object {
+        private const val DEFAULT_CHANGED_FILE_LIST_LIMIT = 20
+
         internal fun create(): JpsStatisticsReportService {
             val fileReportSettings = initFileReportSettings()
             val httpReportSettings = initHttpReportSettings()
@@ -45,7 +46,9 @@ sealed class JpsStatisticsReportService {
             context.getUserData(statisticsReportServiceKey) ?: DummyJpsStatisticsReportService
 
         private fun initFileReportSettings(): FileReportSettings? {
-            return System.getProperty("kotlin.build.report.file.output_dir")?.let { FileReportSettings(File(it)) }
+            return System.getProperty("kotlin.build.report.file.output_dir")?.let {
+                FileReportSettings(File(it), System.getProperty("kotlin.build.report.file.change_file_limit")?.toInt() ?: DEFAULT_CHANGED_FILE_LIST_LIMIT)
+            }
         }
 
         private fun initHttpReportSettings(): HttpReportSettings? {
@@ -140,7 +143,7 @@ class JpsStatisticsReportServiceImpl(
         httpService?.sendData(compileStatisticsData, loggerAdapter)
         fileReportSettings?.also {
             JpsFileReportService(
-                it.buildReportDir, context.projectDescriptor.project.name, true, loggerAdapter
+                it.buildReportDir, context.projectDescriptor.project.name, true, loggerAdapter, it.changedFileListPerLimit
             ).process(
                 compileStatisticsData,
                 BuildStartParameters(tasks = listOf(jpsBuildTaskName)), emptyList(),

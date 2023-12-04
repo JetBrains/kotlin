@@ -42,7 +42,10 @@ internal fun reportingSettings(project: Project): ReportingSettings {
             project.rootProject.buildDir
         }).resolve("reports/kotlin-build")
         val includeMetricsInReport = properties.buildReportMetrics || buildReportMode == BuildReportMode.VERBOSE
-        FileReportSettings(buildReportDir = buildReportDir, includeMetricsInReport = includeMetricsInReport)
+        FileReportSettings(
+            buildReportDir = buildReportDir,
+            includeMetricsInReport = includeMetricsInReport
+        )
     } else {
         null
     }

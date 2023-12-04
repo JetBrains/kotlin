@@ -11,15 +11,20 @@ import org.jetbrains.kotlin.build.report.statistics.CompileStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.file.FileReportService
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinLogger
 import java.io.File
+import kotlin.math.min
 
 internal class JpsFileReportService(
     buildReportDir: File,
     projectName: String,
     printMetrics: Boolean,
     logger: JpsKotlinLogger,
+    private val changedFileListPerLimit: Int?
 ) : FileReportService<JpsBuildTime, JpsBuildPerformanceMetric>(buildReportDir, projectName, printMetrics, logger) {
     override fun printCustomTaskMetrics(statisticsData: CompileStatisticsData<JpsBuildTime, JpsBuildPerformanceMetric>) {
-        p.print("Changed files: ${statisticsData.getChanges().sorted()}")
-        p.print("Execution result: ${statisticsData.getTaskResult()}")
+        val changedFiles = statisticsData.getChanges().let { changes ->
+            changedFileListPerLimit?.let { changes.subList(0, min(it, changes.size)) } ?: changes
+        }
+        p.println("Changed files: ${changedFiles.sorted()}")
+        p.println("Execution result: ${statisticsData.getTaskResult()}")
     }
 }
