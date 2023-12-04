@@ -2822,7 +2822,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val receiverType: KtType
         val receiverExpression: KtExpression
         val operator: String
-        val argumentExpression: KtExpression
+        val argumentExpression: KtExpression?
     }
 
     interface UnsafeOperatorCall : KtFirDiagnostic<KtExpression> {
@@ -2830,7 +2830,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val receiverType: KtType
         val receiverExpression: KtExpression
         val operator: String
-        val argumentExpression: KtExpression
+        val argumentExpression: KtExpression?
     }
 
     interface IteratorOnNullable : KtFirDiagnostic<KtExpression> {

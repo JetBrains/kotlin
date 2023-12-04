@@ -3396,7 +3396,7 @@ internal class UnsafeInfixCallImpl(
     override val receiverType: KtType,
     override val receiverExpression: KtExpression,
     override val operator: String,
-    override val argumentExpression: KtExpression,
+    override val argumentExpression: KtExpression?,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.UnsafeInfixCall
@@ -3405,7 +3405,7 @@ internal class UnsafeOperatorCallImpl(
     override val receiverType: KtType,
     override val receiverExpression: KtExpression,
     override val operator: String,
-    override val argumentExpression: KtExpression,
+    override val argumentExpression: KtExpression?,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.UnsafeOperatorCall

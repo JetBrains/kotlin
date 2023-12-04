@@ -707,8 +707,8 @@ object FirErrors {
     // Nullability
     val UNSAFE_CALL by error2<PsiElement, ConeKotlinType, FirExpression?>(SourceElementPositioningStrategies.DOT_BY_QUALIFIED)
     val UNSAFE_IMPLICIT_INVOKE_CALL by error1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val UNSAFE_INFIX_CALL by error4<KtExpression, ConeKotlinType, FirExpression, String, FirExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val UNSAFE_OPERATOR_CALL by error4<KtExpression, ConeKotlinType, FirExpression, String, FirExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val UNSAFE_INFIX_CALL by error4<KtExpression, ConeKotlinType, FirExpression, String, FirExpression?>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val UNSAFE_OPERATOR_CALL by error4<KtExpression, ConeKotlinType, FirExpression, String, FirExpression?>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val ITERATOR_ON_NULLABLE by error0<KtExpression>()
     val UNNECESSARY_SAFE_CALL by warning1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.SAFE_ACCESS)
     val SAFE_CALL_WILL_CHANGE_NULLABILITY by warning0<KtSafeQualifiedExpression>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)

@@ -4045,7 +4045,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic.b.source!!.psi as KtExpression,
             firDiagnostic.c,
-            firDiagnostic.d.source!!.psi as KtExpression,
+            firDiagnostic.d?.source?.psi as? KtExpression,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -4055,7 +4055,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic.b.source!!.psi as KtExpression,
             firDiagnostic.c,
-            firDiagnostic.d.source!!.psi as KtExpression,
+            firDiagnostic.d?.source?.psi as? KtExpression,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

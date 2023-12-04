@@ -1405,13 +1405,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("receiverType")
             parameter<FirExpression>("receiverExpression")
             parameter<String>("operator")
-            parameter<FirExpression>("argumentExpression")
+            parameter<FirExpression?>("argumentExpression")
         }
         val UNSAFE_OPERATOR_CALL by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<ConeKotlinType>("receiverType")
             parameter<FirExpression>("receiverExpression")
             parameter<String>("operator")
-            parameter<FirExpression>("argumentExpression")
+            parameter<FirExpression?>("argumentExpression")
         }
         val ITERATOR_ON_NULLABLE by error<KtExpression>()
         val UNNECESSARY_SAFE_CALL by warning<PsiElement>(PositioningStrategy.SAFE_ACCESS) {

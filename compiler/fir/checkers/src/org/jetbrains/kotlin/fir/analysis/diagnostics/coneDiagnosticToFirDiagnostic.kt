@@ -240,7 +240,7 @@ private fun mapUnsafeCallError(
                 rootCause.actualType,
                 receiverExpression,
                 candidateFunctionName!!.asString(),
-                singleArgument,
+                singleArgument.takeIf { it.source != null },
             )
         } else {
             FirErrors.UNSAFE_OPERATOR_CALL.createOn(
@@ -248,7 +248,7 @@ private fun mapUnsafeCallError(
                 rootCause.actualType,
                 receiverExpression,
                 candidateFunctionName!!.asString(),
-                singleArgument,
+                singleArgument.takeIf { it.source != null },
             )
         }
     }

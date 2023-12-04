@@ -26349,6 +26349,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("unsafeCallOnOperatorRedCode.kt")
+            public void testUnsafeCallOnOperatorRedCode() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/nullableTypes/unsafeCallOnOperatorRedCode.kt");
+            }
+
+            @Test
             @TestMetadata("uselessElvis.kt")
             public void testUselessElvis() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/uselessElvis.kt");
