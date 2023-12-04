@@ -4,17 +4,12 @@ plugins {
     id("java-gradle-plugin")
     id("org.jetbrains.kotlin.jvm")
     id("com.gradle.plugin-publish")
-    id("jps-compatible")
     id("maven-publish")
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
-}
-
-pill {
-    variant = 'FULL'
 }
 
 dependencies {

@@ -1,11 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResourceTransformer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.pill.PillExtension
 
 plugins {
     id("gradle-plugin-common-configuration")
-    id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
@@ -13,10 +11,6 @@ repositories {
     google()
     mavenCentral()
     gradlePluginPortal()
-}
-
-pill {
-    variant = PillExtension.Variant.FULL
 }
 
 kotlin {
