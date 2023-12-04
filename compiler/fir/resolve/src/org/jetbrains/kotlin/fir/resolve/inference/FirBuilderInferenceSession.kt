@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemC
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariableIfNotPresent
 import org.jetbrains.kotlin.resolve.descriptorUtil.BUILDER_INFERENCE_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
@@ -213,7 +212,7 @@ class FirBuilderInferenceSession(
         for (initialConstraint in storage.initialConstraints) {
             if (initialConstraint.position is BuilderInferencePosition) continue
             if (integrateConstraintToSystem(
-                    commonSystem, initialConstraint, callSubstitutor, nonFixedToVariablesSubstitutor, storage.fixedTypeVariables
+                    commonSystem, initialConstraint, callSubstitutor, nonFixedToVariablesSubstitutor
                 )
             ) {
                 introducedConstraint = true
@@ -277,10 +276,9 @@ class FirBuilderInferenceSession(
         initialConstraint: InitialConstraint,
         callSubstitutor: ConeSubstitutor,
         nonFixedToVariablesSubstitutor: ConeSubstitutor,
-        fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>,
     ): Boolean {
         val substitutedConstraintWith =
-            initialConstraint.substitute(callSubstitutor).substituteNonFixedToVariables(nonFixedToVariablesSubstitutor, fixedTypeVariables)
+            initialConstraint.substitute(callSubstitutor).substituteNonFixedToVariables(nonFixedToVariablesSubstitutor)
 
         // TODO(KT-64031): Invalid naming, it doesn't make sense in case of equality constraints
         val lower = substitutedConstraintWith.a
@@ -336,8 +334,7 @@ class FirBuilderInferenceSession(
      * @return Constraint, substituted according to the [nonFixedToVariablesSubstitutor]
      */
     private fun InitialConstraint.substituteNonFixedToVariables(
-        nonFixedToVariablesSubstitutor: ConeSubstitutor,
-        fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
+        nonFixedToVariablesSubstitutor: ConeSubstitutor
     ): InitialConstraint {
         require(constraintKind != ConstraintKind.LOWER)
 
@@ -374,31 +371,6 @@ class FirBuilderInferenceSession(
             capTypesSubstitutor.safeSubstitute(resolutionContext.typeContext, this.b)
         )
 
-
-        val a = a
-        // TODO(KT-64028): Remove this if.
-        //  The return in condition is actually unreachable in tests.
-        //  - Seems, that case was added due to usage of this function in delegate inference, that isn't present anymore
-        //  - While situation described below seems reasonable the condition seems highly ad-hoc
-        //  - Condition doesn't handle equality constraints correctly and assumes UPPER (KT-64031) direction of constraint only
-        // In situation when some type variable _T is fixed to Stub(_T)?,
-        // we are not allowed just to substitute Stub(_T) with T because nullabilities are different here!
-        // To compensate this, we have to substitute Stub(_T) <: SomeType constraint with T <: SomeType? adding nullability to upper type
-        if (a is ConeStubTypeForChainInference && substitutedLowerType !is ConeStubTypeForChainInference) {
-            val constructor = a.constructor
-            val fixedTypeVariableType = fixedTypeVariables[constructor.variable.typeConstructor]
-            if (fixedTypeVariableType is ConeStubTypeForChainInference &&
-                fixedTypeVariableType.constructor === constructor &&
-                fixedTypeVariableType.isMarkedNullable
-            ) {
-                return InitialConstraint(
-                    substitutedLowerType,
-                    (substitutedUpperType as ConeKotlinType).withNullability(ConeNullability.NULLABLE, resolutionContext.typeContext),
-                    constraintKind,
-                    position
-                )
-            }
-        }
         return InitialConstraint(
             substitutedLowerType,
             substitutedUpperType,
