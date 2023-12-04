@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.buildToolsVersion
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import java.nio.file.Path
@@ -37,15 +38,17 @@ class JvmModule(
 ) {
     private val compilationService = CompilationService.loadImplementation(this.javaClass.classLoader)
 
-    override fun compile(
+    override fun compileImpl(
         strategyConfig: CompilerExecutionStrategyConfiguration,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
+        kotlinLogger: TestKotlinLogger,
     ): CompilationResult {
         val stdlibLocation =
             KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath() // compile against the provided stdlib
         val dependencyFiles = dependencies.map { it.location }.plusElement(stdlibLocation)
         val compilationConfig = compilationService.makeJvmCompilationConfiguration()
         compilationConfigAction(compilationConfig)
+        compilationConfig.useLogger(kotlinLogger)
         val defaultCompilationArguments = listOf(
             "-no-reflect",
             "-no-stdlib",
@@ -79,10 +82,12 @@ class JvmModule(
     override fun compileIncrementally(
         strategyConfig: CompilerExecutionStrategyConfiguration,
         sourcesChanges: SourcesChanges,
+        forceOutput: LogLevel?,
         forceNonIncrementalCompilation: Boolean,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
+        assertions: context(Module) CompilationOutcome.() -> Unit,
     ): CompilationResult {
-        return compile(strategyConfig) { compilationConfig ->
+        return compile(strategyConfig, forceOutput, { compilationConfig ->
             val snapshots = dependencies.map {
                 generateClasspathSnapshot(it).toFile()
             }
@@ -111,6 +116,6 @@ class JvmModule(
                 params,
                 options,
             )
-        }
+        }, assertions)
     }
 }

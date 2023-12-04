@@ -5,10 +5,35 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
+import org.junit.jupiter.api.Assertions.assertEquals
 import java.nio.file.Path
 
+private class CompilationOutcomeImpl(
+    override val logLines: Map<LogLevel, Collection<String>>,
+) : CompilationOutcome {
+    var maxLogLevel: LogLevel = LogLevel.ERROR
+        private set
+    var expectedResult = CompilationResult.COMPILATION_SUCCESS
+        private set
+
+    override fun requireLogLevel(logLevel: LogLevel) {
+        maxLogLevel = maxOf(logLevel, maxLogLevel)
+    }
+
+    override fun expectFail() {
+        expectedResult = CompilationResult.COMPILATION_ERROR
+    }
+
+    override fun expectCompilationResult(compilationResult: CompilationResult) {
+        expectedResult = compilationResult
+    }
+}
+
 abstract class AbstractModule(
-    val project: Project,
+    override val project: Project,
     override val moduleName: String,
     val moduleDirectory: Path,
     val dependencies: List<Dependency>,
@@ -34,6 +59,41 @@ abstract class AbstractModule(
 
     override val icCachesDir: Path
         get() = icWorkingDir.resolve("caches")
+
+    override fun compile(
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+        forceOutput: LogLevel?,
+        compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
+        assertions: context(Module) CompilationOutcome.() -> Unit,
+    ): CompilationResult {
+        val kotlinLogger = TestKotlinLogger()
+        val result = compileImpl(strategyConfig, compilationConfigAction, kotlinLogger)
+        val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel)
+        try {
+            assertions(outcome)
+            assertEquals(outcome.expectedResult, result) {
+                "Compilation result is unexpected"
+            }
+            if (forceOutput != null) {
+                kotlinLogger.printBuildOutput(forceOutput)
+            }
+        } catch (e: AssertionError) {
+            val maxLogLevel = if (forceOutput != null) {
+                maxOf(forceOutput, outcome.maxLogLevel)
+            } else {
+                outcome.maxLogLevel
+            }
+            kotlinLogger.printBuildOutput(maxLogLevel)
+            throw e
+        }
+        return result
+    }
+
+    protected abstract fun compileImpl(
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+        compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
+        kotlinLogger: TestKotlinLogger,
+    ): CompilationResult
 
     override fun toString() = moduleName
 }
