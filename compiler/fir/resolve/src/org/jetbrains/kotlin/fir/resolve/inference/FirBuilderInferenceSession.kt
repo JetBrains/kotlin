@@ -308,18 +308,29 @@ class FirBuilderInferenceSession(
     }
 
     private fun InitialConstraint.substitute(substitutor: TypeSubstitutorMarker): InitialConstraint {
-        val lowerSubstituted = substitutor.safeSubstitute(resolutionContext.typeContext, this.a)
-        val upperSubstituted = substitutor.safeSubstitute(resolutionContext.typeContext, this.b)
+        val substitutedA = substitutor.safeSubstitute(resolutionContext.typeContext, this.a)
+        val substitutedB = substitutor.safeSubstitute(resolutionContext.typeContext, this.b)
 
-        if (lowerSubstituted == a && upperSubstituted == b) return this
+        if (substitutedA == a && substitutedB == b) return this
 
         // TODO: Missing check for ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound language feature
+        val isInferringIntoUpperBoundsForbidden = session.languageVersionSettings.supportsFeature(
+            LanguageFeature.ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
+        )
+        val isFromNotSubstitutedDeclaredUpperBound = substitutedB == b && position is DeclaredUpperBoundConstraintPosition<*>
+
+        val resultingPosition = if (isFromNotSubstitutedDeclaredUpperBound && isInferringIntoUpperBoundsForbidden) {
+            position
+        } else {
+            ConeBuilderInferenceSubstitutionConstraintPosition(this)
+        }
+
 
         return InitialConstraint(
-            lowerSubstituted,
-            upperSubstituted,
+            substitutedA,
+            substitutedB,
             this.constraintKind,
-            ConeBuilderInferenceSubstitutionConstraintPosition(this)
+            resultingPosition
         )
     }
 
