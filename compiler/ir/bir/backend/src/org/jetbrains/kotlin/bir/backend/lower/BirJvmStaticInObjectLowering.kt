@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.bir.expressions.BirMemberAccessExpression
 import org.jetbrains.kotlin.bir.expressions.impl.BirBlockImpl
 import org.jetbrains.kotlin.bir.expressions.impl.BirGetFieldImpl
 import org.jetbrains.kotlin.bir.expressions.impl.BirTypeOperatorCallImpl
+import org.jetbrains.kotlin.bir.getBackReferences
 
 import org.jetbrains.kotlin.bir.util.defaultType
 import org.jetbrains.kotlin.bir.util.hasAnnotation
@@ -34,7 +35,7 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
     private val callsToJvmStaticObjects = registerIndexKey<BirMemberAccessExpression<*>>(false) { call ->
         (call.symbol as? BirDeclaration)?.isJvmStaticDeclaration() == true
     }
-    private val valueReads = registerBackReferencesKey<BirGetValue> { recordReference(it.symbol.owner) }
+    private val valueReads = registerBackReferencesKey<BirGetValue, BirValueDeclaration> { recordReference(it.symbol.owner) }
 
     private val fieldForObjectInstanceToken = acquireProperty(JvmCachedDeclarations.FieldForObjectInstance)
     private val interfaceCompanionFieldDeclaration = acquireProperty(JvmCachedDeclarations.InterfaceCompanionFieldDeclaration)
