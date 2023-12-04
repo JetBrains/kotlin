@@ -10,4 +10,4 @@ enum class MyEnum2() {}
 
 class MyClass(): <!FINAL_SUPERTYPE, INVISIBLE_REFERENCE!>MyEnum2<!>() {}
 
-class MyClass2(): <!FINAL_SUPERTYPE, INVISIBLE_REFERENCE!>MyJavaEnum<!>() {}
+class MyClass2(): <!FINAL_SUPERTYPE, UNRESOLVED_REFERENCE!>MyJavaEnum<!>() {}

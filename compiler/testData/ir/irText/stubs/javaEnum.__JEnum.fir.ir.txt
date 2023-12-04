@@ -1,6 +1,5 @@
 CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL visibility:public superTypes:[kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>]
   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JEnum
-  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:private <> () returnType:<root>.JEnum [primary]
   ENUM_ENTRY IR_EXTERNAL_JAVA_DECLARATION_STUB name:ONE
   ENUM_ENTRY IR_EXTERNAL_JAVA_DECLARATION_STUB name:TWO
   ENUM_ENTRY IR_EXTERNAL_JAVA_DECLARATION_STUB name:THREE

@@ -10,8 +10,6 @@ public final enum class EnumWithSpecializedEntry : R|kotlin/Enum<test/EnumWithSp
     public final static val entries: R|kotlin/enums/EnumEntries<test/EnumWithSpecializedEntry>|
         public get(): R|kotlin/enums/EnumEntries<test/EnumWithSpecializedEntry>|
 
-    private constructor(): R|test/EnumWithSpecializedEntry|
-
     public/*package*/ open class Nested : R|kotlin/Any| {
         public/*package*/ constructor(): R|test/EnumWithSpecializedEntry.Nested|
 

@@ -14,8 +14,6 @@ public abstract interface CustomAnnotation : R|kotlin/Any| {
         public final static val entries: R|kotlin/enums/EnumEntries<test/CustomAnnotation.MyEnum>|
             public get(): R|kotlin/enums/EnumEntries<test/CustomAnnotation.MyEnum>|
 
-        private constructor(): R|test/CustomAnnotation.MyEnum|
-
     }
     @R|test/CustomAnnotation.MyAnnotation|(value = R|test/CustomAnnotation.MyEnum.ONE|) public open class MyTest : R|kotlin/Any| {
         public constructor(): R|test/CustomAnnotation.MyTest|

@@ -10,6 +10,4 @@ public final enum class JavaEnum : R|kotlin/Enum<test/JavaEnum!>| {
     public final static val entries: R|kotlin/enums/EnumEntries<test/JavaEnum>|
         public get(): R|kotlin/enums/EnumEntries<test/JavaEnum>|
 
-    private constructor(): R|test/JavaEnum|
-
 }
