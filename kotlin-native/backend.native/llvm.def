@@ -1,9 +1,9 @@
 headers = llvm-c/Core.h llvm-c/Target.h llvm-c/Analysis.h llvm-c/BitWriter.h \
     llvm-c/BitReader.h llvm-c/Transforms/PassManagerBuilder.h llvm-c/Transforms/IPO.h \
     llvm-c/TargetMachine.h llvm-c/Target.h llvm-c/Linker.h llvm-c/Initialization.h \
-    llvm-c/DebugInfo.h DebugInfoC.h CAPIExtensions.h RemoveRedundantSafepoints.h OpaquePointerAPI.h
+    llvm-c/DebugInfo.h DebugInfoC.h CAPIExtensions.h RemoveRedundantSafepoints.h OpaquePointerAPI.h PassBuilder.h
 
-headerFilter = llvm-c/* llvm-c/**/* DebugInfoC.h CAPIExtensions.h RemoveRedundantSafepoints.h OpaquePointerAPI.h
+headerFilter = llvm-c/* llvm-c/**/* DebugInfoC.h CAPIExtensions.h RemoveRedundantSafepoints.h OpaquePointerAPI.h PassBuilder.h
 
 compilerOpts = -std=c99 \
     -Wall -W -Wno-unused-parameter -Wwrite-strings -Wmissing-field-initializers \
