@@ -7,11 +7,9 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.file.FileTree
-import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
@@ -148,10 +146,13 @@ internal constructor(
     @Input
     var baseName: String = project.name
 
+    @get:Internal
+    internal val defaultDestinationDir: Provider<Directory> = projectLayout.buildDirectory.dir("fat-framework")
+
     @OutputDirectory
     val destinationDirProperty: DirectoryProperty = objectFactory
         .directoryProperty()
-        .convention(projectLayout.buildDirectory.dir("fat-framework"))
+        .convention(defaultDestinationDir)
 
     /**
      * A parent directory for the fat framework.

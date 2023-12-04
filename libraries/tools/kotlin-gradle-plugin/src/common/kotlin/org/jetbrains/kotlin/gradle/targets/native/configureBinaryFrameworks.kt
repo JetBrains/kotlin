@@ -9,20 +9,15 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.copyAttributes
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
@@ -112,7 +107,7 @@ private fun Project.createFatFramework(groupDescription: FrameworkGroupDescripti
     } else {
         tasks.register(fatFrameworkTaskName, FatFrameworkTask::class.java) {
             it.baseName = groupDescription.baseName
-            it.destinationDirProperty.set(it.destinationDirProperty.dir(groupDescription.buildType.name.toLowerCaseAsciiOnly()))
+            it.destinationDirProperty.set(it.defaultDestinationDir.dir(groupDescription.buildType.name.toLowerCaseAsciiOnly()))
         }
     }
 

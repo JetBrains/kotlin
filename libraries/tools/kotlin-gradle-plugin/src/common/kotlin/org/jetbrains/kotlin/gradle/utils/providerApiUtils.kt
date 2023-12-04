@@ -8,16 +8,11 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.provider.SetProperty
-import org.gradle.api.provider.ValueSource
-import org.gradle.api.provider.ValueSourceParameters
+import org.gradle.api.provider.*
 import java.io.File
 import kotlin.reflect.KProperty
 
@@ -179,3 +174,5 @@ private abstract class AdhocValueSource<T> : ValueSource<T, AdhocValueSource.Par
         return parameters.producingLambda.get().invoke() as T
     }
 }
+
+internal fun Provider<Directory>.dir(path: String): Provider<Directory> = map { it.dir(path) }

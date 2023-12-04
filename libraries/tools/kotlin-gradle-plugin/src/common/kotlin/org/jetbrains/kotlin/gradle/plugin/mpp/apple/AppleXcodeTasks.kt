@@ -125,7 +125,7 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
         needFatFramework -> locateOrRegisterTask<FatFrameworkTask>(frameworkTaskName) { task ->
             task.description = "Packs $frameworkBuildType fat framework for Xcode"
             task.baseName = framework.baseName
-            task.destinationDirProperty.convention(appleFrameworkDir(envFrameworkSearchDir))
+            task.destinationDirProperty.fileProvider(appleFrameworkDir(envFrameworkSearchDir))
             task.isEnabled = frameworkBuildType == envBuildType
         }.also {
             it.configure { task -> task.from(framework) }
@@ -136,7 +136,7 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
             task.sourceFramework.fileProvider(framework.linkTaskProvider.flatMap { it.outputFile })
             task.sourceDsym.fileProvider(dsymFile(task.sourceFramework.mapToFile()))
             task.dependsOn(framework.linkTaskProvider)
-            task.destinationDirectory.set(appleFrameworkDir(envFrameworkSearchDir))
+            task.destinationDirectory.fileProvider(appleFrameworkDir(envFrameworkSearchDir))
         }
     }
 }
@@ -194,7 +194,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     embedAndSignTask.configure { task ->
         val frameworkFile = framework.outputFile
         task.dependsOn(assembleTask)
-        task.sourceFramework.set(File(appleFrameworkDir(envFrameworkSearchDir), frameworkFile.name))
+        task.sourceFramework.fileProvider(appleFrameworkDir(envFrameworkSearchDir).map { it.resolve(frameworkFile.name) })
         task.destinationDirectory.set(envEmbeddedFrameworksDir)
         if (envSign != null) {
             task.doLast {
@@ -216,8 +216,11 @@ private val Framework.namePrefix: String
         outputKind.taskNameClassifier
     )
 
-private fun Project.appleFrameworkDir(frameworkSearchDir: File) =
-    buildDir.resolve("xcode-frameworks").resolve(frameworkSearchDir)
+/**
+ * If [frameworkSearchDir] is absolute use it, otherwise make it relative to buildDir/xcode-frameworks
+ */
+private fun Project.appleFrameworkDir(frameworkSearchDir: File): Provider<File> =
+    layout.buildDirectory.dir("xcode-frameworks").map { it.asFile.resolve(frameworkSearchDir) }
 
 /**
  * macOS frameworks contain symlinks which are resolved/removed by the Gradle [Copy] task.
