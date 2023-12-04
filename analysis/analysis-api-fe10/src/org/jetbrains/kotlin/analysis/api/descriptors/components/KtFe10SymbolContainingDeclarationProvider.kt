@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.has
+import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
@@ -95,7 +95,7 @@ internal class KtFe10SymbolContainingDeclarationProvider(
 
     override fun getContainingJvmClassName(symbol: KtCallableSymbol): String? {
         val platform = getContainingModule(symbol).platform
-        if (!platform.isCommon() && !platform.isJvm()) return null
+        if (!platform.has<JvmPlatform>()) return null
 
         val containingSymbolOrSelf = symbol.containingSymbolOrSelf as KtSymbolWithKind
         return when (val descriptor = containingSymbolOrSelf.getDescriptor()) {

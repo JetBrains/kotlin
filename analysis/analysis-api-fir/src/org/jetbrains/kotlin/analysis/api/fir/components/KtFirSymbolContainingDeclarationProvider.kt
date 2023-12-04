@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.has
+import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -123,7 +123,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
 
     override fun getContainingJvmClassName(symbol: KtCallableSymbol): String? {
         val platform = getContainingModule(symbol).platform
-        if (!platform.isCommon() && !platform.isJvm()) return null
+        if (!platform.has<JvmPlatform>()) return null
 
         val containingSymbolOrSelf = when (symbol) {
             is KtValueParameterSymbol -> {
