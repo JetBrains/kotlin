@@ -36,9 +36,7 @@ internal fun getVisibleSourceSetsFromAssociateCompilations(
     return when (visibleInCompilations.size) {
         0 -> emptySet()
         1 -> visibleInCompilations.single()
-        else -> visibleInCompilations.first().toMutableSet().apply {
-            visibleInCompilations.subList(1, visibleInCompilations.size).forEach { retainAll(it) }
-        }
+        else -> visibleInCompilations.reduce { intersection, kotlinSourceSets -> intersection intersect kotlinSourceSets }
     }.toList()
 }
 
