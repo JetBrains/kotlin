@@ -74,7 +74,7 @@ interface TestVersions {
     }
 
     object COCOAPODS {
-        const val VERSION = "1.11.0"
+        const val VERSION = "1.14.3"
     }
 
     object AppleGradlePlugin {
