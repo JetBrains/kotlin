@@ -37,7 +37,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
         val golden1File = testPathFull.resolve("pod1.contents.gold.txt")
         val golden2File = testPathFull.resolve("pod2.contents.gold.txt")
 
-        val includeFrameworkArgs = TestCompilerArgs("-compiler-option", "-F${testDataDir.canonicalPath}")
+        val includeFrameworkArgs = TestCInteropArgs("-compiler-option", "-F${testDataDir.canonicalPath}")
         val klib1: KLIB = cinteropToLibrary(targets, def1File, buildDir, includeFrameworkArgs).assertSuccess().resultingArtifact
         val metadata1 = klib1.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
 
@@ -45,7 +45,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
         val actualFiltered1Output = filterContentsOutput(metadata1, " pod.Version|POD|class Pod")
         assertEquals(StringUtilRt.convertLineSeparators(expectedFiltered1Output), StringUtilRt.convertLineSeparators(actualFiltered1Output))
 
-        val cinterop2ExtraArgs = TestCompilerArgs("-l", klib1.klibFile.canonicalPath, "-compiler-option", "-fmodules")
+        val cinterop2ExtraArgs = TestCInteropArgs("-l", klib1.klibFile.canonicalPath, "-compiler-option", "-fmodules")
         val klib2: KLIB = cinteropToLibrary(targets, def2File, buildDir, includeFrameworkArgs + cinterop2ExtraArgs).assertSuccess().resultingArtifact
         val metadata2 = klib2.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
 
@@ -60,7 +60,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
                 files += TestFile.createCommitted(ktFile, this)
             }
             val compilationResult = compileToExecutable(
-                createTestCaseNoTestRun(module, TestCompilerArgs(listOf())),
+                createTestCaseNoTestRun(module, TestCompilerArgs.EMPTY),
                 klib1.asLibraryDependency(),
                 klib2.asLibraryDependency()
             )

@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestCInteropArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
@@ -88,11 +89,11 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             getBuiltinsGoldenFile(testPathFull)
         else
             getGoldenFile(testPathFull)
-        val fmodulesArgs = if (fmodules) TestCompilerArgs("-compiler-option", "-fmodules") else TestCompilerArgs.EMPTY
+        val fmodulesArgs = if (fmodules) TestCInteropArgs("-compiler-option", "-fmodules") else TestCompilerArgs.EMPTY
         val includeArgs = if (testDataDir.name.startsWith("framework"))
-            TestCompilerArgs("-compiler-option", "-F${testDataDir.canonicalPath}")
+            TestCInteropArgs("-compiler-option", "-F${testDataDir.canonicalPath}")
         else
-            TestCompilerArgs("-compiler-option", "-I${includeFolder.canonicalPath}")
+            TestCInteropArgs("-compiler-option", "-I${includeFolder.canonicalPath}")
 
         val testCompilationResult = cinteropToLibrary(targets, defFile, buildDir, includeArgs + fmodulesArgs)
         // If we are running fmodules-specific test without -fmodules then we want to be sure that cinterop fails the way we want it to.
