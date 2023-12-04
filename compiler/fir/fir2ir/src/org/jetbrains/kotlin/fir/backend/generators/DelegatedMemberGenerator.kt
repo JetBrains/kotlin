@@ -162,37 +162,16 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             TIrDeclaration : IrDeclaration {
         val unwrapped = callable.unwrapDelegateTarget(subClassLookupTag, firField) ?: return
 
-        val delegateToSymbol = findDelegateToSymbol(
-            unwrapped.unwrapSubstitutionOverrides().symbol as TFirSymbol,
-            { name, processor ->
-                processDeclarationsByName(name) {
-                    if (it !is TFirSymbol) return@processDeclarationsByName
-                    processor(it)
-                }
-            },
-            processOverridden,
-        ) ?: return
-
-        val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull() ?: return
-
-        val irSubDeclaration = generateDelegatedMember()
-        bodiesInfo += DeclarationBodyInfo(irSubDeclaration, irField, delegateToSymbol, delegateToLookupTag)
-        cacheDelegatedDeclaration(callable.fir, irSubDeclaration)
-    }
-
-    private inline fun <reified S : FirCallableSymbol<*>> findDelegateToSymbol(
-        unwrappedSymbol: S,
-        processCallables: (name: Name, processor: (S) -> Unit) -> Unit,
-        crossinline processOverridden: (base: S, processor: (S) -> ProcessorAction) -> ProcessorAction
-    ): S? {
-        var result: S? = null
-        // The purpose of this code is to find member in delegate-to scope
+        val unwrappedSymbol = unwrapped.unwrapSubstitutionOverrides().symbol as TFirSymbol
+        var result: TFirSymbol? = null
+        // The purpose of this code is to find a member in delegate-to scope
         // which matches or overrides unwrappedSymbol (which is in turn taken from subclass scope).
-        processCallables(unwrappedSymbol.name) { candidateSymbol ->
-            if (result != null) return@processCallables
+        processDeclarationsByName(unwrappedSymbol.name) { candidateSymbol ->
+            if (candidateSymbol !is TFirSymbol) return@processDeclarationsByName
+            if (result != null) return@processDeclarationsByName
             if (candidateSymbol === unwrappedSymbol) {
                 result = candidateSymbol
-                return@processCallables
+                return@processDeclarationsByName
             }
             processOverridden(candidateSymbol) {
                 if (it === unwrappedSymbol) {
@@ -203,7 +182,12 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
                 }
             }
         }
-        return result?.unwrapSubstitutionOverrides()
+        val delegateToSymbol = result?.unwrapSubstitutionOverrides() ?: return
+        val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull() ?: return
+
+        val irSubDeclaration = generateDelegatedMember()
+        bodiesInfo += DeclarationBodyInfo(irSubDeclaration, irField, delegateToSymbol, delegateToLookupTag)
+        cacheDelegatedDeclaration(callable.fir, irSubDeclaration)
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
