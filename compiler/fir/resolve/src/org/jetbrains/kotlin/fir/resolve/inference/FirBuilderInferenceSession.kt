@@ -280,39 +280,37 @@ class FirBuilderInferenceSession(
         val substitutedConstraintWith =
             initialConstraint.substitute(callSubstitutor).substituteNonFixedToVariables(nonFixedToVariablesSubstitutor)
 
-        // TODO(KT-64031): Invalid naming, it doesn't make sense in case of equality constraints
-        val lower = substitutedConstraintWith.a
-        val upper = substitutedConstraintWith.b
+        val substitutedA = substitutedConstraintWith.a
+        val substitutedB = substitutedConstraintWith.b
 
-        if (commonSystem.isProperType(lower) && (lower == upper || commonSystem.isProperType(upper))) return false
+        if (commonSystem.isProperType(substitutedA) && (substitutedA == substitutedB || commonSystem.isProperType(substitutedB))) return false
 
         val position = substitutedConstraintWith.position
         when (initialConstraint.constraintKind) {
             ConstraintKind.LOWER -> error("LOWER constraint shouldn't be used, please use UPPER")
 
-            ConstraintKind.UPPER -> commonSystem.addSubtypeConstraint(lower, upper, position)
+            ConstraintKind.UPPER -> commonSystem.addSubtypeConstraint(substitutedA, substitutedB, position)
 
             ConstraintKind.EQUALITY ->
                 with(commonSystem) {
-                    addSubtypeConstraint(lower, upper, position)
-                    addSubtypeConstraint(upper, lower, position)
+                    addSubtypeConstraint(substitutedA, substitutedB, position)
+                    addSubtypeConstraint(substitutedB, substitutedA, position)
                 }
         }
         return true
     }
 
     private fun InitialConstraint.substitute(substitutor: TypeSubstitutorMarker): InitialConstraint {
-        // TODO(KT-64031): Invalid naming, it doesn't make sense in case of equality constraints
-        val lowerSubstituted = substitutor.safeSubstitute(resolutionContext.typeContext, this.a)
-        val upperSubstituted = substitutor.safeSubstitute(resolutionContext.typeContext, this.b)
+        val substitutedA = substitutor.safeSubstitute(resolutionContext.typeContext, this.a)
+        val substitutedB = substitutor.safeSubstitute(resolutionContext.typeContext, this.b)
 
-        if (lowerSubstituted == a && upperSubstituted == b) return this
+        if (substitutedA == a && substitutedB == b) return this
 
         // TODO(KT-64033): Missing check for ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound language feature
 
         return InitialConstraint(
-            lowerSubstituted,
-            upperSubstituted,
+            substitutedA,
+            substitutedB,
             this.constraintKind,
             ConeBuilderInferenceSubstitutionConstraintPosition(this)
         )
@@ -348,8 +346,8 @@ class FirBuilderInferenceSession(
         //  a = C<CapturedType(out B)_0>, b = D<CapturedType(out B)_0>
         //  commonCapTypes = [CapturedType(out B)_0]
         //  capTypesSubstitutor = { CapturedTypeConstructor_0 => CapturedType(out W)_1 }
-        //  substitutedLowerType = C<CapturedType(out W)_1>
-        //  substitutedUpperType = D<CapturedType(out W)_1>
+        //  substitutedA = C<CapturedType(out W)_1>
+        //  substitutedB = D<CapturedType(out W)_1>
         val substitutedCommonCapType = commonCapTypes.associate {
             it.constructor to nonFixedToVariablesSubstitutor.substituteOrSelf(it)
         }
@@ -361,19 +359,18 @@ class FirBuilderInferenceSession(
             }
         }
 
-        // TODO(KT-64031): invalid naming. It doesn't make sense in case of equality constraints
-        val substitutedLowerType = nonFixedToVariablesSubstitutor.safeSubstitute(
+        val substitutedA = nonFixedToVariablesSubstitutor.safeSubstitute(
             resolutionContext.typeContext,
             capTypesSubstitutor.safeSubstitute(resolutionContext.typeContext, this.a)
         )
-        val substitutedUpperType = nonFixedToVariablesSubstitutor.safeSubstitute(
+        val substitutedB = nonFixedToVariablesSubstitutor.safeSubstitute(
             resolutionContext.typeContext,
             capTypesSubstitutor.safeSubstitute(resolutionContext.typeContext, this.b)
         )
 
         return InitialConstraint(
-            substitutedLowerType,
-            substitutedUpperType,
+            substitutedA,
+            substitutedB,
             constraintKind,
             position
         )
