@@ -49,7 +49,9 @@ abstract class BirLoweringPhase {
     ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(object : BirElementBackReferenceRecorder<R> {
         context(BirElementBackReferenceRecorderScope)
         override fun recordBackReferences(element: BirElementBase) {
-            block(this@BirElementBackReferenceRecorderScope, element as E)
+            if (element is E) {
+                block(this@BirElementBackReferenceRecorderScope, element)
+            }
         }
     }, E::class.java)
 
