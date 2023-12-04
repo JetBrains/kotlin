@@ -34,25 +34,32 @@ class AppleFrameworkIT : KGPBaseTest() {
             "sharedAppleFramework",
             gradleVersion,
             buildOptions = defaultBuildOptions,
-            environmentVariables = EnvironmentalVariables(
+        ) {
+
+            val environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",
                 "SDK_NAME" to "iphoneos123",
                 "ARCHS" to "arm64",
                 "TARGET_BUILD_DIR" to "no use",
-                "FRAMEWORKS_FOLDER_PATH" to "no use"
-            ),
-        ) {
+                "FRAMEWORKS_FOLDER_PATH" to "no use",
+                "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/builtProductsDir").toString(),
+            )
 
-            build("assembleDebugAppleFrameworkForXcodeIosArm64") {
+            build("assembleDebugAppleFrameworkForXcodeIosArm64", environmentVariables = environmentVariables) {
+                assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeIosArm64")
+                assertDirectoryInProjectExists("shared/build/builtProductsDir/sdk.framework")
+                assertDirectoryInProjectExists("shared/build/builtProductsDir/sdk.framework.dSYM")
+                assertDirectoryInProjectDoesNotExist("shared/build/xcode-frameworks/sdk.framework")
+            }
+
+            build("clean")
+
+            build("assembleDebugAppleFrameworkForXcodeIosArm64", "-Pkotlin.apple.copyFrameworkToBuiltProductsDir=false", environmentVariables = environmentVariables) {
                 assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeIosArm64")
                 assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework")
                 assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework.dSYM")
-            }
+                assertDirectoryInProjectDoesNotExist("shared/build/builtProductsDir/sdk.framework")
 
-            build("assembleCustomDebugAppleFrameworkForXcodeIosArm64") {
-                assertTasksExecuted(":shared:assembleCustomDebugAppleFrameworkForXcodeIosArm64")
-                assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/lib.framework")
-                assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/lib.framework.dSYM")
             }
         }
     }
