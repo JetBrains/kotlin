@@ -226,7 +226,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         return null
     }
 
-    fun findDefaultMethod(name: String, desc: String, isMember: Boolean): Method? {
+    fun findDefaultMethod(name: String, desc: String, isMember: Boolean, fail: Boolean = false): Method? {
         if (name == "<init>") return null
 
         val parameterTypes = arrayListOf<Class<*>>()
@@ -237,6 +237,16 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         val jvmDescriptor = parseJvmDescriptor(desc, parseReturnType = true)
         addParametersAndMasks(parameterTypes, jvmDescriptor.parameters, isConstructor = false)
 
+        if (fail) {
+            val message = """
+                |$methodOwner
+                |${name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX}
+                |${parameterTypes.toTypedArray()}
+                |${jvmDescriptor.returnType!!}
+                |isStaticDefault = $isMember
+            """.trimMargin()
+            error(message)
+        }
         return methodOwner.lookupMethod(
             name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes.toTypedArray(), jvmDescriptor.returnType!!, isStaticDefault = isMember
         )
