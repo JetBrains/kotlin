@@ -721,9 +721,11 @@ tasks {
 
     val wasmJsJar by existing(Jar::class) {
         manifestAttributes(manifest, "Main")
+        manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-js"))
     }
     val wasmWasiJar by existing(Jar::class) {
         manifestAttributes(manifest, "Main")
+        manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-wasi"))
     }
 
     artifacts {
