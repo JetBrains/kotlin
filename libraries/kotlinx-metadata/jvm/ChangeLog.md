@@ -1,5 +1,18 @@
 # kotlinx-metadata-jvm
 
+## 0.8.0
+
+This release concludes our API overhaul: it features last significant API changes, as well as raised deprecations to ERROR level almost everywhere.
+To help with migration, we've prepared a special [guide](Migration.md#migrating-from-070-to-080). 
+It still uses Kotlin 1.9, but is able to read or write metadata of version 2.0.
+
+- Provide a separate class for representing metadata version in kotlinx-metadata: `JvmMetadataVersion`
+- Unify write() method and make it a member of `KotlinClassMetadata` (also `KotlinModuleMetadata`)
+- Split `KotlinClassMetadata.read` into `readStrict` and `readLenient`
+- Promote most deprecations in kotlinx-metadata-jvm to ERROR, including Flags API and Visitors API.
+- Deprecate `KmProperty.hasGetter(hasSetter)` in favor of `KmProperty.getter(setter)`
+- Add missing delegation in `KmDeclarationContainerVisitor.visitExtensions` for consistency
+
 ## 0.7.0
 
 This release features several significant API changes. To help with migration, we've prepared a special [guide](Migration.md#migrating-from-06x-to-070).
