@@ -166,16 +166,18 @@ internal fun createLTOFinalPipelineConfig(
     )
 }
 
-/**
- * Prepares and executes LLVM pipeline on the given [llvmModule].
- */
 abstract class LlvmOptimizationPipeline(
         private val config: LlvmPipelineConfig,
         private val logger: LoggingContext? = null
 ) : Closeable {
-    abstract fun configurePipeline(config: LlvmPipelineConfig, manager: LLVMPassManagerRef, builder: LLVMPassManagerBuilderRef)
     open fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {}
+
     abstract val pipelineName: String
+    abstract val passes: List<String>
+    val optimizationFlag = when {
+        config.sizeLevel != LlvmSizeLevel.NONE -> "Os"
+        else -> "O${config.optimizationLevel.value}"
+    }
 
     private val arena = Arena()
     private val targetMachineDelegate = lazy {
@@ -194,27 +196,19 @@ abstract class LlvmOptimizationPipeline(
 
     private val targetMachine: LLVMTargetMachineRef by targetMachineDelegate
 
-
     fun execute(llvmModule: LLVMModuleRef) {
-        val passManager = LLVMCreatePassManager()!!
-        val passBuilder = LLVMPassManagerBuilderCreate()!!
+        var options: LLVMPassBuilderOptionsRef? = null
         try {
             initLLVMOnce()
-            LLVMPassManagerBuilderSetOptLevel(passBuilder, config.optimizationLevel.value)
-            LLVMPassManagerBuilderSetSizeLevel(passBuilder, config.sizeLevel.value)
-            config.inlineThreshold?.let { threshold ->
-                LLVMPassManagerBuilderUseInlinerWithThreshold(passBuilder, threshold)
-            }
-            LLVMKotlinAddTargetLibraryInfoWrapperPass(passManager, config.targetTriple)
-            // TargetTransformInfo pass.
-            LLVMAddAnalysisPasses(targetMachine, passManager)
+            options = LLVMCreatePassBuilderOptions()
+            // InlinerThreshold is not supported by new PM until LLVM 16
+            // config.inlineThreshold?.let { threshold ->
+            //     LLVMPassBuilderOptionsSetInlinerThreshold(options, threshold)
+            // }
             if (config.timePasses) {
                 LLVMSetTimePasses(1)
             }
-
-            configurePipeline(config, passManager, passBuilder)
             executeCustomPreprocessing(config, llvmModule)
-            // TODO: how to log content of pass manager?
             logger?.log {
                 """
                     Running ${pipelineName} with the following parameters:
@@ -226,14 +220,13 @@ abstract class LlvmOptimizationPipeline(
                     inline_threshold: ${config.inlineThreshold ?: "default"}
                 """.trimIndent()
             }
-            LLVMRunPassManager(passManager, llvmModule)
+            LLVMRunPasses(llvmModule, passes.joinToString(","), targetMachine, options)
             if (config.timePasses) {
                 LLVMPrintAllTimersToStdOut()
                 LLVMClearAllTimers()
             }
         } finally {
-            LLVMPassManagerBuilderDispose(passBuilder)
-            LLVMDisposePassManager(passManager)
+            LLVMDisposePassBuilderOptions(options)
         }
     }
 
@@ -253,28 +246,10 @@ abstract class LlvmOptimizationPipeline(
             }
         }
 
-        private fun initializeLlvmGlobalPassRegistry() {
-            val passRegistry = LLVMGetGlobalPassRegistry()
-
-            LLVMInitializeCore(passRegistry)
-            LLVMInitializeTransformUtils(passRegistry)
-            LLVMInitializeScalarOpts(passRegistry)
-            LLVMInitializeVectorization(passRegistry)
-            LLVMInitializeInstCombine(passRegistry)
-            LLVMInitializeIPO(passRegistry)
-            LLVMInitializeInstrumentation(passRegistry)
-            LLVMInitializeAnalysis(passRegistry)
-            LLVMInitializeIPA(passRegistry)
-            LLVMInitializeCodeGen(passRegistry)
-            LLVMInitializeTarget(passRegistry)
-            LLVMInitializeObjCARCOpts(passRegistry)
-        }
-
         @Synchronized
         fun initLLVMOnce() {
             if (!isInitialized) {
                 initLLVMTargets()
-                initializeLlvmGlobalPassRegistry()
                 isInitialized = true
             }
         }
@@ -283,17 +258,16 @@ abstract class LlvmOptimizationPipeline(
 
 class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, logger) {
-
-    override val pipelineName = "Mandatory llvm optimizations"
-
-    override fun configurePipeline(config: LlvmPipelineConfig, manager: LLVMPassManagerRef, builder: LLVMPassManagerBuilderRef) {
+    override val pipelineName = "New PM Mandatory llvm optimizations"
+    override val passes = buildList {
         if (config.objCPasses) {
             // Lower ObjC ARC intrinsics (e.g. `@llvm.objc.clang.arc.use(...)`).
             // While Kotlin/Native codegen itself doesn't produce these intrinsics, they might come
             // from cinterop "glue" bitcode.
             // TODO: Consider adding other ObjC passes.
-            LLVMAddObjCARCContractPass(manager)
+            add("objc-arc-contract")
         }
+
     }
 
     override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
@@ -301,54 +275,30 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingC
             makeVisibilityHiddenLikeLlvmInternalizePass(module)
         }
     }
-
-    override fun close() {
-    }
 }
 
 class ModuleOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, logger) {
-    override fun configurePipeline(config: LlvmPipelineConfig, manager: LLVMPassManagerRef, builder: LLVMPassManagerBuilderRef) {
-        LLVMPassManagerBuilderPopulateModulePassManager(builder, manager)
-        LLVMPassManagerBuilderPopulateFunctionPassManager(builder, manager)
-    }
-
-    override val pipelineName = "Module LLVM optimizations"
+    override val pipelineName = "New PM Module LLVM optimizations"
+    override val passes = listOf("default<$optimizationFlag>")
 }
 
 class LTOOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, logger) {
-    override fun configurePipeline(config: LlvmPipelineConfig, manager: LLVMPassManagerRef, builder: LLVMPassManagerBuilderRef) {
+    override val pipelineName = "New PM LTO LLVM optimizations"
+    override val passes = buildList {
         if (config.internalize) {
-            LLVMAddInternalizePass(manager, 0)
+            add("internalize")
         }
 
         if (config.globalDce) {
-            LLVMAddGlobalDCEPass(manager)
+            add("globaldce")
         }
 
         // Pipeline that is similar to `llvm-lto`.
-        LLVMPassManagerBuilderPopulateLTOPassManager(builder, manager, Internalize = 0, RunInliner = 1)
+        add("lto<$optimizationFlag>")
     }
-
-    override val pipelineName = "LTO LLVM optimizations"
 }
-
-class ThreadSanitizerPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
-        LlvmOptimizationPipeline(config, logger) {
-    override fun configurePipeline(config: LlvmPipelineConfig, manager: LLVMPassManagerRef, builder: LLVMPassManagerBuilderRef) {
-        LLVMAddThreadSanitizerPass(manager)
-    }
-
-    override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
-        getFunctions(module)
-                .filter { LLVMIsDeclaration(it) == 0 }
-                .forEach { addLlvmFunctionEnumAttribute(it, LlvmFunctionAttribute.SanitizeThread) }
-    }
-
-    override val pipelineName = "Thread sanitizer instrumentation"
-}
-
 
 internal fun RelocationModeFlags.currentRelocationMode(context: PhaseContext): RelocationModeFlags.Mode =
         when (determineLinkerOutput(context)) {
