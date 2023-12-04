@@ -371,7 +371,7 @@ internal open class GradleCompilerRunner(
                             continue
                         }
 
-                        val kotlinTask = mainCompilation.compileKotlinTask as? AbstractKotlinCompile<*> ?: continue
+                        val kotlinTask = mainCompilation.compileTaskProvider.get() as? AbstractKotlinCompile<*> ?: continue
                         val module = IncrementalModuleEntry(
                             project.path,
                             kotlinTask.ownModuleName.get(),
