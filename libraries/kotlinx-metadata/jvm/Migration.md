@@ -14,6 +14,16 @@ In short, `readStrict()` is fully equivalent to old `read()`. `readLenient()` al
 doesn't allow you to write anything afterward.
 You can read more about the differences in the [readme](ReadMe.md#working-with-different-versions).
 
+### Replacement for IntArray as a metadata version
+
+Historically, a metadata version in kotlinx-metadata-jvm API was represented as `IntArray` (because this is how it is stored in the `Metadata` annotation).
+However, having a general-purpose array for storing versions is not very handy: making comparisons or simply converting to string is notoriously inconvenient for arrays.
+Therefore, we decided to replace `IntArray` with a new specialized type, `JvmMetadataVersion`.
+It carries the same three components: `major`, `minor`, and `patch` (with possibility to add new in the future) and provides convenient `equals`, `compareTo`, `toString`, and other methods.
+`KotlinClassMetadata.version` (described below) is exposed as this type.
+Main migration path here is to replace `KotlinClassMetadata.COMPATIBLE_METADATA_VERSION` with new value with the same meaning: `JvmMetadataVersion.LATEST_STABLE_SUPPORTED`.
+
+
 ### Write is now a member method
 
 Previously, the way to write some metadata were companion methods like `KotlinClassMetadata.writeClass()`, etc.
