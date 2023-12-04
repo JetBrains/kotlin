@@ -26,12 +26,12 @@ internal fun interface BirElementIndexClassifier {
 }
 
 
-class BirElementBackReferencesKey<E : BirElement>(
-    val recorder: BirElementBackReferenceRecorder,
+class BirElementBackReferencesKey<E : BirElement, R : BirElement>(
+    val recorder: BirElementBackReferenceRecorder<R>,
     val elementClass: Class<*>,
 ) : BirElementGeneralIndexerKey
 
-fun interface BirElementBackReferenceRecorder : BirElementGeneralIndexer {
+fun interface BirElementBackReferenceRecorder<R : BirElement> : BirElementGeneralIndexer {
     context(BirElementBackReferenceRecorderScope)
     fun recordBackReferences(element: BirElementBase)
 }

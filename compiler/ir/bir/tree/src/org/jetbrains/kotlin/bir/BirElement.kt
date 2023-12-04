@@ -22,7 +22,6 @@ interface BirElement : BirElementOrChildList {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
     fun acceptChildrenLite(visitor: BirElementVisitorLite) {}
 
-    fun <E : BirElement> getBackReferences(key: BirElementBackReferencesKey<E>): List<E>
     fun replaceWith(new: BirElement?)
 }
 
@@ -42,4 +41,10 @@ fun <E : BirElement, T> E.getOrPutDynamicProperty(token: BirElementDynamicProper
 
 fun BirElement.remove() {
     replaceWith(null)
+}
+
+
+fun <E : BirElement, R : BirElement> R.getBackReferences(key: BirElementBackReferencesKey<E, R>): List<E> {
+    @Suppress("UNCHECKED_CAST")
+    return (this as BirElementBase).getBackReferences(key) as List<E>
 }

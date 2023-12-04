@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.bir.backend.builders.*
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.*
+import org.jetbrains.kotlin.bir.getBackReferences
 import org.jetbrains.kotlin.bir.types.utils.isPrimitiveType
 import org.jetbrains.kotlin.bir.types.utils.makeNullable
 import org.jetbrains.kotlin.bir.util.render
@@ -26,7 +27,7 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
     private val lateinitInitializerCalls = registerIndexKey<BirCall>(false) {
         birBuiltIns.lateinitIsInitialized != null && it.symbol == birBuiltIns.lateinitIsInitialized
     }
-    private val variableReads = registerBackReferencesKey<BirGetValue> {
+    private val variableReads = registerBackReferencesKey<BirGetValue, BirValueDeclaration> {
         recordReference(it.symbol)
     }
 

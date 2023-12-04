@@ -275,7 +275,7 @@ class BirForest : BirElementParent() {
         registeredIndexers += key
     }
 
-    fun registerElementBackReferencesKey(key: BirElementBackReferencesKey<*>) {
+    fun registerElementBackReferencesKey(key: BirElementBackReferencesKey<*, *>) {
         registeredIndexers += key
     }
 
@@ -295,7 +295,7 @@ class BirForest : BirElementParent() {
                             index
                         )
                     }
-                    is BirElementBackReferencesKey<*> -> {
+                    is BirElementBackReferencesKey<*, *> -> {
                         BirElementIndexClassifierFunctionGenerator.Indexer(
                             BirElementGeneralIndexer.Kind.BackReferenceRecorder,
                             indexerKey.recorder,
