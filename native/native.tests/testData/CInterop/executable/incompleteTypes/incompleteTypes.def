@@ -1,2 +1,0 @@
-# The def file is empty intentianally
-# `incompleteTypes.aux.h` is meant to be included via `-header` option of cinterop tool

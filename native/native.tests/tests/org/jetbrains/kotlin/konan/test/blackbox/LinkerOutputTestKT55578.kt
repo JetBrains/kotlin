@@ -177,7 +177,7 @@ class LinkerOutputTestKT55578 : AbstractNativeLinkerOutputTest() {
 
     private fun compileKlib(defFile: File, sourceFile: File? = null, extraArgs: List<String> = emptyList()): KLIB {
         val sourceArguments = sourceFile?.let { listOf("-Xcompile-source", sourceFile.absolutePath) } ?: emptyList()
-        return cinteropToLibrary(targets, defFile, buildDir, TestCompilerArgs(extraArgs + sourceArguments))
+        return cinteropToLibrary(targets, defFile, buildDir, TestCInteropArgs(extraArgs + sourceArguments))
             .assertSuccess().resultingArtifact
     }
 }

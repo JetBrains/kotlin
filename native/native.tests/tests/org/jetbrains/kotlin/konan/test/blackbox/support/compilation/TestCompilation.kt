@@ -265,11 +265,25 @@ internal class CInteropCompilation(
     classLoader: KotlinNativeClassLoader,
     freeCompilerArgs: TestCompilerArgs,
     defFile: File,
+    sources: List<File> = emptyList(),
     expectedArtifact: KLIB
 ) : TestCompilation<KLIB>() {
 
     override val result: TestCompilationResult<out KLIB> by lazy {
-        val extraArgsArray = freeCompilerArgs.compilerArgs.toTypedArray()
+        val extraArgsArray = buildList {
+            addAll(freeCompilerArgs.cinteropArgs)
+            sources.forEach {
+                add("-Xcompile-source")
+                add(it.absolutePath)
+            }
+            add("-Xsource-compiler-option")
+            add("-fobjc-arc")
+            add("-Xsource-compiler-option")
+            add("-DNS_FORMAT_ARGUMENT(A)=")
+            add("-compiler-option")
+            add("-I${defFile.parentFile}")
+        }.toTypedArray()
+
         val loggedCInteropParameters = LoggedData.CInteropParameters(extraArgs = extraArgsArray, defFile = defFile)
         val (loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out KLIB>) = try {
             val (exitCode, cinteropOutput, cinteropOutputHasErrors, duration) = invokeCInterop(
@@ -420,7 +434,8 @@ internal class StaticCacheCompilation(
     private val options: Options,
     private val pipelineType: PipelineType,
     dependencies: Iterable<TestCompilationDependency<*>>,
-    expectedArtifact: KLIBStaticCache
+    expectedArtifact: KLIBStaticCache,
+    makePerFileCacheOverride: Boolean? = null,
 ) : BasicCompilation<KLIBStaticCache>(
     targets = settings.get(),
     home = settings.get(),
@@ -445,7 +460,7 @@ internal class StaticCacheCompilation(
         cacheMode.staticCacheForDistributionLibrariesRootDir ?: fail { "No cache root directory found for cache mode $cacheMode" }
     }
 
-    private val makePerFileCache: Boolean = settings.get<CacheMode>().makePerFileCaches
+    private val makePerFileCache: Boolean = makePerFileCacheOverride ?: settings.get<CacheMode>().makePerFileCaches
 
     private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
 

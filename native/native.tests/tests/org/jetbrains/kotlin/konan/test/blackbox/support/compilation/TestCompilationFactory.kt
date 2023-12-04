@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
 import org.jetbrains.kotlin.container.topologicalSort
+import org.jetbrains.kotlin.konan.test.blackbox.muteCInteropTestIfNecessary
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
@@ -196,16 +197,41 @@ internal class TestCompilationFactory {
         }
 
         return cachedKlibCompilations.computeIfAbsent(cacheKey) {
-            val klibCompilation = if (isGivenKlibArtifact)
-                GivenLibraryCompilation(klibArtifact)
-            else
-                LibraryCompilation(
-                    settings = settings,
-                    freeCompilerArgs = freeCompilerArgs,
-                    sourceModules = sourceModules.flatMapToSet { sortDependsOnTopologically(it) },
-                    dependencies = dependencies.forKlib(),
-                    expectedArtifact = klibArtifact
-                )
+            val (klibCompilation, makePerFileCacheOverride) = if (isGivenKlibArtifact)
+                GivenLibraryCompilation(klibArtifact) to null
+            else {
+                val filesByExtension = sourceModules.first().files
+                    .map { it.location }
+                    .groupBy { it.name.split(".").last() }
+                when {
+                    filesByExtension.contains("kt") -> LibraryCompilation(
+                        settings = settings,
+                        freeCompilerArgs = freeCompilerArgs,
+                        sourceModules = sourceModules.flatMapToSet { sortDependsOnTopologically(it) },
+                        dependencies = dependencies.forKlib(),
+                        expectedArtifact = klibArtifact
+                    ) to null
+                    filesByExtension.contains("def") -> {
+                        val defFile = filesByExtension["def"]!!.single()
+                        muteCInteropTestIfNecessary(defFile, settings.get<KotlinNativeTargets>().testTarget)
+
+                        val cSourceFiles = buildList {
+                            for (ext in listOf("cpp", "c", "m")) {
+                                filesByExtension[ext]?.let { addAll(it) }
+                            }
+                        }
+                        CInteropCompilation(
+                            classLoader = settings.get(),
+                            targets = settings.get(),
+                            freeCompilerArgs = freeCompilerArgs,
+                            defFile = defFile,
+                            sources = cSourceFiles,
+                            expectedArtifact = klibArtifact
+                        ) to false // CInterop klib cannot be compiled into per-file cache
+                    }
+                    else -> error("Test module must contain either KT or DEF file")
+                }
+            }
 
             val staticCacheCompilation: StaticCacheCompilation? =
                 staticCacheArtifactAndOptions?.let { (staticCacheArtifact, staticCacheOptions) ->
@@ -215,7 +241,8 @@ internal class TestCompilationFactory {
                         options = staticCacheOptions,
                         pipelineType = settings.get(),
                         dependencies = dependencies.forStaticCache(klibCompilation.asKlibDependency(type = /* does not matter in fact*/ Library)),
-                        expectedArtifact = staticCacheArtifact
+                        expectedArtifact = staticCacheArtifact,
+                        makePerFileCacheOverride = makePerFileCacheOverride,
                     )
                 }
 

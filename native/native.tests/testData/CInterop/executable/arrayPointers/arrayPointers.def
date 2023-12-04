@@ -1,8 +1,0 @@
----
-int (*arrayPointer)[1];
-
-int globalArray[3] = {1, 2, 3};
-
-struct StructWithArrayPtr {
-    int (*arrayPointer)[1];
-};

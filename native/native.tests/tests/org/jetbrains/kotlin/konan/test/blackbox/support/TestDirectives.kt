@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ENTRY_POINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.KIND
@@ -129,6 +130,10 @@ internal object TestDirectives : SimpleDirectivesContainer() {
         description = "Specify free compiler arguments for Kotlin/Native compiler"
     )
 
+    val FREE_CINTEROP_ARGS by stringDirective(
+        description = "Specify free CInterop tool arguments"
+    )
+
     val LLDB_TRACE by stringDirective(
         description = """
             Specify a filename containing the LLDB commands and the patterns that
@@ -210,15 +215,23 @@ internal enum class MutedOption {
     K2
 }
 
-internal class TestCompilerArgs(val compilerArgs: List<String>) {
+internal class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs(emptyList(), cinteropArgs) {
+    constructor(vararg cinteropArgs: String) : this(cinteropArgs.asList())
+}
+
+internal open class TestCompilerArgs(val compilerArgs: List<String>, val cinteropArgs: List<String> = emptyList()) {
     constructor(vararg compilerArgs: String) : this(compilerArgs.asList())
 
     private val uniqueCompilerArgs = compilerArgs.toSet()
-    override fun hashCode() = uniqueCompilerArgs.hashCode()
-    override fun equals(other: Any?) = (other as? TestCompilerArgs)?.uniqueCompilerArgs == uniqueCompilerArgs
+    private val uniqueCinteropArgs = cinteropArgs.toSet()
+    override fun hashCode() = (uniqueCompilerArgs + uniqueCinteropArgs).hashCode()
+    override fun equals(other: Any?) = (other as? TestCompilerArgs)?.uniqueCompilerArgs == uniqueCompilerArgs &&
+            other.uniqueCinteropArgs == uniqueCinteropArgs
 
-    operator fun plus(otherCompilerArgs: TestCompilerArgs): TestCompilerArgs = this + otherCompilerArgs.compilerArgs
-    operator fun plus(otherCompilerArgs: List<String>): TestCompilerArgs = TestCompilerArgs(compilerArgs + otherCompilerArgs)
+    operator fun plus(otherCompilerArgs: TestCompilerArgs): TestCompilerArgs = TestCompilerArgs(
+        this.compilerArgs + otherCompilerArgs.compilerArgs,
+        this.cinteropArgs + otherCompilerArgs.cinteropArgs
+    )
 
     companion object {
         val EMPTY = TestCompilerArgs(emptyList())
@@ -330,9 +343,15 @@ internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDir
             """.trimIndent()
         }
 
-    assertTrue(fileName.endsWith(".kt") && fileName.length > 3 && '/' !in fileName && '\\' !in fileName) {
-        "$location: Invalid file name in ${parsedDirective.directive} directive: $fileName"
-    }
+    val fileExtension = fileName.split(".").last()
+    if (fileExtension in setOf("kt", "def", "h", "c", "cpp", "m"))
+        assertTrue(fileName.length > 3 && '/' !in fileName && '\\' !in fileName) {
+            "$location: Invalid file name with extension $fileExtension in ${parsedDirective.directive} directive: $fileName"
+        }
+    else
+        assertTrue(false) {
+            "$location: Invalid file extension .$fileExtension in ${parsedDirective.directive} directive: $fileName"
+        }
 
     return fileName
 }
@@ -356,19 +375,18 @@ internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives, l
 }
 
 internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, location: Location): TestCompilerArgs {
-    if (FREE_COMPILER_ARGS !in registeredDirectives)
-        return TestCompilerArgs.EMPTY
-
+    val freeCInteropArgs = registeredDirectives[FREE_CINTEROP_ARGS]
     val freeCompilerArgs = registeredDirectives[FREE_COMPILER_ARGS]
-    val forbiddenCompilerArgs = TestCompilerArgs.findForbiddenArgs(freeCompilerArgs)
-    assertTrue(forbiddenCompilerArgs.isEmpty()) {
-        """
+    if (freeCompilerArgs.isNotEmpty()) {
+        val forbiddenCompilerArgs = TestCompilerArgs.findForbiddenArgs(freeCompilerArgs)
+        assertTrue(forbiddenCompilerArgs.isEmpty()) {
+            """
             $location: Forbidden compiler arguments found in $FREE_COMPILER_ARGS directive: $forbiddenCompilerArgs
             All arguments: $freeCompilerArgs
         """.trimIndent()
+        }
     }
-
-    return TestCompilerArgs(freeCompilerArgs)
+    return TestCompilerArgs(freeCompilerArgs, freeCInteropArgs)
 }
 
 internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): OutputDataFile? =
