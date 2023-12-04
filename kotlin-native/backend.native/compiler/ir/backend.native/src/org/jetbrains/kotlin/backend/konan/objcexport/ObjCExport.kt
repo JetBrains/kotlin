@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-@InternalKotlinNativeApi
-class ObjCExportedInterface(
+internal class ObjCExportedInterface(
         val generatedClasses: Set<ClassDescriptor>,
         val categoryMembers: Map<ClassDescriptor, List<CallableMemberDescriptor>>,
         val topLevel: Map<SourceFile, List<CallableMemberDescriptor>>,

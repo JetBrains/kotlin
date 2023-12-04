@@ -49,8 +49,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-@InternalKotlinNativeApi
-val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
+internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
 
 internal object NativeFir2IrExtensions : Fir2IrExtensions {
     override val irNeedsDeserialization = false
