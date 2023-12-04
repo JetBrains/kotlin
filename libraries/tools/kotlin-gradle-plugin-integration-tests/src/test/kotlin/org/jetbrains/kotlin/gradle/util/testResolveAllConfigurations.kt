@@ -84,8 +84,8 @@ private fun generateResolveAllConfigurationsTask(excludes: List<String>) =
                     .matching { it.canBeResolved }
                     .matching { !excludeConfigs.contains(it.name) }
                     .each { configuration ->
-                        try {
-                            def configurationPath = (project.path == ":") ? ":" + configuration.name : project.path + ":" + configuration.name
+                        def configurationPath = (project.path == ":") ? ":" + configuration.name : project.path + ":" + configuration.name
+                        try {                            
                             println "Resolving " + configurationPath
                             configuration.files.each { println '>> ' + configurationPath + ' --> ' + it.name }
                             println "OK, resolved " + configurationPath + "\n"
@@ -136,15 +136,15 @@ private fun generateResolveAllConfigurationsTaskKts(excludes: List<String>) =
         }
     """.trimIndent()
 private fun computeExcludeConfigurations(excludes: List<String>): String {
-    val deprecatedConfigurations = listOf("compile", "runtime", "compileOnly", "runtimeOnly")
+    val excludingConfigurations = listOf("compile", "runtime", "compileOnly", "runtimeOnly", "dependencySources")
     return """
-        sourceSets.forEach { sourceSet ->
-            "${deprecatedConfigurations.joinToString()}".split(", ").toList().forEach {
+        kotlin.sourceSets.forEach { sourceSet ->
+            "${excludingConfigurations.joinToString()}".split(", ").toList().forEach {
                 excludeConfigs.add(sourceSet.name + it.capitalize())
             }
         }
 
-        "${deprecatedConfigurations.joinToString()}".split(", ").toList().forEach {
+        "${excludingConfigurations.joinToString()}".split(", ").toList().forEach {
             excludeConfigs.add(it)
             excludeConfigs.add("test" + it.capitalize())
         }
