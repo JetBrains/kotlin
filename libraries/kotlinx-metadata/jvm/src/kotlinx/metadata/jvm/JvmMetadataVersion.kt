@@ -111,6 +111,6 @@ public class JvmMetadataVersion(public val major: Int, public val minor: Int, pu
          * @see KotlinClassMetadata.readStrict
          */
         @JvmField
-        public val LATEST_STABLE_SUPPORTED: JvmMetadataVersion = JvmMetadataVersion(CompilerMetadataVersion.INSTANCE.toArray())
+        public val LATEST_STABLE_SUPPORTED: JvmMetadataVersion = JvmMetadataVersion(1, 9, 0)
     }
 }

@@ -140,6 +140,8 @@ fun Project.configureKotlinCompilationOptions() {
             ":kotlin-dom-api-compat",
             ":kotlin-test:kotlin-test-wasm-js",
             ":kotlin-test:kotlin-test-wasm-wasi",
+            ":kotlinx-metadata",
+            ":kotlinx-metadata-jvm",
         )
 
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
