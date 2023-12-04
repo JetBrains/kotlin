@@ -146,7 +146,7 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
                     )
                     is PDependency.Module -> mutableListOf(
                         "type" to "module",
-                        "module-name" to dependency.name
+                        "module-name" to dependency.module.name
                     )
                     is PDependency.Library -> mutableListOf(
                         "type" to "library",
@@ -159,7 +159,7 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
                     args.add(1, "scope" to orderRoot.scope.toString())
                 }
 
-                if (dependency is PDependency.Module && orderRoot.isProductionOnTestDependency) {
+                if (!module.forTests && dependency is PDependency.Module && dependency.module.forTests) {
                     args += ("production-on-test" to "")
                 }
 

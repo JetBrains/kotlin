@@ -149,7 +149,7 @@ class ModelParser(private val modulePrefix: String, private val globalExcludedDi
 
             var orderRoots = parseDependencies(project, sourceSet)
             if (productionModule != null) {
-                val productionModuleDependency = PDependency.Module(productionModule.name)
+                val productionModuleDependency = PDependency.Module(productionModule)
                 orderRoots = listOf(POrderRoot(productionModuleDependency, Scope.COMPILE, true)) + orderRoots
             }
 
