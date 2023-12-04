@@ -4,7 +4,6 @@
 
 #include <CAPIExtensions.h>
 #include <llvm/ProfileData/Coverage/CoverageMapping.h>
-#include <llvm/ADT/Triple.h>
 #include <llvm/Analysis/TargetLibraryInfo.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Instructions.h>
@@ -15,11 +14,6 @@
 #include <llvm/Support/Timer.h>
 
 using namespace llvm;
-
-void LLVMAddObjCARCContractPass(LLVMPassManagerRef passManagerRef) {
-    legacy::PassManagerBase *passManager = unwrap(passManagerRef);
-    passManager->add(createObjCARCContractPass());
-}
 
 void LLVMKotlinInitializeTargets() {
 #define INIT_LLVM_TARGET(TargetName) \
@@ -57,10 +51,6 @@ int LLVMInlineCall(LLVMValueRef call) {
   return InlineFunction(*unwrap<CallBase>(call), IFI).isSuccess();
 }
 
-void LLVMAddThreadSanitizerPass(LLVMPassManagerRef PM) {
-  unwrap(PM)->add(createThreadSanitizerLegacyPassPass());
-}
-
 void LLVMSetTimePasses(int enabled) {
     llvm::TimePassesIsEnabled = static_cast<bool>(enabled);
 }
@@ -71,9 +61,4 @@ void LLVMPrintAllTimersToStdOut() {
 
 void LLVMClearAllTimers() {
     llvm::TimerGroup::clearAll();
-}
-
-void LLVMKotlinAddTargetLibraryInfoWrapperPass(LLVMPassManagerRef passManagerRef, const char* targetTriple) {
-  legacy::PassManagerBase *passManager = unwrap(passManagerRef);
-  passManager->add(new TargetLibraryInfoWrapperPass(Triple(targetTriple)));
 }
