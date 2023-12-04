@@ -29,7 +29,6 @@ internal class GradleCompilationResults(
     override fun add(compilationResultCategory: Int, value: Serializable) {
         when (compilationResultCategory) {
             CompilationResultCategory.IC_COMPILE_ITERATION.code -> {
-                @Suppress("UNCHECKED_CAST")
                 val compileIterationResult = value as? CompileIterationResult
                 if (compileIterationResult != null) {
                     val sourceFiles = compileIterationResult.sourceFiles
@@ -47,6 +46,7 @@ internal class GradleCompilationResults(
                 (value as? List<String>)?.let { icLogLines = it }
             }
             CompilationResultCategory.BUILD_METRICS.code -> {
+                @Suppress("UNCHECKED_CAST")
                 (value as? BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>)?.let { buildMetricsReporter.addMetrics(it) }
             }
         }
