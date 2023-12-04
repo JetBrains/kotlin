@@ -10,15 +10,13 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
-import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
-import kotlin.io.path.exists
+import java.nio.file.Paths
 import kotlin.io.path.name
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -37,17 +35,6 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
     @BeforeAll
     fun setUp() {
         ensureCocoapodsInstalled()
-    }
-
-    override fun TestProject.customizeProject() {
-        val mavenLocalOverride = System.getProperty("maven.repo.local") ?: return
-
-        // Manually adding custom local repo, because the system property is lost when Gradle is invoked through Xcode build phase
-        projectPath.toFile().walkTopDown()
-            .filter { it.isFile && it.name in buildFileNames }
-            .forEach { file ->
-                file.modify { it.replace("mavenLocal()", "maven { setUrl(\"$mavenLocalOverride\") }") }
-            }
     }
 
     @DisplayName("Checks xcodebuild for ios-app with a single framework")
@@ -207,15 +194,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         podInstall: (taskPrefix: String, iosAppPath: Path) -> Unit = ::gradlePodInstall,
     ) {
 
-        gradleProperties
-            .takeIf(Path::exists)
-            ?.let {
-                it.append("kotlin_version=${defaultBuildOptions.kotlinVersion}")
-                it.append("test_fixes_version=${defaultBuildOptions.kotlinVersion}")
-                defaultBuildOptions.konanDataDir?.let { konanDataDir ->
-                    it.append("konan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
-                }
-            }
+        prepareForXcodebuild()
 
         for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
 
@@ -225,12 +204,6 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
             frameworkName?.let {
                 useCustomCocoapodsFrameworkName(subproject, it, iosAppLocation)
             }
-
-            val buildOptions = defaultBuildOptions.copy(
-                nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    cocoapodsGenerateWrapper = true
-                )
-            )
 
             // Generate podspec.
             build("$taskPrefix:podspec", buildOptions = buildOptions)
@@ -244,21 +217,14 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
                 podInstall(taskPrefix, iosAppPath)
 
                 // Run Xcode build.
-                val xcodebuildResult = runProcess(
-                    cmd = listOf(
-                        "xcodebuild",
-                        "-sdk", "iphonesimulator",
-                        "-configuration", "Release",
-                        "-workspace", "${iosAppPath.name}.xcworkspace",
-                        "-scheme", iosAppPath.name,
-                        "-arch", arch
-                    ),
-                    environmentVariables = environmentVariables.environmentalVariables,
-                    workingDir = iosAppPath.toFile(),
+                xcodebuild(
+                    workspace = Paths.get("${iosAppPath.name}.xcworkspace"),
+                    scheme = iosAppPath.name,
+                    configuration = "Release",
+                    sdk = "iphonesimulator",
+                    arch = arch,
+                    workingDir = iosAppPath,
                 )
-                assertProcessRunResult(xcodebuildResult) {
-                    assertEquals(0, exitCode, "Exit code mismatch for `xcodebuild`.")
-                }
             }
         }
     }
