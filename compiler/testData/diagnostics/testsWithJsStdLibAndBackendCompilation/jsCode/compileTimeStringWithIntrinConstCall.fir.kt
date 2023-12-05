@@ -74,10 +74,10 @@ fun testArithmeticOperations() {
 }
 
 fun testLogicOperations() {
-    js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>!true<!>}; }")
-    js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>true or false<!>}; }")
+    js("{ var a = ${!true}; }")
+    js("{ var a = ${true or false}; }")
     js("{ var a = ${true || false}; }")
-    js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>true and false<!>}; }")
+    js("{ var a = ${true and false}; }")
     js("{ var a = ${true && false}; }")
 
     js("{ var a = ${TRUE && false}; }")
@@ -85,14 +85,14 @@ fun testLogicOperations() {
 }
 
 fun testEq() {
-    js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>1 == 1<!>}; }")
+    js("{ var a = ${1 == 1}; }")
     js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>1U == 1U<!>}; }"<!>)
     js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>UONE == 1U<!>}; }"<!>)
     js("{ var a = ${"FOO" == STR}; }")
     js("{ var a = ${TRUE == null}; }")
     js("{ var a = ${STR == null}; }")
 
-    js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>1 != 1<!>}; }")
+    js("{ var a = ${1 != 1}; }")
     js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>1U != 1U<!>}; }"<!>)
     js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>UONE != 1U<!>}; }"<!>)
     js("{ var a = ${"FOO" != STR}; }")

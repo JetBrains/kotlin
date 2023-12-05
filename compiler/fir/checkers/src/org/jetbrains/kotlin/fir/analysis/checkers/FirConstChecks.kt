@@ -96,10 +96,6 @@ internal fun checkConstantArguments(
                 return ConstantArgumentKind.NOT_CONST
             }
 
-            if (expression.isForbiddenComplexConstant(session)) {
-                return ConstantArgumentKind.NOT_CONST
-            }
-
             for (exp in (expression as FirCall).arguments) {
                 if (exp is FirResolvedQualifier || exp is FirGetClassCall || exp.getExpandedType().isUnsignedType) {
                     return ConstantArgumentKind.NOT_CONST
@@ -162,7 +158,7 @@ internal fun checkConstantArguments(
             if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
             val symbol = calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return ConstantArgumentKind.NOT_CONST
 
-            if (!symbol.canBeEvaluated() && !expression.isCompileTimeBuiltinCall(session) || expression.isForbiddenComplexConstant(session)) {
+            if (!symbol.canBeEvaluated() && !expression.isCompileTimeBuiltinCall(session)) {
                 return ConstantArgumentKind.NOT_CONST
             }
 
@@ -213,34 +209,6 @@ internal fun checkConstantArguments(
     }
     return null
 }
-
-private fun FirExpression.isForbiddenComplexConstant(session: FirSession): Boolean {
-    val forbidComplexBooleanExpressions = session.languageVersionSettings.supportsFeature(
-        LanguageFeature.ProhibitSimplificationOfNonTrivialConstBooleanExpressions
-    )
-    val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(
-        LanguageFeature.IntrinsicConstEvaluation
-    )
-    return !intrinsicConstEvaluation && forbidComplexBooleanExpressions && isComplexBooleanConstant(session)
-}
-
-private fun FirExpression.isComplexBooleanConstant(session: FirSession): Boolean {
-    return when {
-        !resolvedType.fullyExpandedType(session).isBoolean -> false
-        this is FirConstExpression<*> -> false
-        usesVariableAsConstant -> false
-        else -> true
-    }
-}
-
-/**
- * See: org.jetbranis.kotlin.resolve.constants.CompileTimeConstant.Parameters.usesVariableAsConstant
- */
-@Suppress("RecursivePropertyAccessor")
-private val FirExpression.usesVariableAsConstant: Boolean
-    get() = this is FirPropertyAccessExpression && toResolvedCallableSymbol()?.isConst == true
-            || this is FirQualifiedAccessExpression && explicitReceiver?.usesVariableAsConstant != false
-            || this is FirCall && this.arguments.any { it.usesVariableAsConstant }
 
 private val compileTimeFunctions = setOf(
     *OperatorNameConventions.BINARY_OPERATION_NAMES.toTypedArray(), *OperatorNameConventions.UNARY_OPERATION_NAMES.toTypedArray(),
