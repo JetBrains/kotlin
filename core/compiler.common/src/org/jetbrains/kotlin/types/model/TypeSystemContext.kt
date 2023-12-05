@@ -440,8 +440,6 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean
 
-    fun areEqualCapturedType(c1: CapturedTypeConstructorMarker, c2: CapturedTypeConstructorMarker): Boolean = c1 == c2
-
     fun TypeConstructorMarker.isDenotable(): Boolean
 
     fun KotlinTypeMarker.lowerBoundIfFlexible(): SimpleTypeMarker = this.asFlexibleType()?.lowerBound() ?: this.asSimpleType()!!

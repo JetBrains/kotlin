@@ -119,7 +119,6 @@ fun ConeSimpleKotlinType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
 
 class ConeCapturedTypeConstructor(
     val projection: ConeTypeProjection,
-    val original: ConeCapturedTypeConstructor?,
     var supertypes: List<ConeKotlinType>? = null,
     val typeParameterMarker: TypeParameterMarker? = null,
 ) : CapturedTypeConstructorMarker
@@ -140,7 +139,6 @@ data class ConeCapturedType(
         lowerType,
         constructor = ConeCapturedTypeConstructor(
             projection,
-            original = null,
             typeParameterMarker = typeParameterMarker
         )
     )

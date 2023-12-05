@@ -103,7 +103,6 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
             captureStatus,
             constructor = ConeCapturedTypeConstructor(
                 wrapProjection(constructor.projection, substitutedInnerType),
-                original = constructor,
                 substitutedSuperTypes,
                 typeParameterMarker = constructor.typeParameterMarker,
             ),
