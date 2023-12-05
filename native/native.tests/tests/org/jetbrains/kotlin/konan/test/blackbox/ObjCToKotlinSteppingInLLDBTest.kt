@@ -24,8 +24,12 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 
-@EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 @EnforcedHostTarget
+@EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
+// FIXME: With -opt these tests can't set a breakpoint in inlined "fun bar()"
+@EnforcedProperty(ClassLevelProperty.OPTIMIZATION_MODE, propertyValue = "DEBUG")
+// FIXME: With Rosetta the step-out and step-over tests stop on the line after "[KotlinLibKt bar]"
+@EnforcedProperty(ClassLevelProperty.TEST_TARGET, propertyValue = "macos_arm64")
 class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
 
     @Test
