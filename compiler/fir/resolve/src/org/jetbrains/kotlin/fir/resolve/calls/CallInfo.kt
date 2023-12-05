@@ -38,8 +38,6 @@ data class CallInfo(
 
     val candidateForCommonInvokeReceiver: Candidate? = null,
 
-    val isDelegateExpression: Boolean = false,
-
     val resolutionMode: ResolutionMode,
 
     // Five properties for callable references only
