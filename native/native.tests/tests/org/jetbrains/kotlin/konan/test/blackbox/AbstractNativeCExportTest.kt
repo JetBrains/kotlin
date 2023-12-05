@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
@@ -51,7 +52,11 @@ abstract class AbstractNativeCExportTest(
             .filter { it.endsWith(".c") }
             .map { testPathFull.resolve(it) }
 
-        val testCase = generateCExportTestCase(testPathFull, ktSources)
+        val goldenData = testPathFull.list()!!
+            .singleOrNull { it.endsWith(".out") }
+            ?.let { testPathFull.resolve(it) }
+
+        val testCase = generateCExportTestCase(testPathFull, ktSources, goldenData = goldenData)
         val binaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
             testCase,
             testRunSettings,
@@ -80,7 +85,7 @@ abstract class AbstractNativeCExportTest(
         runExecutableAndVerify(testCase, testExecutable)
     }
 
-    private fun generateCExportTestCase(testPathFull: File, sources: List<File>): TestCase {
+    private fun generateCExportTestCase(testPathFull: File, sources: List<File>, goldenData: File? = null): TestCase {
         val moduleName: String = testPathFull.name
         val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
@@ -91,7 +96,14 @@ abstract class AbstractNativeCExportTest(
             modules = setOf(module),
             freeCompilerArgs = TestCompilerArgs(listOf()),
             nominalPackageName = PackageName(moduleName),
-            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+            checks = TestRunChecks(
+                executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(testRunSettings.get<Timeouts>().executionTimeout),
+                exitCodeCheck = TestRunCheck.ExitCode.Expected(0),
+                expectedFailureCheck = null,
+                outputDataFile = goldenData?.let { TestRunCheck.OutputDataFile(it) },
+                outputMatcher = null,
+                fileCheckMatcher = null,
+            ),
             extras = TestCase.NoTestRunnerExtras(entryPoint = "main")
         ).apply {
             initialize(null, null)

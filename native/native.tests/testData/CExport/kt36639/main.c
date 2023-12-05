@@ -1,7 +1,7 @@
-#include "testlib_api.h"
+#include "kt36639_api.h"
 
-#define __ testlib_symbols()->
-#define T_(x) testlib_kref_ ## x
+#define __ kt36639_symbols()->
+#define T_(x) kt36639_kref_ ## x
 
 
 int
