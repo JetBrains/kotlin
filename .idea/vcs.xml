@@ -52,5 +52,7 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/intellij-community" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/intellij-community/android" vcs="Git" />
   </component>
 </project>
