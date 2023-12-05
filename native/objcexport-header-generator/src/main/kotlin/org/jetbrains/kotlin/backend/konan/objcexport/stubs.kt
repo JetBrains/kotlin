@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 
 @Deprecated("Use 'ObjCExportStub' instead", replaceWith = ReplaceWith("ObjCExportStub"))
-typealias Stub<T> = ObjCExportStub
+@Suppress("unused")
+typealias Stub<@Suppress("UNUSED_TYPEALIAS_PARAMETER") T> = ObjCExportStub
 
 sealed interface ObjCExportStub {
     /**
