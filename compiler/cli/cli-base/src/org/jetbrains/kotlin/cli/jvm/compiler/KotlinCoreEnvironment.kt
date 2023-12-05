@@ -615,8 +615,16 @@ class KotlinCoreEnvironment private constructor(
                 val environment = ourApplicationEnvironment ?: return
                 ourApplicationEnvironment = null
                 Disposer.dispose(environment.parentDisposable)
+                resetApplicationManager()
                 ZipHandler.clearFileAccessorCache()
             }
+        }
+
+        @JvmStatic
+        fun resetApplicationManager() {
+            val ourApplicationField = ApplicationManager::class.java.getDeclaredField("ourApplication")
+            ourApplicationField.isAccessible = true
+            ourApplicationField.set(null, null)
         }
 
         @JvmStatic
