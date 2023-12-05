@@ -97,7 +97,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
             val canceledStatus = services[CompilationCanceledStatus::class.java]
             ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus)
 
-            val rootDisposable = Disposer.newDisposable()
+            val rootDisposable = Disposer.newDisposable("Disposable for ${CLICompiler::class.simpleName}.execImpl")
             try {
                 setIdeaIoUseFallback()
 

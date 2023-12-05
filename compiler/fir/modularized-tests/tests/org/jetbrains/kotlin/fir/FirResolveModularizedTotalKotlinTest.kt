@@ -153,7 +153,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
-        val disposable = Disposer.newDisposable()
+        val disposable = Disposer.newDisposable("Disposable for ${FirResolveModularizedTotalKotlinTest::class.simpleName}.processModule")
         val configuration = createDefaultConfiguration(moduleData)
         configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)

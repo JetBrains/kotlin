@@ -36,7 +36,12 @@ open class GenericReplCompiler(
         scriptDefinition: KotlinScriptDefinition,
         compilerConfiguration: CompilerConfiguration,
         messageCollector: MessageCollector
-    ) : this(Disposer.newDisposable(), scriptDefinition, compilerConfiguration, messageCollector)
+    ) : this(
+        Disposer.newDisposable("Default disposable for ${GenericReplCompiler::class.simpleName}"),
+        scriptDefinition,
+        compilerConfiguration,
+        messageCollector
+    )
 
     private val checker =
         GenericReplChecker(

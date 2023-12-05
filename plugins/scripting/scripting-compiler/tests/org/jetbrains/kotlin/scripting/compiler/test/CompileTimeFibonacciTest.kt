@@ -34,7 +34,7 @@ import kotlin.script.experimental.util.filterByAnnotationType
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/compiler/compileTimeFibonacci"
 
 class CompileTimeFibonacciTest : TestCase() {
-    private val testRootDisposable: Disposable = TestDisposable()
+    private val testRootDisposable: Disposable = TestDisposable("${CompileTimeFibonacciTest::class.simpleName}.testRootDisposable")
 
     fun testFibonacciWithSupportedNumbersImplementsTheCorrectConstants() {
         val outputLines = runScript("supported.fib.kts")

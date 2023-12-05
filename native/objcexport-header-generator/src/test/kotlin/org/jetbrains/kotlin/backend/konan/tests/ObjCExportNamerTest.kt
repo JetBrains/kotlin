@@ -35,7 +35,7 @@ import kotlin.test.assertEquals
  */
 class ObjCExportNamerTest : InlineSourceTestEnvironment {
 
-    override val testDisposable = Disposer.newDisposable()
+    override val testDisposable = Disposer.newDisposable("${ObjCExportNamerTest::class.simpleName}.testDisposable")
 
     override val kotlinCoreEnvironment = createKotlinCoreEnvironment(testDisposable)
 

@@ -46,7 +46,7 @@ object KlibTestUtil {
         configuration.put(CommonConfigurationKeys.MODULE_NAME, libraryName)
         configuration.addKotlinSourceRoots(sourceFiles.map { it.absolutePath })
 
-        val rootDisposable = Disposer.newDisposable()
+        val rootDisposable = Disposer.newDisposable("Disposable for ${KlibTestUtil::class.simpleName}.compileCommonSourcesToKlib")
         val module = try {
             val environment = KotlinCoreEnvironment.createForTests(
                 parentDisposable = rootDisposable,

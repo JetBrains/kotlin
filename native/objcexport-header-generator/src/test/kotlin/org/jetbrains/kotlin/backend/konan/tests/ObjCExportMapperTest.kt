@@ -31,7 +31,7 @@ import kotlin.test.assertNull
  * The test also acts as quick entry point for debugging the [ObjCExportMapper]
  */
 class ObjCExportMapperTest : InlineSourceTestEnvironment {
-    override val testDisposable = Disposer.newDisposable()
+    override val testDisposable = Disposer.newDisposable("${ObjCExportMapperTest::class.simpleName}.testDisposable")
     override val kotlinCoreEnvironment: KotlinCoreEnvironment = createKotlinCoreEnvironment(testDisposable)
 
     @TempDir

@@ -107,7 +107,8 @@ open class IncrementalJvmCompilerRunner(
             psiFileFactory.createFileFromText(file.nameWithoutExtension, JavaLanguage.INSTANCE, file.readText())
 
         private val psiFileFactory: PsiFileFactory by lazy {
-            val rootDisposable = Disposer.newDisposable()
+            val rootDisposable =
+                Disposer.newDisposable("Disposable for PSI file factory of ${IncrementalJvmCompilerRunner::class.simpleName}")
             val configuration = compilerConfiguration
             val environment =
                 KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)

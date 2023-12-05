@@ -59,7 +59,15 @@ class FirScriptDefinitionProviderService(
             val makeConfigurationProvider = configurationProvider?.let { { it } }
                 ?: {
                     // TODO: check if memory can leak in MockProject (probably not too important, since currently the providers are set externaly in important cases)
-                    CliScriptDependenciesProvider(MockProject(null, Disposer.newDisposable()))
+                    CliScriptDependenciesProvider(
+                        MockProject(
+                            null,
+                            Disposer.newDisposable(
+                                "Disposable for project of ${CliScriptDependenciesProvider::class.simpleName} created by" +
+                                        " ${FirScriptDefinitionProviderService::class.simpleName}"
+                            ),
+                        ),
+                    )
                 }
 
             return Factory { session -> FirScriptDefinitionProviderService(session, makeDefinitionsProvider, makeConfigurationProvider) }

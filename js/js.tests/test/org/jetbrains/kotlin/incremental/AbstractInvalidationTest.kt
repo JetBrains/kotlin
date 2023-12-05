@@ -82,7 +82,11 @@ abstract class AbstractInvalidationTest(
 
     private val zipAccessor = ZipFileSystemCacheableAccessor(2)
     protected val environment =
-        KotlinCoreEnvironment.createForParallelTests(TestDisposable(), CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+        KotlinCoreEnvironment.createForParallelTests(
+            TestDisposable("${AbstractInvalidationTest::class.simpleName}.rootDisposable"),
+            CompilerConfiguration(),
+            EnvironmentConfigFiles.JS_CONFIG_FILES,
+        )
 
     @AfterEach
     protected fun clearZipAccessor() {

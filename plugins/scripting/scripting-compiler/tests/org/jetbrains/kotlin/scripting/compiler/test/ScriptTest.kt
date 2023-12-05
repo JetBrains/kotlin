@@ -116,7 +116,7 @@ class ScriptTest : TestCase() {
             if (suppressOutput) MessageCollector.NONE
             else PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
 
-        val rootDisposable = Disposer.newDisposable()
+        val rootDisposable = Disposer.newDisposable("Disposable for ${ScriptTest::class.simpleName}")
         try {
             val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
             configuration.updateWithBaseCompilerArguments()

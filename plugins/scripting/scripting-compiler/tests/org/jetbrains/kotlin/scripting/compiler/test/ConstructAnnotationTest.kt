@@ -40,7 +40,7 @@ private annotation class TestAnnotation(vararg val options: String)
 private annotation class AnnotationWithVarArgAndArray(vararg val options: String, val moreOptions: Array<String>)
 
 class ConstructAnnotationTest : TestCase() {
-    private val testRootDisposable: Disposable = TestDisposable()
+    private val testRootDisposable: Disposable = TestDisposable("${ConstructAnnotationTest::class.simpleName}.testRootDisposable")
 
     fun testAnnotationEmptyVarArg() {
         val annotations = annotations("TestAnnotationEmptyVarArg.kts", TestAnnotation::class)

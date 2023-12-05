@@ -28,7 +28,8 @@ private const val testDataPath = "plugins/scripting/scripting-compiler/testData/
 
 class CollectScriptCompilationDependenciesTest : TestCase() {
 
-    protected val testRootDisposable: Disposable = TestDisposable()
+    protected val testRootDisposable: Disposable =
+        TestDisposable("${CollectScriptCompilationDependenciesTest::class.simpleName}.testRootDisposable")
 
     fun testCascadeImport() {
         runTest("imp_imp_leaf.req1.kts", listOf("imp_leaf.req1.kts", "leaf.req1.kts"))

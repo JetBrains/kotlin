@@ -214,7 +214,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }
 
         fun writeFilesOnDisk() {
-            val disposable = Disposer.newDisposable()
+            val disposable = Disposer.newDisposable("Disposable for ${FilesWriter::class.qualifiedName}.writeFilesOnDisk")
             val environment = KotlinCoreEnvironment.createForTests(
                 disposable,
                 configuration.copy().apply {

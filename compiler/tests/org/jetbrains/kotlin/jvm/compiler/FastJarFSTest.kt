@@ -23,7 +23,7 @@ class FastJarFSTest : TestCase() {
 
     private var fs: FastJarFileSystem? = null
     private var coreAppEnv: JavaCoreApplicationEnvironment? = null
-    private val rootDisposable = Disposer.newDisposable()
+    private val rootDisposable = Disposer.newDisposable("${FastJarFSTest::class.simpleName}.rootDisposable")
 
     override fun setUp() {
         super.setUp()

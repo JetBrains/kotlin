@@ -16,7 +16,7 @@ import java.lang.reflect.Field
 
 class ApplicationEnvironmentDisposer : TestExecutionListener {
     companion object {
-        val ROOT_DISPOSABLE: Disposable = Disposer.newDisposable()
+        val ROOT_DISPOSABLE: Disposable = Disposer.newDisposable("${ApplicationEnvironmentDisposer::class.simpleName}.ROOT_DISPOSABLE")
     }
 
     override fun testPlanExecutionFinished(testPlan: TestPlan) {

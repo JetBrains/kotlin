@@ -83,7 +83,7 @@ object ExperimentalOptInUsageInSourceChecker {
 
     private fun createProjectForParsing(): Project {
         return KotlinCoreEnvironment.createForProduction(
-            Disposer.newDisposable(),
+            Disposer.newDisposable("Disposable for project of ${ExperimentalOptInUsageInSourceChecker::class.simpleName}"),
             CompilerConfiguration(),
             EnvironmentConfigFiles.JVM_CONFIG_FILES
         ).project

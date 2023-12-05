@@ -20,7 +20,7 @@ abstract class AbstractObjCExportHeaderGeneratorTest(
         fun generateHeaders(disposable: Disposable, root: File): String
     }
 
-    private val testRootDisposable = Disposer.newDisposable()
+    private val testRootDisposable = Disposer.newDisposable("${AbstractObjCExportHeaderGeneratorTest::class.simpleName}.testRootDisposable")
     protected val objCExportTestDataDir = testDataDir.resolve("objcexport")
 
     @After
