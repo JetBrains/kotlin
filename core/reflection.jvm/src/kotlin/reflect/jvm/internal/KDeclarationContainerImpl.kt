@@ -244,6 +244,11 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 |${parameterTypes.toTypedArray().toList()}
                 |${jvmDescriptor.returnType!!}
                 |isStaticDefault = $isMember
+                |self:
+                ${methodOwner.methods.joinToString("\n").prependIndent("|    ")}
+                ${methodOwner.interfaces.joinToString("\n") {
+                    "|interface $it:\n${it.methods.joinToString("\n").prependIndent("|    ")}"
+                }}
             """.trimMargin()
             error(message)
         }
