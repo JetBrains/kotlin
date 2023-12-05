@@ -374,7 +374,7 @@ class FirSyntheticCallGenerator(
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
     ): FirNamedReferenceWithCandidate {
-        val callInfo = generateCallInfo(callSite, name, argumentList, callKind, context, resolutionMode)
+        val callInfo = generateCallInfo(callSite, name, argumentList, callKind, resolutionMode)
         val candidate = generateCandidate(callInfo, function, context)
         val applicability = components.resolutionStageRunner.processCandidate(candidate, context)
         val source = callSite.source?.fakeElement(KtFakeSourceElementKind.SyntheticCall)
@@ -406,7 +406,6 @@ class FirSyntheticCallGenerator(
         name: Name,
         argumentList: FirArgumentList,
         callKind: CallKind,
-        context: ResolutionContext,
         resolutionMode: ResolutionMode,
     ) = CallInfo(
         callSite = callSite,
@@ -420,7 +419,6 @@ class FirSyntheticCallGenerator(
         session = session,
         containingFile = components.file,
         containingDeclarations = components.containingDeclarations,
-        isDelegateExpression = context.bodyResolveContext.isDelegateExpression(callSite),
         resolutionMode = resolutionMode,
     )
 
