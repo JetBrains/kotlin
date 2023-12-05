@@ -7,16 +7,14 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firVisitorType
-import org.jetbrains.kotlin.fir.tree.generator.firVisitorVoidType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.AbstractVisitorVoidPrinter
 import org.jetbrains.kotlin.generators.tree.ClassRef
 import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
 import org.jetbrains.kotlin.utils.SmartPrinter
-import java.io.File
 
-private class VisitorVoidPrinter(
+internal class VisitorVoidPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
 ) : AbstractVisitorVoidPrinter<Element, Field>(printer) {
@@ -35,6 +33,3 @@ private class VisitorVoidPrinter(
 
     override fun parentInVisitor(element: Element): Element = AbstractFirTreeBuilder.baseFirElement
 }
-
-fun printVisitorVoid(elements: List<Element>, generationPath: File) =
-    printVisitorCommon(elements, generationPath, firVisitorVoidType, ::VisitorVoidPrinter)

@@ -65,6 +65,8 @@ operator fun <K, V, U> Map<K, Map<V, U>>.get(k1: K, k2: V): U {
     return getValue(k1).getValue(k2)
 }
 
+fun <T1, T2, T3, R> ((T1, T2, T3) -> R).bind(t3: T3): ((T1, T2) -> R) = { t1, t2 -> invoke(t1, t2, t3) }
+
 internal fun <Field : AbstractField<*>> List<Field>.reorderFieldsIfNecessary(order: List<String>?): List<Field> =
     if (order == null) {
         this

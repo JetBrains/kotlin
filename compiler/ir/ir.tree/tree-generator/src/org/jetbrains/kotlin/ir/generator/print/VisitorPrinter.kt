@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.ir.generator.*
-import org.jetbrains.kotlin.ir.generator.model.*
-import org.jetbrains.kotlin.ir.generator.model.Model
+import org.jetbrains.kotlin.ir.generator.model.Element
+import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.utils.SmartPrinter
-import java.io.File
 
-private open class VisitorPrinter(printer: SmartPrinter, override val visitorType: ClassRef<*>) :
-    AbstractVisitorPrinter<Element, Field>(printer) {
+internal class VisitorPrinter(
+    printer: SmartPrinter,
+    override val visitorType: ClassRef<*>
+) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = listOf(resultTypeVariable, dataTypeVariable)
@@ -29,6 +29,3 @@ private open class VisitorPrinter(printer: SmartPrinter, override val visitorTyp
     override val allowTypeParametersInVisitorMethods: Boolean
         get() = false
 }
-
-fun printVisitor(generationPath: File, model: Model) = printVisitorCommon(generationPath, model, elementVisitorType, ::VisitorPrinter)
-

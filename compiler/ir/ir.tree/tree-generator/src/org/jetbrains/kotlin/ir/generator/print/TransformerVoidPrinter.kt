@@ -7,19 +7,17 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.printBlock
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.ir.generator.IrTree
-import org.jetbrains.kotlin.ir.generator.TREE_GENERATOR_README
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
-import org.jetbrains.kotlin.ir.generator.elementTransformerVoidType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
-import org.jetbrains.kotlin.ir.generator.model.Model
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
-import java.io.File
 
-private class TransformerVoidPrinter(
+internal class TransformerVoidPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
@@ -119,24 +117,21 @@ private class TransformerVoidPrinter(
             }
         }
     }
-}
 
-fun printTransformerVoid(generationPath: File, model: Model): GeneratedFile =
-    printGeneratedType(
-        generationPath,
-        TREE_GENERATOR_README,
-        elementTransformerVoidType.packageName,
-        elementTransformerVoidType.simpleName,
-    ) {
-        TransformerVoidPrinter(this, elementTransformerVoidType).printVisitor(model.elements)
-        println()
-        val transformerParameter = FunctionParameter("transformer", elementTransformerVoidType)
-        printFunctionWithBlockBody(
-            name = "transformChildrenVoid",
-            parameters = listOf(transformerParameter),
-            returnType = StandardTypes.unit,
-            extensionReceiver = IrTree.rootElement,
-        ) {
-            println("transformChildren(", transformerParameter.name, ", null)")
+    context(ImportCollector)
+    override fun printVisitor(elements: List<Element>) {
+        super.printVisitor(elements)
+        printer.run {
+            println()
+            val transformerParameter = FunctionParameter("transformer", visitorType)
+            printFunctionWithBlockBody(
+                name = "transformChildrenVoid",
+                parameters = listOf(transformerParameter),
+                returnType = StandardTypes.unit,
+                extensionReceiver = IrTree.rootElement,
+            ) {
+                println("transformChildren(", transformerParameter.name, ", null)")
+            }
         }
     }
+}

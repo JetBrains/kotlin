@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
-import org.jetbrains.kotlin.fir.tree.generator.firDefaultVisitorVoidType
 import org.jetbrains.kotlin.fir.tree.generator.firVisitorVoidType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.SmartPrinter
-import java.io.File
 
-private class DefaultVisitorVoidPrinter(
+internal class DefaultVisitorVoidPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
@@ -46,6 +44,3 @@ private class DefaultVisitorVoidPrinter(
         }
     }
 }
-
-fun printDefaultVisitorVoid(elements: List<Element>, generationPath: File) =
-    printVisitorCommon(elements, generationPath, firDefaultVisitorVoidType, ::DefaultVisitorVoidPrinter)

@@ -7,21 +7,20 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.fir.tree.generator.firTransformerType
 import org.jetbrains.kotlin.fir.tree.generator.firVisitorType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.printBlock
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.utils.SmartPrinter
-import java.io.File
 
-private class TransformerPrinter(
+internal class TransformerPrinter(
     printer: SmartPrinter,
+    override val visitorType: ClassRef<*>,
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
-
-    override val visitorType: ClassRef<*>
-        get() = firTransformerType
 
     override val visitorSuperType: ClassRef<PositionTypeParameterRef>
         get() = firVisitorType.withArgs(AbstractFirTreeBuilder.baseFirElement, visitorDataType)
@@ -88,13 +87,3 @@ private class TransformerPrinter(
         }
     }
 }
-
-fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFile =
-    printGeneratedType(
-        generationPath,
-        TREE_GENERATOR_README,
-        firTransformerType.packageName,
-        firTransformerType.simpleName,
-    ) {
-        TransformerPrinter(this).printVisitor(elements)
-    }

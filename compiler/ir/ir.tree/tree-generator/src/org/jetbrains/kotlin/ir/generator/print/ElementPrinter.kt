@@ -8,22 +8,19 @@ package org.jetbrains.kotlin.ir.generator.print
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
-import org.jetbrains.kotlin.ir.generator.TREE_GENERATOR_README
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.ir.generator.model.Model
 import org.jetbrains.kotlin.ir.generator.model.SingleField
 import org.jetbrains.kotlin.utils.SmartPrinter
-import java.io.File
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 private val transformIfNeeded = ArbitraryImportable("$BASE_PACKAGE.util", "transformIfNeeded")
 private val transformInPlace = ArbitraryImportable("$BASE_PACKAGE.util", "transformInPlace")
 
-private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Element, Field>(printer) {
+internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Element, Field>(printer) {
 
     override fun makeFieldPrinter(printer: SmartPrinter) = object : AbstractFieldPrinter<Field>(printer) {
         override fun forceMutable(field: Field) = field.isMutable
@@ -132,11 +129,5 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                 println()
             }
         }
-    }
-}
-
-fun printElements(generationPath: File, model: Model) = model.elements.map { element ->
-    printGeneratedType(generationPath, TREE_GENERATOR_README, element.packageName, element.typeName) {
-        ElementPrinter(this).printElement(element)
     }
 }

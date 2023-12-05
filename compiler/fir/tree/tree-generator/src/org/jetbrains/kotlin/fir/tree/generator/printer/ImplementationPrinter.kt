@@ -9,21 +9,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.tree.generator.*
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.printer.call
+import org.jetbrains.kotlin.generators.tree.printer.printAcceptChildrenMethod
+import org.jetbrains.kotlin.generators.tree.printer.printBlock
+import org.jetbrains.kotlin.generators.tree.printer.printTransformChildrenMethod
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
-import java.io.File
-
-fun Implementation.generateCode(generationPath: File): GeneratedFile =
-    printGeneratedType(
-        generationPath,
-        TREE_GENERATOR_README,
-        packageName,
-        this.typeName,
-        fileSuppressions = listOf("DuplicatedCode", "unused"),
-    ) {
-        ImplementationPrinter(this).printImplementation(this@generateCode)
-    }
 
 private class ImplementationFieldPrinter(printer: SmartPrinter) : AbstractFieldPrinter<FieldWithDefault>(printer) {
 
@@ -38,7 +29,7 @@ private class ImplementationFieldPrinter(printer: SmartPrinter) : AbstractFieldP
     override fun actualTypeOfField(field: FieldWithDefault) = field.getMutableType()
 }
 
-private class ImplementationPrinter(
+internal class ImplementationPrinter(
     printer: SmartPrinter
 ) : AbstractImplementationPrinter<Implementation, Element, FieldWithDefault>(printer) {
 
@@ -49,7 +40,7 @@ private class ImplementationPrinter(
     override val pureAbstractElementType: ClassRef<*>
         get() = org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 
-    override fun makeFieldPrinter(printer: SmartPrinter) = ImplementationFieldPrinter(printer)
+    override fun makeFieldPrinter(printer: SmartPrinter): AbstractFieldPrinter<FieldWithDefault> = ImplementationFieldPrinter(printer)
 
     context(ImportCollector)
     override fun SmartPrinter.printAdditionalMethods(implementation: Implementation) {

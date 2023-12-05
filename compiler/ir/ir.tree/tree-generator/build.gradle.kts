@@ -9,7 +9,6 @@ val compileOnly by configurations
 runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {
-    implementation(project(":generators"))
     implementation(project(":generators:tree-generator-common"))
     implementation(project(":compiler:util"))
 

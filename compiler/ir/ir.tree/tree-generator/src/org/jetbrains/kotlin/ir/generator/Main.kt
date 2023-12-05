@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.InterfaceAndAbstractClassConfigurator
-import org.jetbrains.kotlin.generators.tree.addPureAbstractElement
-import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
-import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.collectPreviouslyGeneratedFiles
-import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.removeExtraFilesFromPreviousGeneration
+import org.jetbrains.kotlin.generators.tree.bind
+import org.jetbrains.kotlin.generators.tree.printer.generateTree
 import org.jetbrains.kotlin.ir.generator.model.markLeaves
 import org.jetbrains.kotlin.ir.generator.print.*
 import java.io.File
@@ -21,25 +18,24 @@ internal const val TREE_GENERATOR_README = "compiler/ir/ir.tree/tree-generator/R
 fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }
         ?: File("compiler/ir/ir.tree/gen").canonicalFile
-
     val model = IrTree.build()
-
-    InterfaceAndAbstractClassConfigurator(model.elements).configureInterfacesAndAbstractClasses()
-    addPureAbstractElement(model.elements, elementBaseType)
-    markLeaves(model.elements)
-
-    val previouslyGeneratedFiles = collectPreviouslyGeneratedFiles(generationPath)
-    val generatedFiles = sequence {
-        yieldAll(printElements(generationPath, model))
-        yield(printVisitor(generationPath, model))
-        yield(printVisitorVoid(generationPath, model))
-        yield(printTransformer(generationPath, model))
-        yield(printTransformerVoid(generationPath, model))
-        yield(printTypeVisitor(generationPath, model))
-        yield(printFactory(generationPath, model))
-    }.map {
-        GeneratorsFileUtil.writeFileIfContentChanged(it.file, it.newText, logNotChanged = false)
-        it.file
-    }.toList()
-    removeExtraFilesFromPreviousGeneration(previouslyGeneratedFiles, generatedFiles)
+    generateTree(
+        generationPath,
+        TREE_GENERATOR_README,
+        model,
+        elementBaseType,
+        ::ElementPrinter,
+        listOf(
+            elementVisitorType to ::VisitorPrinter,
+            elementVisitorVoidType to ::VisitorVoidPrinter,
+            elementTransformerType to ::TransformerPrinter.bind(model.rootElement),
+            elementTransformerVoidType to ::TransformerVoidPrinter,
+            typeTransformerType to ::TypeTransformerPrinter.bind(model.rootElement),
+        ),
+        afterConfiguration = {
+            markLeaves(model.elements)
+        },
+        enableBaseTransformerTypeDetection = false,
+        addFiles = { add(printFactory(generationPath, model)) }
+    )
 }

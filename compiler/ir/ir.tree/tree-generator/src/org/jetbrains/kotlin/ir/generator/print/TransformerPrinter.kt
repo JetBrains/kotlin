@@ -6,21 +6,17 @@
 package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
-import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
-import org.jetbrains.kotlin.ir.generator.model.Model
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
-import java.io.File
 
-private class TransformerPrinter(
+internal class TransformerPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
-    val rootElement: Element,
+    private val rootElement: Element,
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorSuperType: ClassRef<PositionTypeParameterRef>
@@ -62,8 +58,3 @@ private class TransformerPrinter(
         }
     }
 }
-
-fun printTransformer(generationPath: File, model: Model): GeneratedFile =
-    printVisitorCommon(generationPath, model, elementTransformerType) { printer, visitorType ->
-        TransformerPrinter(printer, visitorType, model.rootElement)
-    }

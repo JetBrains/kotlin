@@ -6,15 +6,13 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.fir.tree.generator.firDefaultVisitorType
 import org.jetbrains.kotlin.fir.tree.generator.firVisitorType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.SmartPrinter
-import java.io.File
 
-private class VisitorPrinter(
+internal class VisitorPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
     private val visitSuperTypeByDefault: Boolean,
@@ -42,13 +40,3 @@ private class VisitorPrinter(
         else -> AbstractFirTreeBuilder.baseFirElement
     }
 }
-
-fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeByDefault: Boolean) =
-    printVisitorCommon(
-        elements,
-        generationPath,
-        if (visitSuperTypeByDefault) firDefaultVisitorType else firVisitorType,
-    ) { printer, visitorType ->
-        VisitorPrinter(printer, visitorType, visitSuperTypeByDefault)
-    }
-

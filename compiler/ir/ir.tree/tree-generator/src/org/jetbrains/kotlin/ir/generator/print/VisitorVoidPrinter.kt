@@ -9,14 +9,11 @@ import org.jetbrains.kotlin.generators.tree.AbstractVisitorVoidPrinter
 import org.jetbrains.kotlin.generators.tree.ClassRef
 import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
-import org.jetbrains.kotlin.ir.generator.elementVisitorVoidType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
-import org.jetbrains.kotlin.ir.generator.model.Model
 import org.jetbrains.kotlin.utils.SmartPrinter
-import java.io.File
 
-private class VisitorVoidPrinter(
+internal class VisitorVoidPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
 ) : AbstractVisitorVoidPrinter<Element, Field>(printer) {
@@ -33,6 +30,3 @@ private class VisitorVoidPrinter(
     override val overriddenVisitMethodsAreFinal: Boolean
         get() = false
 }
-
-fun printVisitorVoid(generationPath: File, model: Model) =
-    printVisitorCommon(generationPath, model, elementVisitorVoidType, ::VisitorVoidPrinter)
