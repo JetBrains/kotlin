@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.backend.konan
  * It is not safe to depend on any internal Kotlin/Native API outside kotlin.git/kotlin-native
  */
 @RequiresOptIn(
-        "This API is internal to the Kotlin/Native compiler and cannot be used outside of kotlin.git",
-        level = RequiresOptIn.Level.ERROR
+    "This API is internal to the Kotlin/Native compiler and cannot be used outside of kotlin.git",
+    level = RequiresOptIn.Level.ERROR
 )
 annotation class InternalKotlinNativeApi

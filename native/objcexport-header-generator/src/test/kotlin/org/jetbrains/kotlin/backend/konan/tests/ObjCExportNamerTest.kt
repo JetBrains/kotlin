@@ -96,12 +96,14 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
         val foo = module.getPackage(FqName.ROOT).memberScope.findFirstVariable("foo") { true }!!
         assertEquals(
             PropertyName("foo", "foo"),
-            createObjCExportNamer(createObjCExportNamerConfiguration(topLevelNamePrefix = "X")).getPropertyName(foo))
+            createObjCExportNamer(createObjCExportNamerConfiguration(topLevelNamePrefix = "X")).getPropertyName(foo)
+        )
     }
 
     @Test
     fun `test - function inside class`() {
-        val module = createModuleDescriptor("""
+        val module = createModuleDescriptor(
+            """
             package bar
             class Foo {
                 fun someFunction(a: Int, b: Int) = a + b
@@ -117,10 +119,12 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - class with ObjCName annotation`() {
-        val module = createModuleDescriptor("""
+        val module = createModuleDescriptor(
+            """
             @kotlin.native.ObjCName("ObjCFoo", "SwiftFoo")
             class Foo
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val fooClass = module.findClassAcrossModuleDependencies(ClassId.fromString("Foo"))!!
         assertEquals(
@@ -139,10 +143,12 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - parameter with ObjCName annotation`() {
-        val module = createModuleDescriptor("""
+        val module = createModuleDescriptor(
+            """
             import kotlin.native.ObjCName
             fun foo(@ObjCName("aObjC", "aSwift") a: Int)
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val foo = module.getPackage(FqName.ROOT).memberScope.findSingleFunction(Name.identifier("foo"))
         val parameterA = foo.valueParameters.find { it.name == Name.identifier("a") }!!
@@ -152,14 +158,18 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
     @Test
     fun `test - class mangling`() {
         val module = createModuleDescriptor {
-            source("""
+            source(
+                """
                 package a 
                 class Foo
-            """.trimIndent())
-            source("""
+            """.trimIndent()
+            )
+            source(
+                """
                 package b
                 class Foo
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
 
         val aFoo = module.findClassAcrossModuleDependencies(ClassId.fromString("a/Foo"))!!
@@ -175,11 +185,13 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
 
     @Test
     fun `test - simple enum`() {
-        val module = createModuleDescriptor("""
+        val module = createModuleDescriptor(
+            """
             enum class Foo {
                 A, B, C
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val foo = module.findClassAcrossModuleDependencies(ClassId.fromString("Foo"))!!
         val fooA = foo.enumEntries.find { it.name == Name.identifier("A") }!!

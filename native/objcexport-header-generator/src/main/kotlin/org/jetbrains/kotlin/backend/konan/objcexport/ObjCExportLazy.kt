@@ -9,12 +9,12 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
-import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -61,35 +61,35 @@ interface ObjCExportLazy {
 
 @JvmOverloads
 fun createObjCExportLazy(
-        configuration: ObjCExportLazy.Configuration,
-        problemCollector: ObjCExportProblemCollector,
-        codeAnalyzer: KotlinCodeAnalyzer,
-        typeResolver: TypeResolver,
-        descriptorResolver: DescriptorResolver,
-        fileScopeProvider: FileScopeProvider,
-        builtIns: KotlinBuiltIns,
-        deprecationResolver: DeprecationResolver? = null
+    configuration: ObjCExportLazy.Configuration,
+    problemCollector: ObjCExportProblemCollector,
+    codeAnalyzer: KotlinCodeAnalyzer,
+    typeResolver: TypeResolver,
+    descriptorResolver: DescriptorResolver,
+    fileScopeProvider: FileScopeProvider,
+    builtIns: KotlinBuiltIns,
+    deprecationResolver: DeprecationResolver? = null,
 ): ObjCExportLazy = ObjCExportLazyImpl(
-        configuration,
-        problemCollector,
-        codeAnalyzer,
-        typeResolver,
-        descriptorResolver,
-        fileScopeProvider,
-        builtIns,
-        deprecationResolver
+    configuration,
+    problemCollector,
+    codeAnalyzer,
+    typeResolver,
+    descriptorResolver,
+    fileScopeProvider,
+    builtIns,
+    deprecationResolver
 )
 
 @InternalKotlinNativeApi
 class ObjCExportLazyImpl(
-        private val configuration: ObjCExportLazy.Configuration,
-        problemCollector: ObjCExportProblemCollector,
-        private val codeAnalyzer: KotlinCodeAnalyzer,
-        private val typeResolver: TypeResolver,
-        private val descriptorResolver: DescriptorResolver,
-        private val fileScopeProvider: FileScopeProvider,
-        builtIns: KotlinBuiltIns,
-        deprecationResolver: DeprecationResolver?
+    private val configuration: ObjCExportLazy.Configuration,
+    problemCollector: ObjCExportProblemCollector,
+    private val codeAnalyzer: KotlinCodeAnalyzer,
+    private val typeResolver: TypeResolver,
+    private val descriptorResolver: DescriptorResolver,
+    private val fileScopeProvider: FileScopeProvider,
+    builtIns: KotlinBuiltIns,
+    deprecationResolver: DeprecationResolver?,
 ) : ObjCExportLazy {
 
     private val namerConfiguration = createNamerConfiguration(configuration)
@@ -101,11 +101,11 @@ class ObjCExportLazyImpl(
     private val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, problemCollector, local = true)
 
     private val translator: ObjCExportTranslator = ObjCExportTranslatorImpl(
-            null,
-            mapper,
-            namer,
-            problemCollector,
-            configuration.objcGenerics
+        null,
+        mapper,
+        namer,
+        problemCollector,
+        configuration.objcGenerics
     )
 
     private val isValid: Boolean
@@ -114,14 +114,15 @@ class ObjCExportLazyImpl(
     override fun generateBase() = translator.generateBaseDeclarations()
 
     override fun translate(file: KtFile): List<ObjCTopLevel<*>> =
-            translateClasses(file) + translateTopLevels(file)
+        translateClasses(file) + translateTopLevels(file)
 
     private fun translateClasses(container: KtDeclarationContainer): List<ObjCClass<*>> {
         val result = mutableListOf<ObjCClass<*>>()
         container.declarations.forEach { declaration ->
             // Supposed to be true if ObjCExportMapper.shouldBeVisible is true.
             if (declaration is KtClassOrObject && declaration.isPublic && declaration !is KtEnumEntry
-                    && !declaration.hasExpectModifier()) {
+                && !declaration.hasExpectModifier()
+            ) {
 
                 if (!declaration.isAnnotation() && !declaration.hasModifier(KtTokens.INLINE_KEYWORD)) {
                     result += translateClass(declaration)
@@ -144,7 +145,7 @@ class ObjCExportLazyImpl(
             LazyObjCProtocolImpl(name, ktClassOrObject, this)
         } else {
             val isFinal = ktClassOrObject.modalityModifier() == null ||
-                    ktClassOrObject.hasModifier(KtTokens.FINAL_KEYWORD)
+                ktClassOrObject.hasModifier(KtTokens.FINAL_KEYWORD)
 
             val attributes = if (isFinal) {
                 listOf(OBJC_SUBCLASSING_RESTRICTED)
@@ -152,30 +153,32 @@ class ObjCExportLazyImpl(
                 emptyList()
             }
 
-            LazyObjCInterfaceImpl(name,
-                                  attributes,
-                                  generics = translateGenerics(ktClassOrObject),
-                                  psi = ktClassOrObject,
-                                  lazy = this)
+            LazyObjCInterfaceImpl(
+                name,
+                attributes,
+                generics = translateGenerics(ktClassOrObject),
+                psi = ktClassOrObject,
+                lazy = this
+            )
         }
     }
 
     private fun translateGenerics(ktClassOrObject: KtClassOrObject): List<ObjCGenericTypeDeclaration> = if (configuration.objcGenerics) {
         ktClassOrObject.typeParametersWithOuter
-                .map {
-                    ObjCGenericTypeRawDeclaration(
-                            nameTranslator.getTypeParameterName(it),
-                            ObjCVariance.fromKotlinVariance(it.variance)
-                    )
-                }
-                .toList()
+            .map {
+                ObjCGenericTypeRawDeclaration(
+                    nameTranslator.getTypeParameterName(it),
+                    ObjCVariance.fromKotlinVariance(it.variance)
+                )
+            }
+            .toList()
     } else {
         emptyList()
     }
 
     private fun translateTopLevels(file: KtFile): List<ObjCInterface> {
         val extensions =
-                mutableMapOf<ClassDescriptor, MutableList<KtCallableDeclaration>>()
+            mutableMapOf<ClassDescriptor, MutableList<KtCallableDeclaration>>()
 
         val topLevel = mutableListOf<KtCallableDeclaration>()
 
@@ -212,9 +215,9 @@ class ObjCExportLazyImpl(
     }
 
     private fun translateExtensions(
-            file: KtFile,
-            classDescriptor: ClassDescriptor,
-            declarations: List<KtCallableDeclaration>
+        file: KtFile,
+        classDescriptor: ClassDescriptor,
+        declarations: List<KtCallableDeclaration>,
     ): ObjCInterface {
         // TODO: consider using file-based categories in compiler too.
 
@@ -228,13 +231,13 @@ class ObjCExportLazyImpl(
     }
 
     private fun resolveDeclaration(ktDeclaration: KtDeclaration): DeclarationDescriptor =
-            codeAnalyzer.resolveToDescriptor(ktDeclaration)
+        codeAnalyzer.resolveToDescriptor(ktDeclaration)
 
     private fun resolve(ktClassOrObject: KtClassOrObject) =
-            resolveDeclaration(ktClassOrObject) as ClassDescriptor
+        resolveDeclaration(ktClassOrObject) as ClassDescriptor
 
     private fun resolve(ktCallableDeclaration: KtCallableDeclaration) =
-            resolveDeclaration(ktCallableDeclaration) as CallableMemberDescriptor
+        resolveDeclaration(ktCallableDeclaration) as CallableMemberDescriptor
 
     private fun getClassIfExtension(topLevelDeclaration: KtCallableDeclaration): ClassDescriptor? {
         val receiverType = topLevelDeclaration.receiverTypeReference ?: return null
@@ -243,19 +246,19 @@ class ObjCExportLazyImpl(
         val trace = BindingTraceContext() // TODO: revise.
 
         val kotlinReceiverType = typeResolver.resolveType(
-                createHeaderScope(topLevelDeclaration, fileScope, trace),
-                receiverType,
-                trace,
-                checkBounds = false
+            createHeaderScope(topLevelDeclaration, fileScope, trace),
+            receiverType,
+            trace,
+            checkBounds = false
         )
 
         return translator.getClassIfExtension(kotlinReceiverType)
     }
 
     private fun createHeaderScope(
-            declaration: KtCallableDeclaration,
-            parent: LexicalScope,
-            trace: BindingTrace
+        declaration: KtCallableDeclaration,
+        parent: LexicalScope,
+        trace: BindingTrace,
     ): LexicalScope {
         if (declaration.typeParameters.isEmpty()) return parent
 
@@ -268,30 +271,30 @@ class ObjCExportLazyImpl(
         when (declaration) {
             is KtFunction -> {
                 descriptor = SimpleFunctionDescriptorImpl.create(
-                        parent.ownerDescriptor,
-                        Annotations.EMPTY,
-                        fakeName,
-                        CallableMemberDescriptor.Kind.DECLARATION,
-                        sourceElement
+                    parent.ownerDescriptor,
+                    Annotations.EMPTY,
+                    fakeName,
+                    CallableMemberDescriptor.Kind.DECLARATION,
+                    sourceElement
                 )
                 scopeKind = LexicalScopeKind.FUNCTION_HEADER
             }
             is KtProperty -> {
                 descriptor = PropertyDescriptorImpl.create(
-                        parent.ownerDescriptor,
-                        Annotations.EMPTY,
-                        Modality.FINAL,
-                        DescriptorVisibilities.PUBLIC,
-                        declaration.isVar,
-                        fakeName,
-                        CallableMemberDescriptor.Kind.DECLARATION,
-                        sourceElement,
-                        false,
-                        false,
-                        false,
-                        false,
-                        false,
-                        false
+                    parent.ownerDescriptor,
+                    Annotations.EMPTY,
+                    Modality.FINAL,
+                    DescriptorVisibilities.PUBLIC,
+                    declaration.isVar,
+                    fakeName,
+                    CallableMemberDescriptor.Kind.DECLARATION,
+                    sourceElement,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
                 )
                 scopeKind = LexicalScopeKind.PROPERTY_HEADER
             }
@@ -299,19 +302,19 @@ class ObjCExportLazyImpl(
         }
 
         val result = LexicalWritableScope(
-                parent,
-                descriptor,
-                false,
-                LocalRedeclarationChecker.DO_NOTHING,
-                scopeKind
+            parent,
+            descriptor,
+            false,
+            LocalRedeclarationChecker.DO_NOTHING,
+            scopeKind
         )
 
         val typeParameters = descriptorResolver.resolveTypeParametersForDescriptor(
-                descriptor,
-                result,
-                result,
-                declaration.typeParameters,
-                trace
+            descriptor,
+            result,
+            result,
+            declaration.typeParameters,
+            trace
         )
 
         descriptorResolver.resolveGenericBounds(declaration, descriptor, result, typeParameters, trace)
@@ -322,7 +325,7 @@ class ObjCExportLazyImpl(
     private class LazyObjCProtocolImpl(
         name: ObjCExportNamer.ClassOrProtocolName,
         override val psi: KtClassOrObject,
-        private val lazy: ObjCExportLazyImpl
+        private val lazy: ObjCExportLazyImpl,
     ) : LazyObjCProtocol(name) {
         override val descriptor: ClassDescriptor by lazy { lazy.resolve(psi) }
 
@@ -337,7 +340,7 @@ class ObjCExportLazyImpl(
         attributes: List<String>,
         generics: List<ObjCGenericTypeDeclaration>,
         override val psi: KtClassOrObject,
-        private val lazy: ObjCExportLazyImpl
+        private val lazy: ObjCExportLazyImpl,
     ) : LazyObjCInterface(name = name, generics = generics, categoryName = null, attributes = attributes) {
         override val descriptor: ClassDescriptor by lazy { lazy.resolve(psi) }
 
@@ -351,7 +354,7 @@ class ObjCExportLazyImpl(
         name: ObjCExportNamer.ClassOrProtocolName,
         private val file: KtFile,
         private val declarations: List<KtCallableDeclaration>,
-        private val lazy: ObjCExportLazyImpl
+        private val lazy: ObjCExportLazyImpl,
     ) : LazyObjCInterface(name = name, generics = emptyList(), categoryName = null, attributes = listOf(OBJC_SUBCLASSING_RESTRICTED)) {
         override val descriptor: ClassDescriptor?
             get() = null
@@ -377,7 +380,7 @@ class ObjCExportLazyImpl(
         categoryName: String,
         private val classDescriptor: ClassDescriptor,
         private val declarations: List<KtCallableDeclaration>,
-        private val lazy: ObjCExportLazyImpl
+        private val lazy: ObjCExportLazyImpl,
     ) : LazyObjCInterface(name = name.objCName, generics = emptyList(), categoryName = categoryName, attributes = emptyList()) {
         override val descriptor: ClassDescriptor?
             get() = null
@@ -400,17 +403,17 @@ class ObjCExportLazyImpl(
 private abstract class LazyObjCInterface : ObjCInterface {
 
     constructor(
-            name: ObjCExportNamer.ClassOrProtocolName,
-            generics: List<ObjCGenericTypeDeclaration>,
-            categoryName: String?,
-            attributes: List<String>
+        name: ObjCExportNamer.ClassOrProtocolName,
+        generics: List<ObjCGenericTypeDeclaration>,
+        categoryName: String?,
+        attributes: List<String>,
     ) : super(name.objCName, generics, categoryName, attributes + name.toNameAttributes())
 
     constructor(
-            name: String,
-            generics: List<ObjCGenericTypeDeclaration>,
-            categoryName: String,
-            attributes: List<String>
+        name: String,
+        generics: List<ObjCGenericTypeDeclaration>,
+        categoryName: String,
+        attributes: List<String>,
     ) : super(name, generics, categoryName, attributes)
 
     protected abstract fun computeRealStub(): ObjCInterface
@@ -431,7 +434,7 @@ private abstract class LazyObjCInterface : ObjCInterface {
 }
 
 private abstract class LazyObjCProtocol(
-        name: ObjCExportNamer.ClassOrProtocolName
+    name: ObjCExportNamer.ClassOrProtocolName,
 ) : ObjCProtocol(name.objCName, name.toNameAttributes()) {
 
     protected abstract fun computeRealStub(): ObjCProtocol
@@ -469,7 +472,7 @@ private val kotlinSequenceClassId = ClassId.topLevel(FqName("kotlin.sequences.Se
 
 // This is a special workaround needed for resolve in the IDE.
 private fun ModuleDescriptor.isCommonStdlibCheckSpecificallyForIDE() =
-        findClassAcrossModuleDependencies(kotlinSequenceClassId)?.module == this
+    findClassAcrossModuleDependencies(kotlinSequenceClassId)?.module == this
 
 private val KtModifierListOwner.isPublic: Boolean
     get() = this.visibilityModifierTypeOrDefault() == KtTokens.PUBLIC_KEYWORD
@@ -479,4 +482,4 @@ internal val KtPureClassOrObject.isInterface: Boolean
 
 internal val KtClassOrObject.typeParametersWithOuter
     get() = generateSequence(this, { if (it is KtClass && it.isInner()) it.containingClassOrObject else null })
-            .flatMap { it.typeParameters.asSequence() }
+        .flatMap { it.typeParameters.asSequence() }

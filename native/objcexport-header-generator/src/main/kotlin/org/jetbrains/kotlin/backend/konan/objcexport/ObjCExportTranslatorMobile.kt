@@ -12,7 +12,15 @@ class ObjCExportTranslatorMobile internal constructor(private val delegate: ObjC
     companion object {
         fun create(namer: ObjCExportNamer, configuration: ObjCExportLazy.Configuration): ObjCExportTranslatorMobile {
             val mapper = ObjCExportMapper(local = true, unitSuspendFunctionExport = configuration.unitSuspendFunctionExport)
-            return ObjCExportTranslatorMobile(ObjCExportTranslatorImpl(null, mapper, namer, ObjCExportProblemCollector.SILENT, configuration.objcGenerics))
+            return ObjCExportTranslatorMobile(
+                ObjCExportTranslatorImpl(
+                    null,
+                    mapper,
+                    namer,
+                    ObjCExportProblemCollector.SILENT,
+                    configuration.objcGenerics
+                )
+            )
         }
     }
 
