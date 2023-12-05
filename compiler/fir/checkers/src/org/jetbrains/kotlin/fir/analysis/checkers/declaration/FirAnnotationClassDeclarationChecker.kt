@@ -220,6 +220,9 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                 annotationsWithCycle += ownedAnnotation
                 return true
             }
+            if (referencedAnnotation.isJavaOrEnhancement) {
+                return false
+            }
             return annotationHasCycle(referencedAnnotation)
         }
     }

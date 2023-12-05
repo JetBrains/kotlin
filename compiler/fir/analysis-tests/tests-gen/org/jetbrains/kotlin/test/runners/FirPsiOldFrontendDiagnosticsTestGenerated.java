@@ -2017,6 +2017,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("javaAnnotationWithParameter.kt")
+            public void testJavaAnnotationWithParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/javaAnnotationWithParameter.kt");
+            }
+
+            @Test
             @TestMetadata("JvmSerializableLambdaAnnotation.kt")
             public void testJvmSerializableLambdaAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/JvmSerializableLambdaAnnotation.kt");
