@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.light.classes.symbol.decompiled
 
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesByPsiTest
-import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.AnalysisApiSymbolLightClassesDecompiledTestConfigurator
+import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.AnalysisApiSymbolLibraryLightClassesDecompiledTestConfigurator
 
 abstract class AbstractSymbolLightClassesByPsiForLibraryTest : AbstractSymbolLightClassesByPsiTest(
-    AnalysisApiSymbolLightClassesDecompiledTestConfigurator,
+    AnalysisApiSymbolLibraryLightClassesDecompiledTestConfigurator,
     EXTENSIONS.LIB_JAVA,
     isTestAgainstCompiledCode = true,
 )

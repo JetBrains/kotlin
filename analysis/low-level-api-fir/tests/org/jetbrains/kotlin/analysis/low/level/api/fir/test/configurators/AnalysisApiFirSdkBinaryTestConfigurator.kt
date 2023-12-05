@@ -8,30 +8,29 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSdkModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.testModuleDecompiler
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-object AnalysisApiFirLibraryBinaryTestConfigurator : AbstractAnalysisApiFirBinaryTestConfigurator() {
-    override fun moduleFactory(): KtModuleFactory = KtLibraryBinaryModuleFactory()
+object AnalysisApiFirSdkBinaryTestConfigurator : AbstractAnalysisApiFirBinaryTestConfigurator() {
+    override fun moduleFactory(): KtModuleFactory = KtSdkBinaryModuleFactory()
 }
 
-private class KtLibraryBinaryModuleFactory : KtModuleFactory {
+private class KtSdkBinaryModuleFactory : KtModuleFactory {
     override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
         val library = testServices.compiledLibraryProvider.compileToLibrary(testModule).artifact
         val decompiledFiles = testServices.testModuleDecompiler.getAllPsiFilesFromLibrary(library, project)
 
         return KtModuleWithFiles(
-            KtLibraryModuleImpl(
+            KtSdkModuleImpl(
                 testModule.name,
                 testModule.targetPlatform,
                 GlobalSearchScope.filesScope(project, decompiledFiles.mapTo(mutableSetOf()) { it.virtualFile }),
                 project,
-                binaryRoots = listOf(library),
-                librarySources = null,
+                binaryRoots = listOf(library)
             ),
             decompiledFiles
         )

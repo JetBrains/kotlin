@@ -16,16 +16,18 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
-object AnalysisApiSymbolLightClassesDecompiledTestConfigurator : AnalysisApiTestConfigurator() {
+abstract class AbstractAnalysisApiSymbolLightClassesDecompiledTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
 
+    protected abstract fun analysisApiTestConfigurator(): AnalysisApiTestConfigurator
+
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
-        AnalysisApiFirLibraryBinaryTestConfigurator.configureTest(builder, disposable)
+        analysisApiTestConfigurator().configureTest(builder, disposable)
     }
 
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
-        get() = AnalysisApiFirLibraryBinaryTestConfigurator.serviceRegistrars +
+        get() = analysisApiTestConfigurator().serviceRegistrars +
                 AnalysisApiSymbolLightClassesDecompiledTestServiceRegistrar
 
     override fun createModules(
@@ -33,6 +35,6 @@ object AnalysisApiSymbolLightClassesDecompiledTestConfigurator : AnalysisApiTest
         testServices: TestServices,
         project: Project
     ): KtModuleProjectStructure {
-        return AnalysisApiFirLibraryBinaryTestConfigurator.createModules(moduleStructure, testServices, project)
+        return analysisApiTestConfigurator().createModules(moduleStructure, testServices, project)
     }
 }
