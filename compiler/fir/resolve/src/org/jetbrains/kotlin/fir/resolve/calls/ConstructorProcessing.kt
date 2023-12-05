@@ -11,11 +11,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
-import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
-import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -86,7 +83,12 @@ fun FirScope.getSingleVisibleClassifier(
             if (result == null) {
                 result = classifierSymbol
             } else {
-                isAmbiguousResult = true
+                val checkResult = checkUnambiguousClassifiers(result!!, classifierSymbol, session)
+                if (checkResult.shouldReplaceResult) {
+                    result = classifierSymbol
+                } else {
+                    isAmbiguousResult = checkResult.isAmbiguousResult
+                }
             }
         }
     }
@@ -137,8 +139,12 @@ private fun FirScope.getFirstClassifierOrNull(
             }
             result != null -> {
                 if (isSuccessResult == isSuccessCandidate) {
-                    // results are similar => ambiguity
-                    isAmbiguousResult = true
+                    val checkResult = checkUnambiguousClassifiers(result!!.symbol, symbol, session)
+                    if (checkResult.shouldReplaceResult) {
+                        result = SymbolWithSubstitutor(symbol, substitutor)
+                    } else {
+                        isAmbiguousResult = checkResult.isAmbiguousResult
+                    }
                 } else {
                     // ignore unsuccessful result if we have successful one
                 }
@@ -152,6 +158,41 @@ private fun FirScope.getFirstClassifierOrNull(
     }
 
     return result.takeUnless { isAmbiguousResult }
+}
+
+private data class CheckUnambiguousClassifiersResult(val shouldReplaceResult: Boolean, val isAmbiguousResult: Boolean)
+
+/**
+ * Handle special cases when classifiers don't cause ambiguity (`Throws`)
+ *
+ * The following output options are possible:
+ *   * `shouldReplaceResult = true, isAmbiguousResult = false` means successful disambiguation
+ *     but the previous result should be replaced with the new one (typically class symbol wins typealias)
+ *   * `shouldReplaceResult = false, isAmbiguousResult = false` means successful disambiguation
+ *     but the new result should be discarded
+ *   * `shouldReplaceResult = false, isAmbiguousResult = true` means unsuccessful disambiguation
+ *     and both results become irrelevant
+ */
+private fun checkUnambiguousClassifiers(
+    foundClassifierSymbol: FirClassifierSymbol<*>,
+    newClassifierSymbol: FirClassifierSymbol<*>,
+    session: FirSession,
+): CheckUnambiguousClassifiersResult {
+    val classTypealiasesThatDontCauseAmbiguity = session.platformClassMapper.classTypealiasesThatDontCauseAmbiguity
+
+    if (foundClassifierSymbol is FirTypeAliasSymbol && newClassifierSymbol is FirRegularClassSymbol &&
+        classTypealiasesThatDontCauseAmbiguity[newClassifierSymbol.classId] == foundClassifierSymbol.classId
+    ) {
+        return CheckUnambiguousClassifiersResult(shouldReplaceResult = true, isAmbiguousResult = false)
+    }
+
+    if (newClassifierSymbol is FirTypeAliasSymbol && foundClassifierSymbol is FirRegularClassSymbol &&
+        classTypealiasesThatDontCauseAmbiguity[foundClassifierSymbol.classId] == newClassifierSymbol.classId
+    ) {
+        return CheckUnambiguousClassifiersResult(shouldReplaceResult = false, isAmbiguousResult = false)
+    }
+
+    return CheckUnambiguousClassifiersResult(shouldReplaceResult = false, isAmbiguousResult = true)
 }
 
 private fun processSyntheticConstructors(
