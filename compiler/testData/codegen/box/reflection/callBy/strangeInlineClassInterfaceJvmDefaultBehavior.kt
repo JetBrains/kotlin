@@ -12,10 +12,6 @@ interface IIC {
 
 }
 
-inline class IC(val x: Int) : IIC {
-    override fun f(i1: Int) = x + i1
-}
-
 fun box(): String {
     val methods = IIC::class.java.methods.toList()
     require(methods.size == 2) { methods.joinToString("\n") }
