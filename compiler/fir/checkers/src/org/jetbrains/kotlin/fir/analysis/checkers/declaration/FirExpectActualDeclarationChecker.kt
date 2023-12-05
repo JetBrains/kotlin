@@ -104,7 +104,11 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
-        fun FirPropertyAccessor.isDefault() = source?.kind == KtFakeSourceElementKind.DefaultAccessor
+        fun FirPropertyAccessor.isDefault(): Boolean {
+            val source = source
+            check(source != null) { "expect-actual matching is only possible for code with sources" }
+            return source.kind == KtFakeSourceElementKind.DefaultAccessor
+        }
 
         if (!accessor.isDefault()) {
             checkExpectDeclarationHasNoExternalModifier(accessor, context, reporter)
@@ -336,7 +340,9 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         actualContainingClass: FirRegularClassSymbol,
         platformSession: FirSession
     ): Boolean {
-        return declaration.source?.kind != KtFakeSourceElementKind.ImplicitConstructor &&
+        val source = declaration.source
+        check(source != null) { "expect-actual matching is only possible for code with sources" }
+        return source.kind != KtFakeSourceElementKind.ImplicitConstructor &&
                 declaration.origin != FirDeclarationOrigin.Synthetic.DataClassMember &&
                 !declaration.isAnnotationConstructor(platformSession) &&
                 !declaration.isPrimaryConstructorOfInlineOrValueClass(platformSession) &&
@@ -344,11 +350,15 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
     }
 
     // Ideally, this function shouldn't exist KT-63751
-    private fun FirElement.hasActualModifier(): Boolean = when (source?.kind) {
-        KtFakeSourceElementKind.DataClassGeneratedMembers -> false
-        KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
-        KtFakeSourceElementKind.ImplicitConstructor -> false
-        else -> hasModifier(KtTokens.ACTUAL_KEYWORD) || hasModifier(KtTokens.IMPL_KEYWORD)
+    private fun FirElement.hasActualModifier(): Boolean {
+        val source = source
+        check(source != null) { "expect-actual matching is only possible for code with sources" }
+        return when (source.kind) {
+            KtFakeSourceElementKind.DataClassGeneratedMembers -> false
+            KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
+            KtFakeSourceElementKind.ImplicitConstructor -> false
+            else -> hasModifier(KtTokens.ACTUAL_KEYWORD) || hasModifier(KtTokens.IMPL_KEYWORD)
+        }
     }
 
     private fun isUnderlyingPropertyOfInlineClass(
