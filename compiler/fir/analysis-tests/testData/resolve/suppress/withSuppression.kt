@@ -4,7 +4,7 @@ const val x = "123"
 
 val y = "789"
 
-const val z = @Suppress(<!ERROR_SUPPRESSION!>"CONST_VAL_WITH_NON_CONST_INITIALIZER"<!>) y
+const val z = @Suppress(<!ERROR_SUPPRESSION!>"NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION"<!>) y
 
 @Target(AnnotationTarget.TYPE)
 annotation class Ann

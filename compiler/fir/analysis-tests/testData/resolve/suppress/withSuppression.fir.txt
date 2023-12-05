@@ -5,7 +5,7 @@ FILE: withSuppression.kt
         }
     public final val y: R|kotlin/String| = String(789)
         public get(): R|kotlin/String|
-    public final const val z: R|kotlin/String| = @R|kotlin/Suppress|(names = vararg(String(CONST_VAL_WITH_NON_CONST_INITIALIZER))) R|/y|
+    public final const val z: R|kotlin/String| = @R|kotlin/Suppress|(names = vararg(String(NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION))) R|/y|
         public get(): R|kotlin/String|
     @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class Ann : R|kotlin/Annotation| {
         public constructor(): R|Ann| {

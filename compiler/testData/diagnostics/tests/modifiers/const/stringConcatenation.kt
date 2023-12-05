@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 const val simple = "O${'K'} ${1.toLong() + 2.0}"
 const val withInnerConcatenation = "1 ${"2 ${3} ${4} 5"} 6"
 
