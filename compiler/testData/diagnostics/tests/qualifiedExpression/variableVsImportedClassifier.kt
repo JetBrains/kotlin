@@ -28,4 +28,5 @@ fun main() {
     W.<!UNRESOLVED_REFERENCE!>foo<!>()
     W.bar()
     W().foo()
+    val x = <!NO_COMPANION_OBJECT!>W<!>
 }

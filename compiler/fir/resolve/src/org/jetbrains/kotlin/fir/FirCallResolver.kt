@@ -76,11 +76,11 @@ class FirCallResolver(
 
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall): FirFunctionCall {
         val name = functionCall.calleeReference.name
-        val result = collectCandidates(functionCall, name, origin = functionCall.origin)
+        val result = collectCandidates(functionCall, name, origin = functionCall.origin, isUsedAsReceiver = true)
 
         var forceCandidates: Collection<Candidate>? = null
         if (result.candidates.isEmpty()) {
-            val newResult = collectCandidates(functionCall, name, CallKind.VariableAccess, origin = functionCall.origin)
+            val newResult = collectCandidates(functionCall, name, CallKind.VariableAccess, origin = functionCall.origin, isUsedAsReceiver = true)
             if (newResult.candidates.isNotEmpty()) {
                 forceCandidates = newResult.candidates
             }
@@ -288,10 +288,15 @@ class FirCallResolver(
             //     A // should resolved to D.A
             //     A.B // should be resolved to A.B
             // }
-            if (!result.applicability.isSuccess || (isUsedAsReceiver && result.candidates.all { it.symbol is FirClassLikeSymbol })) {
+            if (!result.applicability.isSuccess) {
                 components.resolveRootPartOfQualifier(
                     callee, qualifiedAccess, nonFatalDiagnosticFromExpression,
-                )?.let { return it }
+                )?.let {
+                    if (!result.applicability.isSuccess && result.candidates.isNotEmpty()) {
+                        Unit
+                    }
+                    return it
+                }
             }
         }
 

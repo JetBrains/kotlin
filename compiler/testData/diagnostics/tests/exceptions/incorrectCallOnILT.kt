@@ -1,6 +1,25 @@
 // FIR_IDENTICAL
-// ISSUE: KT-62306
+
+import D.*
+
+class A {
+    object B {
+        fun b() {}
+    }
+}
+class D {
+    object A {
+        fun a() {}
+    }
+}
+
+object A1 {
+    fun a() {}
+}
 
 fun main() {
-    1.<!NONE_APPLICABLE!>plus<!>()
+    val x = A // should resolved to D.A
+    x.a()
+    val y = A.B // should be resolved to A.B
+    y.b()
 }

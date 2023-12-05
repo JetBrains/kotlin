@@ -98,9 +98,17 @@ class CandidateFactory private constructor(
                     )
                 }
             }
-        } else if (symbol.isRegularClassWithoutCompanion(callInfo)) {
-            result.addDiagnostic(NoCompanionObject)
+        } else if (symbol is FirClassLikeSymbol<*>) {
+            val referencedClass = symbol.fullyExpandedClass(callInfo.session)
+            if (referencedClass != null) {
+                if (!callInfo.isUsedAsReceiver && referencedClass.isRegularClassWithoutCompanion()) {
+                    result.addDiagnostic(NoCompanionObject)
+                } else if (referencedClass.isJavaOrEnhancement) {
+                    result.addDiagnostic(ResolvedWithLowPriority)
+                }
+            }
         }
+
         if (callInfo.origin == FirFunctionCallOrigin.Operator && symbol is FirPropertySymbol) {
             // Flag all property references that are resolved from an convention operator call.
             result.addDiagnostic(PropertyAsOperator)
@@ -116,29 +124,8 @@ class CandidateFactory private constructor(
         return result
     }
 
-    @OptIn(PrivateForInline::class)
-    private fun FirBasedSymbol<*>.isRegularClassWithoutCompanion(callInfo: CallInfo): Boolean {
-        // `NO_COMPANION_OBJECT` is only actual for call without a receiver,
-        // But the second check `isJavaOrEnhancement` is used for disambiguating cases between Java classes and declared Kotlin properties.
-        // Consider the following example:
-        //
-        // ```kt
-        // FILE: test: W.java
-        // public class W { public void foo() {} }
-        //
-        // FILE: main.kt
-        // import test.W
-        // val W: W = W()
-        // fun test() = W.foo()
-        // ```
-        //
-        // Last `W` should be resolved to declared property instead of Java class
-        // That's why `NO_COMPANION_OBJECT` will be added to the candidate's diagnostic and the second candidate without error will be chosen.
-        // It doesn't relate to Kotlin companion objects and objects since they have higher priority
-        if (callInfo.isUsedAsReceiver && !origin.isJavaOrEnhancement) return false
-
-        val referencedClass = (this as? FirClassLikeSymbol<*>)?.fullyExpandedClass(callInfo.session) ?: return false
-        return referencedClass.classKind != ClassKind.OBJECT && referencedClass.companionObjectSymbol == null
+    private fun FirRegularClassSymbol.isRegularClassWithoutCompanion(): Boolean {
+        return classKind != ClassKind.OBJECT && companionObjectSymbol == null
     }
 
     private fun FirBasedSymbol<*>.unwrapIntegerOperatorSymbolIfNeeded(callInfo: CallInfo): FirBasedSymbol<*> {
