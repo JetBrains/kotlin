@@ -3779,16 +3779,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.AMBIGUOUS_ACTUALS) { firDiagnostic ->
-        AmbiguousActualsImpl(
-            firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b.map { firBasedSymbol ->
-                firSymbolBuilder.buildSymbol(firBasedSymbol)
-            },
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.AMBIGUOUS_EXPECTS) { firDiagnostic ->
         AmbiguousExpectsImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),

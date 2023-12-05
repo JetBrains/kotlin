@@ -1285,11 +1285,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Map<out ExpectActualCompatibility<Symbol>, Collection<Symbol>>>("compatibility")
         }
 
-        val AMBIGUOUS_ACTUALS by error<KtNamedDeclaration>(PositioningStrategy.INCOMPATIBLE_DECLARATION) {
-            parameter<Symbol>("declaration")
-            parameter<Collection<Symbol>>("candidates")
-        }
-
         val AMBIGUOUS_EXPECTS by error<KtNamedDeclaration>(PositioningStrategy.INCOMPATIBLE_DECLARATION) {
             parameter<Symbol>("declaration")
             parameter<Collection<FirModuleData>>("modules")

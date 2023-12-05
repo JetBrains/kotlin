@@ -74,7 +74,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_WITHOUT_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ACTUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ALTERED_ASSIGN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ANONYMOUS_TYPE_INFERRED
@@ -2066,7 +2065,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL,
             FirPlatformIncompatibilityDiagnosticRenderer.TEXT
         )
-        map.put(AMBIGUOUS_ACTUALS, "''{0}'' has several compatible actual declarations in modules {1}.", SYMBOL, SYMBOLS)
         map.put(AMBIGUOUS_EXPECTS, "''{0}'' has several compatible expect declarations in modules {1}.", SYMBOL, COLLECTION(MODULE_DATA))
         map.put(
             NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,

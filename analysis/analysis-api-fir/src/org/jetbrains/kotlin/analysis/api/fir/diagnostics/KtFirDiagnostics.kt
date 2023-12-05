@@ -2642,12 +2642,6 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<KtSymbol>>
     }
 
-    interface AmbiguousActuals : KtFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = AmbiguousActuals::class
-        val declaration: KtSymbol
-        val candidates: List<KtSymbol>
-    }
-
     interface AmbiguousExpects : KtFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = AmbiguousExpects::class
         val declaration: KtSymbol

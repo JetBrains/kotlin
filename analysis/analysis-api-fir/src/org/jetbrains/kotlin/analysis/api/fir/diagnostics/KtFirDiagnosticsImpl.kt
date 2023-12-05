@@ -3183,13 +3183,6 @@ internal class ActualWithoutExpectImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.ActualWithoutExpect
 
-internal class AmbiguousActualsImpl(
-    override val declaration: KtSymbol,
-    override val candidates: List<KtSymbol>,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.AmbiguousActuals
-
 internal class AmbiguousExpectsImpl(
     override val declaration: KtSymbol,
     override val modules: List<FirModuleData>,
