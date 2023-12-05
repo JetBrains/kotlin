@@ -2135,12 +2135,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             }
 
             @Test
-            @TestMetadata("kt63648.kt")
-            public void testKt63648() throws Exception {
-                runTest("compiler/testData/codegen/box/builderInference/issues/kt63648.kt");
-            }
-
-            @Test
             @TestMetadata("kt63733.kt")
             public void testKt63733() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/issues/kt63733.kt");
