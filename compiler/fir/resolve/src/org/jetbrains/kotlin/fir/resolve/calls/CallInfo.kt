@@ -37,10 +37,11 @@ data class CallInfo(
 
     val candidateForCommonInvokeReceiver: Candidate? = null,
 
-    // Four properties for callable references only
+    // Five properties for callable references only
     val expectedType: ConeKotlinType? = null,
     val outerCSBuilder: ConstraintSystemBuilder? = null,
     val lhs: DoubleColonLHS? = null,
+    val hasSyntheticOuterCall: Boolean = false,
     val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
 ) : AbstractCallInfo() {
     val arguments: List<FirExpression> get() = argumentList.arguments

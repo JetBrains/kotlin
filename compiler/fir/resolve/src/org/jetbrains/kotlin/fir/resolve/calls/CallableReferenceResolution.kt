@@ -136,17 +136,32 @@ private fun buildResultingTypeAndAdaptation(
                 parameters += receiverType
             }
 
-            val returnType = callableReferenceAdaptation?.let {
-                parameters += it.argumentTypes
-                if (it.coercionStrategy == CoercionStrategy.COERCION_TO_UNIT) {
-                    context.session.builtinTypes.unitType.type
-                } else {
-                    returnTypeRef.coneType
+            val returnTypeWithoutCoercion = returnTypeRef.coneType
+            val returnType = if (callableReferenceAdaptation == null) {
+                returnTypeWithoutCoercion.also {
+                    fir.valueParameters.mapTo(parameters) { it.returnTypeRef.coneType }
                 }
-            } ?: returnTypeRef.coneType.also {
-                fir.valueParameters.mapTo(parameters) { it.returnTypeRef.coneType }
+            } else {
+                parameters += callableReferenceAdaptation.argumentTypes
+                // K1 simply doesn't perform any conversions for so-called "top level callable references",
+                // only for "callable reference arguments"
+                // (see CallableReferencesCandidateFactory.buildReflectionType, val buildTypeWithConversions)
+                // Here hasSyntheticOuterCall is ~ an equivalent of "top level callable references" in K1
+                // K2 behavior differs at least in two aspects:
+                // - it still allows to drop some default parameters / convert some varargs
+                //     - see testData/diagnostics/tests/callableReference/adapted/simpleAdaptationOutsideOfCall.kt
+                //     - see testData/diagnostics/tests/callableReference/resolve/withVararg.kt
+                // - coercion to unit is still allowed if a candidate return type is not type parameter based
+                //     - see testData/diagnostics/tests/inference/callableReferences/conversionLastStatementInLambda.kt
+                val hasSyntheticOuterCall = candidate.callInfo.hasSyntheticOuterCall
+                if (callableReferenceAdaptation.coercionStrategy != CoercionStrategy.COERCION_TO_UNIT ||
+                    hasSyntheticOuterCall && returnTypeWithoutCoercion.unwrapFlexibleAndDefinitelyNotNull() is ConeTypeParameterType
+                ) {
+                    returnTypeWithoutCoercion
+                } else {
+                    context.session.builtinTypes.unitType.type
+                }
             }
-
 
             val baseFunctionTypeKind = callableReferenceAdaptation?.suspendConversionStrategy?.kind
                 ?: fir.specialFunctionTypeKind(context.session)

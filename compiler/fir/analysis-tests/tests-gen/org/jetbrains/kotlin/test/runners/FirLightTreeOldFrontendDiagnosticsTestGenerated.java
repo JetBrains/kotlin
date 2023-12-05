@@ -4828,6 +4828,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("ambiguityTopLevelVsTopLevelGeneric.kt")
+                public void testAmbiguityTopLevelVsTopLevelGeneric() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/function/ambiguityTopLevelVsTopLevelGeneric.kt");
+                }
+
+                @Test
                 @TestMetadata("annotationClassConstructor.kt")
                 public void testAnnotationClassConstructor() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/function/annotationClassConstructor.kt");
@@ -17458,6 +17464,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("conversionLastStatementInLambdaGeneric.kt")
+                public void testConversionLastStatementInLambdaGeneric() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/callableReferences/conversionLastStatementInLambdaGeneric.kt");
+                }
+
+                @Test
                 @TestMetadata("kt55931.kt")
                 public void testKt55931() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/callableReferences/kt55931.kt");
@@ -17817,6 +17829,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("coersionWithAnonymousFunctionsAndUnresolved.kt")
                 public void testCoersionWithAnonymousFunctionsAndUnresolved() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coersionWithAnonymousFunctionsAndUnresolved.kt");
+                }
+
+                @Test
+                @TestMetadata("genericInApply.kt")
+                public void testGenericInApply() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/genericInApply.kt");
                 }
 
                 @Test

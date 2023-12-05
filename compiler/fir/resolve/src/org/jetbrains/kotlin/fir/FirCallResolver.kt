@@ -375,6 +375,7 @@ class FirCallResolver(
     fun resolveCallableReference(
         constraintSystemBuilder: ConstraintSystemBuilder,
         resolvedCallableReferenceAtom: ResolvedCallableReferenceAtom,
+        hasSyntheticOuterCall: Boolean,
     ): Pair<CandidateApplicability, Boolean> {
         val callableReferenceAccess = resolvedCallableReferenceAtom.reference
         val calleeReference = callableReferenceAccess.calleeReference
@@ -383,8 +384,7 @@ class FirCallResolver(
         val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf)
 
         val info = createCallableReferencesInfoForLHS(
-            callableReferenceAccess, lhs,
-            expectedType, constraintSystemBuilder,
+            callableReferenceAccess, lhs, expectedType, constraintSystemBuilder, hasSyntheticOuterCall
         )
         // No reset here!
         val localCollector = CandidateCollector(components, components.resolutionStageRunner)
@@ -685,6 +685,7 @@ class FirCallResolver(
         lhs: DoubleColonLHS?,
         expectedType: ConeKotlinType?,
         outerConstraintSystemBuilder: ConstraintSystemBuilder?,
+        hasSyntheticOuterCall: Boolean,
     ): CallInfo {
         return CallInfo(
             callableReferenceAccess,
@@ -703,6 +704,7 @@ class FirCallResolver(
             expectedType,
             outerConstraintSystemBuilder,
             lhs,
+            hasSyntheticOuterCall,
         )
     }
 

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId.ACCEPT_SPECIFIC_TYPE
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -562,7 +563,9 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
         for (atom in candidate.postponedAtoms) {
             if (atom is ResolvedCallableReferenceAtom) {
                 val (applicability, success) =
-                    context.bodyResolveComponents.callResolver.resolveCallableReference(candidate.csBuilder, atom)
+                    context.bodyResolveComponents.callResolver.resolveCallableReference(
+                        candidate.csBuilder, atom, hasSyntheticOuterCall = candidate.callInfo.name == ACCEPT_SPECIFIC_TYPE.callableName
+                    )
                 if (!success) {
                     // If the resolution was unsuccessful, we ensure that an error will be reported for the callable reference
                     // during completion by using the `resultingReference` of the postponed atom.
