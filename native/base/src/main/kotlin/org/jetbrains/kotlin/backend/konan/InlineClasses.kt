@@ -29,9 +29,9 @@ fun KotlinType.binaryRepresentationIsNullable() = KotlinTypeInlineClassesSupport
 
 @InternalKotlinNativeApi
 inline fun <R> KotlinType.unwrapToPrimitiveOrReference(
-        eachInlinedClass: (inlinedClass: ClassDescriptor, nullable: Boolean) -> Unit,
-        ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
-        ifReference: (type: KotlinType) -> R
+    eachInlinedClass: (inlinedClass: ClassDescriptor, nullable: Boolean) -> Unit,
+    ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
+    ifReference: (type: KotlinType) -> R,
 ): R = KotlinTypeInlineClassesSupport.unwrapToPrimitiveOrReference(this, eachInlinedClass, ifPrimitive, ifReference)
 
 
@@ -39,7 +39,7 @@ inline fun <R> KotlinType.unwrapToPrimitiveOrReference(
 fun KotlinType.binaryTypeIsReference(): Boolean = this.computePrimitiveBinaryTypeOrNull() == null
 
 fun KotlinType.computePrimitiveBinaryTypeOrNull(): PrimitiveBinaryType? =
-        this.computeBinaryType().primitiveBinaryTypeOrNull()
+    this.computeBinaryType().primitiveBinaryTypeOrNull()
 
 fun KotlinType.computeBinaryType(): BinaryType<ClassDescriptor> = KotlinTypeInlineClassesSupport.computeBinaryType(this)
 
@@ -74,9 +74,9 @@ enum class KonanPrimitiveType(val classId: ClassId, val binaryType: BinaryType.P
             assert(!it.classId.isNestedClass)
             it.classId.packageFqName
         }.fold({ _, _ -> mutableMapOf<Name, KonanPrimitiveType>() },
-                { _, accumulator, element ->
-                    accumulator.also { it[element.classId.shortClassName] = element }
-                })
+               { _, accumulator, element ->
+                   accumulator.also { it[element.classId.shortClassName] = element }
+               })
     }
 }
 
@@ -84,12 +84,14 @@ enum class KonanPrimitiveType(val classId: ClassId, val binaryType: BinaryType.P
 abstract class InlineClassesSupport<Class : Any, Type : Any> {
     @InternalKotlinNativeApi
     abstract fun isNullable(type: Type): Boolean
+
     @InternalKotlinNativeApi
     abstract fun makeNullable(type: Type): Type
     protected abstract fun erase(type: Type): Class
     protected abstract fun computeFullErasure(type: Type): Sequence<Class>
     protected abstract fun hasInlineModifier(clazz: Class): Boolean
     protected abstract fun getNativePointedSuperclass(clazz: Class): Class?
+
     @InternalKotlinNativeApi
     abstract fun getInlinedClassUnderlyingType(clazz: Class): Type
     protected abstract fun getPackageFqName(clazz: Class): FqName?
@@ -103,19 +105,20 @@ abstract class InlineClassesSupport<Class : Any, Type : Any> {
     fun isUsedAsBoxClass(clazz: Class) = getInlinedClass(clazz) == clazz // To handle NativePointed subclasses.
 
     fun getInlinedClass(type: Type): Class? =
-            getInlinedClass(erase(type), isNullable(type))
+        getInlinedClass(erase(type), isNullable(type))
 
     @InternalKotlinNativeApi
     fun getKonanPrimitiveType(clazz: Class): KonanPrimitiveType? =
-            if (isTopLevelClass(clazz))
-                KonanPrimitiveType.byFqNameParts[getPackageFqName(clazz)]?.get(getName(clazz))
-            else null
+        if (isTopLevelClass(clazz))
+            KonanPrimitiveType.byFqNameParts[getPackageFqName(clazz)]?.get(getName(clazz))
+        else null
 
     @InternalKotlinNativeApi
     fun isImplicitInlineClass(clazz: Class): Boolean =
-            isTopLevelClass(clazz) && (getKonanPrimitiveType(clazz) != null ||
-                    getName(clazz) == KonanFqNames.nativePtr.shortName() && getPackageFqName(clazz) == KonanFqNames.internalPackageName ||
-                    getName(clazz) == InteropFqNames.cPointer.shortName() && getPackageFqName(clazz) == InteropFqNames.cPointer.parent().toSafe())
+        isTopLevelClass(clazz) && (getKonanPrimitiveType(clazz) != null ||
+                getName(clazz) == KonanFqNames.nativePtr.shortName() && getPackageFqName(clazz) == KonanFqNames.internalPackageName ||
+                getName(clazz) == InteropFqNames.cPointer.shortName() && getPackageFqName(clazz) == InteropFqNames.cPointer.parent()
+            .toSafe())
 
     private fun getInlinedClass(erased: Class, isNullable: Boolean): Class? {
         val inlinedClass = getInlinedClass(erased) ?: return null
@@ -144,17 +147,17 @@ abstract class InlineClassesSupport<Class : Any, Type : Any> {
 
     @JvmName("classGetInlinedClass")
     private fun getInlinedClass(clazz: Class): Class? =
-            if (hasInlineModifier(clazz) || isImplicitInlineClass(clazz)) {
-                clazz
-            } else {
-                getNativePointedSuperclass(clazz)
-            }
+        if (hasInlineModifier(clazz) || isImplicitInlineClass(clazz)) {
+            clazz
+        } else {
+            getNativePointedSuperclass(clazz)
+        }
 
     inline fun <R> unwrapToPrimitiveOrReference(
-            type: Type,
-            eachInlinedClass: (inlinedClass: Class, nullable: Boolean) -> Unit,
-            ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
-            ifReference: (type: Type) -> R
+        type: Type,
+        eachInlinedClass: (inlinedClass: Class, nullable: Boolean) -> Unit,
+        ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
+        ifReference: (type: Type) -> R,
     ): R {
         var currentType: Type = type
 
@@ -179,10 +182,10 @@ abstract class InlineClassesSupport<Class : Any, Type : Any> {
 
     fun representationIsNullable(type: Type): Boolean {
         unwrapToPrimitiveOrReference(
-                type,
-                eachInlinedClass = { _, nullable -> if (nullable) return true },
-                ifPrimitive = { _, nullable -> return nullable },
-                ifReference = { return isNullable(it) }
+            type,
+            eachInlinedClass = { _, nullable -> if (nullable) return true },
+            ifPrimitive = { _, nullable -> return nullable },
+            ifReference = { return isNullable(it) }
         )
     }
 
@@ -204,7 +207,7 @@ abstract class InlineClassesSupport<Class : Any, Type : Any> {
     }
 
     private fun createReferenceBinaryType(type: Type): BinaryType.Reference<Class> =
-            BinaryType.Reference(computeFullErasure(type), true)
+        BinaryType.Reference(computeFullErasure(type), true)
 }
 
 @InternalKotlinNativeApi
@@ -230,16 +233,16 @@ object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescriptor, Ko
     override fun hasInlineModifier(clazz: ClassDescriptor): Boolean = clazz.isInlineClass()
 
     override fun getNativePointedSuperclass(clazz: ClassDescriptor): ClassDescriptor? = clazz.getAllSuperClassifiers()
-            .firstOrNull { it.fqNameUnsafe == InteropFqNames.nativePointed } as ClassDescriptor?
+        .firstOrNull { it.fqNameUnsafe == InteropFqNames.nativePointed } as ClassDescriptor?
 
     override fun getInlinedClassUnderlyingType(clazz: ClassDescriptor): KotlinType =
-            clazz.unsubstitutedPrimaryConstructor!!.valueParameters.single().type
+        clazz.unsubstitutedPrimaryConstructor!!.valueParameters.single().type
 
     override fun getPackageFqName(clazz: ClassDescriptor) =
-            clazz.findPackage().fqName
+        clazz.findPackage().fqName
 
     override fun getName(clazz: ClassDescriptor) =
-            clazz.name
+        clazz.name
 
     override fun isTopLevelClass(clazz: ClassDescriptor): Boolean = clazz.containingDeclaration is PackageFragmentDescriptor
 }

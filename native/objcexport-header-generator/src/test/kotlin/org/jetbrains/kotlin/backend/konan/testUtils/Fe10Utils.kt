@@ -39,7 +39,7 @@ import java.io.File
 fun createModuleDescriptor(
     environment: KotlinCoreEnvironment,
     tempDir: File,
-    kotlinSources: List<String>
+    kotlinSources: List<String>,
 ): ModuleDescriptor {
     val testModuleRoot = tempDir.resolve("testModule")
     testModuleRoot.mkdirs()
@@ -74,7 +74,7 @@ fun createModuleDescriptor(
 }
 
 fun createKotlinCoreEnvironment(
-    disposable: Disposable, compilerConfiguration: CompilerConfiguration = createCompilerConfiguration()
+    disposable: Disposable, compilerConfiguration: CompilerConfiguration = createCompilerConfiguration(),
 ): KotlinCoreEnvironment {
     return KotlinCoreEnvironment.createForTests(
         parentDisposable = disposable,

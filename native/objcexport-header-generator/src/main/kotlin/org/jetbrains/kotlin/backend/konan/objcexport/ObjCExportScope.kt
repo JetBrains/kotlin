@@ -22,7 +22,7 @@ interface ObjCExportScope {
 
     fun deriveForType(kotlinType: KotlinType): ObjCTypeExportScope = ObjCTypeExportScopeImpl(kotlinType, this)
     fun deriveForClass(container: DeclarationDescriptor, namer: ObjCExportNamer): ObjCClassExportScope =
-            ObjCClassExportScopeImpl(container, namer, this)
+        ObjCClassExportScopeImpl(container, namer, this)
 }
 
 internal inline fun <reified T : ObjCExportScope> ObjCExportScope.nearestScopeOfType(): T? {
@@ -44,16 +44,16 @@ interface ObjCClassExportScope : ObjCExportScope {
 }
 
 private class ObjCClassExportScopeImpl constructor(
-        container: DeclarationDescriptor,
-        val namer: ObjCExportNamer,
-        override val parent: ObjCExportScope?,
+    container: DeclarationDescriptor,
+    val namer: ObjCExportNamer,
+    override val parent: ObjCExportScope?,
 ) : ObjCClassExportScope {
     private val typeParameterNames: List<TypeParameterDescriptor> =
-            if (container is ClassDescriptor && !container.isInterface) {
-                container.typeConstructor.parameters
-            } else {
-                emptyList<TypeParameterDescriptor>()
-            }
+        if (container is ClassDescriptor && !container.isInterface) {
+            container.typeConstructor.parameters
+        } else {
+            emptyList<TypeParameterDescriptor>()
+        }
 
     override fun getGenericTypeUsage(typeParameterDescriptor: TypeParameterDescriptor?): ObjCGenericTypeUsage? {
         return typeParameterDescriptor?.let { descriptor ->

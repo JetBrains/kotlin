@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtFile
 @InternalKotlinNativeApi
 fun ObjCExportLazy.dumpObjCHeader(files: Collection<KtFile>, outputFile: String, shouldExportKDoc: Boolean) {
     val lines = (this.generateBase() + files.flatMap { this.translate(it) })
-            .flatMap { StubRenderer.render(it, shouldExportKDoc) + listOf("") }
+        .flatMap { StubRenderer.render(it, shouldExportKDoc) + listOf("") }
 
     File(outputFile).writeLines(lines)
 }

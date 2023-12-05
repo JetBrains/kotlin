@@ -106,11 +106,11 @@ class InteropBuiltIns(builtIns: KonanBuiltIns) {
 }
 
 private fun MemberScope.getContributedVariables(name: String) =
-        this.getContributedVariables(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
+    this.getContributedVariables(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
 
 internal fun MemberScope.getContributedClass(name: String): ClassDescriptor =
-        this.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BUILTINS) as ClassDescriptor
+    this.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BUILTINS) as ClassDescriptor
 
 private fun MemberScope.getContributedFunctions(name: String) =
-        this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
+    this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
 

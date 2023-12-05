@@ -18,14 +18,14 @@ import org.jetbrains.kotlin.name.isSubpackageOf
 @InternalKotlinNativeApi
 class MainPackageGuesser {
     fun guess(
-            moduleDescriptor: ModuleDescriptor,
-            includedLibraryDescriptors: List<ModuleDescriptor>,
-            exportedDependencies: List<ModuleDescriptor>,
+        moduleDescriptor: ModuleDescriptor,
+        includedLibraryDescriptors: List<ModuleDescriptor>,
+        exportedDependencies: List<ModuleDescriptor>,
     ): FqName {
         // Consider exported libraries only if we cannot infer the package from sources or included libs.
         return guessMainPackage(includedLibraryDescriptors + moduleDescriptor)
-                ?: guessMainPackage(exportedDependencies)
-                ?: FqName.ROOT
+            ?: guessMainPackage(exportedDependencies)
+            ?: FqName.ROOT
     }
 
     private fun guessMainPackage(modules: List<ModuleDescriptor>): FqName? {
@@ -38,12 +38,12 @@ class MainPackageGuesser {
         }
 
         val nonEmptyPackages = allPackages
-                .filter { it.getMemberScope().getContributedDescriptors().isNotEmpty() }
-                .map { it.fqName }.distinct()
+            .filter { it.getMemberScope().getContributedDescriptors().isNotEmpty() }
+            .map { it.fqName }.distinct()
 
         return allPackages.map { it.fqName }.distinct()
-                .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
-                // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
-                .maxByOrNull { it.asString().length }
+            .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
+            // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
+            .maxByOrNull { it.asString().length }
     }
 }

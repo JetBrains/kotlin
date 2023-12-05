@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 internal fun createObjCExportNamerConfiguration(
     topLevelNamePrefix: String = "",
-    additionalPrefix: (moduleName: Name) -> String? = { null }
+    additionalPrefix: (moduleName: Name) -> String? = { null },
 ): ObjCExportNamer.Configuration {
     return object : ObjCExportNamer.Configuration {
         override val topLevelNamePrefix: String get() = topLevelNamePrefix
@@ -30,7 +30,7 @@ internal fun createObjCExportNamerConfiguration(
 internal fun createObjCExportMapper(
     deprecationResolver: DeprecationResolver? = null,
     local: Boolean = false,
-    unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport = UnitSuspendFunctionObjCExport.DEFAULT
+    unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport = UnitSuspendFunctionObjCExport.DEFAULT,
 ): ObjCExportMapper {
     return ObjCExportMapper(deprecationResolver, local, unitSuspendFunctionObjCExport)
 }
