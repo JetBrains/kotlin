@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
@@ -54,9 +53,9 @@ interface ObjCExportLazy {
             get() = false
     }
 
-    fun generateBase(): List<ObjCTopLevel<*>>
+    fun generateBase(): List<ObjCTopLevel>
 
-    fun translate(file: KtFile): List<ObjCTopLevel<*>>
+    fun translate(file: KtFile): List<ObjCTopLevel>
 }
 
 @JvmOverloads
@@ -113,11 +112,11 @@ class ObjCExportLazyImpl(
 
     override fun generateBase() = translator.generateBaseDeclarations()
 
-    override fun translate(file: KtFile): List<ObjCTopLevel<*>> =
+    override fun translate(file: KtFile): List<ObjCTopLevel> =
         translateClasses(file) + translateTopLevels(file)
 
-    private fun translateClasses(container: KtDeclarationContainer): List<ObjCClass<*>> {
-        val result = mutableListOf<ObjCClass<*>>()
+    private fun translateClasses(container: KtDeclarationContainer): List<ObjCClass> {
+        val result = mutableListOf<ObjCClass>()
         container.declarations.forEach { declaration ->
             // Supposed to be true if ObjCExportMapper.shouldBeVisible is true.
             if (declaration is KtClassOrObject && declaration.isPublic && declaration !is KtEnumEntry
@@ -136,7 +135,7 @@ class ObjCExportLazyImpl(
         return result
     }
 
-    private fun translateClass(ktClassOrObject: KtClassOrObject): ObjCClass<*> {
+    private fun translateClass(ktClassOrObject: KtClassOrObject): ObjCClass {
         val name = nameTranslator.getClassOrProtocolName(ktClassOrObject)
 
         // Note: some attributes may be missing (e.g. "unavailable" for unexposed classes).
@@ -324,13 +323,12 @@ class ObjCExportLazyImpl(
 
     private class LazyObjCProtocolImpl(
         name: ObjCExportNamer.ClassOrProtocolName,
-        override val psi: KtClassOrObject,
+        private val psi: KtClassOrObject,
         private val lazy: ObjCExportLazyImpl,
     ) : LazyObjCProtocol(name) {
-        override val descriptor: ClassDescriptor by lazy { lazy.resolve(psi) }
+        private val descriptor: ClassDescriptor by lazy { lazy.resolve(psi) }
 
-        override val isValid: Boolean
-            get() = lazy.isValid
+        override val origin: ObjCExportStubOrigin? by lazy { ObjCExportStubOrigin(descriptor) }
 
         override fun computeRealStub(): ObjCProtocol = lazy.translator.translateInterface(descriptor)
     }
@@ -339,13 +337,12 @@ class ObjCExportLazyImpl(
         name: ObjCExportNamer.ClassOrProtocolName,
         attributes: List<String>,
         generics: List<ObjCGenericTypeDeclaration>,
-        override val psi: KtClassOrObject,
+        private val psi: KtClassOrObject,
         private val lazy: ObjCExportLazyImpl,
     ) : LazyObjCInterface(name = name, generics = generics, categoryName = null, attributes = attributes) {
-        override val descriptor: ClassDescriptor by lazy { lazy.resolve(psi) }
+        private val descriptor: ClassDescriptor by lazy { lazy.resolve(psi) }
 
-        override val isValid: Boolean
-            get() = lazy.isValid
+        override val origin: ObjCExportStubOrigin? by lazy { ObjCExportStubOrigin(descriptor) }
 
         override fun computeRealStub(): ObjCInterface = lazy.translator.translateClass(descriptor)
     }
@@ -356,14 +353,8 @@ class ObjCExportLazyImpl(
         private val declarations: List<KtCallableDeclaration>,
         private val lazy: ObjCExportLazyImpl,
     ) : LazyObjCInterface(name = name, generics = emptyList(), categoryName = null, attributes = listOf(OBJC_SUBCLASSING_RESTRICTED)) {
-        override val descriptor: ClassDescriptor?
-            get() = null
 
-        override val isValid: Boolean
-            get() = lazy.isValid
-
-        override val psi: PsiElement?
-            get() = null
+        override val origin: Nothing? = null
 
         override fun computeRealStub(): ObjCInterface = lazy.translator.translateFile(
             PsiSourceFile(file),
@@ -382,14 +373,8 @@ class ObjCExportLazyImpl(
         private val declarations: List<KtCallableDeclaration>,
         private val lazy: ObjCExportLazyImpl,
     ) : LazyObjCInterface(name = name.objCName, generics = emptyList(), categoryName = categoryName, attributes = emptyList()) {
-        override val descriptor: ClassDescriptor?
-            get() = null
 
-        override val isValid: Boolean
-            get() = lazy.isValid
-
-        override val psi: PsiElement?
-            get() = null
+        override val origin: ObjCExportStubOrigin? = ObjCExportStubOrigin(classDescriptor)
 
         override fun computeRealStub(): ObjCInterface = lazy.translator.translateExtensions(
             classDescriptor,
@@ -400,27 +385,25 @@ class ObjCExportLazyImpl(
     }
 }
 
-private abstract class LazyObjCInterface : ObjCInterface {
+private abstract class LazyObjCInterface(
+    override val name: String,
+    override val generics: List<ObjCGenericTypeDeclaration>,
+    override val categoryName: String?,
+    override val attributes: List<String>,
+) : ObjCInterface() {
 
     constructor(
         name: ObjCExportNamer.ClassOrProtocolName,
         generics: List<ObjCGenericTypeDeclaration>,
         categoryName: String?,
         attributes: List<String>,
-    ) : super(name.objCName, generics, categoryName, attributes + name.toNameAttributes())
-
-    constructor(
-        name: String,
-        generics: List<ObjCGenericTypeDeclaration>,
-        categoryName: String,
-        attributes: List<String>,
-    ) : super(name, generics, categoryName, attributes)
+    ) : this(name.objCName, generics, categoryName, attributes + name.toNameAttributes())
 
     protected abstract fun computeRealStub(): ObjCInterface
 
     private val realStub by lazy { computeRealStub() }
 
-    override val members: List<Stub<*>>
+    override val members: List<ObjCExportStub>
         get() = realStub.members
 
     override val superProtocols: List<String>
@@ -431,17 +414,25 @@ private abstract class LazyObjCInterface : ObjCInterface {
 
     override val superClassGenerics: List<ObjCNonNullReferenceType>
         get() = realStub.superClassGenerics
+
+    final override val comment: Nothing? = null
 }
 
 private abstract class LazyObjCProtocol(
     name: ObjCExportNamer.ClassOrProtocolName,
-) : ObjCProtocol(name.objCName, name.toNameAttributes()) {
+) : ObjCProtocol() {
+
+    override val name: String = name.objCName
+
+    override val comment: Nothing? = null
+
+    override val attributes: List<String> = name.toNameAttributes()
 
     protected abstract fun computeRealStub(): ObjCProtocol
 
     private val realStub by lazy { computeRealStub() }
 
-    override val members: List<Stub<*>>
+    override val members: List<ObjCExportStub>
         get() = realStub.members
 
     override val superProtocols: List<String>

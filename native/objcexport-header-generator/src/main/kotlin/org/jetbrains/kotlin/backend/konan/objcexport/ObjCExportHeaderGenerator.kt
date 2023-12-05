@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 interface ObjCExportTranslator {
-    fun generateBaseDeclarations(): List<ObjCTopLevel<*>>
+    fun generateBaseDeclarations(): List<ObjCTopLevel>
     fun getClassIfExtension(receiverType: KotlinType): ClassDescriptor?
     fun translateFile(file: SourceFile, declarations: List<CallableMemberDescriptor>): ObjCInterface
     fun translateClass(descriptor: ClassDescriptor): ObjCInterface
@@ -66,7 +66,7 @@ class ObjCExportTranslatorImpl(
 
     private val kotlinAnyName = namer.kotlinAnyName
 
-    override fun generateBaseDeclarations(): List<ObjCTopLevel<*>> = buildTopLevel {
+    override fun generateBaseDeclarations(): List<ObjCTopLevel> = buildTopLevel {
         add {
             objCInterface(namer.kotlinAnyName, superClass = "NSObject", members = buildMembers {
                 add { ObjCMethod(null, true, ObjCInstanceType, listOf("init"), emptyList(), listOf("unavailable")) }
@@ -116,7 +116,7 @@ class ObjCExportTranslatorImpl(
         genKotlinNumbers()
     }
 
-    private fun StubBuilder<ObjCTopLevel<*>>.genKotlinNumbers() {
+    private fun StubBuilder<ObjCTopLevel>.genKotlinNumbers() {
         val members = buildMembers {
             NSNumberKind.entries.forEach {
                 add { nsNumberFactory(it, listOf("unavailable")) }
@@ -240,7 +240,7 @@ class ObjCExportTranslatorImpl(
         }
 
         val name = translateClassOrInterfaceName(descriptor)
-        val members: List<Stub<*>> = buildMembers { translateInterfaceMembers(descriptor) }
+        val members: List<ObjCExportStub> = buildMembers { translateInterfaceMembers(descriptor) }
         val superProtocols: List<String> = descriptor.superProtocols
         val comment = objCCommentOrNull(mustBeDocumentedAttributeList(descriptor.annotations))
 
@@ -315,7 +315,7 @@ class ObjCExportTranslatorImpl(
         }
 
         val superProtocols: List<String> = descriptor.superProtocols
-        val members: List<Stub<*>> = buildMembers {
+        val members: List<ObjCExportStub> = buildMembers {
             val presentConstructors = mutableSetOf<String>()
 
             descriptor.constructors
@@ -510,12 +510,12 @@ class ObjCExportTranslatorImpl(
             .filter { mapper.shouldBeExposed(it) }
             .toList()
 
-    private fun StubBuilder<Stub<*>>.translateClassMembers(descriptor: ClassDescriptor, objCExportScope: ObjCExportScope) {
+    private fun StubBuilder<ObjCExportStub>.translateClassMembers(descriptor: ClassDescriptor, objCExportScope: ObjCExportScope) {
         require(!descriptor.isInterface)
         translateClassMembers(descriptor.getExposedMembers(), objCExportScope)
     }
 
-    private fun StubBuilder<Stub<*>>.translateInterfaceMembers(descriptor: ClassDescriptor) {
+    private fun StubBuilder<ObjCExportStub>.translateInterfaceMembers(descriptor: ClassDescriptor) {
         require(descriptor.isInterface)
         translateBaseMembers(descriptor.getExposedMembers())
     }
@@ -536,7 +536,7 @@ class ObjCExportTranslatorImpl(
         }
     }
 
-    private fun StubBuilder<Stub<*>>.translateClassMembers(
+    private fun StubBuilder<ObjCExportStub>.translateClassMembers(
         members: List<CallableMemberDescriptor>,
         objCExportScope: ObjCExportScope,
     ) {
@@ -569,7 +569,7 @@ class ObjCExportTranslatorImpl(
         }
     }
 
-    private fun StubBuilder<Stub<*>>.translateBaseMembers(members: List<CallableMemberDescriptor>) {
+    private fun StubBuilder<ObjCExportStub>.translateBaseMembers(members: List<CallableMemberDescriptor>) {
         // TODO: add some marks about modality.
 
         val methods = mutableListOf<FunctionDescriptor>()
@@ -593,7 +593,10 @@ class ObjCExportTranslatorImpl(
         translatePlainMembers(methods, properties, ObjCRootExportScope)
     }
 
-    private fun StubBuilder<Stub<*>>.translatePlainMembers(members: List<CallableMemberDescriptor>, objCExportScope: ObjCExportScope) {
+    private fun StubBuilder<ObjCExportStub>.translatePlainMembers(
+        members: List<CallableMemberDescriptor>,
+        objCExportScope: ObjCExportScope,
+    ) {
         val methods = mutableListOf<FunctionDescriptor>()
         val properties = mutableListOf<PropertyDescriptor>()
 
@@ -604,7 +607,7 @@ class ObjCExportTranslatorImpl(
         translatePlainMembers(methods, properties, objCExportScope)
     }
 
-    private fun StubBuilder<Stub<*>>.translatePlainMembers(
+    private fun StubBuilder<ObjCExportStub>.translatePlainMembers(
         methods: List<FunctionDescriptor>,
         properties: List<PropertyDescriptor>,
         objCExportScope: ObjCExportScope,
@@ -804,8 +807,10 @@ class ObjCExportTranslatorImpl(
         } else emptyList()
 
         val visibilityComments = visibilityComments(method.visibility, "method")
-        val paramComments = parameters.flatMap { parameter ->
-            parameter.descriptor?.let { mustBeDocumentedParamAttributeList(parameter, descriptor = it) } ?: emptyList()
+        val paramComments = method.valueParameters.flatMap { parameterDescriptor ->
+            parameters.find { parameter -> parameter.origin?.name == parameterDescriptor.name }?.let { parameter ->
+                mustBeDocumentedParamAttributeList(parameter, descriptor = parameterDescriptor)
+            } ?: emptyList()
         }
         val annotationsComments = mustBeDocumentedAttributeList(method.annotations)
         return objCCommentOrNull(annotationsComments + paramComments + throwsComments + visibilityComments)
@@ -1118,9 +1123,9 @@ class ObjCExportTranslatorImpl(
         }
     }
 
-    private inline fun buildTopLevel(block: StubBuilder<ObjCTopLevel<*>>.() -> Unit) = buildStubs(block)
-    private inline fun buildMembers(block: StubBuilder<Stub<*>>.() -> Unit) = buildStubs(block)
-    private inline fun <S : Stub<*>> buildStubs(block: StubBuilder<S>.() -> Unit): List<S> =
+    private inline fun buildTopLevel(block: StubBuilder<ObjCTopLevel>.() -> Unit) = buildStubs(block)
+    private inline fun buildMembers(block: StubBuilder<ObjCExportStub>.() -> Unit) = buildStubs(block)
+    private inline fun <S : ObjCExportStub> buildStubs(block: StubBuilder<S>.() -> Unit): List<S> =
         StubBuilder<S>(problemCollector).apply(block).build()
 }
 
@@ -1131,7 +1136,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     val objcGenerics: Boolean,
     problemCollector: ObjCExportProblemCollector,
 ) {
-    private val stubs = mutableListOf<Stub<*>>()
+    private val stubs = mutableListOf<ObjCExportStub>()
 
     private val classForwardDeclarations = linkedSetOf<ObjCClassForwardDeclaration>()
     private val protocolForwardDeclarations = linkedSetOf<String>()
@@ -1419,7 +1424,7 @@ private fun objCInterface(
     superClass: String? = null,
     superClassGenerics: List<ObjCNonNullReferenceType> = emptyList(),
     superProtocols: List<String> = emptyList(),
-    members: List<Stub<*>> = emptyList(),
+    members: List<ObjCExportStub> = emptyList(),
     attributes: List<String> = emptyList(),
     comment: ObjCComment? = null,
 ): ObjCInterface = ObjCInterfaceImpl(
@@ -1439,7 +1444,7 @@ private fun objCProtocol(
     name: ObjCExportNamer.ClassOrProtocolName,
     descriptor: ClassDescriptor,
     superProtocols: List<String>,
-    members: List<Stub<*>>,
+    members: List<ObjCExportStub>,
     attributes: List<String> = emptyList(),
     comment: ObjCComment? = null,
 ): ObjCProtocol = ObjCProtocolImpl(

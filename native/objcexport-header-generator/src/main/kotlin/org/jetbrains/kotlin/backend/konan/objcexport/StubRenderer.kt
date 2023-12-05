@@ -5,14 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.common.serialization.extractSerializedKdocString
-import org.jetbrains.kotlin.backend.common.serialization.metadata.findKDocString
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-
 object StubRenderer {
-    fun render(stub: Stub<*>): List<String> = render(stub, false)
+    fun render(stub: ObjCExportStub): List<String> = render(stub, false)
 
     private fun findPositionToInsertGeneratedCommentLine(kDoc: List<String>, generatedCommentLine: String): Int {
         val generatedWords = generatedCommentLine.trim().split(" ").map { it.trim() }
@@ -27,7 +21,7 @@ object StubRenderer {
         return kDoc.size
     }
 
-    internal fun render(stub: Stub<*>, shouldExportKDoc: Boolean): List<String> = collect {
+    internal fun render(stub: ObjCExportStub, shouldExportKDoc: Boolean): List<String> = collect {
         stub.run {
             val (kDocEnding, commentBlockEnding) = if (comment?.contentLines == null) {
                 Pair("*/", null)  // Close kDoc with `*/`, and print nothing after empty comment
@@ -35,7 +29,7 @@ object StubRenderer {
                 Pair("", "*/")  // Don't terminate kDoc, though close comment block with `*/`
             }
             val kDoc = if (shouldExportKDoc) {
-                descriptor?.extractKDocString()?.let {
+                origin?.kdoc?.let {
                     if (it.startsWith("/**") && it.endsWith("*/")) {
                         // Nested comment is allowed inside of preformatted ``` block in kdoc but not in ObjC
                         val kdocClean = "/**${it.substring(3, it.length - 2).replace("*/", "**").replace("/*", "**")}$kDocEnding"
@@ -182,7 +176,7 @@ object StubRenderer {
         appendSuperProtocols(this@renderProtocolHeader)
     }
 
-    private fun StringBuilder.appendSuperProtocols(clazz: ObjCClass<ClassDescriptor>) {
+    private fun StringBuilder.appendSuperProtocols(clazz: ObjCClass) {
         val protocols = clazz.superProtocols
         if (protocols.isNotEmpty()) {
             protocols.joinTo(this, separator = ", ", prefix = " <", postfix = ">")
@@ -215,7 +209,7 @@ object StubRenderer {
         appendSuperProtocols(this@renderInterfaceHeader)
     }
 
-    private fun Collector.renderMembers(clazz: ObjCClass<*>, shouldExportKDoc: Boolean) {
+    private fun Collector.renderMembers(clazz: ObjCClass, shouldExportKDoc: Boolean) {
         clazz.members.forEach {
             +render(it, shouldExportKDoc)
         }
@@ -247,9 +241,4 @@ fun formatGenerics(buffer: Appendable, generics: List<Any>) {
     if (generics.isNotEmpty()) {
         generics.joinTo(buffer, separator = ", ", prefix = "<", postfix = ">")
     }
-}
-
-private fun DeclarationDescriptor.extractKDocString(): String? {
-    return (this as? DeclarationDescriptorWithSource)?.findKDocString()
-        ?: extractSerializedKdocString()
 }

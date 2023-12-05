@@ -3,15 +3,63 @@
  * that can be found in the LICENSE file.
  */
 
+@file:JvmName("ObjCExportStubKt")
+
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+
+@Deprecated("Use 'ObjCExportStub' instead", replaceWith = ReplaceWith("ObjCExportStub"))
+@Suppress("unused")
+typealias Stub<@Suppress("UNUSED_TYPEALIAS_PARAMETER") T> = ObjCExportStub
+
+sealed interface ObjCExportStub {
+    /**
+     * The ObjC name of this entity;
+     * Note: The original 'Kotlin Name' can be found in [origin]
+     */
+    val name: String
+
+    val comment: ObjCComment?
+
+
+    /**
+     * Leaves breadcrumbs, minimal information, about the origin of this stub.
+     * A [origin] can either be
+     * - [ObjCExportStubOrigin.Source] indicating that the stub was produced from Source Code (happens inside the IDE)
+     * - [ObjCExportStubOrigin.Binary] indicating that the stub was produced by deserializing a klib (Note: CLI only works in this mode)
+     * - null: Indicating that we not provide information about the origin of this stub. This can happen e.g.
+     * if the stub is just synthetically created by this tool.
+     */
+    val origin: ObjCExportStubOrigin?
+}
+
+val ObjCExportStub.psiOrNull
+    get() = when (val origin = origin) {
+        is ObjCExportStubOrigin.Source -> origin.psi
+        else -> null
+    }
+
+
+abstract class ObjCTopLevel : ObjCExportStub
+
+sealed class ObjCClass : ObjCTopLevel() {
+    abstract val attributes: List<String>
+    abstract val superProtocols: List<String>
+    abstract val members: List<ObjCExportStub>
+}
+
+abstract class ObjCProtocol : ObjCClass()
+
+abstract class ObjCInterface : ObjCClass() {
+    abstract val categoryName: String?
+    abstract val generics: List<ObjCGenericTypeDeclaration>
+    abstract val superClass: String?
+    abstract val superClassGenerics: List<ObjCNonNullReferenceType>
+}
 
 class ObjCComment(val contentLines: List<String>) {
     constructor(vararg contentLines: String) : this(contentLines.toList())
@@ -22,93 +70,146 @@ data class ObjCClassForwardDeclaration(
     val typeDeclarations: List<ObjCGenericTypeDeclaration> = emptyList(),
 )
 
-abstract class Stub<out D : DeclarationDescriptor>(val name: String, val comment: ObjCComment? = null) {
-    abstract val descriptor: D?
-    open val psi: PsiElement?
-        get() = ((descriptor as? DeclarationDescriptorWithSource)?.source as? PsiSourceElement)?.psi
-    open val isValid: Boolean
-        get() = descriptor?.module?.isValid ?: true
-}
-
-abstract class ObjCTopLevel<out D : DeclarationDescriptor>(name: String, comment: ObjCComment? = null) : Stub<D>(name, comment)
-
-abstract class ObjCClass<out D : DeclarationDescriptor>(
-    name: String,
-    val attributes: List<String>,
-    comment: ObjCComment? = null,
-) : ObjCTopLevel<D>(name, comment) {
-    abstract val superProtocols: List<String>
-    abstract val members: List<Stub<*>>
-}
-
-abstract class ObjCProtocol(
-    name: String,
-    attributes: List<String>,
-    comment: ObjCComment? = null,
-) : ObjCClass<ClassDescriptor>(name, attributes, comment)
-
 class ObjCProtocolImpl(
-    name: String,
-    override val descriptor: ClassDescriptor,
+    override val name: String,
+    override val comment: ObjCComment?,
+    override val origin: ObjCExportStubOrigin?,
+    override val attributes: List<String>,
     override val superProtocols: List<String>,
-    override val members: List<Stub<*>>,
-    attributes: List<String> = emptyList(),
-    comment: ObjCComment? = null,
-) : ObjCProtocol(name, attributes, comment)
-
-abstract class ObjCInterface(
-    name: String,
-    val generics: List<ObjCGenericTypeDeclaration>,
-    val categoryName: String?,
-    attributes: List<String>,
-    comment: ObjCComment? = null,
-) : ObjCClass<ClassDescriptor>(name, attributes, comment) {
-    abstract val superClass: String?
-    abstract val superClassGenerics: List<ObjCNonNullReferenceType>
+    override val members: List<ObjCExportStub>,
+) : ObjCProtocol() {
+    constructor(
+        name: String,
+        descriptor: ClassDescriptor,
+        superProtocols: List<String>,
+        members: List<ObjCExportStub>,
+        attributes: List<String> = emptyList(),
+        comment: ObjCComment? = null,
+    ) : this(
+        name = name,
+        comment = comment,
+        origin = ObjCExportStubOrigin(descriptor),
+        attributes = attributes,
+        superProtocols = superProtocols,
+        members = members
+    )
 }
 
 class ObjCInterfaceImpl(
-    name: String,
-    generics: List<ObjCGenericTypeDeclaration> = emptyList(),
-    override val descriptor: ClassDescriptor? = null,
-    override val superClass: String? = null,
-    override val superClassGenerics: List<ObjCNonNullReferenceType> = emptyList(),
-    override val superProtocols: List<String> = emptyList(),
-    categoryName: String? = null,
-    override val members: List<Stub<*>> = emptyList(),
-    attributes: List<String> = emptyList(),
-    comment: ObjCComment? = null,
-) : ObjCInterface(name, generics, categoryName, attributes, comment)
+    override val name: String,
+    override val comment: ObjCComment?,
+    override val origin: ObjCExportStubOrigin?,
+    override val attributes: List<String>,
+    override val superProtocols: List<String>,
+    override val members: List<ObjCExportStub>,
+    override val categoryName: String?,
+    override val generics: List<ObjCGenericTypeDeclaration>,
+    override val superClass: String?,
+    override val superClassGenerics: List<ObjCNonNullReferenceType>,
+) : ObjCInterface() {
+    constructor(
+        name: String,
+        generics: List<ObjCGenericTypeDeclaration> = emptyList(),
+        descriptor: ClassDescriptor? = null,
+        superClass: String? = null,
+        superClassGenerics: List<ObjCNonNullReferenceType> = emptyList(),
+        superProtocols: List<String> = emptyList(),
+        categoryName: String? = null,
+        members: List<ObjCExportStub> = emptyList(),
+        attributes: List<String> = emptyList(),
+        comment: ObjCComment? = null,
+    ) : this(
+        name = name,
+        comment = comment,
+        origin = ObjCExportStubOrigin(descriptor),
+        attributes = attributes,
+        superProtocols = superProtocols,
+        members = members,
+        categoryName = categoryName,
+        generics = generics,
+        superClass = superClass,
+        superClassGenerics = superClassGenerics
+    )
+}
 
 class ObjCMethod(
-    override val descriptor: DeclarationDescriptor?,
+    override val comment: ObjCComment?,
+    override val origin: ObjCExportStubOrigin?,
     val isInstanceMethod: Boolean,
     val returnType: ObjCType,
     val selectors: List<String>,
     val parameters: List<ObjCParameter>,
     val attributes: List<String>,
-    comment: ObjCComment? = null,
-) : Stub<DeclarationDescriptor>(buildMethodName(selectors, parameters), comment)
+) : ObjCExportStub {
+    constructor(
+        descriptor: DeclarationDescriptor?,
+        isInstanceMethod: Boolean,
+        returnType: ObjCType,
+        selectors: List<String>,
+        parameters: List<ObjCParameter>,
+        attributes: List<String>,
+        comment: ObjCComment? = null,
+    ) : this(
+        comment = comment,
+        origin = ObjCExportStubOrigin(descriptor),
+        isInstanceMethod = isInstanceMethod,
+        returnType = returnType,
+        selectors = selectors,
+        parameters = parameters,
+        attributes = attributes
+    )
 
-class ObjCParameter(
-    name: String,
-    override val descriptor: ParameterDescriptor?,
+    override val name: String = buildMethodName(selectors, parameters)
+}
+
+class ObjCParameter private constructor(
+    override val name: String,
+    override val origin: ObjCExportStubOrigin?,
     val type: ObjCType,
-) : Stub<ParameterDescriptor>(name)
+) : ObjCExportStub {
+
+    constructor(
+        name: String,
+        descriptor: ParameterDescriptor?,
+        type: ObjCType,
+    ) : this(
+        name = name,
+        origin = ObjCExportStubOrigin(descriptor),
+        type = type
+    )
+
+    override val comment: Nothing? = null
+}
 
 class ObjCProperty(
-    name: String,
-    override val descriptor: DeclarationDescriptorWithSource?,
+    override val name: String,
+    override val comment: ObjCComment?,
+    override val origin: ObjCExportStubOrigin?,
     val type: ObjCType,
     val propertyAttributes: List<String>,
     val setterName: String? = null,
     val getterName: String? = null,
     val declarationAttributes: List<String> = emptyList(),
-    comment: ObjCComment? = null,
-) : Stub<DeclarationDescriptorWithSource>(name, comment) {
-
-    @Deprecated("", ReplaceWith("this.propertyAttributes"), DeprecationLevel.WARNING)
-    val attributes: List<String> get() = propertyAttributes
+) : ObjCExportStub {
+    constructor(
+        name: String,
+        descriptor: DeclarationDescriptorWithSource?,
+        type: ObjCType,
+        propertyAttributes: List<String>,
+        setterName: String? = null,
+        getterName: String? = null,
+        declarationAttributes: List<String> = emptyList(),
+        comment: ObjCComment? = null,
+    ) : this(
+        name = name,
+        comment = comment,
+        origin = ObjCExportStubOrigin(descriptor),
+        type = type,
+        propertyAttributes = propertyAttributes,
+        setterName = setterName,
+        getterName = getterName,
+        declarationAttributes = declarationAttributes
+    )
 }
 
 private fun buildMethodName(selectors: List<String>, parameters: List<ObjCParameter>): String =
