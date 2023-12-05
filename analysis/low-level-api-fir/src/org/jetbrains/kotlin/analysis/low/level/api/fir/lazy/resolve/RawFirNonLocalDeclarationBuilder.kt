@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.*
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
@@ -103,8 +103,26 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     }
 
     override fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) {
-        val rewrittenTarget = functionsToRebind?.firstOrNull { it.realPsi == function.realPsi } ?: function
-        super.bindFunctionTarget(target, rewrittenTarget)
+        super.bindFunctionTarget(target, computeRebindTarget(function) ?: function)
+    }
+
+    /**
+     * @return [FirFunction] if another function should be used instead of [function] for [FirFunctionTarget]
+     *
+     * @see bindFunctionTarget
+     * @see functionsToRebind
+     */
+    private fun computeRebindTarget(function: FirFunction): FirFunction? {
+        if (functionsToRebind.isNullOrEmpty()) return null
+        val realPsi = function.realPsi
+        if (realPsi != null) {
+            return functionsToRebind.firstOrNull { it.realPsi == realPsi }
+        }
+
+        val accessor = function as? FirPropertyAccessor ?: return null
+        val accessorPsi = accessor.psi ?: return null
+
+        return functionsToRebind.firstOrNull { it is FirPropertyAccessor && it.isGetter == accessor.isGetter && it.psi == accessorPsi }
     }
 
     override fun addCapturedTypeParameters(

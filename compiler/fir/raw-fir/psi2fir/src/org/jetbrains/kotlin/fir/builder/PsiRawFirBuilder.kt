@@ -59,7 +59,10 @@ open class PsiRawFirBuilder(
     val baseScopeProvider: FirScopeProvider,
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL,
 ) : AbstractRawFirBuilder<PsiElement>(session) {
-    protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
+    protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) {
+        target.bind(function)
+    }
+
     protected open fun FirFunctionBuilder.additionalFunctionInit() {}
     protected open fun FirPropertyBuilder.additionalPropertyInit() {}
     protected open fun FirPropertyAccessorBuilder.additionalPropertyAccessorInit() {}
@@ -2080,6 +2083,7 @@ open class PsiRawFirBuilder(
                                 isExtension = receiverTypeReference != null,
                                 lazyDelegateExpression = lazyDelegateExpression,
                                 lazyBodyForGeneratedAccessors = lazyBody,
+                                ::bindFunctionTarget,
                             )
                         }
                     }

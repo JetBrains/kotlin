@@ -292,15 +292,6 @@ private fun rebindReturnExpression(returnExpression: FirStatement, newTarget: Fi
         withFirEntry("expression", returnExpression)
     }
 
-    val target = returnExpression.target
-    requireWithAttachment(target.labeledElement == oldTarget, { "Unexpected return target" }) {
-        withFirSymbolEntry("newTarget", newTarget.propertySymbol)
-        withFirSymbolEntry("oldTarget", oldTarget.propertySymbol)
-        withFirEntry("target", target.labeledElement)
-    }
-
-    target.bind(newTarget)
-
     val functionCall = returnExpression.result
     rebindFunctionCall(functionCall, newTarget, oldTarget)
 }
