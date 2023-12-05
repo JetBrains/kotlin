@@ -1,11 +1,8 @@
 // ISSUE: KT-59426
 
 // IGNORE_LIGHT_ANALYSIS
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANY
 // REASON: red code (see corresponding diagnostic test)
-
-// IGNORE_BACKEND_K2: JVM_IR, WASM
-// REASON: run-time failure (java.lang.ClassCastException: DifferentType cannot be cast to TargetType @ Kt59426Kt.consumeBuildeeReceiver)
 
 fun box(): String {
     build {

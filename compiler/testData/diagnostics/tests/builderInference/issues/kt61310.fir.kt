@@ -2,9 +2,9 @@
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
-    val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
         if (true) {
-            setTypeVariable(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>GenericBox<!>())
+            setTypeVariable(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>GenericBox<!>())
         } else {
             setTypeVariable(GenericBox<TargetType>())
         }

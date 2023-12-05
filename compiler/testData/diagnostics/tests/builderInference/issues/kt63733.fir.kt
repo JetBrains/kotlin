@@ -8,10 +8,10 @@ fun test() {
         setBoundedTypeVariable(TargetType())
         setBoundedTypeVariable(DifferentType())
     }
-    val buildee = <!NEW_INFERENCE_ERROR!>boundedBuild {
+    val buildee = boundedBuild {
         setBoundedTypeVariable(TargetType())
-        setBoundedTypeVariable(DifferentType())
-    }<!>
+        setBoundedTypeVariable(<!ARGUMENT_TYPE_MISMATCH!>DifferentType()<!>)
+    }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
     checkExactType<BoundedBuildee<TargetType>>(<!ARGUMENT_TYPE_MISMATCH("BoundedBuildee<TargetType>; BoundedBuildee<kotlin.Any>")!>buildee<!>)

@@ -1,11 +1,8 @@
 // ISSUE: KT-54664
 
 // IGNORE_LIGHT_ANALYSIS
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANY
 // REASON: red code (see corresponding diagnostic test)
-
-// IGNORE_BACKEND_K2: JVM_IR, WASM
-// REASON: run-time failure (java.lang.ClassCastException: TargetType cannot be cast to DifferentType @ Kt54664Kt.consumeDifferentTypeCallable)
 
 fun box(): String {
     build {

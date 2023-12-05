@@ -2,11 +2,8 @@
 // WITH_STDLIB
 
 // IGNORE_LIGHT_ANALYSIS
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANY
 // REASON: red code (see corresponding diagnostic test)
-
-// IGNORE_BACKEND_K2: JVM_IR, WASM
-// REASON: run-time failure (java.lang.ArrayStoreException: TargetType @ Kt63840aKt$box$1.invoke)
 
 fun box(): String {
     build {
