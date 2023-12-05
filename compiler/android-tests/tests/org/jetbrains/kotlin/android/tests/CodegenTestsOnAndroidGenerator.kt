@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -307,7 +308,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 }
 
                 if (!InTextDirectivesUtils.isPassingTarget(backend.compatibleWith, file) ||
-                    InTextDirectivesUtils.isIgnoredTarget(TargetBackend.ANDROID, file)
+                    InTextDirectivesUtils.isIgnoredTarget(
+                        TargetBackend.ANDROID, file, /*includeAny=*/ true, *IGNORE_BACKEND_DIRECTIVE_PREFIXES
+                    )
                 ) {
                     continue
                 }
