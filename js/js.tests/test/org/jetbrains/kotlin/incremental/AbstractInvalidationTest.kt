@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
@@ -81,12 +82,17 @@ abstract class AbstractInvalidationTest(
     }
 
     private val zipAccessor = ZipFileSystemCacheableAccessor(2)
+
+    private val rootDisposable = TestDisposable("${AbstractInvalidationTest::class.simpleName}.rootDisposable")
+
     protected val environment =
-        KotlinCoreEnvironment.createForParallelTests(
-            TestDisposable("${AbstractInvalidationTest::class.simpleName}.rootDisposable"),
-            CompilerConfiguration(),
-            EnvironmentConfigFiles.JS_CONFIG_FILES,
-        )
+        KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+
+    @AfterEach
+    protected fun disposeEnvironment() {
+        // The test is run with `Lifecycle.PER_METHOD` (as it's the default), so the disposable needs to be disposed after each test.
+        Disposer.dispose(rootDisposable)
+    }
 
     @AfterEach
     protected fun clearZipAccessor() {
