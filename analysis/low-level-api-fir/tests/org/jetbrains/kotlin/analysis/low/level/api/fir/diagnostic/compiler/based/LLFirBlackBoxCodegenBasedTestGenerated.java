@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBoxCodegenBasedTest {
     @Test
     public void testAllFilesPresentInBox() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "cinterop");
     }
 
     @Nested

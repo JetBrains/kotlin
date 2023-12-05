@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.DISABLE_N
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.DISABLE_NATIVE_K1
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.DISABLE_NATIVE_K2
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K1
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K2
@@ -168,7 +169,9 @@ private class ExtTestDataFile(
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
-        return TestCompilerArgs(args)
+        val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)
+            ?.flatMap { it.split(" ") }
+        return TestCompilerArgs(args, freeCInteropArgs ?: emptyList())
     }
 
     fun createTestCase(settings: Settings, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
@@ -250,6 +253,8 @@ private class ExtTestDataFile(
             basePackageName.child(oldPackageName)
         }
 
+        val packagesOfDefFiles = defFiles.map { Name.identifier(it.name.removeSuffix(".def")) }
+
         filesToTransform.forEach { handler ->
             handler.accept(object : KtVisitor<Unit, Set<Name>>() {
                 override fun visitKtElement(element: KtElement, parentAccessibleDeclarationNames: Set<Name>) {
@@ -292,6 +297,8 @@ private class ExtTestDataFile(
                         || importedFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
                         || importedFqName.startsWith(KOTLINX_PACKAGE_NAME)
                         || importedFqName.startsWith(HELPERS_PACKAGE_NAME)
+                        || importedFqName.startsWith(CNAMES_PACKAGE_NAME)
+                        || packagesOfDefFiles.any { importedFqName.startsWith(it) }
                     ) {
                         return
                     }
@@ -583,6 +590,7 @@ private class ExtTestDataFile(
         private val OPT_IN_ANNOTATION_NAME = Name.identifier("OptIn")
         private val HELPERS_PACKAGE_NAME = Name.identifier("helpers")
         private val KOTLINX_PACKAGE_NAME = Name.identifier("kotlinx")
+        private val CNAMES_PACKAGE_NAME = Name.identifier("cnames")
 
         private val MANDATORY_SOURCE_TRANSFORMERS: ExternalSourceTransformers = listOf(DiagnosticsRemovingSourceTransformer)
     }
@@ -611,23 +619,25 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable?) : T
 
         val directives: Directives get() = filesAndModules.directives
 
+        val defFiles: List<KtFile> = filesAndModules.parsedFiles.filter { it.key.name.endsWith(".def") }.map { it.value }
         val filesToTransform: Iterable<CurrentFileHandler>
-            get() = filesAndModules.parsedFiles.map { (extTestFile, psiFile) ->
-                object : CurrentFileHandler {
-                    override val packageFqName get() = psiFile.packageFqName
-                    override val module = object : CurrentFileHandler.ModuleHandler {
-                        override fun markAsMain() {
-                            extTestFile.module.isMain = true
+            get() = filesAndModules.parsedFiles.filter { it.key.name.endsWith(".kt") }
+                .map { (extTestFile, psiFile) ->
+                    object : CurrentFileHandler {
+                        override val packageFqName get() = psiFile.packageFqName
+                        override val module = object : CurrentFileHandler.ModuleHandler {
+                            override fun markAsMain() {
+                                extTestFile.module.isMain = true
+                            }
+                        }
+                        override val psiFactory get() = this@ExtTestDataFileStructureFactory.psiFactory
+
+                        override fun accept(visitor: KtVisitor<*, *>): Unit = psiFile.accept(visitor)
+                        override fun <D> accept(visitor: KtVisitor<*, D>, data: D) {
+                            psiFile.accept(visitor, data)
                         }
                     }
-                    override val psiFactory get() = this@ExtTestDataFileStructureFactory.psiFactory
-
-                    override fun accept(visitor: KtVisitor<*, *>): Unit = psiFile.accept(visitor)
-                    override fun <D> accept(visitor: KtVisitor<*, D>, data: D) {
-                        psiFile.accept(visitor, data)
-                    }
                 }
-            }
 
         fun addFileToMainModule(fileName: String, text: String): Unit = filesAndModules.addFileToMainModule(fileName, text)
 

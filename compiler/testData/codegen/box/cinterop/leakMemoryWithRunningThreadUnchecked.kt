@@ -1,6 +1,6 @@
+// TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: leakMemoryWithRunningThreadUnchecked.def
-package leakMemoryWithRunningThreadUnchecked
 ---
 void test_RunInNewThread(void (*)());
 
@@ -58,7 +58,7 @@ fun ensureInititalized() {
     global.value = 1
 }
 
-fun main() {
+fun box(): String {
     Platform.isMemoryLeakCheckerActive = true
     kotlin.native.runtime.Debugging.forceCheckedShutdown = false
     assertTrue(global.value == 0)
@@ -67,4 +67,6 @@ fun main() {
     assertTrue(global.value == 1)
     // Now exiting. With unchecked shutdown, we exit quietly, even though there're
     // unfinished threads with runtimes.
+
+    return "OK"
 }

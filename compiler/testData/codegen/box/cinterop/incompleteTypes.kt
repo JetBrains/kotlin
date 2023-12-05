@@ -1,11 +1,12 @@
-// FREE_CINTEROP_ARGS: -header library.h
+// FREE_CINTEROP_ARGS: -header incompleteTypes.h
 
+// TARGET_BACKEND: NATIVE
 // MODULE: cinterop
-// FILE: library.def
+// FILE: incompleteTypes.def
 # The def file is intentionally empty
-# `library.h` is meant to be included via `-header` option of cinterop tool
+# `incompleteTypes.h` is meant to be included via `-header` option of cinterop tool
 
-// FILE: library.h
+// FILE: incompleteTypes.h
 #ifdef __cplusplus
 extern "C" {
     #endif
@@ -34,9 +35,9 @@ extern "C" {
 }
 #endif
 
-// FILE: library.cpp
+// FILE: incompleteTypes.cpp
 #include <string>
-#include "library.h"
+#include "incompleteTypes.h"
 
 extern "C" {
 
@@ -94,11 +95,11 @@ extern "C" {
 
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
-import library.*
+import incompleteTypes.*
 import kotlinx.cinterop.*
 import kotlin.test.*
 
-fun main() {
+fun box(): String {
     assertNotNull(s.ptr)
     assertNotNull(u.ptr)
     assertNotNull(array)
@@ -119,4 +120,5 @@ fun main() {
     for (i in 0 until arrayLength()) {
         assertEquals(0x1, array[i])
     }
+    return "OK"
 }

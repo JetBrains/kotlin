@@ -1,3 +1,4 @@
+// TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: kt44283.def
 ---
@@ -39,7 +40,7 @@ import kotlin.test.*
 val callbackCounter = AtomicInt(0)
 
 @ExperimentalForeignApi
-fun main() {
+fun box(): String {
     val func = staticCFunction<CValue<TestStruct>, Unit> {
         kotlin.native.runtime.GC.collect() // Helps to ensure that "runtime" is already initialized.
 
@@ -52,4 +53,6 @@ fun main() {
     assertEquals(0, callbackCounter.value)
     invokeFromThread(func.reinterpret())
     assertEquals(1, callbackCounter.value)
+
+    return "OK"
 }

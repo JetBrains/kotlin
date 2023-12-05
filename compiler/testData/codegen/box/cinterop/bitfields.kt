@@ -4,6 +4,7 @@
  */
 // May need disabling when gcSchedulerType=aggressive . since it may be too slow
 
+// TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: bitfields.def
 ---
@@ -119,7 +120,7 @@ fun test(s: S, x1: Long, x2: B2, x3: UShort, x4: UInt, x5: Int, x6: Long, x7: E,
     check(s, x1, x2, x3, x4, x5, x6, x7, x8, x9)
 }
 
-fun main(args: Array<String>) {
+fun box(): String {
     memScoped {
         val s = alloc<S>()
         for (x1 in -1L..0L)
@@ -133,4 +134,5 @@ fun main(args: Array<String>) {
                                         for (x9 in intArrayOf(-8, -2, -1, 0, 5, 7)) // 4 bits width
                                             test(s, x1, x2, x3.toUShort(), x4, x5, x6, x7, x8, x9)
     }
+    return "OK"
 }

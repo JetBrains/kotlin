@@ -322,11 +322,17 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
 
         testClass<AbstractLLFirBlackBoxCodegenBasedTest> {
-            model("codegen/box")
+            model(
+                "codegen/box",
+                excludeDirs = listOf("cinterop")  // CInterop tests contain .DEF .H .CPP .M files, which are invalid for Compiler Core new test system
+            )
         }
 
         testClass<AbstractLLFirReversedBlackBoxCodegenBasedTest> {
-            model("codegen/box")
+            model(
+                "codegen/box",
+                excludeDirs = listOf("cinterop")  // CInterop tests contain .DEF .H .CPP .M files, which are invalid for Compiler Core new test system
+            )
         }
 
         testClass<AbstractLLFirBlackBoxCodegenBasedTest>(suiteTestClassName = "LLFirBlackBoxModernJdkCodegenBasedTestGenerated") {

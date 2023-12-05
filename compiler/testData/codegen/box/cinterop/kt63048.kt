@@ -1,3 +1,4 @@
+// TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: kt63048.def
 language = Objective-C
@@ -42,7 +43,9 @@ class ImplWithoutOverride : WithClassProperty() {
     }
 }
 
-fun main() {
+fun box(): String {
     assertEquals("42", Impl.stringProperty())
     assertEquals("153", ImplWithoutOverride.stringProperty())
+
+    return "OK"
 }
