@@ -22,7 +22,6 @@ fun Implementation.generateCode(generationPath: File): GeneratedFile =
         this.typeName,
         fileSuppressions = listOf("DuplicatedCode", "unused"),
     ) {
-        addAllImports(usedTypes)
         ImplementationPrinter(this).printImplementation(this@generateCode)
     }
 

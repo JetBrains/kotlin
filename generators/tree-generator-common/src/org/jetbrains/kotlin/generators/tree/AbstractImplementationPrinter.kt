@@ -32,6 +32,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
 
     context(ImportCollector)
     fun printImplementation(implementation: Implementation) {
+        addAllImports(implementation.additionalImports)
         printer.run {
             buildSet {
                 if (implementation.requiresOptIn) {

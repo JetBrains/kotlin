@@ -208,7 +208,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isCrossinline", boolean)
         +field("isNoinline", boolean)
         +field("isHidden", boolean) {
-            usedTypes.add(idSignatureType)
+            additionalImports.add(idSignatureType)
             kDoc = """
             If `true`, the value parameter does not participate in [IdSignature] computation.
 
@@ -487,7 +487,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("name", type<Name>(), mutable = false)
         +field("irBuiltins", type(Packages.tree, "IrBuiltIns"), mutable = false)
         +listField("files", file, mutability = MutableList)
-        usedTypes += ArbitraryImportable(Packages.tree, "UNDEFINED_OFFSET")
+        additionalImports += ArbitraryImportable(Packages.tree, "UNDEFINED_OFFSET")
         +field("startOffset", int, mutable = false) {
             baseGetter = "UNDEFINED_OFFSET"
         }
@@ -722,8 +722,8 @@ object IrTree : AbstractTreeBuilder() {
             visibility = Visibility.PROTECTED
         }
 
-        usedTypes += ArbitraryImportable(Packages.exprs, "checkArgumentSlotAccess")
         generationCallback = {
+            addImport(ArbitraryImportable(Packages.exprs, "checkArgumentSlotAccess"))
             val indexParam = FunctionParameter("index", StandardTypes.int)
             val valueArgumentParam = FunctionParameter("valueArgument", expression.copy(nullable = true))
             val typeArgumentParam = FunctionParameter("type", irTypeType.copy(nullable = true))

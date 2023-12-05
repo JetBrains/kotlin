@@ -156,7 +156,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
          * Note that classes referenced in field types will be imported automatically.
          */
         fun additionalImports(vararg importables: Importable) {
-            importables.forEach { implementation.usedTypes += it }
+            implementation.additionalImports.addAll(importables)
         }
 
         /**

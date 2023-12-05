@@ -42,7 +42,14 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
 
     override val packageName = element.packageName + ".impl"
 
-    val usedTypes = mutableListOf<Importable>()
+    /**
+     * Types/functions that you want to additionally import in the file with the implementation class.
+     *
+     * This is useful if, for example, default values of fields reference classes or functions from other packages.
+     *
+     * Note that classes referenced in field types will be imported automatically.
+     */
+    val additionalImports = mutableListOf<Importable>()
 
     init {
         @Suppress("UNCHECKED_CAST")

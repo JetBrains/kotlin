@@ -137,7 +137,6 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
 
 fun printElements(generationPath: File, model: Model) = model.elements.map { element ->
     printGeneratedType(generationPath, TREE_GENERATOR_README, element.packageName, element.typeName) {
-        addAllImports(element.usedTypes)
         ElementPrinter(this).printElement(element)
     }
 }

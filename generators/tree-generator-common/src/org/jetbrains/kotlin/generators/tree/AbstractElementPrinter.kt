@@ -31,6 +31,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
 
     context(ImportCollector)
     fun printElement(element: Element) {
+        addAllImports(element.additionalImports)
         printer.run {
             val kind = element.kind ?: error("Expected non-null element kind")
 

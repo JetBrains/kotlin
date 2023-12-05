@@ -166,6 +166,15 @@ abstract class AbstractElement<Element, Field, Implementation>(
         }
     }
 
+    /**
+     * Types/functions that you want to additionally import in the file with the element class.
+     *
+     * This is useful if, for example, default values of fields reference classes or functions from other packages.
+     *
+     * Note that classes referenced in field types will be imported automatically.
+     */
+    val additionalImports = mutableListOf<Importable>()
+
     final override fun get(fieldName: String): Field? {
         return allFields.firstOrNull { it.name == fieldName }
     }

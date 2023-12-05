@@ -124,8 +124,6 @@ class Element(
 
     override var kDoc: String? = null
 
-    val usedTypes = mutableListOf<Importable>()
-
     override fun toString() = name
 
     operator fun TypeVariable.unaryPlus() = apply {
