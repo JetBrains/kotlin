@@ -39,4 +39,21 @@ internal sealed interface TestCompilationArtifact {
         val headersDir: File get () = frameworkDir.resolve("Headers")
         val mainHeader: File get() = headersDir.resolve("$frameworkName.h")
     }
+
+    data class BinaryLibrary(val libraryFile: File, val kind: Kind) : TestCompilationArtifact {
+
+        enum class Kind {
+            STATIC, DYNAMIC
+        }
+
+        override val logFile: File get() = libraryFile.resolveSibling("${libraryFile.name}.log")
+
+        /**
+         * Might not exist if the library was compiled without a header.
+         */
+        val headerFile: File? get() {
+            val expectedFile = libraryFile.resolveSibling("${libraryFile.nameWithoutExtension}_api.h")
+            return if (expectedFile.exists()) expectedFile else null
+        }
+    }
 }

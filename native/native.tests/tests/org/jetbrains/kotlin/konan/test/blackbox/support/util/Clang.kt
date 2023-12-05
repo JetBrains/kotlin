@@ -14,15 +14,23 @@ import java.io.File
 internal fun AbstractNativeSimpleTest.compileWithClang(
     sourceFiles: List<File>,
     outputFile: File,
-    frameworkDirectories: List<File>
+    includeDirectories: List<File> = emptyList(),
+    frameworkDirectories: List<File> = emptyList(),
+    libraryDirectories: List<File> = emptyList(),
+    libraries: List<String> = emptyList(),
+    additionalLinkerFlags: List<String> = emptyList(),
 ) {
     val process = ProcessBuilder(
         "${testRunSettings.configurables.absoluteTargetToolchain}/bin/clang",
         *sourceFiles.map { it.absolutePath }.toTypedArray(),
+        *includeDirectories.flatMap { listOf("-I", it.absolutePath) }.toTypedArray(),
         "-isysroot", testRunSettings.configurables.absoluteTargetSysRoot,
         "-target", testRunSettings.configurables.targetTriple.toString(),
         "-g", "-fmodules",
         *frameworkDirectories.flatMap { listOf("-F", it.absolutePath) }.toTypedArray(),
+        *libraryDirectories.flatMap { listOf("-L", it.absolutePath) }.toTypedArray(),
+        *libraries.map { "-l$it" }.toTypedArray(),
+        *additionalLinkerFlags.toTypedArray(),
         "-o", outputFile.absolutePath
     ).redirectErrorStream(true).start()
     val clangOutput = process.inputStream.readBytes()

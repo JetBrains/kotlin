@@ -213,7 +213,10 @@ fun main() {
         // Dump KLIB metadata tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibDumpMetadataTest>(
-                suiteTestClassName = "NativeKlibDumpMetadataTestGenerated"
+                suiteTestClassName = "NativeKlibDumpMetadataTestGenerated",
+                annotations = listOf(
+                    *standalone()
+                )
             ) {
                 model("klib/dump-metadata", pattern = "^([^_](.+)).kt$", recursive = true)
             }
@@ -222,7 +225,8 @@ fun main() {
             testClass<AbstractNativeKlibDumpMetadataTest>(
                 suiteTestClassName = "FirNativeKlibDumpMetadataTestGenerated",
                 annotations = listOf(
-                    *frontendFir()
+                    *frontendFir(),
+                    *standalone(),
                 )
             ) {
                 model("klib/dump-metadata", pattern = "^([^_](.+)).kt$", recursive = true)
@@ -420,6 +424,35 @@ fun main() {
                 )
             ) {
                 model("standalone")
+            }
+        }
+        // C Export
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeCExportDynamicTest>(
+                suiteTestClassName = "CExportTestDynamicGenerated"
+            ) {
+                model("CExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCExportDynamicTest>(
+                suiteTestClassName = "FirCExportTestDynamicGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                ),
+            ) {
+                model("CExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCExportStaticTest>(
+                suiteTestClassName = "CExportTestStaticGenerated"
+            ) {
+                model("CExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCExportStaticTest>(
+                suiteTestClassName = "FirCExportTestStaticGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                ),
+            ) {
+                model("CExport", pattern = "^([^_](.+))$", recursive = false)
             }
         }
     }

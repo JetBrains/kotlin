@@ -26,10 +26,12 @@ internal class TestCompilationFactory {
     private val cachedKlibCompilations = ThreadSafeCache<KlibCacheKey, KlibCompilations>()
     private val cachedExecutableCompilations = ThreadSafeCache<ExecutableCacheKey, TestCompilation<Executable>>()
     private val cachedObjCFrameworkCompilations = ThreadSafeCache<ObjCFrameworkCacheKey, ObjCFrameworkCompilation>()
+    private val cachedBinaryLibraryCompilations = ThreadSafeCache<BinaryLibraryCacheKey, BinaryLibraryCompilation>()
 
     private data class KlibCacheKey(val sourceModules: Set<TestModule>, val freeCompilerArgs: TestCompilerArgs)
     private data class ExecutableCacheKey(val sourceModules: Set<TestModule>)
     private data class ObjCFrameworkCacheKey(val sourceModules: Set<TestModule>)
+    private data class BinaryLibraryCacheKey(val sourceModules: Set<TestModule>, val kind: BinaryLibrary.Kind)
 
     // A pair of compilations for a KLIB itself and for its static cache that are created together.
     private data class KlibCompilations(val klib: TestCompilation<KLIB>, val staticCache: TestCompilation<KLIBStaticCache>?)
@@ -79,6 +81,29 @@ internal class TestCompilationFactory {
                             StaticCacheCompilation.Options.ForIncludedLibraryWithTests(expectedExecutableArtifact, extras)
                         )
                     }
+        }
+    }
+
+    fun testCaseToBinaryLibrary(testCase: TestCase, settings: Settings, kind: BinaryLibrary.Kind): BinaryLibraryCompilation {
+        val rootModules = testCase.rootModules
+        val cacheKey = BinaryLibraryCacheKey(testCase.rootModules, kind)
+        cachedBinaryLibraryCompilations[cacheKey]?.let { return it }
+
+        val (
+            dependencies: Iterable<CompiledDependency<*>>,
+            sourceModules: Set<TestModule.Exclusive>
+        ) = getDependenciesAndSourceModules(settings, testCase.rootModules, testCase.freeCompilerArgs) {
+            ProduceStaticCache.No
+        }
+        val expectedArtifact = BinaryLibrary(settings.artifactFileForBinaryLibrary(rootModules, kind), kind = kind)
+        return cachedBinaryLibraryCompilations.computeIfAbsent(cacheKey) {
+            BinaryLibraryCompilation(
+                settings = settings,
+                freeCompilerArgs = testCase.freeCompilerArgs,
+                sourceModules = sourceModules,
+                dependencies = dependencies,
+                expectedArtifact = expectedArtifact
+            )
         }
     }
 
@@ -269,6 +294,19 @@ internal class TestCompilationFactory {
 
         private fun Settings.artifactFileForExecutable(module: TestModule.Exclusive) =
             singleModuleArtifactFile(module, get<KotlinNativeTargets>().testTarget.family.exeSuffix)
+
+        private fun Settings.pickBinaryLibrarySuffix(kind: BinaryLibrary.Kind) = when (kind) {
+            BinaryLibrary.Kind.STATIC -> get<KotlinNativeTargets>().testTarget.family.staticSuffix
+            BinaryLibrary.Kind.DYNAMIC -> get<KotlinNativeTargets>().testTarget.family.dynamicSuffix
+        }
+
+        private fun Settings.artifactFileForBinaryLibrary(modules: Set<TestModule.Exclusive>, kind: BinaryLibrary.Kind) = when (modules.size) {
+            1 -> artifactFileForBinaryLibrary(modules.first(), kind)
+            else -> multiModuleArtifactFile(modules, pickBinaryLibrarySuffix(kind))
+        }
+
+        private fun Settings.artifactFileForBinaryLibrary(module: TestModule.Exclusive, kind: BinaryLibrary.Kind) =
+            singleModuleArtifactFile(module, pickBinaryLibrarySuffix(kind))
 
         private fun Settings.artifactFileForKlib(modules: Set<TestModule>, freeCompilerArgs: TestCompilerArgs): File =
             when (modules.size) {
