@@ -257,6 +257,9 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinCompile$DefaultImpls {
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;Lorg/gradle/api/Action;)V
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinGradlePluginDsl : java/lang/annotation/Annotation {
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinHierarchyDsl {
 	public abstract fun applyHierarchyTemplate (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun applyHierarchyTemplate (Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;)V

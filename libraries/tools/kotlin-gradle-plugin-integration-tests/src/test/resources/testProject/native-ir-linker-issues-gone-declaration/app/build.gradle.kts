@@ -20,10 +20,11 @@ kotlin {
                 freeCompilerArgs.add("-Xpartial-linkage=disable")
             }
         }
-        sourceSets["commonMain"].dependencies {
-            implementation("org.sample:libb:1.0") // libb:1.0 is compatible with liba:1.0 only!
-            implementation("org.sample:liba:2.0") // liba:1.0 -> liba:2.0
-        }
+    }
+
+    sourceSets["commonMain"].dependencies {
+        implementation("org.sample:libb:1.0") // libb:1.0 is compatible with liba:1.0 only!
+        implementation("org.sample:liba:2.0") // liba:1.0 -> liba:2.0
     }
 }
 

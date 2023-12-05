@@ -13,10 +13,10 @@ repositories {
 }
 
 kotlin {
-    <SingleNativeTarget>("native") {
-        sourceSets["nativeMain"].dependencies {
-            implementation("org.sample:liba:1.0")
-        }
+    <SingleNativeTarget>("native")
+
+    sourceSets["nativeMain"].dependencies {
+        implementation("org.sample:liba:1.0")
     }
 }
 

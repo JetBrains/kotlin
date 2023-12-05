@@ -15,6 +15,7 @@ package org.jetbrains.kotlin.gradle.dsl
  * }
  * ```
  */
+@KotlinGradlePluginDsl
 interface KotlinTopLevelExtensionConfig {
 
     /**

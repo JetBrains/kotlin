@@ -11,9 +11,10 @@ kotlin {
 		}
 	}
 
+	val commonMainSourceSet = sourceSets.commonMain.get()
 	jvm("mixed") {
 		configure(listOf(compilations.create("junit"), compilations.create("testng"))) {
-			defaultSourceSet.dependsOn(sourceSets["commonMain"])
+			defaultSourceSet.dependsOn(commonMainSourceSet)
 			attributes {
 				attribute(testFrameworkAttribute, compilationName)
 			}

@@ -11,22 +11,20 @@ val jsStdlibSources = "${projectDir}/../stdlib/js/src"
 @Suppress("UNUSED_VARIABLE")
 kotlin {
     explicitApi()
-    js {
-        sourceSets {
-            val main by getting {
-                if (!kotlinBuildProperties.isInIdeaSync) {
-                    kotlin.srcDir("$jsStdlibSources/org.w3c")
-                    kotlin.srcDir("$jsStdlibSources/kotlinx")
-                    kotlin.srcDir("$jsStdlibSources/kotlin/browser")
-                    kotlin.srcDir("$jsStdlibSources/kotlin/dom")
-                }
-                dependencies {
-                    api(project(":kotlin-stdlib"))
-                }
+    js()
+
+    sourceSets {
+        val main by getting {
+            if (!kotlinBuildProperties.isInIdeaSync) {
+                kotlin.srcDir("$jsStdlibSources/org.w3c")
+                kotlin.srcDir("$jsStdlibSources/kotlinx")
+                kotlin.srcDir("$jsStdlibSources/kotlin/browser")
+                kotlin.srcDir("$jsStdlibSources/kotlin/dom")
+            }
+            dependencies {
+                api(project(":kotlin-stdlib"))
             }
         }
-        val main by compilations.getting
-        val test by compilations.getting
     }
 }
 

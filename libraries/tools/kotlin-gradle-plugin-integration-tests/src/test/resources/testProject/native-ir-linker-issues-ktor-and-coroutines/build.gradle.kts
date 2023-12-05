@@ -19,10 +19,11 @@ kotlin {
                 freeCompilerArgs.add("-Xpartial-linkage=disable")
             }
         }
-        sourceSets["commonMain"].dependencies {
-            implementation("io.ktor:ktor-client-core:1.5.4")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0-RC-native-mt")
-        }
+    }
+
+    sourceSets["commonMain"].dependencies {
+        implementation("io.ktor:ktor-client-core:1.5.4")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0-RC-native-mt")
     }
 }
 
