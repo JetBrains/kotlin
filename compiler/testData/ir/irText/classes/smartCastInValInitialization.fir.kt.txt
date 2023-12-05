@@ -1,0 +1,25 @@
+class RootBus : MessageBusImpl {
+  constructor() /* primary */ {
+    super/*MessageBusImpl*/()
+    /* <init>() */
+
+  }
+
+}
+
+open class MessageBusImpl {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val parentBus: Any?
+    get
+
+  init {
+    <this> as RootBus /*~> Unit */
+    <this> /*as RootBus */.#parentBus = null
+  }
+
+}
