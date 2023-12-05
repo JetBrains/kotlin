@@ -17,7 +17,7 @@ inline class IC(val x: Int) : IIC {
 }
 
 fun box(): String {
-    val methods = IC::class.java.interfaces.first().methods.toList()
+    val methods = IIC::class.java.methods.toList()
     require(methods.size == 2) { methods.joinToString("\n") }
     
     return "OK"
