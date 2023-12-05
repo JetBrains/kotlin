@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
@@ -121,20 +119,6 @@ class BodyResolveContext(
     val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
 
     var containingClassDeclarations: ArrayDeque<FirRegularClass> = ArrayDeque()
-
-    var resolvingDelegateExpression: FirExpression? = null
-
-    fun <T> withDelegateExpression(delegateExpression: FirExpression, f: () -> T): T {
-        val old = resolvingDelegateExpression
-        resolvingDelegateExpression = delegateExpression
-        return try {
-            f()
-        } finally {
-            resolvingDelegateExpression = old
-        }
-    }
-
-    fun isDelegateExpression(callSite: FirElement): Boolean = callSite == resolvingDelegateExpression
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts, f: () -> T): T {

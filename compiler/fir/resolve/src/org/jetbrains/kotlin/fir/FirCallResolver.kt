@@ -193,7 +193,6 @@ class FirCallResolver(
             components.file,
             containingDeclarations,
             origin = origin,
-            isDelegateExpression = components.context.isDelegateExpression(callSite),
             resolutionMode = resolutionMode,
         )
         towerResolver.reset()
@@ -727,7 +726,6 @@ class FirCallResolver(
             components.file,
             transformer.components.containingDeclarations,
             candidateForCommonInvokeReceiver = null,
-            isDelegateExpression = false,
             resolutionMode = ResolutionMode.ContextIndependent,
             // Additional things for callable reference resolve
             expectedType,

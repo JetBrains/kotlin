@@ -196,7 +196,7 @@ class FirBuilderInferenceSession2(
         if (dispatchReceiver?.isReceiverPostponed() == true) return true
         if (givenExtensionReceiverOptions.any { it.isReceiverPostponed() }) return true
         if (callInfo.arguments.any { it.isArgumentAmongPostponedQualifiedAccess() }) return true
-        if (callInfo.isDelegateExpression) return true
+        if (callInfo.resolutionMode is ResolutionMode.ContextDependent.Delegate) return true
         // For assignments
         if ((callInfo.resolutionMode as? ResolutionMode.WithExpectedType)?.expectedTypeRef?.type?.containsNotFixedTypeVariables() == true) {
             return true
