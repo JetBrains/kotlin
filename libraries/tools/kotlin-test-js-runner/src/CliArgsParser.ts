@@ -3,7 +3,6 @@ import {IgnoredTestSuitesReporting} from "./KotlinTestTeamCityConsoleAdapter";
 
 export type CliDescription = {
     version: string,
-    bin: string,
     description: string,
     usage: string,
     args: {
@@ -36,9 +35,9 @@ export class CliArgsParser {
     printUsage() {
         const description = this.description;
 
-        println(`${description.bin} v${description.version} - ${description.description}`);
+        println(`v${description.version} - ${description.description}`);
         println();
-        println(`Usage: ${description.bin} ${description.usage}`);
+        println(`Usage: ${description.usage}`);
         println();
         for (let key in description.args) {
             const data = description.args[key];
@@ -119,7 +118,6 @@ export class CliArgsParser {
 export function getDefaultCliDescription(): CliDescription {
     return {
         version: VERSION,
-        bin: BIN,
         description: DESCRIPTION,
         usage: "[-t --tests] [-e --exclude] <module_name1>, <module_name2>, ..",
         args: {

@@ -50,7 +50,7 @@ tasks {
     register<YarnTask>("yarnBuild") {
         group = "build"
 
-        dependsOn("yarn")
+        dependsOn("yarn", "cleanLib", "fromStaticToLib")
         workingDir.set(projectDir)
         args.set(listOf("build"))
 
@@ -76,12 +76,32 @@ tasks {
         outputs.dir("lib")
     }
 
-    register<Delete>("cleanYarn") {
+    register<Copy>("fromStaticToLib") {
+        group = "build"
+
+        dependsOn("cleanLib")
+
+        copy {
+            from(projectDir.resolve("static"))
+            into("lib")
+        }
+    }
+
+    register<Delete>("cleanLib") {
         group = "build"
 
         delete = setOf(
-            "node_modules",
             "lib",
+        )
+    }
+
+    register<Delete>("cleanYarn") {
+        group = "build"
+
+        dependsOn("cleanLib")
+
+        delete = setOf(
+            "node_modules",
             ".rpt2_cache"
         )
     }

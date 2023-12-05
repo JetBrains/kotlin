@@ -116,7 +116,6 @@ function plugins() {
                        global_defs: {
                            DEBUG: false,
                            VERSION: pckg.version,
-                           BIN: Object.keys(pckg.bin)[0],
                            DESCRIPTION: pckg.description
                        }
                    }
