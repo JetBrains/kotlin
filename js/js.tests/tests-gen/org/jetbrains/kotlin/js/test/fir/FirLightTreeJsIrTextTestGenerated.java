@@ -2459,6 +2459,12 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         }
 
         @Test
+        @TestMetadata("noErrorTypeAfterCaptureApproximation.kt")
+        public void testNoErrorTypeAfterCaptureApproximation() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/noErrorTypeAfterCaptureApproximation.kt");
+        }
+
+        @Test
         @TestMetadata("readWriteProperty.kt")
         public void testReadWriteProperty() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/readWriteProperty.kt");
@@ -2860,6 +2866,12 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         @TestMetadata("newInferenceFixationOrder1.kt")
         public void testNewInferenceFixationOrder1() throws Exception {
             runTest("compiler/testData/ir/irText/regressions/newInferenceFixationOrder1.kt");
+        }
+
+        @Test
+        @TestMetadata("noSyntheticTypeParameterLeftAfterPCLA.kt")
+        public void testNoSyntheticTypeParameterLeftAfterPCLA() throws Exception {
+            runTest("compiler/testData/ir/irText/regressions/noSyntheticTypeParameterLeftAfterPCLA.kt");
         }
 
         @Test

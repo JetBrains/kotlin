@@ -17110,15 +17110,39 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("bothOuterAndProperConstraints.kt")
+                public void testBothOuterAndProperConstraints() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/bothOuterAndProperConstraints.kt");
+                }
+
+                @Test
                 @TestMetadata("builderInferenceAnnotationInLambdaWithTVExpectedType.kt")
                 public void testBuilderInferenceAnnotationInLambdaWithTVExpectedType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/builderInferenceAnnotationInLambdaWithTVExpectedType.kt");
                 }
 
                 @Test
+                @TestMetadata("builderPassedAsNamedArgument.kt")
+                public void testBuilderPassedAsNamedArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/builderPassedAsNamedArgument.kt");
+                }
+
+                @Test
+                @TestMetadata("callableReferenceInsideInvokeCall.kt")
+                public void testCallableReferenceInsideInvokeCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/callableReferenceInsideInvokeCall.kt");
+                }
+
+                @Test
                 @TestMetadata("changingResolveIfDontUseBuilderInference.kt")
                 public void testChangingResolveIfDontUseBuilderInference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/changingResolveIfDontUseBuilderInference.kt");
+                }
+
+                @Test
+                @TestMetadata("considerContractsOfIncompleteCalls.kt")
+                public void testConsiderContractsOfIncompleteCalls() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/considerContractsOfIncompleteCalls.kt");
                 }
 
                 @Test
@@ -17140,15 +17164,63 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("fixingDependentVariablesForReceivers.kt")
+                public void testFixingDependentVariablesForReceivers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingDependentVariablesForReceivers.kt");
+                }
+
+                @Test
+                @TestMetadata("fixingDependentVariablesForReceiversInitial.kt")
+                public void testFixingDependentVariablesForReceiversInitial() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingDependentVariablesForReceiversInitial.kt");
+                }
+
+                @Test
+                @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter.kt")
+                public void testFixingTVForLambadaWithShallowDependencyToOuter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter.kt");
+                }
+
+                @Test
+                @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter2.kt")
+                public void testFixingTVForLambadaWithShallowDependencyToOuter2() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter2.kt");
+                }
+
+                @Test
+                @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter3.kt")
+                public void testFixingTVForLambadaWithShallowDependencyToOuter3() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter3.kt");
+                }
+
+                @Test
                 @TestMetadata("incompleteCallInReturnArgumentsWithProperExpectType.kt")
                 public void testIncompleteCallInReturnArgumentsWithProperExpectType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/incompleteCallInReturnArgumentsWithProperExpectType.kt");
                 }
 
                 @Test
+                @TestMetadata("innerTvFixationFromLowerConstraints.kt")
+                public void testInnerTvFixationFromLowerConstraints() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/innerTvFixationFromLowerConstraints.kt");
+                }
+
+                @Test
                 @TestMetadata("invalidateKeys.kt")
                 public void testInvalidateKeys() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/invalidateKeys.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeExtensionReceiverWithNotFixedVariables.kt")
+                public void testInvokeExtensionReceiverWithNotFixedVariables() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/invokeExtensionReceiverWithNotFixedVariables.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeExtensionReceiverWithNotFixedVariablesInitial.kt")
+                public void testInvokeExtensionReceiverWithNotFixedVariablesInitial() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/invokeExtensionReceiverWithNotFixedVariablesInitial.kt");
                 }
 
                 @Test
@@ -17260,6 +17332,24 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("lambdaParameterForBareType.kt")
+                public void testLambdaParameterForBareType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForBareType.kt");
+                }
+
+                @Test
+                @TestMetadata("lambdaParameterTypeFixation.kt")
+                public void testLambdaParameterTypeFixation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterTypeFixation.kt");
+                }
+
+                @Test
+                @TestMetadata("manyArgsDifferentYields.kt")
+                public void testManyArgsDifferentYields() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/manyArgsDifferentYields.kt");
+                }
+
+                @Test
                 @TestMetadata("multiLambdaRestriction.kt")
                 public void testMultiLambdaRestriction() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/multiLambdaRestriction.kt");
@@ -17272,9 +17362,33 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("nestedLambdaWithLastLambdaContainingCall.kt")
+                public void testNestedLambdaWithLastLambdaContainingCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdaWithLastLambdaContainingCall.kt");
+                }
+
+                @Test
+                @TestMetadata("nestedLambdaWithNonLastYieldStatement.kt")
+                public void testNestedLambdaWithNonLastYieldStatement() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdaWithNonLastYieldStatement.kt");
+                }
+
+                @Test
+                @TestMetadata("newTvFromLamdaAreNotCountedAsProper.kt")
+                public void testNewTvFromLamdaAreNotCountedAsProper() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/newTvFromLamdaAreNotCountedAsProper.kt");
+                }
+
+                @Test
                 @TestMetadata("noBuilderInferenceRestrictionReceiverInconsistency.kt")
                 public void testNoBuilderInferenceRestrictionReceiverInconsistency() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/noBuilderInferenceRestrictionReceiverInconsistency.kt");
+                }
+
+                @Test
+                @TestMetadata("overloadResolutionByLambdaReturnTypeInsideBI.kt")
+                public void testOverloadResolutionByLambdaReturnTypeInsideBI() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/overloadResolutionByLambdaReturnTypeInsideBI.kt");
                 }
 
                 @Test
@@ -17341,6 +17455,24 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 @TestMetadata("specialCallsWithLambdas.kt")
                 public void testSpecialCallsWithLambdas() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithLambdas.kt");
+                }
+
+                @Test
+                @TestMetadata("substitutedSyntheticPropertyUsage.kt")
+                public void testSubstitutedSyntheticPropertyUsage() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/substitutedSyntheticPropertyUsage.kt");
+                }
+
+                @Test
+                @TestMetadata("theSimplestBuilder.kt")
+                public void testTheSimplestBuilder() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/theSimplestBuilder.kt");
+                }
+
+                @Test
+                @TestMetadata("whenWithPropertyHavingSomePCLACallsWithinInitializer.kt")
+                public void testWhenWithPropertyHavingSomePCLACallsWithinInitializer() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/whenWithPropertyHavingSomePCLACallsWithinInitializer.kt");
                 }
 
                 @Test
@@ -17438,6 +17570,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                     @TestMetadata("renderingStubTypes.kt")
                     public void testRenderingStubTypes() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/renderingStubTypes.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("simpleIntersection.kt")
+                    public void testSimpleIntersection() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/simpleIntersection.kt");
                     }
 
                     @Test
@@ -41089,6 +41227,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 @TestMetadata("kt38667.kt")
                 public void testKt38667() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt38667.kt");
+                }
+
+                @Test
+                @TestMetadata("kt38667Simplified.kt")
+                public void testKt38667Simplified() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt38667Simplified.kt");
                 }
 
                 @Test
