@@ -154,16 +154,20 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
         val disposable = Disposer.newDisposable("Disposable for ${FirResolveModularizedTotalKotlinTest::class.simpleName}.processModule")
-        val configuration = createDefaultConfiguration(moduleData)
-        configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)
-        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        PsiElementFinder.EP.getPoint(environment.project)
-            .unregisterExtension(JavaElementFinder::class.java)
+        try {
+            val configuration = createDefaultConfiguration(moduleData)
+            configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)
+            val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        runAnalysis(moduleData, environment)
+            PsiElementFinder.EP.getPoint(environment.project)
+                .unregisterExtension(JavaElementFinder::class.java)
 
-        Disposer.dispose(disposable)
+            runAnalysis(moduleData, environment)
+        } finally {
+            Disposer.dispose(disposable)
+        }
+
         if (bench.hasFiles && FAIL_FAST) return ProcessorAction.STOP
         return ProcessorAction.NEXT
     }
