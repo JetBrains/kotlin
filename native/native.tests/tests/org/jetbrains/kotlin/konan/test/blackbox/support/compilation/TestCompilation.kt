@@ -256,6 +256,45 @@ internal class ObjCFrameworkCompilation(
     }
 }
 
+internal class BinaryLibraryCompilation(
+    settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
+    sourceModules: Collection<TestModule>,
+    dependencies: Iterable<TestCompilationDependency<*>>,
+    expectedArtifact: BinaryLibrary
+) : SourceBasedCompilation<BinaryLibrary>(
+    targets = settings.get(),
+    home = settings.get(),
+    classLoader = settings.get(),
+    optimizationMode = settings.get(),
+    compilerOutputInterceptor = settings.get(),
+    threadStateChecker = settings.get(),
+    sanitizer = settings.get(),
+    gcType = settings.get(),
+    gcScheduler = settings.get(),
+    allocator = settings.get(),
+    pipelineType = settings.getStageDependentPipelineType(),
+    freeCompilerArgs = freeCompilerArgs,
+    compilerPlugins = settings.get(),
+    sourceModules = sourceModules,
+    dependencies = CategorizedDependencies(dependencies),
+    expectedArtifact = expectedArtifact
+) {
+    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting
+
+    override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
+        val libraryKind = when (expectedArtifact.kind) {
+            BinaryLibrary.Kind.STATIC -> "static"
+            BinaryLibrary.Kind.DYNAMIC -> "dynamic"
+        }
+        add(
+            "-produce", libraryKind,
+            "-output", expectedArtifact.libraryFile.absolutePath
+        )
+        super.applySpecificArgs(argsBuilder)
+    }
+}
+
 internal class GivenLibraryCompilation(givenArtifact: KLIB) : TestCompilation<KLIB>() {
     override val result = TestCompilationResult.Success(givenArtifact, LoggedData.NoopCompilerCall(givenArtifact.klibFile))
 }
