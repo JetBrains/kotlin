@@ -422,8 +422,6 @@ private fun mapSystemHasContradictionError(
                     if (morePreciseDiagnosticExists) return@firstNotNullOfOrNull null
                 }
 
-                if (it is NewConstraintError && it.position.from is ExpectedTypeConstraintPosition<*>) return@firstNotNullOfOrNull null
-
                 FirErrors.NEW_INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source, message)
             }
         )
