@@ -445,6 +445,35 @@ fun main() {
                 model("standalone")
             }
         }
+        // C Export
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeCExportDynamicTest>(
+                suiteTestClassName = "CExportTestDynamicGenerated"
+            ) {
+                model("CExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCExportDynamicTest>(
+                suiteTestClassName = "FirCExportTestDynamicGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                ),
+            ) {
+                model("CExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCExportStaticTest>(
+                suiteTestClassName = "CExportTestStaticGenerated"
+            ) {
+                model("CExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCExportStaticTest>(
+                suiteTestClassName = "FirCExportTestStaticGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                ),
+            ) {
+                model("CExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
     }
 }
 
