@@ -165,7 +165,7 @@ internal fun KotlinTopLevelExtension.explicitApiModeAsCompilerArg(): String? {
     return cliOption?.let { "-Xexplicit-api=$it" }
 }
 
-@KotlinGradlePluginDsl
+@KotlinGradlePluginPublicDsl
 open class KotlinProjectExtension @Inject constructor(project: Project) : KotlinTopLevelExtension(project), KotlinSourceSetContainer, HasMutableExtras {
     final override val extras: MutableExtras = mutableExtrasOf()
 

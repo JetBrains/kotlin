@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 
-@KotlinGradlePluginDsl
+@KotlinGradlePluginPublicDsl
 interface KotlinTargetContainerWithJsPresetFunctions :
     KotlinTargetContainerWithPresetFunctions,
     KotlinJsCompilerTypeHolder {

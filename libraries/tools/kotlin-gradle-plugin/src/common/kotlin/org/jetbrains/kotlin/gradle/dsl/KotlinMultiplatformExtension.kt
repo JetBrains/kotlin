@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
-@KotlinGradlePluginDsl
+@KotlinGradlePluginPublicDsl
 abstract class KotlinMultiplatformExtension
 @InternalKotlinGradlePluginApi constructor(project: Project) :
     KotlinProjectExtension(project),
@@ -263,7 +263,7 @@ abstract class KotlinMultiplatformExtension
 }
 
 @DeprecatedTargetPresetApi
-@KotlinGradlePluginDsl
+@KotlinGradlePluginPublicDsl
 interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget> {
 
     @Deprecated(
