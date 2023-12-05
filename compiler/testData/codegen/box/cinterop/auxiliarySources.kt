@@ -1,3 +1,4 @@
+// TARGET_BACKEND: NATIVE
 // FREE_CINTEROP_ARGS: -header auxiliaryCppSources.h
 
 // MODULE: cinterop
@@ -20,7 +21,7 @@ extern "C" {
 #include <string>
 #include "auxiliaryCppSources.h"
 
-static std::string _name = "Hello from C++";
+static std::string _name = "OK";
 
 const char* name() {
     return _name.c_str();
@@ -35,6 +36,6 @@ import auxiliaryCppSources.*
 import kotlin.test.*
 import kotlinx.cinterop.*
 
-fun main() {
-    assertEquals(name()!!.toKString(), "Hello from C++")
+fun box(): String {
+    return name()!!.toKString()
 }

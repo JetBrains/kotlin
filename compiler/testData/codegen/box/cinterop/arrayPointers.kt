@@ -1,3 +1,4 @@
+// TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: carrayPointers.def
 ---
@@ -18,7 +19,7 @@ import carrayPointers.*
 import kotlin.test.*
 import kotlinx.cinterop.*
 
-fun main() {
+fun box(): String {
     arrayPointer = globalArray
     assertEquals(globalArray[0], arrayPointer!![0])
     arrayPointer!![0] = 15
@@ -29,4 +30,5 @@ fun main() {
         struct.arrayPointer = globalArray
         assertEquals(globalArray[0], struct.arrayPointer!![0])
     }
+    return "OK"
 }

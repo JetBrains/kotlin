@@ -4738,6 +4738,115 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/cinterop")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        @UsePartialLinkage(mode = Mode.DISABLED)
+        @Tag("no-partial-linkage-may-be-skipped")
+        public class Cinterop {
+            @Test
+            public void testAllFilesPresentInCinterop() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("arrayPointers.kt")
+            public void testArrayPointers() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/arrayPointers.kt");
+            }
+
+            @Test
+            @TestMetadata("auxiliarySources.kt")
+            public void testAuxiliarySources() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/auxiliarySources.kt");
+            }
+
+            @Test
+            @TestMetadata("bitfields.kt")
+            public void testBitfields() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/bitfields.kt");
+            }
+
+            @Test
+            @TestMetadata("callbacksAndVarargs.kt")
+            public void testCallbacksAndVarargs() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/callbacksAndVarargs.kt");
+            }
+
+            @Test
+            @TestMetadata("enums.kt")
+            public void testEnums() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/enums.kt");
+            }
+
+            @Test
+            @TestMetadata("forwardDeclarations.kt")
+            public void testForwardDeclarations() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/forwardDeclarations.kt");
+            }
+
+            @Test
+            @TestMetadata("funptr.kt")
+            public void testFunptr() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/funptr.kt");
+            }
+
+            @Test
+            @TestMetadata("globals.kt")
+            public void testGlobals() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/globals.kt");
+            }
+
+            @Test
+            @TestMetadata("incompleteTypes.kt")
+            public void testIncompleteTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/incompleteTypes.kt");
+            }
+
+            @Test
+            @TestMetadata("kt43265.kt")
+            public void testKt43265() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/kt43265.kt");
+            }
+
+            @Test
+            @TestMetadata("kt44283.kt")
+            public void testKt44283() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/kt44283.kt");
+            }
+
+            @Test
+            @TestMetadata("kt54284.kt")
+            public void testKt54284() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/kt54284.kt");
+            }
+
+            @Test
+            @TestMetadata("kt54284_fmodules.kt")
+            public void testKt54284_fmodules() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/kt54284_fmodules.kt");
+            }
+
+            @Test
+            @TestMetadata("kt63048.kt")
+            public void testKt63048() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/kt63048.kt");
+            }
+
+            @Test
+            @TestMetadata("leakMemoryWithRunningThreadUnchecked.kt")
+            public void testLeakMemoryWithRunningThreadUnchecked() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/leakMemoryWithRunningThreadUnchecked.kt");
+            }
+
+            @Test
+            @TestMetadata("toKString.kt")
+            public void testToKString() throws Exception {
+                runTest("compiler/testData/codegen/box/cinterop/toKString.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/classLiteral")
         @TestDataPath("$PROJECT_ROOT")
         @UseExtTestCaseGroupProvider()

@@ -1,5 +1,6 @@
 // This test mostly checks frontend behaviour.
 
+// TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: cForwardDeclarations.def
 ---
@@ -37,7 +38,7 @@ fun <T1 : T2, T2> checkSubtype2() {}
 fun checkDifferentTypes(s: StructDeclared?) = 1
 fun checkDifferentTypes(s: StructDefined?) = 2
 
-fun main() {
+fun box(): String {
     checkSubtype2<StructDeclared, COpaque>()
 
     checkSubtype2<StructDefined, CStructVar>()
@@ -50,4 +51,6 @@ fun main() {
 
     assertEquals(-1, useStructDeclared(declared?.ptr))
     assertEquals(-2, useStructDefined(defined?.ptr))
+
+    return "OK"
 }

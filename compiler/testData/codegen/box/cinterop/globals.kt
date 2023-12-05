@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+// TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: cglobals.def
 ---
@@ -20,7 +21,7 @@ int g5[2][2] = { 15, 16, 17, 18 };
 
 struct S* const g6 = &g3;
 
-void foo() {
+void globals_foo() {
     // Test that local vars are not treated as global ones.
     float g1;
 }
@@ -47,7 +48,7 @@ _Pragma("clang assume_nonnull end")
 import kotlinx.cinterop.*
 import cglobals.*
 
-fun main(args: Array<String>) {
+fun box(): String {
     assert(g1__ == 42)
 
     assert(g2 == 17)
@@ -71,4 +72,6 @@ fun main(args: Array<String>) {
 
     assert(g8.toLong() == 0x1L)
     assert(g9.toLong() == 0x2L)
+
+    return "OK"
 }
