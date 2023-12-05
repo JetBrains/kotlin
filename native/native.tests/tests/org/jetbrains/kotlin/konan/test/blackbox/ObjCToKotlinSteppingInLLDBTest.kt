@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -223,22 +224,11 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         val clangExecutableName = "clangMain"
         val executableFile = File(buildDir, clangExecutableName)
 
-        // FIXME: absoluteTargetToolchain might not work correctly with KONAN_USE_INTERNAL_SERVER because
-        // :kotlin-native:dependencies:update is not a dependency of :native:native.tests:test where this test runs
-        val process = ProcessBuilder(
-            "${testRunSettings.configurables.absoluteTargetToolchain}/bin/clang",
-            clangFile.absolutePath,
-            "-isysroot", testRunSettings.configurables.absoluteTargetSysRoot,
-            "-target", testRunSettings.configurables.targetTriple.toString(),
-            "-g", "-fmodules",
-            "-F", buildDir.absolutePath,
-            "-o", executableFile.absolutePath
-        ).redirectErrorStream(true).start()
-        val clangOutput = process.inputStream.readBytes()
-
-        check(
-            process.waitFor() == 0
-        ) { clangOutput.decodeToString() }
+        compileWithClang(
+            sourceFiles = listOf(clangFile),
+            outputFile = executableFile,
+            frameworkDirectories = listOf(buildDir),
+        )
 
         // 4. Generate the test case
         val testExecutable = TestExecutable(
