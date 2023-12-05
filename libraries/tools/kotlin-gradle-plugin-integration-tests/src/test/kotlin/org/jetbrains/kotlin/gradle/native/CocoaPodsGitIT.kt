@@ -30,8 +30,10 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import java.util.*
-import kotlin.io.path.absolutePathString
+import kotlin.io.path.*
 import kotlin.test.assertTrue
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -49,12 +51,16 @@ class CocoaPodsGitIT : KGPBaseTest() {
 
     private val templateProjectName = "native-cocoapods-template"
     private val groovyTemplateProjectName = "native-cocoapods-template-groovy"
+    private val outdatedRepoName = "native-cocoapods-outdated-repo"
 
     private val defaultPodRepo = "https://github.com/AFNetworking/AFNetworking"
     private val defaultPodName = "AFNetworking"
     private val defaultTarget = "IOS"
     private val defaultFamily = "ios"
     private val defaultSDK = "iphonesimulator"
+    private val privateSpecGitRepo = "privateSpec.git"
+    private val privateSpecName = "KMPPrivateSpec"
+    private val customPodLibraryName = "cocoapodsLibrary"
     private val cinteropTaskName = ":cinterop"
     private val defaultCinteropTaskName = cinteropTaskName + defaultPodName + defaultTarget
 
@@ -456,6 +462,70 @@ class CocoaPodsGitIT : KGPBaseTest() {
             testImport(repos = listOf(podRepo)) {
                 podImportAsserts(buildGradleKts)
             }
+        }
+    }
+
+    @DisplayName("Outdated spec repo")
+    @OptIn(EnvironmentalVariablesOverride::class)
+    @GradleTest
+    fun testOutdatedSpecRepo(
+        gradleVersion: GradleVersion,
+        @TempDir testPodsHomeDir: Path
+    ) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            outdatedRepoName,
+            gradleVersion,
+            environmentVariables = EnvironmentalVariables(mapOf("CP_HOME_DIR" to testPodsHomeDir.absolutePathString()))
+        ) {
+            val podLibrary = projectPath.resolve(customPodLibraryName)
+            val privateSpecGit = projectPath.resolve(privateSpecGitRepo)
+            val privateSpecGitUri = privateSpecGit.toUri().toString()
+
+            buildGradleKts.addSpecRepo(privateSpecGitUri)
+
+            fun podInstallSynthetic(version: String) {
+                buildGradleKts.addPod(customPodLibraryName, "version = \"$version\"")
+                build(defaultPodGenTaskName) {
+                    assertTasksExecuted(defaultPodGenTaskName)
+                }
+
+                build(defaultPodInstallSyntheticTaskName) {
+                    assertTasksExecuted(defaultPodInstallSyntheticTaskName)
+                }
+
+                buildGradleKts.removePod(customPodLibraryName)
+            }
+
+            // Create bare repo
+            runShellCommands {
+                add(listOf("git", "init", "--bare", privateSpecGit.absolutePathString()))
+            }
+
+            // Create master branch in a bare repo
+            val workingDir = projectPath.relativeTo(privateSpecGit).pathString
+            runShellCommands(privateSpecGit) {
+                add(listOf("mkdir", "-p", workingDir))
+                add(listOf("git", "--work-tree=$workingDir", "checkout", "--orphan", "master"))
+                add(listOf("git", "--work-tree=$workingDir", "add", "../$customPodLibraryName.zip"))
+                add(listOf("git", "--work-tree=$workingDir", "commit", "-m", "Initial commit"))
+            }
+
+            //Add spec repo and publish version 0.1.0
+            runShellCommands(podLibrary.resolve("0.1.0")) {
+                add(listOf("pod", "repo", "add", privateSpecName, privateSpecGitUri))
+                add(listOf("pod", "repo", "push", privateSpecName, "cocoapodsLibrary.podspec"))
+            }
+
+            podInstallSynthetic("0.1.0")
+
+            //Silently publish 0.2.0
+            val podLibSpecs = projectPath.resolve(customPodLibraryName).relativeTo(privateSpecGit).pathString
+            runShellCommands(privateSpecGit) {
+                add(listOf("git", "--work-tree=$workingDir", "add", podLibSpecs))
+                add(listOf("git", "--work-tree=$workingDir", "commit", "-m", "Bump to 0.2.0"))
+            }
+
+            podInstallSynthetic("0.2.0")
         }
     }
 

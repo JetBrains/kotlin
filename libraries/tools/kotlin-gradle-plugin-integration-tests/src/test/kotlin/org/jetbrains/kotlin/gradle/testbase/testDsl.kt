@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -604,6 +605,21 @@ private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
         |
         |$it        
         """.trimMargin()
+    }
+}
+
+internal fun TestProject.runShellCommands(path: Path = projectPath, commands: MutableList<List<String>>.() -> Unit = {}) {
+    val commandsList = mutableListOf<List<String>>()
+    commands(commandsList)
+
+    commandsList.forEach {
+        runProcess(
+            it,
+            path.toFile(),
+            environmentVariables.environmentalVariables
+        ).apply {
+            assertTrue(isSuccessful, output)
+        }
     }
 }
 
