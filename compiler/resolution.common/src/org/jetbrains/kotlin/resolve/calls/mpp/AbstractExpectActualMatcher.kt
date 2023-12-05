@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibil
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
@@ -107,20 +108,22 @@ object AbstractExpectActualMatcher {
             }
         }
 
-        val incompatibilityMap = mutableMapOf<ExpectActualMatchingCompatibility.Mismatch, MutableList<DeclarationSymbolMarker>>()
+        val matched = ArrayList<DeclarationSymbolMarker>()
+        val mismatched = HashMap<ExpectActualMatchingCompatibility.Mismatch, MutableList<DeclarationSymbolMarker>>()
         for ((actualMember, compatibility) in mapping) {
             when (compatibility) {
                 ExpectActualMatchingCompatibility.MatchedSuccessfully -> {
                     onMatchedMembers(expectMember, actualMember, expectClassSymbol, actualClassSymbol)
-                    return actualMember
+                    matched.add(actualMember)
                 }
-
-                is ExpectActualMatchingCompatibility.Mismatch -> incompatibilityMap.getOrPut(compatibility) { SmartList() }.add(actualMember)
+                is ExpectActualMatchingCompatibility.Mismatch -> mismatched.getOrPut(compatibility) { SmartList() }.add(actualMember)
             }
         }
 
-        mismatchedMembers?.add(expectMember to incompatibilityMap)
-        onMismatchedMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
+        matched.singleOrNull()?.let { return it }
+
+        mismatchedMembers?.add(expectMember to mismatched)
+        onMismatchedMembersFromClassScope(expectMember, mismatched, expectClassSymbol, actualClassSymbol)
         return null
     }
 

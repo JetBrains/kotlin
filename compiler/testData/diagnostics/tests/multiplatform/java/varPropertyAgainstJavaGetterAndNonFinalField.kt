@@ -1,6 +1,8 @@
 // MODULE: m1-common
 // FILE: common.kt
 expect class Foo {
+    // AMBIGUOUS_ACTUALS in K1, green code in K2.
+    // Reason: expect-actual matcher doesn't match fields in K2 KT-63667
     var <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>: Int
 }
 

@@ -26104,6 +26104,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("ambiguousActuals.kt")
+                public void testAmbiguousActuals() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/ambiguousActuals.kt");
+                }
+
+                @Test
                 @TestMetadata("intermediateActualHasAdditionalSupertypes.kt")
                 public void testIntermediateActualHasAdditionalSupertypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/intermediateActualHasAdditionalSupertypes.kt");

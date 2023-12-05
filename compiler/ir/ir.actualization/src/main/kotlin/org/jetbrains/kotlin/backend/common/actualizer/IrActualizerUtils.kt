@@ -55,18 +55,13 @@ internal fun recordActualForExpectDeclaration(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
     destination: MutableMap<IrSymbol, IrSymbol>,
+    diagnosticsReporter: IrDiagnosticReporter,
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclarationBase
     val actualDeclaration = actualSymbol.owner as IrDeclaration
     val registeredActual = destination.put(expectSymbol, actualSymbol)
-    require(registeredActual == null || registeredActual == actualSymbol) {
-        """
-            Expect symbol already has registered mapping
-            
-            Expect declaration: ${expectDeclaration.render()}
-            Actual declaration: ${actualDeclaration.render()}
-            Already registered: ${registeredActual!!.owner.render()}
-        """.trimIndent()
+    if (registeredActual != null && registeredActual != actualSymbol) {
+        diagnosticsReporter.reportAmbiguousActuals(expectDeclaration)
     }
     if (expectDeclaration is IrTypeParametersContainer) {
         recordTypeParametersMapping(destination, expectDeclaration, actualDeclaration as IrTypeParametersContainer)
@@ -104,6 +99,15 @@ internal fun IrDiagnosticReporter.reportMissingActual(irDeclaration: IrDeclarati
         IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
         (irDeclaration as? IrDeclarationWithName)?.name?.asString().orEmpty(),
         irDeclaration.module
+    )
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+internal fun IrDiagnosticReporter.reportAmbiguousActuals(expectSymbol: IrDeclaration) {
+    at(expectSymbol).report(
+        IrActualizationErrors.AMBIGUOUS_ACTUALS,
+        (expectSymbol as? IrDeclarationWithName)?.name?.asString().orEmpty(),
+        expectSymbol.module
     )
 }
 

@@ -83,7 +83,7 @@ class IrActualizer(
         if (!useIrFakeOverrideBuilder) {
             //   2. Actualize expect fake overrides in non-expect classes inside common or multi-platform module.
             //      It's probably important to run FakeOverridesActualizer before ActualFakeOverridesAdder
-            FakeOverridesActualizer(expectActualMap).apply { dependentFragments.forEach { visitModuleFragment(it) } }
+            FakeOverridesActualizer(expectActualMap, ktDiagnosticReporter).apply { dependentFragments.forEach { visitModuleFragment(it) } }
 
             //   3. Add fake overrides to non-expect classes inside common or multi-platform module,
             //      taken from these non-expect classes actualized super classes.

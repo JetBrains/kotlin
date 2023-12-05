@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibil
 
 internal object IrActualizationErrors {
     val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>()
+    val AMBIGUOUS_ACTUALS by error2<PsiElement, String, ModuleDescriptor>()
     val EXPECT_ACTUAL_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>()
     val EXPECT_ACTUAL_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualCheckingCompatibility.Incompatible<*>>()
     val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>()
@@ -34,6 +35,12 @@ internal object IrActualizationErrors {
 
 internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFactory() {
     override val MAP = KtDiagnosticFactoryToRendererMap("KT").also { map ->
+        map.put(
+            IrActualizationErrors.AMBIGUOUS_ACTUALS,
+            "{0} has several compatible actual declarations in modules {1}",
+            CommonRenderers.STRING,
+            IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
+        )
         map.put(
             IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
             "Expected {0} has no actual declaration in module {1}",

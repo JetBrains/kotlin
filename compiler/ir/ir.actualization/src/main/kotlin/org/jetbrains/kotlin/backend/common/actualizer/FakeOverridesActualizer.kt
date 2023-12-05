@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.isExpect
@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  * This Actualizer processes expect overridable declarations in non-expect classes and replaces them with the associated actual overridable
  * declarations overriding the actual base class members.The newly created actual fake overrides are stored in expectActualMap.
  */
-internal class FakeOverridesActualizer(private val expectActualMap: MutableMap<IrSymbol, IrSymbol>) : IrElementVisitorVoid {
+internal class FakeOverridesActualizer(
+    private val expectActualMap: MutableMap<IrSymbol, IrSymbol>,
+    private val diagnosticReporter: IrDiagnosticReporter
+) : IrElementVisitorVoid {
     override fun visitClass(declaration: IrClass) {
         if (!declaration.isExpect) {
             actualizeFakeOverrides(declaration)
@@ -47,7 +50,7 @@ internal class FakeOverridesActualizer(private val expectActualMap: MutableMap<I
             val actualizedOverrides = overriddenSymbols.map { (it.owner as IrDeclaration).actualize() }
             val actualFakeOverride = createFakeOverrideMember(actualizedOverrides, parent as IrClass)
 
-            recordActualForExpectDeclaration(this.symbol, actualFakeOverride.symbol, expectActualMap)
+            recordActualForExpectDeclaration(this.symbol, actualFakeOverride.symbol, expectActualMap, diagnosticReporter)
 
             return actualFakeOverride
         }

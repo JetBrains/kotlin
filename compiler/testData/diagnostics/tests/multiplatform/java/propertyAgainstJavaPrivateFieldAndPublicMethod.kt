@@ -5,6 +5,8 @@ interface I {
 }
 
 expect class Foo : I {
+    // AMBIGUOUS_ACTUALS in K1, green code in K2.
+    // Reason: expect-actual matcher doesn't match fields in K2 KT-63667
     override val <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>: Int
 }
 

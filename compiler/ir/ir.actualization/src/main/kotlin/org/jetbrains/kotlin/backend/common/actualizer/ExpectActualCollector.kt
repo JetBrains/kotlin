@@ -309,12 +309,12 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
         override fun onMatchedClasses(expectClassSymbol: IrClassSymbol, actualClassSymbol: IrClassSymbol) {
             destination[expectClassSymbol] = actualClassSymbol
             expectActualTracker?.reportWithCurrentFile(actualClassSymbol)
-            recordActualForExpectDeclaration(expectClassSymbol, actualClassSymbol, destination)
+            recordActualForExpectDeclaration(expectClassSymbol, actualClassSymbol, destination, diagnosticsReporter)
         }
 
         override fun onMatchedCallables(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
             expectActualTracker?.reportWithCurrentFile(actualSymbol)
-            recordActualForExpectDeclaration(expectSymbol, actualSymbol, destination)
+            recordActualForExpectDeclaration(expectSymbol, actualSymbol, destination, diagnosticsReporter)
         }
 
         override fun onIncompatibleMembersFromClassScope(
