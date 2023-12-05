@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.konan.file.File
 // Later it will accept an object with ObjC declarations instead of lines.
 class ObjCHeaderWriter {
     fun write(
-            headerName: String,
-            headerLines: List<String>,
-            headersDirectory: File,
+        headerName: String,
+        headerLines: List<String>,
+        headersDirectory: File,
     ) {
         headersDirectory.child(headerName).writeLines(headerLines)
     }

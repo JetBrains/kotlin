@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.objcinterop.*
+import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 class ObjCExportMapper(
     internal val deprecationResolver: DeprecationResolver? = null,
     private val local: Boolean = false,
-    internal val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
+    internal val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport,
 ) {
     fun getCustomTypeMapper(descriptor: ClassDescriptor): CustomTypeMapper? = CustomTypeMappers.getMapper(descriptor)
 
@@ -38,7 +38,7 @@ class ObjCExportMapper(
     fun isSpecialMapped(descriptor: ClassDescriptor): Boolean {
         // TODO: this method duplicates some of the [ObjCExportTranslatorImpl.mapReferenceType] logic.
         return KotlinBuiltIns.isAny(descriptor) ||
-                descriptor.getAllSuperClassifiers().any { it is ClassDescriptor && CustomTypeMappers.hasMapper(it) }
+            descriptor.getAllSuperClassifiers().any { it is ClassDescriptor && CustomTypeMappers.hasMapper(it) }
     }
 
     private val methodBridgeCache = mutableMapOf<FunctionDescriptor, MethodBridge>()
@@ -122,13 +122,14 @@ internal fun ClassDescriptor.isHiddenFromObjC(): Boolean = when {
 }
 
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Boolean =
-        shouldBeVisible(descriptor) && !isSpecialMapped(descriptor) && !descriptor.defaultType.isObjCObjectType()
+    shouldBeVisible(descriptor) && !isSpecialMapped(descriptor) && !descriptor.defaultType.isObjCObjectType()
 
 private fun ObjCExportMapper.isHiddenByDeprecation(descriptor: CallableMemberDescriptor): Boolean {
     // Note: ObjCExport generally expect overrides of exposed methods to be exposed.
     // So don't hide a "deprecated hidden" method which overrides non-hidden one:
     if (deprecationResolver != null && deprecationResolver.isDeprecatedHidden(descriptor) &&
-            descriptor.overriddenDescriptors.all { isHiddenByDeprecation(it) }) {
+        descriptor.overriddenDescriptors.all { isHiddenByDeprecation(it) }
+    ) {
         return true
     }
 
@@ -185,14 +186,14 @@ private fun ObjCExportMapper.isHiddenByDeprecation(descriptor: ClassDescriptor):
 
 // Note: the logic is partially duplicated in ObjCExportLazyImpl.translateClasses.
 internal fun ObjCExportMapper.shouldBeVisible(descriptor: ClassDescriptor): Boolean =
-        descriptor.isEffectivelyPublicApi && when (descriptor.kind) {
+    descriptor.isEffectivelyPublicApi && when (descriptor.kind) {
         ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
         ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
     } && !descriptor.isExpect && !descriptor.isInlined() && !isHiddenByDeprecation(descriptor) && !descriptor.isHiddenFromObjC()
 
 private fun ObjCExportMapper.isBase(descriptor: CallableMemberDescriptor): Boolean =
-        descriptor.overriddenDescriptors.all { !shouldBeExposed(it) }
-        // e.g. it is not `override`, or overrides only unexposed methods.
+    descriptor.overriddenDescriptors.all { !shouldBeExposed(it) }
+// e.g. it is not `override`, or overrides only unexposed methods.
 
 /**
  * Check that given [descriptor] is a so-called "base method", i.e. method
@@ -240,21 +241,21 @@ fun ObjCExportMapper.getBaseProperties(descriptor: PropertyDescriptor): List<Pro
 
 @Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL") // K2 warning suppression, TODO: KT-62472
 internal tailrec fun KotlinType.getErasedTypeClass(): ClassDescriptor =
-        TypeUtils.getClassDescriptor(this) ?: this.constructor.supertypes.first().getErasedTypeClass()
+    TypeUtils.getClassDescriptor(this) ?: this.constructor.supertypes.first().getErasedTypeClass()
 
 internal fun ObjCExportMapper.isTopLevel(descriptor: CallableMemberDescriptor): Boolean =
-        descriptor.containingDeclaration !is ClassDescriptor && this.getClassIfCategory(descriptor) == null
+    descriptor.containingDeclaration !is ClassDescriptor && this.getClassIfCategory(descriptor) == null
 
 internal fun ObjCExportMapper.isObjCProperty(property: PropertyDescriptor): Boolean =
-        property.extensionReceiverParameter == null || getClassIfCategory(property) != null
+    property.extensionReceiverParameter == null || getClassIfCategory(property) != null
 
 @InternalKotlinNativeApi
 fun ClassDescriptor.getEnumValuesFunctionDescriptor(): SimpleFunctionDescriptor? {
     require(this.kind == ClassKind.ENUM_CLASS)
 
     return this.staticScope.getContributedFunctions(
-            StandardNames.ENUM_VALUES,
-            NoLookupLocation.FROM_BACKEND
+        StandardNames.ENUM_VALUES,
+        NoLookupLocation.FROM_BACKEND
     ).singleOrNull { it.extensionReceiverParameter == null && it.valueParameters.size == 0 }
 }
 
@@ -263,8 +264,8 @@ fun ClassDescriptor.getEnumEntriesPropertyDescriptor(): PropertyDescriptor? {
     require(this.kind == ClassKind.ENUM_CLASS)
 
     return this.staticScope.getContributedVariables(
-            StandardNames.ENUM_ENTRIES,
-            NoLookupLocation.FROM_BACKEND
+        StandardNames.ENUM_ENTRIES,
+        NoLookupLocation.FROM_BACKEND
     ).singleOrNull { it.extensionReceiverParameter == null }
 }
 
@@ -273,38 +274,38 @@ internal fun ObjCExportMapper.doesThrow(method: FunctionDescriptor): Boolean = m
 }
 
 private fun ObjCExportMapper.bridgeType(
-        kotlinType: KotlinType
+    kotlinType: KotlinType,
 ): TypeBridge = kotlinType.unwrapToPrimitiveOrReference<TypeBridge>(
-        eachInlinedClass = { inlinedClass, _ ->
-            when (inlinedClass.classId) {
-                UnsignedType.UBYTE.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_CHAR)
-                UnsignedType.USHORT.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_SHORT)
-                UnsignedType.UINT.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_INT)
-                UnsignedType.ULONG.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_LONG_LONG)
-            }
-        },
-        ifPrimitive = { primitiveType, _ ->
-            val objCValueType = when (primitiveType) {
-                KonanPrimitiveType.BOOLEAN -> ObjCValueType.BOOL
-                KonanPrimitiveType.CHAR -> ObjCValueType.UNICHAR
-                KonanPrimitiveType.BYTE -> ObjCValueType.CHAR
-                KonanPrimitiveType.SHORT -> ObjCValueType.SHORT
-                KonanPrimitiveType.INT -> ObjCValueType.INT
-                KonanPrimitiveType.LONG -> ObjCValueType.LONG_LONG
-                KonanPrimitiveType.FLOAT -> ObjCValueType.FLOAT
-                KonanPrimitiveType.DOUBLE -> ObjCValueType.DOUBLE
-                KonanPrimitiveType.NON_NULL_NATIVE_PTR -> ObjCValueType.POINTER
-                KonanPrimitiveType.VECTOR128 -> TODO()
-            }
-            ValueTypeBridge(objCValueType)
-        },
-        ifReference = {
-            if (kotlinType.isFunctionType) {
-                bridgeFunctionType(kotlinType)
-            } else {
-                ReferenceBridge
-            }
+    eachInlinedClass = { inlinedClass, _ ->
+        when (inlinedClass.classId) {
+            UnsignedType.UBYTE.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_CHAR)
+            UnsignedType.USHORT.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_SHORT)
+            UnsignedType.UINT.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_INT)
+            UnsignedType.ULONG.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_LONG_LONG)
         }
+    },
+    ifPrimitive = { primitiveType, _ ->
+        val objCValueType = when (primitiveType) {
+            KonanPrimitiveType.BOOLEAN -> ObjCValueType.BOOL
+            KonanPrimitiveType.CHAR -> ObjCValueType.UNICHAR
+            KonanPrimitiveType.BYTE -> ObjCValueType.CHAR
+            KonanPrimitiveType.SHORT -> ObjCValueType.SHORT
+            KonanPrimitiveType.INT -> ObjCValueType.INT
+            KonanPrimitiveType.LONG -> ObjCValueType.LONG_LONG
+            KonanPrimitiveType.FLOAT -> ObjCValueType.FLOAT
+            KonanPrimitiveType.DOUBLE -> ObjCValueType.DOUBLE
+            KonanPrimitiveType.NON_NULL_NATIVE_PTR -> ObjCValueType.POINTER
+            KonanPrimitiveType.VECTOR128 -> TODO()
+        }
+        ValueTypeBridge(objCValueType)
+    },
+    ifReference = {
+        if (kotlinType.isFunctionType) {
+            bridgeFunctionType(kotlinType)
+        } else {
+            ReferenceBridge
+        }
+    }
 )
 
 private fun ObjCExportMapper.bridgeFunctionType(kotlinType: KotlinType): TypeBridge {
@@ -323,8 +324,8 @@ private fun ObjCExportMapper.bridgeParameter(parameter: ParameterDescriptor): Me
     MethodBridgeValueParameter.Mapped(bridgeType(parameter.type))
 
 private fun ObjCExportMapper.bridgeReturnType(
-        descriptor: FunctionDescriptor,
-        convertExceptionsToErrors: Boolean
+    descriptor: FunctionDescriptor,
+    convertExceptionsToErrors: Boolean,
 ): MethodBridge.ReturnValue {
     val returnType = descriptor.returnType!!
     return when {
@@ -343,7 +344,7 @@ private fun ObjCExportMapper.bridgeReturnType(
         }
 
         descriptor.containingDeclaration.let { it is ClassDescriptor && KotlinBuiltIns.isAny(it) } &&
-                descriptor.name.asString() == "hashCode" -> {
+            descriptor.name.asString() == "hashCode" -> {
             assert(!convertExceptionsToErrors)
             MethodBridge.ReturnValue.HashCode
         }
@@ -365,8 +366,8 @@ private fun ObjCExportMapper.bridgeReturnType(
             if (convertExceptionsToErrors) {
                 val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || TypeUtils.isNullableType(returnType)
                 MethodBridge.ReturnValue.WithError.ZeroForError(
-                        successReturnValueBridge,
-                        successMayBeZero = canReturnZero
+                    successReturnValueBridge,
+                    successMayBeZero = canReturnZero
                 )
             } else {
                 successReturnValueBridge
@@ -457,7 +458,7 @@ enum class NSNumberKind(val mappedKotlinClassId: ClassId?, val objCType: ObjCTyp
 
     // UNSIGNED_SHORT -> unsignedShort
     private val kindName = this.name.split('_')
-            .joinToString("") { it.lowercase().replaceFirstChar(Char::uppercaseChar) }.replaceFirstChar(Char::lowercaseChar)
+        .joinToString("") { it.lowercase().replaceFirstChar(Char::uppercaseChar) }.replaceFirstChar(Char::lowercaseChar)
 
 
     val valueSelector = kindName // unsignedShort
@@ -465,13 +466,13 @@ enum class NSNumberKind(val mappedKotlinClassId: ClassId?, val objCType: ObjCTyp
     val factorySelector = "numberWith${kindName.replaceFirstChar(Char::uppercaseChar)}:" // numberWithUnsignedShort:
 
     constructor(
-            primitiveType: PrimitiveType,
-            objCPrimitiveType: ObjCPrimitiveType
+        primitiveType: PrimitiveType,
+        objCPrimitiveType: ObjCPrimitiveType,
     ) : this(ClassId.topLevel(primitiveType.typeFqName), objCPrimitiveType)
 
     constructor(
-            unsignedType: UnsignedType,
-            objCPrimitiveType: ObjCPrimitiveType
+        unsignedType: UnsignedType,
+        objCPrimitiveType: ObjCPrimitiveType,
     ) : this(unsignedType.classId, objCPrimitiveType)
 
     constructor(objCPrimitiveType: ObjCPrimitiveType) : this(null, objCPrimitiveType)

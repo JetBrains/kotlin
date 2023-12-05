@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.common.serialization.extractSerializedKdocString
+import org.jetbrains.kotlin.backend.common.serialization.metadata.findKDocString
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.backend.common.serialization.extractSerializedKdocString
-import org.jetbrains.kotlin.backend.common.serialization.metadata.findKDocString
 
 object StubRenderer {
     fun render(stub: Stub<*>): List<String> = render(stub, false)
@@ -39,7 +39,8 @@ object StubRenderer {
                     if (it.startsWith("/**") && it.endsWith("*/")) {
                         // Nested comment is allowed inside of preformatted ``` block in kdoc but not in ObjC
                         val kdocClean = "/**${it.substring(3, it.length - 2).replace("*/", "**").replace("/*", "**")}$kDocEnding"
-                        kdocClean.lines().map { it.trim().let {
+                        kdocClean.lines().map {
+                            it.trim().let {
                                 if (it.isNotEmpty() && it[0] == '*') " $it"
                                 else it
                             }
@@ -51,7 +52,7 @@ object StubRenderer {
             val kDocAndComment = kDoc?.filterNot { it.isEmpty() }.orEmpty().toMutableList()
             comment?.contentLines?.let { commentLine ->
                 if (!kDoc.isNullOrEmpty()) kDocAndComment.add(" *")  // Separator between nonempty kDoc and nonempty comment
-                commentLine.forEach { kDocAndComment.add(findPositionToInsertGeneratedCommentLine(kDocAndComment, it), " * $it")}
+                commentLine.forEach { kDocAndComment.add(findPositionToInsertGeneratedCommentLine(kDocAndComment, it), " * $it") }
             }
             if (kDocAndComment.isNotEmpty()) {
                 +"" // Probably makes the output more readable.
@@ -137,8 +138,10 @@ object StubRenderer {
         }
 
         fun appendParameters() {
-            assert(method.selectors.size == method.parameters.size ||
-                   method.selectors.size == 1 && method.parameters.size == 0)
+            assert(
+                method.selectors.size == method.parameters.size ||
+                    method.selectors.size == 1 && method.parameters.size == 0
+            )
 
             if (method.selectors.size == 1 && method.parameters.size == 0) {
                 append(method.selectors[0])
@@ -248,5 +251,5 @@ fun formatGenerics(buffer: Appendable, generics: List<Any>) {
 
 private fun DeclarationDescriptor.extractKDocString(): String? {
     return (this as? DeclarationDescriptorWithSource)?.findKDocString()
-            ?: extractSerializedKdocString()
+        ?: extractSerializedKdocString()
 }

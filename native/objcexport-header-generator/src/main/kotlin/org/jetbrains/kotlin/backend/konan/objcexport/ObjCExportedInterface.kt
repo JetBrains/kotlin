@@ -17,5 +17,5 @@ class ObjCExportedInterface internal constructor(
     val topLevel: Map<SourceFile, List<CallableMemberDescriptor>>,
     val headerLines: List<String>,
     val namer: ObjCExportNamer,
-    val mapper: ObjCExportMapper
+    val mapper: ObjCExportMapper,
 )

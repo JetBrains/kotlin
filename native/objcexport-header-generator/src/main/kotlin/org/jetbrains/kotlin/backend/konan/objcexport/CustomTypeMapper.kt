@@ -18,14 +18,18 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 @InternalKotlinNativeApi
 fun ClassDescriptor.isMappedFunctionClass() =
-        this.getFunctionTypeKind() == FunctionTypeKind.Function &&
-                // Type parameters include return type.
-                declaredTypeParameters.size - 1 < CustomTypeMappers.functionTypeMappersArityLimit
+    this.getFunctionTypeKind() == FunctionTypeKind.Function &&
+        // Type parameters include return type.
+        declaredTypeParameters.size - 1 < CustomTypeMappers.functionTypeMappersArityLimit
 
 @InternalKotlinNativeApi
 interface CustomTypeMapper {
     val mappedClassId: ClassId
-    fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType
+    fun mapType(
+        mappedSuperType: KotlinType,
+        translator: ObjCExportTranslatorImpl,
+        objCExportScope: ObjCExportScope,
+    ): ObjCNonNullReferenceType
 }
 
 internal object CustomTypeMappers {
@@ -89,44 +93,52 @@ internal object CustomTypeMappers {
      * Note: can be generated programmatically, but requires stdlib in this case.
      */
     val hiddenTypes: Set<ClassId> = listOf(
-            "kotlin.Any",
-            "kotlin.CharSequence",
-            "kotlin.Comparable",
-            "kotlin.Function",
-            "kotlin.Number",
-            "kotlin.collections.Collection",
-            "kotlin.collections.Iterable",
-            "kotlin.collections.MutableCollection",
-            "kotlin.collections.MutableIterable"
+        "kotlin.Any",
+        "kotlin.CharSequence",
+        "kotlin.Comparable",
+        "kotlin.Function",
+        "kotlin.Number",
+        "kotlin.collections.Collection",
+        "kotlin.collections.Iterable",
+        "kotlin.collections.MutableCollection",
+        "kotlin.collections.MutableIterable"
     ).map { ClassId.topLevel(FqName(it)) }.toSet()
 
     private class Simple(
-            override val mappedClassId: ClassId,
-            private val getObjCClassName: ObjCExportTranslatorImpl.() -> String
+        override val mappedClassId: ClassId,
+        private val getObjCClassName: ObjCExportTranslatorImpl.() -> String,
     ) : CustomTypeMapper {
 
         constructor(
-                mappedClassId: ClassId,
-                objCClassName: String
+            mappedClassId: ClassId,
+            objCClassName: String,
         ) : this(mappedClassId, { objCClassName })
 
-        override fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType =
-                ObjCClassType(translator.getObjCClassName())
+        override fun mapType(
+            mappedSuperType: KotlinType,
+            translator: ObjCExportTranslatorImpl,
+            objCExportScope: ObjCExportScope,
+        ): ObjCNonNullReferenceType =
+            ObjCClassType(translator.getObjCClassName())
     }
 
     private class Collection(
-            mappedClassFqName: FqName,
-            private val getObjCClassName: ObjCExportTranslatorImpl.() -> String
+        mappedClassFqName: FqName,
+        private val getObjCClassName: ObjCExportTranslatorImpl.() -> String,
     ) : CustomTypeMapper {
 
         constructor(
-                mappedClassFqName: FqName,
-                objCClassName: String
+            mappedClassFqName: FqName,
+            objCClassName: String,
         ) : this(mappedClassFqName, { objCClassName })
 
         override val mappedClassId = ClassId.topLevel(mappedClassFqName)
 
-        override fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType {
+        override fun mapType(
+            mappedSuperType: KotlinType,
+            translator: ObjCExportTranslatorImpl,
+            objCExportScope: ObjCExportScope,
+        ): ObjCNonNullReferenceType {
             val typeArguments = mappedSuperType.arguments.map {
                 val argument = it.type
                 if (TypeUtils.isNullableType(argument)) {
@@ -145,7 +157,11 @@ internal object CustomTypeMappers {
         override val mappedClassId: ClassId
             get() = StandardNames.getFunctionClassId(parameterCount)
 
-        override fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType {
+        override fun mapType(
+            mappedSuperType: KotlinType,
+            translator: ObjCExportTranslatorImpl,
+            objCExportScope: ObjCExportScope,
+        ): ObjCNonNullReferenceType {
             return translator.mapFunctionTypeIgnoringNullability(mappedSuperType, objCExportScope, returnsVoid = false)
         }
     }

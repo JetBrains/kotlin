@@ -9,9 +9,6 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.util.allParameters
 
 @InternalKotlinNativeApi
 sealed class TypeBridge
@@ -21,8 +18,8 @@ object ReferenceBridge : TypeBridge()
 
 @InternalKotlinNativeApi
 data class BlockPointerBridge(
-        val numberOfParameters: Int,
-        val returnsVoid: Boolean
+    val numberOfParameters: Int,
+    val returnsVoid: Boolean,
 ) : TypeBridge()
 
 @InternalKotlinNativeApi
@@ -50,9 +47,9 @@ sealed class MethodBridgeValueParameter : MethodBridgeParameter() {
 
 @InternalKotlinNativeApi
 data class MethodBridge(
-        val returnBridge: ReturnValue,
-        val receiver: MethodBridgeReceiver,
-        val valueParameters: List<MethodBridgeValueParameter>
+    val returnBridge: ReturnValue,
+    val receiver: MethodBridgeReceiver,
+    val valueParameters: List<MethodBridgeValueParameter>,
 ) {
 
     sealed class ReturnValue {
@@ -73,15 +70,17 @@ data class MethodBridge(
     }
 
     val paramBridges: List<MethodBridgeParameter> =
-            listOf(receiver) + MethodBridgeSelector + valueParameters
+        listOf(receiver) + MethodBridgeSelector + valueParameters
 
     // TODO: it is not exactly true in potential future cases.
-    val isInstance: Boolean get() = when (receiver) {
-        MethodBridgeReceiver.Static,
-        MethodBridgeReceiver.Factory -> false
+    val isInstance: Boolean
+        get() = when (receiver) {
+            MethodBridgeReceiver.Static,
+            MethodBridgeReceiver.Factory,
+            -> false
 
-        MethodBridgeReceiver.Instance -> true
-    }
+            MethodBridgeReceiver.Instance -> true
+        }
 
     val returnsError: Boolean
         get() = returnBridge is ReturnValue.WithError
@@ -89,7 +88,7 @@ data class MethodBridge(
 
 @InternalKotlinNativeApi
 fun MethodBridge.valueParametersAssociated(
-        descriptor: FunctionDescriptor
+    descriptor: FunctionDescriptor,
 ): List<Pair<MethodBridgeValueParameter, ParameterDescriptor?>> {
     val kotlinParameters = descriptor.allParameters.iterator()
     val skipFirstKotlinParameter = when (this.receiver) {
@@ -105,7 +104,8 @@ fun MethodBridge.valueParametersAssociated(
             is MethodBridgeValueParameter.Mapped -> it to kotlinParameters.next()
 
             is MethodBridgeValueParameter.SuspendCompletion,
-            is MethodBridgeValueParameter.ErrorOutParameter -> it to null
+            is MethodBridgeValueParameter.ErrorOutParameter,
+            -> it to null
         }
     }.also { assert(!kotlinParameters.hasNext()) }
 }

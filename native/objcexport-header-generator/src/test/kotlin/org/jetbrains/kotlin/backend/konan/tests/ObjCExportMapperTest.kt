@@ -84,9 +84,11 @@ class ObjCExportMapperTest : InlineSourceTestEnvironment {
         val intClassDescriptor = module.findClassAcrossModuleDependencies(ClassId.fromString("kotlin/Int"))!!
 
         /* Represents List<Int> */
-        val listOfIntType = KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, listClassDescriptor, listOf(
-            TypeProjectionImpl(KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, intClassDescriptor, emptyList()))
-        ))
+        val listOfIntType = KotlinTypeFactory.simpleNotNullType(
+            TypeAttributes.Empty, listClassDescriptor, listOf(
+                TypeProjectionImpl(KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, intClassDescriptor, emptyList()))
+            )
+        )
 
         val typeMapper = assertNotNull(objcExportMapper.getCustomTypeMapper(listClassDescriptor))
         assertEquals(ClassId.fromString("kotlin/collections/List"), typeMapper.mappedClassId)

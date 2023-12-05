@@ -13,7 +13,7 @@ import java.io.File
 import kotlin.test.fail
 
 abstract class AbstractObjCExportHeaderGeneratorTest(
-    private val generator: ObjCExportHeaderGenerator
+    private val generator: ObjCExportHeaderGenerator,
 ) {
 
     fun interface ObjCExportHeaderGenerator {

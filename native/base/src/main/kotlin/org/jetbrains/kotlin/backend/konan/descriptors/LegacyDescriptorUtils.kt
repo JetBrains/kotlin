@@ -111,7 +111,7 @@ private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
     fun getSubPackages(fqName: FqName) {
         result.add(fqName)
         val subPackages = packageFragmentProvider?.getSubPackagesOf(fqName) { true }
-                ?: module.getSubPackagesOf(fqName) { true }
+            ?: module.getSubPackagesOf(fqName) { true }
         subPackages.forEach { getSubPackages(it) }
     }
 
@@ -120,16 +120,16 @@ private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
 }
 
 fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescriptor> =
-        getPackagesFqNames(this).flatMap {
-            getPackage(it).fragments.filter { it.module == this }.toSet()
-        }
+    getPackagesFqNames(this).flatMap {
+        getPackage(it).fragments.filter { it.module == this }.toSet()
+    }
 
 val ClassDescriptor.enumEntries: List<ClassDescriptor>
     get() {
         assert(this.kind == ClassKind.ENUM_CLASS)
         return this.unsubstitutedMemberScope.getContributedDescriptors()
-                .filterIsInstance<ClassDescriptor>()
-                .filter { it.kind == ClassKind.ENUM_ENTRY }
+            .filterIsInstance<ClassDescriptor>()
+            .filter { it.kind == ClassKind.ENUM_ENTRY }
     }
 
 @InternalKotlinNativeApi
@@ -138,27 +138,27 @@ val DeclarationDescriptor.isExpectMember: Boolean
 
 @InternalKotlinNativeApi
 val arrayTypes = setOf(
-        "kotlin.Array",
-        "kotlin.ByteArray",
-        "kotlin.CharArray",
-        "kotlin.ShortArray",
-        "kotlin.IntArray",
-        "kotlin.LongArray",
-        "kotlin.FloatArray",
-        "kotlin.DoubleArray",
-        "kotlin.BooleanArray",
-        "kotlin.native.ImmutableBlob",
-        "kotlin.native.internal.NativePtrArray"
+    "kotlin.Array",
+    "kotlin.ByteArray",
+    "kotlin.CharArray",
+    "kotlin.ShortArray",
+    "kotlin.IntArray",
+    "kotlin.LongArray",
+    "kotlin.FloatArray",
+    "kotlin.DoubleArray",
+    "kotlin.BooleanArray",
+    "kotlin.native.ImmutableBlob",
+    "kotlin.native.internal.NativePtrArray"
 )
 
 @InternalKotlinNativeApi
 val arraysWithFixedSizeItems = setOf(
-        "kotlin.ByteArray",
-        "kotlin.CharArray",
-        "kotlin.ShortArray",
-        "kotlin.IntArray",
-        "kotlin.LongArray",
-        "kotlin.FloatArray",
-        "kotlin.DoubleArray",
-        "kotlin.BooleanArray"
+    "kotlin.ByteArray",
+    "kotlin.CharArray",
+    "kotlin.ShortArray",
+    "kotlin.IntArray",
+    "kotlin.LongArray",
+    "kotlin.FloatArray",
+    "kotlin.DoubleArray",
+    "kotlin.BooleanArray"
 )
