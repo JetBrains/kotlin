@@ -184,8 +184,14 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                 }
 
                 is OpaqueComponentArtifactIdentifier -> {
-                    /* Files within the build directory  still require a custom resolver */
-                    if (artifact.file.absoluteFile.startsWith(sourceSet.project.buildDir.absoluteFile)) return@mapNotNull null
+                    /* Files within the build directory still require a custom resolver */
+                    if (
+                        artifact.file.absoluteFile.startsWith(
+                            sourceSet.project.layout.buildDirectory.get().asFile.absoluteFile
+                        )
+                    ) {
+                        return@mapNotNull null
+                    }
 
                     IdeaKotlinResolvedBinaryDependency(
                         binaryType = binaryType, coordinates = IdeaKotlinBinaryCoordinates(
