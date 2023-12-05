@@ -76,13 +76,22 @@ fun FirScope.getSingleVisibleClassifier(
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
     name: Name
-): FirClassifierSymbol<*>? = mutableSetOf<FirClassifierSymbol<*>>().apply {
+): FirClassifierSymbol<*>? {
+    var result: FirClassifierSymbol<*>? = null
+    var isAmbiguousResult = false
     processClassifiersByName(name) { classifierSymbol ->
         if (!classifierSymbol.fir.isInvisibleOrHidden(session, bodyResolveComponents)) {
-            this.add(classifierSymbol)
+            if (result == classifierSymbol) return@processClassifiersByName
+
+            if (result == null) {
+                result = classifierSymbol
+            } else {
+                isAmbiguousResult = true
+            }
         }
     }
-}.singleOrNull()
+    return result.takeUnless { isAmbiguousResult }
+}
 
 private fun FirDeclaration.isInvisibleOrHidden(session: FirSession, bodyResolveComponents: BodyResolveComponents): Boolean {
     if (this is FirMemberDeclaration) {
