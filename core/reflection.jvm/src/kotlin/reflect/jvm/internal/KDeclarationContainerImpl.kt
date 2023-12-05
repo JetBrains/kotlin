@@ -241,7 +241,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             val message = """
                 |$methodOwner
                 |${name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX}
-                |${parameterTypes.toTypedArray()}
+                |${parameterTypes.toTypedArray().toList()}
                 |${jvmDescriptor.returnType!!}
                 |isStaticDefault = $isMember
             """.trimMargin()
