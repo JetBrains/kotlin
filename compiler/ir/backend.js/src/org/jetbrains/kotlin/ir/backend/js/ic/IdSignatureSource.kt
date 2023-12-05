@@ -103,11 +103,17 @@ private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSym
     }
 }
 
+/**
+ * This sealed class is used to retrieve declaration signatures for a specific source file.
+ */
 internal sealed class FileSignatureProvider(val irFile: IrFile, val srcFile: KotlinSourceFile) {
     abstract fun getSignatureToIndexMapping(): Map<IdSignature, Int>
     abstract fun getReachableSignatures(): Set<IdSignature>
     abstract fun getImplementedSymbols(): Map<IdSignature, IrSymbol>
 
+    /**
+     * This is a basic implementation that allows retrieving signatures from a deserialized klib via [IrFileDeserializer].
+     */
     class DeserializedFromKlib(private val fileDeserializer: IrFileDeserializer, srcFile: KotlinSourceFile) : FileSignatureProvider(fileDeserializer.file, srcFile) {
         override fun getSignatureToIndexMapping(): Map<IdSignature, Int> {
             return fileDeserializer.symbolDeserializer.signatureDeserializer.signatureToIndexMapping()
@@ -130,6 +136,13 @@ internal sealed class FileSignatureProvider(val irFile: IrFile, val srcFile: Kot
         }
     }
 
+    /**
+     * This is a special implementation that allows retrieving signatures for function type interfaces.
+     * We need this special implementation because function type interfaces are not serialized into klib,
+     * and the parent [IrFile] is generated on the fly during klib deserialization.
+     * Therefore, there is no corresponding [IrFileDeserializer] for the parent [IrFile].
+     * For more details, see [org.jetbrains.kotlin.ir.backend.js.FunctionTypeInterfacePackages.makePackageAccessor].
+     */
     class GeneratedFunctionTypeInterface(file: IrFile, srcFile: KotlinSourceFile) : FileSignatureProvider(file, srcFile) {
         private val allSignatures = run {
             val topLevelSymbols = buildMap {

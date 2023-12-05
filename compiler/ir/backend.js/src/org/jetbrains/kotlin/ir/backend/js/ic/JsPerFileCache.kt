@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.protobuf.CodedOutputStream
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
+/**
+ * This class maintains incremental cache files used by [JsExecutableProducer] for per-file compilation mode.
+ */
 class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMultiArtifactCache<JsPerFileCache.CachedFileInfo>() {
     companion object {
         private const val JS_MODULE_HEADER = "js.module.header.bin"

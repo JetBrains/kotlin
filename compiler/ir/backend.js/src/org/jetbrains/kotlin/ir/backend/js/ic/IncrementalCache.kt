@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.protobuf.CodedOutputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 
+/**
+ * This class manages the incremental cache for a specific klib.
+ */
 internal class IncrementalCache(private val library: KotlinLibraryHeader, val cacheDir: File) {
     companion object {
         private const val CACHE_HEADER = "ic.header.bin"
@@ -220,6 +223,17 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
         }
     }
 
+    /**
+     * Fetches cached data for a specific [srcFile].
+     *
+     * @param loadSignatures
+     *  If false, it loads only file names for the (direct and inverse) dependencies.
+     *  If true, it also loads the declaration signatures [IdSignature] and declaration hashes [ICHash] for every dependency.
+     *
+     * Note that if the file is modified or removed, the signatures cannot be loaded, and [loadSignatures] must be false.
+     * This is because [IdSignatureSerialization] uses declaration indexes from the klib for serialization and deserialization.
+     * If the file is modified, the indexes can be modified (for example, shifted) too, leading to incorrect deserialization.
+     */
     private fun fetchSourceFileMetadata(srcFile: KotlinSourceFile, loadSignatures: Boolean) =
         kotlinLibrarySourceFileMetadata.getOrPut(srcFile) {
             val deserializer = idSignatureSerialization.getIdSignatureDeserializer(srcFile)

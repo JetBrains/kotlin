@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.io.File
 
+/**
+ * This interface represents the abstract klib and is mainly used for detecting modified files.
+ */
 internal interface KotlinLibraryHeader {
     val libraryFile: KotlinLibraryFile
 
@@ -23,6 +26,9 @@ internal interface KotlinLibraryHeader {
     val jsOutputName: String?
 }
 
+/**
+ * This implementation represents the existing klib that is present on the disk.
+ */
 internal class KotlinLoadedLibraryHeader(
     private val library: KotlinLibrary,
     private val internationService: IrInterningService
@@ -74,6 +80,10 @@ internal class KotlinLoadedLibraryHeader(
     }
 }
 
+/**
+ * This implementation represents the removed klib, which no longer exists.
+ * Its main aim is to correctly handle the removed files; for example, we must invalidate all reverse dependencies.
+ */
 internal class KotlinRemovedLibraryHeader(private val libCacheDir: File) : KotlinLibraryHeader {
     override val libraryFile: KotlinLibraryFile
         get() = icError("removed library name is unavailable; cache dir: ${libCacheDir.absolutePath}")

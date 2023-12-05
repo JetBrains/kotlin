@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 
+/**
+ * This class maintains incremental cache files used by [JsExecutableProducer] for per-module compilation mode.
+ */
 class JsPerModuleCache(
     private val moduleKind: ModuleKind,
     private val moduleArtifacts: List<ModuleArtifact>

@@ -26,6 +26,11 @@ value class KotlinLibraryFile(val path: String) {
     override fun toString(): String = File(path).name
 }
 
+/**
+ * Represents a unique source file name from the klib.
+ * @param path - File name as it is in the klib.
+ * @param id - A unique index of the file, see [fromSources] comment.
+ */
 class KotlinSourceFile private constructor(val path: String, val id: Int) {
     fun toProtoStream(out: CodedOutputStream) {
         out.writeStringNoTag(path)
