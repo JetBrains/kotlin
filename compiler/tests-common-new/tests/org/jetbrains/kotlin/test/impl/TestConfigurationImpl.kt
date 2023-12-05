@@ -50,7 +50,7 @@ class TestConfigurationImpl(
 
     val originalBuilder: TestConfigurationBuilder.ReadOnlyBuilder
 ) : TestConfiguration(), TestService {
-    override val rootDisposable: Disposable = TestDisposable()
+    override val rootDisposable: Disposable = TestDisposable("${TestConfigurationImpl::class.simpleName}.rootDisposable")
     override val testServices: TestServices = TestServices()
 
     init {

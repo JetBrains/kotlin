@@ -362,7 +362,7 @@ class ScriptTemplateTest : TestCase() {
         messageCollector: MessageCollector,
         includeKotlinRuntime: Boolean
     ): Class<*>? {
-        val rootDisposable = Disposer.newDisposable()
+        val rootDisposable = Disposer.newDisposable("Disposable for ${ScriptTemplateTest::class.simpleName}")
         try {
             val additionalClasspath = System.getProperty("kotlin.test.script.classpath")?.split(File.pathSeparator)
                 ?.mapNotNull { File(it).takeIf { file -> file.exists() } }.orEmpty().toTypedArray()

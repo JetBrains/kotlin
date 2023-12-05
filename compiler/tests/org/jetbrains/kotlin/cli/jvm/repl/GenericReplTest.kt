@@ -199,7 +199,7 @@ internal class TestRepl(
 ) : Closeable {
     val application = ApplicationManager.getApplication()
 
-    private val disposable: Disposable by lazy { Disposer.newDisposable() }
+    private val disposable: Disposable by lazy { Disposer.newDisposable("${TestRepl::class.simpleName}.disposable") }
 
     val emptyScriptArgs = ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class))
 

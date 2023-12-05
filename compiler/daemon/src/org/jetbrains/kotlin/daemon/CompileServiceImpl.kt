@@ -891,7 +891,7 @@ class CompileServiceImpl(
         if (compilationOptions.targetPlatform != CompileService.TargetPlatform.JVM)
             CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
         else {
-            val disposable = Disposer.newDisposable()
+            val disposable = Disposer.newDisposable("Disposable for ${CompileServiceImpl::class.simpleName}.leaseReplSession")
             val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
             val repl = KotlinJvmReplService(
                 disposable, port, compilerId, templateClasspath, templateClassName,

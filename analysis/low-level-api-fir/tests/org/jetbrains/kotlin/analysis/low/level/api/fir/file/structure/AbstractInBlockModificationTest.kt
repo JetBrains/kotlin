@@ -139,7 +139,7 @@ private fun doTestInBlockModification(
  * @return **true** if out-of-block happens
  */
 private fun LLFirDeclarationModificationService.modifyElement(element: PsiElement): Boolean {
-    val disposable = Disposer.newDisposable()
+    val disposable = Disposer.newDisposable("${LLFirDeclarationModificationService::class.simpleName}.disposable")
     var isOutOfBlock = false
     try {
         project.analysisMessageBus.connect(disposable).subscribe(

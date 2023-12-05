@@ -163,7 +163,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
     private void executeScriptFile(File scriptFile) throws MojoExecutionException {
         initCompiler();
 
-        Disposable rootDisposable = Disposer.newDisposable();
+        Disposable rootDisposable = Disposer.newDisposable("Disposable for ExecuteKotlinScriptMojo.executeScriptFile");
 
         try {
             MavenPluginLogMessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog());

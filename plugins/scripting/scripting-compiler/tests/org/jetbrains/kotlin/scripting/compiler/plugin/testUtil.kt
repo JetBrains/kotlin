@@ -271,7 +271,7 @@ internal fun <R> withTempDir(keyName: String = "tmp", body: (File) -> R): R {
 }
 
 internal fun <R> withDisposable(body: (Disposable) -> R) {
-    val disposable = Disposer.newDisposable()
+    val disposable = Disposer.newDisposable("Disposable for withDisposable")
     try {
         body(disposable)
     } finally {
@@ -279,7 +279,7 @@ internal fun <R> withDisposable(body: (Disposable) -> R) {
     }
 }
 
-class TestDisposable : Disposable {
+class TestDisposable(val debugName: String) : Disposable {
     @Volatile
     var isDisposed = false
         private set
@@ -287,6 +287,8 @@ class TestDisposable : Disposable {
     override fun dispose() {
         isDisposed = true
     }
+
+    override fun toString(): String = debugName
 }
 
 fun CompilerConfiguration.updateWithBaseCompilerArguments() {

@@ -122,7 +122,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest(
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
-        val disposable = Disposer.newDisposable()
+        val disposable = Disposer.newDisposable("Disposable for ${NonFirResolveModularizedTotalKotlinTest::class.simpleName}.processModule")
         val environment = configureAndSetupEnvironment(moduleData, disposable)
 
         runAnalysis(environment)

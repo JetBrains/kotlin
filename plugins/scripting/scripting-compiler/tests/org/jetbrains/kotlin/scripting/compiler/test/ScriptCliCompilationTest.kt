@@ -35,7 +35,7 @@ private const val testDataPath = "plugins/scripting/scripting-compiler/testData/
 
 class ScriptCliCompilationTest : TestCase() {
 
-    protected val testRootDisposable: Disposable = TestDisposable()
+    protected val testRootDisposable: Disposable = TestDisposable("${ScriptCliCompilationTest::class.simpleName}.testRootDisposable")
 
     fun testPrerequisites() {
         Assert.assertTrue(thisClasspath.isNotEmpty())

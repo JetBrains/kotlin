@@ -46,7 +46,7 @@ class BuiltInsSerializer(
             dependOnOldBuiltIns: Boolean,
             onComplete: (totalSize: Int, totalFiles: Int) -> Unit
         ) {
-            val rootDisposable = Disposer.newDisposable()
+            val rootDisposable = Disposer.newDisposable("Disposable for ${BuiltInsSerializer::class.simpleName}.analyzeAndSerialize")
             val messageCollector = createMessageCollector()
             val performanceManager = object : CommonCompilerPerformanceManager(presentableName = "test") {}
             try {
