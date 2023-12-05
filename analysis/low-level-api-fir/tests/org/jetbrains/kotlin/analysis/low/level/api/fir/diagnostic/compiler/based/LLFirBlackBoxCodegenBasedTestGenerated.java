@@ -46204,6 +46204,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
             public void testSimpleTopLevelFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/simpleTopLevelFunction.kt");
             }
+
+            @Test
+            @TestMetadata("strangeInlineClassInterfaceJvmDefaultBehavior.kt")
+            public void testStrangeInlineClassInterfaceJvmDefaultBehavior() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/strangeInlineClassInterfaceJvmDefaultBehavior.kt");
+            }
         }
 
         @Nested

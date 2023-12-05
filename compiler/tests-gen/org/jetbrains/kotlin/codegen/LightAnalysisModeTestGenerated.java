@@ -36391,6 +36391,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testSimpleTopLevelFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/simpleTopLevelFunction.kt");
             }
+
+            @TestMetadata("strangeInlineClassInterfaceJvmDefaultBehavior.kt")
+            public void testStrangeInlineClassInterfaceJvmDefaultBehavior() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/strangeInlineClassInterfaceJvmDefaultBehavior.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/classLiterals")
