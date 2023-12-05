@@ -92,26 +92,30 @@ class MemberScopeTowerLevel(
             )
 
         if (scopeWithoutSmartcast == null) {
-            consumeCandidates(output, candidates)
+            consumeCandidates(
+                output,
+                candidatesWithoutSmartcast = candidates,
+                candidatesWithSmartcast = null
+            )
         } else {
-            val isFromSmartCast: MutableMap<MemberWithBaseScope<T>, Boolean> = mutableMapOf()
+            val map: MutableMap<T, MemberFromSmartcastScope<T>> = mutableMapOf()
 
             scopeWithoutSmartcast.collectCandidates(processScopeMembers).let { (isEmpty, originalCandidates) ->
                 empty = empty && isEmpty
                 for (originalCandidate in originalCandidates) {
-                    isFromSmartCast[originalCandidate] = false
+                    map[originalCandidate.member] = MemberFromSmartcastScope(originalCandidate, cameFromSmartcast = false)
                 }
             }
 
             for (candidateFromSmartCast in candidates) {
-                isFromSmartCast[candidateFromSmartCast] = true
+                map[candidateFromSmartCast.member] = MemberFromSmartcastScope(candidateFromSmartCast, cameFromSmartcast = true)
             }
 
             consumeCandidates(
                 output,
                 // all the candidates, both from original type and smart cast
-                candidates = isFromSmartCast.keys,
-                isFromSmartCast,
+                candidatesWithoutSmartcast = null,
+                candidatesWithSmartcast = map
             )
         }
 
@@ -162,6 +166,11 @@ class MemberScopeTowerLevel(
         return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
     }
 
+    private data class MemberFromSmartcastScope<T : FirCallableSymbol<*>>(
+        val memberWithBaseScope: MemberWithBaseScope<T>,
+        val cameFromSmartcast: Boolean
+    )
+
     private fun <T : FirCallableSymbol<*>> FirTypeScope.collectCandidates(
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): Pair<Boolean, List<MemberWithBaseScope<T>>> {
@@ -185,16 +194,21 @@ class MemberScopeTowerLevel(
 
     private fun <T : FirCallableSymbol<*>> consumeCandidates(
         output: TowerScopeLevelProcessor<T>,
-        candidates: Collection<MemberWithBaseScope<T>>,
+        candidatesWithoutSmartcast: Collection<MemberWithBaseScope<T>>?,
         // The map is not null only if there's a smart cast type on a dispatch receiver
         // and candidates are present both in smart cast and original types.
         // isFromSmartCast[candidate] == true iff exactly that member is present in smart cast type
-        isFromSmartCast: Map<MemberWithBaseScope<T>, Boolean>? = null
+        candidatesWithSmartcast: Map<T, MemberFromSmartcastScope<T>>?
     ) {
+        val candidates = candidatesWithoutSmartcast
+            ?: candidatesWithSmartcast?.values?.map { it.memberWithBaseScope }
+            ?: error("candidatesWithoutSmartcast or candidatesWithSmartcast should be not null")
+
         for (candidateWithScope in candidates) {
             val (candidate, scope) = candidateWithScope
             if (candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
-                val isFromOriginalTypeInPresenceOfSmartCast = isFromSmartCast != null && !isFromSmartCast.getValue(candidateWithScope)
+                val isFromOriginalTypeInPresenceOfSmartCast = candidatesWithSmartcast != null &&
+                        !candidatesWithSmartcast.getValue(candidateWithScope.member).cameFromSmartcast
 
                 val dispatchReceiverToUse = when {
                     isFromOriginalTypeInPresenceOfSmartCast ->

@@ -144,8 +144,13 @@ class FirTypeIntersectionScopeContext(
             return members.map { ResultOfIntersection.SingleMember(it, MemberWithBaseScope(it, scope)) }
         }
 
+        val uniqueSymbols = mutableSetOf<D>()
         val allMembersWithScope = membersByScope.flatMapTo(linkedSetOf()) { (scope, members) ->
-            members.map { MemberWithBaseScope(it, scope) }
+            members.mapNotNull {
+                runIf(uniqueSymbols.add(it)) {
+                    MemberWithBaseScope(it, scope)
+                }
+            }
         }
 
         val result = mutableListOf<ResultOfIntersection<D>>()
