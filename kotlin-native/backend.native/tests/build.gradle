@@ -2000,12 +2000,6 @@ dynamicTest("produce_dynamic") {
     useGoldenData = true
 }
 
-dynamicTest("kt36639") {
-    source = "produce_dynamic/kt-36639/main.kt"
-    cSource = "$projectDir/produce_dynamic/kt-36639/main.c"
-    useGoldenData = true
-}
-
 dynamicTest("kt36878") {
     source = "produce_dynamic/kt-36878/hello.kt"
     cSource = "$projectDir/produce_dynamic/kt-36878/main.c"
