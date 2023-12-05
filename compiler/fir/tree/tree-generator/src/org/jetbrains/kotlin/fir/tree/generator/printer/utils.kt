@@ -10,8 +10,11 @@ import org.jetbrains.kotlin.fir.tree.generator.firTransformerType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
+import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
 import org.jetbrains.kotlin.utils.SmartPrinter
+import java.io.File
 
 context(ImportCollector)
 fun SmartPrinter.transformFunctionDeclaration(
@@ -89,3 +92,13 @@ fun Field.getMutableType(forBuilder: Boolean = false): TypeRefWithNullability = 
 }
 
 val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.replaceFirstChar(Char::lowercaseChar)
+
+internal fun printVisitorCommon(
+    elements: List<Element>,
+    generationPath: File,
+    visitorType: ClassRef<*>,
+    makePrinter: (SmartPrinter, ClassRef<*>) -> AbstractVisitorPrinter<Element, Field>,
+): GeneratedFile =
+    printGeneratedType(generationPath, TREE_GENERATOR_README, visitorType.packageName, visitorType.simpleName) {
+        makePrinter(this, visitorType).printVisitor(elements)
+    }
