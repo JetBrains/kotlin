@@ -1170,28 +1170,28 @@ internal class WrongJsQualifierImpl(
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.WrongJsQualifier
 
 internal class OptInUsageImpl(
-    override val optInMarkerFqName: FqName,
+    override val optInMarkerClassId: ClassId,
     override val message: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.OptInUsage
 
 internal class OptInUsageErrorImpl(
-    override val optInMarkerFqName: FqName,
+    override val optInMarkerClassId: ClassId,
     override val message: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.OptInUsageError
 
 internal class OptInOverrideImpl(
-    override val optInMarkerFqName: FqName,
+    override val optInMarkerClassId: ClassId,
     override val message: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.OptInOverride
 
 internal class OptInOverrideErrorImpl(
-    override val optInMarkerFqName: FqName,
+    override val optInMarkerClassId: ClassId,
     override val message: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
@@ -1218,7 +1218,7 @@ internal class OptInWithoutArgumentsImpl(
 ) : KtAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KtFirDiagnostic.OptInWithoutArguments
 
 internal class OptInArgumentIsNotMarkerImpl(
-    override val notMarkerFqName: FqName,
+    override val notMarkerClassId: ClassId,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KtFirDiagnostic.OptInArgumentIsNotMarker
@@ -2161,7 +2161,7 @@ internal class RedundantNullableImpl(
 ) : KtAbstractFirDiagnostic<KtTypeReference>(firDiagnostic, token), KtFirDiagnostic.RedundantNullable
 
 internal class PlatformClassMappedToKotlinImpl(
-    override val kotlinClass: FqName,
+    override val kotlinClass: ClassId,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.PlatformClassMappedToKotlin

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,7 +27,7 @@ object PlatformClassMappedToKotlinImportsChecker : FirFileChecker() {
 
             val kotlinClass = context.session.platformClassMapper.getCorrespondingKotlinClass(classId)
             if (kotlinClass != null) {
-                reporter.reportOn(import.source, FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN, importedFqName, context)
+                reporter.reportOn(import.source, FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN, classId, context)
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -303,10 +303,9 @@ object FirOptInUsageBaseChecker {
                     Experimentality.Severity.WARNING -> FirErrors.OPT_IN_USAGE to "should"
                     Experimentality.Severity.ERROR -> FirErrors.OPT_IN_USAGE_ERROR to "must"
                 }
-                val fqName = annotationClassId.asSingleFqName()
                 val reportedMessage = message?.takeIf { it.isNotBlank() }
-                    ?: OptInNames.buildDefaultDiagnosticMessage(OptInNames.buildMessagePrefix(verb), fqName.asString())
-                reporter.reportOn(source, diagnostic, fqName, reportedMessage, context)
+                    ?: OptInNames.buildDefaultDiagnosticMessage(OptInNames.buildMessagePrefix(verb), annotationClassId.asFqNameString())
+                reporter.reportOn(source, diagnostic, annotationClassId, reportedMessage, context)
             }
         }
     }
@@ -332,7 +331,7 @@ object FirOptInUsageBaseChecker {
                     verb,
                     markerName = annotationClassId.asFqNameString()
                 )
-                reporter.reportOn(symbol.source, diagnostic, annotationClassId.asSingleFqName(), message, context)
+                reporter.reportOn(symbol.source, diagnostic, annotationClassId, message, context)
             }
         }
     }

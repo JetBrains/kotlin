@@ -976,25 +976,25 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface OptInUsage : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInUsage::class
-        val optInMarkerFqName: FqName
+        val optInMarkerClassId: ClassId
         val message: String
     }
 
     interface OptInUsageError : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInUsageError::class
-        val optInMarkerFqName: FqName
+        val optInMarkerClassId: ClassId
         val message: String
     }
 
     interface OptInOverride : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInOverride::class
-        val optInMarkerFqName: FqName
+        val optInMarkerClassId: ClassId
         val message: String
     }
 
     interface OptInOverrideError : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInOverrideError::class
-        val optInMarkerFqName: FqName
+        val optInMarkerClassId: ClassId
         val message: String
     }
 
@@ -1016,7 +1016,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface OptInArgumentIsNotMarker : KtFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = OptInArgumentIsNotMarker::class
-        val notMarkerFqName: FqName
+        val notMarkerClassId: ClassId
     }
 
     interface OptInMarkerWithWrongTarget : KtFirDiagnostic<KtAnnotationEntry> {
@@ -1799,7 +1799,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface PlatformClassMappedToKotlin : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = PlatformClassMappedToKotlin::class
-        val kotlinClass: FqName
+        val kotlinClass: ClassId
     }
 
     interface InferredTypeVariableIntoEmptyIntersectionError : KtFirDiagnostic<PsiElement> {

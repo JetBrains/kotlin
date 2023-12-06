@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
@@ -402,19 +401,19 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {
         val OPT_IN_USAGE by warning<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<FqName>("optInMarkerFqName")
+            parameter<ClassId>("optInMarkerClassId")
             parameter<String>("message")
         }
         val OPT_IN_USAGE_ERROR by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<FqName>("optInMarkerFqName")
+            parameter<ClassId>("optInMarkerClassId")
             parameter<String>("message")
         }
         val OPT_IN_OVERRIDE by warning<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FqName>("optInMarkerFqName")
+            parameter<ClassId>("optInMarkerClassId")
             parameter<String>("message")
         }
         val OPT_IN_OVERRIDE_ERROR by error<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FqName>("optInMarkerFqName")
+            parameter<ClassId>("optInMarkerClassId")
             parameter<String>("message")
         }
 
@@ -424,7 +423,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val OPT_IN_WITHOUT_ARGUMENTS by warning<KtAnnotationEntry>()
         val OPT_IN_ARGUMENT_IS_NOT_MARKER by warning<KtAnnotationEntry> {
-            parameter<FqName>("notMarkerFqName")
+            parameter<ClassId>("notMarkerClassId")
         }
         val OPT_IN_MARKER_WITH_WRONG_TARGET by error<KtAnnotationEntry> {
             parameter<String>("target")
@@ -849,7 +848,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val REDUNDANT_NULLABLE by warning<KtTypeReference>(PositioningStrategy.REDUNDANT_NULLABLE)
 
         val PLATFORM_CLASS_MAPPED_TO_KOTLIN by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
-            parameter<FqName>("kotlinClass")
+            parameter<ClassId>("kotlinClass")
         }
 
         val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION by deprecationError<PsiElement>(

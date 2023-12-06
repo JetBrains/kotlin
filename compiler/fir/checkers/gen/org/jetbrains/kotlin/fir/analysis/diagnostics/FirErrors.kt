@@ -69,7 +69,6 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement.Version
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
@@ -311,15 +310,15 @@ object FirErrors {
     val POTENTIALLY_NON_REPORTED_ANNOTATION: KtDiagnosticFactory0 by warning0<KtAnnotationEntry>()
 
     // OptIn
-    val OPT_IN_USAGE: KtDiagnosticFactory2<FqName, String> by warning2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val OPT_IN_USAGE_ERROR: KtDiagnosticFactory2<FqName, String> by error2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val OPT_IN_OVERRIDE: KtDiagnosticFactory2<FqName, String> by warning2<PsiElement, FqName, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val OPT_IN_OVERRIDE_ERROR: KtDiagnosticFactory2<FqName, String> by error2<PsiElement, FqName, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val OPT_IN_USAGE: KtDiagnosticFactory2<ClassId, String> by warning2<PsiElement, ClassId, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val OPT_IN_USAGE_ERROR: KtDiagnosticFactory2<ClassId, String> by error2<PsiElement, ClassId, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val OPT_IN_OVERRIDE: KtDiagnosticFactory2<ClassId, String> by warning2<PsiElement, ClassId, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val OPT_IN_OVERRIDE_ERROR: KtDiagnosticFactory2<ClassId, String> by error2<PsiElement, ClassId, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val OPT_IN_IS_NOT_ENABLED: KtDiagnosticFactory0 by warning0<KtAnnotationEntry>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION: KtDiagnosticFactory0 by error0<PsiElement>()
     val OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN: KtDiagnosticFactory0 by error0<PsiElement>()
     val OPT_IN_WITHOUT_ARGUMENTS: KtDiagnosticFactory0 by warning0<KtAnnotationEntry>()
-    val OPT_IN_ARGUMENT_IS_NOT_MARKER: KtDiagnosticFactory1<FqName> by warning1<KtAnnotationEntry, FqName>()
+    val OPT_IN_ARGUMENT_IS_NOT_MARKER: KtDiagnosticFactory1<ClassId> by warning1<KtAnnotationEntry, ClassId>()
     val OPT_IN_MARKER_WITH_WRONG_TARGET: KtDiagnosticFactory1<String> by error1<KtAnnotationEntry, String>()
     val OPT_IN_MARKER_WITH_WRONG_RETENTION: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
     val OPT_IN_MARKER_ON_WRONG_TARGET: KtDiagnosticFactory1<String> by error1<KtAnnotationEntry, String>()
@@ -489,7 +488,7 @@ object FirErrors {
     val TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE: KtDiagnosticFactory4<FirTypeParameterSymbol, Variance, Variance, ConeKotlinType> by error4<PsiElement, FirTypeParameterSymbol, Variance, Variance, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val SMARTCAST_IMPOSSIBLE: KtDiagnosticFactory4<ConeKotlinType, FirExpression, String, Boolean> by error4<KtExpression, ConeKotlinType, FirExpression, String, Boolean>()
     val REDUNDANT_NULLABLE: KtDiagnosticFactory0 by warning0<KtTypeReference>(SourceElementPositioningStrategies.REDUNDANT_NULLABLE)
-    val PLATFORM_CLASS_MAPPED_TO_KOTLIN: KtDiagnosticFactory1<FqName> by warning1<PsiElement, FqName>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val PLATFORM_CLASS_MAPPED_TO_KOTLIN: KtDiagnosticFactory1<ClassId> by warning1<PsiElement, ClassId>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION: KtDiagnosticFactoryForDeprecation4<String, Collection<ConeKotlinType>, String, String> by deprecationError4<PsiElement, String, Collection<ConeKotlinType>, String, String>(ForbidInferringTypeVariablesIntoEmptyIntersection)
     val INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION: KtDiagnosticFactory4<String, Collection<ConeKotlinType>, String, String> by warning4<PsiElement, String, Collection<ConeKotlinType>, String, String>()
     val INCORRECT_LEFT_COMPONENT_OF_INTERSECTION: KtDiagnosticFactory0 by error0<KtTypeReference>()
