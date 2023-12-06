@@ -24144,6 +24144,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("actualMissingConstructor.kt")
+            public void testActualMissingConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/actualMissingConstructor.kt");
+            }
+
+            @Test
             @TestMetadata("actualTypealiasForNotExpectClass.kt")
             public void testActualTypealiasForNotExpectClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasForNotExpectClass.kt");
