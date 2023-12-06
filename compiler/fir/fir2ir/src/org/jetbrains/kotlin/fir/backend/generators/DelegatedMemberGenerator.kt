@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.name.Name
  * TODO: generic super interface types and generic delegated members.
  */
 class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2IrComponents by components {
-    private val baseFunctionSymbols: MutableMap<IrFunction, List<FirNamedFunctionSymbol>> = mutableMapOf()
-    private val basePropertySymbols: MutableMap<IrProperty, List<FirPropertySymbol>> = mutableMapOf()
+    private val baseFunctionSymbols: MutableMap<IrFunction, Collection<FirNamedFunctionSymbol>> = mutableMapOf()
+    private val basePropertySymbols: MutableMap<IrProperty, Collection<FirPropertySymbol>> = mutableMapOf()
 
     private data class DeclarationBodyInfo(
         val declaration: IrDeclaration,
@@ -231,7 +231,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             delegateOverride, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
             fakeOverrideOwnerLookupTag = firSubClass.symbol.toLookupTag()
         )
-        val baseSymbols = mutableListOf<FirNamedFunctionSymbol>()
+        val baseSymbols = mutableSetOf<FirNamedFunctionSymbol>()
         // the overridden symbols should be collected only after all fake overrides for all superclases are created and bound to their
         // overridden symbols, otherwise in some cases they will be left in inconsistent state leading to the errors in IR
         delegateOverride.processOverriddenFunctionSymbols(firSubClass) {
@@ -364,7 +364,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         )
         // the overridden symbols should be collected only after all fake overrides for all superclases are created and bound to their
         // overridden symbols, otherwise in some cases they will be left in inconsistent state leading to the errors in IR
-        val baseSymbols = mutableListOf<FirPropertySymbol>()
+        val baseSymbols = mutableSetOf<FirPropertySymbol>()
         firDelegateProperty.processOverriddenPropertySymbols(firSubClass) {
             baseSymbols.add(it)
         }

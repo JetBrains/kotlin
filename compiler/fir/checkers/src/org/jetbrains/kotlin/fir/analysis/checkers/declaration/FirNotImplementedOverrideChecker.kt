@@ -64,9 +64,9 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         fun collectSymbol(symbol: FirCallableSymbol<*>) {
             val delegatedWrapperData = symbol.delegatedWrapperData
             if (delegatedWrapperData != null) {
-                val directOverriddenMembersWithBaseScope = classScope.getDirectOverriddenMembersWithBaseScope(
-                    symbol
-                )
+                val directOverriddenMembersWithBaseScope = classScope
+                    .getDirectOverriddenMembersWithBaseScope(symbol)
+                    .filter { it.member != symbol }
 
                 @Suppress("UNCHECKED_CAST")
                 val filteredOverriddenMembers = when (symbol) {

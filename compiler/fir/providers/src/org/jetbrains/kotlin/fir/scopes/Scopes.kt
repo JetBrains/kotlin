@@ -61,7 +61,7 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     session: FirSession,
     scopeSession: ScopeSession,
-): List<FirFunctionSymbol<*>> {
+): Collection<FirFunctionSymbol<*>> {
     val firTypeScope = containingClass.unsubstitutedScope(
         session,
         scopeSession,
@@ -69,12 +69,20 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
         memberRequiredPhase = FirResolvePhase.STATUS,
     )
 
-    val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()
+    val overriddenFunctions = mutableSetOf<FirFunctionSymbol<*>>()
     firTypeScope.processFunctionsByName(callableId.callableName) { }
     firTypeScope.processOverriddenFunctions(this) {
         overriddenFunctions.add(it)
         ProcessorAction.NEXT
     }
+
+    /*
+     * The original symbol may appear in `processOverriddenFunctions`, so it should be removed from the resulting
+     *   list to not confuse the caller with a situation when the function directly overrides itself
+     *
+     * For details see FirTypeScope.processDirectOverriddenFunctionsWithBaseScope
+     */
+    overriddenFunctions -= this
 
     return overriddenFunctions
 }

@@ -262,6 +262,14 @@ fun FirTypeScope.getDirectOverriddenFunctions(
         ProcessorAction.NEXT
     }
 
+    /*
+     * The original symbol may appear in `processOverriddenFunctions`, so it should be removed from the resulting
+     *   list to not confuse the caller with a situation when the function directly overrides itself
+     *
+     * For details see FirTypeScope.processDirectOverriddenFunctionsWithBaseScope
+     */
+    overriddenFunctions -= function
+
     return overriddenFunctions.toList()
 }
 
@@ -275,6 +283,11 @@ fun FirTypeScope.getDirectOverriddenProperties(
         overriddenProperties.addOverridden(it, unwrapIntersectionAndSubstitutionOverride)
         ProcessorAction.NEXT
     }
+
+    /*
+     * See comment in `getDirectOverriddenFunctions` function above
+     */
+    overriddenProperties -= property
 
     return overriddenProperties.toList()
 }
@@ -295,7 +308,7 @@ fun FirTypeScope.retrieveDirectOverriddenOf(memberSymbol: FirCallableSymbol<*>):
     }
 }
 
-private inline fun <reified D : FirCallableSymbol<*>> MutableCollection<D>.addOverridden(
+private inline fun <reified D : FirCallableSymbol<*>> MutableSet<D>.addOverridden(
     symbol: D,
     unwrapIntersectionAndSubstitutionOverride: Boolean
 ) {

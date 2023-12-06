@@ -214,7 +214,7 @@ fun CheckerContext.findClosestClassOrObject(): FirClass? {
 fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     context: CheckerContext,
-): List<FirFunctionSymbol<*>> {
+): Collection<FirFunctionSymbol<*>> {
     return overriddenFunctions(containingClass, context.session, context.scopeSession)
 }
 

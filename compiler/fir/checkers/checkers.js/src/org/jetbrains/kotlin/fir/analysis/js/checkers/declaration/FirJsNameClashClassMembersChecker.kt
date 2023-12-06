@@ -37,15 +37,16 @@ object FirJsNameClashClassMembersChecker : FirClassChecker() {
         private val allSymbols = mutableSetOf<FirCallableSymbol<*>>()
 
         private fun FirTypeScope.collectOverriddenLeaves(classMemberSymbol: FirCallableSymbol<*>): Set<FirCallableSymbol<*>> {
-            val visitedSymbols = hashSetOf(classMemberSymbol)
-            val symbolsToProcess = mutableListOf(classMemberSymbol)
+            val startMemberWithScope = MemberWithBaseScope(classMemberSymbol, this)
+            val visitedSymbols = hashSetOf(startMemberWithScope)
+            val symbolsToProcess = mutableListOf(startMemberWithScope)
             val leaves = mutableSetOf<FirCallableSymbol<*>>()
             while (symbolsToProcess.isNotEmpty()) {
-                val processingSymbol = symbolsToProcess.popLast()
-                val overriddenMembers = getDirectOverriddenMembers(processingSymbol, true)
-                for (overriddenMember in overriddenMembers) {
-                    if (visitedSymbols.add(overriddenMember)) {
-                        symbolsToProcess.add(overriddenMember)
+                val (processingSymbol, scope) = symbolsToProcess.popLast()
+                val overriddenMembers = scope.getDirectOverriddenMembersWithBaseScope(processingSymbol)
+                for (overriddenMemberWithScope in overriddenMembers) {
+                    if (visitedSymbols.add(overriddenMemberWithScope)) {
+                        symbolsToProcess.add(overriddenMemberWithScope)
                     }
                 }
                 if (overriddenMembers.isEmpty()) {
