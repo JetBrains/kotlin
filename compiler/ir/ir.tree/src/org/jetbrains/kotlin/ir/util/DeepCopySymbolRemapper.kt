@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
@@ -157,13 +156,11 @@ open class DeepCopySymbolRemapper(
         super.visitTypeAlias(declaration)
     }
 
-    override fun visitBlock(expression: IrBlock) {
-        if (expression is IrReturnableBlock) {
-            remapSymbol(returnableBlocks, expression) {
-                IrReturnableBlockSymbolImpl()
-            }
+    override fun visitReturnableBlock(expression: IrReturnableBlock) {
+        remapSymbol(returnableBlocks, expression) {
+            IrReturnableBlockSymbolImpl()
         }
-        super.visitBlock(expression)
+        super.visitReturnableBlock(expression)
     }
 
     private fun <T : IrSymbol> Map<T, T>.getDeclared(symbol: T) =
