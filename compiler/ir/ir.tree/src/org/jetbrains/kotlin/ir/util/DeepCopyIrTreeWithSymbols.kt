@@ -461,7 +461,7 @@ open class DeepCopyIrTreeWithSymbols(
         IrReturnableBlockImpl(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
-            symbolRemapper.getReferencedReturnableBlock(expression.symbol),
+            symbolRemapper.getDeclaredReturnableBlock(expression.symbol),
             mapStatementOrigin(expression.origin),
             expression.statements.memoryOptimizedMap { it.transform() }
         ).processAttributes(expression)

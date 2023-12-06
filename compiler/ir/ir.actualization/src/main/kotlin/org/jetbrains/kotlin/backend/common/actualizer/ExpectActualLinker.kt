@@ -44,6 +44,8 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
 
     override fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol) = symbol
 
+    override fun getDeclaredReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol = symbol
+
     override fun getReferencedClass(symbol: IrClassSymbol) = symbol.actualizeSymbol()
 
     override fun getReferencedScript(symbol: IrScriptSymbol) = symbol.actualizeSymbol()

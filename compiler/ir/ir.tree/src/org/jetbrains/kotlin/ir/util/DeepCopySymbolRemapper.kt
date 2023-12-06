@@ -194,6 +194,8 @@ open class DeepCopySymbolRemapper(
 
     override fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getDeclared(symbol)
 
+    override fun getDeclaredReturnableBlock(symbol: IrReturnableBlockSymbol) = returnableBlocks.getDeclared(symbol)
+
     override fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol = classes.getReferenced(symbol)
     override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getReferenced(symbol)
     override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol = enumEntries.getReferenced(symbol)

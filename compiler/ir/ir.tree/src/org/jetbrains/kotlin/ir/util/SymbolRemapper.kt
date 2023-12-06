@@ -34,6 +34,7 @@ interface SymbolRemapper {
     fun getDeclaredTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol
     fun getDeclaredValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol
     fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol
+    fun getDeclaredReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol
 
     fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol
     fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol
@@ -79,6 +80,8 @@ interface SymbolRemapper {
         override fun getDeclaredValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol = symbol
 
         override fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = symbol
+
+        override fun getDeclaredReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol = symbol
 
         override fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol = symbol
 
