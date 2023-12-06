@@ -1805,6 +1805,11 @@ internal class SubtypingBetweenContextReceiversImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.SubtypingBetweenContextReceivers
 
+internal class ContextReceiversWithBackingFieldImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ContextReceiversWithBackingField
+
 internal class RecursionInImplicitTypesImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

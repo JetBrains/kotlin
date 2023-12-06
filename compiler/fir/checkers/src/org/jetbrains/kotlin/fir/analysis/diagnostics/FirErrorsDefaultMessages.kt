@@ -154,6 +154,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITHOUT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_GETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_RECEIVERS_WITH_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTRACT_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATION_PARAMETER
@@ -1281,6 +1282,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             SUBTYPING_BETWEEN_CONTEXT_RECEIVERS,
             "Subtyping relation between context receivers is prohibited."
+        )
+        map.put(
+            CONTEXT_RECEIVERS_WITH_BACKING_FIELD,
+            "Property with context receivers cannot be initialized because it has no backing field."
         )
 
         // Ambiguity

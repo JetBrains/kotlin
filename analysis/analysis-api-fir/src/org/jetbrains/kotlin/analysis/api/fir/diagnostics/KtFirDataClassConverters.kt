@@ -2111,6 +2111,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CONTEXT_RECEIVERS_WITH_BACKING_FIELD) { firDiagnostic ->
+        ContextReceiversWithBackingFieldImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.RECURSION_IN_IMPLICIT_TYPES) { firDiagnostic ->
         RecursionInImplicitTypesImpl(
             firDiagnostic as KtPsiDiagnostic,
