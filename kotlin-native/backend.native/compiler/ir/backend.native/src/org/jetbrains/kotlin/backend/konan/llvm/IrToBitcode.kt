@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
@@ -472,8 +471,6 @@ internal class CodeGeneratorVisitor(
     override fun visitModuleFragment(declaration: IrModuleFragment) {
         context.log{"visitModule                    : ${ir2string(declaration)}"}
 
-        generationState.coverage.collectRegions(declaration)
-
         initializeCachedBoxes(generationState)
         declaration.acceptChildrenVoid(this)
 
@@ -483,7 +480,6 @@ internal class CodeGeneratorVisitor(
 
             codegen.objCDataGenerator?.finishModule()
 
-            generationState.coverage.writeRegionInfo()
             overrideRuntimeGlobals()
             appendLlvmUsed("llvm.used", llvm.usedFunctions.map { it.toConstPointer().llvm } + llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", llvm.compilerUsedGlobals)
@@ -744,9 +740,6 @@ internal class CodeGeneratorVisitor(
         constructor(llvmFunction: LlvmCallable, functionGenerationContext: FunctionGenerationContext) :
                 this(functionGenerationContext, null, llvmFunction)
 
-        val coverageInstrumentation: LLVMCoverageInstrumentation? =
-                generationState.coverage.tryGetInstrumentation(declaration) { function, args -> functionGenerationContext.call(function, args) }
-
         override fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?) {
             if (declaration == null || target == declaration) {
                 if ((target as IrFunction).returnsUnit()) {
@@ -884,7 +877,6 @@ internal class CodeGeneratorVisitor(
                     val parameterScope = ParameterScope(declaration, functionGenerationContext)
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
-                            recordCoverage(body)
                             if (declaration.isReifiedInline) {
                                 callDirect(context.ir.symbols.throwIllegalStateExceptionWithMessage.owner,
                                         listOf(codegen.staticData.kotlinStringLiteral(
@@ -974,18 +966,10 @@ internal class CodeGeneratorVisitor(
         }
     }
 
-    private fun recordCoverage(irElement: IrElement) {
-        val scope = currentCodeContext.functionScope()
-        if (scope is FunctionScope) {
-            scope.coverageInstrumentation?.instrumentIrElement(irElement)
-        }
-    }
-
     //-------------------------------------------------------------------------//
 
     private fun evaluateExpression(value: IrExpression, resultSlot: LLVMValueRef? = null): LLVMValueRef {
         updateBuilderDebugLocation(value)
-        recordCoverage(value)
         when (value) {
             is IrTypeOperatorCall    -> return evaluateTypeOperator           (value, resultSlot)
             is IrCall                -> return evaluateCall                   (value, resultSlot)

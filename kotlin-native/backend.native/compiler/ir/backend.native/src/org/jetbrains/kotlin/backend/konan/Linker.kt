@@ -40,7 +40,6 @@ internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
 internal class Linker(
         private val config: KonanConfig,
         private val linkerOutput: LinkerOutputKind,
-        private val isCoverageEnabled: Boolean = false,
         private val outputFiles: OutputFiles,
 ) {
     private val platform = config.platform
@@ -147,7 +146,6 @@ internal class Linker(
                 debug = debug,
                 kind = linkerOutput,
                 outputDsymBundle = outputFiles.symbolicInfoFile,
-                needsProfileLibrary = isCoverageEnabled,
                 mimallocEnabled = config.allocationMode == AllocationMode.MIMALLOC,
                 sanitizer = config.sanitizer
         )

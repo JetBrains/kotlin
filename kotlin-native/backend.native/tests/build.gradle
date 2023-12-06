@@ -123,9 +123,6 @@ allprojects {
     // backend.native/tests/framework
     ext.testOutputFramework = rootProject.file("$testOutputRoot/framework")
 
-    // backent.native/tests/coverage
-    ext.testOutputCoverage = rootProject.file("$testOutputRoot/coverage")
-
     ext.testOutputFileCheck = rootProject.file("$testOutputRoot/filecheck")
 }
 testOutputExternal.mkdirs()
@@ -187,7 +184,6 @@ tasks.named("run") {
     dependsOn(tasks.withType(FrameworkTest).matching { it.enabled })
     // Add regular gradle test tasks
     dependsOn(tasks.withType(Test).matching { it.enabled })
-    dependsOn(tasks.withType(CoverageTest).matching { it.enabled })
     dependsOn(tasks.withType(FileCheckTest).matching { it.enabled })
     dependsOn(":kotlin-native:Interop:Indexer:check")
     dependsOn(":kotlin-native:Interop:StubGenerator:check")
@@ -5077,112 +5073,6 @@ if (isAppleTarget(project)) {
             opts = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
         }
         swiftSources = ['framework/permanentObjects']
-    }
-}
-
-if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
-    tasks.register("coverage_basic_program", CoverageTest) {
-
-        binaryName = "CoverageBasic"
-        numberOfCoveredFunctions = 1
-        numberOfCoveredLines = 3
-
-        konanArtifacts {
-            program(binaryName, targets: [ target ]) {
-                srcDir 'coverage/basic/program'
-                baseDir "$testOutputCoverage/$binaryName"
-                entryPoint "coverage.basic.program.main"
-                extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
-                extraOpts project.globalTestArgs
-            }
-        }
-    }
-
-    tasks.register("coverage_basic_library", CoverageTest) {
-
-        binaryName = "CoverageBasicLibrary"
-        numberOfCoveredFunctions = 1
-        numberOfCoveredLines = 1
-
-        konanArtifacts {
-            library("lib_to_cover", targets: [target.name]) {
-                srcFiles 'coverage/basic/library/library.kt'
-            }
-            program(binaryName, targets: [ target ]) {
-                srcFiles 'coverage/basic/library/main.kt'
-                libraries {
-                    artifact konanArtifacts.lib_to_cover
-                }
-                baseDir "$testOutputCoverage/$binaryName"
-                entryPoint "coverage.basic.library.main"
-                extraOpts "-Xcoverage-file=$profrawFile", "-Xlibrary-to-cover=${konanArtifacts.lib_to_cover.getArtifactByTarget(target.name)}"
-                extraOpts project.globalTestArgs
-            }
-        }
-    }
-
-    tasks.register("coverage_controlflow", CoverageTest) {
-        binaryName = "CoverageControlFlow"
-        numberOfCoveredFunctions = 1
-        numberOfCoveredLines = 102
-
-        konanArtifacts {
-            program(binaryName, targets: [ target ]) {
-                srcDir 'coverage/basic/controlflow'
-                baseDir "$testOutputCoverage/$binaryName"
-                entryPoint "coverage.basic.controlflow.main"
-                extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
-                extraOpts project.globalTestArgs
-            }
-        }
-    }
-
-    tasks.register("coverage_jumps", CoverageTest) {
-        binaryName = "CoverageJumps"
-        numberOfCoveredFunctions = 8
-        numberOfCoveredLines = 74
-
-        konanArtifacts {
-            program(binaryName, targets: [ target ]) {
-                srcDir 'coverage/basic/jumps'
-                baseDir "$testOutputCoverage/$binaryName"
-                entryPoint "coverage.basic.jumps.main"
-                extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
-                extraOpts project.globalTestArgs
-            }
-        }
-    }
-
-    tasks.register("coverage_smoke0", CoverageTest) {
-        binaryName = "CoverageSmoke0"
-        numberOfCoveredFunctions = 2
-        numberOfCoveredLines = 5
-
-        konanArtifacts {
-            program(binaryName, targets: [ target ]) {
-                srcDir 'coverage/basic/smoke0'
-                baseDir "$testOutputCoverage/$binaryName"
-                entryPoint "coverage.basic.smoke0.main"
-                extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
-                extraOpts project.globalTestArgs
-            }
-        }
-    }
-
-    tasks.register("coverage_smoke1", CoverageTest) {
-        binaryName = "CoverageSmoke1"
-        numberOfCoveredFunctions = 9
-        numberOfCoveredLines = 33
-
-        konanArtifacts {
-            program(binaryName, targets: [ target ]) {
-                srcDir 'coverage/basic/smoke1'
-                baseDir "$testOutputCoverage/$binaryName"
-                entryPoint "coverage.basic.smoke1.main"
-                extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
-                extraOpts project.globalTestArgs
-            }
-        }
     }
 }
 

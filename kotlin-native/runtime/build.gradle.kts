@@ -229,13 +229,6 @@ bitcode {
             onlyIf { target.supportsLibBacktrace() }
         }
 
-        module("profileRuntime") {
-            srcRoot.set(layout.projectDirectory.dir("src/profile_runtime"))
-            sourceSets {
-                main {}
-            }
-        }
-
         module("objc") {
             headersDirs.from(files("src/main/cpp"))
             sourceSets {

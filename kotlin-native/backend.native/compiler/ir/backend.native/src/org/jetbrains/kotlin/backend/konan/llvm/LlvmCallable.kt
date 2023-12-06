@@ -27,10 +27,6 @@ class LlvmCallable(val functionType: LLVMTypeRef, private val llvmValue: LLVMVal
         LLVMCountParamTypes(functionType)
     }
 
-    val pgoFunctionNameVar by lazy {
-        LLVMCreatePGOFunctionNameVar(llvmValue, name)!!
-    }
-
     val isConstant by lazy {
         LLVMIsConstant(llvmValue) == 1
     }

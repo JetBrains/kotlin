@@ -57,18 +57,6 @@ internal fun getIncludedLibraries(
         allowDefaultLibs = false
 )
 
-internal fun getCoveredLibraries(
-    configuration: CompilerConfiguration,
-    resolvedLibraries: KotlinLibraryResolveResult,
-    resolver: SearchPathResolver<KonanLibrary>
-): List<KonanLibrary> = getFeaturedLibraries(
-        configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER),
-        resolvedLibraries,
-        resolver,
-        FeaturedLibrariesReporter.forCoveredLibraries(configuration),
-        allowDefaultLibs = true
-)
-
 private sealed class FeaturedLibrariesReporter {
 
     abstract fun reportIllegalKind(library: KonanLibrary)

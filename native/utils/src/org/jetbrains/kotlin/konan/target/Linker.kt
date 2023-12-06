@@ -64,7 +64,6 @@ private fun staticGnuArCommands(ar: String, executable: ExecutableFile,
 abstract class LinkerFlags(val configurables: Configurables) {
 
     protected val llvmBin = "${configurables.absoluteLlvmHome}/bin"
-    protected val llvmLib = "${configurables.absoluteLlvmHome}/lib"
 
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 
@@ -76,7 +75,7 @@ abstract class LinkerFlags(val configurables: Configurables) {
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
+                                   needsProfileLibrary: Boolean = false, mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind? = null): List<Command>
 
     /**
@@ -97,11 +96,6 @@ abstract class LinkerFlags(val configurables: Configurables) {
     open fun provideCompilerRtLibrary(libraryName: String, isDynamic: Boolean = false): String? {
         System.err.println("Can't provide $libraryName.")
         return null
-    }
-
-    // Code coverage requires this library.
-    protected val profileLibrary: String? by lazy {
-        provideCompilerRtLibrary("profile")
     }
 }
 
@@ -269,7 +263,6 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             +linkerKonanFlags
             if (mimallocEnabled) +mimallocLinkerDependencies
             if (compilerRtLibrary != null) +compilerRtLibrary!!
-            if (needsProfileLibrary) +profileLibrary!!
             +libraries
             +linkerArgs
             +rpath(dynamic, sanitizer)
@@ -420,7 +413,6 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             if (mimallocEnabled) +mimallocLinkerDependencies
             // See explanation about `-u__llvm_profile_runtime` here:
             // https://github.com/llvm/llvm-project/blob/21e270a479a24738d641e641115bce6af6ed360a/llvm/lib/Transforms/Instrumentation/InstrProfiling.cpp#L930
-            if (needsProfileLibrary) +listOf("-u__llvm_profile_runtime", profileLibrary!!)
             +linkerKonanFlags
             +linkerGccFlags
             +if (dynamic) "$libGcc/crtendS.o" else "$libGcc/crtend.o"
@@ -494,7 +486,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
             // --gc-sections flag may affect profiling.
             // See https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#drawbacks-and-limitations.
             // TODO: switching to lld may help.
-            if (optimize && !needsProfileLibrary) {
+            if (optimize) {
                 // TODO: Can be removed after LLD update.
                 //  See KT-48085.
                 if (!dynamic) {
@@ -504,7 +496,6 @@ class MingwLinker(targetProperties: MingwConfigurables)
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
             +libraries
-            if (needsProfileLibrary) +profileLibrary!!
             +linkerArgs
             +linkerKonanFlags.filterNot { it in skipDefaultArguments }
             if (mimallocEnabled) +mimallocLinkerDependencies

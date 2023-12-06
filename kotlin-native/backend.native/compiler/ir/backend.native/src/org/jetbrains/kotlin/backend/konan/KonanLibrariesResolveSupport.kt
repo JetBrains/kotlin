@@ -71,9 +71,6 @@ class KonanLibrariesResolveSupport(
     internal val exportedLibraries =
             getExportedLibraries(configuration, resolvedLibraries, resolver.searchPathResolver, report = true)
 
-    internal val coveredLibraries =
-            getCoveredLibraries(configuration, resolvedLibraries, resolver.searchPathResolver)
-
     internal val includedLibraries =
             getIncludedLibraries(includedLibraryFiles, configuration, resolvedLibraries)
 }

@@ -353,21 +353,6 @@ The default value is 1."""
     @Argument(value = "-Xdebug-info-version", description = "Generate debug info of the given version (1, 2).")
     var debugInfoFormatVersion: String = "1" /* command line parser doesn't accept kotlin.Int type */
 
-    @Argument(value = "-Xcoverage", description = "Emit code coverage information.")
-    var coverage: Boolean = false
-
-    @Argument(
-        value = "-Xlibrary-to-cover",
-        valueDescription = "<path>",
-        description = """Emit code coverage information for the given library.
-The library must be one of the ones passed with '-library'.""",
-        delimiter = Argument.Delimiters.none
-    )
-    var coveredLibraries: Array<String>? = null
-
-    @Argument(value = "-Xcoverage-file", valueDescription = "<path>", description = "Save coverage information to the given file.")
-    var coverageFile: String? = null
-
     @Argument(value = "-Xno-objc-generics", description = "Disable generics support for framework header.")
     var noObjcGenerics: Boolean = false
 

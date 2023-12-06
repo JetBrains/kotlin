@@ -32,16 +32,6 @@ fun KonanTarget.pointerBits() = when (architecture) {
     Architecture.WASM32 -> 32
 }
 
-
-fun KonanTarget.supportsCodeCoverage(): Boolean =
-        // TODO: Disabled for now, because we don't support
-        //  coverage format from LLVM 11.
-        false
-//        this == KonanTarget.MINGW_X64 ||
-//        this == KonanTarget.LINUX_X64 ||
-//        this == KonanTarget.MACOS_X64 ||
-//        this == KonanTarget.IOS_X64
-
 fun KonanTarget.supportsMimallocAllocator(): Boolean =
      when(this) {
         is KonanTarget.LINUX_X64 -> true

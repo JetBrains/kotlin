@@ -172,9 +172,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     put(BITCODE_EMBEDDING_MODE, selectBitcodeEmbeddingMode(this@setupFromArguments, arguments))
     put(DEBUG_INFO_VERSION, arguments.debugInfoFormatVersion.toInt())
-    put(COVERAGE, arguments.coverage)
-    put(LIBRARIES_TO_COVER, arguments.coveredLibraries.toNonNullList())
-    arguments.coverageFile?.let { put(PROFRAW_PATH, it) }
     put(OBJC_GENERICS, !arguments.noObjcGenerics)
     put(DEBUG_PREFIX_MAP, parseDebugPrefixMap(arguments, this@setupFromArguments))
 

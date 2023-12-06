@@ -110,7 +110,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
                     }
                     val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
-                    compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles, isCoverageEnabled = false)
+                    compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
                 }
             } finally {
                 tempFiles.dispose()
@@ -163,7 +163,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBitcodeBackend(context: Bitcod
         bitcodeEngine.runBitcodePostProcessing()
         runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
         val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependencies)
-        compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles, isCoverageEnabled = false)
+        compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
     }
 }
 
@@ -269,7 +269,6 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
         linkerOutputFile: String,
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
-        isCoverageEnabled: Boolean,
 ) {
     val compilationResult = temporaryFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
     runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
@@ -298,7 +297,6 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
             moduleCompilationOutput.dependenciesTrackingResult,
             outputFiles,
             cacheBinaries,
-            isCoverageEnabled = isCoverageEnabled
     )
     runPhase(LinkerPhase, linkerPhaseInput)
     if (context.config.produce.isCache) {

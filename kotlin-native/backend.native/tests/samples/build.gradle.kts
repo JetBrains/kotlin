@@ -58,7 +58,6 @@ val buildSamplesWithPlatformLibs by tasks.creating {
         dependsOn(":objc:assemble")
         dependsOn(":opengl:assemble")
         dependsOn(":uikit:assemble")
-        dependsOn(":coverage:assemble")
         dependsOn(":watchos:assemble")
     }
 

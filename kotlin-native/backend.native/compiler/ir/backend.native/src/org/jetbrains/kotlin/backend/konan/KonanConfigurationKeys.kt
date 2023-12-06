@@ -135,12 +135,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("verify compiler")
         val DEBUG_INFO_VERSION: CompilerConfigurationKey<Int>
                 = CompilerConfigurationKey.create("debug info format version")
-        val COVERAGE: CompilerConfigurationKey<Boolean>
-                = CompilerConfigurationKey.create("emit coverage info for sources")
-        val LIBRARIES_TO_COVER: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey.create("libraries that should be covered")
-        val PROFRAW_PATH: CompilerConfigurationKey<String?>
-                = CompilerConfigurationKey.create("path to *.profraw coverage output")
         val OBJC_GENERICS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("write objc header with generics support")
         val DEBUG_PREFIX_MAP: CompilerConfigurationKey<Map<String, String>>

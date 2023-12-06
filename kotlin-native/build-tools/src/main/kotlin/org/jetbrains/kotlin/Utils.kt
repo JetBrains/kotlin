@@ -115,9 +115,6 @@ val Project.globalBuildArgs: List<String>
 val Project.globalTestArgs: List<String>
     get() = project.groovyPropertyArrayToList("globalTestArgs")
 
-val Project.testTargetSupportsCodeCoverage: Boolean
-    get() = this.testTarget.supportsCodeCoverage()
-
 fun projectOrFiles(proj: Project, notation: String): Any? {
     val propertyMapper = proj.findProperty("notationMapping") ?: return proj.project(notation)
     val mapping = (propertyMapper as? Map<*, *>)?.get(notation) as? String ?: return proj.project(notation)

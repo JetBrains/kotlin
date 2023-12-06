@@ -22,9 +22,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.checkExternalCalls = from.checkExternalCalls
     to.clangOptions = from.clangOptions?.copyOf()
     to.compileFromBitcode = from.compileFromBitcode
-    to.coverage = from.coverage
-    to.coverageFile = from.coverageFile
-    to.coveredLibraries = from.coveredLibraries?.copyOf()
     to.debug = from.debug
     to.debugInfoFormatVersion = from.debugInfoFormatVersion
     to.debugPrefixMap = from.debugPrefixMap?.copyOf()

@@ -308,9 +308,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
     }
 
-    val shouldCoverSources = configuration.getBoolean(KonanConfigKeys.COVERAGE)
-    private val shouldCoverLibraries = !configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER).isNullOrEmpty()
-
     private val defaultAllocationMode get() =
         if (sanitizer == null)
             AllocationMode.CUSTOM
@@ -377,7 +374,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 GC.CONCURRENT_MARK_AND_SWEEP -> add("concurrent_ms_gc.bc")
             }
         }
-        if (shouldCoverLibraries || shouldCoverSources) add("profileRuntime.bc")
         if (target.supportsCoreSymbolication()) {
             add("source_info_core_symbolication.bc")
         }

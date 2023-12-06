@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.BackendContextHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
@@ -100,8 +99,6 @@ internal class NativeGenerationState(
     lateinit var llvmDeclarations: LlvmDeclarations
 
     val virtualFunctionTrampolines = mutableMapOf<IrSimpleFunction, LlvmCallable>()
-
-    val coverage by lazy { CoverageManager(this) }
 
     lateinit var objCExport: ObjCExport
 
