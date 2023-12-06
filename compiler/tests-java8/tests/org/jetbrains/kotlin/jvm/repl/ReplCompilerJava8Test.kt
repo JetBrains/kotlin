@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jvm.repl
 
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.junit.Assert
 import java.io.File
 
@@ -59,10 +61,17 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
             loadScriptingPlugin(this)
         }
 
-        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-
-        val res = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
-        Assert.assertTrue(res)
+        // The following environment can be disposed right away since it's only needed to compile the bytecode. The test will use a separate
+        // environment managed by `GenericReplCompiler`.
+        val disposable = Disposer.newDisposable("Disposable for ${ReplCompilerJava8Test::class.simpleName}.setUp")
+        try {
+            val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val res = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
+            Assert.assertTrue(res)
+        } finally {
+            Disposer.dispose(disposable)
+            resetApplicationToNull()
+        }
     }
 
     fun testIncompatibleScriptJvmTargetConfig() {
@@ -82,8 +91,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
             val result = runTest(configuration)
             Assert.assertTrue(result is ReplCompileResult.Error)
             Assert.assertTrue((result as ReplCompileResult.Error).message.contains("error: cannot inline bytecode built with JVM target 1.8 into bytecode that is being built with JVM target 1.6"))
-        }
-        finally {
+        } finally {
             System.clearProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY)
         }
     }
@@ -99,8 +107,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
         System.setProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY, "1.8")
         try {
             Assert.assertTrue(runTest(configuration) is ReplCompileResult.CompiledClasses)
-        }
-        finally {
+        } finally {
             System.clearProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY)
         }
     }
@@ -113,8 +120,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
 
     private fun runTest(configuration: CompilerConfiguration): ReplCompileResult {
         val collector = PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
-        val replCompiler = GenericReplCompiler(testRootDisposable,
-                                               StandardScriptDefinition, configuration, collector)
+        val replCompiler = GenericReplCompiler(testRootDisposable, StandardScriptDefinition, configuration, collector)
         val state = replCompiler.createState()
 
         return replCompiler.compile(state, ReplCodeLine(0, 0, script))
