@@ -120,3 +120,6 @@ fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideOrNull(
             }
     }
 }
+
+fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideOrFail(): T =
+    resolveFakeOverride() ?: error("No real overrides for ${this.render()}")
