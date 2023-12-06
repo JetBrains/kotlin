@@ -37,7 +37,7 @@ internal class TypeTranslator(
             is KtTypeArgumentWithVariance -> toBoundFrom(typeProjection.type).wrapWithVariance(typeProjection.variance)
         }
 
-    private fun KtAnalysisSession.toTypeConstructorFromTypeAliased(classType: KtUsualClassType): TypeAliased {
+    private fun KtAnalysisSession.toBoundFromTypeAliased(classType: KtNonErrorClassType): TypeAliased {
         val classSymbol = classType.classSymbol
         return if (classSymbol is KtTypeAliasSymbol)
             TypeAliased(
@@ -77,7 +77,7 @@ internal class TypeTranslator(
     fun KtAnalysisSession.toBoundFrom(type: KtType): Bound =
         when (type) {
             is KtUsualClassType -> {
-                if (type.classSymbol is KtTypeAliasSymbol) toTypeConstructorFromTypeAliased(type)
+                if (type.classSymbol is KtTypeAliasSymbol) toBoundFromTypeAliased(type)
                 else toTypeConstructorFrom(type)
             }
 
@@ -92,16 +92,8 @@ internal class TypeTranslator(
 
             is KtClassErrorType -> UnresolvedBound(type.toString())
             is KtFunctionalType -> {
-                /**
-                 * For example
-                 * `typealias CompletionHandler = (cause: Throwable?) -> Unit`
-                 * has functional type with no type arguments in K2
-                 * In K1 we have a usual generic type
-                 */
-                if (type.ownTypeArguments.isEmpty())
-                    toTypeConstructorFrom(type)
-                else
-                    toFunctionalTypeConstructorFrom(type)
+                if (type.classSymbol is KtTypeAliasSymbol) toBoundFromTypeAliased(type)
+                else toFunctionalTypeConstructorFrom(type)
             }
             is KtDynamicType -> Dynamic
             is KtDefinitelyNotNullType -> DefinitelyNonNullable(
