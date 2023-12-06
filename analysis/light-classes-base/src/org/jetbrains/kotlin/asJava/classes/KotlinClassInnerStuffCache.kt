@@ -19,7 +19,7 @@ import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import com.intellij.psi.util.PsiUtil
 import com.intellij.util.ArrayUtil
 import com.intellij.util.IncorrectOperationException
-import gnu.trove.THashMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
@@ -84,7 +84,7 @@ class KotlinClassInnerStuffCache(
 
     private val fieldByNameCache = cache {
         val fields = this.fields.takeIf { it.isNotEmpty() } ?: return@cache emptyMap()
-        Collections.unmodifiableMap(THashMap<String, PsiField>(fields.size).apply {
+        Collections.unmodifiableMap(Object2ObjectOpenHashMap<String, PsiField>(fields.size).apply {
             for (field in fields) {
                 putIfAbsent(field.name, field)
             }
@@ -101,7 +101,7 @@ class KotlinClassInnerStuffCache(
 
     private val methodByNameCache = cache {
         val methods = this.methods.takeIf { it.isNotEmpty() } ?: return@cache emptyMap()
-        Collections.unmodifiableMap(THashMap<String, Array<PsiMethod>>().apply {
+        Collections.unmodifiableMap(Object2ObjectOpenHashMap<String, Array<PsiMethod>>().apply {
             for ((key, list) in methods.groupByTo(HashMap()) { it.name }) {
                 put(key, list.toTypedArray())
             }
@@ -119,7 +119,7 @@ class KotlinClassInnerStuffCache(
     private val innerClassByNameCache = cache {
         val classes = this.innerClasses.takeIf { it.isNotEmpty() } ?: return@cache emptyMap()
 
-        Collections.unmodifiableMap(THashMap<String, PsiClass>().apply {
+        Collections.unmodifiableMap(Object2ObjectOpenHashMap<String, PsiClass>().apply {
             for (psiClass in classes) {
                 val name = psiClass.name
                 if (name == null) {

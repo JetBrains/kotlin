@@ -21,7 +21,7 @@ dependencies {
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 }
 

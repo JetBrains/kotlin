@@ -4,6 +4,7 @@
 
 package org.jetbrains.kotlin.js.backend;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral;
 import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar;
 import org.jetbrains.kotlin.js.common.IdentifierPolicyKt;
 import org.jetbrains.kotlin.js.util.TextOutput;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -190,7 +190,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
      * because the statements designated by statementEnds and statementStarts are
      * those that appear directly within these global blocks.
      */
-    private Set<JsBlock> globalBlocks = new THashSet<JsBlock>();
+    private Set<JsBlock> globalBlocks = new ObjectOpenHashSet<>();
 
     @NotNull
     protected final TextOutput p;

@@ -27,8 +27,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.PeekableIterator;
 import com.intellij.util.containers.PeekableIteratorWrapper;
 import com.intellij.util.lang.CompoundRuntimeException;
-import gnu.trove.Equality;
-import gnu.trove.THashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.Contract;
@@ -385,8 +384,8 @@ public abstract class KtUsefulTestCase extends TestCase {
 
         final StringBuilder builder = new StringBuilder();
         for (final Object o : collection) {
-            if (o instanceof THashSet) {
-                builder.append(new TreeSet<>((THashSet<?>)o));
+            if (o instanceof ObjectOpenHashSet) {
+                builder.append(new TreeSet<>((ObjectOpenHashSet<?>)o));
             }
             else {
                 builder.append(o);
@@ -439,7 +438,12 @@ public abstract class KtUsefulTestCase extends TestCase {
     public static <T> void assertOrderedEquals(@NotNull String errorMsg,
             @NotNull Iterable<? extends T> actual,
             @NotNull Iterable<? extends T> expected) {
-        assertOrderedEquals(errorMsg, actual, expected, Equality.CANONICAL);
+        assertOrderedEquals(errorMsg, actual, expected, new Equality<T>() {
+            @Override
+            public boolean equals(T o1, T o2) {
+                return Objects.equals(o1, o2);
+            }
+        });
     }
 
     public static <T> void assertOrderedEquals(@NotNull String errorMsg,

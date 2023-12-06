@@ -9,7 +9,7 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import gnu.trove.THashMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
@@ -58,7 +58,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
     override val indexedRoots by lazy { roots.asSequence() }
 
     private val packageCache: Array<out MutableMap<String, VirtualFile?>> by lazy {
-        Array(roots.size) { THashMap<String, VirtualFile?>() }
+        Array(roots.size) { Object2ObjectOpenHashMap<String, VirtualFile?>() }
     }
 
     override fun traverseDirectoriesInPackage(

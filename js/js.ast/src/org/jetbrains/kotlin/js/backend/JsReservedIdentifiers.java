@@ -4,7 +4,7 @@
 
 package org.jetbrains.kotlin.js.backend;
 
-import gnu.trove.THashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.util.Collections;
 import java.util.Set;
@@ -142,7 +142,7 @@ public class JsReservedIdentifiers {
                 "$stack", "$stackDepth", "$location",
         };
 
-        reservedGlobalSymbols = new THashSet<String>(commonBuiltins.length);
+        reservedGlobalSymbols = new ObjectOpenHashSet<>(commonBuiltins.length);
         Collections.addAll(reservedGlobalSymbols, commonBuiltins);
     }
 
