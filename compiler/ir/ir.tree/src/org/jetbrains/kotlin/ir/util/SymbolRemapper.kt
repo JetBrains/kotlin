@@ -18,39 +18,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.symbols.*
 
-interface SymbolRemapper {
-    fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol
-    fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol): IrAnonymousInitializerSymbol
-    fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol
-    fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol
-    fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol
-    fun getDeclaredField(symbol: IrFieldSymbol): IrFieldSymbol
-    fun getDeclaredFile(symbol: IrFileSymbol): IrFileSymbol
-    fun getDeclaredConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol
-    fun getDeclaredEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol
-    fun getDeclaredExternalPackageFragment(symbol: IrExternalPackageFragmentSymbol): IrExternalPackageFragmentSymbol
-    fun getDeclaredVariable(symbol: IrVariableSymbol): IrVariableSymbol
-    fun getDeclaredLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol
-    fun getDeclaredTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol
-    fun getDeclaredValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol
-    fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol
-    fun getDeclaredReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol
-
-    fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol
-    fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol
-    fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol
-    fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol
-    fun getReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol
-    fun getReferencedField(symbol: IrFieldSymbol): IrFieldSymbol
-    fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol
-    fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol
-    fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol
-    fun getReferencedProperty(symbol: IrPropertySymbol): IrPropertySymbol
-    fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol
-    fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol
-    fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol): IrReturnTargetSymbol
-    fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol
-
+interface SymbolRemapper : DeclaredSymbolRemapper, ReferencedSymbolRemapper {
     open class Empty : SymbolRemapper {
         override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol = symbol
         override fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol): IrAnonymousInitializerSymbol = symbol

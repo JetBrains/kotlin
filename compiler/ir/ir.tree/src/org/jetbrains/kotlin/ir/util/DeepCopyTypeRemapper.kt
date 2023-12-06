@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class DeepCopyTypeRemapper(
-    private val symbolRemapper: SymbolRemapper
+    private val symbolRemapper: ReferencedSymbolRemapper
 ) : TypeRemapper {
 
     lateinit var deepCopy: DeepCopyIrTreeWithSymbols
