@@ -49,7 +49,7 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
     private fun transformLateinitVariables() {
         compiledBir.getElementsWithIndex(lateinitVariables).forEach { variable ->
             variable.type = variable.type.makeNullable()
-            variable.isVar = false
+            variable.isVar = true
             variable.initializer = BirConst.constNull(variable.sourceSpan, birBuiltIns.nothingNType)
 
             // todo: also transform reads of backing field?
