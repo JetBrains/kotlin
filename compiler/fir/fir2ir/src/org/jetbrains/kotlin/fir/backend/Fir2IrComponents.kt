@@ -54,6 +54,7 @@ interface Fir2IrComponents {
     val fakeOverrideGenerator: FakeOverrideGenerator
     val delegatedMemberGenerator: DelegatedMemberGenerator
     val fakeOverrideBuilder: IrFakeOverrideBuilder
+    val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses
 
     val extensions: Fir2IrExtensions
     val configuration: Fir2IrConfiguration

@@ -118,6 +118,8 @@ fun FirResult.convertToIrAndActualize(
     if (components.configuration.useIrFakeOverrideBuilder) {
         val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(expectActualMap)
         irModuleFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
+        @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
+        components.symbolsMappingForLazyClasses.initializeSymbolMap(fakeOverrideResolver)
     }
     Fir2IrConverter.evaluateConstants(irModuleFragment, components)
     val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)

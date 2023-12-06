@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM_IR
+// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-64150
 // FILE: AbstractBlackBoxCodegenTest.java
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {}

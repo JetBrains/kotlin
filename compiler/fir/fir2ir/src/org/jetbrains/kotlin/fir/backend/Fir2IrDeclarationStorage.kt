@@ -286,7 +286,7 @@ class Fir2IrDeclarationStorage(
         ) { signature ->
             symbolTable.referenceSimpleFunctionIfAny(signature)
         }
-        return cachedIrCallable
+        return cachedIrCallable?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
     }
 
     /**
@@ -715,14 +715,15 @@ class Fir2IrDeclarationStorage(
     ): IrPropertySymbol? {
         @Suppress("NAME_SHADOWING")
         val property = prepareProperty(property)
-        return getCachedIrCallableSymbol(
+        val symbol = getCachedIrCallableSymbol(
             property,
             fakeOverrideOwnerLookupTag,
             propertyCache,
             signatureCalculator
         ) { signature ->
             symbolTable.referencePropertyIfAny(signature)
-        }
+        } ?: return null
+        return symbolsMappingForLazyClasses.remapPropertySymbol(symbol)
     }
 
     private fun getCachedIrPropertySymbols(
@@ -740,11 +741,11 @@ class Fir2IrDeclarationStorage(
     }
 
     fun findGetterOfProperty(propertySymbol: IrPropertySymbol): IrSimpleFunctionSymbol? {
-        return getterForPropertyCache[propertySymbol]
+        return getterForPropertyCache[propertySymbol]?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
     }
 
     fun findSetterOfProperty(propertySymbol: IrPropertySymbol): IrSimpleFunctionSymbol? {
-        return setterForPropertyCache[propertySymbol]
+        return setterForPropertyCache[propertySymbol]?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
     }
 
     fun findBackingFieldOfProperty(propertySymbol: IrPropertySymbol): IrFieldSymbol? {

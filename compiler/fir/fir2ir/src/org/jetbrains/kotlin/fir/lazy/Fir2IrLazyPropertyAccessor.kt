@@ -109,8 +109,8 @@ class Fir2IrLazyPropertyAccessor(
         }
     }
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
-        if (firParentClass == null) return@lazyVar emptyList()
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) {
+        if (firParentClass == null) return@lazyMappedFunctionListVar emptyList()
         // If property accessor is created then corresponding property is definitely created too
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val correspondingProperty = correspondingPropertySymbol!!.owner

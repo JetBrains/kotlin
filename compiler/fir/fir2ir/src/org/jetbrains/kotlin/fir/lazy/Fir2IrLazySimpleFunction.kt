@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.contextReceiversForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrCallableDeclarationsGenerator
 import org.jetbrains.kotlin.fir.backend.generators.generateOverriddenFunctionSymbols
+import org.jetbrains.kotlin.fir.backend.lazyMappedFunctionListVar
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -92,12 +93,13 @@ class Fir2IrLazySimpleFunction(
         }
     }
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) {
         when (configuration.useIrFakeOverrideBuilder) {
             true -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
             false -> computeOverriddenUsingFir2IrFakeOverrideGenerator()
         }
     }
+
 
     // TODO: drop this function after migration to IR f/o generator will be complete (KT-64202)
     private fun computeOverriddenUsingFir2IrFakeOverrideGenerator(): List<IrSimpleFunctionSymbol> {
