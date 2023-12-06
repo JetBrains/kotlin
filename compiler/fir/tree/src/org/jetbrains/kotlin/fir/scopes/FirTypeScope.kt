@@ -27,8 +27,8 @@ abstract class FirTypeScope : FirContainingNamesAwareScope() {
     // Then, for B::foo from scope for B one may receive override A::foo and scope for A
     //
     // Currently, this function and its property brother both have very weak guarantees
-    // - It may silently do nothing on symbols originated from different scope instance
-    // - It may return the same overridden symbols more then once in case of substitution
+    // - It may return the same overridden symbols more than once in case of substitution or intersection
+    //     (but with different base scope)
     abstract fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirNamedFunctionSymbol,
         processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction

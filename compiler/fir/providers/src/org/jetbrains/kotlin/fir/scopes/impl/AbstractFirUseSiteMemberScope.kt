@@ -148,8 +148,7 @@ abstract class AbstractFirUseSiteMemberScope(
             directOverriddenFunctions,
             functionsFromSupertypes,
             functionSymbol,
-            processor,
-            FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
+            processor
         )
     }
 
@@ -161,8 +160,7 @@ abstract class AbstractFirUseSiteMemberScope(
             directOverriddenProperties,
             propertiesFromSupertypes,
             propertySymbol,
-            processor,
-            FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
+            processor
         )
     }
 
@@ -170,24 +168,17 @@ abstract class AbstractFirUseSiteMemberScope(
         directOverriddenMap: Map<D, List<ResultOfIntersection<D>>>,
         callablesFromSupertypes: Map<Name, List<ResultOfIntersection<D>>>,
         callableSymbol: D,
-        processor: (D, FirTypeScope) -> ProcessorAction,
-        processDirectOverriddenCallables: FirTypeScope.(D, (D, FirTypeScope) -> ProcessorAction) -> ProcessorAction
+        processor: (D, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
         when (val directOverridden = directOverriddenMap[callableSymbol]) {
             null -> {
                 val resultOfIntersection = callablesFromSupertypes[callableSymbol.name]
                     ?.firstOrNull { it.chosenSymbol == callableSymbol }
                     ?: return ProcessorAction.NONE
-                if (resultOfIntersection.isIntersectionOverride()) {
-                    for ((overridden, baseScope) in resultOfIntersection.overriddenMembers) {
-                        if (!processor(overridden, baseScope)) return ProcessorAction.STOP
-                    }
-                    return ProcessorAction.NONE
-                } else {
-                    return resultOfIntersection.containingScope
-                        ?.processDirectOverriddenCallables(callableSymbol, processor)
-                        ?: ProcessorAction.NONE
+                for ((overridden, baseScope) in resultOfIntersection.overriddenMembers) {
+                    if (!processor(overridden, baseScope)) return ProcessorAction.STOP
                 }
+                return ProcessorAction.NONE
             }
             else -> {
                 for (resultOfIntersection in directOverridden) {

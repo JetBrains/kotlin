@@ -11,6 +11,7 @@ Some:
     [Library]: public abstract fun toInt(): R|kotlin/Int| from Use site scope of kotlin/Number [id: 1]
     [RenamedForOverride]: public abstract fun toInt(): R|kotlin/Int| from Java enhancement scope for /MyNumber [id: 2]
   [Library]: public abstract fun toLong(): R|kotlin/Long| from Java enhancement scope for /Some [id: 0]
+    [Library]: public abstract fun toLong(): R|kotlin/Long| from Use site scope of kotlin/Number [id: 0]
 
 MyNumber:
   [Enhancement]: public abstract fun byteValue(): R|kotlin/Byte| from Java enhancement scope for /MyNumber [id: 0]
