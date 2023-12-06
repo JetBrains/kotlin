@@ -53,7 +53,7 @@ internal class TransformerPrinter(
                 )
                 println()
             } else {
-                if (element.parentInVisitor == null) return
+                val parentInVisitor = element.parentInVisitor ?: return
                 printFunctionWithBlockBody(
                     name = "transform" + element.name,
                     parameters = listOf(
@@ -64,7 +64,7 @@ internal class TransformerPrinter(
                     typeParameters = element.params,
                     modality = Modality.OPEN,
                 ) {
-                    println("return transformElement(", elementParameterName, ", data)")
+                    println("return ", "transform", parentInVisitor.name, "(", elementParameterName, ", data)")
                 }
             }
             println()
