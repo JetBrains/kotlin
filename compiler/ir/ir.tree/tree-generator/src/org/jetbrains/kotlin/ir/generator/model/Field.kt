@@ -54,6 +54,7 @@ sealed class Field(
         super.updateFieldsInCopy(copy)
         copy.customUseInIrFactoryStrategy = customUseInIrFactoryStrategy
         copy.customSetter = customSetter
+        copy.symbolFieldRole = symbolFieldRole
     }
 
     protected abstract fun internalCopy(): Field

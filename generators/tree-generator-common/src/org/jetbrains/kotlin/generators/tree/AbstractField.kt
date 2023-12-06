@@ -147,4 +147,20 @@ abstract class AbstractField<Field : AbstractField<Field>> {
             override val withGetter: Boolean,
         ) : ImplementationDefaultStrategy
     }
+
+    /**
+     * If this field represents a symbol of a declaration ([org.jetbrains.kotlin.ir.symbols.IrSymbol] or
+     * [org.jetbrains.kotlin.fir.symbols.FirBasedSymbol]), determines whether this symbol corresponds to the element containing this field
+     * or some other element.
+     *
+     * In other words, for element `someElement` the following is true:
+     * [symbolFieldRole] == [SymbolFieldRole.DECLARED] iff `someElement.symbol.owner === someElement`.
+     *
+     * If this field does not represent a symbol, this property should be `null`.
+     */
+    var symbolFieldRole: SymbolFieldRole? = null
+
+    enum class SymbolFieldRole {
+        DECLARED, REFERENCED
+    }
 }

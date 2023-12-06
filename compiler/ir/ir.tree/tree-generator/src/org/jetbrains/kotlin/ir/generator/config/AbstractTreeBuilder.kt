@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.ir.generator.config
 
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.ir.generator.Model
 import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.ir.generator.model.ElementOrRef
 import org.jetbrains.kotlin.ir.generator.model.ElementRef
 import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.ir.generator.Model
 import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
@@ -111,6 +111,53 @@ abstract class AbstractTreeBuilder {
     fun build(): Model {
         val elements = configurationCallbacks.map { it() }
         return Model(elements, rootElement)
+    }
+
+    /**
+     * Constructs a field that represents the element's own symbol, i.e., for which
+     * `element.symbol.owner === element` is always true.
+     */
+    protected fun declaredSymbol(type: TypeRefWithNullability) =
+        field("symbol", type, mutable = false) {
+            symbolFieldRole = AbstractField.SymbolFieldRole.DECLARED
+        }
+
+    /**
+     * Constructs a field that represents a symbol that the element references but not owns.
+     */
+    protected fun referencedSymbol(
+        name: String,
+        type: TypeRefWithNullability,
+        nullable: Boolean = false,
+        mutable: Boolean = true,
+        initializer: SingleField.() -> Unit = {},
+    ) = field(name, type, nullable, mutable) {
+        symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED
+        initializer()
+    }
+
+    /**
+     * Constructs a field that represents a symbol that the element references but not owns.
+     */
+    protected fun referencedSymbol(
+        type: TypeRefWithNullability,
+        nullable: Boolean = false,
+        mutable: Boolean = true,
+        initializer: SingleField.() -> Unit = {},
+    ) = referencedSymbol("symbol", type, nullable, mutable, initializer)
+
+    /**
+     * Constructs a field that represents a list of symbols that the element references but not owns.
+     */
+    protected fun referencedSymbolList(
+        name: String,
+        baseType: TypeRefWithNullability,
+        nullable: Boolean = false,
+        mutability: ListField.Mutability = ListField.Mutability.Var,
+        initializer: ListField.() -> Unit = {},
+    ) = listField(name, baseType, nullable, mutability) {
+        symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED
+        initializer()
     }
 
     companion object {

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.generator
 
+import org.jetbrains.kotlin.generators.tree.ClassRef
+import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
 import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.ir.generator.Packages.declarations
@@ -34,9 +36,15 @@ val elementTransformerType = type(visitors, "IrElementTransformer")
 val elementTransformerVoidType = type(visitors, "IrElementTransformerVoid", TypeKind.Class)
 val typeTransformerType = type(visitors, "IrTypeTransformer")
 val irTypeType = type(types, "IrType")
+val irSimpleTypeType = type(types, "IrSimpleType", TypeKind.Class)
+val irTypeAbbreviationType = type(types, "IrTypeAbbreviation")
 val irFactoryType = type(declarations, "IrFactory")
 val stageControllerType = type(declarations, "StageController", TypeKind.Class)
 val idSignatureType = type(util, "IdSignature", TypeKind.Class)
+val symbolRemapperType = type(util, "SymbolRemapper")
+val declaredSymbolRemapperType = type(util, "DeclaredSymbolRemapper")
+val referencedSymbolRemapperType = type(util, "ReferencedSymbolRemapper")
+val emptySymbolRemapperType = ClassRef<PositionTypeParameterRef>(TypeKind.Class, util, "SymbolRemapper", "Empty")
 val irImplementationDetailType = type(tree, "IrImplementationDetail", TypeKind.Class)
 
 val symbolType = type(symbols, "IrSymbol")
