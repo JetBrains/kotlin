@@ -512,40 +512,40 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
         if (!constructedClass.isExternalObjCClass() &&
             delegatingCallConstructingClass.isExternalObjCClass()) {
 
-            // Calling super constructor from Kotlin Objective-C class.
+            expression.symbol.owner.getObjCInitMethod()?.let { initMethod ->
+                // Calling super constructor from Kotlin Objective-C class.
 
-            require(constructedClass.getSuperClassNotAny() == delegatingCallConstructingClass) { renderCompilerError(expression) }
-            require(expression.symbol.owner.objCConstructorIsDesignated()) { renderCompilerError(expression) }
-            require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
-            require(expression.extensionReceiver == null) { renderCompilerError(expression) }
+                require(constructedClass.getSuperClassNotAny() == delegatingCallConstructingClass) { renderCompilerError(expression) }
+                require(expression.symbol.owner.objCConstructorIsDesignated()) { renderCompilerError(expression) }
+                require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
+                require(expression.extensionReceiver == null) { renderCompilerError(expression) }
 
-            val initMethod = expression.symbol.owner.getObjCInitMethod()!!
+                val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
 
-            val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
-
-            val initCall = builder.genLoweredObjCMethodCall(
-                    initMethodInfo,
-                    superQualifier = delegatingCallConstructingClass.symbol,
-                    receiver = builder.irGet(constructedClass.thisReceiver!!),
-                    arguments = initMethod.valueParameters.map { expression.getValueArgument(it.index) },
-                    call = expression,
-                    method = initMethod
-            )
-
-            val superConstructor = delegatingCallConstructingClass
-                    .constructors.single { it.valueParameters.size == 0 }.symbol
-
-            return builder.irBlock(expression) {
-                // Required for the IR to be valid, will be ignored in codegen:
-                +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
-                        startOffset,
-                        endOffset,
-                        context.irBuiltIns.unitType,
-                        superConstructor
+                val initCall = builder.genLoweredObjCMethodCall(
+                        initMethodInfo,
+                        superQualifier = delegatingCallConstructingClass.symbol,
+                        receiver = builder.irGet(constructedClass.thisReceiver!!),
+                        arguments = initMethod.valueParameters.map { expression.getValueArgument(it.index) },
+                        call = expression,
+                        method = initMethod
                 )
-                +irCall(symbols.interopObjCObjectSuperInitCheck).apply {
-                    extensionReceiver = irGet(constructedClass.thisReceiver!!)
-                    putValueArgument(0, initCall)
+
+                val superConstructor = delegatingCallConstructingClass
+                        .constructors.single { it.valueParameters.size == 0 }.symbol
+
+                return builder.irBlock(expression) {
+                    // Required for the IR to be valid, will be ignored in codegen:
+                    +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
+                            startOffset,
+                            endOffset,
+                            context.irBuiltIns.unitType,
+                            superConstructor
+                    )
+                    +irCall(symbols.interopObjCObjectSuperInitCheck).apply {
+                        extensionReceiver = irGet(constructedClass.thisReceiver!!)
+                        putValueArgument(0, initCall)
+                    }
                 }
             }
         }
