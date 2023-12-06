@@ -457,30 +457,31 @@ open class DeepCopyIrTreeWithSymbols(
             spread.expression.transform()
         )
 
+    override fun visitReturnableBlock(expression: IrReturnableBlock): IrReturnableBlock =
+        IrReturnableBlockImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            symbolRemapper.getReferencedReturnableBlock(expression.symbol),
+            mapStatementOrigin(expression.origin),
+            expression.statements.memoryOptimizedMap { it.transform() }
+        ).processAttributes(expression)
+
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrInlinedFunctionBlock =
+        IrInlinedFunctionBlockImpl(
+            inlinedBlock.startOffset, inlinedBlock.endOffset,
+            inlinedBlock.type.remapType(),
+            inlinedBlock.inlineCall, inlinedBlock.inlinedElement,
+            mapStatementOrigin(inlinedBlock.origin),
+            statements = inlinedBlock.statements.memoryOptimizedMap { it.transform() },
+        ).processAttributes(inlinedBlock)
+
     override fun visitBlock(expression: IrBlock): IrBlock =
-        if (expression is IrReturnableBlock)
-            IrReturnableBlockImpl(
-                expression.startOffset, expression.endOffset,
-                expression.type.remapType(),
-                symbolRemapper.getReferencedReturnableBlock(expression.symbol),
-                mapStatementOrigin(expression.origin),
-                expression.statements.memoryOptimizedMap { it.transform() }
-            ).processAttributes(expression)
-        else if (expression is IrInlinedFunctionBlock)
-            IrInlinedFunctionBlockImpl(
-                expression.startOffset, expression.endOffset,
-                expression.type.remapType(),
-                expression.inlineCall, expression.inlinedElement,
-                mapStatementOrigin(expression.origin),
-                statements = expression.statements.memoryOptimizedMap { it.transform() },
-            ).processAttributes(expression)
-        else
-            IrBlockImpl(
-                expression.startOffset, expression.endOffset,
-                expression.type.remapType(),
-                mapStatementOrigin(expression.origin),
-                expression.statements.memoryOptimizedMap { it.transform() }
-            ).processAttributes(expression)
+        IrBlockImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            mapStatementOrigin(expression.origin),
+            expression.statements.memoryOptimizedMap { it.transform() }
+        ).processAttributes(expression)
 
     override fun visitComposite(expression: IrComposite): IrComposite =
         IrCompositeImpl(
