@@ -301,16 +301,17 @@ private class BackendChecker(
                 delegatingCallConstructingClass.isExternalObjCClass()) {
             // Calling super constructor from Kotlin Objective-C class.
 
-            val initMethod = expression.symbol.owner.getObjCInitMethod()!!
+            expression.symbol.owner.getObjCInitMethod()?.let { initMethod ->
 
-            if (!expression.symbol.owner.objCConstructorIsDesignated())
-                reportError(expression, "Unable to call non-designated initializer as super constructor")
+                if (!expression.symbol.owner.objCConstructorIsDesignated())
+                    reportError(expression, "Unable to call non-designated initializer as super constructor")
 
-            checkCanGenerateObjCCall(
-                    method = initMethod,
-                    call = expression,
-                    arguments = initMethod.valueParameters.map { expression.getValueArgument(it.index) }
-            )
+                checkCanGenerateObjCCall(
+                        method = initMethod,
+                        call = expression,
+                        arguments = initMethod.valueParameters.map { expression.getValueArgument(it.index) }
+                )
+            }
         }
     }
 
