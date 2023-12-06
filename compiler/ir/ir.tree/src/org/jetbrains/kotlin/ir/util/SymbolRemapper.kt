@@ -36,7 +36,6 @@ interface SymbolRemapper {
 
     fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol
     fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol
-    fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol?
     fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol
     fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol
     fun getReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol
@@ -82,8 +81,6 @@ interface SymbolRemapper {
         override fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol = symbol
 
         override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol = symbol
-
-        override fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol? = symbol
 
         override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol = symbol
 

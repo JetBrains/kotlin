@@ -115,9 +115,6 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
                         symbol.owner.findActualForExpected().symbol
                     else super.getReferencedClass(symbol)
 
-            override fun getReferencedClassOrNull(symbol: IrClassSymbol?) =
-                    symbol?.let { getReferencedClass(it) }
-
             override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol = when (symbol) {
                 is IrClassSymbol -> getReferencedClass(symbol)
                 is IrTypeParameterSymbol -> remapExpectTypeParameter(symbol).symbol

@@ -61,11 +61,6 @@ class IrActualizer(
                 return symbol
             }
 
-            override fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol? {
-                if (symbol == null) return null
-                return getReferencedClass(symbol)
-            }
-
             override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol {
                 if (symbol !is IrClassSymbol) return symbol
                 return getReferencedClass(symbol)

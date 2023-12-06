@@ -46,8 +46,6 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
 
     override fun getReferencedScript(symbol: IrScriptSymbol) = symbol.actualizeSymbol()
 
-    override fun getReferencedClassOrNull(symbol: IrClassSymbol?) = symbol?.actualizeSymbol()
-
     override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol) = symbol.actualizeSymbol()
 
     override fun getReferencedVariable(symbol: IrVariableSymbol) = symbol.actualizeSymbol()
