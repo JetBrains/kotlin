@@ -101,18 +101,18 @@ private class ObjCExportCompilerProblemCollector(val context: PhaseContext) : Ob
  * Populate framework directory with headers, module and info.plist.
  */
 internal fun createObjCFramework(
-        config: KonanConfig,
-        moduleDescriptor: ModuleDescriptor,
-        exportedInterface: ObjCExportedInterface,
-        frameworkDirectory: File
+    config: KonanConfig,
+    moduleDescriptor: ModuleDescriptor,
+    exportedInterface: ObjCExportedInterface,
+    frameworkDirectory: File
 ) {
     val frameworkName = frameworkDirectory.name.removeSuffix(CompilerOutputKind.FRAMEWORK.suffix())
     val frameworkBuilder = FrameworkBuilder(
-            config,
-            infoPListBuilder = InfoPListBuilder(config),
-            moduleMapBuilder = ModuleMapBuilder(),
-            objCHeaderWriter = ObjCHeaderWriter(),
-            mainPackageGuesser = MainPackageGuesser(),
+        config,
+        infoPListBuilder = InfoPListBuilder(config),
+        moduleMapBuilder = ModuleMapBuilder(),
+        objCHeaderWriter = ObjCHeaderWriter(),
+        mainPackageGuesser = MainPackageGuesser(),
     )
     frameworkBuilder.build(
             moduleDescriptor,
@@ -135,10 +135,10 @@ internal fun createTestBundle(
 
 // TODO: No need for such class in dynamic driver.
 internal class ObjCExport(
-        private val generationState: NativeGenerationState,
-        private val moduleDescriptor: ModuleDescriptor,
-        private val exportedInterface: ObjCExportedInterface?,
-        private val codeSpec: ObjCExportCodeSpec?
+    private val generationState: NativeGenerationState,
+    private val moduleDescriptor: ModuleDescriptor,
+    private val exportedInterface: ObjCExportedInterface?,
+    private val codeSpec: ObjCExportCodeSpec?
 ) {
     private val config = generationState.config
     private val target get() = config.target

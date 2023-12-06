@@ -265,6 +265,10 @@ fun Project.projectTest(
     }.apply { configure(body) }
 }
 
+fun Test.enableJunit5ExtensionsAutodetection() {
+    systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+}
+
 val defaultMaxMemoryPerTestWorkerMb = 1600
 val reservedMemoryMb = 9000 // system processes, gradle daemon, kotlin daemon, etc ...
 

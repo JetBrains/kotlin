@@ -27,8 +27,8 @@ internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<Ph
 }
 
 internal data class CreateObjCFrameworkInput(
-        val moduleDescriptor: ModuleDescriptor,
-        val exportedInterface: ObjCExportedInterface,
+    val moduleDescriptor: ModuleDescriptor,
+    val exportedInterface: ObjCExportedInterface,
 )
 
 /**

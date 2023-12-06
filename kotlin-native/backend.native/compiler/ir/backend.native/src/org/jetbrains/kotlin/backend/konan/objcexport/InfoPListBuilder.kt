@@ -26,9 +26,9 @@ internal class InfoPListBuilder(
     private val configuration = config.configuration
 
     fun build(
-            name: String,
-            mainPackageGuesser: MainPackageGuesser,
-            moduleDescriptor: ModuleDescriptor,
+        name: String,
+        mainPackageGuesser: MainPackageGuesser,
+        moduleDescriptor: ModuleDescriptor,
     ): String {
         val bundleId = computeBundleID(name, mainPackageGuesser, moduleDescriptor)
 
@@ -124,9 +124,9 @@ internal class InfoPListBuilder(
     }
 
     private fun computeBundleID(
-            bundleName: String,
-            mainPackageGuesser: MainPackageGuesser,
-            moduleDescriptor: ModuleDescriptor,
+        bundleName: String,
+        mainPackageGuesser: MainPackageGuesser,
+        moduleDescriptor: ModuleDescriptor,
     ): String {
         val deprecatedBundleIdOption = configuration[KonanConfigKeys.BUNDLE_ID]
         val bundleIdOption = configuration[BinaryOptions.bundleId]

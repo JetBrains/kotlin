@@ -164,6 +164,7 @@ dependencies {
     distPack project(':kotlin-native:Interop:Skia')
     distPack project(':kotlin-native:backend.native')
     distPack project(':native:objcexport-header-generator')
+    distPack project(':native:objcexport-header-generator-k1')
     distPack project(':native:base')
     distPack project(':kotlin-native:utilities:cli-runner')
     distPack project(':kotlin-native:utilities:basic-utils')

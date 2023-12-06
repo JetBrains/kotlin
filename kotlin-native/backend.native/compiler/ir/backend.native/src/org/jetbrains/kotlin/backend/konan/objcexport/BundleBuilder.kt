@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.konan.target.Family
  * Builds Apple bundle directory.
  */
 internal class BundleBuilder(
-        private val config: KonanConfig,
-        private val infoPListBuilder: InfoPListBuilder,
-        private val mainPackageGuesser: MainPackageGuesser,
+    private val config: KonanConfig,
+    private val infoPListBuilder: InfoPListBuilder,
+    private val mainPackageGuesser: MainPackageGuesser,
 ) {
     fun build(
             moduleDescriptor: ModuleDescriptor,
