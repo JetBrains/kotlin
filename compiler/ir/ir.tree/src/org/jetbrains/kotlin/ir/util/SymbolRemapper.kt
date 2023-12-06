@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 
 interface SymbolRemapper {
     fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol
+    fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol): IrAnonymousInitializerSymbol
     fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol
     fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol
     fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol
@@ -51,6 +52,7 @@ interface SymbolRemapper {
 
     open class Empty : SymbolRemapper {
         override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol = symbol
+        override fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol): IrAnonymousInitializerSymbol = symbol
 
         override fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol = symbol
 

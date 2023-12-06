@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbol, IrSymbol>) : SymbolRemapper {
     override fun getDeclaredClass(symbol: IrClassSymbol) = symbol
 
+    override fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol) = symbol
+
     override fun getDeclaredScript(symbol: IrScriptSymbol) = symbol
 
     override fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol) = symbol
