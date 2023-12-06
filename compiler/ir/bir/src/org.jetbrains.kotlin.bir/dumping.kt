@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.bir.util.Bir2IrConverter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.div
@@ -61,7 +60,7 @@ fun dumpBirPhase(
         }
         val irPhaseName = phaseName ?: irPhases?.lastOrNull() ?: return
 
-        val compiledBir = input.birModule!!.getContainingForest()!!
+        val compiledBir = input.birModule!!.getContainingDatabase()!!
         val bir2IrConverter = Bir2IrConverter(
             input.dynamicPropertyManager!!,
             input.mappedIr2BirElements,

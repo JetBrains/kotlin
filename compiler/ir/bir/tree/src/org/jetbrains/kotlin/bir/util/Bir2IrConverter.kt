@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -28,7 +27,7 @@ class Bir2IrConverter(
     dynamicPropertyManager: BirElementDynamicPropertyManager,
     remappedIr2BirElements: Map<BirElement, IrElement>,
     private val irBuiltIns: IrBuiltIns,
-    compiledBir: BirForest,
+    compiledBir: BirDatabase,
     expectedTreeSize: Int = 0,
 ) : Bir2IrConverterBase(remappedIr2BirElements, compiledBir) {
     private val modules = createElementMap<IrModuleFragment, BirModuleFragment>(1)

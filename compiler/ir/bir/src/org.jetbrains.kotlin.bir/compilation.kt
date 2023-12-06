@@ -27,13 +27,8 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IdSignatureValues.result
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.utils.indexOfFirst
 import java.util.IdentityHashMap
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -242,13 +237,13 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
     override fun phaseBody(context: JvmBackendContext, input: IrModuleFragment): BirCompilationBundle {
         val dynamicPropertyManager = BirElementDynamicPropertyManager()
 
-        val externalModulesBir = BirForest()
-        val compiledBir = BirForest()
+        val externalModulesBir = BirDatabase()
+        val compiledBir = BirDatabase()
 
         val mappedIr2BirElements = IdentityHashMap<BirElement, IrElement>()
         val ir2BirConverter = Ir2BirConverter(dynamicPropertyManager)
         ir2BirConverter.copyAncestorsForOrphanedElements = true
-        ir2BirConverter.appendElementAsForestRoot = { old, new ->
+        ir2BirConverter.appendElementAsDatabaseRoot = { old, new ->
             mappedIr2BirElements[new] = old
 
             when {
@@ -354,7 +349,7 @@ private class ConvertBirToIrPhase(name: String, description: String) :
     SimpleNamedCompilerPhase<JvmBackendContext, BirCompilationBundle, IrModuleFragment>(name, description) {
     override fun phaseBody(context: JvmBackendContext, input: BirCompilationBundle): IrModuleFragment {
         val dynamicPropertyManager = input.dynamicPropertyManager!!
-        val compiledBir = input.birModule!!.getContainingForest()!!
+        val compiledBir = input.birModule!!.getContainingDatabase()!!
         val bir2IrConverter = Bir2IrConverter(
             dynamicPropertyManager,
             input.mappedIr2BirElements,
