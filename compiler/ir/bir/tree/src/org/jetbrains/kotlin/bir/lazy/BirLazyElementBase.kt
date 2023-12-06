@@ -22,7 +22,7 @@ abstract class BirLazyElementBase(
     // it has one. It may differ from the _parent property in case
     // when we know the parent, but the parent has not (yet)
     // accepted us as one of their children. Then we may still be
-    // structurally not bound, or bound directly to a forest.
+    // structurally not bound, or bound directly to a database.
     private var parentElement: BirElementBase? = null
 
     final override val parent: BirElementBase
@@ -45,7 +45,7 @@ abstract class BirLazyElementBase(
         if (new != null) {
             new._parent = this
             (new as? BirLazyElementBase)?.parentElement = this
-            root?.elementAttached(new)
+            _containingDatabase?.elementAttached(new)
         }
     }
 

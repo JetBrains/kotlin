@@ -22,10 +22,10 @@ import kotlin.experimental.or
 
 abstract class BirElementBase : BirElementParent(), BirElement {
     /**
-     * Root reference may be stale.
-     * To actualize it for all elements in a forest, call [BirForest.realizeTreeMovements]
+     * Database reference may be stale.
+     * To actualize it for all elements in a database, call [BirDatabase.realizeTreeMovements]
      */
-    internal var root: BirForest? = null
+    internal var _containingDatabase: BirDatabase? = null
     internal var _parent: BirElementParent? = null
     private var flags: Byte = 0
     internal var indexSlot: UByte = 0u
@@ -36,12 +36,13 @@ abstract class BirElementBase : BirElementParent(), BirElement {
 
     internal abstract fun setParentWithInvalidation(new: BirElementParent?)
 
-    val attachedToTree
-        get() = root != null
+    val attachedToDatabase
+        get() = _containingDatabase != null
 
-    fun getContainingForest(): BirForest? {
-        root?.realizeTreeMovements()
-        return root
+    fun getContainingDatabase(): BirDatabase? {
+        // perf: it should be possible to realize movements only for this element
+        _containingDatabase?.realizeTreeMovements()
+        return _containingDatabase
     }
 
 
@@ -60,9 +61,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
 
 
     fun isAncestorOf(other: BirElementBase): Boolean {
-        root?.realizeTreeMovements()
-        other.root?.realizeTreeMovements()
-        if (root !== other.root) {
+        if (getContainingDatabase() !== other.getContainingDatabase()) {
             return false
         }
 
@@ -75,13 +74,13 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         return false
     }
 
-    internal fun findRootFromAncestors(): BirForest? {
+    internal fun findDatabaseFromAncestors(): BirDatabase? {
         var n = _parent
         while (true) {
             when (n) {
                 null -> break
                 is BirElementBase -> n = n._parent
-                is BirForest -> return n
+                is BirDatabase -> return n
             }
         }
 
@@ -206,8 +205,8 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     }
 
     internal fun <R : BirElement> getBackReferences(key: BirElementBackReferencesKey<*, R>): List<BirElementBase> {
-        root?.flushElementsWithInvalidatedIndexBuffer()
-        require(attachedToTree) { "Element must be attached to tree" }
+        _containingDatabase?.flushElementsWithInvalidatedIndexBuffer()
+        require(attachedToDatabase) { "Element must be attached to tree" }
 
         val array: Array<BirElementBase?>
         when (val elementsOrSingle = backReferences) {
@@ -220,7 +219,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         }
 
         val results = ArrayList<BirElementBase>(array.size)
-        val backReferenceRecorder = BirForest.BackReferenceRecorder()
+        val backReferenceRecorder = BirDatabase.BackReferenceRecorder()
 
         var j = 0
         for (i in array.indices) {
@@ -232,7 +231,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
 
             val recordedRef = backReferenceRecorder.recordedRef
             backReferenceRecorder.recordedRef = null
-            if (recordedRef != null && recordedRef.attachedToTree) {
+            if (recordedRef != null && recordedRef.attachedToDatabase) {
                 if (recordedRef === this) {
                     results += backRef
                 }
