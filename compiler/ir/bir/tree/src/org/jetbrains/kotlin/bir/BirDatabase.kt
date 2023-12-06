@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.bir
 import org.jetbrains.kotlin.bir.util.countAllElementsInTree
 import java.lang.AutoCloseable
 
-class BirForest : BirElementParent() {
+class BirDatabase : BirElementParent() {
     private val possiblyRootElements = mutableListOf<BirElementBase>()
 
     private val elementIndexSlots = arrayOfNulls<ElementsIndexSlot>(256)
@@ -29,22 +29,22 @@ class BirForest : BirElementParent() {
 
     internal fun elementAttached(element: BirElementBase) {
         element.acceptLite {
-            when (it.root) {
+            when (it._containingDatabase) {
                 null -> {
                     // The element is likely new, and therefore likely to
                     // stay attached. Realize the attachment operation eagerly.
                     attachElement(it)
                     it.walkIntoChildren()
                 }
-                this@BirForest -> addToMovedElementsBuffer(it)
-                else -> handleElementFromOtherForest()
+                this@BirDatabase -> addToMovedElementsBuffer(it)
+                else -> handleElementFromOtherDatabase()
             }
         }
     }
 
     private fun attachElement(element: BirElementBase) {
-        element.root = this
-        addElementToIndex(element)
+        element._containingDatabase = this
+        indexElement(element)
     }
 
     fun attachRootElement(element: BirElementBase) {
@@ -65,25 +65,25 @@ class BirForest : BirElementParent() {
     }
 
     internal fun elementDetached(element: BirElementBase) {
-        when (element.root) {
+        when (element._containingDatabase) {
             null -> {
                 // This element has not been attached, or its detachment
                 //  has already been realized, so it should be (TODO: is)
                 //  safe to ignore it here.
             }
             this -> addToMovedElementsBuffer(element)
-            else -> handleElementFromOtherForest()
+            else -> handleElementFromOtherDatabase()
         }
     }
 
     private fun detachElement(element: BirElementBase) {
-        element.root = null
+        element._containingDatabase = null
         removeElementFromIndex(element)
     }
 
     internal fun elementMoved(element: BirElementBase, oldParent: BirElementParent) {
-        if (element.root != null && element.root !== this) {
-            handleElementFromOtherForest()
+        if (element._containingDatabase != null && element._containingDatabase !== this) {
+            handleElementFromOtherDatabase()
         }
 
         addToMovedElementsBuffer(element)
@@ -111,37 +111,37 @@ class BirForest : BirElementParent() {
             buffer[i] = null
             element.setFlag(BirElementBase.FLAG_IS_IN_MOVED_ELEMENTS_BUFFER, false)
 
-            // perf: it may be possible to find out the actual forest reference faster
+            // perf: it may be possible to find out the actual database reference faster
             //  than traversing up to the root each time.
-            val actualRoot = element.findRootFromAncestors()
-            val previousRoot = element.root
+            val actualDatabase = element.findDatabaseFromAncestors()
+            val previousDatabase = element._containingDatabase
 
-            if (actualRoot === this) {
-                if (previousRoot !== this) {
+            if (actualDatabase === this) {
+                if (previousDatabase !== this) {
                     // The element was not attached, but now it is.
 
                     element.acceptLite {
-                        when (it.root) {
+                        when (it._containingDatabase) {
                             null -> {
                                 attachElement(it)
                                 it.walkIntoChildren()
                             }
-                            this@BirForest -> {}
-                            else -> handleElementFromOtherForest()
+                            this@BirDatabase -> {}
+                            else -> handleElementFromOtherDatabase()
                         }
                     }
                 }
             } else {
-                if (previousRoot === this) {
+                if (previousDatabase === this) {
                     // The element was attached, but now it isn't.
 
                     val parent = element._parent
-                    if (parent is BirForest) {
-                        // The element has been a root element in this forest.
+                    if (parent is BirDatabase) {
+                        // The element was a root element in this database.
                         if (parent === this) {
                             element.setParentWithInvalidation(null)
                         } else {
-                            handleElementFromOtherForest()
+                            handleElementFromOtherDatabase()
                         }
                     }
 
@@ -169,20 +169,20 @@ class BirForest : BirElementParent() {
         return count
     }
 
-    private fun handleElementFromOtherForest(): Nothing {
-        // Once an element is attached to some forest, trying to
-        //  attach it to some other forest instance is not supported,
+    private fun handleElementFromOtherDatabase(): Nothing {
+        // Once an element is attached to some database, trying to
+        //  attach it to some other database instance is not supported,
         //  even after being removed from the former.
         //  This limitation can probably be removed in future by adding proper
         //  realization and handling of such a move, but right now
         //  this case is not anticipated to occur in the compilation flow.
-        TODO("Handle element possibly coming from different forest")
+        TODO("Handle element possibly coming from different database")
     }
 
 
-    private fun addElementToIndex(element: BirElementBase) {
+    private fun indexElement(element: BirElementBase) {
         val classifier = elementClassifier ?: return
-        if (element.root !== this) return
+        if (element._containingDatabase !== this) return
 
         val backReferenceRecorder = BackReferenceRecorder()
 
@@ -190,15 +190,15 @@ class BirForest : BirElementParent() {
         if (element is BirImplElementBase) {
             mutableElementCurrentlyBeingClassified = element
         }
-        val i = classifier.classify(element, currentIndexSlot + 1, backReferenceRecorder)
+        val indexSlot = classifier.classify(element, currentIndexSlot + 1, backReferenceRecorder)
         mutableElementCurrentlyBeingClassified = null
 
-        if (i != 0) {
-            if (element.indexSlot.toInt() != i) {
+        if (indexSlot != 0) {
+            if (element.indexSlot.toInt() != indexSlot) {
                 removeElementFromIndex(element)
-                val targetSlot = elementIndexSlots[i]!!
+                val targetSlot = elementIndexSlots[indexSlot]!!
                 targetSlot.add(element)
-                element.indexSlot = i.toUByte()
+                element.indexSlot = indexSlot.toUByte()
             }
         } else {
             removeElementFromIndex(element)
@@ -226,8 +226,8 @@ class BirForest : BirElementParent() {
     private fun removeElementFromIndex(element: BirElementBase) {
         element.indexSlot = 0u
 
-        // Don't eagerly remove element from index slot, as it is too slow.
-        //  But, when detaching a bigger subtree, maybe we can, instead of finding and
+        // Don't eagerly remove an element from the index slot, as it is too slow.
+        // perf: But when detaching a bigger subtree, maybe we can, instead of finding and
         //  removing each element individually, rather scan the list for detached elements.
         //  Maybe also formalize and leverage the invariant that sub-elements must appear later
         //  than their ancestor (so start scanning from the index of the root one).
@@ -266,7 +266,7 @@ class BirForest : BirElementParent() {
     }
 
     internal fun invalidateElement(element: BirElementBase) {
-        addElementToIndex(element)
+        indexElement(element)
         (element as? BirImplElementBase)?.invalidateDependentElements()
         element.setFlag(BirElementBase.FLAG_IN_INVALIDATE_INDEX_BUFFER, false)
     }
@@ -317,7 +317,7 @@ class BirForest : BirElementParent() {
         val roots = getActualRootElements()
         for (root in roots) {
             root.acceptLite { element ->
-                addElementToIndex(element)
+                indexElement(element)
                 element.walkIntoChildren()
             }
         }

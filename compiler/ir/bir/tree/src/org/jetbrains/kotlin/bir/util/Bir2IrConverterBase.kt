@@ -42,15 +42,13 @@ import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class Bir2IrConverterBase(
     protected val remappedIr2BirElements: Map<BirElement, IrElement>,
-    private val compiledBir: BirForest,
+    private val compiledBir: BirDatabase,
 ) {
     var elementConvertedCallback: ((BirElement, IrElement) -> Unit)? = null
     var reuseOnlyExternalElements = false
@@ -104,14 +102,14 @@ abstract class Bir2IrConverterBase(
             return it as SE
         }
 
-        if (reuseOnlyExternalElements && (old as BirElementBase).getContainingForest().let { it != null && it !== compiledBir }) {
+        if (reuseOnlyExternalElements && (old as BirElementBase).getContainingDatabase().let { it != null && it !== compiledBir }) {
             (remappedIr2BirElements[old] as SE?)?.let {
                 return it
             }
         }
 
         @Suppress("UNCHECKED_CAST")
-        val new = /*(!reuseOnlyExternalElements || *//*old is BirLazyElementBase*//* (old as BirElementBase).getContainingForest()
+        val new = /*(!reuseOnlyExternalElements || *//*old is BirLazyElementBase*//* (old as BirElementBase).getContainingDatabase()
             .let { it != null && it !== compiledBir })
             .ifTrue {*/
                 remappedIr2BirElements[old] as SE?

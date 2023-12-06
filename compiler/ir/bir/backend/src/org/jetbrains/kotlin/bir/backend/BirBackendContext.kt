@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.bir.backend
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.bir.BirBuiltIns
 import org.jetbrains.kotlin.bir.BirElementDynamicPropertyManager
-import org.jetbrains.kotlin.bir.BirForest
+import org.jetbrains.kotlin.bir.BirDatabase
 import org.jetbrains.kotlin.bir.expressions.BirCall
 import org.jetbrains.kotlin.bir.types.BirTypeSystemContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 
 abstract class BirBackendContext(
-    val compiledBir: BirForest,
-    val externalModulesBir: BirForest,
+    val compiledBir: BirDatabase,
+    val externalModulesBir: BirDatabase,
     val dynamicPropertyManager: BirElementDynamicPropertyManager,
     val configuration: CompilerConfiguration
 ) {
