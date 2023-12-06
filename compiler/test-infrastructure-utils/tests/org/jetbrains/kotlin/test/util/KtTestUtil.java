@@ -130,6 +130,9 @@ public class KtTestUtil {
             jdkPath = getStringProperty(propertyVariant2);
         }
         if (jdkPath == null) {
+            if (mainProperty.equals("JDK_11_0")) return new File("/Library/Java/JavaVirtualMachines/jdk-11.0.16.jdk/Contents/Home");
+            if (mainProperty.equals("JDK_17_0")) return new File("/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home");
+
             throw new AssertionError("Environment variable " + mainProperty + " is not set!");
         }
 
