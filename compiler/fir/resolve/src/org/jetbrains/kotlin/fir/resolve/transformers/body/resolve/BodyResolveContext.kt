@@ -402,7 +402,7 @@ class BodyResolveContext(
                 val importingScopes = createImportingScopes(file, holder.session, holder.scopeSession)
                 fileImportsScope += importingScopes
                 addNonLocalTowerDataElements(importingScopes.map { it.asTowerDataElement(isLocal = false) })
-                f()
+                withContainer(file, f)
             }
         }
     }

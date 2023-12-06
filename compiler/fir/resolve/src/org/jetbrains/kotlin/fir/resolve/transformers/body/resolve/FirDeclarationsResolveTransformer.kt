@@ -805,7 +805,7 @@ open class FirDeclarationsResolveTransformer(
                 doTransformTypeParameters(simpleFunction)
             }
 
-            if (containingDeclaration != null && containingDeclaration !is FirClass && (containingDeclaration !is FirScript || simpleFunction.isLocal)) {
+            if (containingDeclaration != null && containingDeclaration !is FirClass && containingDeclaration !is FirFile && (containingDeclaration !is FirScript || simpleFunction.isLocal)) {
                 // For class members everything should be already prepared
                 prepareSignatureForBodyResolve(simpleFunction)
                 simpleFunction.transformStatus(this, simpleFunction.resolveStatus().mode())
