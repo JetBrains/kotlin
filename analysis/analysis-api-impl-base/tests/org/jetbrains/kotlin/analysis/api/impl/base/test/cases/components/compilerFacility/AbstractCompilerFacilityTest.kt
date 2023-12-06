@@ -68,12 +68,14 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         ).map { it.name }
     }
 
+    internal open fun createIrCollectorExtension(): CollectingIrGenerationExtension = CollectingIrGenerationExtension()
+
     override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
         val mainModule = moduleStructure.modules.first { it.name == "main" }
         val ktFiles = testServices.ktModuleProvider.getModuleFiles(mainModule).filterIsInstance<KtFile>()
         val ktFile = ktFiles.singleOrNull() ?: ktFiles.first { it.name == "main.kt" }
 
-        val irCollector = CollectingIrGenerationExtension()
+        val irCollector = createIrCollectorExtension()
 
         val project = ktFile.project
         project.extensionArea.getExtensionPoint(IrGenerationExtension.extensionPointName)
@@ -215,7 +217,7 @@ internal fun createCodeFragment(ktFile: KtFile, module: TestModule, testServices
     }
 }
 
-private class CollectingIrGenerationExtension : IrGenerationExtension {
+internal open class CollectingIrGenerationExtension : IrGenerationExtension {
     lateinit var result: String
         private set
 

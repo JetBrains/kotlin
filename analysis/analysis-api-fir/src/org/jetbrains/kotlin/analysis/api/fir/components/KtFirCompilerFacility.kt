@@ -140,23 +140,11 @@ internal class KtFirCompilerFacility(
 
         val irGeneratorExtensions = IrGenerationExtension.getInstances(project)
 
-        val dependencyFir2IrResults = dependencyFiles
-            .map(::getFullyResolvedFirFile)
-            .groupBy { it.llFirSession }
-            .map { (dependencySession, dependencyFiles) ->
-                val dependencyConfiguration = configuration
-                    .copy()
-                    .apply {
-                        put(CommonConfigurationKeys.USE_FIR, true)
-                        put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, dependencySession.languageVersionSettings)
-                    }
+        // Run codegen for dependencies.
+        val dependencyFir2IrResults = dependencyFiles.runFir2Ir(configuration, jvmIrDeserializer, diagnosticReporter, irGeneratorExtensions)
 
-                val dependencyFir2IrExtensions = JvmFir2IrExtensions(dependencyConfiguration, jvmIrDeserializer, JvmIrMangler)
-                runFir2Ir(
-                    dependencySession, dependencyFiles, dependencyFir2IrExtensions,
-                    diagnosticReporter, dependencyConfiguration, irGeneratorExtensions
-                )
-            }
+        // Prepare IrClass used inside each extension.
+        irGeneratorExtensions.forEach { it.prepareIrClass(configuration, jvmIrDeserializer, diagnosticReporter, irGeneratorExtensions) }
 
         val targetConfiguration = configuration
             .copy()
@@ -250,6 +238,45 @@ internal class KtFirCompilerFacility(
         return when (module) {
             is KtCodeFragmentModule -> listOf(module.contextModule, module)
             else -> listOf(module)
+        }
+    }
+
+    private fun List<KtFile>.runFir2Ir(
+        configuration: CompilerConfiguration,
+        irDeserializer: JvmIrDeserializer,
+        diagnosticReporter: DiagnosticReporter,
+        irGeneratorExtensions: List<IrGenerationExtension>,
+    ): List<Fir2IrActualizedResult> =
+        map(::getFullyResolvedFirFile).groupBy { it.llFirSession }.map { (dependencySession, dependencyFiles) ->
+            val dependencyConfiguration = configuration.copy().apply {
+                put(CommonConfigurationKeys.USE_FIR, true)
+                put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, dependencySession.languageVersionSettings)
+            }
+
+            val dependencyFir2IrExtensions = JvmFir2IrExtensions(dependencyConfiguration, irDeserializer, JvmIrMangler)
+            runFir2Ir(
+                dependencySession,
+                dependencyFiles,
+                dependencyFir2IrExtensions,
+                diagnosticReporter,
+                dependencyConfiguration,
+                irGeneratorExtensions
+            )
+        }
+
+    private fun IrGenerationExtension.prepareIrClass(
+        configuration: CompilerConfiguration,
+        irDeserializer: JvmIrDeserializer,
+        diagnosticReporter: DiagnosticReporter,
+        irGeneratorExtensions: List<IrGenerationExtension>,
+    ) {
+        prepareIrClassUsedInsideExtension { classId ->
+            val firClassSymbol =
+                analysisSession.firSymbolProvider.getClassLikeSymbolByClassId(classId) ?: return@prepareIrClassUsedInsideExtension null
+            val ktFile = firClassSymbol.fir.psi?.containingFile as? KtFile ?: return@prepareIrClassUsedInsideExtension null
+            val result = listOf(ktFile).runFir2Ir(configuration, irDeserializer, diagnosticReporter, irGeneratorExtensions.minus(this))
+                .singleOrNull() ?: return@prepareIrClassUsedInsideExtension null
+            result.pluginContext.referenceClass(classId)
         }
     }
 
