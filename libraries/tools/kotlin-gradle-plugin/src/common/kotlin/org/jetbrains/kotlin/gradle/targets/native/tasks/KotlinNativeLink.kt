@@ -73,19 +73,6 @@ constructor(
     final override val toolOptions: KotlinCommonCompilerToolOptions = objectFactory
         .newInstance<KotlinCommonCompilerToolOptionsDefault>()
 
-    init {
-        @Suppress("DEPRECATION")
-        this.dependsOn(compilation.compileTaskProvider)
-        // Frameworks actively uses symlinks.
-        // Gradle build cache transforms symlinks into regular files https://guides.gradle.org/using-build-cache/#symbolic_links
-        outputs.cacheIf { outputKind != CompilerOutputKind.FRAMEWORK }
-
-        @Suppress("DEPRECATION")
-        this.setSource(compilation.compileTaskProvider.map { it.outputFile })
-        includes.clear() // we need to include non '.kt' or '.kts' files
-        disallowSourceChanges()
-    }
-
     override val destinationDirectory: DirectoryProperty = binary.outputDirectoryProperty
 
     @get:Classpath
