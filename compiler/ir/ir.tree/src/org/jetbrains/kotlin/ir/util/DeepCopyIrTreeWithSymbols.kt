@@ -181,7 +181,7 @@ open class DeepCopyIrTreeWithSymbols(
             isExpect = declaration.isExpect,
             returnType = declaration.returnType,
             modality = declaration.modality,
-            symbol = symbolRemapper.getDeclaredFunction(declaration.symbol),
+            symbol = symbolRemapper.getDeclaredSimpleFunction(declaration.symbol),
             isTailrec = declaration.isTailrec,
             isSuspend = declaration.isSuspend,
             isOperator = declaration.isOperator,

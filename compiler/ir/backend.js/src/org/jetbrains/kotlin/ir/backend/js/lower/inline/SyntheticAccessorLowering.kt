@@ -97,7 +97,7 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
                     isExpect = declaration.isExpect,
                     returnType = null,
                     modality = declaration.modality,
-                    symbol = symbolRemapper.getDeclaredFunction(declaration.symbol),
+                    symbol = symbolRemapper.getDeclaredSimpleFunction(declaration.symbol),
                     isTailrec = declaration.isTailrec,
                     isSuspend = declaration.isSuspend,
                     isOperator = declaration.isOperator,

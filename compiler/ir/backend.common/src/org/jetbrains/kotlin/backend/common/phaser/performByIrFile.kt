@@ -172,9 +172,9 @@ private class DeepCopySymbolRemapperSavingFunctions : DeepCopySymbolRemapperPres
     val declaredFunctions = mutableSetOf<IrSimpleFunctionSymbol>()
     val declaredClasses = mutableSetOf<IrClassSymbol>()
 
-    override fun getDeclaredFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol {
+    override fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol {
         declaredFunctions.add(symbol)
-        return super.getDeclaredFunction(symbol)
+        return super.getDeclaredSimpleFunction(symbol)
     }
 
     override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol {
