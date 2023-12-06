@@ -18,8 +18,9 @@ import kotlin.io.path.div
 import kotlin.io.path.writeText
 
 private val irDumpOptions = DumpIrTreeOptions(printFlagsInDeclarationReferences = false, printFilePath = false)
-private val dumpBir = false
-private val dumpIr = false
+
+private val dumpBir = true
+private val dumpIr = true
 
 fun dumpOriginalIrPhase(context: JvmBackendContext, input: IrModuleFragment, phaseName: String, isBefore: Boolean) {
     if (!dumpIr) return
@@ -55,14 +56,14 @@ fun dumpBirPhase(
 
     context.phaseConfig.dumpToDirectory?.let { dumpDir ->
         val irPhases = phase?.let {
-            val i = input.backendContext.loweringPhases.indexOf(phase)
+            val i = input.backendContext!!.loweringPhases.indexOf(phase)
             allBirPhases[i].second
         }
         val irPhaseName = phaseName ?: irPhases?.lastOrNull() ?: return
 
-        val compiledBir = input.birModule.getContainingForest()!!
+        val compiledBir = input.birModule!!.getContainingForest()!!
         val bir2IrConverter = Bir2IrConverter(
-            input.dynamicPropertyManager,
+            input.dynamicPropertyManager!!,
             input.mappedIr2BirElements,
             context.irBuiltIns,
             compiledBir,
@@ -71,7 +72,7 @@ fun dumpBirPhase(
         bir2IrConverter.reuseOnlyExternalElements = true
 
         val irModule = bir2IrConverter.remapElement<IrModuleFragment>(input.birModule)
-        irModule.patchDeclarationParents()
+        //irModule.patchDeclarationParents()
         val text = irModule.dump(irDumpOptions)
 
         val path = Path(dumpDir) / "bir" / "${irPhaseName}.txt"
