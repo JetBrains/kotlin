@@ -55,11 +55,11 @@ abstract class AbstractTreeBuilder {
         type: TypeRefWithNullability?,
         nullable: Boolean = false,
         mutable: Boolean = true,
-        isChild: Boolean = false,
+        isChild: Boolean = true,
         initializer: SingleField.() -> Unit = {},
     ): SingleField {
-        checkChildType(isChild, type, name)
-        return SingleField(name, type?.copy(nullable) ?: InferredOverriddenType, mutable, isChild).apply(initializer)
+        val isChildElement = type is GenericElementOrRef<*> && isChild
+        return SingleField(name, type?.copy(nullable) ?: InferredOverriddenType, mutable, isChildElement).apply(initializer)
     }
 
     protected fun listField(
@@ -67,12 +67,13 @@ abstract class AbstractTreeBuilder {
         elementType: TypeRef?,
         nullable: Boolean = false,
         mutability: ListField.Mutability = ListField.Mutability.Immutable,
-        isChild: Boolean = false,
+        isChild: Boolean = true,
         initializer: ListField.() -> Unit = {},
     ): ListField {
-        checkChildType(isChild, elementType, name)
+        val isChildElement = elementType is GenericElementOrRef<*> && isChild
+
         val listType = when {
-            isChild -> childElementList
+            isChildElement -> childElementList
             mutability == ListField.Mutability.List -> StandardTypes.mutableList
             mutability == ListField.Mutability.Array -> StandardTypes.array
             else -> StandardTypes.list
@@ -82,17 +83,9 @@ abstract class AbstractTreeBuilder {
             baseType = elementType ?: InferredOverriddenType,
             listType = listType,
             isNullable = nullable,
-            mutable = mutability == ListField.Mutability.Var && !isChild,
-            isChild = isChild,
+            mutable = mutability == ListField.Mutability.Var && !isChildElement,
+            isChild = isChildElement,
         ).apply(initializer)
-    }
-
-    private fun checkChildType(isChild: Boolean, type: TypeRef?, name: String) {
-        if (isChild) {
-            require(type == null || type is GenericElementOrRef<*, *>) {
-                "Field $name is a child field but has non-element type $type"
-            }
-        }
     }
 
     fun build(): Model {
