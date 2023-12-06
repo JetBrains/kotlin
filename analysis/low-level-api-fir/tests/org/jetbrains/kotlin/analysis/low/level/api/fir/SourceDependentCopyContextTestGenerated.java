@@ -53,4 +53,40 @@ public class SourceDependentCopyContextTestGenerated extends AbstractSourceDepen
     public void testFunction() throws Exception {
         runTest("analysis/low-level-api-fir/testData/dependentCopy/function.kt");
     }
+
+    @Test
+    @TestMetadata("superCallArgument_delegatedConstructor.kt")
+    public void testSuperCallArgument_delegatedConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/dependentCopy/superCallArgument_delegatedConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("superCallArgument_primaryConstructor.kt")
+    public void testSuperCallArgument_primaryConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/dependentCopy/superCallArgument_primaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("superCallArgument_secondaryConstructor.kt")
+    public void testSuperCallArgument_secondaryConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/dependentCopy/superCallArgument_secondaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeDelegation.kt")
+    public void testSuperTypeDelegation() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/dependentCopy/superTypeDelegation.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeDelegation_toCompanion.kt")
+    public void testSuperTypeDelegation_toCompanion() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/dependentCopy/superTypeDelegation_toCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeDelegation_toPrimaryConstructorParam.kt")
+    public void testSuperTypeDelegation_toPrimaryConstructorParam() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/dependentCopy/superTypeDelegation_toPrimaryConstructorParam.kt");
+    }
 }
