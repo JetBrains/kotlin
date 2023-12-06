@@ -485,6 +485,7 @@ val projectsWithEnabledContextReceivers by extra {
         ":compiler:fir:raw-fir:light-tree2fir",
         ":compiler:fir:tree:tree-generator",
         ":compiler:ir.tree:tree-generator",
+        ":native:swift:sir:tree-generator",
         ":generators:tree-generator-common",
         ":kotlin-lombok-compiler-plugin.k1",
         ":kotlinx-serialization-compiler-plugin.k2",

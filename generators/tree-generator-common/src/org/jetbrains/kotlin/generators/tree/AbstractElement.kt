@@ -6,7 +6,11 @@
 package org.jetbrains.kotlin.generators.tree
 
 /**
- * A class representing a FIR or IR tree element.
+ * Represents an abstract class/interface for a tree node in the tree generator.
+ *
+ * Examples: `IrElement`, `FirRegularClass`.
+ *
+ * Subclasses may contain additional properties/logic specific to a particular tree.
  */
 abstract class AbstractElement<Element, Field, Implementation>(
     val name: String,

@@ -40,3 +40,17 @@ inline fun buildEnum(init: SirEnumBuilder.() -> Unit): SirEnum {
     }
     return SirEnumBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildEnumCopy(original: SirEnum, init: SirEnumBuilder.() -> Unit): SirEnum {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = SirEnumBuilder()
+    copyBuilder.origin = original.origin
+    copyBuilder.visibility = original.visibility
+    copyBuilder.name = original.name
+    copyBuilder.declarations.addAll(original.declarations)
+    copyBuilder.cases.addAll(original.cases)
+    return copyBuilder.apply(init).build()
+}

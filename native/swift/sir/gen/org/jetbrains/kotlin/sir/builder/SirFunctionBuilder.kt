@@ -40,3 +40,17 @@ inline fun buildFunction(init: SirFunctionBuilder.() -> Unit): SirFunction {
     }
     return SirFunctionBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildFunctionCopy(original: SirFunction, init: SirFunctionBuilder.() -> Unit): SirFunction {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = SirFunctionBuilder()
+    copyBuilder.origin = original.origin
+    copyBuilder.visibility = original.visibility
+    copyBuilder.name = original.name
+    copyBuilder.parameters.addAll(original.parameters)
+    copyBuilder.returnType = original.returnType
+    return copyBuilder.apply(init).build()
+}

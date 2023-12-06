@@ -37,3 +37,14 @@ inline fun buildForeignFunction(init: SirForeignFunctionBuilder.() -> Unit = {})
     }
     return SirForeignFunctionBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildForeignFunctionCopy(original: SirForeignFunction, init: SirForeignFunctionBuilder.() -> Unit = {}): SirForeignFunction {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = SirForeignFunctionBuilder()
+    copyBuilder.origin = original.origin
+    copyBuilder.visibility = original.visibility
+    return copyBuilder.apply(init).build()
+}

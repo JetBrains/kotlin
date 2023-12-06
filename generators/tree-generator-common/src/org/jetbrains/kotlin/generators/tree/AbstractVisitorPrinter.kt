@@ -49,7 +49,8 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
      * If `true`, visitor methods for generic tree elements will be parameterized correspondingly.
      * Otherwise, type arguments of generic tree elements will be replaced with `*`.
      */
-    abstract val allowTypeParametersInVisitorMethods: Boolean
+    open val allowTypeParametersInVisitorMethods: Boolean
+        get() = false
 
     /**
      * Allows to customize the default element to visit if the method for visiting this [element] is not overridden.

@@ -6,6 +6,8 @@
 // This file was generated automatically. See native/swift/sir/tree-generator/Readme.md.
 // DO NOT MODIFY IT MANUALLY.
 
+@file:Suppress("DuplicatedCode", "unused")
+
 package org.jetbrains.kotlin.sir.impl
 
 import org.jetbrains.kotlin.sir.SirDeclaration
