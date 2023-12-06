@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import java.nio.file.Paths
 
 internal class DefaultSymbolToDocumentableTranslator(context: DokkaContext) : AsyncSourceToDocumentableTranslator {
     private val kotlinAnalysis = context.plugin<SymbolsAnalysisPlugin>().querySingle { kotlinAnalysis }
@@ -111,34 +110,31 @@ internal class DokkaSymbolVisitor(
     private val KtDeclarationSymbol.isExpect
         get() = (psi as? KtModifierListOwner)?.hasExpectModifier() == true
 
-    private fun <T : KtSymbol> Collection<T>.filterSymbolsInSourceSet() = filter {
-        it.psi?.containingFile?.virtualFile?.path?.let { path ->
-            path.isNotBlank() && sourceSet.sourceRoots.any { root ->
-                Paths.get(path).startsWith(root.toPath())
-            }
-        } == true
+    private fun <T : KtSymbol> List<T>.filterSymbolsInSourceSet(moduleFiles: Set<KtFile>): List<T> = filter {
+        when (val file = it.psi?.containingFile) {
+            is KtFile -> moduleFiles.contains(file)
+            else -> false
+        }
     }
 
     fun visitModule(): DModule {
         val sourceModule = analysisContext.getModule(sourceSet)
-        val ktFiles = analysisContext.modulesWithFiles[sourceModule]?.filterIsInstance<KtFile>() ?: throw IllegalStateException("No source files for a source module ${sourceModule.moduleName} of source set ${sourceSet.sourceSetID}")
+        val ktFiles = analysisContext.modulesWithFiles[sourceModule]?.filterIsInstance<KtFile>()?.toSet()
+            ?: throw IllegalStateException("No source files for a source module ${sourceModule.moduleName} of source set ${sourceSet.sourceSetID}")
         val processedPackages: MutableSet<FqName> = mutableSetOf()
         return analyze(sourceModule) {
-            val packageSymbols: List<DPackage> = ktFiles
-                .mapNotNull {
-                    if (processedPackages.contains(it.packageFqName))
-                        return@mapNotNull null
-                    processedPackages.add(it.packageFqName)
-                    getPackageSymbolIfPackageExists(it.packageFqName)?.let { it1 ->
-                        visitPackageSymbol(
-                            it1
-                        )
-                    }
+            val packages = ktFiles.mapNotNull { file ->
+                if (processedPackages.contains(file.packageFqName))
+                    return@mapNotNull null
+                processedPackages.add(file.packageFqName)
+                getPackageSymbolIfPackageExists(file.packageFqName)?.let { packageSymbol ->
+                    visitPackageSymbol(packageSymbol, ktFiles)
                 }
+            }
 
             DModule(
                 name = moduleName,
-                packages = packageSymbols,
+                packages = packages,
                 documentation = emptyMap(),
                 expectPresentInSet = null,
                 sourceSets = setOf(sourceSet)
@@ -146,11 +142,14 @@ internal class DokkaSymbolVisitor(
         }
     }
 
-    private fun KtAnalysisSession.visitPackageSymbol(packageSymbol: KtPackageSymbol): DPackage {
+    private fun KtAnalysisSession.visitPackageSymbol(
+        packageSymbol: KtPackageSymbol,
+        moduleFiles: Set<KtFile>
+    ): DPackage {
         val dri = getDRIFromPackage(packageSymbol)
         val scope = packageSymbol.getPackageScope()
-        val callables = scope.getCallableSymbols().toList().filterSymbolsInSourceSet()
-        val classifiers = scope.getClassifierSymbols().toList().filterSymbolsInSourceSet()
+        val callables = scope.getCallableSymbols().toList().filterSymbolsInSourceSet(moduleFiles)
+        val classifiers = scope.getClassifierSymbols().toList().filterSymbolsInSourceSet(moduleFiles)
 
         val functions = callables.filterIsInstance<KtFunctionSymbol>().map { visitFunctionSymbol(it, dri) }
         val properties = callables.filterIsInstance<KtPropertySymbol>().map { visitPropertySymbol(it, dri) }
