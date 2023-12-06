@@ -20,12 +20,17 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.*
 
 object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirCallableReferenceAccess) return
 
         checkReferenceIsToAllowedMember(expression, context, reporter)
+        checkDemotedMutableProperty(expression, context, reporter)
     }
 
     // See FE 1.0 [DoubleColonExpressionResolver#checkReferenceIsToAllowedMember]
@@ -49,5 +54,26 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker() {
         ) {
             reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredSymbol, context)
         }
+    }
+
+    private fun checkDemotedMutableProperty(
+        callableReferenceAccess: FirCallableReferenceAccess,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        val reference = callableReferenceAccess.calleeReference.resolved ?: return
+        val source = reference.source?.takeIf { it.kind !is KtFakeSourceElementKind } ?: return
+        val type = callableReferenceAccess.resolvedType.takeIf { it.isKProperty(context.session) && !it.isKMutableProperty(context.session) } ?: return
+        val symbol = reference.resolvedSymbol as? FirVariableSymbol<*> ?: return
+
+        if (symbol.canBeMutableReference() && type.typeArguments[1].type?.captures() == true) {
+            reporter.reportOn(source, FirErrors.MUTABLE_PROPERTY_WITH_CAPTURED_TYPE, context)
+        }
+    }
+
+    private fun FirVariableSymbol<*>.canBeMutableReference(): Boolean = when (this) {
+        is FirFieldSymbol -> isVar
+        is FirPropertySymbol -> isVar || setterSymbol != null
+        else -> false
     }
 }

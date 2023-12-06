@@ -2245,6 +2245,11 @@ internal class UnsupportedClassLiteralsWithEmptyLhsImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.UnsupportedClassLiteralsWithEmptyLhs
 
+internal class MutablePropertyWithCapturedTypeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.MutablePropertyWithCapturedType
+
 internal class NothingToOverrideImpl(
     override val declaration: KtCallableSymbol,
     firDiagnostic: KtPsiDiagnostic,

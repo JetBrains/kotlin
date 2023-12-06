@@ -137,3 +137,6 @@ fun ConeKotlinType.renderReadableWithFqNames(): String {
 }
 
 fun ConeKotlinType.hasError(): Boolean = contains { it is ConeErrorType }
+
+fun ConeKotlinType.captures(): Boolean =
+    this is ConeCapturedType || typeArguments.any { it.type?.captures() == true }

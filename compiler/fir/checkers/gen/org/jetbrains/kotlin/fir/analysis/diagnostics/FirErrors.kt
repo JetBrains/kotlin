@@ -494,6 +494,7 @@ object FirErrors {
     val NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error0<KtExpression>()
     val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error1<PsiElement, ConeKotlinType>()
     val UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS by error0<KtElement>()
+    val MUTABLE_PROPERTY_WITH_CAPTURED_TYPE by warning0<PsiElement>()
 
     // overrides
     val NOTHING_TO_OVERRIDE by error1<KtModifierListOwner, FirCallableSymbol<*>>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)

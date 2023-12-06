@@ -474,10 +474,10 @@ private fun createKPropertyType(
     candidate: Candidate,
 ): ConeKotlinType {
     val propertyType = returnTypeRef.type
-    return org.jetbrains.kotlin.fir.resolve.createKPropertyType(
+    return createKPropertyType(
         receiverType,
         propertyType,
-        isMutable = propertyOrField.canBeMutableReference(candidate)
+        isMutable = propertyOrField.canBeMutableReference(candidate) && !propertyType.captures()
     )
 }
 

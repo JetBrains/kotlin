@@ -4112,6 +4112,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
             }
 
             @Test
+            @TestMetadata("mutableReferenceWithCapturedType.kt")
+            public void testMutableReferenceWithCapturedType() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/references/mutableReferenceWithCapturedType.kt");
+            }
+
+            @Test
             @TestMetadata("referenceToExtension.kt")
             public void testReferenceToExtension() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/references/referenceToExtension.kt");
