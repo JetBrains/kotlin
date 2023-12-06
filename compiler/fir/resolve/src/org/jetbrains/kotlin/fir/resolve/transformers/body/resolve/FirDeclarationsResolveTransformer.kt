@@ -126,6 +126,16 @@ open class FirDeclarationsResolveTransformer(
         return danglingModifierList
     }
 
+    override fun transformFileAnnotationsContainer(
+        fileAnnotationsContainer: FirFileAnnotationsContainer,
+        data: ResolutionMode
+    ): FirFileAnnotationsContainer {
+        if (implicitTypeOnly) return fileAnnotationsContainer
+
+        fileAnnotationsContainer.transformAnnotations(transformer, data)
+        return fileAnnotationsContainer
+    }
+
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty = whileAnalysing(session, property) {
         require(property !is FirSyntheticProperty) { "Synthetic properties should not be processed by body transformers" }
 
