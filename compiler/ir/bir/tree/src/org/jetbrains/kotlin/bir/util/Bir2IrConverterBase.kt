@@ -42,16 +42,19 @@ import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class Bir2IrConverterBase(
-    private val remapedIr2BirElements: Map<BirElement, IrSymbol>,
+    protected val remappedIr2BirElements: Map<BirElement, IrElement>,
     private val compiledBir: BirForest,
 ) {
     var elementConvertedCallback: ((BirElement, IrElement) -> Unit)? = null
     var reuseOnlyExternalElements = false
+    var remappedIr2BirTypes: Map<BirType, IrType>? = null
 
     protected fun <Ir : IrElement, Bir : BirElement> createElementMap(expectedMaxSize: Int = 8): MutableMap<Bir, Ir> =
         IdentityHashMap<Bir, Ir>(expectedMaxSize)
@@ -78,12 +81,13 @@ abstract class Bir2IrConverterBase(
     @JvmName("remapElementNullable")
     fun <Ir : IrElement> remapElement(old: BirElement?): Ir? = if (old == null) null else copyElement(old)
 
-    protected inline fun <Bir : BirElement, ME : IrElement, SE : ME> copyNotReferencedElement(
+    protected inline fun <Bir : BirElement, ME : IrElement, reified SE : ME> copyNotReferencedElement(
         old: Bir,
         copy: () -> SE,
         lateInitialize: SE.() -> Unit,
     ): SE {
-        val new = copy()
+        val new = remappedIr2BirElements[old] as? SE
+            ?: copy().also { setParent(it, old) }
         lateInitialize(new)
         elementConvertedCallback?.invoke(old, new)
         return new
@@ -100,10 +104,19 @@ abstract class Bir2IrConverterBase(
             return it as SE
         }
 
+        if (reuseOnlyExternalElements && (old as BirElementBase).getContainingForest().let { it != null && it !== compiledBir }) {
+            (remappedIr2BirElements[old] as SE?)?.let {
+                return it
+            }
+        }
+
         @Suppress("UNCHECKED_CAST")
-        val new = (!reuseOnlyExternalElements || (old as BirElementBase).getContainingForest() !== compiledBir)
-            .ifTrue { remapedIr2BirElements[old]?.owner as SE? }
-            ?: copy()
+        val new = /*(!reuseOnlyExternalElements || *//*old is BirLazyElementBase*//* (old as BirElementBase).getContainingForest()
+            .let { it != null && it !== compiledBir })
+            .ifTrue {*/
+                remappedIr2BirElements[old] as SE?
+            //}
+            ?: copy().also { setParent(it, old) }
         map[old] = new
         lateInitialize(new)
         elementConvertedCallback?.invoke(old, new)
@@ -150,6 +163,14 @@ abstract class Bir2IrConverterBase(
         } as IrS
     }
 
+    protected fun setParent(new: IrElement, old: BirElement) {
+        if (new is IrDeclaration) {
+            old.ancestors().firstIsInstanceOrNull<BirDeclarationParent>()?.let {
+                new.parent = remapElement(it)
+            }
+        }
+    }
+
     protected fun IrAttributeContainer.copyAttributes(old: BirAttributeContainer) {
         val owner = old.attributeOwnerId
         attributeOwnerId = if (owner === old) this else remapElement(owner)
@@ -177,18 +198,24 @@ abstract class Bir2IrConverterBase(
     }
 
 
-    fun remapType(birType: BirType): IrType = when (birType) {
-        is BirSimpleType -> remapSimpleType(birType)
-        is BirCapturedType -> remapCapturedType(birType)
-        is BirDynamicType -> remapDynamicType(birType)
-        is BirErrorType -> remapErrorType(birType)
-        else -> TODO(birType.toString())
+    fun remapType(birType: BirType): IrType {
+        remappedIr2BirTypes?.get(birType)?.let {
+            return it
+        }
+
+        return when (birType) {
+            is BirCapturedType -> remapCapturedType(birType)
+            is BirSimpleType -> remapSimpleType(birType)
+            is BirDynamicType -> remapDynamicType(birType)
+            is BirErrorType -> remapErrorType(birType)
+            else -> TODO(birType.toString())
+        }
     }
 
     @JvmName("remapTypeNullable")
     fun remapType(birType: BirType?): IrType? = if (birType == null) null else remapType(birType)
 
-    fun remapSimpleType(birType: BirSimpleType): IrSimpleType {
+    private fun remapSimpleType(birType: BirSimpleType): IrSimpleType {
         return IrSimpleTypeImpl(
             birType.kotlinType,
             remapSymbol(birType.classifier),
@@ -237,7 +264,7 @@ abstract class Bir2IrConverterBase(
         )
     }
 
-    fun remapTypeArgument(birTypeArgument: BirTypeArgument): IrTypeArgument = when (birTypeArgument) {
+    private fun remapTypeArgument(birTypeArgument: BirTypeArgument): IrTypeArgument = when (birTypeArgument) {
         is BirStarProjection -> IrStarProjectionImpl
         is BirType -> remapType(birTypeArgument) as IrTypeArgument
         is BirTypeProjectionImpl -> makeTypeProjection(remapType(birTypeArgument.type), birTypeArgument.variance)
