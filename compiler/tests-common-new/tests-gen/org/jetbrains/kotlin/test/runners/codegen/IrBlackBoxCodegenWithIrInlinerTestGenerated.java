@@ -19120,6 +19120,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("complexOverriddensInLazyFunctions.kt")
+        public void testComplexOverriddensInLazyFunctions() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/complexOverriddensInLazyFunctions.kt");
+        }
+
+        @Test
         @TestMetadata("diamondFunction.kt")
         public void testDiamondFunction() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/diamondFunction.kt");

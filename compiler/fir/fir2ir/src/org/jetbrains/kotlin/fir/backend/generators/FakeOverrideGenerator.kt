@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.allowsToHaveFakeOverride
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
@@ -25,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -217,6 +215,46 @@ class FakeOverrideGenerator(
                 listOf(originalSymbol)
             }
         baseFunctionSymbols[fakeOverride.symbol] = baseFirSymbolsForFakeOverride
+    }
+
+    internal fun computeBaseSymbolsWithContainingClass(
+        klass: FirClass,
+        originalFunction: FirNamedFunctionSymbol,
+    ): List<Pair<FirNamedFunctionSymbol, ConeClassLikeLookupTag>> {
+        return computeBaseSymbolsWithContainingClass(klass, originalFunction, FirTypeScope::getDirectOverriddenFunctions)
+    }
+
+    internal fun computeBaseSymbolsWithContainingClass(
+        klass: FirClass,
+        originalFunction: FirPropertySymbol,
+    ): List<Pair<FirPropertySymbol, ConeClassLikeLookupTag>> {
+        return computeBaseSymbolsWithContainingClass(klass, originalFunction, FirTypeScope::getDirectOverriddenProperties)
+    }
+
+    private inline fun <reified S : FirCallableSymbol<*>> computeBaseSymbolsWithContainingClass(
+        klass: FirClass,
+        originalSymbol: S,
+        directOverridden: FirTypeScope.(S) -> List<S>,
+    ): List<Pair<S, ConeClassLikeLookupTag>> {
+        val scope = klass.unsubstitutedScope()
+        val classLookupTag = klass.symbol.toLookupTag()
+        val overriddenFirSymbols = computeBaseSymbols(originalSymbol, directOverridden, scope, classLookupTag)
+        val superTypes = klass.superConeTypes
+        val typeContext = session.typeContext
+        return overriddenFirSymbols.flatMap { symbol ->
+            with(typeContext) {
+                val symbolDispatchReceiver = symbol.containingClassLookupTag() ?: return@flatMap emptyList()
+                superTypes.mapNotNull { superType ->
+                    val compatibleType = superType.anySuperTypeConstructor {
+                        it.typeConstructor() == symbolDispatchReceiver
+                    }
+                    if (!compatibleType) {
+                        return@mapNotNull null
+                    }
+                    symbol to superType.lookupTag
+                }
+            }
+        }
     }
 
     internal fun calcBaseSymbolsForFakeOverrideProperty(

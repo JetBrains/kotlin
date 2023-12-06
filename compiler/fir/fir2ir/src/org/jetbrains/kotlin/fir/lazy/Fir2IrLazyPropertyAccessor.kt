@@ -113,10 +113,27 @@ class Fir2IrLazyPropertyAccessor(
         if (firParentClass == null) return@lazyVar emptyList()
         // If property accessor is created then corresponding property is definitely created too
         @OptIn(UnsafeDuringIrConstructionAPI::class)
-        correspondingPropertySymbol!!.owner.overriddenSymbols.mapNotNull {
-            when (isSetter) {
-                false -> declarationStorage.findGetterOfProperty(it)
-                true -> declarationStorage.findSetterOfProperty(it)
+        val correspondingProperty = correspondingPropertySymbol!!.owner
+        correspondingProperty.overriddenSymbols.mapNotNull {
+            /*
+             * Calculation of overridden symbols for lazy accessor may be called
+             * 1. during fir2ir transformation
+             * 2. somewhere in the backend, after fake-overrides were built
+             *
+             * In the first case declarationStorage knows about all symbols, so we always can search for accessor symbol in it
+             * But in the second case property symbols for fake-overrides are replaced with real one (in f/o generator) and
+             *   declarationStorage has no information about it. But at this point all symbols are already bound. So we can
+             *   just access the corresponding accessor using owner of the symbol
+             */
+            when {
+                it.isBound -> @OptIn(UnsafeDuringIrConstructionAPI::class) when (isSetter) {
+                    false -> it.owner.getter?.symbol
+                    true -> it.owner.setter?.symbol
+                }
+                else -> when (isSetter) {
+                    false -> declarationStorage.findGetterOfProperty(it)
+                    true -> declarationStorage.findSetterOfProperty(it)
+                }
             }
         }
     }

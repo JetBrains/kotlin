@@ -1,0 +1,32 @@
+CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB INTERFACE name:JavaInterface modality:ABSTRACT visibility:public superTypes:[<root>.B; <root>.C; <root>.D]
+  $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.JavaInterface
+  FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:bar visibility:public modality:ABSTRACT <> ($this:<root>.JavaInterface) returnType:kotlin.Unit
+    overridden:
+      public abstract fun bar (): kotlin.Unit [fake_override] declared in <root>.B
+      public abstract fun bar (): kotlin.Unit [fake_override] declared in <root>.C
+      public abstract fun bar (): kotlin.Unit declared in <root>.D
+    $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.JavaInterface
+  FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:foo visibility:public modality:ABSTRACT <> ($this:<root>.JavaInterface) returnType:kotlin.Unit
+    overridden:
+      public abstract fun foo (): kotlin.Unit [fake_override] declared in <root>.B
+      public abstract fun foo (): kotlin.Unit [fake_override] declared in <root>.C
+    $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.JavaInterface
+  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    overridden:
+      public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.B
+      public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.C
+      public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.D
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
+  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    overridden:
+      public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.B
+      public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.C
+      public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.D
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    overridden:
+      public open fun toString (): kotlin.String [fake_override] declared in <root>.B
+      public open fun toString (): kotlin.String [fake_override] declared in <root>.C
+      public open fun toString (): kotlin.String [fake_override] declared in <root>.D
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any

@@ -30,7 +30,7 @@ class Fir2IrLazySimpleFunction(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val fir: FirSimpleFunction,
-    firParent: FirRegularClass?,
+    private val firParent: FirRegularClass?,
     symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
     isFakeOverride: Boolean
@@ -93,17 +93,34 @@ class Fir2IrLazySimpleFunction(
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
-        if (firParent == null) return@lazyVar emptyList()
+        when (configuration.useIrFakeOverrideBuilder) {
+            true -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
+            false -> computeOverriddenUsingFir2IrFakeOverrideGenerator()
+        }
+    }
+
+    // TODO: drop this function after migration to IR f/o generator will be complete (KT-64202)
+    private fun computeOverriddenUsingFir2IrFakeOverrideGenerator(): List<IrSimpleFunctionSymbol> {
+        if (firParent == null) return emptyList()
         if (isFakeOverride && parent is Fir2IrLazyClass) {
             fakeOverrideGenerator.calcBaseSymbolsForFakeOverrideFunction(
                 firParent, this, fir.symbol
             )
             fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let {
                 assert(!it.contains(symbol)) { "Cannot add function $symbol to its own overriddenSymbols" }
-                return@lazyVar it
+                return it
             }
         }
-        fir.generateOverriddenFunctionSymbols(firParent)
+        return fir.generateOverriddenFunctionSymbols(firParent)
+    }
+
+    private fun computeOverriddenSymbolsForIrFakeOverrideGenerator(): List<IrSimpleFunctionSymbol> {
+        if (firParent == null || parent !is Fir2IrLazyClass) return emptyList()
+        val baseFunctionWithDispatchReceiverTag =
+            fakeOverrideGenerator.computeBaseSymbolsWithContainingClass(firParent, fir.symbol)
+        return baseFunctionWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
+            declarationStorage.getIrFunctionSymbol(symbol, dispatchReceiverLookupTag) as IrSimpleFunctionSymbol
+        }
     }
 
     override val initialSignatureFunction: IrFunction? by lazy {

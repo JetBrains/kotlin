@@ -15901,6 +15901,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fakeOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("complexOverriddensInLazyFunctions.kt")
+        public void testComplexOverriddensInLazyFunctions() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/complexOverriddensInLazyFunctions.kt");
+        }
+
         @TestMetadata("diamondFunction.kt")
         public void testDiamondFunction() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/diamondFunction.kt");
