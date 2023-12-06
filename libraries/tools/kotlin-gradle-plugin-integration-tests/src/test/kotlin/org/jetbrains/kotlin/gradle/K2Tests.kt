@@ -41,13 +41,14 @@ class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT() {
 @MppGradlePluginTests
 @DisplayName("K2: custom tests")
 class CustomK2Tests : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copyEnsuringK2()
+
     @GradleTest
     @DisplayName("Serialization plugin in common source set. KT-56911")
     fun testHmppDependenciesInJsTests(gradleVersion: GradleVersion) {
         project(
             "k2-serialization-plugin-in-common-sourceset",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"),
         ) {
             val taskToExecute = ":compileKotlinJs"
             build(taskToExecute) {
@@ -70,7 +71,7 @@ class CustomK2Tests : KGPBaseTest() {
     @GradleTest
     @DisplayName("HMPP compilation with JS target and old stdlib. KT-59151")
     fun testHmppCompilationWithJsAndOldStdlib(gradleVersion: GradleVersion) {
-        with(project("k2-mpp-js-old-stdlib", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"))) {
+        with(project("k2-mpp-js-old-stdlib", gradleVersion)) {
             val taskToExecute = ":compileKotlinJs"
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
@@ -81,7 +82,7 @@ class CustomK2Tests : KGPBaseTest() {
     @GradleTest
     @DisplayName("Native metadata of intermediate with reference to internal in common. KT-58219")
     fun nativeMetadataOfIntermediateWithReferenceToInternalInCommon(gradleVersion: GradleVersion) {
-        with(project("k2-native-intermediate-metadata", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"))) {
+        with(project("k2-native-intermediate-metadata", gradleVersion)) {
             val taskToExecute = ":compileNativeMainKotlinMetadata"
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
@@ -93,7 +94,7 @@ class CustomK2Tests : KGPBaseTest() {
     @GradleTest
     @DisplayName("Native metadata of intermediate with multiple targets. KT-61461")
     fun nativeMetadataOfIntermediateWithMultipleTargets(gradleVersion: GradleVersion) {
-        with(project("k2-native-intermediate-multiple-targets", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"))) {
+        with(project("k2-native-intermediate-multiple-targets", gradleVersion)) {
             val taskToExecute = ":compileNativeMainKotlinMetadata"
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
@@ -109,7 +110,6 @@ class CustomK2Tests : KGPBaseTest() {
             project(
                 "kt-581450-mpp-native-shared-crash",
                 gradleVersion,
-                buildOptions = defaultBuildOptions.copy(languageVersion = "2.0")
             )
         ) {
             val taskToExecute = ":compileNativeMainKotlinMetadata"
@@ -127,7 +127,6 @@ class CustomK2Tests : KGPBaseTest() {
             project(
                 "kt-58444-native-shared-constant-intrinsic",
                 gradleVersion,
-                buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"),
             )
         ) {
             val taskToExecute = ":compileNativeMainKotlinMetadata"
@@ -144,7 +143,6 @@ class CustomK2Tests : KGPBaseTest() {
             project(
                 "k2-java-dep-unresolved-annotation-argument",
                 gradleVersion,
-                buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"),
             )
         ) {
             val taskToExecute = ":compileKotlin"
@@ -161,7 +159,6 @@ class CustomK2Tests : KGPBaseTest() {
             project(
                 "k2-mpp-opt-in-in-platform",
                 gradleVersion,
-                buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"),
             )
         ) {
             val taskToExecute = ":compileKotlinJvm"
@@ -178,7 +175,6 @@ class CustomK2Tests : KGPBaseTest() {
         project(
             "k2-serialization-plugin-in-common-sourceset",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"),
         ) {
             val taskToExecute = ":compileCommonMainKotlinMetadata"
             build(taskToExecute) {
@@ -192,7 +188,6 @@ class CustomK2Tests : KGPBaseTest() {
     fun kt60438MetadataExpectActualDiscrimination(gradleVersion: GradleVersion) {
         project(
             "k2-kt-61540-expect-actual-discrimination", gradleVersion,
-            buildOptions = defaultBuildOptions.copy(languageVersion = "2.0")
         ) {
             build("assemble") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
@@ -207,7 +202,6 @@ class CustomK2Tests : KGPBaseTest() {
     fun kt61778NoOverloadResolutionAmbiguityBetweenExpectAndNonExpectInNative(gradleVersion: GradleVersion) {
         project(
             "k2-no-overload-resolution-ambiguity-between-expect-and-non-expect-in-native", gradleVersion,
-            buildOptions = defaultBuildOptions.copyEnsuringK2()
         ) {
             build("compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
