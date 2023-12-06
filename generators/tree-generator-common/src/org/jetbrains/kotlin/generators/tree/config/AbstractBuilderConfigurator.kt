@@ -127,6 +127,9 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, BuilderField
             }
     }
 
+    private val allLeafBuilders: List<LeafBuilder<BuilderField, Element, Implementation>>
+        get() = elements.flatMap { it.allImplementations }.mapNotNull { it.builder }
+
     /**
      * Allows to batch-apply [config] to certain fields in _all_ the builders that satisfy the given
      * [builderPredicate].
@@ -143,12 +146,22 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, BuilderField
         fieldPredicate: ((BuilderField) -> Boolean)? = null,
         config: LeafBuilderConfigurationContext.(field: String) -> Unit
     ) {
-        val builders = elements.flatMap { it.allImplementations }.mapNotNull { it.builder }
-        for (builder in builders) {
+        for (builder in allLeafBuilders) {
             if (builderPredicate != null && !builderPredicate(builder)) continue
             if (!builder.allFields.any { it.name == field }) continue
             if (fieldPredicate != null && !fieldPredicate(builder[field])) continue
             LeafBuilderConfigurationContext(builder).config(field)
+        }
+    }
+
+    /**
+     * Allows to batch-apply [config] to _all_ leaf builders.
+     *
+     * @param config The configuration block. See [LeafBuilderConfigurationContext]'s documentation for description of its DSL methods.
+     */
+    protected fun configureAllLeafBuilders(config: LeafBuilderConfigurationContext.() -> Unit) {
+        for (builder in allLeafBuilders) {
+            LeafBuilderConfigurationContext(builder).config()
         }
     }
 
