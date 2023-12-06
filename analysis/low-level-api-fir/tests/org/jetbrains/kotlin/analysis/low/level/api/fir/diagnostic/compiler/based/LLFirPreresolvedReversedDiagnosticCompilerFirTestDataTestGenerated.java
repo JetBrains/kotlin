@@ -1504,6 +1504,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
             }
 
             @Test
+            @TestMetadata("contextReceiversSubtyping.kt")
+            public void testContextReceiversSubtyping() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/checkers/contextReceiversSubtyping.kt");
+            }
+
+            @Test
             @TestMetadata("importAnnotationWithRequiresOptIn.kt")
             public void testImportAnnotationWithRequiresOptIn() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/checkers/importAnnotationWithRequiresOptIn.kt");
