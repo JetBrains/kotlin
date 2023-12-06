@@ -39,7 +39,7 @@ class ModelParser(private val modulePrefix: String, private val globalExcludedDi
         }
 
         val (includedProjects, excludedProjects) = project.allprojects
-            .partition { it.plugins.hasPlugin("jps-compatible") }
+            .partition { it == project || it.plugins.hasPlugin("jps-compatible") }
 
         val modules = includedProjects.flatMap { parseModules(it, excludedProjects) }
         val artifacts = parseArtifacts(project)
