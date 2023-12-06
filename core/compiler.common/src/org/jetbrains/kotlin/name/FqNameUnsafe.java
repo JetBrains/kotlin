@@ -163,8 +163,10 @@ public final class FqNameUnsafe {
             return false;
 
         int firstDot = fqName.indexOf('.');
+        int fqNameFirstSegmentLength = firstDot == -1 ? fqName.length() : firstDot;
         String segmentAsString = segment.asString();
-        return fqName.regionMatches(0, segmentAsString, 0, firstDot == -1 ? Math.max(fqName.length(), segmentAsString.length()) : firstDot);
+        return fqNameFirstSegmentLength == segmentAsString.length() &&
+                fqName.regionMatches(0, segmentAsString, 0, fqNameFirstSegmentLength);
     }
 
     public boolean startsWith(@NotNull FqNameUnsafe other) {
