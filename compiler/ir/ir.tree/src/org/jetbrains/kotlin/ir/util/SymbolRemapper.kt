@@ -47,8 +47,8 @@ interface SymbolRemapper {
     fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol
     fun getReferencedProperty(symbol: IrPropertySymbol): IrPropertySymbol
     fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol
-    fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol
     fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol
+    fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol): IrReturnTargetSymbol
     fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol
 
     open class Empty : SymbolRemapper {
@@ -105,9 +105,9 @@ interface SymbolRemapper {
 
         override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = symbol
 
-        override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol = symbol
-
         override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol = symbol
+
+        override fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol): IrReturnTargetSymbol = symbol
 
         override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = symbol
     }
