@@ -28,14 +28,14 @@ import org.jetbrains.kotlin.types.Variance
 // 3) fields
 object BirTree : AbstractTreeBuilder() {
     private fun symbol(type: TypeRefWithNullability, mutable: Boolean = false): SingleField =
-        field("symbol", type, mutable = mutable)
+        field("symbol", type, mutable = mutable, isChild = false)
 
     private fun descriptor(typeName: String, nullable: Boolean = true, initializer: SingleField.() -> Unit = {}): SingleField =
         field(
             "descriptor",
             ClassRef<TypeParameterRef>(TypeKind.Interface, Packages.descriptors, typeName),
-            mutable = false,
             nullable = nullable,
+            mutable = false,
         ) {
             optInAnnotation = obsoleteDescriptorBasedApiAnnotation
             initializer()
@@ -171,7 +171,7 @@ object BirTree : AbstractTreeBuilder() {
             TODO: consider dropping [$name] if it isn't used by any known plugin.
             """.trimIndent()
         }
-        +field("defaultValue", expressionBody, nullable = true, isChild = true)
+        +field("defaultValue", expressionBody, nullable = true)
     }
     val `class`: Element by element(Declaration) {
         typeKind = TypeKind.Interface
@@ -204,7 +204,7 @@ object BirTree : AbstractTreeBuilder() {
         }
         +field("source", type<SourceElement>(), mutable = false)
         +listField("superTypes", irTypeType, mutability = Var)
-        +field("thisReceiver", valueParameter, nullable = true, isChild = true)
+        +field("thisReceiver", valueParameter, nullable = true)
         +field(
             "valueClassRepresentation",
             type<ValueClassRepresentation<*>>().withArgs(type(Packages.types, "BirSimpleType")),
@@ -219,7 +219,7 @@ object BirTree : AbstractTreeBuilder() {
               invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
         """.trimIndent()
 
-        +field("attributeOwnerId", attributeContainer) {
+        +field("attributeOwnerId", attributeContainer, isChild = false) {
             initializeToThis = true
         }
     }
@@ -228,7 +228,7 @@ object BirTree : AbstractTreeBuilder() {
     val annotationContainerElement: Element by element(Declaration) {
         parent(type(Packages.declarations, "BirAnnotationContainer"))
 
-        +listField("annotations", constructorCall, mutability = Var, isChild = true) { // shouldn't those be child elements? rather not ref
+        +listField("annotations", constructorCall, mutability = Var) { // shouldn't those be child elements? rather not ref
             isOverride = true
         }
     }
@@ -238,18 +238,18 @@ object BirTree : AbstractTreeBuilder() {
         +descriptor("ClassDescriptor") // TODO special descriptor for anonymous initializer blocks
         +symbol(SymbolTypes.anonymousInitializer)
         +field("isStatic", boolean)
-        +field("body", blockBody, nullable = true, isChild = true)
+        +field("body", blockBody, nullable = true)
     }
     val declarationContainer: Element by element(Declaration) {
         parent(declarationParent)
 
-        +listField("declarations", declaration, mutability = List, isChild = true)
+        +listField("declarations", declaration, mutability = List)
     }
     val typeParametersContainer: Element by element(Declaration) {
         parent(declaration)
         parent(declarationParent)
 
-        +listField("typeParameters", typeParameter, mutability = Var, isChild = true)
+        +listField("typeParameters", typeParameter, mutability = Var)
     }
     val typeParameter: Element by element(Declaration) {
         parent(declaration)
@@ -285,12 +285,12 @@ object BirTree : AbstractTreeBuilder() {
         +field("isInline", boolean)
         +field("isExpect", boolean)
         +field("returnType", irTypeType)
-        +field("dispatchReceiverParameter", valueParameter, nullable = true, isChild = true)
-        +field("extensionReceiverParameter", valueParameter, nullable = true, isChild = true)
-        +listField("valueParameters", valueParameter, mutability = Var, isChild = true)
+        +field("dispatchReceiverParameter", valueParameter, nullable = true)
+        +field("extensionReceiverParameter", valueParameter, nullable = true)
+        +listField("valueParameters", valueParameter, mutability = Var)
         // The first `contextReceiverParametersCount` value parameters are context receivers.
         +field("contextReceiverParametersCount", int)
-        +field("body", body, nullable = true, isChild = true)
+        +field("body", body, nullable = true)
     }
     val constructor: Element by element(Declaration) {
         typeKind = TypeKind.Interface
@@ -309,8 +309,8 @@ object BirTree : AbstractTreeBuilder() {
 
         +descriptor("ClassDescriptor")
         +symbol(SymbolTypes.enumEntry)
-        +field("initializerExpression", expressionBody, nullable = true, isChild = true)
-        +field("correspondingClass", `class`, nullable = true, isChild = true)
+        +field("initializerExpression", expressionBody, nullable = true)
+        +field("correspondingClass", `class`, nullable = true)
     }
     val errorDeclaration: Element by element(Declaration) {
         parent(declaration)
@@ -331,7 +331,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("type", irTypeType)
         +field("isFinal", boolean)
         +field("isStatic", boolean)
-        +field("initializer", expressionBody, nullable = true, isChild = true)
+        +field("initializer", expressionBody, nullable = true)
         +field("correspondingPropertySymbol", SymbolTypes.property, nullable = true)
     }
     val localDelegatedProperty: Element by element(Declaration) {
@@ -344,14 +344,14 @@ object BirTree : AbstractTreeBuilder() {
         +symbol(SymbolTypes.localDelegatedProperty)
         +field("type", irTypeType)
         +field("isVar", boolean)
-        +field("delegate", variable, nullable = true, isChild = true)
-        +field("getter", simpleFunction, nullable = true, isChild = true)
-        +field("setter", simpleFunction, nullable = true, isChild = true)
+        +field("delegate", variable, nullable = true)
+        +field("getter", simpleFunction, nullable = true)
+        +field("setter", simpleFunction, nullable = true)
     }
     val moduleFragment: Element by element(Declaration) {
         +descriptor("ModuleDescriptor")
         +field("name", type<Name>(), mutable = false)
-        +listField("files", file, mutability = List, isChild = true)
+        +listField("files", file, mutability = List)
     }
     val property: Element by element(Declaration) {
         typeKind = TypeKind.Interface
@@ -372,9 +372,9 @@ object BirTree : AbstractTreeBuilder() {
         +field("isDelegated", boolean)
         +field("isExpect", boolean)
         +isFakeOverrideField()
-        +field("backingField", field, nullable = true, isChild = true)
-        +field("getter", simpleFunction, nullable = true, isChild = true)
-        +field("setter", simpleFunction, nullable = true, isChild = true)
+        +field("backingField", field, nullable = true)
+        +field("getter", simpleFunction, nullable = true)
+        +field("setter", simpleFunction, nullable = true)
         +listField("overriddenSymbols", SymbolTypes.property, mutability = Var)
     }
 
@@ -392,18 +392,18 @@ object BirTree : AbstractTreeBuilder() {
         +symbol(SymbolTypes.script)
         // NOTE: is the result of the FE conversion, because there script interpreted as a class and has receiver
         // TODO: consider removing from here and handle appropriately in the lowering
-        +field("thisReceiver", valueParameter, isChild = true, nullable = true) // K1
+        +field("thisReceiver", valueParameter, nullable = true) // K1
         +field("baseClass", irTypeType, nullable = true) // K1
-        +listField("explicitCallParameters", variable, mutability = Var, isChild = true)
-        +listField("implicitReceiversParameters", valueParameter, mutability = Var, isChild = true)
+        +listField("explicitCallParameters", variable, mutability = Var)
+        +listField("implicitReceiversParameters", valueParameter, mutability = Var)
         +listField("providedProperties", SymbolTypes.property, mutability = Var)
-        +listField("providedPropertiesParameters", valueParameter, mutability = Var, isChild = true)
+        +listField("providedPropertiesParameters", valueParameter, mutability = Var)
         +field("resultProperty", SymbolTypes.property, nullable = true)
-        +field("earlierScriptsParameter", valueParameter, nullable = true, isChild = true)
-        +listField("importedScripts", SymbolTypes.script, mutability = Var, nullable = true)
-        +listField("earlierScripts", SymbolTypes.script, mutability = Var, nullable = true)
+        +field("earlierScriptsParameter", valueParameter, nullable = true)
+        +listField("importedScripts", SymbolTypes.script, nullable = true, mutability = Var)
+        +listField("earlierScripts", SymbolTypes.script, nullable = true, mutability = Var)
         +field("targetClass", SymbolTypes.`class`, nullable = true)
-        +field("constructor", constructor, nullable = true) // K1
+        +field("constructor", constructor, nullable = true, isChild = false) // K1
     }
     val simpleFunction: Element by element(Declaration) {
         isLeaf = true
@@ -444,7 +444,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("isVar", boolean)
         +field("isConst", boolean)
         +field("isLateinit", boolean)
-        +field("initializer", expression, nullable = true, isChild = true)
+        +field("initializer", expression, nullable = true)
     }
     val packageFragment: Element by element(Declaration) {
         parent(declarationContainer)
@@ -477,7 +477,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("type", irTypeType)
     }
     val statementContainer: Element by element(Expression) {
-        +listField("statements", statement, mutability = List, isChild = true)
+        +listField("statements", statement, mutability = List)
     }
     val body: Element by element(Expression) {
         typeKind = TypeKind.Class
@@ -485,7 +485,7 @@ object BirTree : AbstractTreeBuilder() {
     val expressionBody: Element by element(Expression) {
         parent(body)
 
-        +field("expression", expression, nullable = true, isChild = true)
+        +field("expression", expression, nullable = true)
     }
     val blockBody: Element by element(Expression) {
         parent(body)
@@ -501,11 +501,11 @@ object BirTree : AbstractTreeBuilder() {
 
         parent(declarationReference)
 
-        +field("dispatchReceiver", expression, nullable = true, isChild = true)
-        +field("extensionReceiver", expression, nullable = true, isChild = true)
+        +field("dispatchReceiver", expression, nullable = true)
+        +field("extensionReceiver", expression, nullable = true)
         +symbol(s)
         +field("origin", statementOriginType, nullable = true)
-        +listField("valueArguments", expression.copy(nullable = true), mutability = Array, isChild = true)
+        +listField("valueArguments", expression.copy(nullable = true), mutability = Array)
         +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Var)
     }
     val functionAccessExpression: Element by element(Expression) {
@@ -550,7 +550,7 @@ object BirTree : AbstractTreeBuilder() {
         parent(statementContainer)
 
         +field("origin", statementOriginType, nullable = true)
-        +listField("statements", statement, mutability = List, isChild = true) {
+        +listField("statements", statement, mutability = List) {
             isOverride = true
         }
     }
@@ -572,8 +572,8 @@ object BirTree : AbstractTreeBuilder() {
     val inlinedFunctionBlock: Element by element(Expression) {
         parent(block)
 
-        +field("inlineCall", functionAccessExpression)
-        +field("inlinedElement", rootElement)
+        +field("inlineCall", functionAccessExpression, isChild = false)
+        +field("inlinedElement", rootElement, isChild = false)
     }
     val syntheticBody: Element by element(Expression) {
         parent(body)
@@ -583,7 +583,7 @@ object BirTree : AbstractTreeBuilder() {
     val breakContinue: Element by element(Expression) {
         parent(expression)
 
-        +field("loop", loop)
+        +field("loop", loop, isChild = false)
         +field("label", string, nullable = true)
     }
     val `break` by element(Expression) {
@@ -624,8 +624,8 @@ object BirTree : AbstractTreeBuilder() {
 
         +symbol(SymbolTypes.localDelegatedProperty, mutable = true)
         +field("delegate", SymbolTypes.variable)
-        +field("getter", simpleFunction)
-        +field("setter", simpleFunction, nullable = true)
+        +field("getter", simpleFunction, isChild = false)
+        +field("setter", simpleFunction, nullable = true, isChild = false)
     }
     val classReference: Element by element(Expression) {
         parent(declarationReference)
@@ -647,19 +647,19 @@ object BirTree : AbstractTreeBuilder() {
     val constantPrimitive: Element by element(Expression) {
         parent(constantValue)
 
-        +field("value", const.withArgs("T" to TypeRef.Star), nullable = true, isChild = true)
+        +field("value", const.withArgs("T" to TypeRef.Star), nullable = true)
     }
     val constantObject: Element by element(Expression) {
         parent(constantValue)
 
         +field("constructor", SymbolTypes.constructor)
-        +listField("valueArguments", constantValue, mutability = List, isChild = true)
+        +listField("valueArguments", constantValue, mutability = List)
         +listField("typeArguments", irTypeType, mutability = Var)
     }
     val constantArray: Element by element(Expression) {
         parent(constantValue)
 
-        +listField("elements", constantValue, mutability = List, isChild = true)
+        +listField("elements", constantValue, mutability = List)
     }
     val delegatingConstructorCall: Element by element(Expression) {
         parent(functionAccessExpression)
@@ -673,14 +673,14 @@ object BirTree : AbstractTreeBuilder() {
         parent(dynamicExpression)
 
         +field("operator", type("org.jetbrains.kotlin.ir.expressions", "IrDynamicOperator"))
-        +field("receiver", expression, nullable = true, isChild = true)
-        +listField("arguments", expression, mutability = List, isChild = true)
+        +field("receiver", expression, nullable = true)
+        +listField("arguments", expression, mutability = List)
     }
     val dynamicMemberExpression: Element by element(Expression) {
         parent(dynamicExpression)
 
         +field("memberName", string)
-        +field("receiver", expression, nullable = true, isChild = true)
+        +field("receiver", expression, nullable = true)
     }
     val enumConstructorCall: Element by element(Expression) {
         parent(functionAccessExpression)
@@ -697,15 +697,15 @@ object BirTree : AbstractTreeBuilder() {
     val errorCallExpression: Element by element(Expression) {
         parent(errorExpression)
 
-        +field("explicitReceiver", expression, nullable = true, isChild = true)
-        +listField("arguments", expression, mutability = List, isChild = true)
+        +field("explicitReceiver", expression, nullable = true)
+        +listField("arguments", expression, mutability = List)
     }
     val fieldAccessExpression: Element by element(Expression) {
         parent(declarationReference)
 
         +symbol(SymbolTypes.field, mutable = true)
         +field("superQualifierSymbol", SymbolTypes.`class`, nullable = true)
-        +field("receiver", expression, nullable = true, isChild = true)
+        +field("receiver", expression, nullable = true)
         +field("origin", statementOriginType, nullable = true)
     }
     val getField: Element by element(Expression) {
@@ -714,18 +714,18 @@ object BirTree : AbstractTreeBuilder() {
     val setField: Element by element(Expression) {
         parent(fieldAccessExpression)
 
-        +field("value", expression, nullable = true, isChild = true)
+        +field("value", expression, nullable = true)
     }
     val functionExpression: Element by element(Expression) {
         parent(expression)
 
         +field("origin", statementOriginType)
-        +field("function", simpleFunction, nullable = true, isChild = true)
+        +field("function", simpleFunction, nullable = true)
     }
     val getClass: Element by element(Expression) {
         parent(expression)
 
-        +field("argument", expression, nullable = true, isChild = true)
+        +field("argument", expression, nullable = true)
     }
     val instanceInitializerCall: Element by element(Expression) {
         parent(expression)
@@ -736,8 +736,8 @@ object BirTree : AbstractTreeBuilder() {
         parent(expression)
 
         +field("origin", statementOriginType, nullable = true)
-        +field("body", expression, nullable = true, isChild = true)
-        +field("condition", expression, nullable = true, isChild = true)
+        +field("body", expression, nullable = true)
+        +field("condition", expression, nullable = true)
         +field("label", string, nullable = true)
     }
     val whileLoop: Element by element(Expression) {
@@ -751,48 +751,48 @@ object BirTree : AbstractTreeBuilder() {
     val `return`: Element by element(Expression) {
         parent(expression)
 
-        +field("value", expression, nullable = true, isChild = true)
+        +field("value", expression, nullable = true)
         +field("returnTargetSymbol", SymbolTypes.returnTarget)
     }
     val stringConcatenation: Element by element(Expression) {
         parent(expression)
 
-        +listField("arguments", expression, mutability = List, isChild = true)
+        +listField("arguments", expression, mutability = List)
     }
     val suspensionPoint: Element by element(Expression) {
         parent(expression)
 
-        +field("suspensionPointIdParameter", variable, nullable = true, isChild = true)
-        +field("result", expression, nullable = true, isChild = true)
-        +field("resumeResult", expression, nullable = true, isChild = true)
+        +field("suspensionPointIdParameter", variable, nullable = true)
+        +field("result", expression, nullable = true)
+        +field("resumeResult", expression, nullable = true)
     }
     val suspendableExpression: Element by element(Expression) {
         parent(expression)
 
-        +field("suspensionPointId", expression, nullable = true, isChild = true)
-        +field("result", expression, nullable = true, isChild = true)
+        +field("suspensionPointId", expression, nullable = true)
+        +field("result", expression, nullable = true)
     }
     val `throw`: Element by element(Expression) {
         parent(expression)
 
-        +field("value", expression, nullable = true, isChild = true)
+        +field("value", expression, nullable = true)
     }
     val `try`: Element by element(Expression) {
         parent(expression)
 
-        +field("tryResult", expression, nullable = true, isChild = true)
-        +listField("catches", catch, mutability = List, isChild = true)
-        +field("finallyExpression", expression, nullable = true, isChild = true)
+        +field("tryResult", expression, nullable = true)
+        +listField("catches", catch, mutability = List)
+        +field("finallyExpression", expression, nullable = true)
     }
     val catch: Element by element(Expression) {
-        +field("catchParameter", variable, nullable = true, isChild = true)
-        +field("result", expression, nullable = true, isChild = true)
+        +field("catchParameter", variable, nullable = true)
+        +field("result", expression, nullable = true)
     }
     val typeOperatorCall: Element by element(Expression) {
         parent(expression)
 
         +field("operator", type("org.jetbrains.kotlin.ir.expressions", "IrTypeOperator"))
-        +field("argument", expression, nullable = true, isChild = true)
+        +field("argument", expression, nullable = true)
         +field("typeOperand", irTypeType)
     }
     val valueAccessExpression: Element by element(Expression) {
@@ -807,31 +807,31 @@ object BirTree : AbstractTreeBuilder() {
     val setValue: Element by element(Expression) {
         parent(valueAccessExpression)
 
-        +field("value", expression, nullable = true, isChild = true)
+        +field("value", expression, nullable = true)
     }
     val varargElement: Element by element(Expression)
     val vararg: Element by element(Expression) {
         parent(expression)
 
         +field("varargElementType", irTypeType)
-        +listField("elements", varargElement, mutability = List, isChild = true)
+        +listField("elements", varargElement, mutability = List)
     }
     val spreadElement: Element by element(Expression) {
         parent(varargElement)
 
-        +field("expression", expression, nullable = true, isChild = true)
+        +field("expression", expression, nullable = true)
     }
     val `when`: Element by element(Expression) {
         parent(expression)
 
         +field("origin", statementOriginType, nullable = true)
-        +listField("branches", branch, mutability = List, isChild = true)
+        +listField("branches", branch, mutability = List)
     }
     val branch: Element by element(Expression) {
         isLeaf = true
 
-        +field("condition", expression, nullable = true, isChild = true)
-        +field("result", expression, nullable = true, isChild = true)
+        +field("condition", expression, nullable = true)
+        +field("result", expression, nullable = true)
     }
     val elseBranch: Element by element(Expression) {
         parent(branch)

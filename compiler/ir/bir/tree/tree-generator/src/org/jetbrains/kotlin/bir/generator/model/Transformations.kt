@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 fun transformModel(model: Model) {
-    configureInterfacesAndAbstractClasses(model.elements)
+    InterfaceAndAbstractClassConfigurator(model.elements)
+        .configureInterfacesAndAbstractClasses()
     addPureAbstractElement(model.elements, elementImplBaseType)
     adjustSymbolOwners(model.elements)
     markLeaves(model.elements)
@@ -114,8 +115,8 @@ private fun computeFieldFakeOverrides(elements: List<Element>) {
                 // order by the most likely to change
                 when {
                     field.isChild -> 1
-                    field.typeRef is GenericElementRef<*, *> -> 2
-                    field is ListField && field.baseType is GenericElementRef<*, *> -> 3
+                    field.typeRef is GenericElementRef<*> -> 2
+                    field is ListField && field.baseType is GenericElementRef<*> -> 3
                     field.name == "sourceSpan" -> 11
                     field.name == "signature" -> 12
                     else -> 10
