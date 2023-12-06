@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
+import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.util.Bir2IrConverter
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.bir.util.countAllElementsInTree
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -27,8 +29,11 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IdSignatureValues.result
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.utils.indexOfFirst
 import java.util.IdentityHashMap
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -55,7 +60,9 @@ val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhase, List<
 )
 
 private val excludedPhases = setOf<String>(
-    //"Bir2Ir",
+    //"Ir2Bir",
+    //"Lower Bir",
+    "Bir2Ir",
     "Terminate",
 
     // This phase removes annotation constructors, but they are still being used,
@@ -94,7 +101,7 @@ fun lowerWithBir(
         birPhases as List<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>
     )
 
-    val allExcludedPhases = excludedPhases + allBirPhases.flatMap { it.second }
+    val allExcludedPhases = excludedPhases //+ allBirPhases.flatMap { it.second }
 
     val compoundPhase = newPhases.reduce { result, phase -> result then phase }
     val phaseConfig = PhaseConfigBuilder(compoundPhase).apply {
@@ -128,13 +135,13 @@ private fun reconstructPhases(
                 .map { it.second as AbstractNamedCompilerPhase<JvmBackendContext, IrFile, IrFile> }
                 .toMutableList()
 
-            /*val annotationPhasesRange = filePhases.subList(filePhases.indexOfFirst { it.name == "Annotation" }, filePhases.indexOfFirst { it.name == "AnnotationImplementation" } + 1)
+            val annotationPhasesRange = filePhases.subList(filePhases.indexOfFirst { it.name == "Annotation" }, filePhases.indexOfFirst { it.name == "AnnotationImplementation" } + 1)
             val annotationPhases = annotationPhasesRange.toList()
             annotationPhasesRange.clear()
             filePhases.addAll(
                 filePhases.indexOfFirst { it.name == "DirectInvokes" } + 1,
                 annotationPhases
-            )*/
+            )
 
             filePhases.add(
                 filePhases.indexOfFirst { it.name == "FunctionReference" },
@@ -238,13 +245,11 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
         val externalModulesBir = BirForest()
         val compiledBir = BirForest()
 
-        val mappedIr2BirElements = IdentityHashMap<BirElement, IrSymbol>()
+        val mappedIr2BirElements = IdentityHashMap<BirElement, IrElement>()
         val ir2BirConverter = Ir2BirConverter(dynamicPropertyManager)
         ir2BirConverter.copyAncestorsForOrphanedElements = true
         ir2BirConverter.appendElementAsForestRoot = { old, new ->
-            if (old is IrSymbolOwner) {
-                mappedIr2BirElements[new] = old.symbol
-            }
+            mappedIr2BirElements[new] = old
 
             when {
                 old === input -> compiledBir
@@ -276,6 +281,7 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
             birContext,
             input,
             mappedIr2BirElements,
+            ir2BirConverter.remappedIr2BirTypes,
             dynamicPropertyManager,
             size,
             profile
@@ -287,17 +293,16 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
         phaserState: PhaserState<IrModuleFragment>,
         context: JvmBackendContext,
         input: IrModuleFragment,
-    ): BirCompilationBundle {
-        error("Must be enabled")
-    }
+    ) = BirCompilationBundle(null, null, input, emptyMap(), emptyMap(), null, 0, profile)
 }
 
 class BirCompilationBundle(
-    val birModule: BirModuleFragment,
-    val backendContext: JvmBirBackendContext,
+    val birModule: BirModuleFragment?,
+    val backendContext: JvmBirBackendContext?,
     val irModuleFragment: IrModuleFragment,
-    val mappedIr2BirElements: Map<BirElement, IrSymbol>,
-    val dynamicPropertyManager: BirElementDynamicPropertyManager,
+    val mappedIr2BirElements: Map<BirElement, IrElement>,
+    val remappedIr2BirTypes: Map<BirType, IrType>,
+    val dynamicPropertyManager: BirElementDynamicPropertyManager?,
     val estimatedIrTreeSize: Int,
     val profile: Boolean,
 )
@@ -309,7 +314,7 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
         context: JvmBackendContext,
         input: BirCompilationBundle,
     ): BirCompilationBundle {
-        val compiledBir = input.backendContext.compiledBir
+        val compiledBir = input.backendContext!!.compiledBir
         val externalBir = input.backendContext.externalModulesBir
         val profile = input.profile
 
@@ -319,7 +324,7 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
         }
         repeat(1) {
             invokePhaseMeasuringTime(profile, "!BIR - baseline tree traversal") {
-                input.birModule.countAllElementsInTree()
+                input.birModule!!.countAllElementsInTree()
             }
 
             invokePhaseMeasuringTime(profile, "!BIR - index compiled BIR") {
@@ -335,7 +340,7 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
         for (phase in input.backendContext.loweringPhases) {
             val phaseName = phase.javaClass.simpleName
             invokePhaseMeasuringTime(profile, "!BIR - $phaseName") {
-                phase(input.birModule)
+                phase(input.birModule!!)
             }
 
             dumpBirPhase(context, input, phase, null)
@@ -348,8 +353,8 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
 private class ConvertBirToIrPhase(name: String, description: String) :
     SimpleNamedCompilerPhase<JvmBackendContext, BirCompilationBundle, IrModuleFragment>(name, description) {
     override fun phaseBody(context: JvmBackendContext, input: BirCompilationBundle): IrModuleFragment {
-        val dynamicPropertyManager = input.dynamicPropertyManager
-        val compiledBir = input.birModule.getContainingForest()!!
+        val dynamicPropertyManager = input.dynamicPropertyManager!!
+        val compiledBir = input.birModule!!.getContainingForest()!!
         val bir2IrConverter = Bir2IrConverter(
             dynamicPropertyManager,
             input.mappedIr2BirElements,
@@ -357,6 +362,7 @@ private class ConvertBirToIrPhase(name: String, description: String) :
             compiledBir,
             input.estimatedIrTreeSize
         )
+        bir2IrConverter.remappedIr2BirTypes = input.remappedIr2BirTypes
 
         val localClassType = dynamicPropertyManager.acquireProperty(BirJvmInventNamesForLocalClassesLowering.LocalClassType)
         val fieldForObjectInstanceToken = dynamicPropertyManager.acquireProperty(JvmCachedDeclarations.FieldForObjectInstance)
@@ -387,7 +393,7 @@ private class ConvertBirToIrPhase(name: String, description: String) :
         val newIrModule: IrModuleFragment
         invokePhaseMeasuringTime(input.profile, "!BIR - convert IR to BIR") {
             newIrModule = bir2IrConverter.remapElement<IrModuleFragment>(input.birModule)
-            newIrModule.patchDeclarationParents()
+            //newIrModule.patchDeclarationParents()
         }
 
         return newIrModule

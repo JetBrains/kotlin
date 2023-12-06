@@ -43,6 +43,7 @@ abstract class Ir2BirConverterBase() {
     private var isInsideCopyAncestorsForOrphanedElements = false
 
     private val symbolOwnersCurrentlyBeingConverted = IdentityHashMap<IrSymbolOwner, LateBoundBirSymbol<*>?>()
+    val remappedIr2BirTypes = IdentityHashMap<BirType, IrType>()
 
     val currentColBirElementsWithoutParent: List<BirElement>
         get() = collectedBirElementsWithoutParent
@@ -251,17 +252,21 @@ abstract class Ir2BirConverterBase() {
 
     fun remapType(irType: IrType): BirType = when (irType) {
         // for IrDelegatedSimpleType, this egaerly initializes a lazy IrAnnotationType
-        is IrSimpleTypeImpl, is IrDelegatedSimpleType -> remapSimpleType(irType as IrSimpleType)
         is IrCapturedType -> remapCapturedType(irType)
+        is IrSimpleTypeImpl, is IrDelegatedSimpleType -> remapSimpleTypeImpl(irType as IrSimpleType)
         is IrDynamicType -> remapDynamicType(irType)
         is IrErrorType -> remapErrorType(irType)
         else -> TODO(irType.toString())
+    }.also {
+        remappedIr2BirTypes[it] = irType
     }
 
     @JvmName("remapTypeNullable")
     fun remapType(irType: IrType?): BirType? = if (irType == null) null else remapType(irType)
 
-    fun remapSimpleType(irType: IrSimpleType): BirSimpleType {
+    fun remapSimpleType(irType: IrSimpleType) = remapType(irType) as BirSimpleType
+
+    private fun remapSimpleTypeImpl(irType: IrSimpleType): BirSimpleType {
         return BirSimpleTypeImpl(
             irType.kotlinType,
             remapSymbol(irType.classifier),
@@ -291,7 +296,7 @@ abstract class Ir2BirConverterBase() {
             remapElement(irType.constructor.typeParameter) as BirTypeParameter,
             irType.nullability,
             irType.annotations.map { remapElement(it) as BirConstructorCall },
-            irType.abbreviation?.let { remapTypeAbbreviation(it)},
+            irType.abbreviation?.let { remapTypeAbbreviation(it) },
         )
     }
 
@@ -311,7 +316,7 @@ abstract class Ir2BirConverterBase() {
             irType.isMarkedNullable,
         )
 
-    fun remapTypeArgument(irTypeArgument: IrTypeArgument): BirTypeArgument = when (irTypeArgument) {
+    private fun remapTypeArgument(irTypeArgument: IrTypeArgument): BirTypeArgument = when (irTypeArgument) {
         is IrStarProjection -> BirStarProjection
         is IrType -> remapType(irTypeArgument) as BirTypeArgument
         is IrTypeProjectionImpl -> makeTypeProjection(remapType(irTypeArgument.type), irTypeArgument.variance)
