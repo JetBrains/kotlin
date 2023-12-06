@@ -474,6 +474,9 @@ The default value is 1."""
             it[AnalysisFlags.optIn] = optInList + listOf("kotlin.ExperimentalUnsignedTypes")
             if (printIr)
                 phasesToDumpAfter = arrayOf("ALL")
+            if (metadataKlib) {
+                it[AnalysisFlags.metadataCompilation] = true
+            }
         }
 
     override fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {

@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import kotlin.test.Ignore
 
 @Disabled("Used for local testing only")
@@ -205,6 +206,34 @@ class CustomK2Tests : KGPBaseTest() {
         ) {
             build("compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Native metadata compilation with constant expressions (KT-63835)")
+    fun nativeMetadataCompilationWithConstantExpressions(gradleVersion: GradleVersion) {
+        project("k2-native-metadata-compilation-with-constant-expressions", gradleVersion) {
+            build("compileCommonMainKotlinMetadata") {
+                assertTasksExecuted(":compileCommonMainKotlinMetadata")
+            }
+        }
+    }
+}
+
+@NativeGradlePluginTests
+@OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+@DisplayName("K2: custom MacOS tests")
+class CustomK2MacOSTests : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copyEnsuringK2()
+
+    @GradleTest
+    @DisplayName("Universal metadata compilation with constant expressions (KT-63835)")
+    fun universalMetadataCompilationWithConstantExpressions(gradleVersion: GradleVersion) {
+        project("k2-universal-metadata-compilation-with-constant-expressions", gradleVersion) {
+            build("assemble") {
+                assertTasksExecuted(":assemble")
+                assertTasksExecuted(":compileIosMainKotlinMetadata")
             }
         }
     }
