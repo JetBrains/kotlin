@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
@@ -51,6 +52,7 @@ class ValueParameter(
     private val isVal: Boolean,
     private val isVar: Boolean,
     private val modifiers: Modifier,
+    private val valueParameterAnnotations: List<FirAnnotationCall>,
     val returnTypeRef: FirTypeRef,
     val source: KtSourceElement,
     private val moduleData: FirModuleData,
@@ -68,9 +70,9 @@ class ValueParameter(
     val annotations: List<FirAnnotation> by lazy(LazyThreadSafetyMode.NONE) {
         buildList {
             if (!isFromPrimaryConstructor)
-                addAll(modifiers.annotations)
+                addAll(valueParameterAnnotations)
             else
-                modifiers.annotations.filterTo(this) { it.useSiteTarget.appliesToPrimaryConstructorParameter() }
+                valueParameterAnnotations.filterTo(this) { it.useSiteTarget.appliesToPrimaryConstructorParameter() }
             addAll(additionalAnnotations)
         }
     }
@@ -132,7 +134,7 @@ class ValueParameter(
 
             isVar = this@ValueParameter.isVar
             val propertySymbol = FirPropertySymbol(callableId)
-            val remappedAnnotations = modifiers.annotations.map {
+            val remappedAnnotations = valueParameterAnnotations.map {
                 buildAnnotationCallCopy(it) {
                     containingDeclarationSymbol = propertySymbol
                 }
