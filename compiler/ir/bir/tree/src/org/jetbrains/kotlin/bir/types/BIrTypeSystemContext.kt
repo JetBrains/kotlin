@@ -419,7 +419,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
         return emptyList()
     }
 
-    override fun createErrorType(debugName: String): SimpleTypeMarker {
+    override fun createErrorType(debugName: String, delegatedType: SimpleTypeMarker?): SimpleTypeMarker {
         TODO("BirTypeSystemContext doesn't support constraint system resolution")
     }
 

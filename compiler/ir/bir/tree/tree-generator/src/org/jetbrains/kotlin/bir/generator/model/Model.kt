@@ -34,7 +34,7 @@ class Element(
     name: String,
     override val propertyName: String,
     category: Category,
-) : AbstractElement<Element, Field>(name) {
+) : AbstractElement<Element, Field, Nothing>(name) {
     enum class Category(private val packageDir: String, val defaultVisitorParam: String) {
         Expression("expressions", "expression"),
         Declaration("declarations", "declaration"),
@@ -80,7 +80,7 @@ class Element(
 
     override var kind: ImplementationKind? = null
 
-    override val typeName = "Bir$name"
+    override val namePrefix = "Bir"
     val elementImplName = type(packageName + ".impl", typeName + "Impl")
 
     /**
@@ -152,14 +152,18 @@ class Element(
     }
 }
 
-typealias ElementRef = GenericElementRef<Element, Field>
-typealias ElementOrRef = GenericElementOrRef<Element, Field>
+typealias ElementRef = GenericElementRef<Element>
+typealias ElementOrRef = GenericElementOrRef<Element>
 
 sealed class Field(
     override val name: String,
     override var isMutable: Boolean,
-    val isChild: Boolean,
+    isChild: Boolean,
 ) : AbstractField<Field>() {
+    init {
+        this.isChild = isChild
+    }
+
     var isOverride = false
 
     var passViaConstructorParameter = false
@@ -175,9 +179,6 @@ sealed class Field(
         get() = false
 
     override val isFinal: Boolean
-        get() = false
-
-    override val isLateinit: Boolean
         get() = false
 
     override val isParameter: Boolean
@@ -214,7 +215,6 @@ class ListField(
     mutable: Boolean,
     isChild: Boolean,
 ) : Field(name, mutable, isChild), ListField {
-
     override val typeRef: ClassRef<PositionTypeParameterRef>
         get() = listType.withArgs(baseType).copy(isNullable)
 
