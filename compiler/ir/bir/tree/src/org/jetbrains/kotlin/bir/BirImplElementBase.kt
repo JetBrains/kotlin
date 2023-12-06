@@ -40,7 +40,7 @@ abstract class BirImplElementBase : BirElementBase() {
             old as BirImplElementBase
 
             old.setParentWithInvalidation(null)
-            root?.elementDetached(old)
+            _containingDatabase?.elementDetached(old)
         }
 
         if (new != null) {
@@ -54,10 +54,10 @@ abstract class BirImplElementBase : BirElementBase() {
                     oldParent.invalidate(propertyId)
                 }
 
-                root?.elementMoved(new, oldParent)
+                _containingDatabase?.elementMoved(new, oldParent)
             } else {
                 new.setParentWithInvalidation(this)
-                root?.elementAttached(new)
+                _containingDatabase?.elementAttached(new)
             }
         }
     }
@@ -131,9 +131,6 @@ abstract class BirImplElementBase : BirElementBase() {
     }
 
     internal fun <T> getOrPutDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, compute: () -> T): T {
-        // todo: why asserts do run?
-        //assert(root?.isInsideElementClassification != true)
-
         val arrayMap = dynamicProperties
         if (arrayMap == null) {
             val value = compute()
@@ -164,7 +161,7 @@ abstract class BirImplElementBase : BirElementBase() {
 
 
     internal fun invalidate() {
-        root?.elementIndexInvalidated(this)
+        _containingDatabase?.elementIndexInvalidated(this)
     }
 
     internal fun invalidate(propertyId: Int) {
@@ -174,8 +171,8 @@ abstract class BirImplElementBase : BirElementBase() {
     }
 
     internal fun recordPropertyRead(propertyId: Int) {
-        val root = root ?: return
-        val classifiedElement = root.mutableElementCurrentlyBeingClassified ?: return
+        val database = _containingDatabase ?: return
+        val classifiedElement = database.mutableElementCurrentlyBeingClassified ?: return
         if (classifiedElement === this) {
             observedPropertiesBitSet = observedPropertiesBitSet or (1 shl propertyId).toShort()
         } else {
@@ -229,7 +226,7 @@ abstract class BirImplElementBase : BirElementBase() {
             null -> {}
             is BirImplElementBase -> {
                 dependentIndexedElements = null
-                root?.invalidateElement(elementsOrSingle)
+                _containingDatabase?.invalidateElement(elementsOrSingle)
             }
             else -> {
                 @Suppress("UNCHECKED_CAST")
@@ -241,7 +238,7 @@ abstract class BirImplElementBase : BirElementBase() {
                     val arrayIsFull = array[arraySize - 1] != null
 
                     array[i] = null
-                    root?.invalidateElement(e)
+                    _containingDatabase?.invalidateElement(e)
 
                     if (arrayIsFull && array !== dependentIndexedElements) {
                         @Suppress("UNCHECKED_CAST")

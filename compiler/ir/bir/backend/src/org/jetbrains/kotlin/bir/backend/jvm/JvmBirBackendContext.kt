@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.BirBuiltIns
 import org.jetbrains.kotlin.bir.BirElementDynamicPropertyManager
-import org.jetbrains.kotlin.bir.BirForest
+import org.jetbrains.kotlin.bir.BirDatabase
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.types.BirTypeSystemContext
@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.name.FqName
 class JvmBirBackendContext @OptIn(ObsoleteDescriptorBasedAPI::class) constructor(
     irContext: JvmBackendContext,
     module: ModuleDescriptor,
-    compiledBir: BirForest,
-    externalModulesBir: BirForest,
+    compiledBir: BirDatabase,
+    externalModulesBir: BirDatabase,
     val ir2BirConverter: Ir2BirConverter,
     dynamicPropertyManager: BirElementDynamicPropertyManager,
     phaseConfig: List<(JvmBirBackendContext) -> BirLoweringPhase>,

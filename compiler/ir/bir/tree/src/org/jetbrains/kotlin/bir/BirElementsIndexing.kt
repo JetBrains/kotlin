@@ -22,7 +22,7 @@ fun interface BirElementIndexMatcher : BirElementGeneralIndexer {
 }
 
 internal fun interface BirElementIndexClassifier {
-    fun classify(element: BirElementBase, minimumIndex: Int, backReferenceRecorder: BirForest.BackReferenceRecorder): Int
+    fun classify(element: BirElementBase, minimumIndex: Int, backReferenceRecorder: BirDatabase.BackReferenceRecorder): Int
 }
 
 
@@ -120,7 +120,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
                 Type.INT_TYPE,
                 Type.getType(BirElementBase::class.java),
                 Type.INT_TYPE,
-                Type.getType(BirForest.BackReferenceRecorder::class.java)
+                Type.getType(BirDatabase.BackReferenceRecorder::class.java)
             )
         }
 

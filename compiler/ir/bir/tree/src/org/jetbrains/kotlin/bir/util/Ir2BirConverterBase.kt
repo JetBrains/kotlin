@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSymbolBase
@@ -32,7 +31,7 @@ import kotlin.collections.set
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class Ir2BirConverterBase() {
-    var appendElementAsForestRoot: (IrElement, BirElement) -> BirForest? = { _, _ -> null }
+    var appendElementAsDatabaseRoot: (IrElement, BirElement) -> BirDatabase? = { _, _ -> null }
     var copyAncestorsForOrphanedElements = false
     var expandLazyElementsIntoImpl = false
     var instantiateDescriptors = false
@@ -63,7 +62,7 @@ abstract class Ir2BirConverterBase() {
 
     protected fun <Ir : IrElement, Bir : BirElement> copyNotReferencedElement(old: Ir, copy: () -> Bir): Bir {
         val new = doCopyElement(old, copy)
-        appendElementAsForestRoot(old, new)?.attachRootElement(new as BirElementBase)
+        appendElementAsDatabaseRoot(old, new)?.attachRootElement(new as BirElementBase)
         return new
     }
 
@@ -81,7 +80,7 @@ abstract class Ir2BirConverterBase() {
         if (!expandLazyElementsIntoImpl && old is IrLazyDeclarationBase) {
             copyLazyElement<SE>(old)?.let { new ->
                 map[old] = new
-                appendElementAsForestRoot(old, new)?.attachRootElement(new as BirElementBase)
+                appendElementAsDatabaseRoot(old, new)?.attachRootElement(new as BirElementBase)
                 return new
             }
         }
@@ -94,7 +93,7 @@ abstract class Ir2BirConverterBase() {
             val new = copy()
             map[old] = new
 
-            appendElementAsForestRoot(old, new)?.attachRootElement(new as BirElementBase)
+            appendElementAsDatabaseRoot(old, new)?.attachRootElement(new as BirElementBase)
 
             if (old is IrSymbolOwner) {
                 val symbol = symbolOwnersCurrentlyBeingConverted.remove(old)
