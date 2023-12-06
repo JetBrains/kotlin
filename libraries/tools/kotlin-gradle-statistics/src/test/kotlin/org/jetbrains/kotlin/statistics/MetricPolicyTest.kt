@@ -55,6 +55,7 @@ class MetricPolicyTest {
         assertEquals("2.0.255-snapshot", StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize("2.0.255-SNAPSHOT"))
 
         assertEquals("2.0.255-beta", StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize("2.0.255-beta"))
+        assertEquals("2.0.255-beta1", StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize("2.0.255-beta1"))
     }
 
     @Test
