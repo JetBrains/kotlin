@@ -860,8 +860,8 @@ object IrTree : AbstractTreeBuilder() {
 
         visitorParameterName = "inlinedBlock"
 
-        +field("inlineCall", functionAccessExpression)
-        +field("inlinedElement", rootElement)
+        +field("inlineCall", functionAccessExpression, isChild = false)
+        +field("inlinedElement", rootElement, isChild = false)
     }
     val syntheticBody: Element by element(Expression) {
         visitorParameterName = "body"
