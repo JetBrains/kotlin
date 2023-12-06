@@ -1,0 +1,32 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <kt64082_kt64085>
+final class /ConstHolder1 { // /ConstHolder1|null[0]
+    constructor <init>() // /ConstHolder1.<init>|<init>(){}[0]
+    final object Companion { // /ConstHolder1.Companion|null[0]
+        final const val CONST_VAL // /ConstHolder1.Companion.CONST_VAL|{}CONST_VAL[0]
+            final fun <get-CONST_VAL>(): kotlin/String // /ConstHolder1.Companion.CONST_VAL.<get-CONST_VAL>|<get-CONST_VAL>(){}[0]
+    }
+}
+final class /ConstHolder2 { // /ConstHolder2|null[0]
+    constructor <init>() // /ConstHolder2.<init>|<init>(){}[0]
+    final object Companion { // /ConstHolder2.Companion|null[0]
+        final const val CONST_VAL // /ConstHolder2.Companion.CONST_VAL|{}CONST_VAL[0]
+            final fun <get-CONST_VAL>(): kotlin/String // /ConstHolder2.Companion.CONST_VAL.<get-CONST_VAL>|<get-CONST_VAL>(){}[0]
+    }
+}
+abstract interface /Named { // /Named|null[0]
+    abstract val name // /Named.name|{}name[0]
+        abstract fun <get-name>(): kotlin/String // /Named.name.<get-name>|<get-name>(){}[0]
+}
+final class /NamedImpl : /Named { // /NamedImpl|null[0]
+    final val name // /NamedImpl.name|{}name[0]
+        final fun <get-name>(): kotlin/String // /NamedImpl.name.<get-name>|<get-name>(){}[0]
+    constructor <init>() // /NamedImpl.<init>|<init>(){}[0]
+}
+final class /Reader { // /Reader|null[0]
+    constructor <init>() // /Reader.<init>|<init>(){}[0]
+}

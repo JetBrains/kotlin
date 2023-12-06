@@ -98,6 +98,12 @@ public class NativeLibraryAbiReaderTest extends AbstractNativeLibraryAbiReaderTe
     }
 
     @Test
+    @TestMetadata("kt64082-kt64085.kt")
+    public void testKt64082_kt64085() throws Exception {
+        runTest("compiler/testData/klib/dump-abi/content/kt64082-kt64085.kt");
+    }
+
+    @Test
     @TestMetadata("root_package.kt")
     public void testRoot_package() throws Exception {
         runTest("compiler/testData/klib/dump-abi/content/root_package.kt");

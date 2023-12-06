@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.name.FqName
 
 abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Declaration>> {
+    private data class PropertyAccessorIdHashAndDescription(val id: Long, val description: String)
+
     protected var packageFqn: FqName = FqName.ROOT
     protected val classFqnSegments = mutableListOf<String>()
 
@@ -26,7 +28,7 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
      *
      * This property is made private to enforce always setting [description] along with it.
      */
-    private var hashIdAcc: Long? = null
+    private var propertyAccessorIdHashAndDescription: PropertyAccessorIdHashAndDescription? = null
 
     protected var overridden: List<Declaration>? = null
     protected var mask = 0L
@@ -73,11 +75,11 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
 
     protected fun setHashIdAndDescription(id: Long, description: String, isPropertyAccessor: Boolean) {
         if (isPropertyAccessor) {
-            hashIdAcc = id
+            propertyAccessorIdHashAndDescription = PropertyAccessorIdHashAndDescription(id, description)
         } else {
             hashId = id
+            this.description = description
         }
-        this.description = description
     }
 
     protected abstract fun accept(d: Declaration)
@@ -86,7 +88,7 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
         this.packageFqn = FqName.ROOT
         this.classFqnSegments.clear()
         this.hashId = null
-        this.hashIdAcc = null
+        this.propertyAccessorIdHashAndDescription = null
         this.mask = 0L
         this.overridden = null
         this.description = null
@@ -125,7 +127,20 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
                 buildContainerSignature(preservedContainer)
             }
 
-            hashIdAcc == null -> {
+            propertyAccessorIdHashAndDescription != null -> {
+                val accessorSignature = IdSignature.CommonSignature(
+                    packageFqName = packageFqName,
+                    declarationFqName = classFqName,
+                    id = propertyAccessorIdHashAndDescription!!.id,
+                    mask = mask,
+                    description = propertyAccessorIdHashAndDescription!!.description,
+                )
+                propertyAccessorIdHashAndDescription = null
+                classFqnSegments.run { removeAt(lastIndex) }
+                val propertySignature = build()
+                IdSignature.AccessorSignature(propertySignature, accessorSignature)
+            }
+            else -> {
                 IdSignature.CommonSignature(
                     packageFqName = packageFqName,
                     declarationFqName = classFqName,
@@ -133,19 +148,6 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
                     mask = mask,
                     description = description,
                 )
-            }
-            else -> {
-                val accessorSignature = IdSignature.CommonSignature(
-                    packageFqName = packageFqName,
-                    declarationFqName = classFqName,
-                    id = hashIdAcc,
-                    mask = mask,
-                    description = description,
-                )
-                hashIdAcc = null
-                classFqnSegments.run { removeAt(lastIndex) }
-                val propertySignature = build()
-                IdSignature.AccessorSignature(propertySignature, accessorSignature)
             }
         }
     }

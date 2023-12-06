@@ -3,7 +3,7 @@ imported/test|test(){}[0]
 
 // Imported signatures: 11
 bar/publicVal.<get-publicVal>|<get-publicVal>(){}[0]
-bar/publicVal|<get-publicVal>(){}[0]
+bar/publicVal|{}publicVal[0]
 foo/PublicClass.<init>|<init>(kotlin.Int){}[0]
 foo/PublicClass|null[0]
 foo/publicFun|publicFun(){}[0]
