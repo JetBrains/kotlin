@@ -37,6 +37,18 @@ public class SourceDependentCopyFirTestGenerated extends AbstractSourceDependent
     }
 
     @Test
+    @TestMetadata("enumBody.kt")
+    public void testEnumBody() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/dependentCopy/enumBody.kt");
+    }
+
+    @Test
+    @TestMetadata("enumInitializer.kt")
+    public void testEnumInitializer() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/dependentCopy/enumInitializer.kt");
+    }
+
+    @Test
     @TestMetadata("function.kt")
     public void testFunction() throws Exception {
         runTest("analysis/low-level-api-fir/testData/dependentCopy/function.kt");
