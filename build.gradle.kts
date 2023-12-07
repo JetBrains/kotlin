@@ -1,8 +1,7 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import java.io.FileNotFoundException
 
 buildscript {
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
@@ -1113,6 +1112,40 @@ afterEvaluate {
                 "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
             rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
                 YarnLockMismatchReport.WARNING
+        }
+    }
+}
+
+/**
+ * Unused declarations annotated with annotations from this list will not be reported by the "Unused symbols" inspection.
+ */
+val entryPointAnnotations = listOf(
+    "org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI",
+)
+
+afterEvaluate {
+    // A workaround for IDEA-84055
+    val entryPointsComponent = buildString {
+        appendLine("  <component name=\"EntryPointsManager\">")
+        appendLine("    <list size=\"${entryPointAnnotations.size}\">")
+        for ((i, annotation) in entryPointAnnotations.withIndex()) {
+            appendLine("      <item index=\"$i\" class=\"java.lang.String\" itemvalue=\"$annotation\" />")
+        }
+        appendLine("    </list>")
+        appendLine("  </component>")
+    }
+    rootDir.resolve(".idea/misc.xml").run {
+        try {
+            writeText(readText().replace("</project>", "$entryPointsComponent</project>"))
+        } catch (e: FileNotFoundException) {
+            writeText(
+                """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <project version="4">
+                $entryPointsComponent
+                </project>
+                """.trimIndent(),
+            )
         }
     }
 }
