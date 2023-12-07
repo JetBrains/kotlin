@@ -26190,6 +26190,48 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 public void testParameterNames() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/java/parameterNames.kt");
                 }
+
+                @Test
+                @TestMetadata("propertyAgainstFakeOverrideInJava.kt")
+                public void testPropertyAgainstFakeOverrideInJava() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/java/propertyAgainstFakeOverrideInJava.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyAgainstJavaMethod.kt")
+                public void testPropertyAgainstJavaMethod() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/java/propertyAgainstJavaMethod.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyAgainstJavaPrivateFieldAndPublicMethod.kt")
+                public void testPropertyAgainstJavaPrivateFieldAndPublicMethod() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/java/propertyAgainstJavaPrivateFieldAndPublicMethod.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyAgainstJavaPublicFieldAndPublicGetter.kt")
+                public void testPropertyAgainstJavaPublicFieldAndPublicGetter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/java/propertyAgainstJavaPublicFieldAndPublicGetter.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyAgainstValInJavaWithExtraSetter.kt")
+                public void testPropertyAgainstValInJavaWithExtraSetter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/java/propertyAgainstValInJavaWithExtraSetter.kt");
+                }
+
+                @Test
+                @TestMetadata("varPropertyAgainstJavaField.kt")
+                public void testVarPropertyAgainstJavaField() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/java/varPropertyAgainstJavaField.kt");
+                }
+
+                @Test
+                @TestMetadata("varPropertyAgainstJavaGetterAndNonFinalField.kt")
+                public void testVarPropertyAgainstJavaGetterAndNonFinalField() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/java/varPropertyAgainstJavaGetterAndNonFinalField.kt");
+                }
             }
 
             @Nested
