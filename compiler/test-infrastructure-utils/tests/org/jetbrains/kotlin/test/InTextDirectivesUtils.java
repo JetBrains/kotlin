@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 public final class InTextDirectivesUtils {
 
-    private static final String DIRECTIVES_FILE_NAME = "directives.txt";
+    public static final String DIRECTIVES_FILE_NAME = "directives.txt";
 
     public static final String IGNORE_BACKEND_DIRECTIVE_PREFIX = "// IGNORE_BACKEND: ";
     public static final String IGNORE_BACKEND_K1_DIRECTIVE_PREFIX = "// IGNORE_BACKEND_K1: ";

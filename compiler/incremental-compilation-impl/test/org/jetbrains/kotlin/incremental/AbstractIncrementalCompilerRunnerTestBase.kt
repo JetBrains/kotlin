@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import java.io.File
@@ -78,6 +79,11 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
     private fun doTestImpl(testDir: File) {
         fun Iterable<File>.relativePaths() =
             map { it.relativeTo(workingDir).path.replace('\\', '/') }
+
+        val reportInternalCompilerErrors =
+            File(testDir, InTextDirectivesUtils.DIRECTIVES_FILE_NAME).takeIf { it.exists() && it.isFile }?.let {
+                InTextDirectivesUtils.isDirectiveDefined(it.readText(), "// HIDE_INTERNAL_COMPILER_ERRORS")
+            } != true
 
         val srcDir = File(workingDir, "src").apply { mkdirs() }
         val cacheDir = File(workingDir, "incremental-data").apply { mkdirs() }
@@ -140,7 +146,12 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
                 )
             )
             actualSB.appendLine(stepLogAsString(step, compiledSources.relativePaths(), compileErrors))
-            actualSBWithoutErrors.appendLine(stepLogAsString(step, compiledSources.relativePaths(), compileErrors, includeErrors = false))
+            actualSBWithoutErrors.appendLine(
+                stepLogAsString(
+                    step, compiledSources.relativePaths(), compileErrors,
+                    includeErrors = reportInternalCompilerErrors && (lastExitCode == ExitCode.INTERNAL_ERROR)
+                )
+            )
             step++
         }
 
