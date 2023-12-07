@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -70,15 +69,15 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
         val generatedClasses = mutableListOf<IrClass>()
 
         fun kPropertyField(value: IrExpressionBody, id:Int) =
-                IrFieldImpl(
-                        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                context.irFactory.createField(
+                        SYNTHETIC_OFFSET,
+                        SYNTHETIC_OFFSET,
                         DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
-                        IrFieldSymbolImpl(),
                         "KPROPERTY${id}".synthesizedName,
-                        value.expression.type,
                         DescriptorVisibilities.PRIVATE,
+                        IrFieldSymbolImpl(),
+                        value.expression.type,
                         isFinal = true,
-                        isExternal = false,
                         isStatic = true,
                 ).apply {
                     parent = irFile

@@ -169,15 +169,15 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     }
 
     private fun IrFile.addTopLevelInitializer(expression: IrExpression, context: KonanBackendContext, threadLocal: Boolean, eager: Boolean) {
-        val irField = IrFieldImpl(
-                expression.startOffset, expression.endOffset,
+        val irField = context.irFactory.createField(
+                expression.startOffset,
+                expression.endOffset,
                 IrDeclarationOrigin.DEFINED,
-                IrFieldSymbolImpl(),
                 "topLevelInitializer${topLevelInitializersCounter++}".synthesizedName,
-                expression.type,
                 DescriptorVisibilities.PRIVATE,
+                IrFieldSymbolImpl(),
+                expression.type,
                 isFinal = true,
-                isExternal = false,
                 isStatic = true,
         ).apply {
             expression.setDeclarationsParent(this)

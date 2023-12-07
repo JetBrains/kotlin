@@ -1129,16 +1129,16 @@ private class ObjCBlockPointerValuePassing(
         irClass.superTypes += stubs.irBuiltIns.anyType
         irClass.superTypes += functionType.makeNotNull()
 
-        val blockHolderField = IrFieldImpl(
-                startOffset, endOffset,
+        val blockHolderField = context.irFactory.createField(
+                startOffset,
+                endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
-                IrFieldSymbolImpl(),
                 Name.identifier("blockHolder"),
-                stubs.irBuiltIns.anyType,
                 DescriptorVisibilities.PRIVATE,
+                IrFieldSymbolImpl(),
+                stubs.irBuiltIns.anyType,
                 isFinal = true,
                 isStatic = false,
-                isExternal = false
         )
         irClass.addChild(blockHolderField)
 
