@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -23,6 +23,7 @@ object IrFactoryImpl : AbstractIrFactoryImpl() {
     override val stageController: StageController = StageController()
 }
 
+@OptIn(IrImplementationDetail::class)
 abstract class AbstractIrFactoryImpl : IrFactory {
 
     override fun createAnonymousInitializer(

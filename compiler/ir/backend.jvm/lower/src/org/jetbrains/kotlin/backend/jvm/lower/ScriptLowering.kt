@@ -1031,7 +1031,7 @@ private inline fun IrClass.addAnonymousInitializer(builder: IrFunctionBuilder.()
     IrFunctionBuilder().run {
         builder()
         returnType = defaultType
-        IrAnonymousInitializerImpl(
+        factory.createAnonymousInitializer(
             startOffset, endOffset, origin,
             IrAnonymousInitializerSymbolImpl()
         )
