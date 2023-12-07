@@ -1,0 +1,23 @@
+================ Step #1 =================
+
+After chunkBuildStarted. Marked as dirty by Kotlin:
+  src/main.kt
+Cleaning output files:
+  out/production/module/A$Companion.class
+  out/production/module/A.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/main.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+
+================ Step #2 =================
+
+Compiling files:
+  src/main.kt
+End of files
+Exit code: OK
+------------------------------------------
