@@ -114,6 +114,13 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
+    fun testKt64121(gradleVersion: GradleVersion) {
+        project("kt64121", gradleVersion) {
+            build("assemble")
+        }
+    }
+
+    @GradleTest
     fun testSuppressGradlePluginWarnings(gradleVersion: GradleVersion) {
         project("suppressGradlePluginWarnings", gradleVersion) {
             build("assemble") {

@@ -418,7 +418,7 @@ class FirElementSerializer private constructor(
                 val isFakeOverrideOfAnyFunctionInDataOrValueClass = this@collectDeclarations is FirRegularClass &&
                         (this@collectDeclarations.isData || this@collectDeclarations.isInline) &&
                         dispatchReceiverLookupTag?.classId == StandardClassIds.Any && !declaration.isFinal
-                if (isFakeOverrideOfAnyFunctionInDataOrValueClass ||
+                if (isFakeOverrideOfAnyFunctionInDataOrValueClass && !this@collectDeclarations.isExpect ||
                     !declaration.isSubstitutionOrIntersectionOverride &&
                     (declaration.isStatic || declaration is FirConstructor || dispatchReceiverLookupTag == this@collectDeclarations.symbol.toLookupTag())
                 ) {
