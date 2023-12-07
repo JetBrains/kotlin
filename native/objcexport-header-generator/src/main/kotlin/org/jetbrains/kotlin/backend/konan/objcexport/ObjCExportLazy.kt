@@ -374,8 +374,6 @@ class ObjCExportLazyImpl(
         private val lazy: ObjCExportLazyImpl,
     ) : LazyObjCInterface(name = name.objCName, generics = emptyList(), categoryName = categoryName, attributes = emptyList()) {
 
-        override val origin: ObjCExportStubOrigin? = ObjCExportStubOrigin(classDescriptor)
-
         override fun computeRealStub(): ObjCInterface = lazy.translator.translateExtensions(
             classDescriptor,
             declarations.mapNotNull { declaration ->
@@ -402,6 +400,10 @@ private abstract class LazyObjCInterface(
     protected abstract fun computeRealStub(): ObjCInterface
 
     private val realStub by lazy { computeRealStub() }
+
+    override val origin: ObjCExportStubOrigin? by lazy {
+        realStub.origin
+    }
 
     override val members: List<ObjCExportStub>
         get() = realStub.members
