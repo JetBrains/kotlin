@@ -245,5 +245,10 @@ internal class MutableConstraintStorage : ConstraintStorage {
     override var outerSystemVariablesPrefixSize: Int = 0
 
     override var usesOuterCs: Boolean = false
-    var outerCS: ConstraintStorage? = null
+
+    @AssertionsOnly
+    internal var outerCS: ConstraintStorage? = null
 }
+
+@RequiresOptIn
+annotation class AssertionsOnly

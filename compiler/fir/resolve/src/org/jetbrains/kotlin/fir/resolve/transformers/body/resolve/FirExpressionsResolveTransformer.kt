@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.FirOperation.AS
-import org.jetbrains.kotlin.fir.expressions.FirOperation.IS
-import org.jetbrains.kotlin.fir.expressions.FirOperation.NOT_IS
-import org.jetbrains.kotlin.fir.expressions.FirOperation.SAFE_AS
+import org.jetbrains.kotlin.fir.expressions.FirOperation.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
@@ -236,8 +233,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode,
     ): FirStatement {
         return callResolver.resolveVariableAccessAndSelectCandidate(
-            qualifiedAccessExpression, isUsedAsReceiver, isUsedAsGetClassReceiver, callSite
-        , data)
+            qualifiedAccessExpression, isUsedAsReceiver, isUsedAsGetClassReceiver, callSite, data
+        )
     }
 
     fun transformSuperReceiver(
