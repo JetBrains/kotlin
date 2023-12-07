@@ -110,6 +110,11 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("functionWithErrorType"))
     }
 
+    @Test
+    fun `test - kdocWithBlockTags`() {
+        doTest(headersTestDataDir.resolve("kdocWithBlockTags"))
+    }
+
     fun interface HeaderGenerator {
         fun generateHeaders(root: File): String
     }
