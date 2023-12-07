@@ -110,6 +110,18 @@ public class ScriptLazyTypeAnnotationsTestGenerated extends AbstractScriptLazyTy
         }
 
         @Test
+        @TestMetadata("parameterWithAnnotationsScript.kts")
+        public void testParameterWithAnnotationsScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/constructor/parameterWithAnnotationsScript.kts");
+        }
+
+        @Test
+        @TestMetadata("parameterWithAnnotationsScriptBodyResolve.kts")
+        public void testParameterWithAnnotationsScriptBodyResolve() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/constructor/parameterWithAnnotationsScriptBodyResolve.kts");
+        }
+
+        @Test
         @TestMetadata("propagationToLocalMemberFunctionScript.kts")
         public void testPropagationToLocalMemberFunctionScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/constructor/propagationToLocalMemberFunctionScript.kts");
@@ -354,6 +366,24 @@ public class ScriptLazyTypeAnnotationsTestGenerated extends AbstractScriptLazyTy
         }
 
         @Test
+        @TestMetadata("parameterAsImplicitReturnTypePropagationScript.kts")
+        public void testParameterAsImplicitReturnTypePropagationScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/parameterAsImplicitReturnTypePropagationScript.kts");
+        }
+
+        @Test
+        @TestMetadata("parameterAsImplicitReturnTypeScript.kts")
+        public void testParameterAsImplicitReturnTypeScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/parameterAsImplicitReturnTypeScript.kts");
+        }
+
+        @Test
+        @TestMetadata("parameterAsImplicitReturnTypeScriptBodyResolve.kts")
+        public void testParameterAsImplicitReturnTypeScriptBodyResolve() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/parameterAsImplicitReturnTypeScriptBodyResolve.kts");
+        }
+
+        @Test
         @TestMetadata("propagationBetweenLocalMemberFunctionsImplicitBodyScript.kts")
         public void testPropagationBetweenLocalMemberFunctionsImplicitBodyScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/propagationBetweenLocalMemberFunctionsImplicitBodyScript.kts");
@@ -449,6 +479,30 @@ public class ScriptLazyTypeAnnotationsTestGenerated extends AbstractScriptLazyTy
         @TestMetadata("generatedPropertyFromConstructorScript.kts")
         public void testGeneratedPropertyFromConstructorScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/generatedPropertyFromConstructorScript.kts");
+        }
+
+        @Test
+        @TestMetadata("implicitTypeFromIncorrectAccessorsPropagationScript.kts")
+        public void testImplicitTypeFromIncorrectAccessorsPropagationScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/implicitTypeFromIncorrectAccessorsPropagationScript.kts");
+        }
+
+        @Test
+        @TestMetadata("implicitTypeFromIncorrectAccessorsScript.kts")
+        public void testImplicitTypeFromIncorrectAccessorsScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/implicitTypeFromIncorrectAccessorsScript.kts");
+        }
+
+        @Test
+        @TestMetadata("implicitTypeFromIncorrectSetterPropagationScript.kts")
+        public void testImplicitTypeFromIncorrectSetterPropagationScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/implicitTypeFromIncorrectSetterPropagationScript.kts");
+        }
+
+        @Test
+        @TestMetadata("implicitTypeFromIncorrectSetterScript.kts")
+        public void testImplicitTypeFromIncorrectSetterScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/implicitTypeFromIncorrectSetterScript.kts");
         }
 
         @Test

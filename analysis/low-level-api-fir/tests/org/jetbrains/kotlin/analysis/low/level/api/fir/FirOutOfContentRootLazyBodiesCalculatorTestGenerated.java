@@ -112,6 +112,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("constructorWithAnnotations.kt")
+        public void testConstructorWithAnnotations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorWithAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("constructorWithLocalDeclarations.kt")
         public void testConstructorWithLocalDeclarations() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorWithLocalDeclarations.kt");
@@ -259,6 +265,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         @TestMetadata("functionTypes.kt")
         public void testFunctionTypes() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/functionTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("functionWithAnnotations.kt")
+        public void testFunctionWithAnnotations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/functionWithAnnotations.kt");
         }
 
         @Test

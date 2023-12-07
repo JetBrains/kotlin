@@ -1951,6 +1951,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("functionParameterAsImplicitReturnType.kt")
+            public void testFunctionParameterAsImplicitReturnType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/functionParameterAsImplicitReturnType.kt");
+            }
+
+            @Test
             @TestMetadata("illegalRequireKotlinValue.kt")
             public void testIllegalRequireKotlinValue() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/illegalRequireKotlinValue.kt");

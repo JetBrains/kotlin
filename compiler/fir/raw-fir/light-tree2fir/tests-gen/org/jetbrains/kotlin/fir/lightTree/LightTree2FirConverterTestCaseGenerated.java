@@ -106,6 +106,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorOfAnonymousObject.kt");
         }
 
+        @TestMetadata("constructorWithAnnotations.kt")
+        public void testConstructorWithAnnotations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorWithAnnotations.kt");
+        }
+
         @TestMetadata("constructorWithLocalDeclarations.kt")
         public void testConstructorWithLocalDeclarations() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorWithLocalDeclarations.kt");
@@ -229,6 +234,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
         @TestMetadata("functionTypes.kt")
         public void testFunctionTypes() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/functionTypes.kt");
+        }
+
+        @TestMetadata("functionWithAnnotations.kt")
+        public void testFunctionWithAnnotations() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/functionWithAnnotations.kt");
         }
 
         @TestMetadata("genericFunctions.kt")
