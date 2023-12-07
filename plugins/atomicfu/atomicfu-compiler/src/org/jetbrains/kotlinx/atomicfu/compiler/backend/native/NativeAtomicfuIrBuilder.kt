@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -373,7 +374,7 @@ class NativeAtomicfuIrBuilder(
                         }.apply {
                             val lambda = this
                             addValueParameter("it", atomicSymbols.irBuiltIns.intType)
-                            body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                            body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                                     IrReturnImpl(
                                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                                         type = atomicSymbols.irBuiltIns.nothingType,

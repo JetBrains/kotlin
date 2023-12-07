@@ -193,7 +193,7 @@ class ComposeLikeDefaultArgumentRewriter(
             }
         }
 
-        declaration.body = IrBlockBodyImpl(
+        declaration.body = context.irFactory.createBlockBody(
             body.startOffset,
             body.endOffset,
             listOf(

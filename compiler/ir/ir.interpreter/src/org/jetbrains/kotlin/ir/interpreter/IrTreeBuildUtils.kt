@@ -110,7 +110,7 @@ internal fun IrField.createGetField(receiver: IrValueParameter? = null): IrGetFi
 }
 
 internal fun List<IrStatement>.wrapWithBlockBody(): IrBlockBody {
-    return IrBlockBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this)
+    return IrFactoryImpl.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this)
 }
 
 internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean = true): IrFunctionAccessExpression {

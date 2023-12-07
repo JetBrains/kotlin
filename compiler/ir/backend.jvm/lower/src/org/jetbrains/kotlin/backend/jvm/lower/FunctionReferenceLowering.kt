@@ -310,7 +310,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 targetCall.putTypeArgument(typeParameterIndex, reference.getTypeArgument(typeParameterIndex))
             }
 
-            val proxyFunBody = IrBlockBodyImpl(startOffset, endOffset).also { proxyFun.body = it }
+            val proxyFunBody = context.irFactory.createBlockBody(startOffset, endOffset).also { proxyFun.body = it }
             when {
                 targetFun.returnType.isUnit() -> {
                     proxyFunBody.statements.add(targetCall)

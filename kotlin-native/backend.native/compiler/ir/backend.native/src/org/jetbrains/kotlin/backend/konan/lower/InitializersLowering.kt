@@ -125,7 +125,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
 
                     createDispatchReceiverParameter()
 
-                    body = IrBlockBodyImpl(startOffset, endOffset, allInitializers)
+                    body = context.irFactory.createBlockBody(startOffset, endOffset, allInitializers)
                 }
 
             for (initializer in allInitializers) {

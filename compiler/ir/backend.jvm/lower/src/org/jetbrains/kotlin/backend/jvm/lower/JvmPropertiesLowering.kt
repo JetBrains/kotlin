@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
@@ -174,7 +173,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             //   generate two properties like that; should this be the getter's return type instead?
             isStatic = true, returnType = backendContext.irBuiltIns.unitType, visibility = declaration.visibility
         ).apply {
-            body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+            body = backendContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             annotations = declaration.annotations
         }
 

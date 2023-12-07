@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -257,7 +256,7 @@ class ClassCodegen private constructor(
             name = Name.special("<clinit>")
             returnType = context.irBuiltIns.unitType
         }.apply {
-            body = IrBlockBodyImpl(startOffset, endOffset)
+            body = context.irFactory.createBlockBody(startOffset, endOffset)
         }
         // Should be initialized first in case some inline function call in `<clinit>` also uses assertions.
         (classInitializer.body as IrBlockBody).statements.add(0, init)

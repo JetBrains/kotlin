@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 
@@ -48,7 +47,7 @@ class TypeAliasAnnotationMethodsLowering(val context: CommonBackendContext) :
                 modality = Modality.OPEN
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS
             }.apply {
-                body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
                 annotations += alias.annotations
             }
         }

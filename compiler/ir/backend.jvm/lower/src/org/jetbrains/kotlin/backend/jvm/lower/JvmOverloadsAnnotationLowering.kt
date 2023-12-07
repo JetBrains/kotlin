@@ -106,7 +106,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         }
 
         wrapperIrFunction.body = if (target is IrConstructor) {
-            IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
+            context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
         } else {
             IrExpressionBodyImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, call
