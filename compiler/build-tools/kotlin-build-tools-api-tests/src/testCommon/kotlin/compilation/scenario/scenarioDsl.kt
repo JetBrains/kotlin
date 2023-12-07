@@ -85,16 +85,37 @@ private class ScenarioDsl(
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as ScenarioModuleImpl).module }
         val module = project.module(moduleName, transformedDependencies, additionalCompilationArguments)
+        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig)
+            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig)
+    }
+}
+
+fun BaseCompilationTest.scenario(strategyConfig: CompilerExecutionStrategyConfiguration, action: Scenario.() -> Unit) {
+    action(ScenarioDsl(Project(workingDirectory), strategyConfig))
+}
+
+private object GlobalCompiledProjectsCache {
+    private val globalTempDirectory = Files.createTempDirectory("compiled-test-projects-cache").apply {
+        toFile().deleteOnExit()
+    }
+    private val compiledProjectsCache = mutableMapOf<Module, Pair<MutableSet<String>, Path>>()
+
+    fun getProjectFromCache(module: Module, strategyConfig: CompilerExecutionStrategyConfiguration): ScenarioModuleImpl? {
+        val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[module] ?: return null
+        cachedBuildDirPath.copyToRecursively(module.buildDirectory, followLinks = false, overwrite = true)
+        return ScenarioModuleImpl(module, initialOutputs, strategyConfig)
+    }
+
+    fun putProjectIntoCache(module: Module, strategyConfig: CompilerExecutionStrategyConfiguration): ScenarioModuleImpl {
         module.compileIncrementally(strategyConfig, SourcesChanges.Unknown)
         val initialOutputs = mutableSetOf<String>()
         for (file in module.outputDirectory.walk()) {
             if (!file.isRegularFile()) continue
             initialOutputs.add(file.relativeTo(module.outputDirectory).toString())
         }
+        val moduleCacheDirectory = globalTempDirectory.resolve(UUID.randomUUID().toString())
+        module.buildDirectory.copyToRecursively(moduleCacheDirectory, followLinks = false, overwrite = false)
+        compiledProjectsCache[module] = Pair(initialOutputs, moduleCacheDirectory)
         return ScenarioModuleImpl(module, initialOutputs, strategyConfig)
     }
-}
-
-fun BaseCompilationTest.scenario(strategyConfig: CompilerExecutionStrategyConfiguration, action: Scenario.() -> Unit) {
-    action(ScenarioDsl(Project(workingDirectory), strategyConfig))
 }

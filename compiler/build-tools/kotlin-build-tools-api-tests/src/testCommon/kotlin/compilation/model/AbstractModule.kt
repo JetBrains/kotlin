@@ -96,4 +96,23 @@ abstract class AbstractModule(
     ): CompilationResult
 
     override fun toString() = moduleName
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is AbstractModule) return false
+
+        if (moduleName != other.moduleName) return false
+        if (dependencies != other.dependencies) return false
+        if (additionalCompilationArguments != other.additionalCompilationArguments) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = moduleName.hashCode()
+        result = 31 * result + dependencies.hashCode()
+        result = 31 * result + additionalCompilationArguments.hashCode()
+        return result
+    }
+
+
 }
