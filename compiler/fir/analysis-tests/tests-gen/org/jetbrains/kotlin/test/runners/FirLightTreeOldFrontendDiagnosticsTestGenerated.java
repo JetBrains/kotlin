@@ -17350,6 +17350,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("lastLambdaStatementWithFixedVariables.kt")
+                public void testLastLambdaStatementWithFixedVariables() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/lastLambdaStatementWithFixedVariables.kt");
+                }
+
+                @Test
                 @TestMetadata("manyArgsDifferentYields.kt")
                 public void testManyArgsDifferentYields() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/manyArgsDifferentYields.kt");
