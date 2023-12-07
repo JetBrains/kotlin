@@ -39,7 +39,7 @@ internal fun reportingSettings(project: Project): ReportingSettings {
             // TODO: it's a workaround for KT-52963, should be reworked – KT-55763
             project.rootDir.resolve("build")
         } else {
-            project.rootProject.buildDir
+            project.rootProject.layout.buildDirectory.asFile.get()
         }).resolve("reports/kotlin-build")
         val includeMetricsInReport = properties.buildReportMetrics || buildReportMode == BuildReportMode.VERBOSE
         FileReportSettings(
@@ -79,6 +79,7 @@ internal fun reportingSettings(project: Project): ReportingSettings {
     } else null
 
     //temporary solution. support old property
+    @Suppress("DEPRECATION")
     val oldSingleBuildMetric = properties.singleBuildMetricsFile?.also { buildReportOutputTypes.add(BuildReportType.SINGLE_FILE) }
 
     return ReportingSettings(
