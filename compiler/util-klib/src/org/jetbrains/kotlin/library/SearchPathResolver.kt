@@ -56,7 +56,7 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
             return if (isDeprecated)
                 LookupResult.FoundWithWarning(
                     library = resolvedLibrary,
-                    warningText = "Library '${libraryPath.path}' was found in a custom library repository '${searchRootPath.path}'. " +
+                    warningText = "KLIB resolver: Library '${libraryPath.path}' was found in a custom library repository '${searchRootPath.path}'. " +
                             "Note, that custom library repositories are deprecated and will be removed in one of the future Kotlin releases. " +
                             "Please, avoid using '-repo' ('-r') compiler option and specify full paths to libraries in compiler CLI arguments."
                 )
@@ -231,7 +231,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     private fun Sequence<File>.filterOutPre_1_4_libraries(): Sequence<File> = this.filter {
         if (it.isPre_1_4_Library) {
-            logger.warning("Skipping \"$it\" as it is a pre 1.4 library")
+            logger.warning("KLIB resolver: Skipping '$it'. This is a pre 1.4 library.")
             false
         } else {
             true
@@ -256,7 +256,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                     .firstOrNull()
                     .let(::ResolvedLibrary)
             } catch (e: Throwable) {
-                logger.error("Failed to resolve Kotlin library: $givenPath")
+                logger.error("KLIB resolver: Failed to resolve Kotlin library: $givenPath")
                 throw e
             }
         }.library
@@ -268,7 +268,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     override fun resolve(unresolved: RequiredUnresolvedLibrary, isDefaultLink: Boolean): L {
         return resolveOrNull(unresolved, isDefaultLink)
-            ?: logger.fatal("Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
+            ?: logger.fatal("KLIB resolver: Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
     }
 
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean = true
@@ -342,7 +342,7 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
         // Please, don't add checks for other versions here. For example, check for the metadata version should be
         // implemented in KlibDeserializedContainerSource.incompatibility
         if (candidateAbiVersion?.isCompatible() != true) {
-            logger.warning("skipping $candidatePath. Incompatible abi version. The current default is '${KotlinAbiVersion.CURRENT}', found '${candidateAbiVersion}'. The library produced by ${candidateCompilerVersion} compiler")
+            logger.warning("KLIB resolver: Skipping '$candidatePath'. Incompatible ABI version. The current default is '${KotlinAbiVersion.CURRENT}', found '${candidateAbiVersion}'. The library was produced by '$candidateCompilerVersion' compiler.")
             return false
         }
 
@@ -350,13 +350,13 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
             candidateLibraryVersion != null &&
             unresolved.libraryVersion != null
         ) {
-            logger.warning("skipping $candidatePath. The library versions don't match. Expected '${unresolved.libraryVersion}', found '${candidateLibraryVersion}'")
+            logger.warning("KLIB resolver: Skipping '$candidatePath'. Library versions don't match. Expected '${unresolved.libraryVersion}', found '${candidateLibraryVersion}'.")
             return false
         }
 
         candidate.irProviderName?.let {
             if (it !in knownIrProviders) {
-                logger.warning("skipping $candidatePath. The library requires unknown IR provider $it.")
+                logger.warning("KLIB resolver: Skipping '$candidatePath'. The library requires unknown IR provider: $it")
                 return false
             }
         }

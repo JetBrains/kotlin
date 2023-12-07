@@ -1,2 +1,2 @@
-error: could not find "not/existing/path" in [$USER_DIR$]
+error: KLIB resolver: Could not find "not/existing/path" in [$USER_DIR$]
 COMPILATION_ERROR

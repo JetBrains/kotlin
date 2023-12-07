@@ -3937,7 +3937,7 @@ standaloneTest("library_ir_provider_mismatch") {
             String exceptionText = t.message
             exceptionText = PlatformInfo.isWindows() ? exceptionText.replace("\\", "/") : exceptionText
 
-            String expectedText = "warning: skipping $outputDir/unsupported_ir_provider/empty.klib. The library requires unknown IR provider UNSUPPORTED."
+            String expectedText = "warning: KLIB resolver: Skipping '$outputDir/unsupported_ir_provider/empty.klib'. The library requires unknown IR provider: UNSUPPORTED"
             expectedText = PlatformInfo.isWindows() ? expectedText.replace("\\", "/") : expectedText
 
             if (t instanceof GradleException && exceptionText.contains(expectedText)) {

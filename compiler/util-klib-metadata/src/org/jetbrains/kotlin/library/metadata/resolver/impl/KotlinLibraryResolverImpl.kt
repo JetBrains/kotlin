@@ -65,32 +65,33 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
     }
 
     /**
-     * Leaves only distinct libraries (by absolute path), warns on duplicated paths.
+     * Leaves only distinct libraries (by absolute path).
      */
-    private fun List<KotlinLibrary>.leaveDistinct() =
-        this.groupBy { it.libraryFile.absolutePath }.let { groupedByAbsolutePath ->
-            warnOnLibraryDuplicates(groupedByAbsolutePath.filter { it.value.size > 1 }.keys)
-            groupedByAbsolutePath.map { it.value.first() }
-        }
+    private fun List<KotlinLibrary>.leaveDistinct(): List<KotlinLibrary> {
+        if (size <= 1) return this
+
+        val deduplicatedLibraries: Map<String, List<KotlinLibrary>> = groupByTo(linkedMapOf()) { it.libraryFile.absolutePath }
+        return deduplicatedLibraries.values.map { it.first() }
+    }
 
     /**
-     * Having two libraries with the same uniqName we only keep the first one.
-     * TODO: The old JS plugin passes libraries with the same uniqName twice,
-     * so make it a warning for now.
+     * Having two libraries with the same `unique_name` we only keep the first one.
+     *
+     * TODO: This is actually undesirable behavior.
+     *  - In certain situations it harms, e.g. KT-63573
+     *  - But sometimes it is really necessary, e.g. KT-64115
+     *  - Overall, we should not do any resolve inside the compiler (such as skipping KLIBs that happen to have repeated `unique_name`).
+     *    This is an opaque process which better should be performed by the build system (e.g. Gradle). To be fixed in KT-64169
      */
     private fun List<KotlinLibrary>.omitDuplicateNames() =
-        this.groupBy { it.uniqueName }.let { groupedByUniqName ->
-            warnOnLibraryDuplicateNames(groupedByUniqName.filter { it.value.size > 1 }.keys)
-            groupedByUniqName.map { it.value.first() }
+        groupBy { it.uniqueName }.let { groupedByUniqName ->
+            val librariesWithDuplicatedUniqueNames = groupedByUniqName.filterValues { it.size > 1 }
+            librariesWithDuplicatedUniqueNames.entries.sortedBy { it.key }.forEach { (uniqueName, libraries) ->
+                val libraryPaths = libraries.map { it.libraryFile.absolutePath }.sorted().joinToString()
+                logger.warning("KLIB resolver: The same 'unique_name=$uniqueName' found in more than one library: $libraryPaths")
+            }
+            groupedByUniqName.map { it.value.first() } // This line is the reason of such issues as KT-63573.
         }
-
-    private fun warnOnLibraryDuplicates(duplicatedPaths: Iterable<String>) {
-        duplicatedPaths.forEach { logger.warning("library included more than once: $it") }
-    }
-
-    private fun warnOnLibraryDuplicateNames(duplicatedPaths: Iterable<String>) {
-        duplicatedPaths.forEach { logger.warning("duplicate library name: $it") }
-    }
 
     /**
      * Given the list of root libraries does the following:
