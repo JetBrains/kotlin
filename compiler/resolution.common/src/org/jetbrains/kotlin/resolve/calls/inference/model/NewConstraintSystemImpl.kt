@@ -41,7 +41,6 @@ class NewConstraintSystemImpl(
     private val properTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
-    override var typeVariablesThatAreNotCountedAsProperTypes: Set<TypeConstructorMarker>? = null
     override var typeVariablesThatAreCountedAsProperTypes: Set<TypeConstructorMarker>? = null
 
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
@@ -52,27 +51,6 @@ class NewConstraintSystemImpl(
      * @see [org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context.typeVariablesThatAreNotCountedAsProperTypes]
      * @see [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
      */
-    override fun <R> withTypeVariablesThatAreNotCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R {
-        checkState(State.BUILDING)
-        // Cleaning cache is necessary because temporarily we change the meaning of what does "proper type" mean
-        properTypesCache.clear()
-        notProperTypesCache.clear()
-
-        require(typeVariablesThatAreNotCountedAsProperTypes == null) {
-            "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
-        }
-
-        typeVariablesThatAreNotCountedAsProperTypes = typeVariables
-
-        val result = block()
-
-        typeVariablesThatAreNotCountedAsProperTypes = null
-        properTypesCache.clear()
-        notProperTypesCache.clear()
-
-        return result
-    }
-
     override fun <R> withTypeVariablesThatAreCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R {
         checkState(State.BUILDING)
         // Cleaning cache is necessary because temporarily we change the meaning of what does "proper type" mean
@@ -330,6 +308,7 @@ class NewConstraintSystemImpl(
 
         storage.usesOuterCs = true
         storage.outerSystemVariablesPrefixSize = outerSystem.allTypeVariables.size
+        @OptIn(AssertionsOnly::class)
         storage.outerCS = outerSystem
 
         addOtherSystem(outerSystem, isAddingOuter = true)
@@ -339,6 +318,7 @@ class NewConstraintSystemImpl(
         require(storage.allTypeVariables.isEmpty())
         storage.usesOuterCs = baseSystem.usesOuterCs
         storage.outerSystemVariablesPrefixSize = baseSystem.outerSystemVariablesPrefixSize
+        @OptIn(AssertionsOnly::class)
         storage.outerCS = (baseSystem as? MutableConstraintStorage)?.outerCS
 
         addOtherSystem(baseSystem)
@@ -366,6 +346,8 @@ class NewConstraintSystemImpl(
             notProperTypesCache.clear()
         }
 
+        // `clearNotFixedTypeVariables` means that we're mostly replacing the content, thus we need to remove variables that have been fixed
+        // in `otherSystem` from `this.notFixedTypeVariables`, too
         if (clearNotFixedTypeVariables) {
             notFixedTypeVariables.clear()
         }
@@ -387,17 +369,24 @@ class NewConstraintSystemImpl(
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
         storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
 
-        isAddingOuter.hashCode()
+        runOuterCSRelatedAssertions(otherSystem, isAddingOuter)
+    }
 
-//        if (otherSystem.usesOuterCs && (otherSystem as? MutableConstraintStorage)?.outerCS !== storage) {
-//            require(storage.usesOuterCs)
-//
-//            if (!isAddingOuter) {
-//                require(storage.outerSystemVariablesPrefixSize == otherSystem.outerSystemVariablesPrefixSize) {
-//                    "Expected to be ${otherSystem.outerSystemVariablesPrefixSize}, but ${storage.outerSystemVariablesPrefixSize} found"
-//                }
+
+    private fun runOuterCSRelatedAssertions(otherSystem: ConstraintStorage, isAddingOuter: Boolean) {
+        if (!otherSystem.usesOuterCs) return
+
+        // When integrating a child system back, it's ok that for root CS, `storage.usesOuterCs == false`
+        @OptIn(AssertionsOnly::class)
+        if ((otherSystem as? MutableConstraintStorage)?.outerCS === storage) return
+
+        require(storage.usesOuterCs)
+
+        if (!isAddingOuter) {
+//            require(storage.outerSystemVariablesPrefixSize == otherSystem.outerSystemVariablesPrefixSize) {
+//                "Expected to be ${otherSystem.outerSystemVariablesPrefixSize}, but ${storage.outerSystemVariablesPrefixSize} found"
 //            }
-//        }
+        }
     }
 
     // ResultTypeResolver.Context, ConstraintSystemBuilder
@@ -423,10 +412,6 @@ class NewConstraintSystemImpl(
             if (typeToCheck == null) return@contains false
             if (typeVariablesThatAreCountedAsProperTypes != null) {
                 if (typeVariablesThatAreCountedAsProperTypes!!.contains(typeToCheck.typeConstructor())) return@contains false
-            }
-
-            if (typeVariablesThatAreNotCountedAsProperTypes != null) {
-                return@contains typeVariablesThatAreNotCountedAsProperTypes!!.contains(typeToCheck.typeConstructor())
             }
 
             if (!storage.allTypeVariables.containsKey(typeToCheck.typeConstructor())) return@contains false
