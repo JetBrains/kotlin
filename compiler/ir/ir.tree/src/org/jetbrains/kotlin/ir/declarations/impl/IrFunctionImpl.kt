@@ -83,7 +83,7 @@ class IrFunctionImpl @IrImplementationDetail constructor(
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 }
 
-class IrFunctionWithLateBindingImpl(
+class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
