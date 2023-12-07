@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class IrErrorDeclarationImpl(
+class IrErrorDeclarationImpl @IrImplementationDetail constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     private val _descriptor: DeclarationDescriptor?,
