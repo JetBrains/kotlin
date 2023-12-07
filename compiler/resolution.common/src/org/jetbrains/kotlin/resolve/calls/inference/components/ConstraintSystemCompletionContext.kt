@@ -20,8 +20,6 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     abstract override val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     abstract override val postponedTypeVariables: List<TypeVariableMarker>
 
-
-
     abstract fun getBuilder(): ConstraintSystemBuilder
 
     // type can be proper if it not contains not fixed type variables
@@ -121,6 +119,5 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
      * @see [org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context.typeVariablesThatAreNotCountedAsProperTypes]
      * @see [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
      */
-    abstract fun <R> withTypeVariablesThatAreNotCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R
     abstract fun <R> withTypeVariablesThatAreCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R
 }
