@@ -46,4 +46,52 @@ public class FqNameUnsafeTest {
         Assert.assertTrue(new FqNameUnsafe("<abc>.").startsWith(Name.special("<abc>")));
         Assert.assertTrue(new FqNameUnsafe("<>.abc").startsWith(Name.special("<>")));
     }
+
+    @Test
+    public void startsWithFqNameUnsafe() {
+        Assert.assertTrue(new FqNameUnsafe("abc.def").startsWith(new FqNameUnsafe("abc.def")));
+        Assert.assertTrue(new FqNameUnsafe("abc.def").startsWith(new FqNameUnsafe("abc")));
+        Assert.assertTrue(new FqNameUnsafe("abc").startsWith(new FqNameUnsafe("abc")));
+        Assert.assertTrue(new FqNameUnsafe("abc.").startsWith(new FqNameUnsafe("abc.")));
+        Assert.assertTrue(new FqNameUnsafe("abc.").startsWith(new FqNameUnsafe("abc")));
+        Assert.assertTrue(new FqNameUnsafe("abc.def.").startsWith(new FqNameUnsafe("abc")));
+        Assert.assertTrue(new FqNameUnsafe("abc.def.").startsWith(new FqNameUnsafe("abc.def")));
+        Assert.assertTrue(new FqNameUnsafe("abc.def.").startsWith(new FqNameUnsafe("abc.def.")));
+        Assert.assertTrue(new FqNameUnsafe(".abc").startsWith(new FqNameUnsafe("")));
+
+        Assert.assertFalse(new FqNameUnsafe("").startsWith(new FqNameUnsafe("")));
+        Assert.assertFalse(new FqNameUnsafe("").startsWith(new FqNameUnsafe("id")));
+
+        Assert.assertFalse(new FqNameUnsafe("segment").startsWith(new FqNameUnsafe("")));
+        Assert.assertFalse(new FqNameUnsafe(".abc").startsWith(new FqNameUnsafe("abc")));
+        Assert.assertFalse(new FqNameUnsafe(".abc").startsWith(new FqNameUnsafe("xyz")));
+        Assert.assertFalse(new FqNameUnsafe("abcdef").startsWith(new FqNameUnsafe("abc")));
+        Assert.assertFalse(new FqNameUnsafe("abc").startsWith(new FqNameUnsafe("abcdef")));
+        Assert.assertFalse(new FqNameUnsafe("abc").startsWith(new FqNameUnsafe("abc.")));
+        Assert.assertFalse(new FqNameUnsafe("abc.def").startsWith(new FqNameUnsafe("abc.")));
+        Assert.assertFalse(new FqNameUnsafe("abc.def").startsWith(new FqNameUnsafe("abcdef")));
+        Assert.assertFalse(new FqNameUnsafe("abc.def").startsWith(new FqNameUnsafe("abcxyz")));
+        Assert.assertFalse(new FqNameUnsafe("abc.def").startsWith(new FqNameUnsafe("abc.xyz")));
+
+        // special names
+        Assert.assertFalse(new FqNameUnsafe("abc.def").startsWith(new FqNameUnsafe("<abc>")));
+        Assert.assertFalse(new FqNameUnsafe("abc").startsWith(new FqNameUnsafe("<abc>")));
+        Assert.assertFalse(new FqNameUnsafe("abc.").startsWith(new FqNameUnsafe("<abc>")));
+        Assert.assertFalse(new FqNameUnsafe(".abc").startsWith(new FqNameUnsafe("<>")));
+
+        Assert.assertFalse(new FqNameUnsafe("").startsWith(new FqNameUnsafe("<>")));
+        Assert.assertFalse(new FqNameUnsafe("").startsWith(new FqNameUnsafe("<id>")));
+
+        Assert.assertFalse(new FqNameUnsafe("segment").startsWith(new FqNameUnsafe("<>")));
+        Assert.assertFalse(new FqNameUnsafe(".abc").startsWith(new FqNameUnsafe("<abc>")));
+        Assert.assertFalse(new FqNameUnsafe("abcdef").startsWith(new FqNameUnsafe("<abc>")));
+        Assert.assertFalse(new FqNameUnsafe("abc").startsWith(new FqNameUnsafe("<abcdef>")));
+        Assert.assertFalse(new FqNameUnsafe("abc.xyz").startsWith(new FqNameUnsafe("<abcdef>")));
+
+        Assert.assertFalse(new FqNameUnsafe("<abc>.def").startsWith(new FqNameUnsafe("<abc>.")));
+        Assert.assertTrue(new FqNameUnsafe("<abc>").startsWith(new FqNameUnsafe("<abc>")));
+        Assert.assertTrue(new FqNameUnsafe("<abc>.").startsWith(new FqNameUnsafe("<abc>")));
+        Assert.assertTrue(new FqNameUnsafe("<abc.>").startsWith(new FqNameUnsafe("<abc.>")));
+        Assert.assertTrue(new FqNameUnsafe("<>.abc").startsWith(new FqNameUnsafe("<>")));
+    }
 }
