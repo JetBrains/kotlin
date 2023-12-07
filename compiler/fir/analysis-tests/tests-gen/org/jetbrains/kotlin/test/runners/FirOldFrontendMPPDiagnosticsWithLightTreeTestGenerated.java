@@ -332,6 +332,18 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("kt64045.kt")
+    public void testKt64045() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/kt64045.kt");
+    }
+
+    @Test
+    @TestMetadata("kt64045_2.kt")
+    public void testKt64045_2() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/kt64045_2.kt");
+    }
+
+    @Test
     @TestMetadata("kt64166.kt")
     public void testKt64166() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/kt64166.kt");
