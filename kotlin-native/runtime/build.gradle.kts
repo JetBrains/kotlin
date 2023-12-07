@@ -579,15 +579,6 @@ targetList.forEach { targetName ->
         into(project.layout.buildDirectory.dir("${targetName}Stdlib"))
 
         from(project.layout.buildDirectory.dir("stdlib/${hostName}/stdlib"))
-        val runtimeFiles = runtimeBitcode.incoming.artifactView {
-            attributes {
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, project.platformManager.targetByName(targetName).withSanitizer())
-            }
-        }.files
-        from(runtimeFiles) {
-            include("runtime.bc", "compiler_interface.bc")
-            into("default/targets/$targetName/native")
-        }
 
         if (targetName != hostName) {
             doLast {
