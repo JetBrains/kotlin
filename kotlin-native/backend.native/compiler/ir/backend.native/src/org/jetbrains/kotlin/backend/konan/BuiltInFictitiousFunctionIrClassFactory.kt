@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -264,12 +263,19 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                         ).apply {
                             parent = functionClass
                             valueParameters += invokeFunctionDescriptor.valueParameters.map {
-                                IrValueParameterImpl(
-                                        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, DECLARATION_ORIGIN_FUNCTION_CLASS,
-                                        IrValueParameterSymbolImpl(it), it.name, it.index,
-                                        functionClass.typeParameters[it.index].defaultType, null,
-                                        it.isCrossinline, it.isNoinline,
-                                        isHidden = false, isAssignable = false
+                                symbolTable.irFactory.createValueParameter(
+                                        startOffset = SYNTHETIC_OFFSET,
+                                        endOffset = SYNTHETIC_OFFSET,
+                                        origin = DECLARATION_ORIGIN_FUNCTION_CLASS,
+                                        name = it.name,
+                                        type = functionClass.typeParameters[it.index].defaultType,
+                                        isAssignable = false,
+                                        symbol = IrValueParameterSymbolImpl(it),
+                                        index = it.index,
+                                        varargElementType = null,
+                                        isCrossinline = it.isCrossinline,
+                                        isNoinline = it.isNoinline,
+                                        isHidden = false,
                                 ).also { it.parent = this }
                             }
                             if (!isFakeOverride)
@@ -316,19 +322,19 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
     private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter {
         val varargType = if (descriptor is ValueParameterDescriptor) descriptor.varargElementType else null
-        return IrValueParameterImpl(
-                offset,
-                offset,
-                memberOrigin,
-                IrValueParameterSymbolImpl(descriptor),
-                descriptor.name,
-                descriptor.indexOrMinusOne,
-                toIrType(descriptor.type),
-                varargType?.let { toIrType(it) },
-                descriptor.isCrossinline,
-                descriptor.isNoinline,
+        return symbolTable.irFactory.createValueParameter(
+                startOffset = offset,
+                endOffset = offset,
+                origin = memberOrigin,
+                name = descriptor.name,
+                type = toIrType(descriptor.type),
+                isAssignable = false,
+                symbol = IrValueParameterSymbolImpl(descriptor),
+                index = descriptor.indexOrMinusOne,
+                varargElementType = varargType?.let { toIrType(it) },
+                isCrossinline = descriptor.isCrossinline,
+                isNoinline = descriptor.isNoinline,
                 isHidden = false,
-                isAssignable = false
         ).also {
             it.parent = this
         }

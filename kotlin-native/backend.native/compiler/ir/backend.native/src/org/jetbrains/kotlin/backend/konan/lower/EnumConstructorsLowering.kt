@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -124,18 +123,19 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                     }
 
             fun createSynthesizedValueParameter(index: Int, name: String, type: IrType): IrValueParameter =
-                    IrValueParameterImpl(
-                            startOffset, endOffset,
-                            DECLARATION_ORIGIN_ENUM,
-                            IrValueParameterSymbolImpl(),
-                            Name.identifier(name),
-                            index,
-                            type,
+                    context.irFactory.createValueParameter(
+                            startOffset = startOffset,
+                            endOffset = endOffset,
+                            origin = DECLARATION_ORIGIN_ENUM,
+                            name = Name.identifier(name),
+                            type = type,
+                            isAssignable = false,
+                            symbol = IrValueParameterSymbolImpl(),
+                            index = index,
                             varargElementType = null,
                             isCrossinline = false,
                             isNoinline = false,
                             isHidden = false,
-                            isAssignable = false
                     ).apply {
                         parent = loweredConstructor
                     }

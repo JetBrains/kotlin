@@ -426,14 +426,24 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                     add(it)
                     ++parametersIndex
                 }
-                addAll(irScript.explicitCallParameters.map {
-                    IrValueParameterImpl(
-                        it.startOffset, it.endOffset,
-                        IrDeclarationOrigin.SCRIPT_CALL_PARAMETER, IrValueParameterSymbolImpl(),
-                        it.name, index = parametersIndex++, type = it.type,
-                        varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
-                    ).also { it.parent = irScript }
-                })
+                addAll(
+                    irScript.explicitCallParameters.map {
+                        context.irFactory.createValueParameter(
+                            startOffset = it.startOffset,
+                            endOffset = it.endOffset,
+                            origin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER,
+                            name = it.name,
+                            type = it.type,
+                            isAssignable = false,
+                            symbol = IrValueParameterSymbolImpl(),
+                            index = parametersIndex++,
+                            varargElementType = null,
+                            isCrossinline = false,
+                            isNoinline = false,
+                            isHidden = false,
+                        ).also { it.parent = irScript }
+                    },
+                )
                 implicitReceiversFieldsWithParameters.forEach {(_, param) ->
                     add(param)
                 }

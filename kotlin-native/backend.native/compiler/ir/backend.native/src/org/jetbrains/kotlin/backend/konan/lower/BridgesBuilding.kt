@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -148,18 +147,19 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                         )
 
                     runtimeJobFunction.valueParameters +=
-                        IrValueParameterImpl(
-                                startOffset, endOffset,
-                                IrDeclarationOrigin.DEFINED,
-                                IrValueParameterSymbolImpl(),
-                                arg.name,
-                                arg.index,
+                        context.irFactory.createValueParameter(
+                                startOffset = startOffset,
+                                endOffset = endOffset,
+                                origin = IrDeclarationOrigin.DEFINED,
+                                name = arg.name,
                                 type = context.irBuiltIns.anyNType,
+                                isAssignable = arg.isAssignable,
+                                symbol = IrValueParameterSymbolImpl(),
+                                index = arg.index,
                                 varargElementType = null,
                                 isCrossinline = arg.isCrossinline,
                                 isNoinline = arg.isNoinline,
                                 isHidden = arg.isHidden,
-                                isAssignable = arg.isAssignable
                         )
                 }
                 val overriddenJobDescriptor = OverriddenFunctionInfo(jobFunction, runtimeJobFunction)

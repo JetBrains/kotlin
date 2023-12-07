@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -1157,18 +1156,19 @@ private class ObjCBlockPointerValuePassing(
         )
         irClass.addChild(constructor)
 
-        val constructorParameter = IrValueParameterImpl(
-                startOffset, endOffset,
-                OBJC_BLOCK_FUNCTION_IMPL,
-                IrValueParameterSymbolImpl(),
-                Name.identifier("blockPointer"),
-                0,
-                symbols.nativePtrType,
+        val constructorParameter = context.irFactory.createValueParameter(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = OBJC_BLOCK_FUNCTION_IMPL,
+                name = Name.identifier("blockPointer"),
+                type = symbols.nativePtrType,
+                isAssignable = false,
+                symbol = IrValueParameterSymbolImpl(),
+                index = 0,
                 varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
                 isHidden = false,
-                isAssignable = false
         )
         constructor.valueParameters += constructorParameter
         constructorParameter.parent = constructor
@@ -1208,18 +1208,19 @@ private class ObjCBlockPointerValuePassing(
         invokeMethod.createDispatchReceiverParameter()
 
         invokeMethod.valueParameters += (0 until parameterCount).map { index ->
-            val parameter = IrValueParameterImpl(
-                    startOffset, endOffset,
-                    OBJC_BLOCK_FUNCTION_IMPL,
-                    IrValueParameterSymbolImpl(),
-                    Name.identifier("p$index"),
-                    index,
-                    functionType.arguments[index].typeOrNull!!,
+            val parameter = context.irFactory.createValueParameter(
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = OBJC_BLOCK_FUNCTION_IMPL,
+                    name = Name.identifier("p$index"),
+                    type = functionType.arguments[index].typeOrNull!!,
+                    isAssignable = false,
+                    symbol = IrValueParameterSymbolImpl(),
+                    index = index,
                     varargElementType = null,
                     isCrossinline = false,
                     isNoinline = false,
                     isHidden = false,
-                    isAssignable = false
             )
             parameter.parent = invokeMethod
             parameter

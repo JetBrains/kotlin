@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.objcinterop.*
@@ -387,18 +386,19 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             )
 
         newFunction.valueParameters += parameterTypes.mapIndexed { index, type ->
-            IrValueParameterImpl(
-                    function.startOffset, function.endOffset,
-                    IrDeclarationOrigin.DEFINED,
-                    IrValueParameterSymbolImpl(),
-                    Name.identifier("p$index"),
-                    index,
-                    type,
+            context.irFactory.createValueParameter(
+                    startOffset = function.startOffset,
+                    endOffset = function.endOffset,
+                    origin = IrDeclarationOrigin.DEFINED,
+                    name = Name.identifier("p$index"),
+                    type = type,
+                    isAssignable = false,
+                    symbol = IrValueParameterSymbolImpl(),
+                    index = index,
                     varargElementType = null,
                     isCrossinline = false,
                     isNoinline = false,
                     isHidden = false,
-                    isAssignable = false
             ).apply {
                 parent = newFunction
             }
