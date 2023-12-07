@@ -634,6 +634,16 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
         }
 
     @Argument(
+        value = "-Xwasm-disable-initialization",
+        description = "Disables the automatic initialization of the WebAssembly module. When this option is active, the exported function '_initialize' must be called manually prior to calling any other exported functions."
+    )
+    var wasmDisableInitialization = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xoptimize-generated-js",
         description = "Perform additional optimizations on the generated JS code."
     )

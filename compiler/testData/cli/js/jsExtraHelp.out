@@ -54,6 +54,7 @@ where advanced options include:
   -Xes-generators            Enable ES2015 generator functions usage inside the compiled code
   -Xwasm                     Use the experimental WebAssembly compiler backend.
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
+  -Xwasm-disable-initialization Disables the automatic initialization of the WebAssembly module. When this option is active, the exported function '_initialize' must be called manually prior to calling any other exported functions.
   -Xwasm-enable-array-range-checks
                              Turn on range checks for array access functions.
   -Xwasm-enable-asserts      Turn on asserts.

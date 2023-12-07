@@ -379,6 +379,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     baseFileName = outputName,
                     emitNameSection = arguments.wasmDebug,
                     allowIncompleteImplementations = arguments.irDce,
+                    initialization = !arguments.wasmDisableInitialization,
                     generateWat = configuration.get(JSConfigurationKeys.WASM_GENERATE_WAT, false),
                     generateSourceMaps = generateSourceMaps,
                 )
