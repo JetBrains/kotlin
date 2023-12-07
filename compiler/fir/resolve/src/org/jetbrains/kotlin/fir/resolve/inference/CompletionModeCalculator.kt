@@ -30,10 +30,10 @@ fun Candidate.computeCompletionMode(
         // This is questionable as null return type can be only for error call
         currentReturnType == null -> ConstraintSystemCompletionMode.PARTIAL
 
-        //csBuilder.usesOuterCs -> ConstraintSystemCompletionMode.PARTIAL
-
         // Full if return type for call has no type variables
         csBuilder.isProperType(currentReturnType) -> ConstraintSystemCompletionMode.FULL
+
+        csBuilder.usesOuterCs -> ConstraintSystemCompletionMode.PARTIAL
 
         else -> CalculatorForNestedCall(
             this, currentReturnType, csBuilder, components.trivialConstraintTypeInferenceOracle
