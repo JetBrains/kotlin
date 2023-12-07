@@ -42,15 +42,13 @@ class VariableFixationFinder(
                 }
 
         /**
-         * If not null, that property means that we should assume temporary
-         * `allTypeVariables.keys.minus(typeVariablesThatAreNotCountedAsProperTypes)` as proper types when fixating some variables.
+         * If not null, that property means that we should assume temporary them all as proper types when fixating some variables.
          *
          * By default, if that property is null, we assume all `allTypeVariables` as not proper.
          *
          * Currently, that is only used for `provideDelegate` resolution, see
          * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
          */
-        val typeVariablesThatAreNotCountedAsProperTypes: Set<TypeConstructorMarker>?
         val typeVariablesThatAreCountedAsProperTypes: Set<TypeConstructorMarker>?
 
         fun isReified(variable: TypeVariableMarker): Boolean
@@ -223,8 +221,7 @@ class VariableFixationFinder(
         val key = it.typeConstructor()
         if (!notFixedTypeVariables.containsKey(key)) return false
         if (typeVariablesThatAreCountedAsProperTypes != null && typeVariablesThatAreCountedAsProperTypes!!.contains(key)) return false
-        if (typeVariablesThatAreNotCountedAsProperTypes == null) return true
-        return typeVariablesThatAreNotCountedAsProperTypes!!.contains(key)
+        return true
     }
 
     private fun Context.isReified(variable: TypeConstructorMarker): Boolean =
