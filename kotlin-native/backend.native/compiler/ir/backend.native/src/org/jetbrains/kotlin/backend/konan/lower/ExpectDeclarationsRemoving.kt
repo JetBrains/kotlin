@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -83,7 +83,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
 
                 val actualForExpected = function.findActualForExpected()
                 actualForExpected.valueParameters[index].defaultValue =
-                        IrExpressionBodyImpl(
+                        irModule.irBuiltins.irFactory.createExpressionBody(
                                 defaultValue.startOffset, defaultValue.endOffset,
                                 defaultValue.expression.remapExpectValueSymbols().patchDeclarationParents(actualForExpected)
                         )

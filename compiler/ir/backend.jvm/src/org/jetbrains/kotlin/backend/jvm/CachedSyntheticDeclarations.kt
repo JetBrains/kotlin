@@ -172,7 +172,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
                 JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
             )
 
-            accessor.body = IrExpressionBodyImpl(
+            accessor.body = context.irFactory.createExpressionBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 createConstructorCall(accessor, source.symbol)
             )
@@ -208,7 +208,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
             accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
-            accessor.body = IrExpressionBodyImpl(
+            accessor.body = context.irFactory.createExpressionBody(
                 accessor.startOffset, accessor.startOffset,
                 createSimpleFunctionCall(accessor, source.symbol, superQualifierSymbol)
             )
@@ -270,7 +270,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
         val maybeDispatchReceiver =
             if (targetField.isStatic) null
             else IrGetValueImpl(accessor.startOffset, accessor.endOffset, accessor.valueParameters[0].symbol)
-        return IrExpressionBodyImpl(
+        return context.irFactory.createExpressionBody(
             accessor.startOffset, accessor.endOffset,
             IrGetFieldImpl(
                 accessor.startOffset, accessor.endOffset,
@@ -332,7 +332,7 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
             accessor.startOffset, accessor.endOffset,
             accessor.valueParameters[if (targetField.isStatic) 0 else 1].symbol
         )
-        return IrExpressionBodyImpl(
+        return context.irFactory.createExpressionBody(
             accessor.startOffset, accessor.endOffset,
             IrSetFieldImpl(
                 accessor.startOffset, accessor.endOffset,

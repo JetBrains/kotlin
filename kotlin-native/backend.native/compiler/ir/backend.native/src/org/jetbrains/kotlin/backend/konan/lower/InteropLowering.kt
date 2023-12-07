@@ -186,7 +186,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             if (eager)
                 annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.eagerInitialization.owner)
 
-            initializer = IrExpressionBodyImpl(startOffset, endOffset, expression)
+            initializer = context.irFactory.createExpressionBody(startOffset, endOffset, expression)
         }
         addChild(irField)
     }

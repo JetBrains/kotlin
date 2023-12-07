@@ -214,22 +214,24 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
     // Bridge from static to static method - simply fill the function arguments to the parameters.
     // By nature of the generation of both source and target of bridge, they line up.
     private fun IrFunction.bridgeToStatic(callTarget: IrSimpleFunction) {
-        body = IrExpressionBodyImpl(IrCallImpl.fromSymbolOwner(startOffset, endOffset, returnType, callTarget.symbol).also { call ->
+        body = context.irFactory.createExpressionBody(
+            IrCallImpl.fromSymbolOwner(startOffset, endOffset, returnType, callTarget.symbol).also { call ->
 
-            callTarget.typeParameters.forEachIndexed { i, _ ->
-                call.putTypeArgument(i, createPlaceholderAnyNType(context.irBuiltIns))
-            }
+                callTarget.typeParameters.forEachIndexed { i, _ ->
+                    call.putTypeArgument(i, createPlaceholderAnyNType(context.irBuiltIns))
+                }
 
-            valueParameters.forEachIndexed { i, it ->
-                call.putValueArgument(i, IrGetValueImpl(startOffset, endOffset, it.symbol))
-            }
-        })
+                valueParameters.forEachIndexed { i, it ->
+                    call.putValueArgument(i, IrGetValueImpl(startOffset, endOffset, it.symbol))
+                }
+            },
+        )
     }
 
     // Bridge from static DefaultImpl method to the interface method. Arguments need to
     // be shifted in presence of dispatch and extension receiver.
     private fun IrFunction.bridgeViaAccessorTo(callTarget: IrSimpleFunction) {
-        body = IrExpressionBodyImpl(
+        body = context.irFactory.createExpressionBody(
             IrCallImpl.fromSymbolOwner(
                 startOffset,
                 endOffset,

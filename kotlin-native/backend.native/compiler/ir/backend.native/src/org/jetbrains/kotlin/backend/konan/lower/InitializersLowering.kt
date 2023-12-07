@@ -81,7 +81,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                     // We shall keep initializer for constants for compile-time instantiation.
                     // We suppose that if the property is const, then its initializer is IrConst.
                     // If this requirement isn't satisfied, then PropertyAccessorInlineLowering can fail.
-                    declaration.initializer = if (isConst) IrExpressionBodyImpl(initExpression.shallowCopy()) else null
+                    declaration.initializer = if (isConst) context.irFactory.createExpressionBody(initExpression.shallowCopy()) else null
 
                     return declaration
                 }

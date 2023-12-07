@@ -81,7 +81,7 @@ abstract class AbstractAtomicfuIrBuilder(
             visibility = DescriptorVisibilities.PRIVATE
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
         }.apply {
-            initializer = initValue?.let { IrExpressionBodyImpl(it) }
+            initializer = initValue?.let(context.irFactory::createExpressionBody)
             this.annotations = annotations + atomicSymbols.volatileAnnotationConstructorCall
             this.parent = parentContainer
         }
@@ -103,7 +103,7 @@ abstract class AbstractAtomicfuIrBuilder(
             visibility = DescriptorVisibilities.PRIVATE
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
         }.apply {
-            this.initializer = IrExpressionBodyImpl(
+            this.initializer = context.irFactory.createExpressionBody(
                 newAtomicArray(arrayClass, size, dispatchReceiver)
             )
             this.annotations = annotations
@@ -150,7 +150,7 @@ abstract class AbstractAtomicfuIrBuilder(
             this.visibility = DescriptorVisibilities.PRIVATE
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
         }.apply {
-            initializer = IrExpressionBodyImpl(
+            initializer = context.irFactory.createExpressionBody(
                 IrConstructorCallImpl.fromSymbolOwner(
                     irClass.defaultType,
                     irClass.primaryConstructor!!.symbol

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -143,7 +142,9 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
 
         private fun buildEnumEntryField(enumEntry: IrEnumEntry): IrField =
             context.cachedDeclarations.getFieldForEnumEntry(enumEntry).apply {
-                initializer = enumEntry.initializerExpression?.let { IrExpressionBodyImpl(it.expression.patchDeclarationParents(this)) }
+                initializer = enumEntry.initializerExpression?.let {
+                    context.irFactory.createExpressionBody(it.expression.patchDeclarationParents(this))
+                }
                 annotations = annotations + enumEntry.annotations
             }
 

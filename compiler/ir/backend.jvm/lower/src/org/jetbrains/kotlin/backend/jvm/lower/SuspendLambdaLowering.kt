@@ -94,7 +94,11 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
         val message = "This is a stub representing a copy of a suspend method without the state machine " +
                 "(used by the inliner). Since the difference is at the bytecode level, the body is " +
                 "still on the original function. Use suspendForInlineToOriginal() to retrieve it."
-        body = IrExpressionBodyImpl(startOffset, endOffset, IrErrorExpressionImpl(startOffset, endOffset, returnType, message))
+        body = context.irFactory.createExpressionBody(
+            startOffset,
+            endOffset,
+            IrErrorExpressionImpl(startOffset, endOffset, returnType, message),
+        )
     }
 
     protected fun IrFunction.addCompletionValueParameter(): IrValueParameter =

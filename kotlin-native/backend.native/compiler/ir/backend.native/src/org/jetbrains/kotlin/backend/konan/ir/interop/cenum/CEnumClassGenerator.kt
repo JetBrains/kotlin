@@ -129,15 +129,17 @@ internal class CEnumClassGenerator(
         )
         val constructorSymbol = symbolTable.descriptorExtension.referenceConstructor(enumDescriptor.unsubstitutedPrimaryConstructor!!)
         postLinkageSteps.add {
-            enumEntry.initializerExpression = IrExpressionBodyImpl(IrEnumConstructorCallImpl(
-                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                    type = irBuiltIns.unitType,
-                    symbol = constructorSymbol,
-                    typeArgumentsCount = 0,
-                    valueArgumentsCount = constructorSymbol.owner.valueParameters.size
-            ).also {
-                it.putValueArgument(0, extractEnumEntryValue(entryDescriptor))
-            })
+            enumEntry.initializerExpression = context.irFactory.createExpressionBody(
+                    IrEnumConstructorCallImpl(
+                            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                            type = irBuiltIns.unitType,
+                            symbol = constructorSymbol,
+                            typeArgumentsCount = 0,
+                            valueArgumentsCount = constructorSymbol.owner.valueParameters.size,
+                    ).also {
+                        it.putValueArgument(0, extractEnumEntryValue(entryDescriptor))
+                    },
+            )
         }
         return enumEntry
     }

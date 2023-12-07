@@ -180,7 +180,7 @@ interface IrBuilderWithPluginContext {
                 field.startOffset,
                 field.endOffset
             )
-            field.initializer = IrExpressionBodyImpl(builder.initializer())
+            field.initializer = factory.createExpressionBody(builder.initializer())
             field.annotations += createAnnotationCallWithoutArgs(compilerContext.jvmFieldClassSymbol)
         }
     }

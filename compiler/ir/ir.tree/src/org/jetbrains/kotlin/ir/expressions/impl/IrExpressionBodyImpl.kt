@@ -16,18 +16,17 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
-class IrExpressionBodyImpl(
+class IrExpressionBodyImpl @IrImplementationDetail constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var expression: IrExpression,
 ) : IrExpressionBody() {
-
-    constructor(expression: IrExpression) : this(expression.startOffset, expression.endOffset, expression)
 
     override val factory: IrFactory
         get() = IrFactoryImpl
