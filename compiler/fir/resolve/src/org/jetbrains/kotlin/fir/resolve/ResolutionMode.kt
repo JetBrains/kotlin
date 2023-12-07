@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
 sealed class ResolutionMode(
     val forceFullCompletion: Boolean,
+    // Only true AugmentedAssignmentCallOption, don't run even slightest form of completion
     val skipCompletion: Boolean = false,
+    // isReceiverOrTopLevel != forceFullCompletion -> Delegate
+    // Collect postponed calls
     val isReceiverOrTopLevel: Boolean = forceFullCompletion,
 ) {
     sealed class ContextDependent(
