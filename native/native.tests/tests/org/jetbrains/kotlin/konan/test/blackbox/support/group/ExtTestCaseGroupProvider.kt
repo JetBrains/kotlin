@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.group
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import com.intellij.pom.PomModel
 import com.intellij.pom.core.impl.PomModelImpl
 import com.intellij.pom.tree.TreeAspect
@@ -599,7 +600,7 @@ private class ExtTestDataFileSettings(
 private typealias SharedModuleGenerator = (sharedModulesDir: File) -> TestModule.Shared?
 private typealias SharedModuleCache = (moduleName: String, generator: SharedModuleGenerator) -> TestModule.Shared?
 
-private class ExtTestDataFileStructureFactory(parentDisposable: Disposable?) : TestDisposable(parentDisposable) {
+private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : TestDisposable(parentDisposable) {
     private val psiFactory = createPsiFactory(parentDisposable = this)
 
     inner class ExtTestDataFileStructure(originalTestDataFile: File, sourceTransformers: ExternalSourceTransformers) {
@@ -879,9 +880,13 @@ internal fun isDisabledNative(pipelineType: PipelineType, directives: Directives
 }
 
 internal fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
-    val extTestDataFileStructure =
-        ExtTestDataFileStructureFactory(parentDisposable = null).ExtTestDataFileStructure(testDataFile, emptyList())
-    return isIgnoredTarget(extTestDataFileStructure.directives)
+    val disposable = Disposer.newDisposable("Disposable for ExtTestCaseGroupProvider.isIgnoredTarget")
+    try {
+        val extTestDataFileStructure = ExtTestDataFileStructureFactory(disposable).ExtTestDataFileStructure(testDataFile, emptyList())
+        return isIgnoredTarget(extTestDataFileStructure.directives)
+    } finally {
+        Disposer.dispose(disposable)
+    }
 }
 
 internal fun Settings.isIgnoredTarget(directives: Directives): Boolean {
