@@ -177,7 +177,7 @@ class Candidate(
     // In case of implicit receivers we want to update corresponding sources to generate correct offset. This method must be called only
     // once when candidate was selected and confirmed to be correct one.
     fun updateSourcesOfReceivers() {
-        //require(!sourcesWereUpdated)
+        require(!sourcesWereUpdated)
         sourcesWereUpdated = true
 
         dispatchReceiver = dispatchReceiver?.tryToSetSourceForImplicitReceiver()
