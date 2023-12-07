@@ -58,7 +58,7 @@ class InitializersLowering(context: CommonBackendContext) : InitializersLowering
         container.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression =
                 block.deepCopyWithSymbols(container).apply {
-                    transformChildrenVoid(ValueRemapper(remappedValues))
+                    if (remappedValues.isNotEmpty()) transformChildrenVoid(ValueRemapper(remappedValues))
                 }
         })
     }

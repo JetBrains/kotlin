@@ -58,6 +58,7 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
         }
 
         context.mapping.classToItsSyntheticInitializationFunction[irClass]?.let {
+            // Take all the captured by local class params
             declaration.valueParameters = it.valueParameters.onEach { param -> param.parent = declaration }
         }
 
