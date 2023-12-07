@@ -166,7 +166,7 @@ class Fir2IrDeclarationStorage(
 
     private val delegatedReverseCache: ConcurrentHashMap<IrSymbol, FirDeclaration> = ConcurrentHashMap()
 
-    private val fieldCache: ConcurrentHashMap<FirField, IrFieldSymbol> = ConcurrentHashMap()
+    private val fieldCache: ConcurrentHashMap<FirField, IrFieldSymbol> = commonMemberStorage.fieldCache
 
     private data class FieldStaticOverrideKey(val lookupTag: ConeClassLikeLookupTag, val name: Name)
 
