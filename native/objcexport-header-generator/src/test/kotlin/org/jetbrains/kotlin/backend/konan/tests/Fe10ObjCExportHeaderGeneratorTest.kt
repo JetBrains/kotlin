@@ -107,4 +107,9 @@ class Fe10ObjCExportHeaderGeneratorTest : AbstractFE10ObjCExportHeaderGeneratorT
     fun `test - functionWithErrorType`() {
         doTest(objCExportTestDataDir.resolve("functionWithErrorType"))
     }
+
+    @Test
+    fun `test - kdocWithBlockTags`() {
+        doTest(objCExportTestDataDir.resolve("kdocWithBlockTags"))
+    }
 }
