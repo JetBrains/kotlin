@@ -112,4 +112,19 @@ class Fe10ObjCExportHeaderGeneratorTest : AbstractFE10ObjCExportHeaderGeneratorT
     fun `test - kdocWithBlockTags`() {
         doTest(objCExportTestDataDir.resolve("kdocWithBlockTags"))
     }
+
+    @Test
+    fun `test - functionWithMustBeDocumentedAnnotation`() {
+        doTest(objCExportTestDataDir.resolve("functionWithMustBeDocumentedAnnotation"))
+    }
+
+    @Test
+    fun `test - parameterWithMustBeDocumentedAnnotation`() {
+        doTest(objCExportTestDataDir.resolve("parameterWithMustBeDocumentedAnnotation"))
+    }
+
+    @Test
+    fun `test - receiverWithMustBeDocumentedAnnotation`() {
+        doTest(objCExportTestDataDir.resolve("receiverWithMustBeDocumentedAnnotation"))
+    }
 }
