@@ -12,7 +12,6 @@ import com.sun.jdi.request.StepRequest
 import com.sun.tools.jdi.SocketAttachingConnector
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.BOX_MAIN_FILE_NAME
@@ -21,14 +20,13 @@ import java.io.File
 import java.net.URL
 
 abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServices) {
-
     companion object {
         val BOX_MAIN_FILE_CLASS_NAME = BOX_MAIN_FILE_NAME.replace(".kt", "Kt")
     }
 
-    private var wholeFile = File("")
-    private var backend = TargetBackend.JVM
-    private var frontend: FrontendKind<*> = FrontendKinds.ClassicFrontend
+    private lateinit var wholeFile: File
+    private lateinit var backend: TargetBackend
+    private lateinit var frontend: FrontendKind<*>
 
     abstract fun storeStep(loggedItems: ArrayList<SteppingTestLoggedData>, event: Event)
 

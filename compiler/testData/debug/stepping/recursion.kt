@@ -12,7 +12,7 @@ fun foo(n :Int ) : Int {
     return foo(n-1) * n
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:9 foo

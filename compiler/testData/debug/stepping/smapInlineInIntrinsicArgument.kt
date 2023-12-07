@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: WASM
-// IGNORE_BACKEND: JVM
+
 // FILE: test.kt
 fun box(){
     test() +
@@ -17,12 +17,7 @@ fun fail() : String {
     return "fail"
 }
 
-// The JVM backend does not go back to line 4 and 7 for the
-// addition. Instead it treats the addition of the evaluated
-// arguments as being on line 5 and 8. That seems incorrect
-// and the JVM_IR stepping is more correct.
-
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:5 box
 // test.kt:13 box
 // test.kt:5 box

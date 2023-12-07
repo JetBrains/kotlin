@@ -13,7 +13,7 @@ fun box() {
 }
 
 // FORCE_STEP_INTO
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:12 box
 // test.kt:4 <init>
 // test.kt:12 box

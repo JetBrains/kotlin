@@ -19,7 +19,7 @@ fun getC() = false
 
 fun getD() = true
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 box
 // test.kt:14 getA
 // test.kt:4 box

@@ -13,7 +13,7 @@ inline fun lookAtMe(f: () -> Int) {
     a + f()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:6 box
 // test.kt:12 box
 // test.kt:13 box

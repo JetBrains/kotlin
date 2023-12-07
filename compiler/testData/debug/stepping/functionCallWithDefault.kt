@@ -13,7 +13,7 @@ inline fun bar(i: Int = 1) {
 }
 
 // FORCE_STEP_INTO
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:5 box
 // test.kt:9 foo$default (synthetic)
 // test.kt:10 foo

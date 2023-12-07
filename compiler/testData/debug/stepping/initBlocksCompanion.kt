@@ -31,7 +31,7 @@ fun box() {
     A.s
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:30 box
 // test.kt:8 <clinit>
 // test.kt:9 <clinit>

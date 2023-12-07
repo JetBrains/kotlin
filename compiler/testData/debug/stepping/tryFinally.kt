@@ -35,12 +35,7 @@ fun box() {
     foo()
 }
 
-// The JVM backend steps back to line 11 when leaving the
-// `mightThrow2` call. The JVM_IR backend does not. The
-// JVM_IR behavior is consistent with what happens for the
-// try-finally where the value is discarded which seems good.
-
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:30 box
 // test.kt:5 foo
 // test.kt:6 foo
@@ -52,9 +47,6 @@ fun box() {
 // test.kt:12 foo
 // test.kt:26 mightThrow2
 // test.kt:27 mightThrow2
-// EXPECTATIONS JVM
-// test.kt:12 foo
-// EXPECTATIONS JVM JVM_IR
 // test.kt:14 foo
 // test.kt:15 foo
 // test.kt:11 foo
@@ -70,10 +62,6 @@ fun box() {
 // test.kt:11 foo
 // test.kt:12 foo
 // test.kt:26 mightThrow2
-// EXPECTATIONS JVM
-// test.kt:15 foo
-// test.kt:11 foo
-// EXPECTATIONS JVM_IR
 // test.kt:14 foo
 
 // EXPECTATIONS JS_IR

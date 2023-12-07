@@ -15,7 +15,7 @@ fun foo(f: () -> Unit) {
     f()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:5 box
 // test.kt:15 foo
 // test.kt:6 invoke

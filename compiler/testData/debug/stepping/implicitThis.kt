@@ -28,14 +28,13 @@ class A {
     }
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:5 box
 // test.kt:21 <clinit>
 // test.kt:16 <init>
 // test.kt:21 <clinit>
 // test.kt:21 <clinit>
 // test.kt:5 box
-
 // test.kt:8 <init>
 // test.kt:5 box
 // test.kt:11 test

@@ -52,10 +52,7 @@ fun box() {
     Zoo()
 }
 
-// JVM_IR has an extra step back to the line of the class
-// declaration for the return in the constructor.
-
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:49 box
 // test.kt:4 <init>
 // test.kt:7 <init>
@@ -63,9 +60,7 @@ fun box() {
 // test.kt:46 x
 // test.kt:8 <init>
 // test.kt:9 <init>
-// EXPECTATIONS JVM_IR
 // test.kt:4 <init>
-// EXPECTATIONS JVM JVM_IR
 // test.kt:49 box
 // test.kt:50 box
 // test.kt:12 <init>
@@ -75,9 +70,7 @@ fun box() {
 // test.kt:17 <init>
 // test.kt:18 <init>
 // test.kt:19 <init>
-// EXPECTATIONS JVM_IR
 // test.kt:12 <init>
-// EXPECTATIONS JVM JVM_IR
 // test.kt:50 box
 // test.kt:51 box
 // test.kt:22 <init>
@@ -90,9 +83,7 @@ fun box() {
 // test.kt:29 <init>
 // test.kt:30 <init>
 // test.kt:31 <init>
-// EXPECTATIONS JVM_IR
 // test.kt:22 <init>
-// EXPECTATIONS JVM JVM_IR
 // test.kt:51 box
 // test.kt:52 box
 // test.kt:34 <init>
@@ -102,9 +93,7 @@ fun box() {
 // test.kt:40 <init>
 // test.kt:41 <init>
 // test.kt:43 <init>
-// EXPECTATIONS JVM_IR
 // test.kt:34 <init>
-// EXPECTATIONS JVM JVM_IR
 // test.kt:52 box
 // test.kt:53 box
 

@@ -2,10 +2,10 @@
 // FILE: foo.kt
 import bar
 fun foo(x: Int): Int {
-    if (x >= 0) {   // 4
-        return x    // 5
+    if (x >= 0) {   // 5
+        return x    // 6
     }
-    return bar(x)   // 7
+    return bar(x)   // 8
 }
 
 // FILE: test.kt
@@ -21,7 +21,7 @@ fun bar(x: Int) =
         foo(x)
     }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:14 box
 // foo.kt:5 foo
 // foo.kt:8 foo

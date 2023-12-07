@@ -21,7 +21,7 @@ fun fail() : String {
     return "fail"
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:5 box
 // test.kt:17 box
 // test.kt:6 box

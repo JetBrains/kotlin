@@ -15,7 +15,7 @@ fun box() {
         .bar()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:10 box
 // test.kt:4 <init>
 // test.kt:10 box

@@ -17,7 +17,7 @@ suspend fun box() {
 // That means that we never step into the lambda as that is only
 // called via code in the kotlin package.
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:10 box
 // test.kt:6 foo
 // test.kt:10 box

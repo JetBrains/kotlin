@@ -14,8 +14,7 @@ fun box(): String {
     return o + k
 }
 
-// EXPECTATIONS JVM JVM_IR
-
+// EXPECTATIONS JVM_IR
 // test.kt:9 box
 // test.kt:7 box
 // test.kt:12 box

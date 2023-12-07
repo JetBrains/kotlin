@@ -30,7 +30,7 @@ inline fun Boolean.rid(): Boolean = this
 
 fun nop() {}
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 box
 // test.kt:25 box
 // test.kt:4 box

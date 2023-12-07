@@ -18,12 +18,9 @@ fun box() {
     c.f()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:17 box
 // test.kt:14 <init>
-// EXPECTATIONS JVM
-// test.kt:8 <clinit>
-// EXPECTATIONS JVM JVM_IR
 // test.kt:17 box
 // test.kt:18 box
 // test.kt:11 f

@@ -20,7 +20,7 @@ fun box() {
 // interfaces with default methods (forwarding to the actual implementation
 // on A$DefaultImpls) have the line number of the class declaration.
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:15 box
 // test.kt:15 <init>
 // test.kt:15 box

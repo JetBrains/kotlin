@@ -15,11 +15,9 @@ fun test(): Long {
     return 1
 }
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:6 box
 // EXPECTATIONS JVM_IR
+// test.kt:6 box
 // test.kt:10 test
-// EXPECTATIONS JVM JVM_IR
 // test.kt:11 test
 // test.kt:12 test
 // test.kt:6 box

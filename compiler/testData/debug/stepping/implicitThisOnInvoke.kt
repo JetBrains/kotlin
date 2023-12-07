@@ -17,14 +17,13 @@ fun test(b: B) {
     }
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:5 box
 // test.kt:8 <init>
 // test.kt:5 box
 // test.kt:10 <init>
 // test.kt:5 box
 // test.kt:15 test
-
 // test.kt:16 test
 // test.kt:10 getA
 // test.kt:16 test

@@ -15,7 +15,7 @@ inline fun getB(): Int {
     return 1
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:6 box
 // test.kt:15 box
 // test.kt:7 box
