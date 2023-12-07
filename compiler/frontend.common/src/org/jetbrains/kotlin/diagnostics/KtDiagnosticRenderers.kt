@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.diagnostics
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.rendering.ContextIndependentParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.name.ClassId
 
 object KtDiagnosticRenderers {
     val NULLABLE_STRING = Renderer<String?> { it ?: "null" }
@@ -32,6 +33,10 @@ object KtDiagnosticRenderers {
     }
 
     val FUNCTION_PARAMETERS = Renderer { hasValueParameters: Boolean -> if (hasValueParameters) "..." else "" }
+
+    val CLASS_ID = Renderer { classId: ClassId ->
+        classId.asFqNameString()
+    }
 
     @Suppress("FunctionName")
     fun <T> COLLECTION(renderer: ContextIndependentParameterRenderer<T>): ContextIndependentParameterRenderer<Collection<T>> {

@@ -5291,6 +5291,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
         }
 
         @Test
+        @TestMetadata("ClassIdDiagnosticRendering.kt")
+        public void testClassIdDiagnosticRendering() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/ClassIdDiagnosticRendering.kt");
+        }
+
+        @Test
         @TestMetadata("classLiteralForParameter.kt")
         public void testClassLiteralForParameter() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/classLiteralForParameter.kt");

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.CLASS_ID
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.COLLECTION
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.EMPTY
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.FUNCTION_PARAMETERS
@@ -890,7 +891,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SINGLETON_IN_SUPERTYPE, "Cannot extend an object.")
         map.put(NULLABLE_SUPERTYPE, "Supertypes cannot be nullable.")
         map.put(REDUNDANT_NULLABLE, "Redundant '?'.")
-        map.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class is not recommended for use in Kotlin. Use ''{0}'' instead.", TO_STRING)
+        map.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class is not recommended for use in Kotlin. Use ''{0}'' instead.", CLASS_ID)
         map.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class can appear in a supertype list.")
         map.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice.")
         map.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum classes cannot extend classes.")
@@ -1049,11 +1050,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         // OptIn
-        map.put(OPT_IN_USAGE, "{1}", TO_STRING, STRING)
-        map.put(OPT_IN_USAGE_ERROR, "{1}", TO_STRING, STRING)
+        map.put(OPT_IN_USAGE, "{1}", CLASS_ID, STRING)
+        map.put(OPT_IN_USAGE_ERROR, "{1}", CLASS_ID, STRING)
 
-        map.put(OPT_IN_OVERRIDE, "{1}", TO_STRING, STRING)
-        map.put(OPT_IN_OVERRIDE_ERROR, "{1}", TO_STRING, STRING)
+        map.put(OPT_IN_OVERRIDE, "{1}", CLASS_ID, STRING)
+        map.put(OPT_IN_OVERRIDE_ERROR, "{1}", CLASS_ID, STRING)
 
         map.put(OPT_IN_IS_NOT_ENABLED, "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'.")
         map.put(OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation.")
@@ -1065,7 +1066,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             OPT_IN_ARGUMENT_IS_NOT_MARKER,
             "Annotation ''{0}'' is not an opt-in requirement marker; therefore, its usage in @OptIn is ignored.",
-            TO_STRING
+            CLASS_ID
         )
         map.put(
             OPT_IN_MARKER_WITH_WRONG_TARGET,
@@ -2072,7 +2073,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION,
             "''actual typealias'' to annotation which affects code compilation can lead to incorrect behavior. Instead, use ''{0}'' annotation directly.",
-            TO_STRING
+            CLASS_ID
         )
         map.put(
             ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
