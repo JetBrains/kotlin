@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstantPrimitiveImpl
@@ -393,19 +392,18 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
         )
         irField.parent = declaration
 
-        val irProperty = IrPropertyImpl(
+        val irProperty = context.irFactory.createProperty(
                 startOffset,
                 endOffset,
                 IrDeclarationOrigin.DEFINED,
-                IrPropertySymbolImpl(),
                 irField.name,
                 irField.visibility,
                 Modality.FINAL,
+                IrPropertySymbolImpl(),
                 isVar = false,
                 isConst = false,
                 isLateinit = false,
                 isDelegated = false,
-                isExternal = false
         )
         irProperty.backingField = irField
 

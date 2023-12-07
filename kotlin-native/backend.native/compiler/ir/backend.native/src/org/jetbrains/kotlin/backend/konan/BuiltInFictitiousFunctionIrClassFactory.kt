@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
@@ -381,21 +380,22 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
         fun createFakeOverrideProperty(descriptor: PropertyDescriptor): IrProperty {
             val propertyDeclare = { s: IrPropertySymbol ->
-                IrPropertyImpl(
+                symbolTable.irFactory.createProperty(
                         startOffset = offset,
                         endOffset = offset,
                         origin = memberOrigin,
-                        symbol = s,
                         name = descriptor.name,
                         visibility = descriptor.visibility,
                         modality = descriptor.modality,
+                        symbol = s,
                         isVar = descriptor.isVar,
                         isConst = descriptor.isConst,
                         isLateinit = descriptor.isLateInit,
                         isDelegated = descriptor.isDelegated,
                         isExternal = descriptor.isExternal,
                         isExpect = descriptor.isExpect,
-                        isFakeOverride = true)
+                        isFakeOverride = true,
+                )
             }
             val property = symbolTable.descriptorExtension.declareProperty(descriptor, propertyFactory = propertyDeclare)
 
