@@ -68,7 +68,7 @@ private fun run(
     options: KaptOptions,
     projectDisposable: Disposable,
 ): Pair<KaptContext, Map<KtLightClass, KaptStub?>> {
-    val standaloneAnalysisAPISession = buildStandaloneAnalysisAPISession(projectDisposable) {
+    val standaloneAnalysisAPISession = buildStandaloneAnalysisAPISession(projectDisposable, unitTestMode = true) {
         (project as MockProject).registerService(
             KtLifetimeTokenProvider::class.java,
             KtReadActionConfinementLifetimeTokenProvider::class.java

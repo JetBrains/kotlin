@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt4
 
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.DefaultStandaloneApplicationEnvironmentConfigurations
 import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt3.test.*
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
@@ -38,6 +39,8 @@ abstract class AbstractKotlinKapt4ContextTestBase(
             +MAP_DIAGNOSTIC_LOCATIONS
             +WITH_STDLIB
         }
+
+        useApplicationEnvironmentConfiguration(DefaultStandaloneApplicationEnvironmentConfigurations.TEST)
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
