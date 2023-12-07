@@ -1142,14 +1142,17 @@ private class ObjCBlockPointerValuePassing(
         )
         irClass.addChild(blockHolderField)
 
-        val constructor = IrConstructorImpl(
-                startOffset, endOffset,
+        val constructor = context.irFactory.createConstructor(
+                startOffset,
+                endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
-                IrConstructorSymbolImpl(),
                 Name.special("<init>"),
                 DescriptorVisibilities.PUBLIC,
+                isInline = false,
+                isExpect = false,
                 irClass.defaultType,
-                isInline = false, isExternal = false, isPrimary = true, isExpect = false
+                IrConstructorSymbolImpl(),
+                isPrimary = true,
         )
         irClass.addChild(constructor)
 

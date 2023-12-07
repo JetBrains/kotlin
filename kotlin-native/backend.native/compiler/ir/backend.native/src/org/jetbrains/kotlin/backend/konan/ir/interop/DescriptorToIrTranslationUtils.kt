@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.*
@@ -88,9 +87,18 @@ internal interface DescriptorToIrTranslationMixin {
     fun createConstructor(constructorDescriptor: ClassConstructorDescriptor): IrConstructor {
         val irConstructor = symbolTable.descriptorExtension.declareConstructor(constructorDescriptor) {
             with(constructorDescriptor) {
-                IrConstructorImpl(
-                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, it, name, visibility,
-                    IrUninitializedType, isInline, isEffectivelyExternal(), isPrimary, isExpect
+                symbolTable.irFactory.createConstructor(
+                        SYNTHETIC_OFFSET,
+                        SYNTHETIC_OFFSET,
+                        IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+                        name,
+                        visibility,
+                        isInline,
+                        isExpect,
+                        IrUninitializedType,
+                        it,
+                        isPrimary,
+                        isEffectivelyExternal(),
                 )
             }
         }

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -420,17 +419,17 @@ internal class TestProcessor (val context: Context) {
                                            owner: IrClass,
                                            functions: Collection<TestFunction>,
                                            ignored: Boolean): IrConstructor =
-        IrConstructorImpl(
-                testSuite.owner.startOffset, testSuite.owner.endOffset,
+        context.irFactory.createConstructor(
+                testSuite.owner.startOffset,
+                testSuite.owner.endOffset,
                 TEST_SUITE_GENERATED_MEMBER,
-                IrConstructorSymbolImpl(),
                 Name.special("<init>"),
                 DescriptorVisibilities.PUBLIC,
-                testSuite.starProjectedType,
                 isInline = false,
-                isExternal = false,
+                isExpect = false,
+                testSuite.starProjectedType,
+                IrConstructorSymbolImpl(),
                 isPrimary = true,
-                isExpect = false
         ).apply {
             parent = owner
 

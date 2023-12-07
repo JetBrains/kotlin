@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -106,23 +105,23 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
             val startOffset = constructor.startOffset
             val endOffset = constructor.endOffset
             val loweredConstructor =
-                IrConstructorImpl(
-                        startOffset, endOffset,
-                        constructor.origin,
-                        IrConstructorSymbolImpl(),
-                        constructor.name,
-                        DescriptorVisibilities.PROTECTED,
-                        constructor.returnType,
-                        isInline = false,
-                        isExternal = false,
-                        isPrimary = constructor.isPrimary,
-                        isExpect = false
-                ).apply {
-                    parent = constructor.parent
-                    val body = constructor.body!!
-                    this.body = body // Will be transformed later.
-                    body.setDeclarationsParent(this)
-                }
+                    context.irFactory.createConstructor(
+                            startOffset,
+                            endOffset,
+                            constructor.origin,
+                            constructor.name,
+                            DescriptorVisibilities.PROTECTED,
+                            isInline = false,
+                            isExpect = false,
+                            constructor.returnType,
+                            IrConstructorSymbolImpl(),
+                            isPrimary = constructor.isPrimary,
+                    ).apply {
+                        parent = constructor.parent
+                        val body = constructor.body!!
+                        this.body = body // Will be transformed later.
+                        body.setDeclarationsParent(this)
+                    }
 
             fun createSynthesizedValueParameter(index: Int, name: String, type: IrType): IrValueParameter =
                     IrValueParameterImpl(
