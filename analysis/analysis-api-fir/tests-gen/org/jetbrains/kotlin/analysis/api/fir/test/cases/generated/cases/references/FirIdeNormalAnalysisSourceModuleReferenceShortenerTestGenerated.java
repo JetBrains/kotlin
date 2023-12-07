@@ -845,9 +845,33 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
             }
 
             @Test
+            @TestMetadata("superTypeConstructorArgument_nested_objectLiteral.kt")
+            public void testSuperTypeConstructorArgument_nested_objectLiteral() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/superTypeConstructorArgument_nested_objectLiteral.kt");
+            }
+
+            @Test
+            @TestMetadata("superTypeConstructorArgument_objectLiteral.kt")
+            public void testSuperTypeConstructorArgument_objectLiteral() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/superTypeConstructorArgument_objectLiteral.kt");
+            }
+
+            @Test
             @TestMetadata("superTypeConstructor_nested.kt")
             public void testSuperTypeConstructor_nested() throws Exception {
                 runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/superTypeConstructor_nested.kt");
+            }
+
+            @Test
+            @TestMetadata("superTypeConstructor_nested_objectLiteral.kt")
+            public void testSuperTypeConstructor_nested_objectLiteral() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/superTypeConstructor_nested_objectLiteral.kt");
+            }
+
+            @Test
+            @TestMetadata("superTypeConstructor_objectLiteral.kt")
+            public void testSuperTypeConstructor_objectLiteral() throws Exception {
+                runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions/superTypeConstructor_objectLiteral.kt");
             }
 
             @Test

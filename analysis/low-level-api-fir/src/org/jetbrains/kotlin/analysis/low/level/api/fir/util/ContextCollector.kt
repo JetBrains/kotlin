@@ -398,6 +398,15 @@ private class ContextCollectorVisitor(
         }
     }
 
+    /**
+     * Same as [processClassHeader], but for anonymous objects.
+     *
+     * N.B. Anonymous classes cannot have its own explicit type parameters, so we do not process them.
+     */
+    private fun Processor.processAnonymousObjectHeader(anonymousObject: FirAnonymousObject) {
+        processList(anonymousObject.superTypeRefs)
+    }
+
     override fun visitConstructor(constructor: FirConstructor) = withProcessor(constructor) {
         dumpContext(constructor, ContextKind.SELF)
 
@@ -624,6 +633,8 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(anonymousObject)
 
         onActiveBody {
+            processAnonymousObjectHeader(anonymousObject)
+
             context.withAnonymousObject(anonymousObject, holder) {
                 dumpContext(anonymousObject, ContextKind.BODY)
 
@@ -632,7 +643,6 @@ private class ContextCollectorVisitor(
                 }
             }
         }
-
     }
 
     override fun visitBlock(block: FirBlock) = withProcessor(block) {

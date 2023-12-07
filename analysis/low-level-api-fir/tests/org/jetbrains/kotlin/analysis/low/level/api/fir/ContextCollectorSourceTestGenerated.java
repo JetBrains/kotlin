@@ -160,6 +160,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
         }
 
         @Test
+        @TestMetadata("superTypeCallArgumentsExpression_objectLiteral.kt")
+        public void testSuperTypeCallArgumentsExpression_objectLiteral() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsExpression_objectLiteral.kt");
+        }
+
+        @Test
         @TestMetadata("superTypeCallArgumentsTypeRef.kt")
         public void testSuperTypeCallArgumentsTypeRef() throws Exception {
             runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsTypeRef.kt");
@@ -175,6 +181,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
         @TestMetadata("superTypeCalleeGenerics.kt")
         public void testSuperTypeCalleeGenerics() throws Exception {
             runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCalleeGenerics.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeCallee_objectLiteral.kt")
+        public void testSuperTypeCallee_objectLiteral() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallee_objectLiteral.kt");
         }
 
         @Test
