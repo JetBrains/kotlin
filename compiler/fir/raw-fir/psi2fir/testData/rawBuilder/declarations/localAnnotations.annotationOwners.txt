@@ -27,11 +27,11 @@ owner -> FirNamedFunctionSymbol /foo
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -39,11 +39,11 @@ owner -> FirNamedFunctionSymbol /foo
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -51,11 +51,11 @@ owner -> FirNamedFunctionSymbol /foo
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -165,11 +165,11 @@ owner -> FirNamedFunctionSymbol <local>/boo
 context -> FirNamedFunctionSymbol <local>/boo from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/boo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/boo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -177,11 +177,11 @@ owner -> FirNamedFunctionSymbol <local>/boo
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/boo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/boo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -189,11 +189,11 @@ owner -> FirNamedFunctionSymbol <local>/boo
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/boo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/boo
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -323,11 +323,11 @@ owner -> FirNamedFunctionSymbol <local>/localMember
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -335,11 +335,11 @@ owner -> FirNamedFunctionSymbol <local>/localMember
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -347,11 +347,11 @@ owner -> FirNamedFunctionSymbol <local>/localMember
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -587,11 +587,11 @@ owner -> FirNamedFunctionSymbol <local>/localMember
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -599,11 +599,11 @@ owner -> FirNamedFunctionSymbol <local>/localMember
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -611,11 +611,11 @@ owner -> FirNamedFunctionSymbol <local>/localMember
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirNamedFunctionSymbol <local>/localMember
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -755,11 +755,11 @@ owner -> FirPropertySymbol <local>/localProperty
 context -> FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirPropertySymbol <local>/localProperty
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirPropertySymbol <local>/localProperty
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -767,11 +767,11 @@ owner -> FirPropertySymbol <local>/localProperty
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirPropertySymbol <local>/localProperty
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirPropertySymbol <local>/localProperty
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
@@ -779,11 +779,11 @@ owner -> FirPropertySymbol <local>/localProperty
 context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirPropertySymbol <local>/localProperty
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()
-owner -> FirPropertySymbol <local>/localProperty
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
 
 @Anno()

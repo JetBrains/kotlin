@@ -1,14 +1,14 @@
 @R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
-  anchor -> [FirConstructorSymbol /A.A]
+  anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
 @R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
-  anchor -> [FirConstructorSymbol /A.A]
+  anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
 @R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
-  anchor -> [FirConstructorSymbol /A.A]
+  anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
 FILE: [ResolvedTo(IMPORTS)] parameterWithAnnotations.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {

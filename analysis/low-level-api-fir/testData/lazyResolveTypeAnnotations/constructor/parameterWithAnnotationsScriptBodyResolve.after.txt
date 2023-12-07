@@ -1,14 +1,14 @@
 @R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
-  anchor -> [FirConstructorSymbol /A.A]
+  anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
 @R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
-  anchor -> [FirConstructorSymbol /A.A]
+  anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
 @R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
-  anchor -> [FirConstructorSymbol /A.A]
+  anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
 @R|Anno|(position = <strcat>(String(anonymousFunction return type ), R|/prop|))  kotlin/Int
   context -> FirAnonymousFunctionSymbol special/anonymous
@@ -52,3 +52,4 @@ FILE: [ResolvedTo(IMPORTS)] parameterWithAnnotationsScriptBodyResolve.kts
             }
 
         }
+

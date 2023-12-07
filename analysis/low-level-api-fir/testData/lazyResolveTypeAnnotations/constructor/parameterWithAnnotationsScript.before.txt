@@ -1,14 +1,14 @@
 @R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
-  anchor -> [FirConstructorSymbol /A.A]
+  anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
 @R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
-  anchor -> [FirConstructorSymbol /A.A]
+  anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
 @R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
-  anchor -> [FirConstructorSymbol /A.A]
+  anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
 FILE: [ResolvedTo(IMPORTS)] parameterWithAnnotationsScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
@@ -34,3 +34,4 @@ FILE: [ResolvedTo(IMPORTS)] parameterWithAnnotationsScript.kts
             }
 
         }
+

@@ -1,13 +1,13 @@
 @Anno(<strcat>(String(nested nested parameter type ), prop#))
-owner -> FirConstructorSymbol /A.A
+owner -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
 context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
 
 @Anno(<strcat>(String(nested parameter type ), prop#))
-owner -> FirConstructorSymbol /A.A
+owner -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
 context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
 
 @Anno(<strcat>(String(parameter type ), prop#))
-owner -> FirConstructorSymbol /A.A
+owner -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
 context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
 
 @Anno(<strcat>(String(defaultValue ), prop#))

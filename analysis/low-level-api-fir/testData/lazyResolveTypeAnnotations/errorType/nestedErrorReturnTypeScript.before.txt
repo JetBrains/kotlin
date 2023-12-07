@@ -16,11 +16,11 @@
 
 @R|lowlevel/Anno|(<strcat>(String(param ), prop#))  ERROR CLASS: Symbol not found for Type1
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
-  anchor -> [FirNamedFunctionSymbol lowlevel/function]
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(<strcat>(String(nested param ), prop#))  ERROR CLASS: Symbol not found for Type2
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
-  anchor -> [FirNamedFunctionSymbol lowlevel/function]
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested bound ), prop#))  ERROR CLASS: Symbol not found for ASF>
   context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol lowlevel/function

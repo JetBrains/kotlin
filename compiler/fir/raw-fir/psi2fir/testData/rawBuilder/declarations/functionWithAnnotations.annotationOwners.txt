@@ -1,17 +1,17 @@
 @NestedNestedParameterTypeAnnotation(<strcat>(String(nested nested ), prop#))
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
 context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
 
 @NestedParameterTypeAnnotation(<strcat>(String(nested ), prop#))
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
 context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
 
 @ParameterTypeAnnotation(<strcat>(prop#))
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
 context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
 
 @ParameterAnnotation(String(param))
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
 context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
 
 @DefaultValueAnnotation()

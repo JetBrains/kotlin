@@ -661,31 +661,34 @@ open class PsiRawFirBuilder(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 isVararg = isVarArg
-                returnTypeRef = when {
-                    typeReference != null -> typeReference.toFirOrErrorType()
-                    defaultTypeRef != null -> defaultTypeRef
-                    valueParameterDeclaration.shouldExplicitParameterTypeBePresent -> createNoTypeForParameterTypeRef(parameterSource)
-                    else -> null.toFirOrImplicitType()
-                }.let {
-                    if (isVararg && it is FirErrorTypeRef) {
-                        it.wrapIntoArray()
-                    } else {
-                        it
-                    }
-                }
-
                 this.name = name
                 symbol = FirValueParameterSymbol(name)
+                withContainerSymbol(symbol, isLocal = valueParameterDeclaration != ValueParameterDeclaration.FUNCTION) {
+                    returnTypeRef = when {
+                        typeReference != null -> typeReference.toFirOrErrorType()
+                        defaultTypeRef != null -> defaultTypeRef
+                        valueParameterDeclaration.shouldExplicitParameterTypeBePresent -> createNoTypeForParameterTypeRef(parameterSource)
+                        else -> null.toFirOrImplicitType()
+                    }.let {
+                        if (isVararg && it is FirErrorTypeRef) {
+                            it.wrapIntoArray()
+                        } else {
+                            it
+                        }
+                    }
+
+                    addAnnotationsFrom(
+                        this@toFirValueParameter,
+                        isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
+                    )
+                }
+
                 defaultValue = if (hasDefaultValue()) {
                     buildOrLazyExpression(null) { { this@toFirValueParameter.defaultValue }.toFirExpression("Should have default value") }
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
                 containingFunctionSymbol = functionSymbol
-                addAnnotationsFrom(
-                    this@toFirValueParameter,
-                    isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
-                )
                 annotations += additionalAnnotations
             }
         }

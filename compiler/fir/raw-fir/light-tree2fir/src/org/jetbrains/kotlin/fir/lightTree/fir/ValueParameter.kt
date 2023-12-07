@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
 class ValueParameter(
+    private val valueParameterSymbol: FirValueParameterSymbol,
     private val isVal: Boolean,
     private val isVar: Boolean,
     private val modifiers: Modifier,
@@ -90,7 +91,7 @@ class ValueParameter(
             }
 
             this.name = this@ValueParameter.name
-            symbol = FirValueParameterSymbol(name)
+            symbol = valueParameterSymbol
             defaultValue = this@ValueParameter.defaultValue
             isCrossinline = modifiers.hasCrossinline()
             isNoinline = modifiers.hasNoinline()

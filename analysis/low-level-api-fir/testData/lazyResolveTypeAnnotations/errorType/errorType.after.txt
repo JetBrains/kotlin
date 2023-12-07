@@ -8,11 +8,11 @@
 
 @R|lowlevel/Anno|(position = <strcat>(String(param ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type1
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
-  anchor -> [FirNamedFunctionSymbol lowlevel/function]
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested param ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type2
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
-  anchor -> [FirNamedFunctionSymbol lowlevel/function]
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
 
 @R|lowlevel/Anno|(position = <strcat>(String(bound ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for ASF
   context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol lowlevel/function

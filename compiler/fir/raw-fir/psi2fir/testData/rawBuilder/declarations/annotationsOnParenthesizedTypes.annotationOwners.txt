@@ -3,11 +3,11 @@ owner -> FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.receiverArgumen
 context -> FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.receiverArgument
 
 @A()
-owner -> FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.parameter
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.parameter
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.parameter
 
 @A()
-owner -> FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.parameterArgument
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.parameterArgument
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /AnnotationsOnParenthesizedTypes.parameterArgument
 
 @A()

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionWithoutNameSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
@@ -93,7 +94,13 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
                 buildString {
                     appendLine(annotation.render().trim())
                     append("owner -> ")
-                    appendLine(annotation.containingDeclarationSymbol)
+                    appendLine(annotation.containingDeclarationSymbol.let {
+                        if (it is FirValueParameterSymbol) {
+                            "$it from ${it.containingFunctionSymbol}"
+                        } else {
+                            it
+                        }
+                    })
 
                     contexts.joinToWithBuffer(buffer = this, separator = "\n") {
                         append("context -> ")

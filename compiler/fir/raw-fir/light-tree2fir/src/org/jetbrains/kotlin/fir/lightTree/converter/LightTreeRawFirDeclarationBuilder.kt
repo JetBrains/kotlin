@@ -2492,23 +2492,30 @@ class LightTreeRawFirDeclarationBuilder(
         var destructuringDeclaration: DestructuringDeclaration? = null
         valueParameter.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> {
-                    modifiers = convertModifierList(it)
-                    valueAnnotations += convertAnnotationList(it)
-                }
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
                 VAL_KEYWORD -> isVal = true
                 VAR_KEYWORD -> isVar = true
                 IDENTIFIER -> identifier = it.asText
-                TYPE_REFERENCE -> firType = convertType(it)
+                TYPE_REFERENCE -> {}
                 DESTRUCTURING_DECLARATION -> destructuringDeclaration = convertDestructingDeclaration(it)
                 else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it, "Should have default value")
             }
         }
 
         val name = convertValueParameterName(identifier.nameAsSafeName(), valueParameterDeclaration) { identifier }
+        val valueParameterSymbol = FirValueParameterSymbol(name)
+        withContainerSymbol(valueParameterSymbol, isLocal = valueParameterDeclaration != ValueParameterDeclaration.FUNCTION) {
+            valueParameter.forEachChildren {
+                when (it.tokenType) {
+                    MODIFIER_LIST -> valueAnnotations += convertAnnotationList(it)
+                    TYPE_REFERENCE -> firType = convertType(it)
+                }
+            }
+        }
 
         val valueParameterSource = valueParameter.toFirSourceElement()
         return ValueParameter(
+            valueParameterSymbol = valueParameterSymbol,
             isVal = isVal,
             isVar = isVar,
             modifiers = modifiers,

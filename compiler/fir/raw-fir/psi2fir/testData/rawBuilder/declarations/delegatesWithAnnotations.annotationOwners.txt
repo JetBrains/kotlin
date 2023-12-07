@@ -19,7 +19,7 @@ owner -> FirNamedFunctionSymbol /<anonymous>.getValue
 context -> FirNamedFunctionSymbol /<anonymous>.getValue from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /delegate
 
 @Anno(<strcat>(String(setValue value parameter type ), x#))
-owner -> FirNamedFunctionSymbol /<anonymous>.setValue
+owner -> FirValueParameterSymbol <local>/value from FirNamedFunctionSymbol /<anonymous>.setValue
 context -> FirValueParameterSymbol <local>/value from FirNamedFunctionSymbol /<anonymous>.setValue from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /delegate
 
 @Anno(<strcat>(String(setValue ), x#))

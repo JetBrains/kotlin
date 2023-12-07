@@ -39,19 +39,19 @@ owner -> FirNamedFunctionSymbol /foo
 context -> FirNamedFunctionSymbol /foo
 
 @base()
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/y from FirNamedFunctionSymbol /foo
 context -> FirValueParameterSymbol <local>/y from FirNamedFunctionSymbol /foo
 
 @base()
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/y from FirNamedFunctionSymbol /foo
 context -> FirValueParameterSymbol <local>/y from FirNamedFunctionSymbol /foo
 
 @base()
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/z from FirNamedFunctionSymbol <local>/bar
 context -> FirValueParameterSymbol <local>/z from FirNamedFunctionSymbol <local>/bar from FirNamedFunctionSymbol /foo
 
 @base()
-owner -> FirNamedFunctionSymbol /foo
+owner -> FirValueParameterSymbol <local>/z from FirNamedFunctionSymbol <local>/bar
 context -> FirValueParameterSymbol <local>/z from FirNamedFunctionSymbol <local>/bar from FirNamedFunctionSymbol /foo
 
 @base()
@@ -134,19 +134,19 @@ owner -> FirNamedFunctionSymbol /fooDerived
 context -> FirNamedFunctionSymbol /fooDerived
 
 @derived(IntegerLiteral(1))
-owner -> FirNamedFunctionSymbol /fooDerived
+owner -> FirValueParameterSymbol <local>/y from FirNamedFunctionSymbol /fooDerived
 context -> FirValueParameterSymbol <local>/y from FirNamedFunctionSymbol /fooDerived
 
 @derived(IntegerLiteral(1))
-owner -> FirNamedFunctionSymbol /fooDerived
+owner -> FirValueParameterSymbol <local>/y from FirNamedFunctionSymbol /fooDerived
 context -> FirValueParameterSymbol <local>/y from FirNamedFunctionSymbol /fooDerived
 
 @derived(IntegerLiteral(1))
-owner -> FirNamedFunctionSymbol /fooDerived
+owner -> FirValueParameterSymbol <local>/z from FirNamedFunctionSymbol <local>/bar
 context -> FirValueParameterSymbol <local>/z from FirNamedFunctionSymbol <local>/bar from FirNamedFunctionSymbol /fooDerived
 
 @derived(IntegerLiteral(1))
-owner -> FirNamedFunctionSymbol /fooDerived
+owner -> FirValueParameterSymbol <local>/z from FirNamedFunctionSymbol <local>/bar
 context -> FirValueParameterSymbol <local>/z from FirNamedFunctionSymbol <local>/bar from FirNamedFunctionSymbol /fooDerived
 
 @derived(IntegerLiteral(1))

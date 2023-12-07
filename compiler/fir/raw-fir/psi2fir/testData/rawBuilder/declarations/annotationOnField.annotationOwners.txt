@@ -19,7 +19,7 @@ owner -> FirPropertySymbol /SomeClass.propertyWithCustomGetter
 context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /SomeClass.propertyWithCustomGetter
 
 @FIELD:Ann()
-owner -> FirNamedFunctionSymbol /SomeClass.anotherFun
+owner -> FirValueParameterSymbol <local>/s from FirNamedFunctionSymbol /SomeClass.anotherFun
 context -> FirValueParameterSymbol <local>/s from FirNamedFunctionSymbol /SomeClass.anotherFun
 
 @FIELD:Ann()

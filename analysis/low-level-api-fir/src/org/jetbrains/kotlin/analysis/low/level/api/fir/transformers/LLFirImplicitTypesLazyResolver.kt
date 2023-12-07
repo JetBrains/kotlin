@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyRe
 import org.jetbrains.kotlin.fir.scopes.callableCopySubstitutionForTypeUpdater
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -83,16 +84,25 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
      * @see postponedSymbols
      */
     fun postponeForeignAnnotationResolution(symbol: FirBasedSymbol<*>) {
+        // We should unwrap local symbols to avoid recursion
+        val symbolToPostpone = when (symbol) {
+            is FirValueParameterSymbol -> symbol.containingFunctionSymbol
+            else -> symbol
+        }
+
         // We cannot resolve them on demand, so we shouldn't postpone them
-        if (symbol.cannotResolveAnnotationsOnDemand()) {
+        if (symbolToPostpone.cannotResolveAnnotationsOnDemand()) {
             return
         }
 
         val currentSymbol = anchorForForeignAnnotations ?: errorWithAttachment("Unexpected state: the current symbol have to be here") {
-            withFirSymbolEntry("symbol to postpone", symbol)
+            withFirSymbolEntry("symbol to postpone", symbolToPostpone)
         }
 
-        postponedSymbols.put(currentSymbol, symbol)
+        // There is no sense to postpone itself as it will lead to recursion
+        if (currentSymbol == symbolToPostpone) return
+
+        postponedSymbols.put(currentSymbol, symbolToPostpone)
     }
 
     /**
