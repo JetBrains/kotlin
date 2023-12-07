@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
+import org.jetbrains.kotlin.buildtools.api.CompilationService
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -17,6 +18,7 @@ class Project(
     val projectDirectory: Path,
 ) {
     val projectId = ProjectId.ProjectUUID(UUID.randomUUID())
+    val compilationService = CompilationService.loadImplementation(this.javaClass.classLoader)
 
     fun module(
         moduleName: String,
@@ -33,8 +35,15 @@ class Project(
         templatePath.copyToRecursively(module.sourcesDirectory, followLinks = false)
         return module
     }
+
+    fun endCompilationRound() {
+        compilationService.finishProjectCompilation(projectId)
+    }
 }
 
 fun BaseCompilationTest.project(action: Project.() -> Unit) {
-    Project(workingDirectory).action()
+    Project(workingDirectory).apply {
+        action()
+        endCompilationRound()
+    }
 }
