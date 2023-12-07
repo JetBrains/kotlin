@@ -24,6 +24,7 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
 
     private val cachedDefinitionsLock = ReentrantLock()
 
+    // getter implementation might take it's own lock, so it shouldn't be used under 'cachedDefinitionsLock'
     protected abstract val currentDefinitions: Sequence<ScriptDefinition>
 
     protected open fun getScriptingHostConfiguration(): ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration
