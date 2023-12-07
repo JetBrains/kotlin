@@ -16,6 +16,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.TransactionGuardImpl
@@ -615,13 +616,23 @@ class KotlinCoreEnvironment private constructor(
                 val environment = ourApplicationEnvironment ?: return
                 ourApplicationEnvironment = null
                 Disposer.dispose(environment.parentDisposable)
-                resetApplicationManager()
+                resetApplicationManager(environment.application)
                 ZipHandler.clearFileAccessorCache()
             }
         }
 
+        /**
+         * Resets the application managed by [ApplicationManager]. If [applicationToReset] is specified, [resetApplicationManager] will only
+         * reset the application if it's the expected one. Otherwise, the application will already have been changed to another application.
+         * For example, application disposal can trigger one of the disposables registered via [ApplicationManager.setApplication], which
+         * reset the managed application to the previous application.
+         */
         @JvmStatic
-        fun resetApplicationManager() {
+        fun resetApplicationManager(applicationToReset: Application? = null) {
+            if (applicationToReset != null && applicationToReset != ApplicationManager.getApplication()) {
+                return
+            }
+
             val ourApplicationField = ApplicationManager::class.java.getDeclaredField("ourApplication")
             ourApplicationField.isAccessible = true
             ourApplicationField.set(null, null)
