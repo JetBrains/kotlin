@@ -122,20 +122,6 @@ fun TestConfigurationBuilder.configureCommonHandlersForBoxTest() {
     }
 }
 
-fun TestConfigurationBuilder.configureCommonHandlersForSteppingTest() {
-    commonHandlersForCodegenTest()
-    configureJvmArtifactsHandlersStep {
-        steppingHandlersForBackendStep()
-    }
-}
-
-fun TestConfigurationBuilder.configureCommonHandlersForLocalVariableTest() {
-    commonHandlersForCodegenTest()
-    configureJvmArtifactsHandlersStep {
-        localVariableHandlersForBackendStep()
-    }
-}
-
 fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
     configureClassicFrontendHandlersStep {
         commonClassicFrontendHandlersForCodegenTest()
@@ -166,14 +152,6 @@ fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.boxHandlersForBa
     useHandlers(
         ::JvmBoxRunner
     )
-}
-
-fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.steppingHandlersForBackendStep() {
-    useHandlers(::SteppingDebugRunner)
-}
-
-fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.localVariableHandlersForBackendStep() {
-    useHandlers(::LocalVariableDebugRunner)
 }
 
 fun HandlersStepBuilder<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.commonClassicFrontendHandlersForCodegenTest() {
