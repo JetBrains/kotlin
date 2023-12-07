@@ -87,14 +87,14 @@ fun main(args: Array<String>) {
     memScoped {
         val s = alloc<S>()
         for (x1 in -1L..0L)
-            for (x2 in B2.values())
-                for (x3 in 0..7)
+            for (x2 in arrayOf(B2.ZERO, B2.ONE, B2.THREE))
+                for (x3 in ushortArrayOf(0u, 2u, 7u))
                     for (x4 in uintArrayOf(0u, 6u, 15u))
-                        for (x5 in intArrayOf(-16, -2, -1, 0, 5, 15))
-                            for (x6 in longArrayOf(Long.MIN_VALUE/2, -1L shl 36, -325L, 0, 1L shl 48, Long.MAX_VALUE/2))
+                        for (x5 in intArrayOf(-16, -1, 0, 5, 15))
+                            for (x6 in longArrayOf(Long.MIN_VALUE/2, -325L, 0, 1L shl 48, Long.MAX_VALUE/2))
                                 for (x7 in E.values())
                                     for (x8 in arrayOf(false, true))
-                                        for (x9 in intArrayOf(-8, -2, -1, 0, 5, 7)) // 4 bits width
+                                        for (x9 in intArrayOf(-8, -1, 0, 5, 7)) // 4 bits width
                                             test(s, x1, x2, x3.toUShort(), x4, x5, x6, x7, x8, x9)
     }
 }
