@@ -115,6 +115,21 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("kdocWithBlockTags"))
     }
 
+    @Test
+    fun `test - functionWithMustBeDocumentedAnnotation`() {
+        doTest(headersTestDataDir.resolve("functionWithMustBeDocumentedAnnotation"))
+    }
+
+    @Test
+    fun `test - parameterWithMustBeDocumentedAnnotation`() {
+        doTest(headersTestDataDir.resolve("parameterWithMustBeDocumentedAnnotation"))
+    }
+
+    @Test
+    fun `test - receiverWithMustBeDocumentedAnnotation`() {
+        doTest(headersTestDataDir.resolve("receiverWithMustBeDocumentedAnnotation"))
+    }
+
     fun interface HeaderGenerator {
         fun generateHeaders(root: File): String
     }

@@ -13,13 +13,17 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 fun ObjCExportStubOrigin(descriptor: DeclarationDescriptor?): ObjCExportStubOrigin? {
     if (descriptor == null) return null
 
+    if (descriptor is DeserializedDescriptor) {
+        return ObjCExportStubOrigin.Binary(descriptor.name, descriptor.extractSerializedKdocString())
+    }
+
     if (descriptor is DeclarationDescriptorWithSource) {
         return ObjCExportStubOrigin.Source(descriptor.name, descriptor.findKDocString(), (descriptor.source as? PsiSourceElement)?.psi)
     }
 
-    assert(descriptor is DeserializedDescriptor) { "Expected '$descriptor' to implement ${DeserializedDescriptor::class.simpleName}" }
     return ObjCExportStubOrigin.Binary(descriptor.name, descriptor.extractSerializedKdocString())
 }
+
 
 fun ObjCProtocolImpl(
     name: String,

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
@@ -807,7 +808,7 @@ class ObjCExportTranslatorImpl(
         } else emptyList()
 
         val visibilityComments = visibilityComments(method.visibility, "method")
-        val paramComments = method.valueParameters.flatMap { parameterDescriptor ->
+        val paramComments = method.allParameters.flatMap { parameterDescriptor ->
             parameters.find { parameter -> parameter.origin?.name == parameterDescriptor.name }?.let { parameter ->
                 mustBeDocumentedParamAttributeList(parameter, descriptor = parameterDescriptor)
             } ?: emptyList()
