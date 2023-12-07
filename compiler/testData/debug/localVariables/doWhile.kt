@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM
+
 // FILE: test.kt
 fun shouldContinue(i: Int) = i < 1
 
@@ -16,7 +16,7 @@ fun box() {
   } while (x < z)
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:6 box:
 // test.kt:8 box: x:int=0:int
 // test.kt:9 box: x:int=0:int, z:int=2:int

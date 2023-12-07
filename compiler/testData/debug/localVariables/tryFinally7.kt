@@ -1,5 +1,5 @@
-// The old backend has `y` and `j` visible on the finally block.
-// IGNORE_BACKEND: JVM
+
+
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -33,7 +33,7 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:32 box:
 // test.kt:13 compute:
 // test.kt:14 compute:

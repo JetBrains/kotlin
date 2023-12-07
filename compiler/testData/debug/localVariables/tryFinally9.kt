@@ -1,5 +1,5 @@
-// The local variables in the try and finally blocks are not removed for the finally block with the old backend.
-// IGNORE_BACKEND: JVM
+
+
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -38,7 +38,7 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:37 box:
 // test.kt:13 compute:
 // test.kt:14 compute:

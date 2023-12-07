@@ -31,7 +31,7 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:30 box:
 // test.kt:17 compute:
 // test.kt:18 compute:

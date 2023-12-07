@@ -1,5 +1,5 @@
-// The local variables `y` and `i` are visible in the finally block with old backend.
-// IGNORE_BACKEND: JVM
+
+
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -36,7 +36,7 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:35 box:
 // test.kt:20 compute:
 // test.kt:21 compute:

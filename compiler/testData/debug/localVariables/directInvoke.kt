@@ -5,16 +5,9 @@ fun box() {
     }("O", "K")
 }
 
-// EXPECTATIONS JVM JVM_IR
 // EXPECTATIONS JVM_IR
 // test.kt:5 box:
 // test.kt:4 box: a:java.lang.String="O":java.lang.String, b:java.lang.String="K":java.lang.String
-// EXPECTATIONS JVM
-// test.kt:3 box:
-// test.kt:5 box:
-// test.kt:4 invoke: a:java.lang.String="O":java.lang.String, b:java.lang.String="K":java.lang.String
-// test.kt:5 box:
-// EXPECTATIONS JVM JVM_IR
 // test.kt:6 box:
 
 // EXPECTATIONS JS_IR

@@ -22,13 +22,11 @@ fun box() {
     foo.start()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:21 box:
 // test.kt:3 <init>:
 // test.kt:4 <init>:
-// EXPECTATIONS JVM_IR
 // test.kt:3 <init>:
-// EXPECTATIONS JVM JVM_IR
 // test.kt:21 box:
 // test.kt:22 box: foo:Foo=Foo
 // test.kt:13 start:

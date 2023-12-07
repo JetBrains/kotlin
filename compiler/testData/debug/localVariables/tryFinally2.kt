@@ -1,5 +1,5 @@
-// The old backend has the local y covering the finally block as well.
-// IGNORE_BACKEND: JVM
+
+
 // WITH_STDLIB
 // FILE: test.kt
 fun box() {
@@ -17,7 +17,7 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:6 box:
 // test.kt:7 box: result:java.lang.String="":java.lang.String
 // test.kt:8 box: result:java.lang.String="":java.lang.String, x:java.lang.String="A":java.lang.String

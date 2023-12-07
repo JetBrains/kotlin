@@ -26,7 +26,7 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:20 box:
 // test.kt:3 box: $i$f$foo:int=0:int
 // test.kt:3 <init>:
@@ -41,11 +41,7 @@ fun box() {
 // test.kt:13 baz: param:int=6:int
 // test.kt:14 baz: param:int=6:int, b:int=2:int
 // test.kt:25 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2:int=0:int
-// EXPECTATIONS JVM_IR
 // test.kt:26 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2:int=0:int, d:int=4:int
-// EXPECTATIONS JVM
-// test.kt:26 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2:int=0:int
-// EXPECTATIONS JVM JVM_IR
 // test.kt:14 baz: param:int=6:int, b:int=2:int
 // test.kt:15 baz: param:int=6:int, b:int=2:int
 // test.kt:17 box: $i$f$bar:int=0:int

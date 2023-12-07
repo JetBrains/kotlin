@@ -1,5 +1,5 @@
-// The JVM backend does not have `x` visible in the locals table for the for loop at all.
-// IGNORE_BACKEND: JVM
+
+
 // WITH_STDLIB
 
 // FILE: test.kt
@@ -20,7 +20,7 @@ suspend fun box() {
     }
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:10 box:
 // test.kt:12 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:6 h: $completion:kotlin.coroutines.Continuation=TestKt$box$1
