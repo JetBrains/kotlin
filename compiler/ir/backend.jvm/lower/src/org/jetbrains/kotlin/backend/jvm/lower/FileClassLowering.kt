@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fileClasses.JvmMultifileClassPartInfo
 import org.jetbrains.kotlin.fileClasses.JvmSimpleFileClassInfo
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -98,17 +97,18 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                 IrDeclarationOrigin.FILE_CLASS
             else
                 IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
-        return IrClassImpl(
-            0, fileEntry.maxOffset,
-            fileClassOrigin,
-            symbol = IrClassSymbolImpl(),
+        return context.irFactory.createClass(
+            startOffset = 0,
+            endOffset = fileEntry.maxOffset,
+            origin = fileClassOrigin,
             name = fileClassInfo.fileClassFqName.shortName(),
-            kind = ClassKind.CLASS,
             visibility = if (isMultifilePart || onlyPrivateDeclarationsAndFeatureIsEnabled)
                 JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             else
                 DescriptorVisibilities.PUBLIC,
-            modality = Modality.FINAL
+            symbol = IrClassSymbolImpl(),
+            kind = ClassKind.CLASS,
+            modality = Modality.FINAL,
         ).apply {
             superTypes = listOf(context.irBuiltIns.anyType)
             parent = irFile

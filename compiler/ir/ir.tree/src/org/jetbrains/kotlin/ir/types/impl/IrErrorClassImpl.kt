@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.types.impl
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -19,6 +20,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
+
+@OptIn(IrImplementationDetail::class)
 object IrErrorClassImpl : IrClassImpl(
     UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.ERROR_CLASS, IrClassSymbolImpl(),
     Name.special("<error>"), ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
@@ -229,6 +230,7 @@ class Fir2IrDeclarationStorage(
         return fileCache[firFile]!!
     }
 
+    @OptIn(IrImplementationDetail::class)
     internal class NonCachedSourceFileFacadeClass(
         origin: IrDeclarationOrigin,
         name: Name,

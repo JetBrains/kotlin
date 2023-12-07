@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -34,15 +33,12 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.SetDeclarationsParentVisitor
-import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal class TestProcessor (val context: Context) {
     companion object {
@@ -479,21 +475,15 @@ internal class TestProcessor (val context: Context) {
             functions: Collection<TestFunction>,
             irFile: IrFile
     ): IrClass {
-        return IrClassImpl(
-                testClass.startOffset, testClass.endOffset,
+        return context.irFactory.createClass(
+                testClass.startOffset,
+                testClass.endOffset,
                 TEST_SUITE_CLASS,
-                IrClassSymbolImpl(),
                 testClass.name.synthesizeSuiteClassName(),
-                ClassKind.CLASS,
                 DescriptorVisibilities.PRIVATE,
+                IrClassSymbolImpl(),
+                ClassKind.CLASS,
                 Modality.FINAL,
-                isCompanion = false,
-                isInner = false,
-                isData = false,
-                isExternal = false,
-                isValue = false,
-                isExpect = false,
-                isFun = false
         ).apply {
             irFile.addChild(this)
             createParameterDeclarations()

@@ -1114,13 +1114,15 @@ private class ObjCBlockPointerValuePassing(
     private fun IrBuilderWithScope.generateKotlinFunctionClass(): IrConstructor {
         val symbols = stubs.symbols
 
-        val irClass = IrClassImpl(
-                startOffset, endOffset,
-                OBJC_BLOCK_FUNCTION_IMPL, IrClassSymbolImpl(),
+        val irClass = context.irFactory.createClass(
+                startOffset,
+                endOffset,
+                OBJC_BLOCK_FUNCTION_IMPL,
                 Name.identifier(stubs.getUniqueKotlinFunctionReferenceClassName("BlockFunctionImpl")),
-                ClassKind.CLASS, DescriptorVisibilities.PRIVATE, Modality.FINAL,
-                isCompanion = false, isInner = false, isData = false, isExternal = false,
-                isValue = false, isExpect = false, isFun = false
+                DescriptorVisibilities.PRIVATE,
+                IrClassSymbolImpl(),
+                ClassKind.CLASS,
+                Modality.FINAL,
         )
         irClass.createParameterDeclarations()
 

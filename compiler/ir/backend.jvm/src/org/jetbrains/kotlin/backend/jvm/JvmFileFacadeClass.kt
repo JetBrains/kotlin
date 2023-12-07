@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.name.Name
 
+@OptIn(IrImplementationDetail::class)
 class JvmFileFacadeClass(
     origin: IrDeclarationOrigin,
     name: Name,
