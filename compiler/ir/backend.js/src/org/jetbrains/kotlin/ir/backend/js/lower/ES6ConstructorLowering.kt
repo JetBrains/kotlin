@@ -104,12 +104,18 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
             origin = ES6_INIT_FUNCTION
         }.also { factory ->
             factory.parent = irClass
+            factory.copyValueParametersFrom(constructor)
             factory.copyTypeParametersFrom(irClass)
             factory.annotations = annotations
             factory.extensionReceiverParameter = irClass.thisReceiver?.copyTo(factory)
 
+            val remaps: Map<IrValueSymbol, IrValueSymbol> = constructor.valueParameters
+                .zip(factory.valueParameters)
+                .plus(irClass.thisReceiver!! to factory.extensionReceiverParameter!!)
+                .associate { it.first.symbol to it.second.symbol }
+
             factory.body = constructor.body?.deepCopyWithSymbols(factory)?.apply {
-                transformChildrenVoid(ValueRemapper(mapOf(irClass.thisReceiver!!.symbol to factory.extensionReceiverParameter!!.symbol)))
+                transformChildrenVoid(ValueRemapper(remaps))
             }
 
             constructorFactory = factory

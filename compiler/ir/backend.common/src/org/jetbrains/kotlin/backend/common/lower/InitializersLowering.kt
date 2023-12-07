@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -16,6 +17,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.render
@@ -37,6 +41,11 @@ class InitializersLowering(context: CommonBackendContext) : InitializersLowering
                     (it is IrAnonymousInitializer && !it.isStatic)
         }
         val block = IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null, instanceInitializerStatements)
+        val remappedValues: Map<IrValueSymbol, IrValueSymbol> =
+            context.mapping.classToItsSyntheticInitializationFunction[irClass]?.valueParameters.orEmpty()
+                .zip(container.valueParameters.filter(IrValueParameter::isBoundValueParameter))
+                .associate { it.first.symbol to it.second.symbol }
+
         // Check that the initializers contain no local classes. Deep-copying them is a disaster for code size, and liable to break randomly.
         block.accept(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) =
@@ -48,7 +57,9 @@ class InitializersLowering(context: CommonBackendContext) : InitializersLowering
 
         container.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression =
-                block.deepCopyWithSymbols(container)
+                block.deepCopyWithSymbols(container).apply {
+                    transformChildrenVoid(ValueRemapper(remappedValues))
+                }
         })
     }
 }

@@ -30,7 +30,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 data class Closure(val capturedValues: List<IrValueSymbol>, val capturedTypeParameters: List<IrTypeParameter>)
 
-class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
+class ClosureAnnotator(
+    irElement: IrElement,
+    declaration: IrDeclaration,
+    private val findInitializationFunction: IrClass.() -> IrFunction? = { primaryConstructor }
+) {
     private val closureBuilders = mutableMapOf<IrDeclaration, ClosureBuilder>()
 
     init {
@@ -184,9 +188,8 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
                 includeInParent(closureBuilder)
             }
 
-            this.declarations.firstOrNull { it is IrConstructor && it.isPrimary }?.let {
-                val constructor = it as IrConstructor
-                constructor.valueParameters.forEach { v -> closureBuilder.declareVariable(v) }
+            findInitializationFunction()?.let {
+                it.valueParameters.forEach { v -> closureBuilder.declareVariable(v) }
             }
 
             closureBuilder
@@ -261,24 +264,6 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             declaration.acceptChildren(this, closureBuilder)
 
             includeInParent(closureBuilder)
-        }
-
-        override fun visitConstructor(declaration: IrConstructor, data: ClosureBuilder?) {
-            val closureBuilder = declaration.closureBuilder
-
-            declaration.acceptChildren(this, closureBuilder)
-
-            declaration.constructedClass.declarations.forEach {
-                if (it is IrAnonymousInitializer) it.acceptChildren(this, closureBuilder)
-            }
-
-            includeInParent(closureBuilder)
-        }
-
-        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: ClosureBuilder?) {
-            if (!declaration.parentAsClass.constructors.any()) {
-                super.visitAnonymousInitializer(declaration, data)
-            }
         }
 
         override fun visitTypeParameter(declaration: IrTypeParameter, data: ClosureBuilder?) {

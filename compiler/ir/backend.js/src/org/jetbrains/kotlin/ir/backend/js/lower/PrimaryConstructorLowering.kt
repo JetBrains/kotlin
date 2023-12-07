@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.lower.isBoundValueParameter
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -55,6 +57,10 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
             visibility = DescriptorVisibilities.PRIVATE
         }
 
+        context.mapping.classToItsSyntheticInitializationFunction[irClass]?.let {
+            declaration.valueParameters = it.valueParameters.onEach { param -> param.parent = declaration }
+        }
+
         declaration.body = irClass.run {
             factory.createBlockBody(startOffset, endOffset, listOf(IrInstanceInitializerCallImpl(startOffset, endOffset, symbol, unitType)))
         }
@@ -79,7 +85,16 @@ class DelegateToSyntheticPrimaryConstructor(context: JsCommonBackendContext) : B
                             primary.symbol,
                             valueArgumentsCount = primary.valueParameters.size,
                             typeArgumentsCount = primary.typeParameters.size
-                        )
+                        ).apply {
+                            // Something was captured during [org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering]
+                            if (valueArgumentsCount != 0) {
+                                container.valueParameters
+                                    .filter(IrValueParameter::isBoundValueParameter)
+                                    .forEachIndexed { index, param ->
+                                        putValueArgument(index, IrGetValueImpl(startOffset, endOffset, param.symbol))
+                                    }
+                            }
+                        }
                     }
                 }
 
