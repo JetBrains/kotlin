@@ -34829,6 +34829,12 @@ public class FirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTestGenerated
             }
 
             @Test
+            @TestMetadata("javaClassReferencedActualType.kt")
+            public void testJavaClassReferencedActualType() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/javaClassReferencedActualType.kt");
+            }
+
+            @Test
             @TestMetadata("javaMethodWithTypeParameter.kt")
             public void testJavaMethodWithTypeParameter() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/k2/javaMethodWithTypeParameter.kt");

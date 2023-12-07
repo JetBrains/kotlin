@@ -799,7 +799,7 @@ class KotlinCoreEnvironment private constructor(
                 // exception from `ExtensionPointImpl.doRegisterExtension`, because the registered extension can no longer be found
                 // when the project is being disposed.
                 // For example, see the `unregisterExtension` call in `GenerationUtils.compileFilesUsingFrontendIR`.
-                // TODO: refactor this to avoid registering unneeded extensions in the first place, and avoid using deprecated API.
+                // TODO: refactor this to avoid registering unneeded extensions in the first place, and avoid using deprecated API. (KT-64296)
                 @Suppress("DEPRECATION")
                 PsiElementFinder.EP.getPoint(project).registerExtension(JavaElementFinder(this))
                 @Suppress("DEPRECATION")
