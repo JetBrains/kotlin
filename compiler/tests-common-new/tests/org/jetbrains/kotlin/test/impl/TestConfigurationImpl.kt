@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.impl
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
@@ -30,6 +31,8 @@ class TestConfigurationImpl(
 
     sourcePreprocessors: List<Constructor<SourceFilePreprocessor>>,
     additionalMetaInfoProcessors: List<Constructor<AdditionalMetaInfoProcessor>>,
+
+    applicationEnvironmentConfiguration: KotlinCoreApplicationEnvironmentConfiguration,
     environmentConfigurators: List<Constructor<AbstractEnvironmentConfigurator>>,
 
     additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>,
@@ -38,7 +41,7 @@ class TestConfigurationImpl(
     metaTestConfigurators: List<Constructor<MetaTestConfigurator>>,
     afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
 
-    compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
+    compilerConfigurationProvider: ((TestServices, Disposable, KotlinCoreApplicationEnvironmentConfiguration, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
     runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>,
 
     override val metaInfoHandlerEnabled: Boolean,
@@ -104,8 +107,18 @@ class TestConfigurationImpl(
             register(SourceFileProvider::class, sourceFileProvider)
 
             val environmentProvider =
-                compilerConfigurationProvider?.invoke(this, rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
-                    ?: CompilerConfigurationProviderImpl(this, rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
+                compilerConfigurationProvider?.invoke(
+                    this,
+                    rootDisposable,
+                    applicationEnvironmentConfiguration,
+                    this@TestConfigurationImpl.environmentConfigurators
+                )
+                    ?: CompilerConfigurationProviderImpl(
+                        this,
+                        rootDisposable,
+                        applicationEnvironmentConfiguration,
+                        this@TestConfigurationImpl.environmentConfigurators,
+                    )
             register(CompilerConfigurationProvider::class, environmentProvider)
 
             register(AssertionsService::class, assertions)

@@ -23,6 +23,13 @@ import org.jetbrains.kotlin.test.services.*
 class AnalysisApiTestCompilerConfiguratorProvider(
     testServices: TestServices,
     override val testRootDisposable: Disposable,
+
+    /**
+     * This setting has no effect in Analysis API tests. Please use
+     * [org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator.applicationEnvironmentConfiguration].
+     */
+    override val applicationEnvironmentConfiguration: KotlinCoreApplicationEnvironmentConfiguration,
+
     override val configurators: List<AbstractEnvironmentConfigurator>
 ) : CompilerConfigurationProvider(testServices) {
     private val configurationCache: MutableMap<TestModule, CompilerConfiguration> = mutableMapOf()

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.test.builders
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.jvm.compiler.DefaultKotlinCoreApplicationEnvironmentConfigurations
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -28,6 +30,8 @@ class TestConfigurationBuilder {
 
     private val sourcePreprocessors: MutableList<Constructor<SourceFilePreprocessor>> = mutableListOf()
     private val additionalMetaInfoProcessors: MutableList<Constructor<AdditionalMetaInfoProcessor>> = mutableListOf()
+    private var applicationEnvironmentConfiguration: KotlinCoreApplicationEnvironmentConfiguration =
+        DefaultKotlinCoreApplicationEnvironmentConfigurations.TEST
     private val environmentConfigurators: MutableList<Constructor<AbstractEnvironmentConfigurator>> = mutableListOf()
     private val preAnalysisHandlers: MutableList<Constructor<PreAnalysisHandler>> = mutableListOf()
 
@@ -46,7 +50,7 @@ class TestConfigurationBuilder {
     private val configurationsByNegativeTestDataCondition: MutableList<Pair<Regex, TestConfigurationBuilder.() -> Unit>> = mutableListOf()
     private val additionalServices: MutableList<ServiceRegistrationData> = mutableListOf()
 
-    private var compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)? = null
+    private var compilerConfigurationProvider: ((TestServices, Disposable, KotlinCoreApplicationEnvironmentConfiguration, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)? = null
     private var runtimeClasspathProviders: MutableList<Constructor<RuntimeClasspathProvider>> = mutableListOf()
 
     lateinit var testInfo: KotlinTestInfo
@@ -164,6 +168,10 @@ class TestConfigurationBuilder {
         this.directives += directives
     }
 
+    fun useApplicationEnvironmentConfiguration(configuration: KotlinCoreApplicationEnvironmentConfiguration) {
+        applicationEnvironmentConfiguration = configuration
+    }
+
     fun useConfigurators(vararg environmentConfigurators: Constructor<AbstractEnvironmentConfigurator>) {
         this.environmentConfigurators += environmentConfigurators
     }
@@ -198,7 +206,9 @@ class TestConfigurationBuilder {
     }
 
     @TestInfrastructureInternals
-    fun useCustomCompilerConfigurationProvider(provider: (TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider) {
+    fun useCustomCompilerConfigurationProvider(
+        provider: (TestServices, Disposable, KotlinCoreApplicationEnvironmentConfiguration, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider,
+    ) {
         compilerConfigurationProvider = provider
     }
 
@@ -247,6 +257,7 @@ class TestConfigurationBuilder {
             steps,
             sourcePreprocessors,
             additionalMetaInfoProcessors,
+            applicationEnvironmentConfiguration,
             environmentConfigurators,
             additionalSourceProviders,
             preAnalysisHandlers,
@@ -303,7 +314,7 @@ class TestConfigurationBuilder {
         val additionalServices: List<ServiceRegistrationData>
             get() = builder.additionalServices
 
-        val compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?
+        val compilerConfigurationProvider: ((TestServices, Disposable, KotlinCoreApplicationEnvironmentConfiguration, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?
             get() = builder.compilerConfigurationProvider
         val runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>
             get() = builder.runtimeClasspathProviders

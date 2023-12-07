@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.messages.IrMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
@@ -39,6 +40,7 @@ import java.io.File
 
 abstract class CompilerConfigurationProvider(val testServices: TestServices) : TestService {
     abstract val testRootDisposable: Disposable
+    abstract val applicationEnvironmentConfiguration: KotlinCoreApplicationEnvironmentConfiguration
     abstract val configurators: List<AbstractEnvironmentConfigurator>
 
     protected abstract fun getKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment
@@ -78,6 +80,7 @@ val TestServices.compilerConfigurationProvider: CompilerConfigurationProvider by
 open class CompilerConfigurationProviderImpl(
     testServices: TestServices,
     override val testRootDisposable: Disposable,
+    override val applicationEnvironmentConfiguration: KotlinCoreApplicationEnvironmentConfiguration,
     override val configurators: List<AbstractEnvironmentConfigurator>
 ) : CompilerConfigurationProvider(testServices) {
     private val cache: MutableMap<TestModule, KotlinCoreEnvironment> = mutableMapOf()
@@ -92,9 +95,10 @@ open class CompilerConfigurationProviderImpl(
     protected open fun createKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
         val platform = module.targetPlatform
         val configFiles = platform.platformToEnvironmentConfigFiles()
-        val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
+        val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(
             testRootDisposable,
-            CompilerConfiguration()
+            CompilerConfiguration(),
+            applicationEnvironmentConfiguration,
         )
         val configuration = createCompilerConfiguration(module, configurators)
         val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
