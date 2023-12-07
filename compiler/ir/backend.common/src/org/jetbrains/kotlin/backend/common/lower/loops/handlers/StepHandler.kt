@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.addArgument
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -281,18 +278,22 @@ internal class StepHandler(
     private fun DeclarationIrBuilder.convertToLastInclusiveIfPossible(headerInfo: ProgressionHeaderInfo): ProgressionHeaderInfo? {
         val originalLast = headerInfo.last as? IrConst<*> ?: return null
 
-        if (originalLast.type.isInt() && Int.MIN_VALUE == originalLast.value
-            || originalLast.type.isUInt() && UInt.MIN_VALUE.toInt() == originalLast.value
-            || originalLast.type.isShort() && Short.MIN_VALUE == originalLast.value
-            || originalLast.type.isUShort() && UShort.MIN_VALUE.toShort() == originalLast.value
-            || originalLast.type.isByte() && Byte.MIN_VALUE == originalLast.value
-            || originalLast.type.isUByte() && UByte.MIN_VALUE.toByte() == originalLast.value
-            || originalLast.type.isLong() && Long.MIN_VALUE == originalLast.value
-            || originalLast.type.isULong() && ULong.MIN_VALUE.toLong() == originalLast.value
-            || originalLast.type.isChar() && Char.MIN_VALUE == originalLast.value
-        ) {
-            return null
+        val value = originalLast.value
+        val type = originalLast.type
+        val isMinValue = when (originalLast.kind) {
+            IrConstKind.Byte ->
+                value == Byte.MIN_VALUE && type.isByte() || value == UByte.MIN_VALUE.toByte() && type.isUByte()
+            IrConstKind.Int ->
+                value == Int.MIN_VALUE && type.isInt() || value == UInt.MIN_VALUE.toInt() && type.isUInt()
+            IrConstKind.Long ->
+                value == Long.MIN_VALUE && type.isLong() || value == ULong.MIN_VALUE.toLong() && type.isULong()
+            IrConstKind.Short ->
+                value == Short.MIN_VALUE && type.isShort() || value == UShort.MIN_VALUE.toShort() && type.isUShort()
+            IrConstKind.Char ->
+                value == Char.MIN_VALUE && type.isChar()
+            else -> false
         }
+        if (isMinValue) return null
 
         val lastInclusive =
             callGetProgressionLastElementIfNecessary(
