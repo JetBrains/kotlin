@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -332,22 +331,21 @@ internal class TestProcessor (val context: Context) {
     private fun buildObjectGetter(objectSymbol: IrClassSymbol,
                                   owner: IrClass,
                                   getterName: Name): IrSimpleFunction =
-        IrFunctionImpl(
-                owner.startOffset, owner.endOffset,
+        context.irFactory.createSimpleFunction(
+                owner.startOffset,
+                owner.endOffset,
                 TEST_SUITE_GENERATED_MEMBER,
-                IrSimpleFunctionSymbolImpl(),
                 getterName,
                 DescriptorVisibilities.PROTECTED,
-                Modality.FINAL,
-                objectSymbol.starProjectedType,
                 isInline = false,
-                isExternal = false,
+                isExpect = false,
+                objectSymbol.starProjectedType,
+                Modality.FINAL,
+                IrSimpleFunctionSymbolImpl(),
                 isTailrec = false,
                 isSuspend = false,
-                isExpect = false,
-                isFakeOverride = false,
                 isOperator = false,
-                isInfix = false
+                isInfix = false,
         ).apply {
             parent = owner
 
@@ -370,22 +368,21 @@ internal class TestProcessor (val context: Context) {
     private fun buildInstanceGetter(classSymbol: IrClassSymbol,
                                     owner: IrClass,
                                     getterName: Name): IrSimpleFunction =
-        IrFunctionImpl(
-                owner.startOffset, owner.endOffset,
+        context.irFactory.createSimpleFunction(
+                owner.startOffset,
+                owner.endOffset,
                 TEST_SUITE_GENERATED_MEMBER,
-                IrSimpleFunctionSymbolImpl(),
                 getterName,
                 DescriptorVisibilities.PROTECTED,
-                Modality.FINAL,
-                classSymbol.starProjectedType,
                 isInline = false,
-                isExternal = false,
+                isExpect = false,
+                classSymbol.starProjectedType,
+                Modality.FINAL,
+                IrSimpleFunctionSymbolImpl(),
                 isTailrec = false,
                 isSuspend = false,
-                isExpect = false,
-                isFakeOverride = false,
                 isOperator = false,
-                isInfix = false
+                isInfix = false,
         ).apply {
             parent = owner
 

@@ -12,14 +12,17 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -188,9 +191,23 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
     ): IrSimpleFunction {
         val functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction = {
             with(descriptor) {
-                IrFunctionImpl(
-                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin, it, name, visibility, modality, returnType,
-                    isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride
+                symbolTable.irFactory.createSimpleFunction(
+                        SYNTHETIC_OFFSET,
+                        SYNTHETIC_OFFSET,
+                        origin,
+                        name,
+                        visibility,
+                        isInline,
+                        isExpect,
+                        returnType,
+                        modality,
+                        it,
+                        isTailrec,
+                        isSuspend,
+                        isOperator,
+                        isInfix,
+                        isExternal,
+                        isFakeOverride = isFakeOverride,
                 )
             }
         }
@@ -329,10 +346,23 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
             val functionDeclare = { s: IrSimpleFunctionSymbol ->
                 descriptor.run {
-                    IrFunctionImpl(
-                            offset, offset, memberOrigin, s, name, visibility, modality, returnType,
-                            isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
-                            isFakeOverride = true
+                    symbolTable.irFactory.createSimpleFunction(
+                            offset,
+                            offset,
+                            memberOrigin,
+                            name,
+                            visibility,
+                            isInline,
+                            isExpect,
+                            returnType,
+                            modality,
+                            s,
+                            isTailrec,
+                            isSuspend,
+                            isOperator,
+                            isInfix,
+                            isExternal,
+                            isFakeOverride = true,
                     )
                 }
             }

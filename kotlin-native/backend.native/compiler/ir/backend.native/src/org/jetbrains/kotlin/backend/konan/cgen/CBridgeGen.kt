@@ -3,10 +3,11 @@ package org.jetbrains.kotlin.backend.konan.cgen
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.InteropFqNames
+import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.ir.util.getAnnotationArgumentValue
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -18,7 +19,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -573,23 +575,22 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
         cFunctionName: String,
         isObjCMethod: Boolean
 ): IrSimpleFunction {
-    val bridge = IrFunctionImpl(
+    val bridge = irBuiltIns.irFactory.createSimpleFunction(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             IrDeclarationOrigin.DEFINED,
-            IrSimpleFunctionSymbolImpl(),
             Name.identifier(cFunctionName),
             DescriptorVisibilities.PRIVATE,
-            Modality.FINAL,
-            signature.returnType,
             isInline = false,
-            isExternal = true,
+            isExpect = false,
+            signature.returnType,
+            Modality.FINAL,
+            IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
             isSuspend = false,
-            isExpect = false,
-            isFakeOverride = false,
             isOperator = false,
-            isInfix = false
+            isInfix = false,
+            isExternal = true,
     )
 
     bridge.annotations += buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -1186,15 +1187,21 @@ private class ObjCBlockPointerValuePassing(
         val overriddenInvokeMethod = (functionType.classifier.owner as IrClass).simpleFunctions()
                 .single { it.name == OperatorNameConventions.INVOKE }
 
-        val invokeMethod = IrFunctionImpl(
-                startOffset, endOffset,
+        val invokeMethod = context.irFactory.createSimpleFunction(
+                startOffset,
+                endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
-                IrSimpleFunctionSymbolImpl(),
                 overriddenInvokeMethod.name,
-                DescriptorVisibilities.PUBLIC, Modality.FINAL,
+                DescriptorVisibilities.PUBLIC,
+                isInline = false,
+                isExpect = false,
                 returnType = functionType.arguments.last().typeOrNull!!,
-                isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false,
-                isFakeOverride = false, isOperator = false, isInfix = false
+                Modality.FINAL,
+                IrSimpleFunctionSymbolImpl(),
+                isTailrec = false,
+                isSuspend = false,
+                isOperator = false,
+                isInfix = false,
         )
         invokeMethod.overriddenSymbols += overriddenInvokeMethod.symbol
         irClass.addChild(invokeMethod)

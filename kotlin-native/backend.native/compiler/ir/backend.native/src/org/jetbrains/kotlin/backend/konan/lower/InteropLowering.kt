@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.ir.util.inlineFunction
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
@@ -15,7 +14,10 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
+import org.jetbrains.kotlin.backend.konan.ir.isFromInteropLibrary
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -27,13 +29,10 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.objcinterop.*
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -271,22 +270,21 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
 
         // Generate `override fun init...(...) = this.initBy(...)`:
 
-        return IrFunctionImpl(
-                constructor.startOffset, constructor.endOffset,
+        return context.irFactory.createSimpleFunction(
+                constructor.startOffset,
+                constructor.endOffset,
                 OVERRIDING_INITIALIZER_BY_CONSTRUCTOR,
-                IrSimpleFunctionSymbolImpl(),
                 initMethod.name,
                 DescriptorVisibilities.PUBLIC,
-                Modality.OPEN,
-                irClass.defaultType,
                 isInline = false,
-                isExternal = false,
+                isExpect = false,
+                irClass.defaultType,
+                Modality.OPEN,
+                IrSimpleFunctionSymbolImpl(),
                 isTailrec = false,
                 isSuspend = false,
-                isExpect = false,
-                isFakeOverride = false,
                 isOperator = false,
-                isInfix = false
+                isInfix = false,
         ).also { result ->
             result.parent = irClass
             result.createDispatchReceiverParameter()
@@ -369,24 +367,23 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
         function.valueParameters.mapTo(parameterTypes) { nativePtrType }
 
         val newFunction =
-            IrFunctionImpl(
-                    function.startOffset, function.endOffset,
+            context.irFactory.createSimpleFunction(
+                    function.startOffset,
+                    function.endOffset,
                     // The generated function is called by ObjC and contains Kotlin code, so
                     // it must switch thread state and potentially initialize runtime on this thread.
                     CBridgeOrigin.C_TO_KOTLIN_BRIDGE,
-                    IrSimpleFunctionSymbolImpl(),
                     ("imp:$selector").synthesizedName,
                     DescriptorVisibilities.PRIVATE,
-                    Modality.FINAL,
-                    function.returnType,
                     isInline = false,
-                    isExternal = false,
+                    isExpect = false,
+                    function.returnType,
+                    Modality.FINAL,
+                    IrSimpleFunctionSymbolImpl(),
                     isTailrec = false,
                     isSuspend = false,
-                    isExpect = false,
-                    isFakeOverride = false,
                     isOperator = false,
-                    isInfix = false
+                    isInfix = false,
             )
 
         newFunction.valueParameters += parameterTypes.mapIndexed { index, type ->

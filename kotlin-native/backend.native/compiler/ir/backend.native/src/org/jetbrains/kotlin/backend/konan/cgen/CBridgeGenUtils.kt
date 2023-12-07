@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -112,23 +112,23 @@ private fun createKotlinBridge(
         foreignExceptionMode: ForeignExceptionMode.Mode,
         origin: IrDeclarationOrigin
 ): IrFunction {
-    val bridge = IrFunctionImpl(
+    val bridge = stubs.irBuiltIns.irFactory.createSimpleFunction(
             startOffset,
             endOffset,
             origin,
-            IrSimpleFunctionSymbolImpl(),
             Name.identifier(cBridgeName),
             DescriptorVisibilities.PRIVATE,
-            Modality.FINAL,
-            IrUninitializedType,
             isInline = false,
-            isExternal = isExternal,
+            isExpect = false,
+            IrUninitializedType,
+            Modality.FINAL,
+            IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
             isSuspend = false,
-            isExpect = false,
-            isFakeOverride = false,
             isOperator = false,
-            isInfix = false
+            isInfix = false,
+            isExternal = isExternal,
+            isFakeOverride = false,
     )
     if (isExternal) {
         bridge.annotations += buildSimpleAnnotation(stubs.irBuiltIns, startOffset, endOffset,

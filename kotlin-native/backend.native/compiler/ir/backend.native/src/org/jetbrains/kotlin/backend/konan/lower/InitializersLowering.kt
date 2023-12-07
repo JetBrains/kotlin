@@ -7,20 +7,15 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.isPrimitiveType
-import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -109,22 +104,21 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
             val initializeFun =
-                IrFunctionImpl(
-                        startOffset, endOffset,
+                context.irFactory.createSimpleFunction(
+                        startOffset,
+                        endOffset,
                         DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER,
-                        IrSimpleFunctionSymbolImpl(),
                         "INITIALIZER".synthesizedName,
                         DescriptorVisibilities.PRIVATE,
-                        Modality.FINAL,
-                        context.irBuiltIns.unitType,
                         isInline = false,
-                        isSuspend = false,
-                        isExternal = false,
-                        isTailrec = false,
                         isExpect = false,
-                        isFakeOverride = false,
+                        context.irBuiltIns.unitType,
+                        Modality.FINAL,
+                        IrSimpleFunctionSymbolImpl(),
+                        isTailrec = false,
+                        isSuspend = false,
                         isOperator = false,
-                        isInfix = false
+                        isInfix = false,
                 ).apply {
                     parent = irClass
                     irClass.declarations.add(this)

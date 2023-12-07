@@ -5,18 +5,19 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSuspendableExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSuspensionPointImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictedSuspendFunction
-import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictsSuspensionReceiver
 
 internal class NativeSuspendFunctionsLowering(
         generationState: NativeGenerationState
@@ -457,42 +457,40 @@ internal class NativeSuspendFunctionsLowering(
 
     // These are marker functions to split up the lowering on two parts.
     private val saveState =
-        IrFunctionImpl(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+        context.irFactory.createSimpleFunction(
+                SYNTHETIC_OFFSET,
+                SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.DEFINED,
-                IrSimpleFunctionSymbolImpl(),
                 "saveState".synthesizedName,
                 DescriptorVisibilities.PRIVATE,
-                Modality.ABSTRACT,
-                context.irBuiltIns.unitType,
                 isInline = false,
-                isExternal = false,
+                isExpect = false,
+                context.irBuiltIns.unitType,
+                Modality.ABSTRACT,
+                IrSimpleFunctionSymbolImpl(),
                 isTailrec = false,
                 isSuspend = false,
-                isExpect = false,
-                isFakeOverride = false,
                 isOperator = false,
-                isInfix = false
+                isInfix = false,
         )
 
     private val restoreState =
-        IrFunctionImpl(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                IrDeclarationOrigin.DEFINED,
-                IrSimpleFunctionSymbolImpl(),
-                "restoreState".synthesizedName,
-                DescriptorVisibilities.PRIVATE,
-                Modality.ABSTRACT,
-                context.irBuiltIns.unitType,
-                isInline = false,
-                isExternal = false,
-                isTailrec = false,
-                isSuspend = false,
-                isExpect = false,
-                isFakeOverride = false,
-                isOperator = false,
-                isInfix = false
-        )
+            context.irFactory.createSimpleFunction(
+                    SYNTHETIC_OFFSET,
+                    SYNTHETIC_OFFSET,
+                    IrDeclarationOrigin.DEFINED,
+                    "restoreState".synthesizedName,
+                    DescriptorVisibilities.PRIVATE,
+                    isInline = false,
+                    isExpect = false,
+                    context.irBuiltIns.unitType,
+                    Modality.ABSTRACT,
+                    IrSimpleFunctionSymbolImpl(),
+                    isTailrec = false,
+                    isSuspend = false,
+                    isOperator = false,
+                    isInfix = false,
+            )
 
     private fun IrBuilderWithScope.irVar(name: Name, type: IrType,
                                          isMutable: Boolean = false,
