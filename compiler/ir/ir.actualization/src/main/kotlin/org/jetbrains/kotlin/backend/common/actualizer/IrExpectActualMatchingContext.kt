@@ -271,7 +271,11 @@ internal abstract class IrExpectActualMatchingContext(
         get() = (asIr().parent as? IrClass)?.defaultType
 
     override val CallableSymbolMarker.extensionReceiverType: IrType?
-        get() = safeAsIr<IrFunction>()?.extensionReceiverParameter?.type
+        get() = when (this) {
+            is IrFunctionSymbol -> owner.extensionReceiverParameter?.type
+            is IrPropertySymbol -> owner.getter?.extensionReceiverParameter?.type
+            else -> null
+        }
 
     override val CallableSymbolMarker.extensionReceiverTypeRef: TypeRefMarker?
         get() = extensionReceiverType

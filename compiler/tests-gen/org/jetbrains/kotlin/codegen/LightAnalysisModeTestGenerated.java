@@ -29649,6 +29649,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/multiplatform/k2/actualInnerClassesFirMemberMapping.kt");
             }
 
+            @TestMetadata("extensionPropertiesOverloads.kt")
+            public void ignoreExtensionPropertiesOverloads() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/extensionPropertiesOverloads.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
             }

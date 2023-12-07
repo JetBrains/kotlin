@@ -2,9 +2,6 @@
 // IGNORE_NATIVE_K1: mode=ONE_STAGE_MULTI_MODULE
 // !LANGUAGE: +MultiPlatformProjects
 
-// Ignore until KT-62926 is fixed
-// IGNORE_BACKEND_K2: ANY
-
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: commonMain.kt

@@ -27667,6 +27667,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 }
 
                 @Test
+                @TestMetadata("extensionPropertiesOverloads.kt")
+                public void testExtensionPropertiesOverloads() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/extensionPropertiesOverloads.kt");
+                }
+
+                @Test
                 @TestMetadata("internalOverride.kt")
                 public void testInternalOverride() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/internalOverride.kt");
