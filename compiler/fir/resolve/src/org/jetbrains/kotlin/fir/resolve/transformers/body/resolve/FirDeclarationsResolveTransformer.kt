@@ -494,11 +494,6 @@ open class FirDeclarationsResolveTransformer(
 
         val candidateSystem = candidate.system
         val candidateStorage = candidateSystem.currentStorage()
-        val allTypeVariables = candidateStorage.allTypeVariables.keys.toList()
-        // Subset of type variables obtained from the `provideDelegate` call
-        val typeVariablesRelatedToProvideDelegate =
-            allTypeVariables.subList(candidateStorage.outerSystemVariablesPrefixSize, allTypeVariables.size).toSet()
-
         val variableWithConstraints =
             candidateSystem.notFixedTypeVariables[typeVariable] ?: error("Not found type variable $typeVariable")
 
@@ -507,7 +502,7 @@ open class FirDeclarationsResolveTransformer(
         // Temporary declare all the "outer" variables as proper (i.e., all inner variables as improper)
         // Without that, all variables (both inner and outer ones) would be considered as improper,
         // while we want to fix to assume `Delegate<Tv>` as proper because `Tv` belongs to the outer system
-        candidateSystem.withTypeVariablesThatAreNotCountedAsProperTypes(typeVariablesRelatedToProvideDelegate) {
+        candidateSystem.withTypeVariablesThatAreCountedAsProperTypes(candidateSystem.outerTypeVariables.orEmpty()) {
             // TODO: reconsider the approach here (KT-61781 for tracking)
             // Actually, this code might fail with an exception in some rare cases (see KT-61781)
             // The problem is that in the issue example, when fixing T type variable, it has two upper bounds: X and Delegate<Y>
@@ -519,7 +514,7 @@ open class FirDeclarationsResolveTransformer(
             // it seems like they do something relevant.
             resultType = inferenceComponents.resultTypeResolver.findResultTypeOrNull(
                 candidateSystem, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-            ) as? ConeKotlinType ?: return@withTypeVariablesThatAreNotCountedAsProperTypes
+            ) as? ConeKotlinType ?: return@withTypeVariablesThatAreCountedAsProperTypes
 
 
             check(!candidateStorage.hasContradiction) { "We only should try fixing variables on successful provideDelegate candidate" }
