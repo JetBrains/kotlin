@@ -297,7 +297,8 @@ fun compileSwift(
     val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
 
     val args = listOf("-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget) +
-            options + "-o" + output.toString() + sources
+            options + "-o" + output.toString() + sources +
+            listOf("-Xlinker", "-adhoc_codesign") // Linker doesn't do adhoc codesigning for tvOS arm64 simulator by default.
 
     val (stdOut, stdErr, exitCode) = runProcess(
             executor = localExecutor(project), executable = compiler, args = args,
