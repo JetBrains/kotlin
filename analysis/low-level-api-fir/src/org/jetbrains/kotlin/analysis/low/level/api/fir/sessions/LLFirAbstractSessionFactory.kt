@@ -609,6 +609,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             }
         }
 
+        // Please update KmpModuleSorterTest#buildDependenciesToTest if the logic of collecting dependencies changes
         val dependencyModules = buildSet {
             addAll(module.directRegularDependencies)
 
