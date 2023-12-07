@@ -28,7 +28,9 @@ enum class LoggingTag(val ord: Int) {
     TLS(4),
     Pause(5),
     Alloc(6),
-    Balancing(7);
+    Balancing(7),
+    Barriers(8),
+    ;
 
     companion object {
         fun parse(str: String) = entries.firstOrNull {

@@ -27,7 +27,10 @@ struct HeapObjHeader {
 
     static HeapObjHeader& from(gc::GC::ObjectData& objectData) noexcept { return *descriptor().fromField<0>(&objectData); }
 
-    static HeapObjHeader& from(ObjHeader* object) noexcept { return *descriptor().fromField<1>(object); }
+    static HeapObjHeader& from(ObjHeader* object) noexcept {
+        RuntimeAssert(object->heap(), "Object %p does not reside in the heap", object);
+        return *descriptor().fromField<1>(object);
+    }
 
     gc::GC::ObjectData& objectData() noexcept { return *descriptor().field<0>(this).second; }
 

@@ -11,7 +11,7 @@
 
 #include "ExtraObjectData.hpp"
 #include "GCScheduler.hpp"
-#include "Memory.h"
+#include "ReferenceOps.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -83,8 +83,10 @@ private:
     std::unique_ptr<Impl> impl_;
 };
 
+void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept;
+OBJ_GETTER(weakRefReadBarrier, std::atomic<ObjHeader*>& weakReferee) noexcept;
+
 bool isMarked(ObjHeader* object) noexcept;
-OBJ_GETTER(tryRef, std::atomic<ObjHeader*>& object) noexcept;
 
 // This will drop the mark bit if it was set and return `true`.
 // If the mark bit was unset, this will return `false`.

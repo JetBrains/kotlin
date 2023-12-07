@@ -8,17 +8,20 @@
 #include "Memory.h"
 #include "std_support/AtomicRef.hpp"
 
-// Concurrent GC may cause conflicting unordered accesses to references in heap.
-// C++ memory model declares that accesses have data race unless they are atomic.
-// Thus TSAN would report such non-atomic accesses.
-// TODO find out if compiler may take advantage of the theoretical UB here.
+#if __has_feature(thread_sanitizer)
+#include <sanitizer/tsan_interface.h>
+#endif
+
+// C++ memory model is in some sence stricter than the memmory model of real target CPUs.
+// For example all the ptr-sized memory accesses on intel x86 and arm CPUs are atomic.
+// Another case is the release-consume memory ordering, which can be achieved without additional memory fences on consume.
 //
-// However, in practice all the ptr-sized loads and stores are atomic on CPU-level
-// even if they are not std::atomic.
-// And as far as we aware,
-// std::atomic operations are not optimized by LLVM even if they have relaxed memory order.
-// So we don't want to compile every heap reference access into std::atomic access.
-#define ALWAYS_ATOMIC_REFS __has_feature(thread_sanitizer)
+// However, LLVM often fails to properly optimize atomic operations.
+// So we have to allow some imeplementation-defined UB here.
+//
+// Under this flag all tha operations with references in the kotlin heap
+// are implemented in complete complience with C++ memory model.
+#define STRICT_ATOMICS_IN_HEAP __has_feature(thread_sanitizer)
 
 namespace kotlin::mm {
 
@@ -46,15 +49,22 @@ public:
     ALWAYS_INLINE ObjHeader* operator=(ObjHeader* desired) noexcept { store(desired); return desired; }
 
     ALWAYS_INLINE ObjHeader* load() const noexcept {
-#if ALWAYS_ATOMIC_REFS
-        return loadAtomic(std::memory_order_relaxed);
+#if STRICT_ATOMICS_IN_HEAP
+        // Consume stores in the object, that were released on the object's allocation
+        // See `ObjectOps.cpp`
+        auto loaded = loadAtomic(std::memory_order_consume);
+#if __has_feature(thread_sanitizer)
+        // The stores were released by an atomic_thread_fence, TSAN doesn't support fences.
+        __tsan_acquire(loaded);
+#endif
+        return loaded;
 #else
         return ref_;
 #endif
     }
 
     ALWAYS_INLINE void store(ObjHeader* desired) noexcept {
-#if ALWAYS_ATOMIC_REFS
+#if STRICT_ATOMICS_IN_HEAP
         storeAtomic(desired, std::memory_order_relaxed);
 #else
         ref_ = desired;
@@ -200,6 +210,6 @@ private:
     ObjHeader* value_ = nullptr;
 };
 
-OBJ_GETTER(weakRefReadBarrier, std::atomic<ObjHeader*>& referee) noexcept;
+OBJ_GETTER(weakRefReadBarrier, std::atomic<ObjHeader*>& weakReferee) noexcept;
 
 }
