@@ -306,7 +306,6 @@ class FirBuilderInferenceSession(
 
         if (substitutedA == a && substitutedB == b) return this
 
-        // TODO(KT-64033): Missing check for ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound language feature
         val isInferringIntoUpperBoundsForbidden = session.languageVersionSettings.supportsFeature(
             LanguageFeature.ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
         )

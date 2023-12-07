@@ -53,7 +53,7 @@ fun <R> b(lambda: R.(List<R>) -> Unit) {}
 fun test5() {
 
     operator fun <T> T.invoke(): T = this
-    b {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>b<!> {
         <!BUILDER_INFERENCE_STUB_RECEIVER!>extension()<!>
         <!BUILDER_INFERENCE_STUB_RECEIVER!><!BUILDER_INFERENCE_STUB_RECEIVER!>this()<!>.extension()<!>
         <!BUILDER_INFERENCE_STUB_RECEIVER!>use(<!BUILDER_INFERENCE_STUB_RECEIVER!>::extension<!>)<!>
@@ -63,7 +63,7 @@ fun test5() {
 val <T> T.genericLambda: T.((T) -> Unit) -> Unit get() = {}
 
 fun test6() {
-    b {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>b<!> {
         <!BUILDER_INFERENCE_STUB_RECEIVER!>extension()<!>
         <!BUILDER_INFERENCE_STUB_RECEIVER!>genericLambda { }<!>
         <!BUILDER_INFERENCE_STUB_RECEIVER!>genericLambda { it.extension() }<!>

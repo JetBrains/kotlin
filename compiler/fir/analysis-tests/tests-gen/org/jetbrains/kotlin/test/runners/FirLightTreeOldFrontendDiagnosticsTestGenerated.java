@@ -39465,6 +39465,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("buildToCustomUpperBoundForbidden.kt")
+            public void testBuildToCustomUpperBoundForbidden() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildToCustomUpperBoundForbidden.kt");
+            }
+
+            @Test
+            @TestMetadata("buildToDefaultUpperBoundForbidden.kt")
+            public void testBuildToDefaultUpperBoundForbidden() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildToDefaultUpperBoundForbidden.kt");
+            }
+
+            @Test
             @TestMetadata("completeIrrelevantCalls.kt")
             public void testCompleteIrrelevantCalls() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/completeIrrelevantCalls.kt");
