@@ -2347,6 +2347,12 @@ public class FirLightTreeBytecodeTextTestGenerated extends AbstractFirLightTreeB
         }
 
         @Test
+        @TestMetadata("multipleConstructorsOnly.kt")
+        public void testMultipleConstructorsOnly() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/multipleConstructorsOnly.kt");
+        }
+
+        @Test
         @TestMetadata("multipleExtensionReceivers.kt")
         public void testMultipleExtensionReceivers() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/multipleExtensionReceivers.kt");
