@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrEnumEntryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -1091,10 +1090,12 @@ class JvmSymbols(
             annotationClass.addConstructor { isPrimary = true }
 
         private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry {
-            return IrEnumEntryImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
+            return context.irFactory.createEnumEntry(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
+                Name.identifier(entryName),
                 IrEnumEntrySymbolImpl(),
-                Name.identifier(entryName)
             ).apply {
                 parent = enumClass
                 enumClass.addChild(this)
