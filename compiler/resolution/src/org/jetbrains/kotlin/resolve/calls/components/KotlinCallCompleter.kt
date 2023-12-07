@@ -79,10 +79,11 @@ class KotlinCallCompleter(
                     )
                 }
             }
-            ConstraintSystemCompletionMode.PARTIAL, ConstraintSystemCompletionMode.ONLY_LAMBDAS, ConstraintSystemCompletionMode.PARTIAL_BI -> {
+            ConstraintSystemCompletionMode.PARTIAL, ConstraintSystemCompletionMode.PARTIAL_PCLA -> {
                 candidate.runCompletion(completionMode, diagnosticHolder, resolutionCallbacks)
                 candidate.asCallResolutionResult(completionMode, diagnosticHolder)
             }
+            ConstraintSystemCompletionMode.PARTIAL_PCLA -> error("PCLA might be only run for K2")
             ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA -> throw IllegalStateException("Should not be here")
 
         }

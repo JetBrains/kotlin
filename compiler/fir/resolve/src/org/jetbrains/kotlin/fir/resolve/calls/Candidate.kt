@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.util.CodeFragmentAdjustment
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Candidate(
     symbol: FirBasedSymbol<*>,
@@ -73,8 +74,8 @@ class Candidate(
     val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
         val system = constraintSystemFactory.createConstraintSystem()
 
-        val outerCs = inferenceSession.outerCSForCandidate(this)
-        if (outerCs != null && !baseSystem.usesOuterCs) {
+        val outerCs = runUnless(baseSystem.usesOuterCs) { inferenceSession.outerCSForCandidate(this) }
+        if (outerCs != null) {
             system.addOuterSystem(outerCs)
             system.addOtherSystem(baseSystem)
         } else {
