@@ -30,6 +30,63 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         )
     )
 
+    @DisplayName("KT-63742: Check that kotlinNativeLink task passes all required args for cache orchestration and ic")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4) // DefaultResolvedComponentResult is supported after 7.4 only
+    @GradleTest
+    fun checkArgumentsForIncrementalCache(gradleVersion: GradleVersion) {
+        nativeProject("native-incremental-simple", gradleVersion) {
+
+            val compilerCacheOrchestrationArgs = arrayOf(
+                "-Xauto-cache-from=${getGradleUserHome()}",
+                "-Xbackend-threads=4"
+            )
+
+            val incrementalCacheArgs = arrayOf(
+                "-Xenable-incremental-compilation",
+                "-Xic-cache-dir=${projectPath.resolve("build").resolve("kotlin-native-ic-cache").toFile().canonicalPath}"
+            )
+
+            // disabled incremental cache parameter
+            val withoutIncrementalCacheBuildOptions = defaultBuildOptions.copy(
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    incremental = false
+                )
+            )
+            build("linkDebugExecutableHost", buildOptions = withoutIncrementalCacheBuildOptions) {
+                extractNativeTasksCommandLineArgumentsFromOutput(":linkDebugExecutableHost") {
+                    assertCommandLineArgumentsContain(*compilerCacheOrchestrationArgs)
+                    assertCommandLineArgumentsDoNotContain(*incrementalCacheArgs)
+                }
+            }
+
+
+            // enabled incremental cache parameter
+            val withIncrementalCacheBuildOptions = defaultBuildOptions.copy(
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    incremental = true
+                )
+            )
+            build("clean", "linkDebugExecutableHost", buildOptions = withIncrementalCacheBuildOptions) {
+                extractNativeTasksCommandLineArgumentsFromOutput(":linkDebugExecutableHost") {
+                    assertCommandLineArgumentsContain(*(compilerCacheOrchestrationArgs + incrementalCacheArgs))
+                }
+            }
+
+            // enabled incremental cache and configuration cache parameters
+            val withIncrementalCacheAndConfigurationCacheBuildOptions = defaultBuildOptions.copy(
+                configurationCache = true,
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    incremental = true
+                )
+            )
+            build("clean", "linkDebugExecutableHost", buildOptions = withIncrementalCacheAndConfigurationCacheBuildOptions) {
+                extractNativeTasksCommandLineArgumentsFromOutput(":linkDebugExecutableHost") {
+                    assertCommandLineArgumentsContain(*(compilerCacheOrchestrationArgs + incrementalCacheArgs))
+                }
+            }
+        }
+    }
+
     @DisplayName("Smoke test")
     @GradleTest
     fun checkIncrementalCacheIsCreated(gradleVersion: GradleVersion) {

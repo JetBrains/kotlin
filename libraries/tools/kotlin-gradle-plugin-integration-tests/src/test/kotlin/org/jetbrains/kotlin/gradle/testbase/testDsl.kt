@@ -222,6 +222,10 @@ fun TestProject.buildAndFail(
 
 }
 
+fun getGradleUserHome(): File {
+    return testKitDir.toAbsolutePath().toFile().canonicalFile
+}
+
 private fun BuildResult.additionalAssertions(buildOptions: BuildOptions) {
     if (buildOptions.warningMode != WarningMode.Fail) {
         assertDeprecationWarningsArePresent(buildOptions.warningMode)
@@ -251,7 +255,7 @@ internal inline fun <reified T> TestProject.getModels(
 
     val connector = GradleConnector
         .newConnector()
-        .useGradleUserHomeDir(testKitDir.toAbsolutePath().toFile())
+        .useGradleUserHomeDir(getGradleUserHome())
         .useGradleVersion(gradleVersion.version)
         .forProjectDirectory(projectPath.toAbsolutePath().toFile())
 
