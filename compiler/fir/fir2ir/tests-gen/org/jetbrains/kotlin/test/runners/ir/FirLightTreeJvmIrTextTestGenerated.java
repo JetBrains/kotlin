@@ -1032,45 +1032,45 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
             }
 
             @Test
-            @TestMetadata("expectClassInherited.kt")
-            public void testExpectClassInherited() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectClassInherited.kt");
+            @TestMetadata("K1_expectClassInherited.kt")
+            public void testK1_expectClassInherited() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/K1_expectClassInherited.kt");
             }
 
             @Test
-            @TestMetadata("expectIntersectionOverride.kt")
-            public void testExpectIntersectionOverride() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectIntersectionOverride.kt");
+            @TestMetadata("K1_expectMemberInNotExpectClass.kt")
+            public void testK1_expectMemberInNotExpectClass() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/K1_expectMemberInNotExpectClass.kt");
             }
 
             @Test
-            @TestMetadata("expectMemberInNotExpectClass.kt")
-            public void testExpectMemberInNotExpectClass() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectMemberInNotExpectClass.kt");
+            @TestMetadata("K1_expectedEnumClass.kt")
+            public void testK1_expectedEnumClass() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/K1_expectedEnumClass.kt");
             }
 
             @Test
-            @TestMetadata("expectMemberInNotExpectClassFir.kt")
-            public void testExpectMemberInNotExpectClassFir() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectMemberInNotExpectClassFir.kt");
+            @TestMetadata("K1_expectedSealedClass.kt")
+            public void testK1_expectedSealedClass() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/K1_expectedSealedClass.kt");
             }
 
             @Test
-            @TestMetadata("expectedEnumClass.kt")
-            public void testExpectedEnumClass() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectedEnumClass.kt");
+            @TestMetadata("K2_expectIntersectionOverride.kt")
+            public void testK2_expectIntersectionOverride() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/K2_expectIntersectionOverride.kt");
             }
 
             @Test
-            @TestMetadata("expectedEnumClass2.kt")
-            public void testExpectedEnumClass2() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectedEnumClass2.kt");
+            @TestMetadata("K2_expectMemberInNotExpectClass.kt")
+            public void testK2_expectMemberInNotExpectClass() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/K2_expectMemberInNotExpectClass.kt");
             }
 
             @Test
-            @TestMetadata("expectedSealedClass.kt")
-            public void testExpectedSealedClass() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectedSealedClass.kt");
+            @TestMetadata("K2_expectedEnumClass.kt")
+            public void testK2_expectedEnumClass() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/K2_expectedEnumClass.kt");
             }
         }
 
