@@ -53,7 +53,7 @@
     <dependency>
       <groupId>org.jline</groupId>
       <artifactId>jline</artifactId>
-      <version>3.3.1</version>
+      <version>3.24.1</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
