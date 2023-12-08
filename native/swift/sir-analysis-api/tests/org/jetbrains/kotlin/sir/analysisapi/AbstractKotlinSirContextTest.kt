@@ -22,16 +22,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 open class AbstractKotlinSirContextTest : AbstractKotlinSirContextTestBase() {
-
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
-        with(builder) {
-            globalDefaults {
-                targetPlatform = NativePlatforms.unspecifiedNativePlatform
-            }
-        }
-    }
-
     override val configurator: AnalysisApiTestConfigurator
         get() = AnalysisApiFirTestConfiguratorFactory.createConfigurator(
             AnalysisApiTestConfiguratorFactoryData(

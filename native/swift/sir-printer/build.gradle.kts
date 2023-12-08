@@ -23,3 +23,12 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+
+val testDataDir = projectDir.resolve("testData")
+
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    inputs.dir(testDataDir)
+    useJUnitPlatform { }
+}
+
+testsJar()

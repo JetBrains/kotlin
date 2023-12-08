@@ -31,7 +31,10 @@ sourceSets {
     }
 }
 
+val testDataDir = projectDir.resolve("testData")
+
 projectTest(jUnitMode = JUnitMode.JUnit5) {
+    inputs.dir(testDataDir)
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform { }
