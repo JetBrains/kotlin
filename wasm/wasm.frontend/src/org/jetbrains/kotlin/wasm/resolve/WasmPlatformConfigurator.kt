@@ -26,7 +26,6 @@ object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
         JsExternalChecker, WasmExternalInheritanceChecker,
         JsRuntimeAnnotationChecker,
         JsExportAnnotationChecker,
-        JsExportDeclarationChecker,
         WasmExternalDeclarationChecker,
         WasmImportAnnotationChecker,
         WasmJsFunAnnotationChecker,
@@ -51,6 +50,7 @@ object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(ExtensionFunctionToExternalIsInlinable)
         container.useInstance(JsQualifierChecker)
         container.useInstance(WasmDiagnosticSuppressor)
+        container.useInstance(JsExportDeclarationChecker(includeUnsignedNumbers = true))
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

@@ -210,13 +210,19 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     val primitivesToExternRefAdapters: Map<IrType, InteropTypeAdapter> by lazy {
         mapOf(
             builtIns.byteType to adapters.kotlinByteToExternRefAdapter,
+            symbols.uByteType to adapters.kotlinUByteToJsNumber,
             builtIns.shortType to adapters.kotlinShortToExternRefAdapter,
+            symbols.uShortType to adapters.kotlinUShortToJsNumber,
             builtIns.charType to adapters.kotlinCharToExternRefAdapter,
             builtIns.intType to adapters.kotlinIntToExternRefAdapter,
+            symbols.uIntType to adapters.kotlinUIntToJsNumber,
             builtIns.longType to adapters.kotlinLongToExternRefAdapter,
+            symbols.uLongType to adapters.kotlinULongToJsBigInt,
             builtIns.floatType to adapters.kotlinFloatToExternRefAdapter,
             builtIns.doubleType to adapters.kotlinDoubleToExternRefAdapter,
-        ).mapValues { FunctionBasedAdapter(it.value.owner) }
+        ).mapValues {
+            FunctionBasedAdapter(it.value.owner)
+        }
     }
 
     private fun IrType.kotlinToJsAdapterIfNeeded(isReturn: Boolean): InteropTypeAdapter? {
@@ -262,6 +268,11 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             builtIns.booleanType -> return FunctionBasedAdapter(adapters.kotlinBooleanToExternRefAdapter.owner)
             builtIns.anyType -> return FunctionBasedAdapter(adapters.kotlinToJsAnyAdapter.owner)
             builtIns.numberType -> return FunctionBasedAdapter(adapters.numberToDoubleAdapter.owner)
+
+            symbols.uByteType -> return FunctionBasedAdapter(adapters.kotlinUByteToJsNumber.owner)
+            symbols.uShortType -> return FunctionBasedAdapter(adapters.kotlinUShortToJsNumber.owner)
+            symbols.uIntType -> return FunctionBasedAdapter(adapters.kotlinUIntToJsNumber.owner)
+            symbols.uLongType -> return FunctionBasedAdapter(adapters.kotlinULongToJsBigInt.owner)
 
             builtIns.byteType,
             builtIns.shortType,
@@ -320,16 +331,28 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         return SendKotlinObjectToJsAdapter(this)
     }
 
-    private fun createNullableAdapter(notNullType: IrType, isPrimitive: Boolean, valueAdapter: InteropTypeAdapter?): InteropTypeAdapter? {
-        return if (isPrimitive) { //nullable primitive should be checked and adapt to target type
+    private fun createNullableAdapter(
+        notNullType: IrType,
+        isPrimitiveOrUnsigned: Boolean,
+        valueAdapter: InteropTypeAdapter?
+    ): InteropTypeAdapter? {
+        return if (isPrimitiveOrUnsigned) { //nullable primitive should be checked and adapt to target type
             val externRefToPrimitiveAdapter = when (notNullType) {
                 builtIns.floatType -> adapters.externRefToKotlinFloatAdapter.owner
                 builtIns.doubleType -> adapters.externRefToKotlinDoubleAdapter.owner
                 builtIns.longType -> adapters.externRefToKotlinLongAdapter.owner
                 builtIns.booleanType -> adapters.externRefToKotlinBooleanAdapter.owner
+
+                symbols.uByteType -> adapters.externRefToKotlinUByteAdapter.owner
+                symbols.uShortType -> adapters.externRefToKotlinUShortAdapter.owner
+                symbols.uIntType -> adapters.externRefToKotlinUIntAdapter.owner
+                symbols.uLongType -> adapters.externRefToKotlinULongAdapter.owner
+
                 else -> adapters.externRefToKotlinIntAdapter.owner
             }
+
             val externalToPrimitiveAdapter = FunctionBasedAdapter(externRefToPrimitiveAdapter)
+
             NullOrAdapter(
                 adapter = valueAdapter?.let { CombineAdapter(it, externalToPrimitiveAdapter) } ?: externalToPrimitiveAdapter
             )
@@ -342,9 +365,13 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         }
     }
 
-    private fun createNotNullAdapter(notNullType: IrType, isPrimitive: Boolean, valueAdapter: InteropTypeAdapter?): InteropTypeAdapter? {
+    private fun createNotNullAdapter(
+        notNullType: IrType,
+        isPrimitiveOrUnsigned: Boolean,
+        valueAdapter: InteropTypeAdapter?
+    ): InteropTypeAdapter? {
         // !nullable primitive checked by wasm signature
-        if (isPrimitive) return valueAdapter
+        if (isPrimitiveOrUnsigned) return valueAdapter
 
         // !nullable reference should be null checked
         // notNullAdapter((undefined -> null)!!)
@@ -367,12 +394,12 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         val notNullType = makeNotNull()
         val valueAdapter = notNullType.jsToKotlinAdapterIfNeededNotNullable(isReturn)
-        val isPrimitive = valueAdapter?.fromType?.isPrimitiveType() ?: notNullType.isPrimitiveType()
+        val isPrimitiveOrUnsigned = (valueAdapter?.fromType ?: notNullType).let { it.isPrimitiveType() || it.isUnsigned() }
 
         return if (isNullable())
-            createNullableAdapter(notNullType, isPrimitive, valueAdapter)
+            createNullableAdapter(notNullType, isPrimitiveOrUnsigned, valueAdapter)
         else
-            createNotNullAdapter(notNullType, isPrimitive, valueAdapter)
+            createNotNullAdapter(notNullType, isPrimitiveOrUnsigned, valueAdapter)
     }
 
     private fun IrType.jsToKotlinAdapterIfNeededNotNullable(isReturn: Boolean): InteropTypeAdapter? {
@@ -386,12 +413,16 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             builtIns.shortType -> return FunctionBasedAdapter(adapters.jsToKotlinShortAdapter.owner)
             builtIns.charType -> return FunctionBasedAdapter(adapters.jsToKotlinCharAdapter.owner)
 
+            symbols.uByteType,
+            symbols.uShortType,
+            symbols.uIntType,
+            symbols.uLongType,
             builtIns.booleanType,
             builtIns.intType,
             builtIns.longType,
             builtIns.floatType,
             builtIns.doubleType,
-            context.wasmSymbols.voidType ->
+            symbols.voidType ->
                 return null
         }
 

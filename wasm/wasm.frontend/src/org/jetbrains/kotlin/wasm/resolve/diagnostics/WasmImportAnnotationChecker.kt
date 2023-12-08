@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.isUnsignedNumberType
 
 object WasmImportAnnotationChecker : DeclarationChecker {
     private val wasmImportFqName = FqName("kotlin.wasm.WasmImport")
@@ -54,7 +55,7 @@ object WasmImportAnnotationChecker : DeclarationChecker {
     }
 
     private fun isParameterTypeSupported(type: KotlinType): Boolean =
-        type.isPrimitiveNumberType() || type.isBoolean()
+        type.isPrimitiveNumberType() || type.isUnsignedNumberType() || type.isBoolean()
 
     private fun isReturnTypeSupported(type: KotlinType): Boolean =
         isParameterTypeSupported(type) || type.isUnit()

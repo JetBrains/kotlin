@@ -72,5 +72,5 @@ private fun isTypeSupportedInWasmInterop(
     }
 
     // Primitive numbers and Boolean are supported
-    return type.isPrimitive && !type.isChar
+    return (type.isPrimitive && !type.isChar) || type.isUnsignedType
 }

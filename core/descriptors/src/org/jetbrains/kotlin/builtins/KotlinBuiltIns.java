@@ -956,6 +956,10 @@ public abstract class KotlinBuiltIns {
         return type != null && isNotNullConstructedFromGivenClass(type, FqNames.string);
     }
 
+    public static boolean isUnsignedNumber(@Nullable KotlinType type) {
+        return type != null && (isUByte(type) || isUShort(type) || isUInt(type) || isULong(type));
+    }
+
     public static boolean isCharSequenceOrNullableCharSequence(@Nullable KotlinType type) {
         return type != null && isConstructedFromGivenClass(type, FqNames.charSequence);
     }

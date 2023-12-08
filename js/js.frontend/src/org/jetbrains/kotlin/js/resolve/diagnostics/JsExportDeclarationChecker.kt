@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.*
 
-object JsExportDeclarationChecker : DeclarationChecker {
+class JsExportDeclarationChecker(private val includeUnsignedNumbers: Boolean) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val trace = context.trace
         val bindingContext = trace.bindingContext
@@ -190,8 +190,9 @@ object JsExportDeclarationChecker : DeclarationChecker {
                 KotlinBuiltIns.isString(nonNullable) ||
                 (nonNullable.isPrimitiveNumberOrNullableType() && !nonNullable.isLong()) ||
                 nonNullable.isNothingOrNullableNothing() ||
-                KotlinBuiltIns.isArray(this) ||
-                KotlinBuiltIns.isPrimitiveArray(this)
+                KotlinBuiltIns.isArray(nonNullable) ||
+                KotlinBuiltIns.isPrimitiveArray(nonNullable) ||
+                (includeUnsignedNumbers && KotlinBuiltIns.isUnsignedNumber(nonNullable))
 
         if (isPrimitiveExportableType) return true
 

@@ -50,6 +50,12 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
     }
 
     @Test
+    @TestMetadata("externalsWithUnsigned.kt")
+    public void testExternalsWithUnsigned() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/externalsWithUnsigned.kt");
+    }
+
+    @Test
     @TestMetadata("functionTypes.kt")
     public void testFunctionTypes() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/functionTypes.kt");

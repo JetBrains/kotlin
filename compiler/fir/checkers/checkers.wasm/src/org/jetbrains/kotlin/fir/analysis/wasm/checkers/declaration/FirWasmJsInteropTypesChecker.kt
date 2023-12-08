@@ -122,7 +122,7 @@ private fun isTypeSupportedInJsInterop(
 
     val nonNullable = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
 
-    if (nonNullable.isPrimitive || nonNullable.isString) {
+    if (nonNullable.isPrimitive || nonNullable.isUnsignedType || nonNullable.isString) {
         return true
     }
 

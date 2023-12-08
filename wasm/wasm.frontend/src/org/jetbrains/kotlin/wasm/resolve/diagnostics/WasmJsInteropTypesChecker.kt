@@ -113,6 +113,7 @@ private fun isTypeSupportedInJsInterop(
     val nonNullable = type.makeNotNullable()
     if (
         KotlinBuiltIns.isPrimitiveType(nonNullable) ||
+        KotlinBuiltIns.isUnsignedNumber(nonNullable) ||
         KotlinBuiltIns.isString(nonNullable)
     ) {
         return true

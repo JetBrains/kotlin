@@ -91,11 +91,23 @@ private external fun externrefHashCode(ref: ExternalInterfaceType): Int
 private fun externrefToString(ref: ExternalInterfaceType): String =
     js("String(ref)")
 
+private fun externrefToUByte(ref: ExternalInterfaceType): UByte =
+    js("Number(ref)")
+
+private fun externrefToUShort(ref: ExternalInterfaceType): UShort =
+    js("Number(ref)")
+
+private fun externrefToUInt(ref: ExternalInterfaceType): UInt =
+    js("Number(ref)")
+
+private fun externrefToULong(ref: ExternalInterfaceType): ULong =
+    js("BigInt(ref)")
+
 private fun externrefToInt(ref: ExternalInterfaceType): Int =
     js("Number(ref)")
 
 private fun externrefToLong(ref: ExternalInterfaceType): Long =
-    js("Number(ref)")
+    js("BigInt(ref)")
 
 private fun externrefToBoolean(ref: ExternalInterfaceType): Boolean =
     js("Boolean(ref)")
@@ -314,6 +326,18 @@ internal fun jsToKotlinByteAdapter(x: Int): Byte = x.toByte()
 internal fun jsToKotlinShortAdapter(x: Int): Short = x.toShort()
 internal fun jsToKotlinCharAdapter(x: Int): Char = x.toChar()
 
+internal fun externRefToKotlinUByteAdapter(x: ExternalInterfaceType): UByte =
+    externrefToUByte(x)
+
+internal fun externRefToKotlinUShortAdapter(x: ExternalInterfaceType): UShort =
+    externrefToUShort(x)
+
+internal fun externRefToKotlinUIntAdapter(x: ExternalInterfaceType): UInt =
+    externrefToUInt(x)
+
+internal fun externRefToKotlinULongAdapter(x: ExternalInterfaceType): ULong =
+    externrefToULong(x)
+
 internal fun externRefToKotlinIntAdapter(x: ExternalInterfaceType): Int =
     externrefToInt(x)
 
@@ -334,6 +358,30 @@ internal fun kotlinIntToExternRefAdapter(x: Int): JsNumber =
 
 internal fun kotlinBooleanToExternRefAdapter(x: Boolean): JsBoolean =
     if (x) jsTrue else jsFalse
+
+private fun kotlinUByteToJsNumberUnsafe(x: Int): JsNumber =
+    js("x & 0xFF")
+
+private fun kotlinUShortToJsNumberUnsafe(x: Int): JsNumber =
+    js("x & 0xFFFF")
+
+private fun kotlinUIntToJsNumberUnsafe(x: Int): JsNumber =
+    js("x >>> 0")
+
+private fun kotlinULongToJsBigIntUnsafe(x: Long): ExternalInterfaceType =
+    js("x & 0xFFFFFFFFFFFFFFFFn")
+
+internal fun kotlinUByteToJsNumber(x: UByte): JsNumber =
+    kotlinUByteToJsNumberUnsafe(x.toInt())
+
+internal fun kotlinUShortToJsNumber(x: UShort): JsNumber =
+    kotlinUShortToJsNumberUnsafe(x.toInt())
+
+internal fun kotlinUIntToJsNumber(x: UInt): JsNumber =
+    kotlinUIntToJsNumberUnsafe(x.toInt())
+
+internal fun kotlinULongToJsBigInt(x: ULong): ExternalInterfaceType =
+    kotlinULongToJsBigIntUnsafe(x.toLong())
 
 internal fun kotlinLongToExternRefAdapter(x: Long): ExternalInterfaceType =
     longToExternref(x)

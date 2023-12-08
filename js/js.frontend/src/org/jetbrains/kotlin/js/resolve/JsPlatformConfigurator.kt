@@ -27,7 +27,6 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         JsRuntimeAnnotationChecker,
         JsDynamicDeclarationChecker,
         JsExportAnnotationChecker,
-        JsExportDeclarationChecker
     ),
     additionalCallCheckers = listOf(
         JsModuleCallChecker,
@@ -52,6 +51,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(ExtensionFunctionToExternalIsInlinable)
         container.useInstance(JsQualifierChecker)
         container.useInstance(JsNativeDiagnosticSuppressor)
+        container.useInstance(JsExportDeclarationChecker(includeUnsignedNumbers = false))
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
