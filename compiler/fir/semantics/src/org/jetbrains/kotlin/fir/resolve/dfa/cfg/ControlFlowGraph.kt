@@ -68,6 +68,7 @@ data class Edge(
 ) {
     companion object {
         val Normal_Forward = Edge(NormalPath, EdgeKind.Forward)
+        private val Normal_PostponedForward = Edge(NormalPath, EdgeKind.PostponedForward)
         private val Normal_DeadForward = Edge(NormalPath, EdgeKind.DeadForward)
         private val Normal_DfgForward = Edge(NormalPath, EdgeKind.DfgForward)
         private val Normal_CfgForward = Edge(NormalPath, EdgeKind.CfgForward)
@@ -79,6 +80,7 @@ data class Edge(
                 NormalPath -> {
                     when (kind) {
                         EdgeKind.Forward -> Normal_Forward
+                        EdgeKind.PostponedForward -> Normal_PostponedForward
                         EdgeKind.DeadForward -> Normal_DeadForward
                         EdgeKind.DfgForward -> Normal_DfgForward
                         EdgeKind.CfgForward -> Normal_CfgForward
@@ -110,14 +112,16 @@ enum class EdgeKind(
     val usedInDeadDfa: Boolean, // propagate flow to dead nodes
     val usedInCfa: Boolean,
     val isBack: Boolean,
-    val isDead: Boolean
+    val isDead: Boolean,
+    val isPostponed: Boolean,
 ) {
-    Forward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = false),
-    DeadForward(usedInDfa = false, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = true),
-    DfgForward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = false, isBack = false, isDead = false),
-    CfgForward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = false, isDead = false),
-    CfgBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = false),
-    DeadBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true)
+    Forward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = false, isPostponed = false),
+    PostponedForward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = false, isPostponed = true),
+    DeadForward(usedInDfa = false, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = true, isPostponed = false),
+    DfgForward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = false, isBack = false, isDead = false, isPostponed = false),
+    CfgForward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = false, isDead = false, isPostponed = false),
+    CfgBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = false, isPostponed = false),
+    DeadBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true, isPostponed = false),
 }
 
 private val CFGNode<*>.previousNodeCount

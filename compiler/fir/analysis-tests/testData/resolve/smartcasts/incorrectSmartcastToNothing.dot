@@ -97,13 +97,12 @@ digraph incorrectSmartcastToNothing_kt {
                     48 [label="Exit block"];
                 }
                 49 [label="Exit when branch result"];
-                50 [label="Merge postponed lambda exits"];
-                51 [label="Exit when"];
+                50 [label="Exit when"];
             }
-            52 [label="Variable declaration: lval cacheBaseDir: R|java/io/File?|"];
-            53 [label="Exit block"];
+            51 [label="Variable declaration: lval cacheBaseDir: R|java/io/File?|"];
+            52 [label="Exit block"];
         }
-        54 [label="Exit function test" style="filled" fillcolor=red];
+        53 [label="Exit function test" style="filled" fillcolor=red];
     }
     6 -> {7};
     7 -> {8};
@@ -126,12 +125,12 @@ digraph incorrectSmartcastToNothing_kt {
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {51};
+    27 -> {50};
     28 -> {29};
     29 -> {30};
     30 -> {31};
     31 -> {32};
-    32 -> {51};
+    32 -> {50};
     33 -> {34};
     34 -> {35};
     35 -> {36 47};
@@ -146,15 +145,13 @@ digraph incorrectSmartcastToNothing_kt {
     42 -> {43};
     43 -> {44};
     44 -> {45};
-    45 -> {46} [color=green];
-    45 -> {50} [color=red];
+    45 -> {46};
     46 -> {47};
-    47 -> {48 50};
+    47 -> {48};
     48 -> {49};
-    49 -> {51};
-    50 -> {51} [color=red];
+    49 -> {50};
+    50 -> {51};
     51 -> {52};
     52 -> {53};
-    53 -> {54};
 
 }

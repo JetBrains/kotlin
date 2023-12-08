@@ -193,7 +193,7 @@ digraph postponedLambdaInReturn_kt {
     50 -> {51};
     51 -> {52};
     52 -> {53};
-    53 -> {54} [color=green];
+    53 -> {54};
     54 -> {55};
     55 -> {61};
     55 -> {56} [style=dotted];
@@ -332,7 +332,7 @@ digraph postponedLambdaInReturn_kt {
     87 -> {88};
     88 -> {89};
     89 -> {90};
-    90 -> {91} [color=green];
+    90 -> {91};
     91 -> {92};
     92 -> {109};
     92 -> {93} [style=dotted];
@@ -441,11 +441,10 @@ digraph postponedLambdaInReturn_kt {
             160 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
             161 [label="Variable declaration: lval x: R|kotlin/String|"];
             162 [label="Access variable R|<local>/y|"];
-            163 [label="Smart cast: R|<local>/y|"];
-            164 [label="Access variable R|kotlin/String.length|"];
-            165 [label="Exit block"];
+            163 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
+            164 [label="Exit block"];
         }
-        166 [label="Exit function test3" style="filled" fillcolor=red];
+        165 [label="Exit function test3" style="filled" fillcolor=red];
     }
     117 -> {118};
     118 -> {119};
@@ -485,7 +484,7 @@ digraph postponedLambdaInReturn_kt {
     147 -> {148};
     148 -> {149};
     149 -> {150};
-    150 -> {151} [color=green];
+    150 -> {151};
     151 -> {152};
     152 -> {158};
     152 -> {153} [style=dotted];
@@ -501,6 +500,5 @@ digraph postponedLambdaInReturn_kt {
     162 -> {163};
     163 -> {164};
     164 -> {165};
-    165 -> {166};
 
 }

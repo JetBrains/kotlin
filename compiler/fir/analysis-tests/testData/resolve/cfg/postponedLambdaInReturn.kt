@@ -46,5 +46,5 @@ fun test3() {
         else
             return@run ""
     }
-    y.length // bad
+    y<!UNSAFE_CALL!>.<!>length // bad
 }

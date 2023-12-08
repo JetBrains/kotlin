@@ -117,11 +117,26 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     private var _flow: PersistentFlow? = null
     open val flowInitialized: Boolean get() = _flow != null
     open var flow: PersistentFlow
-        get() = _flow ?: throw IllegalStateException("flow for $this not initialized - traversing nodes in wrong order?")
+        get() = _flow ?: error("flow for $this not initialized - traversing nodes in wrong order?")
         @CfgInternals
         set(value) {
             assert(_flow == null) { "reassigning flow for $this" }
             _flow = value
+        }
+
+    /**
+     * Lazily calculated [Flow][org.jetbrains.kotlin.fir.resolve.dfa.Flow] representing the [postponed path][FlowPath.Postponed] for this
+     * node. This flow is used to represent lambda expression analysis when call resolution is incomplete.
+     */
+    private var _postponedFlow: (() -> PersistentFlow)? = null
+    open val postponedFlowInitialized: Boolean get() = _postponedFlow != null
+    open var postponedFlow: () -> PersistentFlow
+        get() = _postponedFlow ?: error("postponed flow for $this not initialized - traversing nodes in wrong order?")
+        @CfgInternals
+        set(value) {
+            check(_postponedFlow == null) { "reassigning postponed flow for $this" }
+            var memorized: PersistentFlow? = null // Do not recalculate flow when accessed multiple times.
+            _postponedFlow = { memorized ?: value().also { memorized = it } }
         }
 
     /**
@@ -139,6 +154,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     @CfgInternals
     open fun addAlternateFlow(path: FlowPath, flow: PersistentFlow) {
         assert(path !== FlowPath.Default) { "cannot add default flow path as alternate for $this" }
+        assert(path !== FlowPath.Postponed) { "cannot add postponed flow path as alternate for $this" }
         assert(_alternateFlows?.get(path) == null) { "reassigning $path flow for $this" }
 
         var alternateFlows = _alternateFlows
@@ -259,12 +275,6 @@ class SplitPostponedLambdasNode(owner: ControlFlowGraph, override val fir: FirSt
 class PostponedLambdaExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunctionExpression, level: Int) : CFGNode<FirAnonymousFunctionExpression>(owner, level) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitPostponedLambdaExitNode(this, data)
-    }
-}
-
-class MergePostponedLambdaExitsNode(owner: ControlFlowGraph, override val fir: FirElement, level: Int) : CFGNode<FirElement>(owner, level) {
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitMergePostponedLambdaExitsNode(this, data)
     }
 }
 
@@ -773,6 +783,12 @@ class StubNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, le
         get() = firstPreviousNode.flow
         @CfgInternals
         set(_) = throw IllegalStateException("can't set flow for stub node")
+
+    override val postponedFlowInitialized: Boolean get() = firstPreviousNode.postponedFlowInitialized
+    override var postponedFlow: () -> PersistentFlow
+        get() = firstPreviousNode.postponedFlow
+        @CfgInternals
+        set(_) = throw IllegalStateException("can't set postponedFlow for stub node")
 
     override val alternateFlowPaths: Set<FlowPath>
         get() = firstPreviousNode.alternateFlowPaths

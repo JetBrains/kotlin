@@ -39,3 +39,14 @@ fun test5() {
     <!DEBUG_INFO_SMARTCAST!>x<!>(if (true) { x = null; 0 } else 0, <!DEBUG_INFO_SMARTCAST!>x<!>)
     <!DEBUG_INFO_SMARTCAST!>x<!>.inv()
 }
+
+fun test6(x: Any, b: Boolean) {
+    if (x !is String) {
+        if (b) {
+            require(x is String) { "" }
+        } else {
+            return
+        }
+    }
+    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+}

@@ -39,3 +39,14 @@ fun test5() {
     <!UNSAFE_IMPLICIT_INVOKE_CALL!>x<!>(if (true) { x = null; 0 } else 0, <!ARGUMENT_TYPE_MISMATCH!>x<!>)
     x<!UNSAFE_CALL!>.<!>inv()
 }
+
+fun test6(x: Any, b: Boolean) {
+    if (x !is String) {
+        if (b) {
+            require(x is String) { "" }
+        } else {
+            return
+        }
+    }
+    x.length
+}

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ClassExitNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.MergePostponedLambdaExitsNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.smartCastedType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
@@ -309,9 +308,6 @@ private class ContextCollectorVisitor(
 
     private fun isAcceptedControlFlowNode(node: CFGNode<*>): Boolean = when {
         node is ClassExitNode -> false
-
-        // TODO Remove as soon as KT-61728 is fixed
-        node is MergePostponedLambdaExitsNode && !node.flowInitialized -> false
 
         else -> true
     }

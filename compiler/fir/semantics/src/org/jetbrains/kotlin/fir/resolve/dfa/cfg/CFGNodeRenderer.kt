@@ -95,7 +95,6 @@ fun CFGNode<*>.render(): String =
 
                 is SplitPostponedLambdasNode -> "Postponed enter to lambda"
                 is PostponedLambdaExitNode -> "Postponed exit from lambda"
-                is MergePostponedLambdaExitsNode -> "Merge postponed lambda exits"
                 is AnonymousFunctionExpressionNode -> "Exit anonymous function expression"
 
                 is FileEnterNode -> "Enter file ${fir.name}"

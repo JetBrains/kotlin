@@ -62,7 +62,7 @@ fun test6(x: String?) {
         1,
         run { x<!UNSAFE_CALL!>.<!>length; 123 } // Bad (resolution order undefined)
     )
-    x<!UNSAFE_CALL!>.<!>length // OK (x as String in both branches)
+    x.length // OK (x as String in both branches)
 }
 
 fun test7(x: String?) {

@@ -74,7 +74,17 @@ class FirControlFlowGraphRenderVisitor(
                     append("</B></TD></TR>")
                     if (node.flowInitialized) {
                         append("<TR><TD ALIGN=\"LEFT\" BALIGN=\"LEFT\">")
-                        append(node.renderFlowHtmlLike())
+                        append(node.flow.renderFlowHtmlLike())
+                        append("</TD></TR>")
+                    }
+                    if (node.postponedFlowInitialized) {
+                        append("<TR><TD><B>Postponed</B></TD></TR>")
+                        append("<TR><TD ALIGN=\"LEFT\" BALIGN=\"LEFT\">")
+                        try {
+                            append(node.postponedFlow().renderFlowHtmlLike())
+                        } catch (e: Throwable) {
+                            append("ERROR")
+                        }
                         append("</TD></TR>")
                     }
                     append("</TABLE>")
@@ -166,8 +176,8 @@ class FirControlFlowGraphRenderVisitor(
         println("}")
     }
 
-    private fun CFGNode<*>.renderFlowHtmlLike(): String {
-        val flow = flow
+    private fun PersistentFlow.renderFlowHtmlLike(): String {
+        val flow = this
         val variables = flow.knownVariables + flow.implications.keys +
                 flow.implications.flatMap { it.value }.map { it.condition.variable } +
                 flow.implications.flatMap { it.value }.map { it.effect.variable }

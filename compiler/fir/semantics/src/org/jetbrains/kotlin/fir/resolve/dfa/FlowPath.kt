@@ -11,8 +11,12 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeLabel
 /**
  * Sealed class representing a type of path through a [Control Flow Graph (CFG) Node][org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode] used
  * for data flow analysis. Most CFG nodes only have a single data flow path through them, but there are times when a node may require
- * multiple paths to be calculated. The most common use case is for `finally` code blocks, where multiple code paths may enter, but these
- * paths diverge after exiting the code block. Consider the following (very) contrived example:
+ * multiple paths to be calculated.
+ *
+ * ## Finally Blocks
+ *
+ * A common use case is for `finally` code blocks, where multiple code paths may enter, but these paths diverge after exiting the code
+ * block. Consider the following (very) contrived example:
  *
  * ```kotlin
  * fun test() {
@@ -55,12 +59,42 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeLabel
  * the data flow leading into the `finally` block from the `break` statement.
  * 3. A flow which will be used when the entire `try` expression exits without exception or jumping. This data flow is a continuation of the
  * data flow leading into the `finally` block from the main `try` block.
+ *
+ * ## Lambda Expressions
+ *
+ * Another common case for separate flow path is when dealing with postponed lambda expression analysis. When a call is being resolved,
+ * lambda expression resolution order is undefined, especially when generics are involved. Consider the following contrived example:
+ *
+ * ```kotlin
+ * fun <T> foo(x: T?, y: T) {}
+ * fun <T> id(x: T): T = x
+ * fun <T> n(): T? = null
+ *
+ * fun test(x: String?) {
+ *     foo(
+ *         id(if (true) run { x as String; n() } else run { x as String; n() }),
+ *         run { x.length; 123 } // (1)
+ *     )
+ *     x.length // (2)
+ * }
+ * ```
+ *
+ * Just based on the first parameter (`id(...)`) of the call to `foo(...)`, Kotlin is unable to determine what the time of `T` should be. It
+ * must also resolve the section parameter (`run { ... }`). So while the flow through this code would result in `x` being a `String` at (1),
+ * call resolution is unable to determine that. This means the implication that `x` is a `String` must be postponed until after the
+ * `foo(...)` call is fully resolved. Once fully resolved, the postponed flow can be integrated back into the default flow and used to
+ * determine `x` is a `String` at (2).
  */
 sealed class FlowPath {
     /**
      * The [FlowPath] which represents the combination of all flows leading into a CFG Node.
      */
     data object Default : FlowPath()
+
+    /**
+     * The [FlowPath] which represent lambda expression analysis when call resolution is incomplete.
+     */
+    data object Postponed : FlowPath()
 
     /**
      * The [FlowPath] which represents the combination of all flows leading into a CFG Node that follow an edge with the specified
