@@ -349,7 +349,7 @@ class LocalDeclarationsLowering(
 
             private fun visitInitializationStage(declaration: IrDeclaration): IrStatement? =
                 if (localContext is LocalClassContext && declaration.parent == localContext.declaration) {
-                    localContext.initializationContext.let { declaration.apply { transformChildrenVoid(FunctionBodiesRewriter(it)) } }
+                    declaration.apply { transformChildrenVoid(FunctionBodiesRewriter(localContext.initializationContext)) }
                 } else null
 
 
