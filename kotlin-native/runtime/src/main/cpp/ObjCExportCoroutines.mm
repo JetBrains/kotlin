@@ -3,15 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
+#import "Memory.h"
+#import "ObjCExport.h"
+#import "ObjCExportErrors.h"
+
 #if KONAN_OBJC_INTEROP
 
 #import <pthread.h>
 #import <Foundation/NSException.h>
 #import <Foundation/NSObject.h>
-
-#import "Memory.h"
-#import "ObjCExport.h"
-#import "ObjCExportErrors.h"
 
 typedef void (^Completion)(id _Nullable, NSError* _Nullable);
 
@@ -77,6 +77,20 @@ extern "C" void Kotlin_ObjCExport_resumeContinuation(KRef continuation, KRef res
   } else {
     Kotlin_ObjCExport_resumeContinuationSuccess(continuation, result);
   }
+}
+
+#else
+
+extern "C" void Kotlin_ObjCExport_runCompletionSuccess(KRef completionHolder, KRef result) {
+  RuntimeAssert(false, "Unavailable operation");
+}
+
+extern "C" void Kotlin_ObjCExport_runCompletionFailure(
+  KRef completionHolder,
+  KRef exception,
+  const TypeInfo** exceptionTypes
+) {
+  RuntimeAssert(false, "Unavailable operation");
 }
 
 #endif
