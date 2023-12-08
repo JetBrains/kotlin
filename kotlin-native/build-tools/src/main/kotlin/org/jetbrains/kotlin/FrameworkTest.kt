@@ -172,6 +172,10 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
             emptyList()
         }
         compileSwift(project, project.testTarget, sources, options + simulatorHack + swiftExtraOpts, Paths.get(executable))
+        if (project.testTargetConfigurables.target == KonanTarget.TVOS_SIMULATOR_ARM64) {
+            // Since Xcode 15 tvos arm64 simulator binaries aren't signed and fail to run - KT-62086
+            codesign(project, executable)
+        }
     }
 
     @TaskAction
