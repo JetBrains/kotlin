@@ -443,7 +443,7 @@ private fun TestGroup.disabledInOneStageMode(vararg unexpandedPaths: String): An
     )
 }
 
-// If XCTest framework wasn't set, disable all source locaitons provided by the parameter
+// If XCTest framework wasn't set, disable all source locations provided by the parameter
 private fun TestGroup.disabledWithoutXCTest(vararg unexpandedPaths: String): AnnotationModel {
     require(unexpandedPaths.isNotEmpty()) { "No unexpanded paths specified" }
 

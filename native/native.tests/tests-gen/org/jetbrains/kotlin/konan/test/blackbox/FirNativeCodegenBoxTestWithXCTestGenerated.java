@@ -2047,9 +2047,27 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             }
 
                             @Test
+                            @TestMetadata("ByAssignmentToALocalVariableMaterializeCase.kt")
+                            public void testByAssignmentToALocalVariableMaterializeCase() throws Exception {
+                                runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableMaterializeCase.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("ByAssignmentToALocalVariableYieldCase.kt")
+                            public void testByAssignmentToALocalVariableYieldCase() throws Exception {
+                                runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableYieldCase.kt");
+                            }
+
+                            @Test
                             @TestMetadata("InsideAnonymousObject.kt")
                             public void testInsideAnonymousObject() throws Exception {
                                 runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideAnonymousObject.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("InsideLocalClass.kt")
+                            public void testInsideLocalClass() throws Exception {
+                                runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideLocalClass.kt");
                             }
 
                             @Test
@@ -2068,6 +2086,12 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @TestMetadata("ThroughDelegatedLocalVariableYieldCase.kt")
                             public void testThroughDelegatedLocalVariableYieldCase() throws Exception {
                                 runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableYieldCase.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("ThroughGenericFunctionCall.kt")
+                            public void testThroughGenericFunctionCall() throws Exception {
+                                runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughGenericFunctionCall.kt");
                             }
 
                             @Test
@@ -12821,6 +12845,12 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             }
 
             @Test
+            @TestMetadata("delegateToConstVal.kt")
+            public void testDelegateToConstVal() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConstVal.kt");
+            }
+
+            @Test
             @TestMetadata("delegateToConstructorParameter.kt")
             public void testDelegateToConstructorParameter() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConstructorParameter.kt");
@@ -15728,6 +15758,24 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @TestMetadata("falsePositiveBoundSmartcast.kt")
             public void testFalsePositiveBoundSmartcast() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");
+            }
+
+            @Test
+            @TestMetadata("functionsDifferInTypeParameterBounds.kt")
+            public void testFunctionsDifferInTypeParameterBounds() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/functionsDifferInTypeParameterBounds.kt");
+            }
+
+            @Test
+            @TestMetadata("functionsDifferInTypeParameterBounds2.kt")
+            public void testFunctionsDifferInTypeParameterBounds2() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/functionsDifferInTypeParameterBounds2.kt");
+            }
+
+            @Test
+            @TestMetadata("functionsDifferInTypeParameterBounds3.kt")
+            public void testFunctionsDifferInTypeParameterBounds3() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/functionsDifferInTypeParameterBounds3.kt");
             }
 
             @Test
@@ -39049,6 +39097,12 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 runTest("compiler/testData/codegen/box/sam/kt59858.kt");
             }
 
+            @Test
+            @TestMetadata("kt63564.kt")
+            public void testKt63564() throws Exception {
+                runTest("compiler/testData/codegen/box/sam/kt63564.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/sam/adapters")
             @TestDataPath("$PROJECT_ROOT")
@@ -39656,6 +39710,30 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @TestMetadata("nullSmartCast.kt")
             public void testNullSmartCast() throws Exception {
                 runTest("compiler/testData/codegen/box/smartCasts/nullSmartCast.kt");
+            }
+
+            @Test
+            @TestMetadata("NullableFunctionTypeAsMemberImmutableProperty.kt")
+            public void testNullableFunctionTypeAsMemberImmutableProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsMemberImmutableProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("NullableFunctionTypeAsMemberImmutablePropertyFromConstructor.kt")
+            public void testNullableFunctionTypeAsMemberImmutablePropertyFromConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsMemberImmutablePropertyFromConstructor.kt");
+            }
+
+            @Test
+            @TestMetadata("NullableFunctionTypeAsPrimaryConstructorParameter.kt")
+            public void testNullableFunctionTypeAsPrimaryConstructorParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsPrimaryConstructorParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("NullableFunctionTypeAsSecondaryConstructorParameter.kt")
+            public void testNullableFunctionTypeAsSecondaryConstructorParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/smartCasts/NullableFunctionTypeAsSecondaryConstructorParameter.kt");
             }
 
             @Test
