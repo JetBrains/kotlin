@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticConstructors
@@ -279,7 +281,7 @@ fun isArrayOrArrayLiteral(argument: ValueArgument, trace: BindingTrace): Boolean
     if (argumentExpression is KtCollectionLiteralExpression) return true
 
     val type = trace.getType(argumentExpression) ?: return false
-    return KotlinBuiltIns.isArrayOrPrimitiveArray(type)
+    return KotlinBuiltIns.isArrayOrPrimitiveArray(type) || KotlinBuiltIns.isUnsignedArrayType(type)
 }
 
 fun createResolutionCandidatesForConstructors(

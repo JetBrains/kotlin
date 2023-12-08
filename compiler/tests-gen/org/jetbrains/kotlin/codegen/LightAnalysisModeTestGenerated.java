@@ -44094,6 +44094,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/vararg/evaluationOrder.kt");
         }
 
+        @TestMetadata("inlineClassArraysAsNamedArgumentInVararg.kt")
+        public void testInlineClassArraysAsNamedArgumentInVararg() throws Exception {
+            runTest("compiler/testData/codegen/box/vararg/inlineClassArraysAsNamedArgumentInVararg.kt");
+        }
+
         @TestMetadata("kt10926.kt")
         public void testKt10926() throws Exception {
             runTest("compiler/testData/codegen/box/vararg/kt10926.kt");

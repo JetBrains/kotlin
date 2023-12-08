@@ -42677,6 +42677,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
+            @TestMetadata("inlineClassArraysAsNamedArgumentInVararg.kt")
+            public void testInlineClassArraysAsNamedArgumentInVararg() throws Exception {
+                runTest("compiler/testData/codegen/box/vararg/inlineClassArraysAsNamedArgumentInVararg.kt");
+            }
+
+            @Test
             @TestMetadata("kt10926.kt")
             public void testKt10926() throws Exception {
                 runTest("compiler/testData/codegen/box/vararg/kt10926.kt");
