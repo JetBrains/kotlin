@@ -165,7 +165,18 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    fun classProto(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
+    fun classProto(klass: FirClass, containingFile: FirFile?): ProtoBuf.Class.Builder {
+        return if (containingFile == null) {
+            // Containing file can be null for local classes, as well as synthetic ones like kotlin/Cloneable.
+            // Not using `processFile` means that we will not be able to use IR-based constant expression evaluator when serializing
+            // annotations in such classes, and will fall back to the FIR-based evaluator.
+            classProtoImpl(klass)
+        } else extension.processFile(containingFile) {
+            classProtoImpl(klass)
+        }
+    }
+
+    private fun classProtoImpl(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
         val builder = ProtoBuf.Class.newBuilder()
 
         val regularClass = klass as? FirRegularClass

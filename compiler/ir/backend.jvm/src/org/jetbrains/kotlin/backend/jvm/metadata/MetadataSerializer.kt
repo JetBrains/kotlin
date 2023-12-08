@@ -13,7 +13,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 interface MetadataSerializer {
-    fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>?
+    fun serialize(metadata: MetadataSource, containingFile: MetadataSource.File): Pair<MessageLite, JvmStringTable>?
 
     fun bindPropertyMetadata(metadata: MetadataSource.Property, signature: Method, origin: IrDeclarationOrigin)
 

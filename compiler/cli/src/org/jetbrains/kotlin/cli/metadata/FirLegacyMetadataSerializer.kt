@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtensionBase
@@ -152,7 +153,8 @@ internal open class FirLegacyMetadataSerializer(
                     serializeClasses(nestedClasses, classSerializer)
                 }
 
-                val classProto = classSerializer.classProto(klass)
+                val file = session.firProvider.getFirClassifierContainerFileIfAny(klass.symbol)
+                val classProto = classSerializer.classProto(klass, file)
                 proto.addClass_(classProto.build())
             }
         }

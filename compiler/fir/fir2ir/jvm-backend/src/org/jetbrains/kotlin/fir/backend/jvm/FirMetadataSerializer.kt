@@ -125,9 +125,9 @@ class FirMetadataSerializer(
     private val actualizedExpectDeclarations: Set<FirDeclaration>?
 ) : MetadataSerializer {
 
-    override fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>? {
+    override fun serialize(metadata: MetadataSource, containingFile: MetadataSource.File): Pair<MessageLite, JvmStringTable>? {
         val message = when (metadata) {
-            is FirMetadataSource.Class -> serializer!!.classProto(metadata.fir).build()
+            is FirMetadataSource.Class -> serializer!!.classProto(metadata.fir, (containingFile as FirMetadataSource.File).fir).build()
             is FirMetadataSource.File -> serializer!!.packagePartProto(metadata.fir, actualizedExpectDeclarations).build()
             is FirMetadataSource.Function -> {
                 val withTypeParameters = metadata.fir.copyToFreeAnonymousFunction(approximator)
