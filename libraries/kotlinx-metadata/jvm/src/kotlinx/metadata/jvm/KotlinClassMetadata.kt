@@ -106,7 +106,7 @@ public sealed class KotlinClassMetadata {
 
         override fun write(): Metadata {
             throwIfNotWriteable(isAllowedToWrite, "class")
-            checkMetadataVersion(version)
+            checkMetadataVersionForWrite(version)
             return wrapWriteIntoIAE {
                 val writer = ClassWriter(JvmStringTable())
                 writer.writeClass(kmClass)
@@ -198,7 +198,7 @@ public sealed class KotlinClassMetadata {
 
         override fun write(): Metadata {
             throwIfNotWriteable(isAllowedToWrite, "file facade")
-            checkMetadataVersion(version)
+            checkMetadataVersionForWrite(version)
             return wrapWriteIntoIAE {
                 val writer = PackageWriter(JvmStringTable())
                 writer.writePackage(kmPackage)
@@ -286,7 +286,7 @@ public sealed class KotlinClassMetadata {
 
         override fun write(): Metadata {
             throwIfNotWriteable(isAllowedToWrite, if (isLambda) "lambda" else "synthetic class")
-            checkMetadataVersion(version)
+            checkMetadataVersionForWrite(version)
             return if (isLambda) wrapWriteIntoIAE {
                 val writer = LambdaWriter(JvmStringTable())
                 writer.writeLambda(kmLambda!!)
@@ -424,7 +424,7 @@ public sealed class KotlinClassMetadata {
 
         override fun write(): Metadata {
             throwIfNotWriteable(isAllowedToWrite, "multi-file class facade")
-            checkMetadataVersion(version)
+            checkMetadataVersionForWrite(version)
             return Metadata(
                 MULTI_FILE_CLASS_FACADE_KIND, version.toIntArray(),
                 partClassNames.toTypedArray<String>(), extraInt = flags
@@ -506,7 +506,7 @@ public sealed class KotlinClassMetadata {
 
         override fun write(): Metadata {
             throwIfNotWriteable(isAllowedToWrite, "multi-file class part")
-            checkMetadataVersion(version)
+            checkMetadataVersionForWrite(version)
             return wrapWriteIntoIAE {
                 val writer = PackageWriter(JvmStringTable())
                 writer.writePackage(kmPackage)
@@ -586,7 +586,7 @@ public sealed class KotlinClassMetadata {
 
         override fun write(): Metadata {
             throwIfNotWriteable(!lenient, "unknown kind")
-            checkMetadataVersion(version)
+            checkMetadataVersionForWrite(version)
             return Metadata(
                 original.kind,
                 version.toIntArray(),
@@ -817,10 +817,13 @@ public sealed class KotlinClassMetadata {
             throw IllegalArgumentException("This $name cannot be written because it represents metadata read in lenient mode")
         }
 
-        internal fun checkMetadataVersion(version: JvmMetadataVersion) {
+        private fun checkMetadataVersionForWrite(version: JvmMetadataVersion) {
             require(version.major >= 1 && (version.major > 1 || version.minor >= 4)) {
                 "This version of kotlinx-metadata-jvm doesn't support writing Kotlin metadata of version earlier than 1.4. " +
                         "Please change the version from $version to at least [1, 4]."
+            }
+            require(version <= JvmMetadataVersion.HIGHEST_ALLOWED_TO_WRITE) {
+                "kotlinx-metadata-jvm cannot write metadata for future compiler versions. Requested to write version $version, but highest known version is ${JvmMetadataVersion.HIGHEST_ALLOWED_TO_WRITE}"
             }
         }
 

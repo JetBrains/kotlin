@@ -48,4 +48,22 @@ class WritersContractTest {
         assertEquals(before.extraString, after.extraString)
         assertEquals(before.packageName, after.packageName)
     }
+
+    @Test
+    fun futureVersionCantBeWritten() = everyType.forEach { before ->
+        val md = KotlinClassMetadata.readStrict(before)
+        md.version = JvmMetadataVersion(3, 4, 5)
+        assertFailsWith<IllegalArgumentException> { md.write() }
+    }
+
+    @Test
+    fun nextVersionWrite() = everyType.forEach { before ->
+        val md = KotlinClassMetadata.readStrict(before)
+        val ver = md.version
+        assertEquals(2, ver.major) // to correctly handle future case 2.x -> 3.0
+        md.version = JvmMetadataVersion(ver.major, ver.minor + 1, ver.patch)
+        md.write() // OK
+        md.version = JvmMetadataVersion(ver.major, ver.minor + 2, ver.patch)
+        assertFailsWith<IllegalArgumentException> { md.write() }
+    }
 }

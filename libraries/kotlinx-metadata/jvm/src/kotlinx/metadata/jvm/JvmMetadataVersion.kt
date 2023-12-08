@@ -112,5 +112,8 @@ public class JvmMetadataVersion(public val major: Int, public val minor: Int, pu
          */
         @JvmField
         public val LATEST_STABLE_SUPPORTED: JvmMetadataVersion = JvmMetadataVersion(CompilerMetadataVersion.INSTANCE.toArray())
+
+        @JvmField
+        internal val HIGHEST_ALLOWED_TO_WRITE: JvmMetadataVersion = JvmMetadataVersion(CompilerMetadataVersion.INSTANCE_NEXT.toArray())
     }
 }
