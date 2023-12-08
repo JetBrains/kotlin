@@ -53,12 +53,7 @@ internal abstract class LoggedData {
         }
     }
 
-    class CompilerParameters(
-        private val home: KotlinNativeHome,
-        private val compilerArgs: Array<String>,
-        private val sourceModules: Collection<TestModule>,
-        private val environment: JVMEnvironment = JVMEnvironment() // Capture environment.
-    ) : LoggedData() {
+    class CompilerInput(private val sourceModules: Collection<TestModule>) : LoggedData() {
         private val testDataFiles: List<File>
             get() = buildList {
                 sourceModules.forEach { module ->
@@ -68,16 +63,30 @@ internal abstract class LoggedData {
                 sort()
             }
 
+        override fun computeText(): String = buildString {
+            val files = testDataFiles
+            if (files.size > 1) {
+                appendLine("NOTE: this compilation includes multiple test data files!")
+                appendLine(" So a test failure doesn't imply that something is wrong with that particular test.")
+                appendLine(" To check the single test data file, rerun the test with the following Gradle flag:")
+                appendLine("   -Pkotlin.internal.native.test.forceStandalone=true")
+                appendLine()
+                appendList("TEST DATA FILES (COMPILED TOGETHER):", testDataFiles)
+            } else {
+                appendLine("TEST DATA FILE: ${files.singleOrNull()}")
+            }
+        }
+    }
+
+    class CompilerParameters(
+        private val home: KotlinNativeHome,
+        private val compilerArgs: Array<String>,
+        private val environment: JVMEnvironment = JVMEnvironment() // Capture environment.
+    ) : LoggedData() {
         override fun computeText() = buildString {
             appendArguments("COMPILER ARGUMENTS:", listOf(home.dir.resolve("bin/kotlinc-native").path) + compilerArgs)
             appendLine()
             appendLine(environment)
-
-            val testDataFiles = testDataFiles
-            if (testDataFiles.isNotEmpty()) {
-                appendLine()
-                appendList("TEST DATA FILES (COMPILED TOGETHER):", testDataFiles)
-            }
         }
     }
 
@@ -100,6 +109,7 @@ internal abstract class LoggedData {
 
     class CompilationToolCall(
         private val toolName: String,
+        private val input: LoggedData?,
         private val parameters: LoggedData,
         val exitCode: ExitCode,
         val toolOutput: String,
@@ -113,6 +123,8 @@ internal abstract class LoggedData {
             )
 
             return buildString {
+                input?.let(::appendLine)
+
                 if (problems.isNotEmpty()) {
                     appendLine("$toolName PROBLEMS:")
                     problems.forEach(::appendLine)

@@ -89,7 +89,8 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
             applySources()
         }
 
-        val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs, sourceModules)
+        val loggedCompilerInput = LoggedData.CompilerInput(sourceModules)
+        val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs)
 
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult<out A>) = try {
             val compilerToolCallResult = when (compilerOutputInterceptor) {
@@ -105,8 +106,15 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
 
             val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = compilerToolCallResult
 
-            val loggedCompilationToolCall =
-                LoggedData.CompilationToolCall("COMPILER", loggedCompilerParameters, exitCode, compilerOutput, compilerOutputHasErrors, duration)
+            val loggedCompilationToolCall = LoggedData.CompilationToolCall(
+                "COMPILER",
+                loggedCompilerInput,
+                loggedCompilerParameters,
+                exitCode,
+                compilerOutput,
+                compilerOutputHasErrors,
+                duration
+            )
 
             val result = if (exitCode != ExitCode.OK || compilerOutputHasErrors)
                 TestCompilationResult.CompilationToolFailure(loggedCompilationToolCall)
@@ -282,6 +290,7 @@ internal class CInteropCompilation(
 
             val loggedInteropCall = LoggedData.CompilationToolCall(
                 toolName = "CINTEROP",
+                input = null,
                 parameters = loggedCInteropParameters,
                 exitCode = exitCode,
                 toolOutput = cinteropOutput,
