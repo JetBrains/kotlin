@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestRunnerType
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.DisabledTestsIfProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCases
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase as TC
@@ -79,11 +81,6 @@ class FirStdlibTest : AbstractNativeBlackBoxTest() {
 
 @Tag("stdlib")
 @Tag("xctest")
-@DisabledTestsIfProperty(
-    sourceLocations = ["*.kt"],
-    property = ClassLevelProperty.XCTEST_FRAMEWORK,
-    propertyValue = "" // Framework location is not set
-)
 @PredefinedTestCases(
     TC(
         name = "xctest",
@@ -105,17 +102,18 @@ class FirStdlibTest : AbstractNativeBlackBoxTest() {
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class StdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
     @TestFactory
-    fun xctest() = dynamicTestCase(TestCaseId.Named("xctest"))
+    fun xctest(): Collection<DynamicNode> {
+        Assumptions.assumeTrue {
+            System.getProperty(ClassLevelProperty.XCTEST_FRAMEWORK.propertyName).isNotEmpty()
+        }
+
+        return dynamicTestCase(TestCaseId.Named("xctest"))
+    }
 }
 
 @Tag("stdlib")
 @Tag("frontend-fir")
 @Tag("xctest")
-@DisabledTestsIfProperty(
-    sourceLocations = ["*.kt"],
-    property = ClassLevelProperty.XCTEST_FRAMEWORK,
-    propertyValue = "" // Framework location is not set
-)
 @PredefinedTestCases(
     TC(
         name = "xctest",
@@ -135,7 +133,7 @@ class StdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
             "libraries/stdlib/native-wasm/test/**.kt",
             "kotlin-native/runtime/test/**.kt"
         ],
-        ignoredTests = [DISABLED_STDLIB_TEST]
+        ignoredTests = []
     )
 )
 @EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "2m")
@@ -143,7 +141,13 @@ class StdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class FirStdlibTestWithXCTest : AbstractNativeBlackBoxTest() {
     @TestFactory
-    fun xctest() = dynamicTestCase(TestCaseId.Named("xctest"))
+    fun xctest(): Collection<DynamicNode> {
+        Assumptions.assumeTrue {
+            System.getProperty(ClassLevelProperty.XCTEST_FRAMEWORK.propertyName).isNotEmpty()
+        }
+
+        return dynamicTestCase(TestCaseId.Named("xctest"))
+    }
 }
 
 private const val ENABLE_MPP = "-Xmulti-platform"

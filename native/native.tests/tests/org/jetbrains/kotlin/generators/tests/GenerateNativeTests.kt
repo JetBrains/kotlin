@@ -64,7 +64,7 @@ fun main() {
                 annotations = listOf(
                     *frontendFir(),
                     xctest(),
-                    disabledWithoutXCTest("*.kt"),
+                    disabledWithoutXCTest("**.kt"),
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {

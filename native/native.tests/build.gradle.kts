@@ -45,58 +45,30 @@ testsJar {}
 val infrastructureTest = nativeTest("infrastructureTest", "infrastructure")
 val codegenBoxTest = nativeTest("codegenBoxTest", "codegen & !frontend-fir")
 val codegenBoxK2Test = nativeTest("codegenBoxK2Test", "codegen & frontend-fir")
-val stdlibTest = nativeTest("stdlibTest", "stdlib & !frontend-fir & !xctest")
-val stdlibK2Test = nativeTest("stdlibK2Test", "stdlib & frontend-fir & !xctest")
-val kotlinTestLibraryTest = nativeTest("kotlinTestLibraryTest", "kotlin-test & !frontend-fir & !xctest")
-val kotlinTestLibraryK2Test = nativeTest("kotlinTestLibraryK2Test", "kotlin-test & frontend-fir & !xctest")
+val stdlibTest = nativeTest("stdlibTest", "stdlib & !frontend-fir")
+val stdlibK2Test = nativeTest("stdlibK2Test", "stdlib & frontend-fir")
+val kotlinTestLibraryTest = nativeTest("kotlinTestLibraryTest", "kotlin-test & !frontend-fir")
+val kotlinTestLibraryK2Test = nativeTest("kotlinTestLibraryK2Test", "kotlin-test & frontend-fir")
 val partialLinkageTest = nativeTest("partialLinkageTest", "partial-linkage")
 val cinteropTest = nativeTest("cinteropTest", "cinterop")
 val debuggerTest = nativeTest("debuggerTest", "debugger")
 val cachesTest = nativeTest("cachesTest", "caches")
 val klibTest = nativeTest("klibTest", "klib")
+val standaloneTest = nativeTest("standaloneTest", "standalone")
 
-// xctest tasks
-val xcTestRunnerEnabled = (kotlinBuildProperties.isKotlinNativeEnabled && HostManager.hostIsMac)
-
-val codegenBoxK2TestWithXCTest = nativeTest(
-    "codegenBoxK2TestWithXCTest",
-    "codegen & frontend-fir & xctest",
-    requirePlatformLibs = true,
-    xcTestRunner = xcTestRunnerEnabled
-)
-
-val stdlibTestWithXCTest = nativeTest(
-    "stdlibTestWithXCTest",
-    "stdlib & !frontend-fir & xctest",
-    requirePlatformLibs = true,
-    xcTestRunner = xcTestRunnerEnabled
-)
-val stdlibK2TestWithXCTest = nativeTest(
-    "stdlibK2TestWithXCTest",
-    "stdlib & frontend-fir & xctest",
-    requirePlatformLibs = true,
-    xcTestRunner = xcTestRunnerEnabled
-)
-val kotlinTestLibraryTestWithXCTest = nativeTest(
-    "kotlinTestLibraryTestWithXCTest",
-    "kotlin-test & !frontend-fir & xctest",
-    requirePlatformLibs = true,
-    xcTestRunner = xcTestRunnerEnabled
-)
-val kotlinTestLibraryK2TestWithXCTest = nativeTest(
-    "kotlinTestLibraryK2TestWithXCTest",
-    "kotlin-test & frontend-fir & xctest",
-    requirePlatformLibs = true,
-    xcTestRunner = xcTestRunnerEnabled
-)
 // Note: arbitrary JUnit tag expressions can be used in this property.
 // See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
 val testTags = findProperty("kotlin.native.tests.tags")?.toString()
 
 // Sets if the XCTest runner should be enabled
-val runWithXCTest = testTags?.contains("xctest") ?: false
+val runWithXCTest = (testTags?.contains("xctest") ?: false) && HostManager.host.family.isAppleFamily
 
-val test by nativeTest("test", testTags, requirePlatformLibs = runWithXCTest, xcTestRunner = xcTestRunnerEnabled && runWithXCTest)
+// Task to run xctest locally without a need to explicitly specify "xctest" test tag.
+if (HostManager.host.family.isAppleFamily) {
+    nativeTest("xcTest", "xctest", requirePlatformLibs = true, xcTestRunner = true)
+}
+
+val test by nativeTest("test", testTags, requirePlatformLibs = runWithXCTest, xcTestRunner = runWithXCTest)
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))

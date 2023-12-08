@@ -30,7 +30,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
     @Tag("frontend-fir")
     @FirPipeline()
     @Tag("xctest")
-    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
     @UseExtTestCaseGroupProvider()
     public class Box {
         @Test
@@ -44,7 +44,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Annotations {
             @Test
@@ -100,7 +100,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class AnnotatedLambda {
                 @Test
@@ -115,7 +115,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Instances {
                 @Test
@@ -214,7 +214,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class KClassMapping {
                 @Test
@@ -229,7 +229,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Repeatable {
                 @Test
@@ -244,7 +244,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class TypeAnnotations {
                 @Test
@@ -266,7 +266,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ArgumentOrder {
             @Test
@@ -377,7 +377,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Arrays {
             @Test
@@ -757,7 +757,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ArraysOfInlineClass {
                 @Test
@@ -790,7 +790,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInReversed {
                 @Test
@@ -829,7 +829,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInUnsignedArray {
                 @Test
@@ -892,7 +892,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class MultiDecl {
                 @Test
@@ -954,7 +954,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Int {
                     @Test
@@ -993,7 +993,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Long {
                     @Test
@@ -1034,7 +1034,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Assert {
             @Test
@@ -1060,7 +1060,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Jvm {
                 @Test
@@ -1076,7 +1076,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class BinaryOp {
             @Test
@@ -1247,7 +1247,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class BoxingOptimization {
             @Test
@@ -1496,7 +1496,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Bridges {
             @Test
@@ -1876,7 +1876,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class SubstitutionInSuperClass {
                 @Test
@@ -1958,7 +1958,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class BuilderInference {
             @Test
@@ -1972,7 +1972,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class OneParameter {
                 @Test
@@ -1986,7 +1986,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class OneTypeVariable {
                     @Test
@@ -2000,7 +2000,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class OneTypeInfoOrigin {
                         @Test
@@ -2038,7 +2038,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class SourceSinkFeedContexts {
                             @Test
@@ -2107,7 +2107,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class TargetTypes {
                             @Test
@@ -2338,7 +2338,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class TypeInfoSinks {
                             @Test
@@ -2407,7 +2407,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class TypeInfoSources {
                             @Test
@@ -2462,7 +2462,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class BuiltinStubMethods {
             @Test
@@ -2482,7 +2482,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class BridgesForStubs {
                 @Test
@@ -2497,7 +2497,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ExtendJavaClasses {
                 @Test
@@ -2518,7 +2518,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class MapGetOrDefault {
                 @Test
@@ -2533,7 +2533,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class MapRemove {
                 @Test
@@ -2549,7 +2549,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class CallableReference {
             @Test
@@ -2725,7 +2725,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class AdaptedReferences {
                 @Test
@@ -2901,7 +2901,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class SuspendConversion {
                     @Test
@@ -3013,7 +3013,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Bound {
                 @Test
@@ -3195,7 +3195,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Equals {
                     @Test
@@ -3223,7 +3223,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Equality {
                 @Test
@@ -3316,7 +3316,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class FunInterfaceConstructor {
                 @Test
@@ -3361,7 +3361,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Function {
                 @Test
@@ -3705,7 +3705,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Local {
                     @Test
@@ -3841,7 +3841,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Property {
                 @Test
@@ -4036,7 +4036,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Serializability {
                 @Test
@@ -4058,7 +4058,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Casts {
             @Test
@@ -4252,7 +4252,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Functions {
                 @Test
@@ -4345,7 +4345,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class JavaInterop {
                 @Test
@@ -4360,7 +4360,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class LiteralExpressionAsGenericArgument {
                 @Test
@@ -4411,7 +4411,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class MutableCollections {
                 @Test
@@ -4468,7 +4468,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class NativeCCEMessage {
                 @Test
@@ -4508,7 +4508,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class CheckcastOptimization {
             @Test
@@ -4547,7 +4547,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ClassLiteral {
             @Test
@@ -4579,7 +4579,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Bound {
                 @Test
@@ -4618,7 +4618,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Java {
                 @Test
@@ -4634,7 +4634,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Classes {
             @Test
@@ -5308,7 +5308,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Inner {
                 @Test
@@ -5366,7 +5366,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Closures {
             @Test
@@ -5656,7 +5656,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class CaptureInSuperConstructorCall {
                 @Test
@@ -5863,7 +5863,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class CaptureOuterProperty {
                 @Test
@@ -5926,7 +5926,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class CapturedVarsOptimization {
                 @Test
@@ -6019,7 +6019,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ClosureInsideClosure {
                 @Test
@@ -6071,7 +6071,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class CollectionLiterals {
             @Test
@@ -6086,7 +6086,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Collections {
             @Test
@@ -6131,7 +6131,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Companion {
             @Test
@@ -6164,7 +6164,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Compatibility {
             @Test
@@ -6185,7 +6185,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class CompileKotlinAgainstKotlin {
             @Test
@@ -6421,7 +6421,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Fir {
                 @Test
@@ -6436,7 +6436,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class InlineClasses {
                 @Test
@@ -6534,7 +6534,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class OldMangling {
                     @Test
@@ -6556,7 +6556,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Jvm8 {
                 @Test
@@ -6570,7 +6570,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Defaults {
                     @Test
@@ -6614,7 +6614,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class AllCompatibility {
                         @Test
@@ -6670,7 +6670,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class DelegationBy {
                             @Test
@@ -6686,7 +6686,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Interop {
                         @Test
@@ -6750,7 +6750,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Jvm8against6 {
                     @Test
@@ -6800,7 +6800,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Delegation {
                         @Test
@@ -6835,7 +6835,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class TypeAnnotations {
                 @Test
@@ -6851,7 +6851,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Constants {
             @Test
@@ -6944,7 +6944,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Constructor {
             @Test
@@ -6959,7 +6959,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ConstructorCall {
             @Test
@@ -6974,7 +6974,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Contracts {
             @Test
@@ -7085,7 +7085,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ControlStructures {
             @Test
@@ -7585,7 +7585,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class BreakContinueInExpressions {
                 @Test
@@ -7719,7 +7719,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class InlinedBreakContinue {
                     @Test
@@ -7777,7 +7777,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInArray {
                 @Test
@@ -7852,7 +7852,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInArrayWithIndex {
                 @Test
@@ -7987,7 +7987,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInCharSequenceWithIndex {
                 @Test
@@ -8086,7 +8086,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInIterableWithIndex {
                 @Test
@@ -8173,7 +8173,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInIterator {
                 @Test
@@ -8188,7 +8188,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInSequenceWithIndex {
                 @Test
@@ -8263,7 +8263,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ReturnsNothing {
                 @Test
@@ -8308,7 +8308,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class SlowDsl {
                 @Test
@@ -8323,7 +8323,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class TryCatchInExpressions {
                 @Test
@@ -8519,7 +8519,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Coroutines {
             @Test
@@ -9319,7 +9319,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Bridges {
                 @Test
@@ -9370,7 +9370,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ControlFlow {
                 @Test
@@ -9523,7 +9523,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Debug {
                 @Test
@@ -9538,7 +9538,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class FeatureIntersection {
                 @Test
@@ -9666,7 +9666,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class CallableReference {
                     @Test
@@ -9698,7 +9698,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Bound {
                         @Test
@@ -9719,7 +9719,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Function {
                         @Test
@@ -9745,7 +9745,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class Local {
                             @Test
@@ -9768,7 +9768,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class FunInterface {
                     @Test
@@ -9807,7 +9807,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class JvmDefault {
                     @Test
@@ -9821,7 +9821,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Kt46007 {
                         @Test
@@ -9837,7 +9837,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Tailrec {
                     @Test
@@ -9937,7 +9937,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class InlineClasses {
                 @Test
@@ -9969,7 +9969,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Direct {
                     @Test
@@ -10266,7 +10266,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Resume {
                     @Test
@@ -10563,7 +10563,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class ResumeWithException {
                     @Test
@@ -10831,7 +10831,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class IntLikeVarSpilling {
                 @Test
@@ -10906,7 +10906,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class IntrinsicSemantics {
                 @Test
@@ -10981,7 +10981,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class JavaInterop {
                 @Test
@@ -10996,7 +10996,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class LocalFunctions {
                 @Test
@@ -11010,7 +11010,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Named {
                     @Test
@@ -11098,7 +11098,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class MultiModule {
                 @Test
@@ -11167,7 +11167,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class RedundantLocalsElimination {
                 @Test
@@ -11188,7 +11188,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Reflect {
                 @Test
@@ -11203,7 +11203,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class StackUnwinding {
                 @Test
@@ -11254,7 +11254,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class SuspendConversion {
                 @Test
@@ -11293,7 +11293,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class SuspendFunctionAsCoroutine {
                 @Test
@@ -11410,7 +11410,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class SuspendFunctionTypeCall {
                 @Test
@@ -11455,7 +11455,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class TailCallOptimizations {
                 @Test
@@ -11493,7 +11493,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Unit {
                     @Test
@@ -11509,7 +11509,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class TailOperations {
                 @Test
@@ -11548,7 +11548,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class UnitTypeReturn {
                 @Test
@@ -11605,7 +11605,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class VarSpilling {
                 @Test
@@ -11667,7 +11667,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Cleanup {
                     @Test
@@ -11682,7 +11682,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class DebugMode {
                     @Test
@@ -11699,7 +11699,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class CorrectFrontendCode {
             @Test
@@ -11720,7 +11720,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class DataClasses {
             @Test
@@ -11848,7 +11848,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Components {
                 @Test
@@ -11875,7 +11875,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Copy {
                 @Test
@@ -11938,7 +11938,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Equals {
                 @Test
@@ -11989,7 +11989,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class HashCode {
                 @Test
@@ -12070,7 +12070,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ToString {
                 @Test
@@ -12128,7 +12128,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class DataObjects {
             @Test
@@ -12161,7 +12161,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class DeadCodeElimination {
             @Test
@@ -12200,7 +12200,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class DefaultArguments {
             @Test
@@ -12358,7 +12358,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Constructor {
                 @Test
@@ -12463,7 +12463,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Convention {
                 @Test
@@ -12514,7 +12514,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Function {
                 @Test
@@ -12697,7 +12697,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Private {
                 @Test
@@ -12736,7 +12736,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Signature {
                 @Test
@@ -12770,7 +12770,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class DelegatedProperty {
             @Test
@@ -13084,7 +13084,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DelegateToAnother {
                 @Test
@@ -13159,7 +13159,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DelegateToConst {
                 @Test
@@ -13192,7 +13192,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DelegateToFinalProperty {
                 @Test
@@ -13255,7 +13255,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DelegateToSingleton {
                 @Test
@@ -13312,7 +13312,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DelegateToThis {
                 @Test
@@ -13345,7 +13345,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Local {
                 @Test
@@ -13456,7 +13456,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class OptimizedDelegatedProperties {
                 @Test
@@ -13537,7 +13537,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ProvideDelegate {
                 @Test
@@ -13679,7 +13679,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Delegation {
             @Test
@@ -13784,7 +13784,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Deprecated {
             @Test
@@ -13799,7 +13799,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class DestructuringDeclInLambdaParam {
             @Test
@@ -13862,7 +13862,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Diagnostics {
             @Test
@@ -13876,7 +13876,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Functions {
                 @Test
@@ -13890,7 +13890,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Inference {
                     @Test
@@ -13911,7 +13911,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Invoke {
                     @Test
@@ -13925,7 +13925,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class OnObjects {
                         @Test
@@ -14001,7 +14001,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class TailRecursion {
                     @Test
@@ -14287,7 +14287,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Vararg {
                 @Test
@@ -14309,7 +14309,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class DifferentDependencyVersion {
             @Test
@@ -14324,7 +14324,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class DirectInvokeOptimization {
             @Test
@@ -14423,7 +14423,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Elvis {
             @Test
@@ -14492,7 +14492,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Enum {
             @Test
@@ -14962,7 +14962,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DefaultCtor {
                 @Test
@@ -15020,7 +15020,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class EquivalentCalls {
             @Test
@@ -15041,7 +15041,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Evaluate {
             @Test
@@ -15062,7 +15062,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ExclExcl {
             @Test
@@ -15101,7 +15101,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ExtensionClasses {
             @Test
@@ -15116,7 +15116,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ExtensionFunctions {
             @Test
@@ -15292,7 +15292,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ContextReceivers {
                 @Test
@@ -15306,7 +15306,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class FromKEEP {
                     @Test
@@ -15323,7 +15323,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ExtensionProperties {
             @Test
@@ -15434,7 +15434,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class External {
             @Test
@@ -15449,7 +15449,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class FakeOverride {
             @Test
@@ -15536,7 +15536,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class FieldRename {
             @Test
@@ -15569,7 +15569,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class FileCheck {
             @Test
@@ -15757,7 +15757,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Kt53261 {
                 @Test
@@ -15832,7 +15832,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class StringConcatenationTypeNarrowing {
                 @Test
@@ -15884,7 +15884,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Finally {
             @Test
@@ -16037,7 +16037,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Fir {
             @Test
@@ -16154,7 +16154,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class FullJdk {
             @Test
@@ -16168,7 +16168,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Native {
                 @Test
@@ -16183,7 +16183,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Regressions {
                 @Test
@@ -16199,7 +16199,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class FunInterface {
             @Test
@@ -16393,7 +16393,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Equality {
                 @Test
@@ -16439,7 +16439,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Functions {
             @Test
@@ -16735,7 +16735,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class BigArity {
                 @Test
@@ -16792,7 +16792,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class FunctionExpression {
                 @Test
@@ -16837,7 +16837,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Invoke {
                 @Test
@@ -16936,7 +16936,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class LocalFunctions {
                 @Test
@@ -17126,7 +17126,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Ieee754 {
             @Test
@@ -17441,7 +17441,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Increment {
             @Test
@@ -17612,7 +17612,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Inference {
             @Test
@@ -17824,7 +17824,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class BuilderInference {
                 @Test
@@ -18038,7 +18038,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class InlineArgsInPlace {
             @Test
@@ -18119,7 +18119,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class InlineClasses {
             public InlineClasses() {
@@ -20892,7 +20892,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class BoxReturnValueInLambda {
                 public BoxReturnValueInLambda() {
@@ -21130,7 +21130,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class BoxReturnValueOnOverride {
                 public BoxReturnValueOnOverride() {
@@ -21636,7 +21636,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class CallableReferences {
                 public CallableReferences() {
@@ -21973,7 +21973,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Let {
                     public Let() {
@@ -22134,7 +22134,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ContextsAndAccessors {
                 public ContextsAndAccessors() {
@@ -22488,7 +22488,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DefaultParameterValues {
                 public DefaultParameterValues() {
@@ -22689,7 +22689,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class DefaultWithDefaultParameter {
                     @Test
@@ -22704,7 +22704,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class OverrideFunctionWithDefaultParameter {
                     @Test
@@ -22720,7 +22720,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DelegationByUnderlyingType {
                 @Test
@@ -22771,7 +22771,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class FunInterface {
                 public FunInterface() {
@@ -22881,7 +22881,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class FunctionNameMangling {
                 public FunctionNameMangling() {
@@ -23155,7 +23155,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class GenericUnderlyingValue {
                 @Test
@@ -23212,7 +23212,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class HiddenConstructor {
                 public HiddenConstructor() {
@@ -23428,7 +23428,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class InlineClassCollection {
                 public InlineClassCollection() {
@@ -23502,7 +23502,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class InterfaceDelegation {
                 public InterfaceDelegation() {
@@ -23640,7 +23640,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class InterfaceMethodCalls {
                 public InterfaceMethodCalls() {
@@ -23834,7 +23834,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class JavaInterop {
                 @Test
@@ -23849,7 +23849,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Jvm8DefaultInterfaceMethods {
                 @Test
@@ -23864,7 +23864,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class PropertyDelegation {
                 public PropertyDelegation() {
@@ -24058,7 +24058,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Result {
                 @Test
@@ -24121,7 +24121,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ReturnResult {
                 @Test
@@ -24172,7 +24172,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class UnboxGenericParameter {
                 @Test
@@ -24186,7 +24186,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class FunInterface {
                     public FunInterface() {
@@ -24336,7 +24336,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Lambda {
                     public Lambda() {
@@ -24486,7 +24486,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class ObjectLiteral {
                     public ObjectLiteral() {
@@ -24638,7 +24638,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class InnerNested {
             @Test
@@ -24826,7 +24826,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class SuperConstructorCall {
                 @Test
@@ -24968,7 +24968,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Instructions {
             @Test
@@ -24982,7 +24982,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Swap {
                 @Test
@@ -25010,7 +25010,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Intrinsics {
             @Test
@@ -25151,7 +25151,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Invokedynamic {
             @Test
@@ -25165,7 +25165,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Lambdas {
                 @Test
@@ -25185,7 +25185,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class InlineClassInSignature {
                     @Test
@@ -25201,7 +25201,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Sam {
                 @Test
@@ -25215,7 +25215,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class FunctionExprToJavaInterface {
                     @Test
@@ -25230,7 +25230,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class FunctionRefToJavaInterface {
                     @Test
@@ -25244,7 +25244,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class SpecialFunctions {
                         @Test
@@ -25259,7 +25259,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class WithAccessor {
                         @Test
@@ -25275,7 +25275,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class InlineClassInSignature {
                     @Test
@@ -25290,7 +25290,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class SpecializedGenerics {
                     @Test
@@ -25306,7 +25306,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Serializable {
                 @Test
@@ -25322,7 +25322,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class InvolvesIrInterpreter {
             @Test
@@ -25480,7 +25480,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ConstEvaluationFromJavaWorld {
                 @Test
@@ -25495,7 +25495,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class IntrinsicConst {
                 @Test
@@ -25576,7 +25576,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Serialization {
                 @Test
@@ -25628,7 +25628,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Ir {
             @Test
@@ -25768,7 +25768,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ClosureConversion {
                 @Test
@@ -25831,7 +25831,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class PrimitiveNumberComparisons {
                 @Test
@@ -25870,7 +25870,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class PrivateSignatures {
                 @Test
@@ -25897,7 +25897,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class SerializationRegressions {
                 @Test
@@ -25961,7 +25961,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class JavaFieldAndKotlinProperty {
             @Test
@@ -25976,7 +25976,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class JavaInterop {
             @Test
@@ -25990,7 +25990,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForeignAnnotationsTests {
                 @Test
@@ -26004,7 +26004,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Tests {
                     @Test
@@ -26020,7 +26020,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Generics {
                 @Test
@@ -26035,7 +26035,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class NotNullAssertions {
                 @Test
@@ -26055,7 +26055,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class EnhancedNullability {
                     @Test
@@ -26070,7 +26070,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class ExpressionAssertionMessages {
                     @Test
@@ -26085,7 +26085,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class NullCheckOnLambdaReturnValue {
                     @Test
@@ -26101,7 +26101,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ObjectMethods {
                 @Test
@@ -26117,7 +26117,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class JavaVisibility {
             @Test
@@ -26131,7 +26131,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Package {
                 @Test
@@ -26146,7 +26146,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ProtectedAndPackage {
                 @Test
@@ -26161,7 +26161,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ProtectedStatic {
                 @Test
@@ -26177,7 +26177,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Jdk {
             @Test
@@ -26216,7 +26216,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Js {
             @Test
@@ -26231,7 +26231,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Jvm8 {
             @Test
@@ -26245,7 +26245,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Defaults {
                 @Test
@@ -26259,7 +26259,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class AllCompatibility {
                     @Test
@@ -26273,7 +26273,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class DelegationBy {
                         @Test
@@ -26289,7 +26289,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class DelegationBy {
                     @Test
@@ -26304,7 +26304,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class NoDefaultImpls {
                     @Test
@@ -26318,7 +26318,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class DelegationBy {
                         @Test
@@ -26333,7 +26333,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Specialization {
                         @Test
@@ -26348,7 +26348,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class WithCompatibility {
                         @Test
@@ -26364,7 +26364,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class NonDefaultInheritance {
                     @Test
@@ -26379,7 +26379,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Reflection {
                     @Test
@@ -26395,7 +26395,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class InterfaceFlag {
                 @Test
@@ -26410,7 +26410,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class JavaDefaults {
                 @Test
@@ -26426,7 +26426,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class JvmField {
             @Test
@@ -26441,7 +26441,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class JvmName {
             @Test
@@ -26455,7 +26455,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class FileFacades {
                 @Test
@@ -26471,7 +26471,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class JvmOverloads {
             @Test
@@ -26486,7 +26486,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class JvmPackageName {
             @Test
@@ -26501,7 +26501,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class JvmStatic {
             @Test
@@ -26515,7 +26515,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ProtectedInSuperClass {
                 @Test
@@ -26531,7 +26531,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Labels {
             @Test
@@ -26594,7 +26594,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class LazyCodegen {
             @Test
@@ -26662,7 +26662,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Optimizations {
                 @Test
@@ -26732,7 +26732,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class LocalClasses {
             @Test
@@ -26987,7 +26987,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Mangling {
             @Test
@@ -27038,7 +27038,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class MixedNamedPosition {
             @Test
@@ -27077,7 +27077,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class MultiDecl {
             @Test
@@ -27175,7 +27175,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForIterator {
                 @Test
@@ -27219,7 +27219,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class LongIterator {
                     @Test
@@ -27259,7 +27259,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForRange {
                 @Test
@@ -27315,7 +27315,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class ExplicitRangeTo {
                     @Test
@@ -27359,7 +27359,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Int {
                         @Test
@@ -27398,7 +27398,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Long {
                         @Test
@@ -27438,7 +27438,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class ExplicitRangeToWithDot {
                     @Test
@@ -27482,7 +27482,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Int {
                         @Test
@@ -27521,7 +27521,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Long {
                         @Test
@@ -27561,7 +27561,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Int {
                     @Test
@@ -27600,7 +27600,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Long {
                     @Test
@@ -27641,7 +27641,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class MultifileClasses {
             @Test
@@ -27655,7 +27655,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Optimized {
                 @Test
@@ -27671,7 +27671,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Multiplatform {
             @Test
@@ -27709,7 +27709,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ComplexMatchings {
                 @Test
@@ -27736,7 +27736,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DefaultArguments {
                 @Test
@@ -27895,7 +27895,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Exhaustiveness {
                 @Test
@@ -27910,7 +27910,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Hmpp {
                 @Test
@@ -27925,7 +27925,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class K2 {
                 @Test
@@ -27969,7 +27969,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Annotations {
                     @Test
@@ -28002,7 +28002,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Basic {
                     @Test
@@ -28257,7 +28257,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class ComplexMatchings {
                     @Test
@@ -28284,7 +28284,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class DefaultArguments {
                     @Test
@@ -28449,7 +28449,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class MigratedOldTests {
                     @Test
@@ -28495,7 +28495,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class MigratedOldTests {
                 @Test
@@ -28534,7 +28534,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class MultiModule {
                 @Test
@@ -28550,7 +28550,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class NonLocalReturns {
             @Test
@@ -28583,7 +28583,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class NotNullAssertions {
             @Test
@@ -28598,7 +28598,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class NothingValue {
             @Test
@@ -28625,7 +28625,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class NullCheckOptimization {
             @Test
@@ -28676,7 +28676,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ObjectIntrinsics {
             @Test
@@ -28697,7 +28697,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Objects {
             @Test
@@ -29161,7 +29161,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class CompanionObjectAccess {
                 @Test
@@ -29271,7 +29271,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class MultipleCompanionsWithAccessors {
                     @Test
@@ -29358,7 +29358,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class PrimitiveCompanion {
                     @Test
@@ -29417,7 +29417,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class OperatorConventions {
             @Test
@@ -29599,7 +29599,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class CompareTo {
                 @Test
@@ -29681,7 +29681,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Optimizations {
             @Test
@@ -29702,7 +29702,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Package {
             @Test
@@ -29789,7 +29789,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ParametersMetadata {
             @Test
@@ -29804,7 +29804,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class PlatformTypes {
             @Test
@@ -29818,7 +29818,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Primitives {
                 @Test
@@ -29948,7 +29948,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class PolymorphicSignature {
             @Test
@@ -29963,7 +29963,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class PrimitiveTypes {
             @Test
@@ -30325,7 +30325,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class EqualityWithObject {
                 @Test
@@ -30393,7 +30393,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Generated {
                     @Test
@@ -30517,7 +30517,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class NumberToChar {
                 @Test
@@ -30569,7 +30569,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Private {
             @Test
@@ -30596,7 +30596,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class PrivateConstructors {
             @Test
@@ -30683,7 +30683,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Properties {
             @Test
@@ -31171,7 +31171,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class BackingField {
                 @Test
@@ -31186,7 +31186,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Const {
                 @Test
@@ -31225,7 +31225,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Lateinit {
                 @Test
@@ -31329,7 +31329,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class IsInitializedAndDeinitialize {
                     @Test
@@ -31398,7 +31398,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Local {
                     @Test
@@ -31455,7 +31455,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class TopLevel {
                     @Test
@@ -31502,7 +31502,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class PublishedApi {
             @Test
@@ -31535,7 +31535,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Ranges {
             @Test
@@ -31693,7 +31693,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Contains {
                 @Test
@@ -32007,7 +32007,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Generated {
                     @Test
@@ -32185,7 +32185,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class EvaluationOrder {
                 @Test
@@ -32253,7 +32253,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Stepped {
                     @Test
@@ -32267,7 +32267,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class ForInDownTo {
                         @Test
@@ -32330,7 +32330,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class ForInRangeLiteral {
                         @Test
@@ -32393,7 +32393,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class ForInUntil {
                         @Test
@@ -32458,7 +32458,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Expression {
                 @Test
@@ -32659,7 +32659,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInDownTo {
                 @Test
@@ -32716,7 +32716,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInIndices {
                 @Test
@@ -32875,7 +32875,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInProgressionWithIndex {
                 @Test
@@ -32980,7 +32980,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInReversed {
                 @Test
@@ -33103,7 +33103,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForInUntil {
                 @Test
@@ -33208,7 +33208,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ForWithPossibleOverflow {
                 @Test
@@ -33301,7 +33301,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class JavaInterop {
                 @Test
@@ -33315,7 +33315,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class WithIndex {
                     @Test
@@ -33331,7 +33331,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Literal {
                 @Test
@@ -33532,7 +33532,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class NullableLoopParameter {
                 @Test
@@ -33565,7 +33565,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Stepped {
                 @Test
@@ -33579,7 +33579,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Expression {
                     @Test
@@ -33593,7 +33593,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class DownTo {
                         @Test
@@ -33703,7 +33703,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class NestedStep {
                             @Test
@@ -33766,7 +33766,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class Reversed {
                             @Test
@@ -33818,7 +33818,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class RangeTo {
                         @Test
@@ -33928,7 +33928,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class NestedStep {
                             @Test
@@ -33991,7 +33991,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class Reversed {
                             @Test
@@ -34043,7 +34043,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class RangeUntil {
                         @Test
@@ -34117,7 +34117,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class NestedStep {
                             @Test
@@ -34180,7 +34180,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class Reversed {
                             @Test
@@ -34232,7 +34232,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Until {
                         @Test
@@ -34348,7 +34348,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class NestedStep {
                             @Test
@@ -34411,7 +34411,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class Reversed {
                             @Test
@@ -34464,7 +34464,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Literal {
                     @Test
@@ -34478,7 +34478,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class DownTo {
                         @Test
@@ -34588,7 +34588,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class NestedStep {
                             @Test
@@ -34651,7 +34651,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class Reversed {
                             @Test
@@ -34703,7 +34703,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class RangeTo {
                         @Test
@@ -34813,7 +34813,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class NestedStep {
                             @Test
@@ -34876,7 +34876,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class Reversed {
                             @Test
@@ -34928,7 +34928,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class RangeUntil {
                         @Test
@@ -35002,7 +35002,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class NestedStep {
                             @Test
@@ -35065,7 +35065,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class Reversed {
                             @Test
@@ -35117,7 +35117,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Until {
                         @Test
@@ -35233,7 +35233,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class NestedStep {
                             @Test
@@ -35296,7 +35296,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class Reversed {
                             @Test
@@ -35349,7 +35349,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Unsigned {
                     @Test
@@ -35363,7 +35363,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Expression {
                         @Test
@@ -35377,7 +35377,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class DownTo {
                             @Test
@@ -35487,7 +35487,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class NestedStep {
                                 @Test
@@ -35550,7 +35550,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class Reversed {
                                 @Test
@@ -35602,7 +35602,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class RangeTo {
                             @Test
@@ -35712,7 +35712,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class NestedStep {
                                 @Test
@@ -35775,7 +35775,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class Reversed {
                                 @Test
@@ -35827,7 +35827,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class RangeUntil {
                             @Test
@@ -35901,7 +35901,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class NestedStep {
                                 @Test
@@ -35964,7 +35964,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class Reversed {
                                 @Test
@@ -36016,7 +36016,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class Until {
                             @Test
@@ -36132,7 +36132,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class NestedStep {
                                 @Test
@@ -36195,7 +36195,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class Reversed {
                                 @Test
@@ -36248,7 +36248,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Literal {
                         @Test
@@ -36262,7 +36262,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class DownTo {
                             @Test
@@ -36372,7 +36372,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class NestedStep {
                                 @Test
@@ -36435,7 +36435,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class Reversed {
                                 @Test
@@ -36487,7 +36487,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class RangeTo {
                             @Test
@@ -36597,7 +36597,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class NestedStep {
                                 @Test
@@ -36660,7 +36660,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class Reversed {
                                 @Test
@@ -36712,7 +36712,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class RangeUntil {
                             @Test
@@ -36786,7 +36786,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class NestedStep {
                                 @Test
@@ -36849,7 +36849,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class Reversed {
                                 @Test
@@ -36901,7 +36901,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                         @Tag("frontend-fir")
                         @FirPipeline()
                         @Tag("xctest")
-                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                         @UseExtTestCaseGroupProvider()
                         public class Until {
                             @Test
@@ -37017,7 +37017,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class NestedStep {
                                 @Test
@@ -37080,7 +37080,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                             @Tag("frontend-fir")
                             @FirPipeline()
                             @Tag("xctest")
-                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                             @UseExtTestCaseGroupProvider()
                             public class Reversed {
                                 @Test
@@ -37135,7 +37135,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Unsigned {
                 @Test
@@ -37185,7 +37185,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Expression {
                     @Test
@@ -37386,7 +37386,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Literal {
                     @Test
@@ -37587,7 +37587,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class NullableLoopParameter {
                     @Test
@@ -37622,7 +37622,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class RecursiveRawTypes {
             @Test
@@ -37637,7 +37637,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Reflection {
             @Test
@@ -37651,7 +37651,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Annotations {
                 @Test
@@ -37665,7 +37665,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class OnTypes {
                     @Test
@@ -37680,7 +37680,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Repeatable {
                     @Test
@@ -37696,7 +37696,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Builtins {
                 @Test
@@ -37711,7 +37711,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Call {
                 @Test
@@ -37725,7 +37725,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Bound {
                     @Test
@@ -37740,7 +37740,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class InlineClasses {
                     @Test
@@ -37754,7 +37754,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class NonNullObject {
                         @Test
@@ -37769,7 +37769,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class NullableObject {
                         @Test
@@ -37784,7 +37784,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Primitive {
                         @Test
@@ -37800,7 +37800,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class ValueClasses {
                     @Test
@@ -37816,7 +37816,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class CallBy {
                 @Test
@@ -37831,7 +37831,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ClassLiterals {
                 @Test
@@ -37876,7 +37876,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Classes {
                 @Test
@@ -37897,7 +37897,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Constructors {
                 @Test
@@ -37918,7 +37918,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class CreateAnnotation {
                 @Test
@@ -37933,7 +37933,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Enclosing {
                 @Test
@@ -37948,7 +37948,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Functions {
                 @Test
@@ -37975,7 +37975,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class GenericSignature {
                 @Test
@@ -37996,7 +37996,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class IsInstance {
                 @Test
@@ -38011,7 +38011,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class KClassInAnnotation {
                 @Test
@@ -38026,7 +38026,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class LambdaClasses {
                 @Test
@@ -38041,7 +38041,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class LocalClasses {
                 @Test
@@ -38056,7 +38056,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Mapping {
                 @Test
@@ -38070,7 +38070,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class FakeOverrides {
                     @Test
@@ -38085,7 +38085,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class InlineClasses {
                     @Test
@@ -38100,7 +38100,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class JvmStatic {
                     @Test
@@ -38115,7 +38115,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Types {
                     @Test
@@ -38130,7 +38130,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class ValueClasses {
                     @Test
@@ -38146,7 +38146,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class MethodsFromAny {
                 @Test
@@ -38173,7 +38173,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Modifiers {
                 @Test
@@ -38188,7 +38188,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class MultifileClasses {
                 @Test
@@ -38203,7 +38203,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class NoReflectAtRuntime {
                 @Test
@@ -38235,7 +38235,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class MethodsFromAny {
                     @Test
@@ -38257,7 +38257,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Parameters {
                 @Test
@@ -38272,7 +38272,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Properties {
                 @Test
@@ -38292,7 +38292,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Accessors {
                     @Test
@@ -38307,7 +38307,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class GetDelegate {
                     @Test
@@ -38321,7 +38321,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class Method {
                         @Test
@@ -38337,7 +38337,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class JvmField {
                     @Test
@@ -38352,7 +38352,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class LocalDelegated {
                     @Test
@@ -38368,7 +38368,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Supertypes {
                 @Test
@@ -38383,7 +38383,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class SyntheticClasses {
                 @Test
@@ -38398,7 +38398,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class TypeOf {
                 @Test
@@ -38460,7 +38460,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Js {
                     @Test
@@ -38475,7 +38475,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class NoReflect {
                     @Test
@@ -38495,7 +38495,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                     @Tag("frontend-fir")
                     @FirPipeline()
                     @Tag("xctest")
-                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                     @UseExtTestCaseGroupProvider()
                     public class NonReifiedTypeParameters {
                         @Test
@@ -38511,7 +38511,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class NonReifiedTypeParameters {
                     @Test
@@ -38593,7 +38593,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class TypeParameters {
                 @Test
@@ -38608,7 +38608,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Types {
                 @Test
@@ -38640,7 +38640,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class CreateType {
                     @Test
@@ -38655,7 +38655,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Subtyping {
                     @Test
@@ -38672,7 +38672,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Regressions {
             @Test
@@ -39101,7 +39101,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Reified {
             @Test
@@ -39241,7 +39241,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ArraysReification {
                 @Test
@@ -39269,7 +39269,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class SafeCall {
             @Test
@@ -39386,7 +39386,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Sam {
             @Test
@@ -39424,7 +39424,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Adapters {
                 @Test
@@ -39438,7 +39438,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Operators {
                     @Test
@@ -39454,7 +39454,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Approximation {
                 @Test
@@ -39493,7 +39493,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Constructors {
                 @Test
@@ -39526,7 +39526,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Equality {
                 @Test
@@ -39541,7 +39541,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class JavaSamWithEqualsHashCode {
                 @Test
@@ -39557,7 +39557,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class SameFileInSourceAndDependencies {
             @Test
@@ -39584,7 +39584,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Script {
             @Test
@@ -39599,7 +39599,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Sealed {
             @Test
@@ -39656,7 +39656,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class SecondaryConstructors {
             @Test
@@ -39851,7 +39851,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Size {
             @Test
@@ -39866,7 +39866,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Smap {
             @Test
@@ -39881,7 +39881,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class SmartCasts {
             @Test
@@ -40088,7 +40088,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class SpecialBuiltins {
             @Test
@@ -40223,7 +40223,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Statics {
             @Test
@@ -40286,7 +40286,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class StoreStackBeforeInline {
             @Test
@@ -40331,7 +40331,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Strings {
             @Test
@@ -40562,7 +40562,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Super {
             @Test
@@ -40750,7 +40750,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class SuperConstructor {
                 @Test
@@ -40808,7 +40808,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Suppressions {
             @Test
@@ -40829,7 +40829,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class SuspendConversion {
             @Test
@@ -40916,7 +40916,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Synchronized {
             @Test
@@ -40931,7 +40931,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class SyntheticAccessors {
             @Test
@@ -41059,7 +41059,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ProtectedJavaFieldAccessor {
                 @Test
@@ -41074,7 +41074,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ProtectedMemberReferenceAccessor {
                 @Test
@@ -41114,7 +41114,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class SyntheticExtensions {
             @Test
@@ -41129,7 +41129,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Throws {
             @Test
@@ -41144,7 +41144,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ToArray {
             @Test
@@ -41171,7 +41171,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class TopLevelInitializtion {
             @Test
@@ -41216,7 +41216,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class TopLevelPrivate {
             @Test
@@ -41243,7 +41243,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class TrailingComma {
             @Test
@@ -41264,7 +41264,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Traits {
             @Test
@@ -41477,7 +41477,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class TypeInfo {
             @Test
@@ -41528,7 +41528,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class TypeMapping {
             @Test
@@ -41585,7 +41585,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Typealias {
             @Test
@@ -41756,7 +41756,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class UnaryOp {
             @Test
@@ -41807,7 +41807,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class UnderscoredTypeArguments {
             @Test
@@ -41846,7 +41846,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Unit {
             @Test
@@ -41945,7 +41945,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class UnsignedTypes {
             @Test
@@ -42235,7 +42235,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Jvm8Intrinsics {
                 @Test
@@ -42251,7 +42251,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ValueClasses {
             @Test
@@ -42265,7 +42265,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class JavaInterop {
                 @Test
@@ -42281,7 +42281,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Vararg {
             @Test
@@ -42392,7 +42392,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Volatile {
             @Test
@@ -42497,7 +42497,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class When {
             @Test
@@ -42799,7 +42799,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class EnumOptimization {
                 @Test
@@ -42940,7 +42940,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class StringOptimization {
                 @Test
@@ -43009,7 +43009,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class WhenSubjectVariable {
                 @Test
@@ -43134,7 +43134,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
     @Tag("frontend-fir")
     @FirPipeline()
     @Tag("xctest")
-    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
     @UseExtTestCaseGroupProvider()
     public class BoxInline {
         @Test
@@ -43148,7 +43148,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Annotations {
             @Test
@@ -43175,7 +43175,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class AnonymousObject {
             @Test
@@ -43579,7 +43579,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class EnumEntries {
                 @Test
@@ -43594,7 +43594,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class EnumWhen {
                 @Test
@@ -43633,7 +43633,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ProperRecapturing {
                 @Test
@@ -43684,7 +43684,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class ProperRecapturingInClass {
                 @Test
@@ -43771,7 +43771,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Sam {
                 @Test
@@ -43786,7 +43786,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class TwoCapturedReceivers {
                 @Test
@@ -43844,7 +43844,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ArgumentOrder {
             @Test
@@ -43943,7 +43943,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ArrayConvention {
             @Test
@@ -43994,7 +43994,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Assert {
             @Test
@@ -44009,7 +44009,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Builders {
             @Test
@@ -44024,7 +44024,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class BytecodePreprocessing {
             @Test
@@ -44039,7 +44039,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class CallableReference {
             @Test
@@ -44149,7 +44149,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class AdaptedReferences {
                 @Test
@@ -44200,7 +44200,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Bound {
                 @Test
@@ -44372,7 +44372,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Capture {
             @Test
@@ -44453,7 +44453,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Complex {
             @Test
@@ -44516,7 +44516,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class ComplexStack {
             @Test
@@ -44585,7 +44585,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Contracts {
             @Test
@@ -44690,7 +44690,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class DefaultValues {
             @Test
@@ -44824,7 +44824,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class LambdaInlining {
                 @Test
@@ -45036,7 +45036,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class CallableReferences {
                     @Test
@@ -45220,7 +45220,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class MaskElimination {
                 @Test
@@ -45278,7 +45278,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class DelegatedProperty {
             @Test
@@ -45329,7 +45329,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class EnclosingInfo {
             @Test
@@ -45344,7 +45344,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Enum {
             @Test
@@ -45449,7 +45449,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class FunctionExpression {
             @Test
@@ -45470,7 +45470,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class InlineArgsInplace {
             @Test
@@ -45491,7 +45491,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class InlineClasses {
             @Test
@@ -45553,7 +45553,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class UnboxGenericParameter {
                 @Test
@@ -45567,7 +45567,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class FunInterface {
                     @Test
@@ -45618,7 +45618,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Lambda {
                     @Test
@@ -45669,7 +45669,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class ObjectLiteral {
                     @Test
@@ -45722,7 +45722,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class InnerClasses {
             @Test
@@ -45785,7 +45785,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Invokedynamic {
             @Test
@@ -45799,7 +45799,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Lambdas {
                 @Test
@@ -45814,7 +45814,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Sam {
                 @Test
@@ -45830,7 +45830,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class JvmName {
             @Test
@@ -45845,7 +45845,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class JvmPackageName {
             @Test
@@ -45860,7 +45860,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class LambdaClassClash {
             @Test
@@ -45887,7 +45887,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class LambdaTransformation {
             @Test
@@ -45932,7 +45932,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class LocalFunInLambda {
             @Test
@@ -45971,7 +45971,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class MultiModule {
             @Test
@@ -45992,7 +45992,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class MultifileClasses {
             @Test
@@ -46007,7 +46007,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Multiplatform {
             @Test
@@ -46021,7 +46021,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DefaultArguments {
                 @Test
@@ -46043,7 +46043,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class NoInline {
             @Test
@@ -46100,7 +46100,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class NonLocalReturns {
             @Test
@@ -46252,7 +46252,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Deparenthesize {
                 @Test
@@ -46279,7 +46279,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class TryFinally {
                 @Test
@@ -46371,7 +46371,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class CallSite {
                     @Test
@@ -46422,7 +46422,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Chained {
                     @Test
@@ -46485,7 +46485,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class DeclSite {
                     @Test
@@ -46572,7 +46572,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class ExceptionTable {
                     @Test
@@ -46707,7 +46707,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
                 @Tag("frontend-fir")
                 @FirPipeline()
                 @Tag("xctest")
-                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
                 @UseExtTestCaseGroupProvider()
                 public class Variables {
                     @Test
@@ -46730,7 +46730,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Optimizations {
             @Test
@@ -46751,7 +46751,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Private {
             @Test
@@ -46838,7 +46838,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Property {
             @Test
@@ -46937,7 +46937,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Reified {
             @Test
@@ -47071,7 +47071,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class CheckCast {
                 @Test
@@ -47140,7 +47140,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DefaultLambda {
                 @Test
@@ -47155,7 +47155,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class IsCheck {
                 @Test
@@ -47189,7 +47189,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Signature {
             @Test
@@ -47204,7 +47204,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class SignatureMangling {
             @Test
@@ -47219,7 +47219,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Simple {
             @Test
@@ -47372,7 +47372,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Smap {
             @Test
@@ -47512,7 +47512,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Anonymous {
                 @Test
@@ -47587,7 +47587,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DefaultLambda {
                 @Test
@@ -47656,7 +47656,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class InlineOnly {
                 @Test
@@ -47695,7 +47695,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Newsmap {
                 @Test
@@ -47734,7 +47734,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Resolve {
                 @Test
@@ -47762,7 +47762,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Special {
             @Test
@@ -47831,7 +47831,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class StackOnReturn {
             @Test
@@ -47942,7 +47942,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Suspend {
             @Test
@@ -48100,7 +48100,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class CallableReference {
                 @Test
@@ -48145,7 +48145,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class DefaultParameter {
                 @Test
@@ -48196,7 +48196,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class InlineClass {
                 @Test
@@ -48235,7 +48235,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class InlineUsedAsNoinline {
                 @Test
@@ -48262,7 +48262,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class Receiver {
                 @Test
@@ -48325,7 +48325,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class StateMachine {
                 @Test
@@ -48479,7 +48479,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class SyntheticAccessors {
             @Test
@@ -48541,7 +48541,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
             @Tag("frontend-fir")
             @FirPipeline()
             @Tag("xctest")
-            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
             @UseExtTestCaseGroupProvider()
             public class WithinInlineLambda {
                 @Test
@@ -48611,7 +48611,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Trait {
             @Test
@@ -48632,7 +48632,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class TryCatchFinally {
             @Test
@@ -48671,7 +48671,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class TypeParameters {
             @Test
@@ -48722,7 +48722,7 @@ public class FirNativeCodegenBoxTestWithXCTestGenerated extends AbstractNativeCo
         @Tag("frontend-fir")
         @FirPipeline()
         @Tag("xctest")
-        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/*.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/**.kt" }, property = ClassLevelProperty.XCTEST_FRAMEWORK, propertyValue = "")
         @UseExtTestCaseGroupProvider()
         public class Varargs {
             @Test
