@@ -1,2 +1,2 @@
 Resolved to:
-PsiField:VAL_FLAG
+PsiField:Dependency.VAL_FLAG: PsiType:Flag<?>

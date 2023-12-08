@@ -1,2 +1,2 @@
 Resolved to:
-PsiField:varFlag
+PsiField:DependencyObject.varFlag: PsiType:Flag<?>
