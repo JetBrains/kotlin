@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.sir
 
 import org.jetbrains.kotlin.sir.builder.buildEnum
+import org.jetbrains.kotlin.sir.constants.BYTE
+import org.jetbrains.kotlin.sir.mock.MockFunction
+import org.jetbrains.kotlin.sir.mock.MockKotlinType
+import org.jetbrains.kotlin.sir.mock.MockParameter
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -22,7 +26,18 @@ class SirTest {
 
     private fun produceSwiftElement(): Any {
         return buildEnum {
-            origin = SirOrigin.KotlinEntity(path = listOf("org.me.MyEnum"))
+            origin = SirOrigin.ForeignEntity(
+                MockFunction(
+                    fqName = listOf("foo"),
+                    parameters = listOf(
+                        MockParameter(
+                            name = "arg1",
+                            type = MockKotlinType(BYTE),
+                        )
+                    ),
+                    returnType = MockKotlinType("kotlin/Byte")
+                )
+            )
             name = "MyEnum"
             visibility = SirVisibility.PUBLIC
         }

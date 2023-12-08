@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.sir
 
 sealed interface SirOrigin {
-    sealed  interface Synthetic : SirOrigin
+    sealed interface Synthetic : SirOrigin
 
     data class ExternallyDefined(val name: String) : Synthetic
 
-    data class KotlinEntity(val path: List<String>) : SirOrigin
+    data class ForeignEntity(val entity: KotlinEntity): SirOrigin
 
     /**
      * Value for nodes of unknown or non-viable origin
      * (e.g. objects created in/for tests)
      */
-    data object Unknown: SirOrigin
+    data object Unknown : SirOrigin
 }

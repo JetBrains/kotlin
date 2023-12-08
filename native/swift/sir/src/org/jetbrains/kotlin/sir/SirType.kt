@@ -10,7 +10,23 @@ sealed interface SirType
 class SirNominalType(
     val type: SirNamedDeclaration,
     val parent: SirNominalType? = null,
-) : SirType
+) : SirType {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is SirNominalType) return false
+
+        if (type != other.type) return false
+        if (parent != other.parent) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = type.hashCode()
+        result = 31 * result + (parent?.hashCode() ?: 0)
+        return result
+    }
+}
 
 class SirExistentialType(
     // TODO: Protocols. For now, only `any Any` is supported

@@ -6,17 +6,13 @@
 package org.jetbrains.kotlin.sir.analysisapi
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
-import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirForeignFunction
-import org.jetbrains.kotlin.sir.SirVisibility
-import org.jetbrains.kotlin.sir.builder.SirForeignFunctionBuilder
-import org.jetbrains.kotlin.sir.builder.buildForeignFunction
+import org.jetbrains.kotlin.sir.analysisapi.transformers.toForeignFunction
 
 /**
  * A root interface for classes that produce Swift IR elements.
@@ -37,17 +33,8 @@ class SirGenerator : SirFactory {
             super.visitNamedFunction(function)
             function
                 .takeIf { function.isPublic }
-                ?.fqName
-                ?.pathSegments()
-                ?.toListString()
-                ?.let { names -> buildForeignFunction {
-                        origin = SirOrigin.KotlinEntity(names)
-                        visibility = SirVisibility.PUBLIC
-                    }
-                }
+                ?.toForeignFunction()
                 ?.let { res.add(it) }
         }
     }
 }
-
-private fun List<Name>.toListString() = map { it.asString() }

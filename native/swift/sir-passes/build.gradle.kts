@@ -14,6 +14,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
+    testImplementation(projectTests(":native:swift:sir"))
     testImplementation(projectTests(":compiler:tests-common"))
 }
 

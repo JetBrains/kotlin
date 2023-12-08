@@ -12,11 +12,9 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirForeignFunction
-import org.jetbrains.kotlin.sir.SirModule
+import org.jetbrains.kotlin.sir.KotlinFunction
 import org.jetbrains.kotlin.sir.SirOrigin
-import org.jetbrains.kotlin.sir.builder.SirModuleBuilder
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -62,7 +60,8 @@ abstract class AbstractKotlinSirContextTestBase : AbstractAnalysisApiBasedTest()
             module.declarations
                 .filterIsInstance<SirForeignFunction>()
                 .forEach {
-                    appendLine("${(it.origin as SirOrigin.KotlinEntity).path}")
+                    val function = (it.origin as SirOrigin.ForeignEntity).entity as KotlinFunction
+                    appendLine("${function.fqName}")
                 }
         }
 
