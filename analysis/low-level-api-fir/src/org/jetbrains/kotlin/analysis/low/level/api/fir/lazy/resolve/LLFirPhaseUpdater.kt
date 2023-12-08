@@ -37,7 +37,7 @@ internal object LLFirPhaseUpdater {
                 is FirAnonymousInitializer -> target.body?.accept(PhaseUpdatingTransformer, newPhase)
                 is FirScript -> {
                     target.parameters.forEach { it.accept(PhaseUpdatingTransformer, newPhase) }
-                    for (statement in target.statements) {
+                    for (statement in target.declarations) {
                         if (!statement.isScriptStatement) continue
                         statement.accept(PhaseUpdatingTransformer, newPhase)
                     }

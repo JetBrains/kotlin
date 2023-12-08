@@ -291,11 +291,11 @@ private class LLFirBodyTargetResolver(
 
 internal object BodyStateKeepers {
     val SCRIPT: StateKeeper<FirScript, FirDesignationWithFile> = stateKeeper { script, designation ->
-        val oldStatements = script.statements
+        val oldStatements = script.declarations
         if (oldStatements.none { it.isScriptStatement } || script.isCertainlyResolved) return@stateKeeper
 
         add(RESULT_PROPERTY, designation)
-        add(FirScript::statements, FirScript::replaceStatements) {
+        add(FirScript::declarations, FirScript::replaceDeclarations) {
             val recreatedStatements = FirLazyBodiesCalculator.createStatementsForScript(script)
             requireSameSize(oldStatements, recreatedStatements)
 
@@ -447,7 +447,7 @@ private fun StateKeeperScope<FirFunction, FirDesignationWithFile>.preserveContra
     }
 }
 
-private fun FirScript.findResultProperty(): FirProperty? = statements.findIsInstanceAnd<FirProperty> {
+private fun FirScript.findResultProperty(): FirProperty? = declarations.findIsInstanceAnd<FirProperty> {
     it.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
 }
 

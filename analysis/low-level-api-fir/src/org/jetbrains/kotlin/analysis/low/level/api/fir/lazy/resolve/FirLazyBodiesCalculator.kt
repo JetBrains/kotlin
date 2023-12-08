@@ -87,7 +87,7 @@ internal object FirLazyBodiesCalculator {
 
     fun createStatementsForScript(script: FirScript): List<FirStatement> {
         val newScript = revive<FirScript>(FirDesignation(emptyList(), script))
-        return newScript.statements
+        return newScript.declarations
     }
 
     fun needCalculatingAnnotationCall(firAnnotationCall: FirAnnotationCall): Boolean =

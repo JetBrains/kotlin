@@ -141,7 +141,7 @@ internal class RootScriptStructureElement(
 internal fun <T, R> visitScriptDependentElements(script: FirScript, visitor: FirVisitor<T, R>, data: R) {
     script.annotations.forEach { it.accept(visitor, data) }
     script.contextReceivers.forEach { it.accept(visitor, data) }
-    script.statements.forEach {
+    script.declarations.forEach {
         if (it.isScriptStatement) {
             it.accept(visitor, data)
         }

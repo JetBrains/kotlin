@@ -41,7 +41,7 @@ object FirTopLevelPropertiesChecker : FirFileChecker() {
 
 object FirScriptPropertiesChecker : FirScriptChecker() {
     override fun check(declaration: FirScript, context: CheckerContext, reporter: DiagnosticReporter) {
-        val topLevelProperties = declaration.statements.filterIsInstance<FirProperty>()
+        val topLevelProperties = declaration.declarations.filterIsInstance<FirProperty>()
         checkFileLikeDeclaration(declaration, topLevelProperties, context, reporter)
     }
 }

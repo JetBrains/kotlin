@@ -85,7 +85,7 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     protected fun resolveScript(script: FirScript) {
         transformer.declarationsTransformer?.withScript(script) {
             script.parameters.forEach { it.transformSingle(transformer, ResolutionMode.ContextIndependent) }
-            script.transformStatements(
+            script.transformDeclarations(
                 transformer = object : FirTransformer<Any?>() {
                     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
                         if (element !is FirStatement || !element.isScriptStatement) return element

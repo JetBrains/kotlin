@@ -108,7 +108,7 @@ internal fun checkBodyIsResolved(function: FirFunction) {
 }
 
 internal fun checkStatementsAreResolved(script: FirScript) {
-    for (statement in script.statements) {
+    for (statement in script.declarations) {
         if (statement.isScriptStatement && statement is FirExpression) {
             checkExpressionTypeIsResolved(statement.coneTypeOrNull, "script statement", script) {
                 withFirEntry("expression", statement)

@@ -67,7 +67,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import java.util.Arrays
 
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
@@ -433,7 +432,7 @@ private class CollectingVisitor(private val collector: ElementsToShortenCollecto
     }
 
     override fun visitScript(script: FirScript) {
-        script.statements.forEach {
+        script.declarations.forEach {
             it.accept(this)
         }
     }

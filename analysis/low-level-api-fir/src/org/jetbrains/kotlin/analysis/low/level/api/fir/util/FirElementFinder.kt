@@ -97,7 +97,7 @@ internal object FirElementFinder {
                     }
 
                     subDeclaration is FirScript -> {
-                        val scriptDeclarations = subDeclaration.statements.asSequence().filterIsInstance<FirDeclaration>()
+                        val scriptDeclarations = subDeclaration.declarations.asSequence().filterIsInstance<FirDeclaration>()
                         if (find(scriptDeclarations.asIterable(), classIdPathIndex)) {
                             return true
                         }

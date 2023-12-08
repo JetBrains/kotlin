@@ -364,9 +364,9 @@ object LowLevelFirApiFacadeForResolveOnAir {
      * We assume that [newScript] has the same declarations as [originalScript]
      */
     private fun restoreOriginalDeclarationsInScript(originalScript: FirScript, newScript: FirScript) {
-        val updatedStatements = ArrayList<FirStatement>(newScript.statements.size)
-        val originalDeclarations = originalScript.statements.iterator()
-        for (recreatedStatement in newScript.statements) {
+        val updatedStatements = ArrayList<FirStatement>(newScript.declarations.size)
+        val originalDeclarations = originalScript.declarations.iterator()
+        for (recreatedStatement in newScript.declarations) {
             updatedStatements += if (recreatedStatement.isScriptStatement) {
                 recreatedStatement
             } else {
@@ -379,12 +379,12 @@ object LowLevelFirApiFacadeForResolveOnAir {
             scriptDeclarationInconsistencyError(originalScript, newScript)
         }
 
-        newScript.replaceStatements(updatedStatements)
+        newScript.replaceDeclarations(updatedStatements)
     }
 
     private fun scriptDeclarationInconsistencyError(originalScript: FirScript, newScript: FirScript): Nothing {
-        val originalDeclarations = originalScript.statements.filterNot(FirStatement::isScriptStatement)
-        val newDeclarations = newScript.statements.filterNot(FirStatement::isScriptStatement)
+        val originalDeclarations = originalScript.declarations.filterNot(FirStatement::isScriptStatement)
+        val newDeclarations = newScript.declarations.filterNot(FirStatement::isScriptStatement)
         errorWithAttachment("New script has ${if (newDeclarations.size > originalDeclarations.size) "more" else "less"} declarations") {
             withFirEntry("originalScript", originalScript)
             withFirEntry("newScript", newScript)

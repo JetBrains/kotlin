@@ -168,7 +168,7 @@ internal class LLFirImplicitBodyTargetResolver(
             }
 
             is FirScript -> {
-                if (target.statements.any { it.isScriptDependentDeclaration }) {
+                if (target.declarations.any { it.isScriptDependentDeclaration }) {
                     resolve(target, BodyStateKeepers.SCRIPT)
                 }
             }

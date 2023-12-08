@@ -60,7 +60,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
                                 return@findSourceNonLocalFirDeclarationByProvider firScript?.takeIf { it.psi == declaration }
                             }
 
-                            firScript?.statements?.filterIsInstance<FirDeclaration>()
+                            firScript?.declarations?.filterIsInstance<FirDeclaration>()
                         } else {
                             firFile.declarations
                         }
@@ -211,7 +211,7 @@ val FirDeclaration.isGeneratedDeclaration
     get() = realPsi == null
 
 internal inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Unit) {
-    for (statement in statements) {
+    for (statement in declarations) {
         if (statement.isScriptStatement) continue
         action(statement as FirDeclaration)
     }
@@ -242,7 +242,7 @@ internal val FirStatement.isScriptDependentDeclaration: Boolean
     get() = this is FirDeclaration && origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
 
 internal inline fun FirScript.forEachDependentDeclaration(action: (FirDeclaration) -> Unit) {
-    for (statement in statements) {
+    for (statement in declarations) {
         if (statement !is FirDeclaration || !statement.isScriptDependentDeclaration) continue
         action(statement)
     }

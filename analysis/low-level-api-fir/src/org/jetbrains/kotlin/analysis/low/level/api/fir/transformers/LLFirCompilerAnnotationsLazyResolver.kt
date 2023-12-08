@@ -321,7 +321,7 @@ private fun FirAnnotationContainer.hasAnnotationsToResolve(): Boolean {
                 this.setter?.hasAnnotationsToResolve() == true ||
                 this.backingField?.hasAnnotationsToResolve() == true
 
-        is FirScript -> statements.any { it.isScriptDependentDeclaration && it.hasAnnotationsToResolve() }
+        is FirScript -> declarations.any { it.isScriptDependentDeclaration && it.hasAnnotationsToResolve() }
         else -> false
     }
 }

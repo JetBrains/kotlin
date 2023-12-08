@@ -254,7 +254,7 @@ class Fir2IrVisitor(
 
             conversionScope.withParent(irScript) {
                 val destructComposites = mutableMapOf<FirVariableSymbol<*>, IrComposite>()
-                for (statement in script.statements) {
+                for (statement in script.declarations) {
                     val irStatement = if (statement is FirDeclaration) {
                         when {
                             statement is FirProperty && statement.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> {

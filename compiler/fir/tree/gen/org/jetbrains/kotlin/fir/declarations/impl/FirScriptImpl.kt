@@ -33,7 +33,7 @@ internal class FirScriptImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override val name: Name,
-    override var statements: MutableOrEmptyList<FirStatement>,
+    override var declarations: MutableOrEmptyList<FirStatement>,
     override val symbol: FirScriptSymbol,
     override val parameters: MutableList<FirVariable>,
     override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
@@ -49,7 +49,7 @@ internal class FirScriptImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
-        statements.forEach { it.accept(visitor, data) }
+        declarations.forEach { it.accept(visitor, data) }
         parameters.forEach { it.accept(visitor, data) }
         contextReceivers.forEach { it.accept(visitor, data) }
     }
@@ -57,7 +57,7 @@ internal class FirScriptImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirScriptImpl {
         transformAnnotations(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
-        transformStatements(transformer, data)
+        transformDeclarations(transformer, data)
         parameters.transformInplace(transformer, data)
         contextReceivers.transformInplace(transformer, data)
         return this
@@ -68,8 +68,8 @@ internal class FirScriptImpl(
         return this
     }
 
-    override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirScriptImpl {
-        statements.transformInplace(transformer, data)
+    override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirScriptImpl {
+        declarations.transformInplace(transformer, data)
         return this
     }
 
@@ -81,7 +81,7 @@ internal class FirScriptImpl(
         controlFlowGraphReference = newControlFlowGraphReference
     }
 
-    override fun replaceStatements(newStatements: List<FirStatement>) {
-        statements = newStatements.toMutableOrEmpty()
+    override fun replaceDeclarations(newDeclarations: List<FirStatement>) {
+        declarations = newDeclarations.toMutableOrEmpty()
     }
 }

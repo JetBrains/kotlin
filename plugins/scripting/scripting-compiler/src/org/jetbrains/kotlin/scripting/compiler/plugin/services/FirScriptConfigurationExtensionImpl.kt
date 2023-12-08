@@ -137,10 +137,10 @@ class FirScriptConfiguratorExtensionImpl(
         }
 
         configuration[ScriptCompilationConfiguration.resultField]?.takeIf { it.isNotBlank() }?.let { resultFieldName ->
-            val lastExpression = statements.lastOrNull()
+            val lastExpression = declarations.lastOrNull()
             if (lastExpression != null && lastExpression is FirExpression) {
-                statements.removeAt(statements.size - 1)
-                statements.add(
+                declarations.removeAt(declarations.size - 1)
+                declarations.add(
                     @OptIn(UnresolvedExpressionTypeAccess::class)
                     buildProperty {
                         this.name = Name.identifier(resultFieldName)

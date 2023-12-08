@@ -1286,7 +1286,7 @@ open class PsiRawFirBuilder(
                 for (declaration in script.declarations) {
                     when (declaration) {
                         is KtScriptInitializer -> {
-                            declaration.body?.let { statements.add(it.toFirStatement()) }
+                            declaration.body?.let { declarations.add(it.toFirStatement()) }
                         }
                         is KtDestructuringDeclaration -> {
                             val destructuringContainerVar = generateTemporaryVariable(
@@ -1299,9 +1299,9 @@ open class PsiRawFirBuilder(
                             ).apply {
                                 isDestructuringDeclarationContainerVariable = true
                             }
-                            statements.add(destructuringContainerVar)
+                            declarations.add(destructuringContainerVar)
 
-                            statements.addDestructuringVariables(
+                            declarations.addDestructuringVariables(
                                 moduleData,
                                 declaration,
                                 destructuringContainerVar,
@@ -1312,7 +1312,7 @@ open class PsiRawFirBuilder(
                             }
                         }
                         else -> {
-                            statements.add(declaration.toFirStatement())
+                            declarations.add(declaration.toFirStatement())
                         }
                     }
                 }

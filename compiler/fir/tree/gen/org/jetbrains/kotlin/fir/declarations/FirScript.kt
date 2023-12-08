@@ -30,7 +30,7 @@ abstract class FirScript : FirDeclaration(), FirControlFlowGraphOwner {
     abstract override val attributes: FirDeclarationAttributes
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val name: Name
-    abstract val statements: List<FirStatement>
+    abstract val declarations: List<FirStatement>
     abstract override val symbol: FirScriptSymbol
     abstract val parameters: List<FirVariable>
     abstract val contextReceivers: List<FirContextReceiver>
@@ -47,9 +47,9 @@ abstract class FirScript : FirDeclaration(), FirControlFlowGraphOwner {
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
-    abstract fun replaceStatements(newStatements: List<FirStatement>)
+    abstract fun replaceDeclarations(newDeclarations: List<FirStatement>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirScript
 
-    abstract fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirScript
+    abstract fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirScript
 }

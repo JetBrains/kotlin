@@ -25,7 +25,7 @@ internal class KtFirResultPropertySymbolPointer(private val scriptPointer: KtSym
             scriptPointer.restoreSymbol()?.firSymbol?.fir as? FirScript
         } ?: return null
 
-        val lastProperty = script.statements.lastOrNull() as? FirProperty ?: return null
+        val lastProperty = script.declarations.lastOrNull() as? FirProperty ?: return null
         if (lastProperty.origin !is FirDeclarationOrigin.ScriptCustomization.ResultProperty) return null
         return analysisSession.firSymbolBuilder.variableLikeBuilder.buildPropertySymbol(lastProperty.symbol) as? KtKotlinPropertySymbol
     }

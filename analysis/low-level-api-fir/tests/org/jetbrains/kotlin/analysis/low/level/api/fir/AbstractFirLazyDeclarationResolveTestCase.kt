@@ -91,7 +91,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiLa
         val (classSymbol, declarations) = when (symbol) {
             is FirClassSymbol -> symbol to symbol.declarationSymbols
             is FirScriptSymbol -> {
-                symbol to symbol.fir.let { it.parameters + it.statements }.mapNotNull { (it as? FirDeclaration)?.symbol }
+                symbol to symbol.fir.let { it.parameters + it.declarations }.mapNotNull { (it as? FirDeclaration)?.symbol }
             }
 
             else -> error("Unknown container: ${symbol::class.simpleName}")
