@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.formver.conversion.ProgramConverter
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.print
-import org.jetbrains.kotlin.formver.reporting.VerifierErrorInterpreter
+import org.jetbrains.kotlin.formver.reporting.reportVerifierError
 import org.jetbrains.kotlin.formver.viper.Verifier
 import org.jetbrains.kotlin.formver.viper.ast.Program
 import org.jetbrains.kotlin.formver.viper.ast.unwrapOr
@@ -67,9 +67,7 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
             val verifier = Verifier()
             val onFailure = { err: VerifierError ->
                 val source = err.position.unwrapOr { declaration.source }
-                with(VerifierErrorInterpreter()) {
-                    reporter.reportVerifierError(source, err, config.errorStyle, context)
-                }
+                reporter.reportVerifierError(source, err, config.errorStyle, context)
             }
 
             val consistent = verifier.checkConsistency(program, onFailure)

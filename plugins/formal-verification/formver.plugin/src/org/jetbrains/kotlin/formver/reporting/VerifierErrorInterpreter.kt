@@ -7,139 +7,44 @@ package org.jetbrains.kotlin.formver.reporting
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.formver.ErrorStyle
 import org.jetbrains.kotlin.formver.PluginErrors
-import org.jetbrains.kotlin.formver.embeddings.SourceRole
 import org.jetbrains.kotlin.formver.viper.errors.ConsistencyError
 import org.jetbrains.kotlin.formver.viper.errors.VerificationError
 import org.jetbrains.kotlin.formver.viper.errors.VerifierError
-import org.jetbrains.kotlin.formver.viper.errors.getInfoOrNull
 
-class VerifierErrorInterpreter {
-    private var isOriginalViperErrorReported = false
+private fun VerificationError.formatByErrorStyle(errorStyle: ErrorStyle): List<FormattedError> = when (errorStyle) {
+    ErrorStyle.USER_FRIENDLY -> listOf(formatUserFriendly() ?: DefaultError(this))
+    ErrorStyle.ORIGINAL_VIPER -> listOf(DefaultError(this))
+    ErrorStyle.BOTH -> listOfNotNull(formatUserFriendly(), DefaultError(this))
+}
 
-    private fun DiagnosticReporter.reportVerificationErrorUserFriendly(
-        source: KtSourceElement?,
-        error: VerificationError,
-        context: CheckerContext,
-    ) {
-        when (val role = error.getInfoOrNull<SourceRole>()) {
-            is SourceRole.ReturnsEffect ->
-                reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, role.asUserFriendlyMessage, context)
-            is SourceRole.CallsInPlaceEffect ->
-                reportOn(source, PluginErrors.INVALID_INVOCATION_TYPE, role.paramSymbol, role.kind.asUserFriendlyMessage, context)
-            is SourceRole.ParamFunctionLeakageCheck -> with(role) {
-                reportOn(source, PluginErrors.LAMBDA_MAY_LEAK, error.reason.fetchLeakingFunction(), context)
-            }
-            is SourceRole.ConditionalEffect -> {
-                val (returnEffect, condition) = role
-                reportOn(source, PluginErrors.CONDITIONAL_EFFECT_ERROR, returnEffect.describe(), condition.describe(), context)
-            }
-            else -> reportVerificationErrorOriginalViper(source, error, context)
-        }
+private fun DiagnosticReporter.reportVerificationError(
+    source: KtSourceElement?,
+    error: VerificationError,
+    errorStyle: ErrorStyle,
+    context: CheckerContext,
+) = error.formatByErrorStyle(errorStyle).forEach { it.report(this, source, context) }
+
+private fun DiagnosticReporter.reportConsistencyError(source: KtSourceElement?, error: ConsistencyError, context: CheckerContext) {
+    val sourceIsFunctionDeclaration = source?.elementType?.let { it == KtNodeTypes.FUN } ?: false
+    val positionStrategy = when (sourceIsFunctionDeclaration) {
+        true -> SourceElementPositioningStrategies.DECLARATION_NAME
+        false -> SourceElementPositioningStrategies.DEFAULT
     }
+    reportOn(source, PluginErrors.INTERNAL_ERROR, error.msg, context, positioningStrategy = positionStrategy)
+}
 
-    private fun DiagnosticReporter.reportVerificationErrorOriginalViper(
-        source: KtSourceElement?,
-        error: VerificationError,
-        context: CheckerContext,
-    ) {
-        if (!isOriginalViperErrorReported) {
-            reportOn(source, PluginErrors.VIPER_VERIFICATION_ERROR, error.msg, context)
-            isOriginalViperErrorReported = true
-        }
-    }
-
-    private fun DiagnosticReporter.reportVerificationError(
-        source: KtSourceElement?,
-        error: VerificationError,
-        errorStyle: ErrorStyle,
-        context: CheckerContext,
-    ) = when (errorStyle) {
-        ErrorStyle.USER_FRIENDLY -> reportVerificationErrorUserFriendly(source, error, context)
-        ErrorStyle.ORIGINAL_VIPER -> reportVerificationErrorOriginalViper(source, error, context)
-        ErrorStyle.BOTH -> {
-            reportVerificationErrorUserFriendly(source, error, context)
-            reportVerificationErrorOriginalViper(source, error, context)
-        }
-    }
-
-    private fun DiagnosticReporter.reportConsistencyError(source: KtSourceElement?, error: ConsistencyError, context: CheckerContext) {
-        val sourceIsFunctionDeclaration = source?.elementType?.let { it == KtNodeTypes.FUN } ?: false
-        val positionStrategy = when (sourceIsFunctionDeclaration) {
-            true -> SourceElementPositioningStrategies.DECLARATION_NAME
-            false -> SourceElementPositioningStrategies.DEFAULT
-        }
-        reportOn(source, PluginErrors.INTERNAL_ERROR, error.msg, context, positioningStrategy = positionStrategy)
-    }
-
-    fun DiagnosticReporter.reportVerifierError(
-        source: KtSourceElement?,
-        error: VerifierError,
-        errorStyle: ErrorStyle,
-        context: CheckerContext,
-    ) = when (error) {
-        is ConsistencyError -> reportConsistencyError(source, error, context)
-        is VerificationError -> reportVerificationError(source, error, errorStyle, context)
-    }
-
-    private val EventOccurrencesRange.asUserFriendlyMessage: String
-        get() = when (this) {
-            EventOccurrencesRange.AT_MOST_ONCE -> "at most once"
-            EventOccurrencesRange.EXACTLY_ONCE -> "exactly once"
-            EventOccurrencesRange.AT_LEAST_ONCE -> "at least once"
-            EventOccurrencesRange.MORE_THAN_ONCE -> "more than once"
-            else -> TODO("Unreachable")
-        }
-
-    private val SourceRole.ReturnsEffect.asUserFriendlyMessage: String
-        get() = when (this) {
-            is SourceRole.ReturnsEffect.Bool -> if (bool) "false" else "true"
-            is SourceRole.ReturnsEffect.Null -> if (negated) "null" else "non-null"
-            else -> TODO("Unreachable")
-        }
-
-    private fun SourceRole.ReturnsEffect.describe(): String = when (this) {
-        is SourceRole.ReturnsEffect.Bool, is SourceRole.ReturnsEffect.Null -> "a $this value is returned"
-        SourceRole.ReturnsEffect.Wildcard -> "the function returns"
-    }
-
-    private fun SourceRole.Condition.describe(): String = when (this) {
-        is SourceRole.FirSymbolHolder -> firSymbol.rendered
-        is SourceRole.Condition.Constant -> literal.toString()
-        is SourceRole.Condition.Negation -> "!${arg.describe()}"
-        is SourceRole.Condition.Conjunction -> "(${lhs.describe()} && ${rhs.describe()})"
-        is SourceRole.Condition.Disjunction -> "(${lhs.describe()} || ${rhs.describe()})"
-        is SourceRole.Condition.IsNull -> buildString {
-            append(targetVariable.rendered)
-            when (negated) {
-                true -> append(" != ")
-                false -> append(" == ")
-            }
-            append("null")
-        }
-        is SourceRole.Condition.IsType -> buildString {
-            append(targetVariable.rendered)
-            when (negated) {
-                true -> append(" !is ")
-                false -> append(" is ")
-            }
-            append(expectedType.rendered)
-        }
-    }
-
-    private val ConeKotlinType.rendered: String
-        get() = renderReadable()
-
-    private val FirBasedSymbol<*>.rendered: String
-        get() = FirDiagnosticRenderers.DECLARATION_NAME.render(this)
+fun DiagnosticReporter.reportVerifierError(
+    source: KtSourceElement?,
+    error: VerifierError,
+    errorStyle: ErrorStyle,
+    context: CheckerContext,
+) = when (error) {
+    is ConsistencyError -> reportConsistencyError(source, error, context)
+    is VerificationError -> reportVerificationError(source, error, errorStyle, context)
 }
