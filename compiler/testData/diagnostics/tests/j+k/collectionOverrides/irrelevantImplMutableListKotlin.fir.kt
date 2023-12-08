@@ -103,4 +103,9 @@ fun main() {
     x.size
     x.remove("")
     x.remove(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+    val y = A()
+    <!OPERATOR_MODIFIER_REQUIRED!>y[0]<!>
+    y.size
+    y.remove("")
+    y.remove(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }

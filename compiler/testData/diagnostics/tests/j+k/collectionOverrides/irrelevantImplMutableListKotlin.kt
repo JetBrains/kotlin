@@ -103,4 +103,9 @@ fun main() {
     x.size
     x.remove("")
     x.remove(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    val y = A()
+    y[0]
+    y.size
+    y.remove("")
+    y.remove(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
 }
