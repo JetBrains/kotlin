@@ -662,7 +662,9 @@ class LocalDeclarationsLowering(
         }
 
         private fun getOrCreateInitializationPhaseFunctionContext(localClassContext: LocalClassContext): LocalContextWithClosureAsParameters {
-            localClassContext.declaration.primaryConstructor?.let { return localClassConstructors.getOrElse(it) { error("Expect primary constructor to be registered") } }
+            localClassContext.declaration.primaryConstructor?.let {
+                return localClassConstructors[it] ?: error("Expect primary constructor to be registered")
+            }
 
             val declaration = context.mapping.classToItsSyntheticInitializationFunction
                 .getOrPut(localClassContext.declaration) { context.irFactory.buildFun { name = Name.special("<synthetic-init>") } }
