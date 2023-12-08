@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.LLDB
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.junit.jupiter.api.Assumptions
@@ -224,6 +225,9 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         val executableFile = File(buildDir, clangExecutableName)
 
         compileWithClang(
+            // This code was initially written against clang from toolchain.
+            // Changing it to another one probably won't hurt, but it was not tested.
+            clangDistribution = ClangDistribution.Toolchain,
             sourceFiles = listOf(clangFile),
             outputFile = executableFile,
             frameworkDirectories = listOf(buildDir),
