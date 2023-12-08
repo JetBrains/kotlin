@@ -1,0 +1,4 @@
+ALL:
+  LazySchemeProcessor.isSchemeFile(name: CharSequence): Boolean
+DIRECT:
+  LazySchemeProcessor.isSchemeFile(name: CharSequence): Boolean

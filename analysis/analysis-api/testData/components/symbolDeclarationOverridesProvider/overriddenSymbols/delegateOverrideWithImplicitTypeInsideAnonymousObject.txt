@@ -1,0 +1,4 @@
+ALL:
+  BaseClass.isSchemeFile(name: CharSequence): Boolean
+DIRECT:
+  BaseClass.isSchemeFile(name: CharSequence): Boolean
