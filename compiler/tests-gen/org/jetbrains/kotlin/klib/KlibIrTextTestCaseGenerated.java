@@ -835,39 +835,80 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
-            @TestMetadata("K1_expectClassInherited.kt")
-            public void testK1_expectClassInherited() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/K1_expectClassInherited.kt");
+            @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform/k1")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class K1 extends AbstractKlibIrTextTestCase {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+                }
+
+                public void testAllFilesPresentInK1() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform/k1"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                }
+
+                @TestMetadata("expectClassInherited.kt")
+                public void testExpectClassInherited() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectClassInherited.kt");
+                }
+
+                @TestMetadata("expectIntersectionOverride.kt")
+                public void testExpectIntersectionOverride() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectIntersectionOverride.kt");
+                }
+
+                @TestMetadata("expectMemberInNotExpectClass.kt")
+                public void testExpectMemberInNotExpectClass() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectMemberInNotExpectClass.kt");
+                }
+
+                @TestMetadata("expectedEnumClass.kt")
+                public void testExpectedEnumClass() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectedEnumClass.kt");
+                }
+
+                @TestMetadata("expectedSealedClass.kt")
+                public void testExpectedSealedClass() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectedSealedClass.kt");
+                }
             }
 
-            @TestMetadata("K1_expectMemberInNotExpectClass.kt")
-            public void testK1_expectMemberInNotExpectClass() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/K1_expectMemberInNotExpectClass.kt");
-            }
+            @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform/k2")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class K2 extends AbstractKlibIrTextTestCase {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+                }
 
-            @TestMetadata("K1_expectedEnumClass.kt")
-            public void testK1_expectedEnumClass() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/K1_expectedEnumClass.kt");
-            }
+                public void testAllFilesPresentInK2() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                }
 
-            @TestMetadata("K1_expectedSealedClass.kt")
-            public void testK1_expectedSealedClass() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/K1_expectedSealedClass.kt");
-            }
+                @TestMetadata("expectClassInherited.kt")
+                public void testExpectClassInherited() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/expectClassInherited.kt");
+                }
 
-            @TestMetadata("K2_expectIntersectionOverride.kt")
-            public void testK2_expectIntersectionOverride() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/K2_expectIntersectionOverride.kt");
-            }
+                @TestMetadata("expectIntersectionOverride.kt")
+                public void testExpectIntersectionOverride() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/expectIntersectionOverride.kt");
+                }
 
-            @TestMetadata("K2_expectMemberInNotExpectClass.kt")
-            public void testK2_expectMemberInNotExpectClass() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/K2_expectMemberInNotExpectClass.kt");
-            }
+                @TestMetadata("expectMemberInNotExpectClass.kt")
+                public void testExpectMemberInNotExpectClass() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/expectMemberInNotExpectClass.kt");
+                }
 
-            @TestMetadata("K2_expectedEnumClass.kt")
-            public void testK2_expectedEnumClass() throws Exception {
-                runTest("compiler/testData/ir/irText/declarations/multiplatform/K2_expectedEnumClass.kt");
+                @TestMetadata("expectedEnumClass.kt")
+                public void testExpectedEnumClass() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/expectedEnumClass.kt");
+                }
+
+                @TestMetadata("expectedSealedClass.kt")
+                public void testExpectedSealedClass() throws Exception {
+                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/expectedSealedClass.kt");
+                }
             }
         }
 

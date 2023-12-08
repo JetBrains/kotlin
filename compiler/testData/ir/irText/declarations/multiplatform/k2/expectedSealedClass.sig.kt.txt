@@ -1,0 +1,27 @@
+// FILE: common.kt
+
+// FILE: platform.kt
+
+// CHECK:
+//   Mangled name: Add
+//   Public signature: /Add|null[0]
+class Add : Ops {
+  // CHECK:
+  //   Mangled name: Add#<init>(){}
+  //   Public signature: /Add.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Ops
+//   Public signature: /Ops|null[0]
+sealed class Ops {
+  // CHECK:
+  //   Mangled name: Ops#<init>(){}
+  //   Public signature: /Ops.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  protected constructor() /* primary */
+
+}

@@ -1,0 +1,29 @@
+// FILE: common.kt
+
+// FILE: platform.kt
+
+abstract class A {
+  protected constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  abstract fun foo()
+
+}
+
+open class B : A {
+  constructor(i: Int) /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+  override fun foo() {
+  }
+
+  open fun bar(s: String) {
+  }
+
+}

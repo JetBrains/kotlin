@@ -1,0 +1,21 @@
+// FILE: common.kt
+
+// FILE: platform.kt
+
+sealed class Ops {
+  protected constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Add : Ops {
+  constructor() /* primary */ {
+    super/*Ops*/()
+    /* <init>() */
+
+  }
+
+}
