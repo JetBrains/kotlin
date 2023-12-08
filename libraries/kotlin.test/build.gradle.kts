@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import org.gradle.api.publish.internal.PublicationInternal
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import plugins.configureDefaultPublishing
@@ -281,8 +282,7 @@ tasks {
         dependsOn(jvmTestTasks)
     }
 
-    val generateProjectStructureMetadata by existing {
-        val outputFile = file("build/kotlinProjectStructureMetadata/kotlin-project-structure-metadata.json")
+    val generateProjectStructureMetadata by existing(GenerateProjectStructureMetadata::class) {
         val outputTestFile = file("kotlin-project-structure-metadata.beforePatch.json")
         val patchedFile = file("kotlin-project-structure-metadata.json")
 
@@ -295,16 +295,16 @@ tasks {
             This will fail if the kotlin-project-structure-metadata.json file would change unnoticed (w/o updating our patched file)
              */
             run {
-                val outputFileText = outputFile.readText().trim()
+                val outputFileText = resultFile.readText().trim()
                 val expectedFileContent = outputTestFile.readText().trim()
                 if (outputFileText != expectedFileContent)
                     error(
-                        "${outputFile.path} file content does not match expected content\n\n" +
+                        "${resultFile.path} file content does not match expected content\n\n" +
                                 "expected:\n\n$expectedFileContent\n\nactual:\n\n$outputFileText"
                     )
             }
 
-            patchedFile.copyTo(outputFile, overwrite = true)
+            patchedFile.copyTo(resultFile, overwrite = true)
         }
     }
 }
