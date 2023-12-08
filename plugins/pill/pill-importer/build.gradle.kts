@@ -33,7 +33,7 @@ fun runPillTask(taskName: String) {
     val runMethod = pillImporterClass.declaredMethods.single { it.name == "run" }
     require(Modifier.isStatic(runMethod.modifiers))
 
-    val platformDir = rootProject.ideaHomePathForTests()
+    val platformDir = rootProject.ideaHomePathForTests().get().asFile
     val resourcesDir = File(project.projectDir, "resources")
 
     runMethod.invoke(null, project.rootProject, taskName, platformDir, resourcesDir)
