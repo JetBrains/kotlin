@@ -43,11 +43,10 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!config.shouldConvert(declaration)) return
         val errorCollector = ErrorCollector()
-        var program: Program? = null
         try {
             val programConversionContext = ProgramConverter(session, config, errorCollector)
             programConversionContext.registerForVerification(declaration)
-            program = programConversionContext.program
+            val program = programConversionContext.program
 
             getProgramForLogging(program)?.let {
                 reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, declaration.name.asString(), it.toDebugOutput(), context)
