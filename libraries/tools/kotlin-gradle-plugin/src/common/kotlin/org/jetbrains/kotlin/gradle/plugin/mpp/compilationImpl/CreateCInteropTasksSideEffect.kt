@@ -45,6 +45,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
                     "for compilation '${compilation.compilationName}'" +
                     "of target '${it.konanTarget.name}'."
             it.enabled = compilation.konanTarget.enabledOnCurrentHost
+            it.definitionFile.set(params.settings.definitionFile)
         }
 
 

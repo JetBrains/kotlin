@@ -1094,7 +1094,15 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:NormalizeLineEndings
-    val defFile: File get() = settings.defFileProperty.get()
+    abstract val definitionFile: RegularFileProperty
+
+    @get:Internal
+    @Deprecated(
+        "This eager parameter is deprecated.",
+        replaceWith = ReplaceWith("definitionFile")
+    )
+    val defFile: File get() = definitionFile.asFile.get()
+
 
     @get:Optional
     @get:Input
@@ -1147,7 +1155,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
                 addArg("-o", outputFile.absolutePath)
 
                 addArgIfNotNull("-target", konanTarget.visibleName)
-                addArgIfNotNull("-def", defFile.canonicalPath)
+                addArgIfNotNull("-def", definitionFile.getFile().canonicalPath)
                 addArgIfNotNull("-pkg", packageName)
 
                 addFileArgs("-header", headers)

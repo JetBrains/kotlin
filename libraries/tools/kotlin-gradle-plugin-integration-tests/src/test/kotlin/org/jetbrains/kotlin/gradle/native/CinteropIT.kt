@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
 @NativeGradlePluginTests
@@ -50,6 +51,27 @@ class CinteropIT : KGPBaseTest() {
             defFile.appendText("\ncompilerOpts = -fmodules")
             build(":cinteropNlibIosX64") {
                 assertOutputDoesNotContain("Try adding `-compiler-option -fmodules` to cinterop.")
+            }
+        }
+    }
+
+    @DisplayName("KT-62795: checking that we can pass def file to cinterop task as a output file property from another task")
+    @GradleTest
+    fun cinteropWithDefFileFromTaskOutput(gradleVersion: GradleVersion) {
+        nativeProject("cinterop-with-def-creation-task", gradleVersion = gradleVersion) {
+
+            val defFilePath = projectPath.resolve("def/cinterop.def").toFile().canonicalFile.absolutePath
+
+            build(":assemble") {
+                assertTasksUpToDate(":createDefFileTask") // this task does not have any action, so it always just UpToDate
+                extractNativeTasksCommandLineArgumentsFromOutput(":cinteropCinteropNative", toolName = NativeToolKind.C_INTEROP) {
+                    assertCommandLineArgumentsContainSequentially("-def", defFilePath)
+                }
+            }
+
+            build(":assemble") {
+                assertTasksUpToDate(":createDefFileTask")
+                assertTasksUpToDate(":cinteropCinteropNative")
             }
         }
     }

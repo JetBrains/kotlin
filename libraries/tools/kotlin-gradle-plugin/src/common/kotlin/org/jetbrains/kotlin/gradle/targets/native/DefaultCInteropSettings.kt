@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -19,9 +20,8 @@ import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.newInstance
-import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
 import javax.inject.Inject
@@ -71,12 +71,19 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
 
     val interopProcessingTaskName get() = params.interopProcessingTaskName
 
-    val defFileProperty: Property<File> = params.services.objectFactory.property<File>().value(
+
+    @Deprecated("Deprecated. Please, use definitionFile.", ReplaceWith("definitionFile"))
+    val defFileProperty: Property<File> = params.services.objectFactory.property<File>().convention(
         params.services.projectLayout.projectDirectory.file("src/nativeInterop/cinterop/$name.def").asFile
     )
 
+    val definitionFile: RegularFileProperty = params.services.objectFactory.fileProperty().convention(
+        params.services.projectLayout.file(defFileProperty)
+    )
+
+    @Deprecated("Deprecated because it is a non-lazy property.", ReplaceWith("definitionFile"))
     var defFile: File
-        get() = defFileProperty.get()
+        get() = definitionFile.getFile()
         set(value) {
             defFileProperty.set(value)
         }
