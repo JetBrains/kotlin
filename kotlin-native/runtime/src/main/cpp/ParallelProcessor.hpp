@@ -41,10 +41,8 @@ private:
 
         ALWAYS_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
             RuntimeAssert(!full(), "Batch overflow");
-            bool pushed = elems_.try_push_front(value);
-            if (pushed) {
-                ++elemsCount_;
-            }
+            const bool pushed = elems_.try_push_front(value);
+            elemsCount_ += static_cast<int>(pushed);
             return pushed;
         }
 

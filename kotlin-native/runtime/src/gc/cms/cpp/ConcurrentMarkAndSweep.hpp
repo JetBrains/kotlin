@@ -50,15 +50,14 @@ public:
 
         auto& commonThreadData() const noexcept { return threadData_; }
         auto& barriers() noexcept { return barriers_; }
-        // TODO use in concurrent mark
-        [[maybe_unused]] auto& markQueue() noexcept { return markQueue_; }
+        auto& mark() noexcept { return mark_; }
 
     private:
         friend ConcurrentMarkAndSweep;
         ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
-        BarriersThreadData barriers_;
-        ManuallyScoped<mark::ParallelMark::MutatorQueue> markQueue_;
+        barriers::BarriersThreadData barriers_;
+        mark::ParallelMark::ThreadData mark_;
 
         std::atomic<bool> rootSetLocked_ = false;
         std::atomic<bool> published_ = false;

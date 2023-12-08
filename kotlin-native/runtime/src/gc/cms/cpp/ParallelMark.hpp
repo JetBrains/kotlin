@@ -76,16 +76,17 @@ private:
 class ParallelMark : private Pinned {
     using MarkStackImpl = intrusive_forward_list<GC::ObjectData>;
     // work balancing parameters were chosen pretty arbitrary
-    using ParallelProcessor = ParallelProcessor<MarkStackImpl, 512, 4096>;
-public:
 
+public:
+    using ParallelProcessor = ParallelProcessor<MarkStackImpl, 512, 4096>;
     using MutatorQueue = ParallelProcessor::WorkSource;
 
     class MarkTraits {
     public:
         using MarkQueue = ParallelProcessor::Worker;
+        using AnyQueue = ParallelProcessor::WorkSource;
 
-        static void clear(MarkQueue& queue) noexcept {
+        static void clear(AnyQueue& queue) noexcept {
             RuntimeAssert(queue.localEmpty(), "Mark queue must be empty");
         }
 
@@ -97,7 +98,7 @@ public:
             return nullptr;
         }
 
-        static ALWAYS_INLINE bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
+        static ALWAYS_INLINE bool tryEnqueue(AnyQueue& queue, ObjHeader* object) noexcept {
             auto& objectData = alloc::objectDataForObject(object);
             return compiler::gcMarkSingleThreaded() ? queue.tryPushLocal(objectData) : queue.tryPush(objectData);
         }
@@ -114,7 +115,14 @@ public:
         }
     };
 
-    ParallelMark(bool mutatorsCooperate);
+    class ThreadData : private Pinned {
+    public:
+        auto& markQueue() noexcept { return markQueue_; }
+    private:
+        ManuallyScoped<MutatorQueue> markQueue_{};
+    };
+
+    explicit ParallelMark(bool mutatorsCooperate);
 
     void beginMarkingEpoch(gc::GCHandle gcHandle);
     void endMarkingEpoch();

@@ -52,7 +52,10 @@ public:
     static GCHandle invalid();
     static void ClearForTests();
 
-    uint64_t getEpoch() { return epoch_; }
+    uint64_t getEpoch() const {
+        RuntimeAssert(isValid(), "Invalid GC handle");
+        return epoch_;
+    }
     bool isValid() const;
     void finished();
     void finalizersDone();
@@ -84,6 +87,11 @@ private:
 
 class GCHandle::GCStageScopeBase : private MoveOnly {
 public:
+    ALWAYS_INLINE void requireValid() const {
+        RuntimeAssert(handle_.isValid(), "Invalid GC handle accessed");
+    }
+
+protected:
     explicit GCStageScopeBase(GCHandle gcHandle) : handle_(gcHandle) {}
 
     friend void swap(GCStageScopeBase& first, GCStageScopeBase& second) noexcept {
@@ -100,62 +108,113 @@ public:
         return *this;
     }
 
-protected:
     uint64_t getStageTime() const { return (konan::getTimeMicros() - startTime_); }
 
     GCHandle handle_;
     uint64_t startTime_ = konan::getTimeMicros();
 };
 
-class GCHandle::GCSweepScope : GCStageScopeBase {
+class GCHandle::GCSweepScope : public GCStageScopeBase {
     SweepStats stats_;
     uint64_t markedCount_ = 0;
 
 public:
     explicit GCSweepScope(GCHandle handle);
-    GCSweepScope(GCSweepScope&& that) = default;
-    GCSweepScope& operator=(GCSweepScope&& that) = default;
+    GCSweepScope(GCSweepScope&& that) noexcept : GCSweepScope(GCHandle::invalid()) {
+        swap(*this, that);
+    }
+    GCSweepScope& operator=(GCSweepScope&& that) noexcept {
+        auto tmp = std::move(that);
+        swap(*this, tmp);
+        return *this;
+    }
+    friend void swap(GCSweepScope& first, GCSweepScope& second) noexcept {
+        using std::swap;
+        swap(reinterpret_cast<GCStageScopeBase&>(first), reinterpret_cast<GCStageScopeBase&>(second));
+        swap(first.stats_, second.stats_);
+        swap(first.markedCount_, second.markedCount_);
+    }
     ~GCSweepScope();
 
-    void addSweptObject() noexcept { stats_.sweptCount += 1; }
+    void addSweptObject() noexcept {
+        requireValid();
+        stats_.sweptCount += 1;
+    }
     void addKeptObject(size_t sizeBytes) noexcept {
+        requireValid();
         stats_.keptCount += 1;
         stats_.keptSizeBytes += sizeBytes;
     }
     // Custom allocator only. To be finalized objects are kept alive.
-    void addMarkedObject() noexcept { markedCount_ += 1; }
+    void addMarkedObject() noexcept {
+        requireValid();
+        markedCount_ += 1;
+    }
 };
 
-class GCHandle::GCSweepExtraObjectsScope : private GCStageScopeBase {
+class GCHandle::GCSweepExtraObjectsScope : public GCStageScopeBase {
     SweepStats stats_;
 
 public:
     explicit GCSweepExtraObjectsScope(GCHandle handle);
-    GCSweepExtraObjectsScope(GCSweepExtraObjectsScope&& that) = default;
-    GCSweepExtraObjectsScope& operator=(GCSweepExtraObjectsScope&& that) = default;
+    GCSweepExtraObjectsScope(GCSweepExtraObjectsScope&& that) noexcept : GCSweepExtraObjectsScope(GCHandle::invalid()) {
+        swap(*this, that);
+    }
+    GCSweepExtraObjectsScope& operator=(GCSweepExtraObjectsScope&& that) noexcept {
+        auto tmp = std::move(that);
+        swap(*this, tmp);
+        return *this;
+    }
+    friend void swap(GCSweepExtraObjectsScope& first, GCSweepExtraObjectsScope& second) noexcept {
+        using std::swap;
+        swap(reinterpret_cast<GCStageScopeBase&>(first), reinterpret_cast<GCStageScopeBase&>(second));
+        swap(first.stats_, second.stats_);
+    }
     ~GCSweepExtraObjectsScope();
 
-    void addSweptObject() noexcept { stats_.sweptCount += 1; }
+    void addSweptObject() noexcept {
+        requireValid();
+        stats_.sweptCount += 1;
+    }
     void addKeptObject(size_t sizeBytes) noexcept {
+        requireValid();
         stats_.keptCount += 1;
         stats_.keptSizeBytes += sizeBytes;
     }
 };
 
-class GCHandle::GCGlobalRootSetScope : private GCStageScopeBase {
+class GCHandle::GCGlobalRootSetScope : public GCStageScopeBase {
     uint64_t globalRoots_ = 0;
     uint64_t stableRoots_ = 0;
 
 public:
     explicit GCGlobalRootSetScope(GCHandle handle);
-    GCGlobalRootSetScope(GCGlobalRootSetScope&& that) = default;
-    GCGlobalRootSetScope& operator=(GCGlobalRootSetScope&& that) = default;
+    GCGlobalRootSetScope(GCGlobalRootSetScope&& that) noexcept : GCGlobalRootSetScope(GCHandle::invalid()) {
+        swap(*this, that);
+    }
+    GCGlobalRootSetScope& operator=(GCGlobalRootSetScope&& that) noexcept {
+        auto tmp = std::move(that);
+        swap(*this, tmp);
+        return *this;
+    }
+    friend void swap(GCGlobalRootSetScope& first, GCGlobalRootSetScope& second) noexcept {
+        using std::swap;
+        swap(reinterpret_cast<GCStageScopeBase&>(first), reinterpret_cast<GCStageScopeBase&>(second));
+        swap(first.globalRoots_, second.globalRoots_);
+        swap(first.stableRoots_, second.stableRoots_);
+    }
     ~GCGlobalRootSetScope();
-    void addGlobalRoot() { globalRoots_++; }
-    void addStableRoot() { stableRoots_++; }
+    void addGlobalRoot() {
+        requireValid();
+        globalRoots_++;
+    }
+    void addStableRoot() {
+        requireValid();
+        stableRoots_++;
+    }
 };
 
-class GCHandle::GCThreadRootSetScope : private GCStageScopeBase {
+class GCHandle::GCThreadRootSetScope : public GCStageScopeBase {
     mm::ThreadData& threadData_;
     uint64_t stackRoots_ = 0;
     uint64_t threadLocalRoots_ = 0;
@@ -165,36 +224,78 @@ public:
     GCThreadRootSetScope(GCThreadRootSetScope&& that) = default;
     GCThreadRootSetScope& operator=(GCThreadRootSetScope&& that) = delete;
     ~GCThreadRootSetScope();
-    void addStackRoot() { stackRoots_++; }
-    void addThreadLocalRoot() { threadLocalRoots_++; }
+    void addStackRoot() {
+        requireValid();
+        stackRoots_++;
+    }
+    void addThreadLocalRoot() {
+        requireValid();
+        threadLocalRoots_++;
+    }
 };
 
-class GCHandle::GCMarkScope : private GCStageScopeBase {
+class GCHandle::GCMarkScope : public GCStageScopeBase {
     MarkStats stats_;
 
 public:
     explicit GCMarkScope(GCHandle handle);
-    GCMarkScope(GCMarkScope&& that) = default;
-    GCMarkScope& operator=(GCMarkScope&& that) = default;
+    GCMarkScope(GCMarkScope&& that) noexcept : GCMarkScope(GCHandle::invalid()) {
+        swap(*this, that);
+    }
+    GCMarkScope& operator=(GCMarkScope&& that) noexcept {
+        auto tmp = std::move(that);
+        swap(*this, tmp);
+        return *this;
+    }
+    friend void swap(GCMarkScope& first, GCMarkScope& second) noexcept {
+        using std::swap;
+        swap(reinterpret_cast<GCStageScopeBase&>(first), reinterpret_cast<GCStageScopeBase&>(second));
+        swap(first.stats_, second.stats_);
+    }
     ~GCMarkScope();
 
-    void addObject() noexcept { ++stats_.markedCount; }
+    void addObject() noexcept {
+        requireValid();
+        ++stats_.markedCount;
+    }
 };
 
-class GCHandle::GCProcessWeaksScope : private GCStageScopeBase {
+class GCHandle::GCProcessWeaksScope : public GCStageScopeBase {
     uint64_t undisposedCount_ = 0;
     uint64_t aliveCount_ = 0;
     uint64_t nulledCount_ = 0;
 
 public:
     explicit GCProcessWeaksScope(GCHandle handle) noexcept;
-    GCProcessWeaksScope(GCProcessWeaksScope&& that) = default;
-    GCProcessWeaksScope& operator=(GCProcessWeaksScope&& that) = default;
+    GCProcessWeaksScope(GCProcessWeaksScope&& that) noexcept : GCProcessWeaksScope(GCHandle::invalid()) {
+        swap(*this, that);
+    }
+    GCProcessWeaksScope& operator=(GCProcessWeaksScope&& that) noexcept {
+        auto tmp = std::move(that);
+        swap(*this, tmp);
+        return *this;
+    }
+    friend void swap(GCProcessWeaksScope& first, GCProcessWeaksScope& second) noexcept {
+        using std::swap;
+        swap(reinterpret_cast<GCStageScopeBase&>(first), reinterpret_cast<GCStageScopeBase&>(second));
+        swap(first.undisposedCount_, second.undisposedCount_);
+        swap(first.aliveCount_, second.aliveCount_);
+        swap(first.nulledCount_, second.nulledCount_);
+    }
     ~GCProcessWeaksScope();
 
-    void addUndisposed() noexcept { ++undisposedCount_; }
-    void addAlive() noexcept { ++aliveCount_; }
-    void addNulled() noexcept { ++nulledCount_; }
+    void addUndisposed() noexcept {
+        requireValid();
+        ++undisposedCount_;
+    }
+    void addAlive() noexcept {
+        requireValid();
+        ++aliveCount_;
+    }
+    void addNulled() noexcept {
+        requireValid();
+        ++nulledCount_;
+    }
 };
 
 }

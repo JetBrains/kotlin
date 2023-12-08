@@ -156,22 +156,14 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     markDispatcher_.endMarkingEpoch();
 
-    if (compiler::concurrentWeakSweep()) {
-        // Expected to happen inside STW.
-        gc::EnableWeakRefBarriers(epoch);
-        resumeTheWorld(gcHandle);
-    }
+    // TODO re-enable concurrent weak sweep again
 
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
-
-    if (compiler::concurrentWeakSweep()) {
-        stopTheWorld(gcHandle);
-        gc::DisableWeakRefBarriers();
-    }
 
     // TODO outline as mark_.isolateMarkedHeapAndFinishMark()
     // By this point all the alive heap must be marked.
     // All the mutations (incl. allocations) after this method will be subject for the next GC.
+
     // This should really be done by each individual thread while waiting
     int threadCount = 0;
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {

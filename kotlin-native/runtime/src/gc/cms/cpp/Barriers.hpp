@@ -8,11 +8,11 @@
 #include <atomic>
 #include <optional>
 
-#include "Memory.h"
 #include "Utils.hpp"
 #include "GCStatistics.hpp"
+#include "ReferenceOps.hpp"
 
-namespace kotlin::gc {
+namespace kotlin::gc::barriers {
 
 class BarriersThreadData : private Pinned {
 public:
@@ -29,9 +29,11 @@ private:
 };
 
 // Must be called during STW.
-void EnableWeakRefBarriers(int64_t epoch) noexcept;
-void DisableWeakRefBarriers() noexcept;
+void enableMarkBarriers(int64_t epoch) noexcept;
+void disableMarkBarriers() noexcept;
 
-OBJ_GETTER(WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept;
+void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept;
+
+// TODO re-introduce weak barriers again
 
 } // namespace kotlin::gc
