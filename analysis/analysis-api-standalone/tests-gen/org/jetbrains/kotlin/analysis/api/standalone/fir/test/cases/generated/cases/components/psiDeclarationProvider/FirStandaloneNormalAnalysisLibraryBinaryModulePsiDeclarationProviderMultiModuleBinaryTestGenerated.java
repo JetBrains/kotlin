@@ -71,6 +71,12 @@ public class FirStandaloneNormalAnalysisLibraryBinaryModulePsiDeclarationProvide
     }
 
     @Test
+    @TestMetadata("propertiesInInnerClass.kt")
+    public void testPropertiesInInnerClass() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInInnerClass.kt");
+    }
+
+    @Test
     @TestMetadata("propertiesInNamedCompanionObject.kt")
     public void testPropertiesInNamedCompanionObject() throws Exception {
         runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInNamedCompanionObject.kt");
@@ -89,8 +95,20 @@ public class FirStandaloneNormalAnalysisLibraryBinaryModulePsiDeclarationProvide
     }
 
     @Test
+    @TestMetadata("propertiesInNestedObject.kt")
+    public void testPropertiesInNestedObject() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInNestedObject.kt");
+    }
+
+    @Test
     @TestMetadata("propertiesInObject.kt")
     public void testPropertiesInObject() throws Exception {
         runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInObject.kt");
+    }
+
+    @Test
+    @TestMetadata("propertiesInOuterClass.kt")
+    public void testPropertiesInOuterClass() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/multiModuleBinary/propertiesInOuterClass.kt");
     }
 }

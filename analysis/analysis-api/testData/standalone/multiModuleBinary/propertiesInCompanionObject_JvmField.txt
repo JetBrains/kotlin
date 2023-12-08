@@ -1,2 +1,2 @@
 Resolved to:
-PsiField:JVM_FIELD_FLAG
+PsiField:Dependency.JVM_FIELD_FLAG: PsiType:Flag<?>

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiParameter
 import org.jetbrains.kotlin.psi.KtElement
@@ -28,6 +29,14 @@ public object TestPsiElementRenderer {
             append(psiElement.name)
         }
         is KtElement -> psiElement.text
+        is PsiField -> buildString {
+            append("PsiField:")
+            append(psiElement.containingClass?.name)
+            append(".")
+            append(psiElement.name)
+            append(": ")
+            append(psiElement.type)
+        }
         is PsiMethod -> buildString {
             append("PsiMethod:")
             append(psiElement.name)

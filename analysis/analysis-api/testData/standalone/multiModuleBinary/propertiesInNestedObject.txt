@@ -1,0 +1,2 @@
+Resolved to:
+PsiField:O.varFlag: PsiType:Flag<?>
