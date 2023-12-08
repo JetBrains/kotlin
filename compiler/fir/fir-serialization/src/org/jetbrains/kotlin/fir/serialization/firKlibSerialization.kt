@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -33,11 +35,7 @@ fun serializeSingleFirFile(
         languageVersionSettings,
         produceHeaderKlib
     )
-    val packageProto = packageSerializer.packagePartProto(
-        file.packageFqName,
-        listOf(file),
-        actualizedExpectDeclarations
-    ).build()
+    val packageProto = packageSerializer.packagePartProto(file, actualizedExpectDeclarations).build()
 
     val classesProto = mutableListOf<Pair<ProtoBuf.Class, Int>>()
 

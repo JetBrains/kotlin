@@ -109,7 +109,7 @@ class Fir2IrVisitor(
                 it.toIrDeclaration()
             }
             annotationGenerator.generate(this, file)
-            metadata = FirMetadataSource.File(listOf(file))
+            metadata = FirMetadataSource.File(file)
         }
         return irFile
     }

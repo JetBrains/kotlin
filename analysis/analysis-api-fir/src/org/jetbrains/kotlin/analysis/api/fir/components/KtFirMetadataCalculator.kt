@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
@@ -78,7 +77,7 @@ internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalys
         val firFile = ktFile.getOrBuildFirFile(firResolveSession)
         val bindings = JvmSerializationBindings().also { collectBindings(firFile.declarations, mapping, it) }
         val (serializer, stringTable) = createTopLevelSerializer(bindings)
-        val fileProto = serializer.packagePartProto(firFile.packageFqName, listOf(firFile), null)
+        val fileProto = serializer.packagePartProto(firFile, null)
         return generateAnnotation(fileProto.build(), stringTable, KotlinClassHeader.Kind.FILE_FACADE)
     }
 

@@ -84,11 +84,7 @@ class FirElementSerializer private constructor(
 
     private var metDefinitelyNotNullType: Boolean = false
 
-    fun packagePartProto(
-        packageFqName: FqName,
-        files: List<FirFile>,
-        actualizedExpectDeclarations: Set<FirDeclaration>?
-    ): ProtoBuf.Package.Builder {
+    fun packagePartProto(file: FirFile, actualizedExpectDeclarations: Set<FirDeclaration>?): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
 
         fun addDeclaration(declaration: FirDeclaration, onUnsupportedDeclaration: (FirDeclaration) -> Unit) {
@@ -106,13 +102,13 @@ class FirElementSerializer private constructor(
             }
         }
 
-        for (file in files) {
-            extension.processFile(file) {
-                for (declaration in file.declarations) {
-                    addDeclaration(declaration) {}
-                }
+        extension.processFile(file) {
+            for (declaration in file.declarations) {
+                addDeclaration(declaration) {}
             }
         }
+
+        val packageFqName = file.packageFqName
 
         // TODO: figure out how to extract all file dependent processing from `serializePackage`
         extension.serializePackage(packageFqName, builder)
