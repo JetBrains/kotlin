@@ -22,11 +22,13 @@ public abstract class KtSymbolDeclarationOverridesProvider : KtAnalysisSessionCo
 
 public interface KtSymbolDeclarationOverridesProviderMixIn : KtAnalysisSessionMixIn {
     /**
-     * Return a list of **all** symbols which are overridden by symbol
+     * Return a list of **all** explicitly declared symbols that are overridden by symbol
      *
-     * E.g, if we have `A.foo` overrides `B.foo` overrides `C.foo`, all two super declarations `B.foo`, `C.foo` will be returned
+     * E.g., if we have `A.foo` overrides `B.foo` overrides `C.foo`, all two super declarations `B.foo`, `C.foo` will be returned
      *
-     * Unwraps substituted overridden symbols (see [org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE])
+     * Unwraps substituted overridden symbols
+     * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE] and [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin.SUBSTITUTION_OVERRIDE]),
+     * so such fake declaration won't be returned.
      *
      * @see getDirectlyOverriddenSymbols
      */
@@ -34,11 +36,13 @@ public interface KtSymbolDeclarationOverridesProviderMixIn : KtAnalysisSessionMi
         withValidityAssertion { analysisSession.symbolDeclarationOverridesProvider.getAllOverriddenSymbols(this) }
 
     /**
-     * Return a list of symbols which are **directly** overridden by symbol
+     * Return a list of explicitly declared symbols which are **directly** overridden by symbol
      **
-     * E.g, if we have `A.foo` overrides `B.foo` overrides `C.foo`, only declarations directly overridden `B.foo` will be returned
+     * E.g., if we have `A.foo` overrides `B.foo` overrides `C.foo`, only declarations directly overridden `B.foo` will be returned
      *
-     * Unwraps substituted overridden symbols (see [org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE])
+     * Unwraps substituted overridden symbols
+     * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE] and [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin.SUBSTITUTION_OVERRIDE]),
+     * so such fake declaration won't be returned.
      *
      *  @see getAllOverriddenSymbols
      */

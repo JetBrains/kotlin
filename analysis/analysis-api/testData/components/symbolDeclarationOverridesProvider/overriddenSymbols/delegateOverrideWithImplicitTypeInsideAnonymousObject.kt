@@ -1,4 +1,3 @@
-// IGNORE_FIR
 class MyClass {
     lateinit var d: IntermediateClass<Int>
     val prop = object : IntermediateClass<Int> by d {

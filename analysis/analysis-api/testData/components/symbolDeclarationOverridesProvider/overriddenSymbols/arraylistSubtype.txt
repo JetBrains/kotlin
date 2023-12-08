@@ -1,6 +1,5 @@
 ALL:
   java/util/ArrayList.size: Int
-  java/util/AbstractList.size: Int
   java/util/AbstractCollection.size: Int
   List.size: Int
   Collection.size: Int
