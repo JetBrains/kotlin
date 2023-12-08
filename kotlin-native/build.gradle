@@ -563,13 +563,9 @@ void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean contains
 
 tasks.named("bundleRegular").configure {
     configurePackingLicensesToBundle(it, /* containsPlatformLibraries = */ false)
-    def checksumFile = archiveBaseName.zip(archiveVersion) { name, version -> file("$name-$version.sha256")}
-    outputs.file(checksumFile)
 }
 tasks.named("bundlePrebuilt").configure {
     configurePackingLicensesToBundle(it, /* containsPlatformLibraries = */ true)
-    def checksumFile = archiveBaseName.zip(archiveVersion) { name, version -> file("$name-$version.sha256")}
-    outputs.file(checksumFile)
 }
 
 configure([bundleRegular, bundlePrebuilt]) {
@@ -592,13 +588,15 @@ configure([bundleRegular, bundlePrebuilt]) {
     }
 
     // Calculating SHA-256 checksums for bundle artifacts
+    def checksumFile = archiveBaseName.zip(archiveVersion) { name, version -> file("${buildDir}/${name}-${version}.sha256") }
+    outputs.file(checksumFile).withPropertyName("checksumFile")
+
     doLast {
         File bundleFile = archiveFile.get().asFile
         if (bundleFile.exists()) {
             String checksum = calculateChecksum(bundleFile, "SHA-256")
-            File checksumFile = new File(bundleFile.parentFile, "${bundleFile.name}.sha256")
-            println "SHA-256: " + checksum + " , file:" + checksumFile
-            checksumFile.write(checksum)
+            println "SHA-256: " + checksum + " , file:" + checksumFile.get()
+            checksumFile.get().write(checksum)
         }
     }
 }
