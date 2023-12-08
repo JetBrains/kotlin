@@ -99,24 +99,22 @@ fun computeCacheDirName(
     partialLinkageEnabled: Boolean
 ) = "$testTarget${if (debuggable) "-g" else ""}$cacheKind${if (partialLinkageEnabled) "-pl" else ""}"
 
-fun TestProject.getFileCache(fileProjectName: String, fileRelativePath: String, fqName: String) =
-    getFileCache("", fileProjectName, fileRelativePath, fqName)
-
 fun TestProject.getFileCache(
-    executableProjectName: String,
     fileProjectName: String,
     fileRelativePath: String,
-    fqName: String,
+    fqName: String = "",
+    executableProjectName: String = "",
+    executableName: String = "debugExecutable",
 ): Path {
     val cacheFlavor = computeCacheDirName(HostManager.host, NativeCacheKind.STATIC.name, true, true)
-    val libCacheDir = getICCacheDir(executableProjectName).resolve(cacheFlavor).resolve("$fileProjectName-per-file-cache")
+    val libCacheDir = getICCacheDir(executableName, executableProjectName).resolve(cacheFlavor).resolve("$fileProjectName-per-file-cache")
     val fileId = cacheFileId(fqName, projectPath.resolve(fileRelativePath).toFile().canonicalPath)
     return libCacheDir.resolve(fileId)
 }
 
-private fun TestProject.getICCacheDir(projectName: String = "") =
+private fun TestProject.getICCacheDir(executableName: String, projectName: String = "") =
     (if (projectName == "") projectPath else projectPath.resolve(projectName))
-        .resolve("build/kotlin-native-ic-cache")
+        .resolve("build/kotlin-native-ic-cache/$executableName")
 
 private fun cacheFileId(fqName: String, filePath: String) =
     "${if (fqName == "") "ROOT" else fqName}.${filePath.hashCode().toString(Character.MAX_RADIX)}"

@@ -378,7 +378,9 @@ constructor(
                             add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
                             add("-Xbackend-threads=${cacheSettings.threads}")
                             if (cacheSettings.icEnabled) {
-                                val icCacheDir = cacheSettings.gradleBuildDir.resolve("kotlin-native-ic-cache")
+                                val icCacheDir = cacheSettings.gradleBuildDir
+                                    .resolve("kotlin-native-ic-cache")
+                                    .resolve(binaryName)
                                 icCacheDir.mkdirs()
                                 add("-Xenable-incremental-compilation")
                                 add("-Xic-cache-dir=$icCacheDir")

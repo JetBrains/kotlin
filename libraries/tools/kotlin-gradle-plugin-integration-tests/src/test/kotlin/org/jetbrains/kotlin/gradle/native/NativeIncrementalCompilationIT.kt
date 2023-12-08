@@ -93,7 +93,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         nativeProject("native-incremental-simple", gradleVersion) {
             build("linkDebugExecutableHost") {
                 assertDirectoryExists(
-                    getFileCache("native-incremental-simple", "src/hostMain/kotlin/main.kt", "")
+                    getFileCache("native-incremental-simple", "src/hostMain/kotlin/main.kt")
                 )
             }
         }
@@ -105,8 +105,8 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         nativeProject("native-incremental-multifile", gradleVersion) {
             var mainKtCacheModified = 0L
             var fooKtCacheModified = 0L
-            val mainKtCache = getFileCache("native-incremental-multifile", "src/hostMain/kotlin/main.kt", "")
-            val fooKtCache = getFileCache("native-incremental-multifile", "src/hostMain/kotlin/foo.kt", "")
+            val mainKtCache = getFileCache("native-incremental-multifile", "src/hostMain/kotlin/main.kt")
+            val fooKtCache = getFileCache("native-incremental-multifile", "src/hostMain/kotlin/foo.kt")
             build("linkDebugExecutableHost") {
                 assertDirectoryExists(mainKtCache)
                 assertDirectoryExists(fooKtCache)
@@ -138,8 +138,8 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         nativeProject("native-incremental-multifile", gradleVersion) {
             var mainKtCacheModified = 0L
             var fooKtCacheModified = 0L
-            val mainKtCache = getFileCache("native-incremental-multifile", "src/hostMain/kotlin/main.kt", "")
-            val fooKtCache = getFileCache("native-incremental-multifile", "src/hostMain/kotlin/foo.kt", "")
+            val mainKtCache = getFileCache("native-incremental-multifile", "src/hostMain/kotlin/main.kt")
+            val fooKtCache = getFileCache("native-incremental-multifile", "src/hostMain/kotlin/foo.kt")
             build("linkDebugExecutableHost") {
                 assertDirectoryExists(mainKtCache)
                 assertDirectoryExists(fooKtCache)
@@ -172,9 +172,18 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
             var fooKtCacheModified = 0L
             var barKtCacheModified = 0L
             var mainKtCacheModified = 0L
-            val fooKtCache = getFileCache("program", "MultiProject:library", "library/src/hostMain/kotlin/foo.kt", "")
-            val barKtCache = getFileCache("program", "MultiProject:program", "program/src/hostMain/kotlin/bar.kt", "")
-            val mainKtCache = getFileCache("program", "MultiProject:program", "program/src/hostMain/kotlin/main.kt", "")
+            val fooKtCache = getFileCache(
+                "MultiProject:library", "library/src/hostMain/kotlin/foo.kt",
+                executableProjectName = "program"
+            )
+            val barKtCache = getFileCache(
+                "MultiProject:program", "program/src/hostMain/kotlin/bar.kt",
+                executableProjectName = "program"
+            )
+            val mainKtCache = getFileCache(
+                "MultiProject:program", "program/src/hostMain/kotlin/main.kt",
+                executableProjectName = "program"
+            )
             build("linkDebugExecutableHost") {
                 assertDirectoryExists(fooKtCache)
                 assertDirectoryExists(barKtCache)
