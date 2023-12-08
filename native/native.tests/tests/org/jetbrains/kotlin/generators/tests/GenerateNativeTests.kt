@@ -68,8 +68,8 @@ fun main() {
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
-                model("codegen/box", targetBackend = TargetBackend.NATIVE, excludeDirs = listOf("fileCheck"))
-                model("codegen/boxInline", targetBackend = TargetBackend.NATIVE, excludeDirs = listOf("fileCheck"))
+                model("codegen/box", targetBackend = TargetBackend.NATIVE)
+                model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",

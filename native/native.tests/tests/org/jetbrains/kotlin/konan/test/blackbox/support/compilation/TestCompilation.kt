@@ -553,6 +553,7 @@ internal class TestBundleCompilation(
             }
         }
         applyPartialLinkageArgs(partialLinkageConfig)
+        applyFileCheckArgs(expectedArtifact.fileCheckStage, expectedArtifact.fileCheckDump)
         super.applySpecificArgs(argsBuilder)
     }
 

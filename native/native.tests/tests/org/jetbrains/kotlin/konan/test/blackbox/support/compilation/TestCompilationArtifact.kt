@@ -41,8 +41,12 @@ internal sealed interface TestCompilationArtifact {
         val mainHeader: File get() = headersDir.resolve("$frameworkName.h")
     }
 
-    data class XCTestBundle(val bundleDir: File) : TestCompilationArtifact {
+    data class XCTestBundle(val bundleDir: File, val fileCheckStage: String? = null) : TestCompilationArtifact {
         override val logFile: File get() = bundleDir.resolveSibling("${bundleDir.name}.log")
         val testDumpFile: File get() = bundleDir.resolveSibling("${bundleDir.name}.dump")
+        val fileCheckDump: File?
+            get() = fileCheckStage?.let {
+                bundleDir.resolveSibling("out.$it.ll")
+            }
     }
 }
