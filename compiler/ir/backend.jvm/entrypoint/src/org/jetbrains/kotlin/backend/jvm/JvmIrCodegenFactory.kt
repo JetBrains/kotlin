@@ -212,7 +212,7 @@ open class JvmIrCodegenFactory(
             psi2irContext.irBuiltIns,
             irLinker,
             messageLogger
-        ).takeIf { !ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols }
+        ).takeIf { !ideCodegenSettings.doNotLoadDependencyModuleHeaders }
         if (pluginExtensions.isNotEmpty() && pluginContext != null) {
             for (extension in pluginExtensions) {
                 if (psi2irContext.configuration.generateBodies ||
