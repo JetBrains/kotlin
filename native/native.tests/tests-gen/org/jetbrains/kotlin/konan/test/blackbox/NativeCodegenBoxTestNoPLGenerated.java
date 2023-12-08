@@ -13544,6 +13544,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                 }
 
                 @Test
+                @TestMetadata("commonCaseForInference.kt")
+                public void testCommonCaseForInference() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/commonCaseForInference.kt");
+                }
+
+                @Test
                 @TestMetadata("delegatedPropertyWithIdProvideDelegate.kt")
                 public void testDelegatedPropertyWithIdProvideDelegate() throws Exception {
                     runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/delegatedPropertyWithIdProvideDelegate.kt");
@@ -13604,6 +13610,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                 }
 
                 @Test
+                @TestMetadata("inferenceFromReceiver2.kt")
+                public void testInferenceFromReceiver2() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/inferenceFromReceiver2.kt");
+                }
+
+                @Test
                 @TestMetadata("inlineProvideDelegate.kt")
                 public void testInlineProvideDelegate() throws Exception {
                     runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/inlineProvideDelegate.kt");
@@ -13658,6 +13670,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                 }
 
                 @Test
+                @TestMetadata("notNullAssertionInLocalDelegated.kt")
+                public void testNotNullAssertionInLocalDelegated() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/notNullAssertionInLocalDelegated.kt");
+                }
+
+                @Test
                 @TestMetadata("propertyMetadata.kt")
                 public void testPropertyMetadata() throws Exception {
                     runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/propertyMetadata.kt");
@@ -13667,6 +13685,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                 @TestMetadata("provideDelegateByExtensionFunction.kt")
                 public void testProvideDelegateByExtensionFunction() throws Exception {
                     runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/provideDelegateByExtensionFunction.kt");
+                }
+
+                @Test
+                @TestMetadata("setValue.kt")
+                public void testSetValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/setValue.kt");
                 }
             }
         }
@@ -13717,6 +13741,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             @TestMetadata("hiddenSuperOverrideIn1.0.kt")
             public void testHiddenSuperOverrideIn1_0() throws Exception {
                 runTest("compiler/testData/codegen/box/delegation/hiddenSuperOverrideIn1.0.kt");
+            }
+
+            @Test
+            @TestMetadata("ifWithCallableReferenceInLazy.kt")
+            public void testIfWithCallableReferenceInLazy() throws Exception {
+                runTest("compiler/testData/codegen/box/delegation/ifWithCallableReferenceInLazy.kt");
             }
 
             @Test

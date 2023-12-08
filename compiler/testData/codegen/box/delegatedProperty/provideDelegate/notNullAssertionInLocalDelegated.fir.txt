@@ -1,0 +1,42 @@
+FILE: notNullAssertionInLocalDelegated.kt
+    public final data class Ref<D> : R|kotlin/Any| {
+        public constructor<D>(t: R|D|): R|Ref<D>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val t: R|D| = R|<local>/t|
+            public get(): R|D|
+
+        public final operator fun component1(): R|D|
+
+        public final fun copy(t: R|D| = this@R|/Ref|.R|/Ref.t|): R|Ref<D>|
+
+    }
+    public final class GenericDelegate<G> : R|kotlin/Any| {
+        public constructor<G>(value: R|G|): R|GenericDelegate<G>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|G| = R|<local>/value|
+            public get(): R|G|
+
+    }
+    public final operator fun <V> R|Ref<V>|.provideDelegate(a: R|kotlin/Any?|, p: R|kotlin/reflect/KProperty<*>|): R|GenericDelegate<V>| {
+        ^provideDelegate R|/GenericDelegate.GenericDelegate|<R|V|>(this@R|/provideDelegate|.R|SubstitutionOverride</Ref.t: R|V|>|)
+    }
+    public final operator fun <W> R|GenericDelegate<W>|.getValue(a: R|kotlin/Any?|, p: R|kotlin/reflect/KProperty<*>|): R|W| {
+        ^getValue this@R|/getValue|.R|SubstitutionOverride</GenericDelegate.value: R|W|>|
+    }
+    public final fun <E> R|kotlin/collections/List<Ref<*>>|.getElement(i: R|kotlin/Int|): R|Ref<E>| {
+        ^getElement (this@R|/getElement|.R|SubstitutionOverride<kotlin/collections/List.get: R|Ref<*>|>|(R|<local>/i|) as R|Ref<E>|)
+    }
+    @R|kotlin/Suppress|(names = vararg(String(UNNECESSARY_NOT_NULL_ASSERTION))) public final fun test(list: R|kotlin/collections/List<Ref<*>>|): R|kotlin/Unit| {
+        lval data: R|kotlin/String|by R|<local>/list|.R|/getElement|<R|kotlin/String|>(Int(0))!!.R|/provideDelegate|<R|kotlin/String|>(Null(null), ::R|<local>/data|)
+        R|kotlin/require|(==(R|<local>/data|, R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.get: R|Ref<*>|>|(Int(0)).R|SubstitutionOverride</Ref.t: R|CapturedType(*)|>|))
+        lval data2: R|kotlin/String|by R|<local>/list|.R|/getElement|<R|kotlin/String|>(Int(0)).R|/provideDelegate|<R|kotlin/String|>(Null(null), ::R|<local>/data2|)
+        R|kotlin/require|(==(R|<local>/data2|, R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.get: R|Ref<*>|>|(Int(0)).R|SubstitutionOverride</Ref.t: R|CapturedType(*)|>|))
+    }
+    public final fun box(): R|kotlin/String| {
+        R|/test|(R|kotlin/collections/listOf|<R|Ref<kotlin/String>|>(R|/Ref.Ref|<R|kotlin/String|>(String(q))))
+        ^box String(OK)
+    }

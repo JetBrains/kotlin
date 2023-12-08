@@ -13575,6 +13575,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("commonCaseForInference.kt")
+            public void testCommonCaseForInference() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/commonCaseForInference.kt");
+            }
+
             @TestMetadata("delegatedPropertyWithIdProvideDelegate.kt")
             public void testDelegatedPropertyWithIdProvideDelegate() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/delegatedPropertyWithIdProvideDelegate.kt");
@@ -13623,6 +13628,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("inClass.kt")
             public void testInClass() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/inClass.kt");
+            }
+
+            @TestMetadata("inferenceFromReceiver2.kt")
+            public void testInferenceFromReceiver2() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/inferenceFromReceiver2.kt");
             }
 
             @TestMetadata("inlineProvideDelegate.kt")
@@ -13675,6 +13685,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/memberExtension.kt");
             }
 
+            @TestMetadata("notNullAssertionInLocalDelegated.kt")
+            public void testNotNullAssertionInLocalDelegated() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/notNullAssertionInLocalDelegated.kt");
+            }
+
             @TestMetadata("propertyMetadata.kt")
             public void testPropertyMetadata() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/propertyMetadata.kt");
@@ -13683,6 +13698,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("provideDelegateByExtensionFunction.kt")
             public void testProvideDelegateByExtensionFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/provideDelegateByExtensionFunction.kt");
+            }
+
+            @TestMetadata("setValue.kt")
+            public void testSetValue() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/setValue.kt");
             }
         }
     }
@@ -13782,6 +13802,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("hiddenSuperOverrideIn1.0.kt")
         public void testHiddenSuperOverrideIn1_0() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/hiddenSuperOverrideIn1.0.kt");
+        }
+
+        @TestMetadata("ifWithCallableReferenceInLazy.kt")
+        public void testIfWithCallableReferenceInLazy() throws Exception {
+            runTest("compiler/testData/codegen/box/delegation/ifWithCallableReferenceInLazy.kt");
         }
 
         @TestMetadata("inClassDeclaration.kt")
