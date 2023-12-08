@@ -1,0 +1,1 @@
+fun bar(): Int = foo() * 2

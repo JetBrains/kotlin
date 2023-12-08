@@ -1,0 +1,1 @@
+fun baz(): Int = bar() - 1

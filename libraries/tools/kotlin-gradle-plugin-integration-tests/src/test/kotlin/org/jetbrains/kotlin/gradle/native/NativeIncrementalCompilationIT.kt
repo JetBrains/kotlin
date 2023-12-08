@@ -140,4 +140,44 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Check parallel link tasks execution")
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    fun parallelLink(gradleVersion: GradleVersion) {
+        nativeProject("native-incremental-multi-project-with-tests", gradleVersion, configureSubProjects = true) {
+            var fooKtCacheModified = 0L
+            var barKtCacheModified = 0L
+            var mainKtCacheModified = 0L
+            val fooKtCache = getFileCache("program", "MultiProjectWithTests:library", "library/src/hostMain/kotlin/foo.kt", "")
+            val barKtCache = getFileCache("program", "MultiProjectWithTests:program", "program/src/hostMain/kotlin/bar.kt", "")
+            val mainKtCache = getFileCache("program", "MultiProjectWithTests:program", "program/src/hostMain/kotlin/main.kt", "")
+            build(
+                "linkDebugExecutableHost", "program:linkDebugTestHost",
+                buildOptions = defaultBuildOptions.copy(configurationCache = true)
+            ) {
+                assertDirectoryExists(fooKtCache)
+                assertDirectoryExists(barKtCache)
+                assertDirectoryExists(mainKtCache)
+                fooKtCacheModified = fooKtCache.toFile().lastModified()
+                barKtCacheModified = barKtCache.toFile().lastModified()
+                mainKtCacheModified = mainKtCache.toFile().lastModified()
+            }
+
+            val fooKt = projectPath.resolve("library/src/hostMain/kotlin").resolve("foo.kt")
+            fooKt.writeText("fun foo(): Int = 41")
+
+            build(
+                "linkDebugExecutableHost", "program:linkDebugTestHost",
+                buildOptions = defaultBuildOptions.copy(configurationCache = true)
+            ) {
+                assertDirectoryExists(fooKtCache)
+                assertDirectoryExists(barKtCache)
+                assertDirectoryExists(mainKtCache)
+                assertNotEquals(fooKtCacheModified, fooKtCache.toFile().lastModified())
+                assertEquals(barKtCacheModified, barKtCache.toFile().lastModified())
+                assertNotEquals(mainKtCacheModified, mainKtCache.toFile().lastModified())
+            }
+        }
+    }
 }

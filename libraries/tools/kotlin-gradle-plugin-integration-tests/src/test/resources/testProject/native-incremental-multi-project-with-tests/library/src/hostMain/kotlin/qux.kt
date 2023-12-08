@@ -1,0 +1,1 @@
+fun qux(): Int = baz() + foo()
