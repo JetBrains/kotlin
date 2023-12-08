@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -52,7 +50,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 open class FirJvmSerializerExtension(
     override val session: FirSession,
     private val bindings: JvmSerializationBindings,
-    private val metadata: MetadataSource?,
     private val localDelegatedProperties: List<FirProperty>,
     private val approximator: AbstractTypeApproximator,
     private val scopeSession: ScopeSession,
@@ -74,7 +71,6 @@ open class FirJvmSerializerExtension(
         session: FirSession,
         bindings: JvmSerializationBindings,
         state: GenerationState,
-        metadata: MetadataSource?,
         localDelegatedProperties: List<FirProperty>,
         approximator: AbstractTypeApproximator,
         components: Fir2IrComponents,
@@ -82,7 +78,6 @@ open class FirJvmSerializerExtension(
     ) : this(
         session,
         bindings,
-        metadata,
         localDelegatedProperties,
         approximator,
         components.scopeSession,
@@ -107,7 +102,6 @@ open class FirJvmSerializerExtension(
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
     ) {
-        assert((metadata as FirMetadataSource.Class).fir == klass)
         if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }
@@ -134,7 +128,6 @@ open class FirJvmSerializerExtension(
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
     ) {
-        assert((metadata as FirMetadataSource.Script).fir == script)
         if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }

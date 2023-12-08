@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.JvmAbiStability
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension.Companion.FIELD_FOR_PROPERTY
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension.Companion.METHOD_FOR_FIR_FUNCTION
@@ -69,9 +68,8 @@ internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalys
 
     override fun calculateMetadata(ktClass: KtClassOrObject, mapping: Multimap<KtElement, PsiElement>): Metadata {
         val firClass = ktClass.getOrBuildFirOfType<FirRegularClass>(firResolveSession)
-
         val bindings = JvmSerializationBindings().also { collectBindings(firClass.declarations, mapping, it) }
-        val (serializer, stringTable) = createTopLevelSerializer(FirMetadataSource.Class(firClass), bindings)
+        val (serializer, stringTable) = createTopLevelSerializer(bindings)
         val classProto = serializer.classProto(firClass)
         return generateAnnotation(classProto.build(), stringTable, KotlinClassHeader.Kind.CLASS)
     }
@@ -79,9 +77,8 @@ internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalys
     override fun calculateMetadata(ktFile: KtFile, mapping: Multimap<KtElement, PsiElement>): Metadata {
         val firFile = ktFile.getOrBuildFirFile(firResolveSession)
         val bindings = JvmSerializationBindings().also { collectBindings(firFile.declarations, mapping, it) }
-        val fileList = listOf(firFile)
-        val (serializer, stringTable) = createTopLevelSerializer(FirMetadataSource.File(fileList), bindings)
-        val fileProto = serializer.packagePartProto(firFile.packageFqName, fileList, null)
+        val (serializer, stringTable) = createTopLevelSerializer(bindings)
+        val fileProto = serializer.packagePartProto(firFile.packageFqName, listOf(firFile), null)
         return generateAnnotation(fileProto.build(), stringTable, KotlinClassHeader.Kind.FILE_FACADE)
     }
 
@@ -134,15 +131,11 @@ internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalys
         }
     }
 
-    private fun createTopLevelSerializer(
-        metadataSource: FirMetadataSource,
-        bindings: JvmSerializationBindings,
-    ): Pair<FirElementSerializer, JvmStringTable> {
+    private fun createTopLevelSerializer(bindings: JvmSerializationBindings): Pair<FirElementSerializer, JvmStringTable> {
         val stringTable = FirJvmElementAwareStringTableForLightClasses()
         val jvmSerializerExtension = FirJvmSerializerExtension(
             firSession,
             bindings,
-            metadataSource,
             localDelegatedProperties = emptyList(),
             firSession.typeApproximator,
             scopeSession,

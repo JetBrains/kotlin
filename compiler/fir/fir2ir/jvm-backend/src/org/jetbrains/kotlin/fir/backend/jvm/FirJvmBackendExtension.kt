@@ -62,7 +62,6 @@ class FirJvmBackendExtension(
                 session,
                 JvmSerializationBindings(),
                 context.state,
-                metadata,
                 // annotation can't have local delegated properties, it is safe to pass empty list
                 localDelegatedProperties = emptyList(),
                 typeApproximator,
