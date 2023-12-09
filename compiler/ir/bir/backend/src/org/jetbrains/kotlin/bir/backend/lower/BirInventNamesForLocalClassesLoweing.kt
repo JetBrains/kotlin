@@ -53,14 +53,14 @@ abstract class BirInventNamesForLocalClassesLowering(
     }
 
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(classes).forEach { clazz ->
+        getAllElementsWithIndex(classes).forEach { clazz ->
             val nameScope = getLocalNameScopeIfApplicable(clazz) ?: return@forEach
             if (nameScope.isLocal) {
                 putLocalClassName(clazz, nameScope.enclosingName!!)
             }
         }
 
-        compiledBir.getElementsWithIndex(functionExpressions).forEach { expression ->
+        getAllElementsWithIndex(functionExpressions).forEach { expression ->
             val internalName = (if (isLocalFunctionToBeNamed(expression.function!!))
                 getLocalNameScopeIfApplicable(expression.function)?.enclosingName
             else null)
@@ -69,7 +69,7 @@ abstract class BirInventNamesForLocalClassesLowering(
             putLocalClassName(expression, internalName)
         }
 
-        compiledBir.getElementsWithIndex(functionReferences).forEach { reference ->
+        getAllElementsWithIndex(functionReferences).forEach { reference ->
             val localNameScope = getLocalNameScopeIfApplicable(reference) ?: return@forEach
             if (localNameScope.processingInlinedFunction && reference[originalBeforeInlineKey] == null) {
                 // skip BirFunctionReference from `singleArgumentInlineFunction`
@@ -85,13 +85,13 @@ abstract class BirInventNamesForLocalClassesLowering(
             putLocalClassName(reference, internalName)
         }
 
-        compiledBir.getElementsWithIndex(propertyReferences).forEach { property ->
+        getAllElementsWithIndex(propertyReferences).forEach { property ->
             val nameScope = getLocalNameScopeIfApplicable(property) ?: return@forEach
             val internalName = inventName(null, nameScope)
             putLocalClassName(property, internalName)
         }
 
-        compiledBir.getElementsWithIndex(functionsToName).forEach { function ->
+        getAllElementsWithIndex(functionsToName).forEach { function ->
             val nameScope = getLocalNameScopeIfApplicable(function) ?: return@forEach
             val internalName = inventName(function.name, nameScope)
             putLocalClassName(function, internalName)

@@ -32,7 +32,7 @@ class BirVarargLowering : BirLoweringPhase() {
     private val varargs = registerIndexKey<BirVararg>(false)
 
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(functionAccessesWithMissingArgument).forEach { expression ->
+        getAllElementsWithIndex(functionAccessesWithMissingArgument).forEach { expression ->
             if (expression.isInsideAnnotation()) return@forEach
 
             for (i in expression.valueArguments.indices) {
@@ -47,7 +47,7 @@ class BirVarargLowering : BirLoweringPhase() {
         }
 
         // todo: does it work with nested varargs properly?
-        compiledBir.getElementsWithIndex(varargs).forEach { vararg ->
+        getAllElementsWithIndex(varargs).forEach { vararg ->
             if (vararg.isInsideAnnotation()) return@forEach
 
             val array = birBodyScope {

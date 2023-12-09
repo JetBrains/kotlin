@@ -36,7 +36,7 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
     }
 
     private fun transformLateinitProperties() {
-        compiledBir.getElementsWithIndex(lateinitProperties).forEach { property ->
+        getAllElementsWithIndex(lateinitProperties).forEach { property ->
             property.backingField!!.let {
                 it.type = it.type.makeNullable()
             }
@@ -45,7 +45,7 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
     }
 
     private fun transformLateinitVariables() {
-        compiledBir.getElementsWithIndex(lateinitVariables).forEach { variable ->
+        getAllElementsWithIndex(lateinitVariables).forEach { variable ->
             variable.type = variable.type.makeNullable()
             variable.isVar = true
             variable.initializer = BirConst.constNull(variable.sourceSpan, birBuiltIns.nothingNType)
@@ -60,7 +60,7 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
     }
 
     private fun transformIsLateinitInitialized() {
-        compiledBir.getElementsWithIndex(lateinitInitializerCalls).forEach { call ->
+        getAllElementsWithIndex(lateinitInitializerCalls).forEach { call ->
             transformCallToLateinitIsInitializedPropertyGetter(call)
         }
     }

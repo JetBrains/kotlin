@@ -323,6 +323,10 @@ class BirDatabase : BirElementParent() {
         }
     }
 
+    fun hasIndex(key: BirElementsIndexKey<*>): Boolean {
+        return key in indexerIndexes
+    }
+
     fun <E : BirElement> getElementsWithIndex(key: BirElementsIndexKey<E>): Sequence<E> {
         flushElementsWithInvalidatedIndexBuffer()
 

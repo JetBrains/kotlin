@@ -36,7 +36,7 @@ class BirJvmOverloadsAnnotationLowering : BirLoweringPhase() {
     }
 
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(overloadsAnnotations).forEach { annotation ->
+        getAllElementsWithIndex(overloadsAnnotations).forEach { annotation ->
             val function = annotation.parent as? BirFunction ?: return@forEach
             val parentClass = function.parent as? BirClass ?: return@forEach
 

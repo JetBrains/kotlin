@@ -42,7 +42,7 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
     private val fieldForObjectInstanceParentToken = acquireProperty(JvmCachedDeclarations.FieldForObjectInstanceParent)
 
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(functionsWithStaticAnnotationKey).forEach { function ->
+        getAllElementsWithIndex(functionsWithStaticAnnotationKey).forEach { function ->
             val parent = function.correspondingPropertySymbol?.owner?.parent
                 ?: function.parent as? BirClass
             if (parent is BirClass && parent.kind == ClassKind.OBJECT && !parent.isCompanion) {
@@ -53,7 +53,7 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
             }
         }
 
-        compiledBir.getElementsWithIndex(callsToJvmStaticObjects).forEach { call ->
+        getAllElementsWithIndex(callsToJvmStaticObjects).forEach { call ->
             val callee = call.symbol.owner
             if (callee.parent.let { it is BirClass && it.kind == ClassKind.OBJECT && !it.isCompanion }) {
                 call.replaceWithStatic(replaceCallee = null)

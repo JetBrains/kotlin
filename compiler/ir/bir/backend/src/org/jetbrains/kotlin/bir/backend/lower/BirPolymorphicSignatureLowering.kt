@@ -30,7 +30,7 @@ class BirPolymorphicSignatureLowering : BirLoweringPhase() {
     }
 
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(polymorphicCalls).forEach { call ->
+        getAllElementsWithIndex(polymorphicCalls).forEach { call ->
             val castReturnType = call.findCoercionType()
             val newCall = transformPolymorphicCall(call, castReturnType)
             call.replaceWith(newCall)
