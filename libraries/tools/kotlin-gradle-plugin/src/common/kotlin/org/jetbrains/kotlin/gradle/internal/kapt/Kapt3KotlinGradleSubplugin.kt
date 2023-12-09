@@ -318,33 +318,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         return project.provider { emptyList<SubpluginOption>() }
     }
 
-    private fun Kapt3SubpluginContext.getAPOptions(): Provider<CompositeSubpluginOption> = project.provider {
-        val androidVariantData = KaptWithAndroid.androidVariantData(this)
-
-        val annotationProcessorProviders = androidVariantData?.annotationProcessorOptionProviders
-
-        val subluginOptionsFromProvidedApOptions = lazy {
-            val apOptionsFromProviders =
-                annotationProcessorProviders
-                    ?.flatMap { it.asArguments() }
-                    .orEmpty()
-
-            apOptionsFromProviders.map {
-                // Use the internal subplugin option type to exclude them from Gradle input/output checks, as their providers are already
-                // properly registered as a nested input:
-
-                // Pass options as they are in the key-only form (key = 'a=b'), kapt will deal with them:
-                InternalSubpluginOption(key = it.removePrefix("-A"), value = "")
-            }
-        }
-
-        CompositeSubpluginOption(
-            "apoptions",
-            lazy { encodeList((getDslKaptApOptions().get() + subluginOptionsFromProvidedApOptions.value).associate { it.key to it.value }) },
-            getDslKaptApOptions().get()
-        )
-    }
-
     /* Returns AP options from static DSL. */
     private fun Kapt3SubpluginContext.getDslKaptApOptions(): Provider<List<SubpluginOption>> = project.provider {
         val androidVariantData = KaptWithAndroid.androidVariantData(this)
