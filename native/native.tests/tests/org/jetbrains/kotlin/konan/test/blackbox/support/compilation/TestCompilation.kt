@@ -66,6 +66,9 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
         add(
             "-Xverify-ir=error"
         )
+        // We use dev distribution for tests as it provides a full set of testing utilities,
+        // which might not be available in user distribution.
+        add("-Xllvm-variant=dev")
         addFlattened(binaryOptions.entries) { (name, value) -> listOf("-Xbinary=$name=$value") }
     }
 
@@ -476,7 +479,6 @@ internal class ExecutableCompilation(
 
         internal fun ArgsBuilder.applyFileCheckArgs(fileCheckStage: String?, fileCheckDump: File?) =
             fileCheckStage?.let {
-                add("-Xllvm-variant=dev")  // FileCheck utility is provided in `LLVM dev`, not `LLVM user`
                 add("-Xsave-llvm-ir-after=$it")
                 add("-Xsave-llvm-ir-directory=${fileCheckDump!!.parent}")
             }
