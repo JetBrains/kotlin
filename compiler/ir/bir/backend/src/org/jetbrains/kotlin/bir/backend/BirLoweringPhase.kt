@@ -64,7 +64,7 @@ abstract class BirLoweringPhase {
     }, E::class.java)
 
     protected inline fun <reified E : BirElement, R : BirElement> registerBackReferencesKey(
-        crossinline block: (E) -> R?
+        crossinline block: (E) -> R?,
     ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(object : BirElementBackReferenceRecorder<R> {
         context(BirElementBackReferenceRecorderScope)
         override fun recordBackReferences(element: BirElementBase) {
@@ -75,7 +75,11 @@ abstract class BirLoweringPhase {
     }, E::class.java)
 
     protected fun <E : BirElement> getAllElementsWithIndex(key: BirElementsIndexKey<E>): Sequence<E> {
-        return compiledBir.getElementsWithIndex(key) + externalModulesBir.getElementsWithIndex(key)
+        var elements = compiledBir.getElementsWithIndex(key)
+        if (externalModulesBir.hasIndex(key)) {
+            elements += externalModulesBir.getElementsWithIndex(key)
+        }
+        return elements
     }
 
 

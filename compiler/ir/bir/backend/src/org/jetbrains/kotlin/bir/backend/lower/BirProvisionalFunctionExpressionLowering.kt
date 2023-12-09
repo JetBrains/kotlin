@@ -26,7 +26,7 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(functionExpressions).forEach { expression ->
+        getAllElementsWithIndex(functionExpressions).forEach { expression ->
             replaceFunctionExpression(expression)
         }
     }

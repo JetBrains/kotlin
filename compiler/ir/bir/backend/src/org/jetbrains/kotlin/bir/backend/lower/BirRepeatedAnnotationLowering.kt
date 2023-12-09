@@ -55,7 +55,7 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
 
     override fun invoke(module: BirModuleFragment) {
         if (generationState.classBuilderMode.generateBodies) {
-            compiledBir.getElementsWithIndex(elementsWithMultipleAnnotations).forEach { element ->
+            getAllElementsWithIndex(elementsWithMultipleAnnotations).forEach { element ->
                 transformMultipleAnnotations(element.annotations)?.let {
                     element.annotations.clear()
                     element.annotations += it
@@ -63,7 +63,7 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
             }
         }
 
-        compiledBir.getElementsWithIndex(repeatedAnnotations).forEach { annotation ->
+        getAllElementsWithIndex(repeatedAnnotations).forEach { annotation ->
             val annotationClass = annotation.parent as? BirClass ?: return@forEach
             if (annotationClass.kind != ClassKind.ANNOTATION_CLASS) return@forEach
             if (annotationClass.hasAnnotation(JavaRepeatableAnnotation)) return@forEach

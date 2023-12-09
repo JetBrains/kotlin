@@ -43,7 +43,7 @@ class BirDirectInvokeLowering : BirLoweringPhase() {
     }
 
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(invokeCalls).forEach { call ->
+        getAllElementsWithIndex(invokeCalls).forEach { call ->
             val receiver = call.dispatchReceiver!!
             val result = when {
                 // TODO deal with type parameters somehow?
