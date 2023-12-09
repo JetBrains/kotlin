@@ -67,7 +67,10 @@ abstract class AbstractNativeCExportTest(
         ).result.assertSuccess().resultingArtifact
 
         val clangExecutableName = "clangMain"
-        val executableFile = File(buildDir, clangExecutableName)
+        // We create executable in the same directory as dynamic library because there is no rpath on Windows.
+        // Possible alternative: generate executable in buildDir and move or copy DLL there.
+        // It might make sense in case of multiple dynamic libraries, but let's keep things simple for now.
+        val executableFile = File(binaryLibrary.libraryFile.parentFile, clangExecutableName)
         val includeDirectories = binaryLibrary.headerFile?.let { listOf(it.parentFile) } ?: emptyList()
         val libraryName = binaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")
         val clangResult = compileWithClang(
