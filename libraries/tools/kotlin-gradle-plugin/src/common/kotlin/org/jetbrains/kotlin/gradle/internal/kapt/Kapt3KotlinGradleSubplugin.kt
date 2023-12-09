@@ -54,17 +54,32 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
     }
 
     companion object {
+        // Required for IDEA import
+        @Suppress("unused")
         @JvmStatic
-        fun getKaptGeneratedClassesDir(project: Project, sourceSetName: String) =
-            File(project.buildDir, "tmp/kapt3/classes/$sourceSetName")
+        fun getKaptGeneratedClassesDir(project: Project, sourceSetName: String): File =
+            project.getKaptGeneratedClassesDirectory(sourceSetName).get().asFile
 
+        internal fun Project.getKaptGeneratedClassesDirectory(sourceSetName: String) =
+            layout.buildDirectory.dir("tmp/kapt3/classes/$sourceSetName")
+
+        // Required for IDEA import
+        @Suppress("unused")
         @JvmStatic
-        fun getKaptGeneratedSourcesDir(project: Project, sourceSetName: String) =
-            File(project.buildDir, "generated/source/kapt/$sourceSetName")
+        fun getKaptGeneratedSourcesDir(project: Project, sourceSetName: String): File =
+            project.getKaptGeneratedSourcesDirectory(sourceSetName).get().asFile
 
+        internal fun Project.getKaptGeneratedSourcesDirectory(sourceSetName: String) =
+            layout.buildDirectory.dir("generated/source/kapt/$sourceSetName")
+
+        // Required for IDEA import
+        @Suppress("unused")
         @JvmStatic
         fun getKaptGeneratedKotlinSourcesDir(project: Project, sourceSetName: String) =
-            File(project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
+            project.getKaptGeneratedKotlinSourcesDirectory(sourceSetName).get().asFile
+
+        internal fun Project.getKaptGeneratedKotlinSourcesDirectory(sourceSetName: String) =
+            layout.buildDirectory.dir("generated/source/kaptKotlin/$sourceSetName")
 
         const val KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME = "kotlinKaptWorkerDependencies"
 
@@ -224,7 +239,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     private fun Kapt3SubpluginContext.temporaryKaptDirectory(
         name: String
-    ) = project.buildDir.resolve("tmp/kapt3/$name/$sourceSetName")
+    ) = project.layout.buildDirectory.dir("tmp/kapt3/$name/$sourceSetName")
 
     internal inner class Kapt3SubpluginContext(
         val project: Project,
@@ -235,9 +250,9 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val kaptExtension: KaptExtension,
         val kaptClasspathConfigurations: List<Configuration>
     ) {
-        val sourcesOutputDir = getKaptGeneratedSourcesDir(project, sourceSetName)
-        val kotlinSourcesOutputDir = getKaptGeneratedKotlinSourcesDir(project, sourceSetName)
-        val classesOutputDir = getKaptGeneratedClassesDir(project, sourceSetName)
+        val sourcesOutputDir = project.getKaptGeneratedSourcesDirectory(sourceSetName)
+        val kotlinSourcesOutputDir = project.getKaptGeneratedKotlinSourcesDirectory(sourceSetName)
+        val classesOutputDir = project.getKaptGeneratedClassesDirectory(sourceSetName)
         val includeCompileClasspath =
             kaptExtension.includeCompileClasspath
                 ?: project.isIncludeCompileClasspath()
@@ -330,7 +345,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val androidSubpluginOptions = androidOptions.toList().map { SubpluginOption(it.first, it.second) }
 
         androidSubpluginOptions + getNonAndroidDslApOptions(
-            kaptExtension, project, listOf(kotlinSourcesOutputDir), androidVariantData, androidExtension
+            kaptExtension, project, listOf(kotlinSourcesOutputDir.get().asFile), androidVariantData, androidExtension
         ).get()
     }
 
@@ -355,7 +370,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 val androidVariantData = KaptWithAndroid.androidVariantData(this)
                 if (androidVariantData != null) {
                     KaptWithAndroid.registerGeneratedJavaSourceForAndroid(this, project, androidVariantData, taskProvider)
-                    androidVariantData.addJavaSourceFoldersToModel(sourcesOutputDir)
+                    androidVariantData.addJavaSourceFoldersToModel(sourcesOutputDir.get().asFile)
                 } else {
                     registerGeneratedJavaSource(taskProvider, javaCompile)
                 }
@@ -389,7 +404,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             }
 
             if (project.isIncrementalKapt()) {
-                task.incAptCache.fileValue(getKaptIncrementalAnnotationProcessingCache()).disallowChanges()
+                task.incAptCache.value(getKaptIncrementalAnnotationProcessingCache()).disallowChanges()
             }
 
             task.kaptClasspath.from(kaptClasspathConfiguration).disallowChanges()

@@ -29,6 +29,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDirectory
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
@@ -255,8 +256,8 @@ internal class AndroidProjectHandler(
                 add(kotlinTask.get().destinationDirectory.get().asFile)
                 if (Kapt3GradleSubplugin.isEnabled(project)) {
                     // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
-                    val kaptClasssesDir = Kapt3GradleSubplugin.getKaptGeneratedClassesDir(project, getVariantName(variantData))
-                    add(kaptClasssesDir)
+                    val kaptClassesDir = project.getKaptGeneratedClassesDirectory(getVariantName(variantData))
+                    add(kaptClassesDir.get().asFile)
                 }
             }
         }).builtBy(kotlinTask)
