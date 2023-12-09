@@ -52,16 +52,17 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
         ClangMode.C -> "clang"
         ClangMode.CXX -> "clang++"
     }
+    val configurables = testRunSettings.configurables
     val clangPath = when (clangDistribution) {
-        ClangDistribution.Toolchain -> "${testRunSettings.configurables.absoluteTargetToolchain}/bin/$clangExecutableName"
-        ClangDistribution.Llvm -> "${testRunSettings.configurables.absoluteLlvmHome}/bin/$clangExecutableName"
+        ClangDistribution.Toolchain -> "${configurables.absoluteTargetToolchain}/bin/$clangExecutableName"
+        ClangDistribution.Llvm -> "${configurables.absoluteLlvmHome}/bin/$clangExecutableName"
     }
     val process = ProcessBuilder(
         clangPath,
         *sourceFiles.map { it.absolutePath }.toTypedArray(),
         *includeDirectories.flatMap { listOf("-I", it.absolutePath) }.toTypedArray(),
-        "-isysroot", testRunSettings.configurables.absoluteTargetSysRoot,
-        "-target", testRunSettings.configurables.targetTriple.toString(),
+        "-isysroot", configurables.absoluteTargetSysRoot,
+        "-target", configurables.targetTriple.toString(),
         "-g", "-fmodules",
         *frameworkDirectories.flatMap { listOf("-F", it.absolutePath) }.toTypedArray(),
         *libraryDirectories.flatMap { listOf("-L", it.absolutePath) }.toTypedArray(),
