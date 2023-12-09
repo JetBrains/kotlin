@@ -25,7 +25,7 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
     private val originalBeforeInlineToken = acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(functionExpressions).forEach { expression ->
             replaceFunctionExpression(expression)
         }
