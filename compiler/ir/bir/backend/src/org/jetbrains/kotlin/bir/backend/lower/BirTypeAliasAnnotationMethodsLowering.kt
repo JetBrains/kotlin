@@ -24,7 +24,7 @@ class BirTypeAliasAnnotationMethodsLowering : BirLoweringPhase() {
     private val annotatedTypeAliases = registerIndexKey<BirTypeAlias>(false) { it.annotations.isNotEmpty() }
 
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(annotatedTypeAliases).forEach { alias ->
+        getAllElementsWithIndex(annotatedTypeAliases).forEach { alias ->
             val parentClass = alias.parent as? BirClass ?: return@forEach
 
             val function = BirSimpleFunction.build {
