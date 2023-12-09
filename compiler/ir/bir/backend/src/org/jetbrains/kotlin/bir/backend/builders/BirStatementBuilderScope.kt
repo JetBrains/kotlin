@@ -128,7 +128,6 @@ class BirStatementBuilderScope() {
     ): BirElseBranch =
         BirElseBranchImpl(sourceSpan, birConst(true), result).apply(block)
 
-
     fun birReturn(
         value: BirExpression,
         returnTarget: BirReturnTargetSymbol = this.returnTarget ?: error("return target not specified"),
@@ -426,4 +425,17 @@ class BirStatementBuilderScope() {
         expression: BirExpression,
     ): BirExpressionBody =
         BirExpressionBodyImpl(sourceSpan, expression)
+}
+
+context(BirStatementBuilderScope)
+fun birIfThenElse(
+    type: BirType,
+    condition: BirExpression,
+    thenPart: BirExpression,
+    elsePart: BirExpression,
+    origin: IrStatementOrigin? = null,
+    block: BirBranch.() -> Unit = {},
+) = birWhen(type, origin) {
+    branches += birBranch(condition, thenPart)
+    branches += birElseBranch(elsePart)
 }
