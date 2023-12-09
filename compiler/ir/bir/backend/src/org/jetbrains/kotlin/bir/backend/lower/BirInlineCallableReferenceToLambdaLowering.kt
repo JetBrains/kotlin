@@ -32,7 +32,7 @@ class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
     private val functionAccesses = registerBackReferencesKey<BirFunctionAccessExpression, _> { it.symbol.owner }
     private val originalBeforeInlineToken = acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
 
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(inlineFunctions).forEach { function ->
             val accesses by lazy { function.getBackReferences(functionAccesses) }
             for (parameter in function.valueParameters) {

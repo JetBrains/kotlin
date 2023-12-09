@@ -23,7 +23,7 @@ context(JvmBirBackendContext)
 class BirTypeAliasAnnotationMethodsLowering : BirLoweringPhase() {
     private val annotatedTypeAliases = registerIndexKey<BirTypeAlias>(false) { it.annotations.isNotEmpty() }
 
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(annotatedTypeAliases).forEach { alias ->
             val parentClass = alias.parent as? BirClass ?: return@forEach
 

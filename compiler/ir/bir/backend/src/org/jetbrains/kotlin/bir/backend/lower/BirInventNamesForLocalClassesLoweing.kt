@@ -52,7 +52,7 @@ abstract class BirInventNamesForLocalClassesLowering(
         fun makeLocal() = if (isLocal) this else copy(isLocal = true)
     }
 
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(classes).forEach { clazz ->
             val nameScope = getLocalNameScopeIfApplicable(clazz) ?: return@forEach
             if (nameScope.isLocal) {

@@ -335,7 +335,7 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
         for (phase in input.backendContext.loweringPhases) {
             val phaseName = phase.javaClass.simpleName
             invokePhaseMeasuringTime(profile, "!BIR - $phaseName") {
-                phase(input.birModule!!)
+                phase.lower(input.birModule!!)
             }
 
             dumpBirPhase(context, input, phase, null)

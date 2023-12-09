@@ -30,7 +30,7 @@ class BirJvmNameLowering : BirLoweringPhase() {
         it.constructedClass == JvmNameAnnotation
     }
 
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(jvmNameAnnotations).forEach { annotation ->
             val function = annotation.parent as? BirFunction ?: return@forEach
 

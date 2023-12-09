@@ -53,7 +53,7 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
                 && function.returnType.isUnit()
     }
 
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)) return
 
         getAllElementsWithIndex(mainishFunctions).forEach { mainMethod ->

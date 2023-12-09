@@ -42,7 +42,7 @@ class BirDirectInvokeLowering : BirLoweringPhase() {
         it.dispatchReceiver != null && it.symbol.owner.name == OperatorNameConventions.INVOKE
     }
 
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(invokeCalls).forEach { call ->
             val receiver = call.dispatchReceiver!!
             val result = when {

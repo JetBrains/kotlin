@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 
 context(BirBackendContext)
 abstract class BirLoweringPhase {
-    abstract operator fun invoke(module: BirModuleFragment)
+    abstract fun lower(module: BirModuleFragment)
 
     protected inline fun <reified E : BirElement> registerIndexKey(
         includeExternalModules: Boolean,

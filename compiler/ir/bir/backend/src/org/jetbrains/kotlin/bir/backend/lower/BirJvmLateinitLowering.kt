@@ -29,7 +29,7 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
     }
     private val variableReads = registerBackReferencesKey<BirGetValue, _> { it.symbol }
 
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         transformLateinitProperties()
         transformLateinitVariables()
         transformIsLateinitInitialized()
