@@ -82,13 +82,12 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
                     ),
                     addIndexToName = false,
                 )
-                +birWhen(birBuiltIns.nothingType) {
-                    branches += birBranch(
-                        birNotEquals(birGet(resultVar), birNull()),
-                        birReturn(birGet(resultVar))
-                    )
-                    branches += birElseBranch(throwUninitializedPropertyAccessException(backingField.name.asString()))
-                }
+                +birIfThenElse(
+                    birBuiltIns.nothingType,
+                    birNotEquals(birGet(resultVar), birNull()),
+                    birReturn(birGet(resultVar)),
+                    throwUninitializedPropertyAccessException(backingField.name.asString())
+                )
             }
         }
     }
@@ -103,13 +102,12 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
     private fun transformGetLateinitVariable(getVariable: BirGetValue, variable: BirVariable) {
         val ensureInitializedAndGet = birBodyScope {
             sourceSpan = getVariable.sourceSpan
-            birWhen(getVariable.type) {
-                branches += birBranch(
-                    birEquals(birGet(variable), birNull()),
-                    throwUninitializedPropertyAccessException(variable.name.asString())
-                )
-                branches += birElseBranch(birGet(variable))
-            }
+            birIfThenElse(
+                getVariable.type,
+                birEquals(birGet(variable), birNull()),
+                throwUninitializedPropertyAccessException(variable.name.asString()),
+                birGet(variable)
+            )
         }
 
         getVariable.replaceWith(ensureInitializedAndGet)
