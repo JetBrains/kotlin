@@ -53,7 +53,7 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
 
     private val repeatedAnnotationSyntheticContainerToken = acquireTemporaryProperty<BirClass, BirClass>()
 
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         if (generationState.classBuilderMode.generateBodies) {
             getAllElementsWithIndex(elementsWithMultipleAnnotations).forEach { element ->
                 transformMultipleAnnotations(element.annotations)?.let {

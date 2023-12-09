@@ -31,7 +31,7 @@ class BirVarargLowering : BirLoweringPhase() {
 
     private val varargs = registerIndexKey<BirVararg>(false)
 
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(functionAccessesWithMissingArgument).forEach { expression ->
             if (expression.isInsideAnnotation()) return@forEach
 
