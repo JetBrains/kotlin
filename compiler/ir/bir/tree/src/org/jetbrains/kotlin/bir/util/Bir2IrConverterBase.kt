@@ -43,12 +43,14 @@ import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class Bir2IrConverterBase(
     protected val remappedIr2BirElements: Map<BirElement, IrElement>,
-    private val compiledBir: BirDatabase,
+    protected val compiledBir: BirDatabase,
 ) {
     var elementConvertedCallback: ((BirElement, IrElement) -> Unit)? = null
     var reuseOnlyExternalElements = false
@@ -84,8 +86,13 @@ abstract class Bir2IrConverterBase(
         copy: () -> SE,
         lateInitialize: SE.() -> Unit,
     ): SE {
-        val new = remappedIr2BirElements[old] as? SE
-            ?: copy().also { setParent(it, old) }
+        (tryReuseExternalElement<Bir, ME>(old) as? SE)?.let {
+            return it
+        }
+
+        val new = reuseOnlyExternalElements.ifFalse {
+            remappedIr2BirElements[old] as? SE
+        } ?: copy().also { setParent(it, old) }
         lateInitialize(new)
         elementConvertedCallback?.invoke(old, new)
         return new
@@ -102,23 +109,28 @@ abstract class Bir2IrConverterBase(
             return it as SE
         }
 
-        if (reuseOnlyExternalElements && (old as BirElementBase).getContainingDatabase().let { it != null && it !== compiledBir }) {
-            (remappedIr2BirElements[old] as SE?)?.let {
-                return it
-            }
+        tryReuseExternalElement<Bir, ME>(old)?.let {
+            @Suppress("UNCHECKED_CAST")
+            return it as SE
         }
 
         @Suppress("UNCHECKED_CAST")
-        val new = /*(!reuseOnlyExternalElements || *//*old is BirLazyElementBase*//* (old as BirElementBase).getContainingDatabase()
-            .let { it != null && it !== compiledBir })
-            .ifTrue {*/
-                remappedIr2BirElements[old] as SE?
-            //}
-            ?: copy().also { setParent(it, old) }
+        val new = reuseOnlyExternalElements.ifFalse {
+            remappedIr2BirElements[old] as SE?
+        } ?: copy().also { setParent(it, old) }
         map[old] = new
         lateInitialize(new)
         elementConvertedCallback?.invoke(old, new)
         return new
+    }
+
+    protected fun <Bir : BirElement, ME : IrElement> tryReuseExternalElement(old: Bir): IrElement? {
+        if (reuseOnlyExternalElements && (old as BirElementBase).getContainingDatabase().let { it != null && it !== compiledBir }) {
+            (remappedIr2BirElements[old])?.let {
+                return it
+            }
+        }
+        return null
     }
 
     fun <IrS : IrSymbol, BirS : BirSymbol> remapSymbol(old: BirS): IrS {
