@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.bir.backend.lower
 
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
-import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.GlobalBirElementDynamicProperties
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.*
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.bir.backend.jvm.isInlineFunctionCall
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.BirSimpleFunctionImpl
 import org.jetbrains.kotlin.bir.expressions.*
-import org.jetbrains.kotlin.bir.get
 import org.jetbrains.kotlin.bir.getBackReferences
 import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirTypeProjection
@@ -31,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
 context(JvmBirBackendContext)
 class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
     private val inlineFunctions = registerIndexKey<BirFunction>(true) { it.isInlineFunctionCall() }
-    private val functionAccesses = registerBackReferencesKey<BirFunctionAccessExpression, BirFunction> { recordReference(it.symbol.owner) }
+    private val functionAccesses = registerBackReferencesKey<BirFunctionAccessExpression, _> { it.symbol.owner }
     private val originalBeforeInlineToken = acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
 
     override fun invoke(module: BirModuleFragment) {
