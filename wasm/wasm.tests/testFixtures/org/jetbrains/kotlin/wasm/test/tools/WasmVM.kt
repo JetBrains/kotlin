@@ -81,6 +81,22 @@ internal sealed class WasmVM(
             )
     }
 
+    object JavaScriptCore : WasmVM(shortName = "JSC", property = "javascript.engine.path.JavaScriptCore", entryPointIsJsFile = true) {
+        override fun run(
+            entryFile: String,
+            jsFiles: List<String>,
+            workingDirectory: File?,
+            useNewExceptionHandling: Boolean,
+            toolArgs: List<String>
+        ) =
+            tool.run(
+                *toolArgs.toTypedArray(),
+                *jsFiles.toTypedArray(),
+                "--module-file=$entryFile",
+                workingDirectory = workingDirectory,
+            )
+    }
+
     object NodeJs : WasmVM(shortName = "NodeJs", property = "javascript.engine.path.NodeJs", entryPointIsJsFile = true) {
         override fun run(
             entryFile: String,
@@ -134,7 +150,7 @@ internal class ExternalTool(val path: String) {
 
         val exitValue = process.waitFor()
         if (exitValue != 0) {
-            fail("Command \"$commandString\" terminated with exit code $exitValue")
+            fail("Command \"$commandString\" terminated with exit code $exitValue in working dir \"$workingDirectory\"")
         }
 
         return stdout.toString()
