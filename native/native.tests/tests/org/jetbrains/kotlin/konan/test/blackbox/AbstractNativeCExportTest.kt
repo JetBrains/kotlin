@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
@@ -38,7 +40,7 @@ abstract class AbstractNativeCExportTest(
         STATIC, DYNAMIC
     }
 
-    protected open val kindSpecificClangFlags: List<String> = emptyList()
+    internal open fun getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.BinaryLibrary): List<String> = emptyList()
 
     private val testCompilationFactory = TestCompilationFactory()
 
@@ -68,19 +70,19 @@ abstract class AbstractNativeCExportTest(
         val executableFile = File(buildDir, clangExecutableName)
         val includeDirectories = binaryLibrary.headerFile?.let { listOf(it.parentFile) } ?: emptyList()
         val libraryName = binaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")
-        compileWithClang(
-            clangDistribution = ClangDistribution.LlvmDistribution,
+        val clangResult = compileWithClang(
+            clangDistribution = ClangDistribution.Llvm,
             sourceFiles = cSources,
             includeDirectories = includeDirectories,
             outputFile = executableFile,
             libraryDirectories = listOf(binaryLibrary.libraryFile.parentFile),
             libraries = listOf(libraryName),
-            additionalLinkerFlags = kindSpecificClangFlags,
-        )
+            additionalClangFlags = getKindSpecificClangFlags(binaryLibrary),
+        ).assertSuccess()
 
         val testExecutable = TestExecutable(
-            TestCompilationArtifact.Executable(executableFile),
-            loggedCompilationToolCall = LoggedData.NoopCompilerCall(buildDir),
+            clangResult.resultingArtifact,
+            loggedCompilationToolCall = clangResult.loggedData,
             testNames = listOf(TestName("TMP")),
         )
 
@@ -119,7 +121,16 @@ abstract class AbstractNativeCExportTest(
 }
 
 abstract class AbstractNativeCExportStaticTest() : AbstractNativeCExportTest(libraryKind = BinaryLibraryKind.STATIC) {
-    override val kindSpecificClangFlags: List<String>
-        get() = testRunSettings.configurables.linkerKonanFlags.flatMap { listOf("-Xlinker", it) }
+    override fun getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.BinaryLibrary): List<String> =
+        testRunSettings.configurables.linkerKonanFlags.flatMap { listOf("-Xlinker", it) }
 }
-abstract class AbstractNativeCExportDynamicTest() : AbstractNativeCExportTest(libraryKind = BinaryLibraryKind.DYNAMIC)
+abstract class AbstractNativeCExportDynamicTest() : AbstractNativeCExportTest(libraryKind = BinaryLibraryKind.DYNAMIC) {
+    override fun getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.BinaryLibrary): List<String> =
+        if (testRunSettings.get<KotlinNativeTargets>().testTarget.family != Family.MINGW) {
+            listOf("-rpath", binaryLibrary.libraryFile.parentFile.absolutePath)
+        } else {
+            // --allow-multiple-definition is needed because finalLinkCommands statically links a lot of MinGW-specific libraries,
+            // that are already included in DLL produced by Kotlin/Native.
+            listOf("-Wl,--allow-multiple-definition")
+        }
+}

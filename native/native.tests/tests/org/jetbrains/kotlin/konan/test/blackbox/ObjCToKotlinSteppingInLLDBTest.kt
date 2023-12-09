@@ -225,19 +225,19 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         val clangExecutableName = "clangMain"
         val executableFile = File(buildDir, clangExecutableName)
 
-        compileWithClang(
+        val clangResult = compileWithClang(
             // This code was initially written against clang from toolchain.
             // Changing it to another one probably won't hurt, but it was not tested.
             clangDistribution = ClangDistribution.Toolchain,
             sourceFiles = listOf(clangFile),
             outputFile = executableFile,
             frameworkDirectories = listOf(buildDir),
-        )
+        ).assertSuccess()
 
         // 4. Generate the test case
         val testExecutable = TestExecutable(
-            TestCompilationArtifact.Executable(executableFile),
-            loggedCompilationToolCall = LoggedData.NoopCompilerCall(buildDir),
+            clangResult.resultingArtifact,
+            loggedCompilationToolCall = clangResult.loggedData,
             testNames = listOf(TestName(testName)),
         )
         val spec = LLDBSessionSpec.parse(lldbSpec)
