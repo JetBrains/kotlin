@@ -56,7 +56,7 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
     override fun invoke(module: BirModuleFragment) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)) return
 
-        compiledBir.getElementsWithIndex(mainishFunctions).forEach { mainMethod ->
+        getAllElementsWithIndex(mainishFunctions).forEach { mainMethod ->
             val parentClass = mainMethod.parent as? BirClass ?: return@forEach
             if (!parentClass.isFileClass) return@forEach
             val isParametrized = mainMethod.isParameterizedMainMethod() ?: return@forEach
