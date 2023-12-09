@@ -57,8 +57,8 @@ val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhase, List<
 private val excludedPhases = setOf<String>(
     //"Ir2Bir",
     //"Lower Bir",
-    //"Bir2Ir",
-    "Terminate",
+    "Bir2Ir",
+    //"Terminate",
 
     // This phase removes annotation constructors, but they are still being used,
     // which causes an exception in BIR. It works in IR because removed constructors
@@ -388,7 +388,6 @@ private class ConvertBirToIrPhase(name: String, description: String) :
         val newIrModule: IrModuleFragment
         invokePhaseMeasuringTime(input.profile, "!BIR - convert IR to BIR") {
             newIrModule = bir2IrConverter.remapElement<IrModuleFragment>(input.birModule)
-            //newIrModule.patchDeclarationParents()
         }
 
         return newIrModule
