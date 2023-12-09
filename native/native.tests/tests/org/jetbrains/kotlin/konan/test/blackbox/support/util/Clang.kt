@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.konan.target.ClangArgs
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import java.io.File
-import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 /**
  * Specifies which Clang should be used for compilation.
@@ -48,44 +51,42 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
     libraries: List<String> = emptyList(),
     additionalClangFlags: List<String> = emptyList(),
 ): TestCompilationResult<out TestCompilationArtifact.Executable> {
+    val configurables = testRunSettings.configurables
+    val host = testRunSettings.get<KotlinNativeTargets>().hostTarget
     val clangExecutableName = when (clangMode) {
         ClangMode.C -> "clang"
         ClangMode.CXX -> "clang++"
-    }
-    val configurables = testRunSettings.configurables
+    }.let { if (host.family == Family.MINGW) "$it.exe" else it }
     val clangPath = when (clangDistribution) {
         ClangDistribution.Toolchain -> "${configurables.absoluteTargetToolchain}/bin/$clangExecutableName"
         ClangDistribution.Llvm -> "${configurables.absoluteLlvmHome}/bin/$clangExecutableName"
     }
-    val process = ProcessBuilder(
+    val clangArgsProvider = ClangArgs.Native(configurables)
+    val clangArgs = when (clangMode) {
+        ClangMode.C -> clangArgsProvider.clangArgs
+        ClangMode.CXX -> clangArgsProvider.clangXXArgs
+    }
+    val processBuilder = ProcessBuilder(
         clangPath,
+        *clangArgs,
         *sourceFiles.map { it.absolutePath }.toTypedArray(),
         *includeDirectories.flatMap { listOf("-I", it.absolutePath) }.toTypedArray(),
-        "-isysroot", configurables.absoluteTargetSysRoot,
-        "-target", configurables.targetTriple.toString(),
         "-g", "-fmodules",
         *frameworkDirectories.flatMap { listOf("-F", it.absolutePath) }.toTypedArray(),
         *libraryDirectories.flatMap { listOf("-L", it.absolutePath) }.toTypedArray(),
         *libraries.map { "-l$it" }.toTypedArray(),
         *additionalClangFlags.toTypedArray(),
         "-o", outputFile.absolutePath
-    ).start()
-    val exitCode: Int
-    val duration = measureTime {
-        exitCode = process.waitFor()
+    )
+    val process = processBuilder.start()
+    val (exitCode, duration) = measureTimedValue {
+        process.waitFor()
     }
     val clangErrorOutput = process.errorStream.readBytes()
     val clangOutput = process.inputStream.readBytes()
 
     val parameters = ClangParameters(
-        clangPath,
-        sourceFiles,
-        outputFile,
-        includeDirectories,
-        frameworkDirectories,
-        libraryDirectories,
-        libraries,
-        additionalClangFlags
+        processBuilder.command()
     )
     val loggedData = LoggedData.CompilationToolCall(
         toolName = "CLANG",
@@ -105,25 +106,12 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
 }
 
 internal class ClangParameters(
-    private val clangPath: String,
-    private val sourceFiles: List<File>,
-    private val outputFile: File,
-    private val includeDirectories: List<File> = emptyList(),
-    private val frameworkDirectories: List<File> = emptyList(),
-    private val libraryDirectories: List<File> = emptyList(),
-    private val libraries: List<String> = emptyList(),
-    private val additionalClangFlags: List<String> = emptyList(),
+    private val command: List<String>,
 ) : LoggedData() {
     override fun computeText(): String = buildString {
         appendLine("CLANG")
-        appendLine("- $clangPath")
-        appendLine("OUTPUT FILE")
-        appendLine("- ${outputFile.absolutePath}")
-        appendArguments("SOURCES", sourceFiles.map { it.absolutePath })
-        appendArguments("INCLUDE DIRECTORIES", includeDirectories.map { it.absolutePath })
-        appendArguments("LIBRARY DIRECTORIES", libraryDirectories.map { it.absolutePath })
-        appendArguments("FRAMEWORK DIRECTORIES", frameworkDirectories.map { it.absolutePath })
-        appendArguments("LIBRARIES", libraries)
-        appendArguments("ADDITIONAL CLANG FLAGS", additionalClangFlags)
+        command.forEach {
+            appendLine("- $it")
+        }
     }
 }
