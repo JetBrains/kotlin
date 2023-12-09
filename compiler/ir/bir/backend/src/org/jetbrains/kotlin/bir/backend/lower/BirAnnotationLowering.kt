@@ -17,7 +17,7 @@ context(JvmBirBackendContext)
 class BirAnnotationLowering : BirLoweringPhase() {
     private val annotationClasses = registerIndexKey<BirClass>(false) { it.kind == ClassKind.ANNOTATION_CLASS }
 
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(annotationClasses).forEach { annotationClass ->
             annotationClass.declarations
                 .filterIsInstance<BirConstructor>()

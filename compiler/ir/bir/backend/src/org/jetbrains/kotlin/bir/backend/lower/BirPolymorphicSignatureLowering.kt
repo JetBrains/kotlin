@@ -29,7 +29,7 @@ class BirPolymorphicSignatureLowering : BirLoweringPhase() {
         PolymorphicSignatureAnnotation?.let { call.symbol.owner.hasAnnotation(it) } == true
     }
 
-    override fun invoke(module: BirModuleFragment) {
+    override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(polymorphicCalls).forEach { call ->
             val castReturnType = call.findCoercionType()
             val newCall = transformPolymorphicCall(call, castReturnType)
