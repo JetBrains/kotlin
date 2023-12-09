@@ -509,7 +509,7 @@ internal fun buildKaptSubpluginOptions(
     pluginOptions += FilesSubpluginOption("classes", generatedClassesDir)
     pluginOptions += FilesSubpluginOption("incrementalData", incrementalDataDir)
 
-    val annotationProcessors = kaptExtension.processors
+    @Suppress("DEPRECATION") val annotationProcessors = kaptExtension.processors
     if (annotationProcessors.isNotEmpty()) {
         pluginOptions += SubpluginOption("processors", annotationProcessors)
     }
