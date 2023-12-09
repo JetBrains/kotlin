@@ -224,6 +224,7 @@ internal abstract class LoggedData {
             return this
         }
 
+        @JvmStatic
         protected fun StringBuilder.appendArguments(header: String, args: Iterable<String>): StringBuilder {
             appendLine(header)
 
