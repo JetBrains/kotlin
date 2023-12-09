@@ -71,9 +71,8 @@ fun dumpBirPhase(
         bir2IrConverter.reuseOnlyExternalElements = true
 
         val irModule = bir2IrConverter.remapElement<IrModuleFragment>(input.birModule)
-        //irModule.patchDeclarationParents()
-        val text = irModule.dump(irDumpOptions)
 
+        val text = irModule.dump(irDumpOptions)
         val path = Path(dumpDir) / "bir" / "${irPhaseName}.txt"
         path.createParentDirectories()
         path.writeText(text)
