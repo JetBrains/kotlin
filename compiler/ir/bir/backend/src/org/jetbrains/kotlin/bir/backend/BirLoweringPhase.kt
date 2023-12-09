@@ -43,8 +43,16 @@ abstract class BirLoweringPhase {
         return key
     }
 
+    protected fun <E : BirElement, R : BirElement> registerBackReferencesKey(
+        block: BirElementBackReferenceRecorder<R>,
+        elementClass: Class<*>,
+    ): BirElementBackReferencesKey<E, R> {
+        val key = BirElementBackReferencesKey<E, R>(block, elementClass)
+        compiledBir.registerElementBackReferencesKey(key)
+        return key
+    }
 
-    protected inline fun <reified E : BirElement, R : BirElement> registerBackReferencesKey(
+    protected inline fun <reified E : BirElement, R : BirElement> registerMultipleBackReferencesKey(
         crossinline block: context(BirElementBackReferenceRecorderScope) (E) -> Unit,
     ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(object : BirElementBackReferenceRecorder<R> {
         context(BirElementBackReferenceRecorderScope)
@@ -55,15 +63,16 @@ abstract class BirLoweringPhase {
         }
     }, E::class.java)
 
-    protected fun <E : BirElement, R : BirElement> registerBackReferencesKey(
-        block: BirElementBackReferenceRecorder<R>,
-        elementClass: Class<*>,
-    ): BirElementBackReferencesKey<E, R> {
-        val key = BirElementBackReferencesKey<E, R>(block, elementClass)
-        compiledBir.registerElementBackReferencesKey(key)
-        return key
-    }
-
+    protected inline fun <reified E : BirElement, R : BirElement> registerBackReferencesKey(
+        crossinline block: (E) -> R?
+    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(object : BirElementBackReferenceRecorder<R> {
+        context(BirElementBackReferenceRecorderScope)
+        override fun recordBackReferences(element: BirElementBase) {
+            if (element is E) {
+                recordReference(block(element))
+            }
+        }
+    }, E::class.java)
 
     protected fun <E : BirElement> getAllElementsWithIndex(key: BirElementsIndexKey<E>): Sequence<E> {
         return compiledBir.getElementsWithIndex(key) + externalModulesBir.getElementsWithIndex(key)
