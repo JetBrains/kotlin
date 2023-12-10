@@ -205,7 +205,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @DisplayName("Proper Gradle plugin variant is used")
     @GradleTestVersions(
-        maxVersion = TestVersions.Gradle.G_8_2,
         additionalVersions = [
             TestVersions.Gradle.G_7_0,
             TestVersions.Gradle.G_7_1,
@@ -215,7 +214,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             TestVersions.Gradle.G_7_6,
             TestVersions.Gradle.G_8_0,
             TestVersions.Gradle.G_8_1,
-            TestVersions.Gradle.G_8_2,
         ],
     )
     @GradleTest
