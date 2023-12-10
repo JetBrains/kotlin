@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -42,9 +43,12 @@ abstract class AbstractNativeCExportTest(
 
     internal open fun getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.BinaryLibrary): List<String> = emptyList()
 
+    internal open fun checkTestPrerequisites() {}
+
     private val testCompilationFactory = TestCompilationFactory()
 
     protected fun runTest(@TestDataFile testDir: String) {
+        checkTestPrerequisites()
         val testPathFull = getAbsoluteFile(testDir)
         val ktSources = testPathFull.list()!!
             .filter { it.endsWith(".kt") }
@@ -125,6 +129,12 @@ abstract class AbstractNativeCExportTest(
 abstract class AbstractNativeCExportStaticTest() : AbstractNativeCExportTest(libraryKind = BinaryLibraryKind.STATIC) {
     override fun getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.BinaryLibrary): List<String> =
         testRunSettings.configurables.linkerKonanFlags.flatMap { listOf("-Xlinker", it) }
+
+    override fun checkTestPrerequisites() {
+        if (targets.testTarget.family == Family.MINGW) {
+            Assumptions.abort<Nothing>("Testing of static libraries is not supported for MinGW targets.")
+        }
+    }
 }
 abstract class AbstractNativeCExportDynamicTest() : AbstractNativeCExportTest(libraryKind = BinaryLibraryKind.DYNAMIC) {
     override fun getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.BinaryLibrary): List<String> =
