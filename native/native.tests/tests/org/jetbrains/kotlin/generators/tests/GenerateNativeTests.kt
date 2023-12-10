@@ -455,6 +455,22 @@ fun main() {
                 model("CExport", pattern = "^([^_](.+))$", recursive = false)
             }
         }
+        // Old Framework tests
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeFrameworkTest>(
+                suiteTestClassName = "FrameworkTestGenerated"
+            ) {
+                model("FrameworkTest", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeFrameworkTest>(
+                suiteTestClassName = "FirFrameworkTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                ),
+            ) {
+                model("FrameworkTest", pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
     }
 }
 
