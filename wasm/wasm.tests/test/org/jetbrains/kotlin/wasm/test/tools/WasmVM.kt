@@ -53,9 +53,7 @@ internal sealed class WasmVM(val shortName: String) {
             tool.run(
                 *toolArgs.toTypedArray(),
                 "--wasm-verbose",
-                "--wasm-gc",
                 *if (disableExceptionHandlingIfPossible) arrayOf("--no-wasm-exceptions") else emptyArray(),
-                "--wasm-function-references",
                 *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
                 "--module=$entryMjs",
                 workingDirectory = workingDirectory,
