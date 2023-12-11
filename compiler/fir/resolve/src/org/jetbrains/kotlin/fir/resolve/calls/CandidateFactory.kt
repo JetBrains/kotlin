@@ -100,9 +100,16 @@ class CandidateFactory private constructor(
         } else if (objectsByName && symbol.isRegularClassWithoutCompanion(callInfo.session)) {
             result.addDiagnostic(NoCompanionObject)
         }
-        if (callInfo.origin == FirFunctionCallOrigin.Operator && symbol is FirPropertySymbol) {
-            // Flag all property references that are resolved from an convention operator call.
-            result.addDiagnostic(PropertyAsOperator)
+        if (callInfo.origin == FirFunctionCallOrigin.Operator) {
+            val propertySymbol = when {
+                symbol is FirPropertySymbol -> symbol
+                callInfo.candidateForCommonInvokeReceiver != null -> callInfo.candidateForCommonInvokeReceiver.symbol as? FirPropertySymbol
+                else -> null
+            }
+            if (propertySymbol != null) {
+                // Flag all property references that are resolved from an convention operator call.
+                result.addDiagnostic(PropertyAsOperator(propertySymbol))
+            }
         }
         if (symbol is FirPropertySymbol &&
             !context.session.languageVersionSettings.supportsFeature(LanguageFeature.PrioritizedEnumEntries)

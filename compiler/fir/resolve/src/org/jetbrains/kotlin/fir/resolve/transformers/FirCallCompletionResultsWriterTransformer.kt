@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionResultOverridesOtherToPreserveCompatibility
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
@@ -50,6 +47,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -148,8 +146,8 @@ class FirCallCompletionResultsWriterTransformer(
 
         qualifiedAccessExpression.replaceContextReceiverArguments(subCandidate.contextReceiverArguments())
 
-        if (qualifiedAccessExpression is FirPropertyAccessExpressionImpl && calleeReference.candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR) {
-            val conePropertyAsOperator = ConePropertyAsOperator(calleeReference.candidate.symbol as FirPropertySymbol)
+        subCandidate.diagnostics.firstIsInstanceOrNull<PropertyAsOperator>()?.let { propertyAsOperator ->
+            val conePropertyAsOperator = ConePropertyAsOperator(propertyAsOperator.propertySymbol)
             val nonFatalDiagnostics: List<ConeDiagnostic> = buildList {
                 addAll(qualifiedAccessExpression.nonFatalDiagnostics)
                 add(conePropertyAsOperator)

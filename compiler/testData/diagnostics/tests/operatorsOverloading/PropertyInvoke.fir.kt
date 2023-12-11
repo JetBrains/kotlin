@@ -67,7 +67,7 @@ fun useSet() { <!PROPERTY_AS_OPERATOR!>e[1]<!> = 3 }
 
 val E.contains: I get() = I()
 val useContains = 1 <!PROPERTY_AS_OPERATOR!>in<!> e
-val useNotContains = 1 <!PROPERTY_AS_OPERATOR!>!in<!> e
+val useNotContains = 1 <!PROPERTY_AS_OPERATOR, PROPERTY_AS_OPERATOR!>!in<!> e
 
 val E.invoke: I get() = I()
 val useInvoke = <!NONE_APPLICABLE!>e<!>()

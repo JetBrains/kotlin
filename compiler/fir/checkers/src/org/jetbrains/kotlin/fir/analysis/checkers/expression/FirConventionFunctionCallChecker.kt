@@ -47,11 +47,6 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker() {
     ) {
         if (callExpression.dispatchReceiver?.resolvedType is ConeDynamicType) return
         // KT-61905: TODO: Return also in case of error type.
-        val sourceKind = callExpression.source?.kind
-        if (sourceKind !is KtRealSourceElementKind &&
-            sourceKind !is KtFakeSourceElementKind.GeneratedComparisonExpression &&
-            sourceKind !is KtFakeSourceElementKind.DesugaredCompoundAssignment
-        ) return
         val unwrapped = receiver?.unwrapSmartcastExpression()
         if (unwrapped !is FirPropertyAccessExpression) return
         val diagnostic = unwrapped.nonFatalDiagnostics.firstIsInstanceOrNull<ConePropertyAsOperator>() ?: return

@@ -12,11 +12,11 @@ val <X3> C<X3>.getValue: D<X3> get() = TODO()
 operator fun <X4> D<X4>.invoke(x: Any?, y: Any?): X4 = TODO()
 
 fun foo(a: A<String>, c: C<String>) {
-    val x1 by a
+    val x1 by <!PROPERTY_AS_OPERATOR!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x1<!>
     x1.length
 
-    val y1 by c
+    val y1 by <!PROPERTY_AS_OPERATOR!>c<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>y1<!>
     y1.length
 }
