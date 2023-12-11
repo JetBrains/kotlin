@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
 import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.konan.test.blackbox.muteCInteropTestIfNecessary
+import org.jetbrains.kotlin.konan.test.blackbox.support.CINTEROP_SOURCE_EXTENSIONS
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
@@ -216,7 +217,7 @@ internal class TestCompilationFactory {
                         muteCInteropTestIfNecessary(defFile, settings.get<KotlinNativeTargets>().testTarget)
 
                         val cSourceFiles = buildList {
-                            for (ext in listOf("cpp", "c", "m")) {
+                            for (ext in CINTEROP_SOURCE_EXTENSIONS) {
                                 filesByExtension[ext]?.let { addAll(it) }
                             }
                         }

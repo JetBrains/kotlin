@@ -215,6 +215,10 @@ internal enum class MutedOption {
     K2
 }
 
+internal val CINTEROP_SOURCE_EXTENSIONS = setOf("c", "cpp", "m", "mm")
+internal val CINTEROP_DEFINITION_EXTENSIONS = setOf("def", "h")
+internal val KNOWN_EXTENSIONS = setOf("kt") + CINTEROP_DEFINITION_EXTENSIONS + CINTEROP_SOURCE_EXTENSIONS
+
 internal class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs(emptyList(), cinteropArgs) {
     constructor(vararg cinteropArgs: String) : this(cinteropArgs.asList())
 }
@@ -344,7 +348,7 @@ internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDir
         }
 
     val fileExtension = fileName.split(".").last()
-    if (fileExtension in setOf("kt", "def", "h", "c", "cpp", "m"))
+    if (fileExtension in KNOWN_EXTENSIONS)
         assertTrue(fileName.length > 3 && '/' !in fileName && '\\' !in fileName) {
             "$location: Invalid file name with extension $fileExtension in ${parsedDirective.directive} directive: $fileName"
         }
