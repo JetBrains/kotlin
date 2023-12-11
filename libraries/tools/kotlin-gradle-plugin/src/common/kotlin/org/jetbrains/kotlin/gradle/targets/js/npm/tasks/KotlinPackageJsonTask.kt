@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.*
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
 import org.jetbrains.kotlin.gradle.utils.`is`
+import org.jetbrains.kotlin.gradle.utils.mapToFile
 import java.io.File
 
 @DisableCachingByDefault
@@ -146,7 +147,7 @@ abstract class KotlinPackageJsonTask :
                 task.gradleNodeModules.value(gradleNodeModules)
                     .disallowChanges()
 
-                task.packageJson.set(compilation.npmProject.packageJsonFile)
+                task.packageJson.set(compilation.npmProject.packageJsonFile.mapToFile())
 
                 task.onlyIf {
                     it as KotlinPackageJsonTask

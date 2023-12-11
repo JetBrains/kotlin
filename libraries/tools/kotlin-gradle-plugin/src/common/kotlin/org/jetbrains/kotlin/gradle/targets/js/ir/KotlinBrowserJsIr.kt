@@ -100,7 +100,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureRun(
-        compilation: KotlinJsIrCompilation
+        compilation: KotlinJsIrCompilation,
     ) {
         val commonRunTask = registerSubTargetTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
 
@@ -125,18 +125,23 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.description = "start ${mode.name.toLowerCaseAsciiOnly()} webpack dev server"
 
                     val npmProject = compilation.npmProject
-                    task.devServer = KotlinWebpackConfig.DevServer(
-                        open = true,
-                        static = mutableListOf(
-                            npmProject.dist.normalize().relativeOrAbsolute(npmProject.dir),
-                            compilation.output.resourcesDir.relativeOrAbsolute(npmProject.dir),
-                        ),
-                        client = KotlinWebpackConfig.DevServer.Client(
-                            KotlinWebpackConfig.DevServer.Client.Overlay(
-                                errors = true,
-                                warnings = false
+                    val resourcesDir = compilation.output.resourcesDir
+                    task.devServerProperty.convention(
+                        npmProject.dist.zip(npmProject.dir) { distDirectory, dir ->
+                            KotlinWebpackConfig.DevServer(
+                                open = true,
+                                static = mutableListOf(
+                                    distDirectory.asFile.normalize().relativeOrAbsolute(dir.asFile),
+                                    resourcesDir.relativeOrAbsolute(dir.asFile),
+                                ),
+                                client = KotlinWebpackConfig.DevServer.Client(
+                                    KotlinWebpackConfig.DevServer.Client.Overlay(
+                                        errors = true,
+                                        warnings = false
+                                    )
+                                )
                             )
-                        )
+                        }
                     )
 
                     task.watchOptions = KotlinWebpackConfig.WatchOptions(
@@ -167,7 +172,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureBuild(
-        compilation: KotlinJsIrCompilation
+        compilation: KotlinJsIrCompilation,
     ) {
         val project = compilation.target.project
 
@@ -302,7 +307,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     private fun <T> getByKind(
         kind: KotlinJsBinaryMode,
         releaseValue: T,
-        debugValue: T
+        debugValue: T,
     ): T = when (kind) {
         KotlinJsBinaryMode.PRODUCTION -> releaseValue
         KotlinJsBinaryMode.DEVELOPMENT -> debugValue

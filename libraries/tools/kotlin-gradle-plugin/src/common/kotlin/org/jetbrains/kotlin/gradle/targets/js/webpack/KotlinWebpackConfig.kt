@@ -31,7 +31,7 @@ data class KotlinWebpackConfig(
     var outputFileName: String? = entry?.name,
     var configDirectory: File? = null,
     var reportEvaluatedConfigFile: File? = null,
-    var devServer: DevServer? = null,
+    var devServer: Provider<DevServer>? = null,
     var watchOptions: WatchOptions? = null,
     var experiments: MutableSet<String> = mutableSetOf(),
     override val rules: KotlinWebpackRulesContainer,
@@ -69,7 +69,7 @@ data class KotlinWebpackConfig(
                 )
             }
 
-            if (devServer != null) {
+            if (devServer != null && devServer!!.isPresent) {
                 it.add(
                     versions.webpackDevServer
                 )
@@ -176,10 +176,10 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendDevServer() {
-        if (devServer != null) {
+        if (devServer != null && devServer!!.isPresent) {
 
             appendLine("// dev server")
-            appendLine("config.devServer = ${json(devServer!!)};")
+            appendLine("config.devServer = ${json(devServer!!.get())};")
             appendLine()
         }
 

@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.Directory
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
@@ -53,7 +55,7 @@ abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
         private fun registerIfAbsentImpl(
             project: Project,
             rootProjectDir: File?,
-            cacheDir: File?
+            cacheDir: Provider<Directory>?
         ): Provider<GradleNodeModulesCache> {
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
@@ -76,7 +78,7 @@ abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
         fun registerIfAbsent(
             project: Project,
             rootProjectDir: File?,
-            cacheDir: File?
+            cacheDir: Provider<Directory>?
         ) = registerIfAbsentImpl(project, rootProjectDir, cacheDir).also { serviceProvider ->
             SingleActionPerProject.run(project, UsesGradleNodeModulesCache::class.java.name) {
                 project.tasks.withType<UsesGradleNodeModulesCache>().configureEach { task ->

@@ -22,9 +22,11 @@ import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
@@ -35,7 +37,8 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
-import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.utils.injected
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
@@ -49,12 +52,12 @@ constructor(
     @Internal
     @Transient
     override val compilation: KotlinJsIrCompilation,
-    private val objects: ObjectFactory
+    private val objects: ObjectFactory,
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
     @Transient
     private val nodeJs = project.rootProject.kotlinNodeJsExtension
     private val versions = nodeJs.versions
-    private val rootPackageDir by lazy { nodeJs.rootPackageDir }
+    private val rootPackageDir by lazy { nodeJs.rootPackageDirectory }
 
     private val npmProject = compilation.npmProject
 
@@ -167,7 +170,8 @@ constructor(
         get() = mainOutputFile.get().asFile
 
     @get:Internal
-    val mainOutputFile: Provider<RegularFile> = objects.providerWithLazyConvention { outputDirectory.file(mainOutputFileName) }.flatMap { it }
+    val mainOutputFile: Provider<RegularFile> =
+        objects.providerWithLazyConvention { outputDirectory.file(mainOutputFileName) }.flatMap { it }
 
     private val projectDir = project.projectDir
 
@@ -193,7 +197,16 @@ constructor(
 
     @Input
     @Optional
-    var devServer: KotlinWebpackConfig.DevServer? = null
+    val devServerProperty: Property<KotlinWebpackConfig.DevServer> = project.objects.property(KotlinWebpackConfig.DevServer::class.java)
+
+    @get:Internal
+    @Deprecated(
+        "This property is deprecated and will be removed in future. Use devServerProperty instead",
+        replaceWith = ReplaceWith("devServerProperty")
+    )
+    var devServer: KotlinWebpackConfig.DevServer
+        get() = devServerProperty.get()
+        set(value) = devServerProperty.set(value)
 
     @Input
     @Optional
@@ -231,7 +244,7 @@ constructor(
         outputFileName = mainOutputFileName.get(),
         configDirectory = configDirectory,
         rules = rules,
-        devServer = devServer,
+        devServer = devServerProperty,
         devtool = devtool,
         sourceMaps = sourceMaps,
         resolveFromModulesFirst = resolveFromModulesFirst,
@@ -286,7 +299,7 @@ constructor(
             runner.copy(
                 config = runner.config.copy(
                     progressReporter = true,
-                    progressReporterPathFilter = rootPackageDir
+                    progressReporterPathFilter = rootPackageDir.getFile()
                 )
             ).execute(services)
 

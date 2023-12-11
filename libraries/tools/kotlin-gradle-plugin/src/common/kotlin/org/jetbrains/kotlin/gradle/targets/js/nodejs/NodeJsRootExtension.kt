@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
@@ -95,13 +98,34 @@ open class NodeJsRootExtension(
 
     lateinit var resolver: KotlinRootNpmResolver
 
-    val rootPackageDir: File = project.buildDir.resolve("js")
+    val rootPackageDirectory: Provider<Directory> = project.layout.buildDirectory.dir("js")
 
+    @Deprecated(
+        "This property is deprecated and will be removed in future. Use rootPackageDirectory instead",
+        replaceWith = ReplaceWith("rootPackageDirectory")
+    )
+    val rootPackageDir: File
+        get() = rootPackageDirectory.getFile()
+
+    val projectPackagesDirectory: Provider<Directory>
+        get() = rootPackageDirectory.map { it.dir("packages") }
+
+    @Deprecated(
+        "This property is deprecated and will be removed in future. Use projectPackagesDirectory instead",
+        replaceWith = ReplaceWith("projectPackagesDirectory")
+    )
     val projectPackagesDir: File
-        get() = rootPackageDir.resolve("packages")
+        get() = projectPackagesDirectory.getFile()
 
+    val nodeModulesGradleCacheDirectory: Provider<Directory>
+        get() = rootPackageDirectory.map { it.dir("packages_imported") }
+
+    @Deprecated(
+        "This property is deprecated and will be removed in future. Use nodeModulesGradleCacheDirectory instead",
+        replaceWith = ReplaceWith("nodeModulesGradleCacheDirectory")
+    )
     val nodeModulesGradleCacheDir: File
-        get() = rootPackageDir.resolve("packages_imported")
+        get() = nodeModulesGradleCacheDirectory.getFile()
 
     internal val platform: org.gradle.api.provider.Property<Platform> = project.objects.property<Platform>()
 
@@ -130,7 +154,7 @@ open class NodeJsRootExtension(
         return NodeJsEnv(
             download = download,
             cleanableStore = cleanableStore,
-            rootPackageDir = rootPackageDir,
+            rootPackageDir = rootPackageDirectory.getFile(),
             dir = nodeDir,
             nodeBinDir = nodeBinDir,
             nodeExecutable = getExecutable("node", nodeCommand, "exe"),

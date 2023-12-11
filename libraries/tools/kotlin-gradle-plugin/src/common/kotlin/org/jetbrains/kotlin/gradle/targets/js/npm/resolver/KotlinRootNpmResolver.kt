@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -22,7 +24,7 @@ class KotlinRootNpmResolver internal constructor(
     val rootProjectVersion: String,
     val tasksRequirements: TasksRequirements,
     val versions: NpmVersions,
-    val projectPackagesDir: File,
+    val projectPackagesDir: Provider<Directory>,
     val rootProjectDir: File,
 ) : Serializable {
 

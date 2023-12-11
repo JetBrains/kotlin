@@ -109,7 +109,7 @@ constructor(
                 it.nodeJs = nodeJs
                 it.executable = nodeJs.requireConfigured().nodeExecutable
                 if ((compilation.target as? KotlinJsIrTarget)?.wasmTargetType != KotlinWasmTargetType.WASI) {
-                    it.workingDir = npmProject.dir
+                    it.workingDir(npmProject.dir)
                     it.dependsOn(
                         nodeJsTaskProviders.npmInstallTaskProvider,
                         nodeJsTaskProviders.storeYarnLockTaskProvider,

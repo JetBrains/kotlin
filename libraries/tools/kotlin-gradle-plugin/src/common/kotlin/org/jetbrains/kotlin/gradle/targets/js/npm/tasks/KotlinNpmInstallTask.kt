@@ -6,17 +6,30 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.*
+import org.gradle.api.file.Directory
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.IgnoreEmptyDirectories
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.asNpmEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.asYarnEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
 @DisableCachingByDefault
@@ -38,6 +51,9 @@ abstract class KotlinNpmInstallTask :
 
     private val rootResolver: KotlinRootNpmResolver
         get() = nodeJs.resolver
+
+    private val packagesDir: Provider<Directory>
+        get() = nodeJs.projectPackagesDirectory
 
     // -----
 
@@ -64,24 +80,33 @@ abstract class KotlinNpmInstallTask :
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
-    val packageJsonFiles: Collection<File> by lazy {
-        rootResolver.projectResolvers.values
-            .flatMap { it.compilationResolvers }
-            .map { it.compilationNpmResolution }
-            .map { it.npmProjectPackageJsonFile }
-    }
+    val packageJsonFiles: FileCollection = project.objects.fileCollection().from(
+        {
+            rootResolver.projectResolvers.values
+                .flatMap { it.compilationResolvers }
+                .map { it.compilationNpmResolution }
+                .map { resolution ->
+                    val name = resolution.npmProjectName
+                    packagesDir.map { it.dir(name).file(NpmProject.PACKAGE_JSON) }
+                }
+        }
+    )
 
     @get:OutputFile
-    val yarnLock: File by lazy {
-        nodeJs.rootPackageDir.resolve("yarn.lock")
-    }
+    val yarnLockFile: Provider<RegularFile> = nodeJs.rootPackageDirectory.map { it.file("yarn.lock") }
+
+    @Deprecated(
+        "This property is deprecated and will be removed in future. Use yarnLockFile instead",
+        replaceWith = ReplaceWith("yarnLockFile")
+    )
+    @get:Internal
+    val yarnLock: File
+        get() = yarnLockFile.getFile()
 
     // node_modules as OutputDirectory is performance problematic
     // so input will only be existence of its directory
     @get:Internal
-    val nodeModules: File by lazy {
-        nodeJs.rootPackageDir.resolve("node_modules")
-    }
+    val nodeModules: Provider<Directory> = nodeJs.rootPackageDirectory.map { it.dir("node_modules") }
 
     @TaskAction
     fun resolve() {

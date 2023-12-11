@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Task
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Property
 import org.gradle.api.services.BuildService
@@ -47,10 +49,15 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
         val resolution: Property<KotlinRootNpmResolution>
 
         val gradleNodeModulesProvider: Property<GradleNodeModulesCache>
+
+        val packagesDir: DirectoryProperty
     }
 
     val resolution
         get() = parameters.resolution
+
+    val packagesDir
+        get() = parameters.packagesDir
 
     @Volatile
     var state: ResolutionState = ResolutionState.Configuring(resolution.get())

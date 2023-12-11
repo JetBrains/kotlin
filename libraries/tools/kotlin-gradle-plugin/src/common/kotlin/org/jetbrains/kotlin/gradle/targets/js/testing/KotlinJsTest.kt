@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import javax.inject.Inject
@@ -154,7 +155,7 @@ constructor(
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val forkOptions = DefaultProcessForkOptions(fileResolver)
-        forkOptions.workingDir = testFramework!!.workingDir.toFile()
+        forkOptions.workingDir = testFramework!!.workingDir.getFile()
         forkOptions.executable = nodeExecutable
 
         environment.forEach { (key, value) ->

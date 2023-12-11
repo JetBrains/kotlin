@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
-import java.nio.file.Path
 
 interface KotlinJsTestFramework : RequiresNpmDependencies {
     val settingsState: String
@@ -20,5 +21,5 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec
 
-    val workingDir: Path
+    val workingDir: Provider<Directory>
 }

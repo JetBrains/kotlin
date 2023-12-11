@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -27,7 +28,7 @@ abstract class YarnLockCopyTask : DefaultTask() {
     abstract val inputFile: RegularFileProperty
 
     @get:Internal
-    abstract val outputDirectory: RegularFileProperty
+    abstract val outputDirectory: DirectoryProperty
 
     @get:Internal
     abstract val fileName: Property<String>

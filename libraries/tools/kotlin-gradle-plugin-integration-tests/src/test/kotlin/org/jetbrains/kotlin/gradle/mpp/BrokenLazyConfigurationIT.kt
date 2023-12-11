@@ -89,30 +89,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
                 """.trimIndent()
             )
             build("build") {
-                try {
-                    assertDirectoryInProjectDoesNotExist("build")
-                    assert(false) // The assertion above now fails. This line is to ensure try-catch is removed after fixing related issues
-                } catch (e: AssertionError) {
-                    val expectedTopLevelSubdirectoriesMapping = mapOf(
-                        "js" to "KT-61294",
-                    )
-                    val expectedTopLevelSubdirectories = expectedTopLevelSubdirectoriesMapping.keys
-                    val actualTopLevelDirectories =
-                        e.message?.lines()?.filter { it.startsWith(" ") }?.map { it.replace("\\", "").trim() }?.toSet() ?: emptySet()
-
-                    val fixed = expectedTopLevelSubdirectories - actualTopLevelDirectories
-                    val new = actualTopLevelDirectories - expectedTopLevelSubdirectories
-                    if (fixed.isNotEmpty()) {
-                        throw Exception(
-                            "Please remove the tests workaround for ${
-                                fixed.map(expectedTopLevelSubdirectoriesMapping::get).joinToString(" and ")
-                            } as seems like it's not anymore required", e
-                        )
-                    }
-                    if (new.isNotEmpty()) {
-                        throw Exception("Unexpected new top level files and/or directories are found: ${new.joinToString(",")}", e)
-                    }
-                }
+                assertDirectoryInProjectDoesNotExist("build")
 
                 assertDirectoryInProjectExists("build2")
             }

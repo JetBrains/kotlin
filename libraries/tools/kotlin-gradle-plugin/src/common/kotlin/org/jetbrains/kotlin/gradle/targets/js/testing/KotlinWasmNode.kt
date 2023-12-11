@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import java.nio.file.Path
 
 internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
@@ -33,15 +36,17 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
     @Transient
     private val project: Project = target.project
 
+    private val projectLayout = project.layout
+
     private val npmProjectDir by project.provider { compilation.npmProject.dir }
 
     private val wasmTargetType: KotlinWasmTargetType? = target.wasmTargetType
 
-    override val workingDir: Path
+    override val workingDir: Provider<Directory>
         get() = if (wasmTargetType != KotlinWasmTargetType.WASI) {
-            npmProjectDir.toPath()
+            npmProjectDir
         } else {
-            kotlinJsTest.inputFileProperty.get().asFile.toPath().parent
+            projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
         }
 
     override fun createTestExecutionSpec(

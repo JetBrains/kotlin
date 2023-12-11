@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing.mocha
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.getValue
 import java.nio.file.Path
 
@@ -31,8 +34,8 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
     private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
     private val npmProjectDir by project.provider { npmProject.dir }
 
-    override val workingDir: Path
-        get() = npmProjectDir.toPath()
+    override val workingDir: Provider<Directory>
+        get() = npmProjectDir
 
     override val settingsState: String
         get() = "mocha"
@@ -72,7 +75,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
 
         val mocha = npmProject.require("mocha/bin/mocha")
 
-        val file = task.inputFileProperty.get().asFile.toString()
+        val file = task.inputFileProperty.getFile().toString()
 
         val args = nodeJsArgs + mutableListOf(
             "--require",

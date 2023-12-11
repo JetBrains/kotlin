@@ -310,14 +310,10 @@ class KotlinCompilationNpmResolver(
             externalNpmDependencies,
             fileCollectionDependencies,
             projectPath,
-            rootResolver.projectPackagesDir,
-            rootResolver.rootProjectDir,
             compilationDisambiguatedName,
             npmProject.name,
             npmVersion,
             npmProject.main,
-            npmProject.packageJsonFile,
-            npmProject.dir,
             rootResolver.tasksRequirements
         )
     }

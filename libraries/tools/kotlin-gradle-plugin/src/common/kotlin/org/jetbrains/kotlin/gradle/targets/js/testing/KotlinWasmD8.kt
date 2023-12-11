@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Provider
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -32,8 +35,8 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
     private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
     private val npmProjectDir by project.provider { compilation.npmProject.dir }
 
-    override val workingDir: Path
-        get() = npmProjectDir.toPath()
+    override val workingDir: Provider<Directory>
+        get() = npmProjectDir
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,

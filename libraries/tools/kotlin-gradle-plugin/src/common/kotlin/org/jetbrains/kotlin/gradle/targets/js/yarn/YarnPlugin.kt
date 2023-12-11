@@ -91,7 +91,7 @@ open class YarnPlugin : Plugin<Project> {
 
         tasks.register(STORE_YARN_LOCK_NAME, YarnLockStoreTask::class.java) { task ->
             task.dependsOn(kotlinNpmInstall)
-            task.inputFile.set(nodeJs.rootPackageDir.resolve("yarn.lock"))
+            task.inputFile.set(nodeJs.rootPackageDirectory.map { it.file("yarn.lock") })
             task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
             task.fileName.set(yarnRootExtension.lockFileName)
 
@@ -102,7 +102,7 @@ open class YarnPlugin : Plugin<Project> {
 
         tasks.register(UPGRADE_YARN_LOCK, YarnLockCopyTask::class.java) { task ->
             task.dependsOn(kotlinNpmInstall)
-            task.inputFile.set(nodeJs.rootPackageDir.resolve("yarn.lock"))
+            task.inputFile.set(nodeJs.rootPackageDirectory.map { it.file("yarn.lock") })
             task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
             task.fileName.set(yarnRootExtension.lockFileName)
         }
@@ -110,7 +110,7 @@ open class YarnPlugin : Plugin<Project> {
         val restoreYarnLock = tasks.register(RESTORE_YARN_LOCK_NAME, YarnLockCopyTask::class.java) {
             val lockFile = yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)
             it.inputFile.set(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName))
-            it.outputDirectory.set(nodeJs.rootPackageDir)
+            it.outputDirectory.set(nodeJs.rootPackageDirectory)
             it.fileName.set("yarn.lock")
             it.onlyIf {
                 lockFile.exists()
