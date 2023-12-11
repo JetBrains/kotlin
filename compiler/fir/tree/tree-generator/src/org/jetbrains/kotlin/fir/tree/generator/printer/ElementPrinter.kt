@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.printAcceptChildrenMethod
-import org.jetbrains.kotlin.generators.tree.printer.printAcceptMethod
-import org.jetbrains.kotlin.generators.tree.printer.printTransformChildrenMethod
-import org.jetbrains.kotlin.generators.tree.printer.printTransformMethod
+import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 
 internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Element, Field>(printer) {
@@ -69,8 +66,7 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
 
             if (element.isRootElement) {
                 println()
-                println("fun accept(visitor: ", firVisitorVoidType.render(), ") = accept(visitor, null)")
-
+                printAcceptVoidMethod(firVisitorVoidType)
                 printAcceptChildrenMethod(
                     element = element,
                     visitorClass = firVisitorType,
@@ -78,8 +74,7 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
                 )
                 println()
                 println()
-                println("fun acceptChildren(visitor: ", firVisitorVoidType.render(), ") = acceptChildren(visitor, null)")
-
+                printAcceptChildrenVoidMethod(firVisitorVoidType)
                 printTransformChildrenMethod(
                     element = element,
                     transformerClass = firTransformerType,

@@ -60,8 +60,8 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
                 element,
                 hasDataParameter = false,
                 modality = when {
-                    element.isRootElement && visitorType.kind == TypeKind.Class -> Modality.ABSTRACT
-                    !element.isRootElement && visitorType.kind == TypeKind.Class -> Modality.OPEN
+                    isAbstractVisitRootElementMethod && visitorType.kind == TypeKind.Class -> Modality.ABSTRACT
+                    !isAbstractVisitRootElementMethod && visitorType.kind == TypeKind.Class -> Modality.OPEN
                     else -> null
                 }
             )

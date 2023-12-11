@@ -18,6 +18,7 @@ val enumCaseType = type(BASE_PACKAGE, "SirEnumCase", TypeKind.Class)
 private const val VISITORS_PACKAGE = "$BASE_PACKAGE.visitors"
 
 val elementVisitorType = type(VISITORS_PACKAGE, "SirVisitor", TypeKind.Class)
+val elementVisitorVoidType = type(VISITORS_PACKAGE, "SirVisitorVoid", TypeKind.Class)
 val elementTransformerType = type(VISITORS_PACKAGE, "SirTransformer", TypeKind.Class)
 
 val swiftIrImplementationDetailAnnotation = type(BASE_PACKAGE, "SirImplementationDetail", TypeKind.Class)

@@ -348,4 +348,18 @@ fun SmartPrinter.printTransformChildrenMethod(
     )
 }
 
+context(ImportCollector)
+fun SmartPrinter.printAcceptVoidMethod(visitorType: ClassRef<*>) {
+    val visitorParameter = FunctionParameter("visitor", visitorType)
+    printFunctionDeclaration("accept", listOf(visitorParameter), StandardTypes.unit)
+    println(" = accept(", visitorParameter.name, ", null)")
+}
+
+context(ImportCollector)
+fun SmartPrinter.printAcceptChildrenVoidMethod(visitorType: ClassRef<*>) {
+    val visitorParameter = FunctionParameter("visitor", visitorType)
+    printFunctionDeclaration("acceptChildren", listOf(visitorParameter), StandardTypes.unit)
+    println(" = acceptChildren(", visitorParameter.name, ", null)")
+}
+
 fun AbstractField<*>.call(): String = if (nullable) "?." else "."

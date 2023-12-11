@@ -27,6 +27,7 @@ fun main(args: Array<String>) {
         ::ElementPrinter,
         listOf(
             elementVisitorType to ::VisitorPrinter,
+            elementVisitorVoidType to ::VisitorVoidPrinter,
             elementTransformerType to ::TransformerPrinter.bind(model.rootElement),
         ),
         ImplementationConfigurator,

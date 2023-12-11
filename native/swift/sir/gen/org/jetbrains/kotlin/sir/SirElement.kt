@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.sir
 
 import org.jetbrains.kotlin.sir.visitors.SirTransformer
 import org.jetbrains.kotlin.sir.visitors.SirVisitor
+import org.jetbrains.kotlin.sir.visitors.SirVisitorVoid
 
 /**
  * The root interface of the Swift IR tree.
@@ -37,6 +38,8 @@ sealed interface SirElement {
     fun <E : SirElement, D> transform(transformer: SirTransformer<D>, data: D): E =
         transformer.transformElement(this, data) as E
 
+    fun accept(visitor: SirVisitorVoid) = accept(visitor, null)
+
     /**
      * Runs the provided [visitor] on subtrees with roots in this node's children.
      *
@@ -48,6 +51,8 @@ sealed interface SirElement {
      * @param data An arbitrary context to pass to each invocation of [visitor]'s methods.
      */
     fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D)
+
+    fun acceptChildren(visitor: SirVisitorVoid) = acceptChildren(visitor, null)
 
     /**
      * Recursively transforms this node's children *in place* using [transformer].
