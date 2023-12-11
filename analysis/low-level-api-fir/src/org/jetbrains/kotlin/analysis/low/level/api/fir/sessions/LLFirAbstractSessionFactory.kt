@@ -95,6 +95,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         project: Project,
         builtinTypes: BuiltinTypes,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean = false,
     ): List<FirSymbolProvider>
 
     fun createScriptSession(module: KtScriptModule): LLFirScriptSession {
@@ -386,8 +387,13 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                             .intersectWith(GlobalSearchScope.notScope(libraryModule.contentScope))
 
                         val restLibrariesProvider = createProjectLibraryProvidersForScope(
-                            session, moduleData, scopeProvider,
-                            project, builtinTypes, librariesSearchScope
+                            session,
+                            moduleData,
+                            scopeProvider,
+                            project,
+                            builtinTypes,
+                            librariesSearchScope,
+                            isFallbackDependenciesProvider = true,
                         )
 
                         addAll(restLibrariesProvider)

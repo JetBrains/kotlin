@@ -54,10 +54,16 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     private val kotlinScopeProvider: FirKotlinScopeProvider,
     project: Project,
     scope: GlobalSearchScope,
+
+    // A workaround for KT-63718. It should be removed with KT-64236.
+    isFallbackDependenciesProvider: Boolean,
 ) : LLFirKotlinSymbolProvider(session) {
     private val moduleData = moduleDataProvider.getModuleData(null)
 
-    final override val declarationProvider = project.createDeclarationProvider(scope, session.llFirModuleData.ktModule)
+    final override val declarationProvider = project.createDeclarationProvider(
+        scope,
+        contextualModule = session.llFirModuleData.ktModule.takeIf { !isFallbackDependenciesProvider },
+    )
 
     override val symbolNamesProvider: FirSymbolNamesProvider = LLFirKotlinSymbolNamesProvider.cached(session, declarationProvider)
 

@@ -34,13 +34,23 @@ class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LL
         firJavaFacade: FirJavaFacade,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return buildList {
             //stub based provider here works over kotlin-only indices and thus provides only kotlin declarations
             //in order to find java declarations, one need to explicitly setup java symbol provider.
             //for ProtoBuf based provider (used in compiler), there is no need in separated java provider,
             //because all declarations are retrieved at once and are not distinguished
-            add(createStubBasedFirSymbolProviderForClassFiles(project, scope, session, moduleDataProvider, kotlinScopeProvider))
+            add(
+                createStubBasedFirSymbolProviderForClassFiles(
+                    project,
+                    scope,
+                    session,
+                    moduleDataProvider,
+                    kotlinScopeProvider,
+                    isFallbackDependenciesProvider,
+                )
+            )
             add(LLFirJavaSymbolProvider(session, moduleData, project, scope))
         }
     }
@@ -52,6 +62,7 @@ class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LL
         moduleDataProvider: SingleModuleDataProvider,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> = listOf(
         createStubBasedFirSymbolProviderForCommonMetadataFiles(
             project = project,
@@ -59,6 +70,7 @@ class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LL
             session = session,
             moduleDataProvider = moduleDataProvider,
             kotlinScopeProvider = kotlinScopeProvider,
+            isFallbackDependenciesProvider = isFallbackDependenciesProvider,
         )
     )
 
@@ -68,10 +80,16 @@ class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LL
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return listOf(
             createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
-                project, scope, session, moduleDataProvider, kotlinScopeProvider
+                project,
+                scope,
+                session,
+                moduleDataProvider,
+                kotlinScopeProvider,
+                isFallbackDependenciesProvider,
             )
         )
     }
@@ -82,10 +100,16 @@ class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LL
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return listOf(
             createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
-                project, scope, session, moduleDataProvider, kotlinScopeProvider
+                project,
+                scope,
+                session,
+                moduleDataProvider,
+                kotlinScopeProvider,
+                isFallbackDependenciesProvider,
             ),
         )
     }
@@ -112,6 +136,7 @@ private class StubBasedBuiltInsSymbolProvider(
     kotlinScopeProvider,
     project,
     createBuiltInsScope(project),
+    isFallbackDependenciesProvider = false,
 ) {
     private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
         session,

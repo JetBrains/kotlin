@@ -80,13 +80,20 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
         project: Project,
         builtinTypes: BuiltinTypes,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
             addAll(
                 LLFirLibrarySymbolProviderFactory.getService(project).createCommonLibrarySymbolProvider(
-                    session, moduleData, kotlinScopeProvider, moduleDataProvider, packagePartProvider, scope,
+                    session,
+                    moduleData,
+                    kotlinScopeProvider,
+                    moduleDataProvider,
+                    packagePartProvider,
+                    scope,
+                    isFallbackDependenciesProvider,
                 )
             )
 

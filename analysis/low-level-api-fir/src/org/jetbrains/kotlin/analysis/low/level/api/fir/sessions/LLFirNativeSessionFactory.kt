@@ -10,7 +10,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -79,13 +78,19 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
         project: Project,
         builtinTypes: BuiltinTypes,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
             addAll(
                 LLFirLibrarySymbolProviderFactory.getService(project).createNativeLibrarySymbolProvider(
-                    session, moduleData, kotlinScopeProvider, moduleDataProvider, scope
+                    session,
+                    moduleData,
+                    kotlinScopeProvider,
+                    moduleDataProvider,
+                    scope,
+                    isFallbackDependenciesProvider,
                 )
             )
             addIfNotNull(

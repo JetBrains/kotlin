@@ -81,10 +81,17 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
         project: Project,
         builtinTypes: BuiltinTypes,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
-        return LLFirLibrarySymbolProviderFactory.getService(project)
-            .createJsLibrarySymbolProvider(session, moduleData, kotlinScopeProvider, moduleDataProvider, scope)
+        return LLFirLibrarySymbolProviderFactory.getService(project).createJsLibrarySymbolProvider(
+            session,
+            moduleData,
+            kotlinScopeProvider,
+            moduleDataProvider,
+            scope,
+            isFallbackDependenciesProvider,
+        )
     }
 
     private fun LLFirSession.registerModuleIndependentJsComponents() {

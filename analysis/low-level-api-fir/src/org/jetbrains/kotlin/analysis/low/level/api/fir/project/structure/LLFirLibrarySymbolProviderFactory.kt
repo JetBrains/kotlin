@@ -23,6 +23,7 @@ abstract class LLFirLibrarySymbolProviderFactory {
         firJavaFacade: FirJavaFacade,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider>
 
     abstract fun createCommonLibrarySymbolProvider(
@@ -32,6 +33,7 @@ abstract class LLFirLibrarySymbolProviderFactory {
         moduleDataProvider: SingleModuleDataProvider,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider>
 
     abstract fun createNativeLibrarySymbolProvider(
@@ -40,8 +42,8 @@ abstract class LLFirLibrarySymbolProviderFactory {
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider>
-
 
     abstract fun createJsLibrarySymbolProvider(
         session: FirSession,
@@ -49,15 +51,14 @@ abstract class LLFirLibrarySymbolProviderFactory {
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider>
-
 
     abstract fun createBuiltinsSymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
     ): List<FirSymbolProvider>
-
 
     companion object {
         fun getService(project: Project): LLFirLibrarySymbolProviderFactory =

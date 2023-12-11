@@ -44,6 +44,7 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
         firJavaFacade: FirJavaFacade,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return listOf(
             JvmClassFileBasedSymbolProvider(
@@ -64,6 +65,7 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
         moduleDataProvider: SingleModuleDataProvider,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return buildList {
             add(
@@ -88,6 +90,7 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
             FORWARD_DECLARATIONS_MODULE_NAME,
@@ -109,6 +112,7 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val kLibs = moduleData.getLibraryKLibs()
 

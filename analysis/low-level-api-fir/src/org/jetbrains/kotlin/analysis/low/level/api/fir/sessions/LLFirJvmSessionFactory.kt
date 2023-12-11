@@ -86,6 +86,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         project: Project,
         builtinTypes: BuiltinTypes,
         scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
@@ -100,7 +101,8 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
                     moduleDataProvider,
                     firJavaFacade,
                     packagePartProvider,
-                    scope
+                    scope,
+                    isFallbackDependenciesProvider,
                 )
             )
             addIfNotNull(
