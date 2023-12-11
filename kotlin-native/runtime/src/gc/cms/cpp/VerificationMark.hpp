@@ -3,17 +3,18 @@
  * that can be found in the LICENSE file.
  */
 
+#include <vector>
 #include "MarkAndSweepUtils.hpp"
 
 namespace kotlin::gc {
 
 struct VerificationMarkTraits {
-    using MarkQueue = std_support::vector<GC::ObjectData*>;
+    using MarkQueue = std::vector<GC::ObjectData*>;
 
     static void clear(MarkQueue& queue) noexcept { queue.clear(); }
 
     static bool tryMark(ObjHeader* object) noexcept {
-        auto& objectData = objectDataForObject(object);
+        auto& objectData = alloc::objectDataForObject(object);
         if (objectData.markIsVerified()) return false;
         RuntimeCheck(objectData.marked(), "Verification mark found an unmarked object %p", object);
         objectData.remarkVerified();
@@ -24,15 +25,15 @@ struct VerificationMarkTraits {
         if (queue.empty()) return nullptr;
         auto top = queue.back();
         queue.pop_back();
-        return objectForObjectData(*top);
+        return alloc::objectForObjectData(*top);
     }
 
     static bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
-        auto& objectData = objectDataForObject(object);
+        auto& objectData = alloc::objectDataForObject(object);
         if (objectData.markIsVerified()) return false;
         RuntimeCheck(objectData.marked(), "Verification mark found an unmarked object %p", object);
         objectData.remarkVerified();
-        queue.push_back(&objectDataForObject(object));
+        queue.push_back(&alloc::objectDataForObject(object));
         return true;
     }
 
@@ -42,9 +43,9 @@ struct VerificationMarkTraits {
         RuntimeCheck(process != nullptr, "Got null processObjectInMark for object %p", object);
 
         if (object->type_info() == theArrayTypeInfo) {
-            internal::processArrayInMark<VerificationMarkTraits>(static_cast<void*>(&markQueue), object->array());
+            internal::processArrayInMark<VerificationMarkTraits>(&markQueue, object->array());
         } else {
-            internal::processObjectInMark<VerificationMarkTraits>(static_cast<void*>(&markQueue), object);
+            internal::processObjectInMark<VerificationMarkTraits>(&markQueue, object);
         }
     }
 };
