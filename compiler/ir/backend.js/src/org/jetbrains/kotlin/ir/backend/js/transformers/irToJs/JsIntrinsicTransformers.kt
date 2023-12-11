@@ -323,19 +323,19 @@ private inline fun MutableMap<IrSymbol, IrCallTransformer>.withTranslatedArgs(
     crossinline t: (List<JsExpression>) -> JsExpression
 ) {
     put(function) { call, context ->
-        runCatching {
+        try {
             t(translateCallArguments(call, context))
-        }.getOrElse {
-            doError(context.createErrorContextInfo(), cause = it)
+        } catch (e: Throwable) {
+            doError(context.createErrorContextInfo(), cause = e)
         }
     }
 }
 
 private fun IrCallTransformer.wrappedWithErrorHandler(): IrCallTransformer = { call, context ->
-    runCatching {
+    try {
         this@wrappedWithErrorHandler(call, context)
-    }.getOrElse {
-        doError(context.createErrorContextInfo(), cause = it)
+    } catch (e: Throwable) {
+        doError(context.createErrorContextInfo(), cause = e)
     }
 }
 
