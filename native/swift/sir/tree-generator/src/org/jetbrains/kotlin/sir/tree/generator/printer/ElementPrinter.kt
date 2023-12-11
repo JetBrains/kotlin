@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.sir.tree.generator.printer
 
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.*
-import org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree
-import org.jetbrains.kotlin.sir.tree.generator.elementTransformerType
-import org.jetbrains.kotlin.sir.tree.generator.elementVisitorType
-import org.jetbrains.kotlin.sir.tree.generator.elementVisitorVoidType
+import org.jetbrains.kotlin.sir.tree.generator.*
 import org.jetbrains.kotlin.sir.tree.generator.model.Element
 import org.jetbrains.kotlin.sir.tree.generator.model.Field
 import org.jetbrains.kotlin.utils.SmartPrinter
@@ -42,8 +39,12 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
             println()
             println()
             printAcceptChildrenVoidMethod(elementVisitorVoidType)
+            println()
+            printTransformVoidMethod(element, elementTransformerVoidType, treeName)
             printTransformChildrenMethod(element, elementTransformerType, StandardTypes.unit)
             println()
+            println()
+            printTransformChildrenVoidMethod(element, elementTransformerVoidType, StandardTypes.unit)
         }
     }
 }

@@ -20,6 +20,7 @@ private const val VISITORS_PACKAGE = "$BASE_PACKAGE.visitors"
 val elementVisitorType = type(VISITORS_PACKAGE, "SirVisitor", TypeKind.Class)
 val elementVisitorVoidType = type(VISITORS_PACKAGE, "SirVisitorVoid", TypeKind.Class)
 val elementTransformerType = type(VISITORS_PACKAGE, "SirTransformer", TypeKind.Class)
+val elementTransformerVoidType = type(VISITORS_PACKAGE, "SirTransformerVoid", TypeKind.Class)
 
 val swiftIrImplementationDetailAnnotation = type(BASE_PACKAGE, "SirImplementationDetail", TypeKind.Class)
 val swiftIrBuilderDslAnnotation = type(BASE_PACKAGE, "SirBuilderDsl", TypeKind.Class)

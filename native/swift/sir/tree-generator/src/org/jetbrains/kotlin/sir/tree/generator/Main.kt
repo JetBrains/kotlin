@@ -29,6 +29,7 @@ fun main(args: Array<String>) {
             elementVisitorType to ::VisitorPrinter,
             elementVisitorVoidType to ::VisitorVoidPrinter,
             elementTransformerType to ::TransformerPrinter.bind(model.rootElement),
+            elementTransformerVoidType to ::TransformerVoidPrinter,
         ),
         ImplementationConfigurator,
         BuilderConfigurator(model.elements),
