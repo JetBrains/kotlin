@@ -38,7 +38,7 @@ class SirPassTests {
         mySirElement.parent = module
 
         val myPass = ForeignIntoSwiftFunctionTranslationPass()
-        val result = myPass.run(mySirElement, Unit) as? SirFunction
+        val result = myPass.run(mySirElement, null) as? SirFunction
         assertNotNull(result, "SirFunction should be produced")
         val exp = MockSirFunction(
             name = "foo",
@@ -96,7 +96,7 @@ class SirPassTests {
         mySirElement.parent = module
 
         val myPass = ForeignIntoSwiftFunctionTranslationPass()
-        val result = myPass.run(mySirElement, Unit) as? SirFunction
+        val result = myPass.run(mySirElement, null) as? SirFunction
         assertNotNull(result, "SirFunction should be produced")
         val exp = MockSirFunction(
             name = "foo",

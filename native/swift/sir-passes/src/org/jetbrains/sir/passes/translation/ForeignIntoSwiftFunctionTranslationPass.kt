@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.sir.builder.buildFunction
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.KotlinFunction
 import org.jetbrains.kotlin.sir.constants.*
-import org.jetbrains.kotlin.sir.visitors.SirTransformer
+import org.jetbrains.kotlin.sir.visitors.SirTransformerVoid
 import org.jetbrains.sir.passes.SirPass
 import java.lang.IllegalStateException
 
@@ -22,15 +22,15 @@ import java.lang.IllegalStateException
  * or `element` does not contain origin of type `SirOrigin.KotlinEntity.Function`,
  * returns original element.
  */
-public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Unit> {
+public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothing?> {
 
-    private class Transformer : SirTransformer<Unit>() {
-        override fun <E : SirElement> transformElement(element: E, data: Unit): E {
-            element.transformChildren(this, data)
+    private class Transformer : SirTransformerVoid() {
+        override fun <E : SirElement> transformElement(element: E): E {
+            element.transformChildren(this)
             return element
         }
 
-        override fun transformForeignFunction(foreignFunction: SirForeignFunction, data: Unit): SirDeclaration {
+        override fun transformForeignFunction(foreignFunction: SirForeignFunction): SirDeclaration {
             val kotlinOrigin = (foreignFunction.origin as? SirOrigin.ForeignEntity)?.entity as? KotlinFunction
                 ?: return foreignFunction
             return buildFunction {
@@ -46,7 +46,7 @@ public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Unit>
         }
     }
 
-    override fun run(element: SirElement, data: Unit): SirElement = element.accept(Transformer(), Unit)
+    override fun run(element: SirElement, data: Nothing?): SirElement = element.transform(Transformer())
 }
 
 private fun KotlinParameter.toSir(): SirParameter = SirParameter(
