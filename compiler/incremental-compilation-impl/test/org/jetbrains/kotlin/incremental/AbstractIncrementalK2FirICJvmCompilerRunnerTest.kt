@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import java.io.File
 
-abstract class AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
+abstract class AbstractIncrementalK2FirICJvmCompilerRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JVMCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
             languageVersion = "2.0"
