@@ -201,10 +201,10 @@ class PostponedArgumentsAnalyzer(
             }
         }
 
-        if (!hasExpressionInReturnArguments && !lambdaExpectedTypeIsUnit) {
+        if (!hasExpressionInReturnArguments) {
             builder.addSubtypeConstraint(
                 components.session.builtinTypes.unitType.type,
-                returnTypeRef.type,
+                substitute(lambda.returnType),
                 ConeLambdaArgumentConstraintPosition(lambda.atom)
             )
         }

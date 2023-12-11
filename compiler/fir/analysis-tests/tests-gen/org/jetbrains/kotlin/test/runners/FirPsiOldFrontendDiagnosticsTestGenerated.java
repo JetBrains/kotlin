@@ -17059,6 +17059,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("UnitUpperboundLambdaReturnType.kt")
+            public void testUnitUpperboundLambdaReturnType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/UnitUpperboundLambdaReturnType.kt");
+            }
+
+            @Test
             @TestMetadata("unsoundness1.kt")
             public void testUnsoundness1() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/unsoundness1.kt");
