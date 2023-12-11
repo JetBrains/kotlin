@@ -6,43 +6,49 @@
 package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.visitors.SirVisitor
+import org.jetbrains.kotlin.sir.visitors.SirVisitorVoid
 import org.jetbrains.kotlin.utils.SmartPrinter
 
 private const val DEFAULT_INDENT: String = "    "
 
-public class SirAsSwiftSourcesPrinter : SirVisitor<Unit, SmartPrinter>() {
-    public fun print(element: SirElement): String = buildString {
-        element.accept(this@SirAsSwiftSourcesPrinter, SmartPrinter(this))
-    }.trim()
+public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVisitorVoid() {
 
-    override fun visitModule(module: SirModule, data: SmartPrinter): Unit = with(data) {
+    public constructor() : this(SmartPrinter(StringBuilder()))
+
+    public fun print(element: SirElement): String {
+        element.accept(this)
+        return printer.toString().trim()
+    }
+
+    override fun visitModule(module: SirModule): Unit = with(printer) {
         module.declarations.forEach {
-            it.accept(this@SirAsSwiftSourcesPrinter, this)
+            it.accept(this@SirAsSwiftSourcesPrinter)
             if (module.declarations.last() != it) {
                 println()
             }
         }
     }
 
-    override fun visitFunction(function: SirFunction, data: SmartPrinter): Unit = with(data) {
-        println(listOfNotNull(
-            function.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " },
-            "func ",
-            function.name.swiftIdentifier,
-            function.parameters.takeIf { it.isNotEmpty() }
-                ?.joinToString(prefix = "(\n", postfix = "\n)", separator = ",\n") {
-                    it.swift.prependIndent(DEFAULT_INDENT)
-                } ?: "()",
-            " -> ",
-            function.returnType.swift,
-            " { fatalError() }"
-        ).joinToString(separator = ""))
+    override fun visitFunction(function: SirFunction): Unit = with(printer) {
+        println(
+            listOfNotNull(
+                function.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " },
+                "func ",
+                function.name.swiftIdentifier,
+                function.parameters.takeIf { it.isNotEmpty() }
+                    ?.joinToString(prefix = "(\n", postfix = "\n)", separator = ",\n") {
+                        it.swift.prependIndent(DEFAULT_INDENT)
+                    } ?: "()",
+                " -> ",
+                function.returnType.swift,
+                " { fatalError() }",
+            ).joinToString(separator = ""),
+        )
     }
 
-    override fun visitForeignFunction(function: SirForeignFunction, data: SmartPrinter) {} // we do not write Foreign nodes
+    override fun visitForeignFunction(function: SirForeignFunction) {} // we do not write foreign nodes
 
-    override fun visitElement(element: SirElement, data: SmartPrinter): Unit = with(data) {
+    override fun visitElement(element: SirElement): Unit = with(printer) {
         println("/* ERROR: unsupported element type: " + element.javaClass.simpleName + " */")
     }
 }
