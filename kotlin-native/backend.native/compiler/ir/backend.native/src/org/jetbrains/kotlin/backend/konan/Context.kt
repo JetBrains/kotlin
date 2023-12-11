@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegenElement
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
@@ -95,6 +96,7 @@ internal class Context(
         get() = IrTypeSystemContextImpl(irBuiltIns)
 
     var cAdapterExportedElements: CAdapterExportedElements? = null
+    var cAdapterCodegenElements: List<CAdapterCodegenElement>? = null
     var objCExportedInterface: ObjCExportedInterface? = null
     var objCExportCodeSpec: ObjCExportCodeSpec? = null
 

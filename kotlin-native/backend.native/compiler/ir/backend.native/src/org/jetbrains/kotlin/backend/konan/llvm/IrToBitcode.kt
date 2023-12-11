@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_ARGUMEN
 import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegenElement
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.*
@@ -386,8 +387,11 @@ internal class CodeGeneratorVisitor(
             return block()
         }
     }
-    private fun appendCAdapters(elements: CAdapterExportedElements) {
-        CAdapterCodegen(codegen, generationState).buildAllAdaptersRecursively(elements)
+    private fun appendCAdapters(elements: List<CAdapterCodegenElement>) {
+        val codegen = CAdapterCodegen(codegen, generationState)
+        elements.forEach {
+            codegen.buildCAdapter(it)
+        }
     }
 
     private fun FunctionGenerationContext.initThreadLocalField(irField: IrField) {
@@ -484,7 +488,7 @@ internal class CodeGeneratorVisitor(
             appendLlvmUsed("llvm.used", llvm.usedFunctions.map { it.toConstPointer().llvm } + llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", llvm.compilerUsedGlobals)
             if (context.config.produceCInterface) {
-                context.cAdapterExportedElements?.let { appendCAdapters(it) }
+                context.cAdapterCodegenElements?.let { appendCAdapters(it) }
             }
         }
 

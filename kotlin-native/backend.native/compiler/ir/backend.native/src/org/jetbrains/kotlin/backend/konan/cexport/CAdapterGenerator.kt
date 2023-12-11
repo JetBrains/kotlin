@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.backend.konan.cexport
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
+import org.jetbrains.kotlin.backend.konan.cKeywords
+import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isChildOf
@@ -119,7 +118,6 @@ internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
     }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class ExportedElement(
         val kind: ElementKind,
         val scope: ExportedElementScope,
@@ -156,13 +154,6 @@ internal class ExportedElement(
     val isClass = declaration is ClassDescriptor && declaration.kind != ClassKind.ENUM_ENTRY
     val isEnumEntry = declaration is ClassDescriptor && declaration.kind == ClassKind.ENUM_ENTRY
     val isSingletonObject = declaration is ClassDescriptor && DescriptorUtils.isObject(declaration)
-
-    val irSymbol = when {
-        isFunction -> owner.symbolTable.referenceFunction(declaration as FunctionDescriptor)
-        isClass -> owner.symbolTable.descriptorExtension.referenceClass(declaration as ClassDescriptor)
-        isEnumEntry -> owner.symbolTable.descriptorExtension.referenceEnumEntry(declaration as ClassDescriptor)
-        else -> error("unexpected $kind element: $declaration")
-    }
 
     private fun KotlinType.includeToSignature() = !this.isUnit()
 
@@ -396,15 +387,11 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
  * First phase of C export: walk given declaration descriptors and create [CAdapterExportedElements] from them.
  */
 internal class CAdapterGenerator(
-        private val context: PsiToIrContext,
-        private val configuration: CompilerConfiguration,
         private val typeTranslator: CAdapterTypeTranslator,
 ) : DeclarationDescriptorVisitor<Boolean, Void?> {
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = typeTranslator.prefix
     private val paramNamesRecorded = mutableMapOf<String, Int>()
-
-    internal val symbolTable get() = context.symbolTable!!
 
     internal fun paramsToUniqueNames(params: List<ParameterDescriptor>): Map<ParameterDescriptor, String> {
         paramNamesRecorded.clear()
@@ -550,10 +537,10 @@ internal class CAdapterGenerator(
 
     private val moduleDescriptors = mutableSetOf<ModuleDescriptor>()
 
-    fun buildExports(moduleDescriptor: ModuleDescriptor): CAdapterExportedElements {
+    fun buildExports(moduleDescriptor: ModuleDescriptor, exportedDependencies: List<ModuleDescriptor>): CAdapterExportedElements {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))
         moduleDescriptors += moduleDescriptor
-        moduleDescriptors += moduleDescriptor.getExportedDependencies(context.config)
+        moduleDescriptors += exportedDependencies
 
         currentPackageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }.toSet().sortedWith(
                 Comparator { o1, o2 ->
@@ -582,3 +569,5 @@ internal class CAdapterGenerator(
     private var functionIndex = 0
     fun nextFunctionIndex() = functionIndex++
 }
+
+

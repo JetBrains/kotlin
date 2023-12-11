@@ -12,15 +12,26 @@ import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterTypeTranslator
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.getExportedDependencies
 import java.io.File
 
-internal val BuildCExports = createSimpleNamedCompilerPhase<PsiToIrContext, FrontendPhaseOutput.Full, CAdapterExportedElements>(
+internal val BuildCExports = createSimpleNamedCompilerPhase<PhaseContext, FrontendPhaseOutput.Full, CAdapterExportedElements>(
         "BuildCExports", "Build C exports",
         outputIfNotEnabled = { _, _, _, _ -> error("") }
 ) { context, input ->
     val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
-    val typeTranslator = CAdapterTypeTranslator(prefix, context.builtIns)
-    CAdapterGenerator(context, input.environment.configuration, typeTranslator).buildExports(input.moduleDescriptor)
+    val typeTranslator = CAdapterTypeTranslator(prefix, input.moduleDescriptor.builtIns)
+    CAdapterGenerator(typeTranslator).buildExports(
+            input.moduleDescriptor,
+            input.moduleDescriptor.getExportedDependencies(context.config)
+    )
+}
+
+internal val BuildCAdapterCodegenElements = createSimpleNamedCompilerPhase<PsiToIrContext, CAdapterExportedElements, List<CAdapterCodegenElement>>(
+        "BuildCAdapterCodegenElements", "Build C Export codegen elements",
+        outputIfNotEnabled = { _, _, _, _ -> error("") }
+) { context, elements ->
+    CAdapterCodegenElementsBuilder(context.symbolTable!!).buildAllCodegenElementsRecursively(elements)
 }
 
 internal data class CExportGenerateApiInput(

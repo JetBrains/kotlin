@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.cexport
 
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal class CAdapterTypeTranslator(
         val prefix: String,
-        val builtIns: KonanBuiltIns,
+        val builtIns: KotlinBuiltIns,
 ) {
     private fun translateTypeFull(type: KotlinType): Pair<String, String> =
             if (isMappedToVoid(type)) {

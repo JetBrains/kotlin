@@ -78,17 +78,18 @@ internal class DynamicCompilerDriver : CompilerDriver() {
 
     private fun produceCLibrary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
-
-        val (psiToIrOutput, cAdapterElements) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
-            if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
-                it.runPhase(BuildCExports, frontendOutput)
-            } else {
-                null
-            }
+        val cAdapterElements = if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
+            engine.runPhase(BuildCExports, frontendOutput)
+        } else null
+        val (psiToIrOutput, cAdapterCodegenElements) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+            if (cAdapterElements != null) {
+                it.runPhase(BuildCAdapterCodegenElements, cAdapterElements)
+            } else null
         }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
             it.cAdapterExportedElements = cAdapterElements
+            it.cAdapterCodegenElements = cAdapterCodegenElements
         }
         engine.runBackend(backendContext, psiToIrOutput.irModule)
     }
