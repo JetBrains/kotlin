@@ -34,7 +34,7 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
 
         if (element.isRootElement) {
             println()
-            printAcceptVoidMethod(elementVisitorVoidType)
+            printAcceptVoidMethod(elementVisitorVoidType, treeName)
             printAcceptChildrenMethod(element, elementVisitorType, TypeVariable("R"))
             println()
             println()

@@ -40,6 +40,11 @@ interface FirElement {
     fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformElement(this, data) as E
 
+    /**
+     * Runs the provided [visitor] on the FIR subtree with the root at this node.
+     *
+     * @param visitor The visitor to accept.
+     */
     fun accept(visitor: FirVisitorVoid) = accept(visitor, null)
 
     /**
@@ -54,6 +59,15 @@ interface FirElement {
      */
     fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)
 
+    /**
+     * Runs the provided [visitor] on subtrees with roots in this node's children.
+     *
+     * Basically, calls `accept(visitor)` on each child of this node.
+     *
+     * Does **not** run [visitor] on this node itself.
+     *
+     * @param visitor The visitor for children to accept.
+     */
     fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)
 
     /**

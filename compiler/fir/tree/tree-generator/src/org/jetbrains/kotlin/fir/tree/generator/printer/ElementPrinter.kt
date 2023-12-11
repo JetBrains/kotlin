@@ -21,14 +21,15 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
     override fun SmartPrinter.printAdditionalMethods(element: Element) {
         val kind = element.kind ?: error("Expected non-null element kind")
         with(element) {
-            printAcceptMethod(element, firVisitorType, hasImplementation = true, treeName = "FIR")
+            val treeName = "FIR"
+            printAcceptMethod(element, firVisitorType, hasImplementation = true, treeName = treeName)
 
             printTransformMethod(
                 element = element,
                 transformerClass = firTransformerType,
                 implementation = "transformer.transform${element.name}(this, data)",
                 returnType = TypeVariable("E", listOf(AbstractFirTreeBuilder.baseFirElement)),
-                treeName = "FIR",
+                treeName = treeName,
             )
 
             fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRefWithNullability? = null, forceNullable: Boolean = false) {
@@ -66,7 +67,7 @@ internal class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<El
 
             if (element.isRootElement) {
                 println()
-                printAcceptVoidMethod(firVisitorVoidType)
+                printAcceptVoidMethod(firVisitorVoidType, treeName)
                 printAcceptChildrenMethod(
                     element = element,
                     visitorClass = firVisitorType,

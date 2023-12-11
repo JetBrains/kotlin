@@ -39,6 +39,11 @@ sealed interface SirElement {
     fun <E : SirElement, D> transform(transformer: SirTransformer<D>, data: D): E =
         transformer.transformElement(this, data) as E
 
+    /**
+     * Runs the provided [visitor] on the Swift IR subtree with the root at this node.
+     *
+     * @param visitor The visitor to accept.
+     */
     fun accept(visitor: SirVisitorVoid) = accept(visitor, null)
 
     /**
@@ -53,6 +58,15 @@ sealed interface SirElement {
      */
     fun <R, D> acceptChildren(visitor: SirVisitor<R, D>, data: D)
 
+    /**
+     * Runs the provided [visitor] on subtrees with roots in this node's children.
+     *
+     * Basically, calls `accept(visitor)` on each child of this node.
+     *
+     * Does **not** run [visitor] on this node itself.
+     *
+     * @param visitor The visitor for children to accept.
+     */
     fun acceptChildren(visitor: SirVisitorVoid) = acceptChildren(visitor, null)
 
     /**

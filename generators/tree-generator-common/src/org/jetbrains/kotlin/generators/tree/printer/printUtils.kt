@@ -199,6 +199,32 @@ inline fun SmartPrinter.printBlock(body: () -> Unit) {
 private val dataTP = TypeVariable("D")
 private val dataParameter = FunctionParameter("data", dataTP)
 
+private fun acceptMethodKDoc(
+    visitorParameter: FunctionParameter,
+    dataParameter: FunctionParameter?,
+    returnType: TypeRef,
+    treeName: String,
+) = buildString {
+    append("Runs the provided [")
+    append(visitorParameter.name)
+    append("] on the ")
+    append(treeName)
+    append(" subtree with the root at this node.\n\n")
+    append("@param ")
+    append(visitorParameter.name)
+    append(" The visitor to accept.")
+    if (dataParameter != null) {
+        append("\n@param ")
+        append(dataParameter.name)
+        append(" An arbitrary context to pass to each invocation of [")
+        append(visitorParameter.name)
+        append("]'s methods.")
+    }
+    if (returnType != StandardTypes.unit) {
+        append("\n@return The value returned by the topmost `visit*` invocation.")
+    }
+}
+
 context(ImportCollector)
 fun SmartPrinter.printAcceptMethod(
     element: AbstractElement<*, *, *>,
@@ -211,15 +237,7 @@ fun SmartPrinter.printAcceptMethod(
     val resultTP = TypeVariable("R")
     val visitorParameter = FunctionParameter("visitor", visitorClass.withArgs(resultTP, dataTP))
     if (element.isRootElement) {
-        printKDoc(
-            """
-            Runs the provided [${visitorParameter.name}] on the $treeName subtree with the root at this node.
-            
-            @param ${visitorParameter.name} The visitor to accept.
-            @param ${dataParameter.name} An arbitrary context to pass to each invocation of [${visitorParameter.name}]'s methods.
-            @return The value returned by the topmost `visit*` invocation.
-            """.trimIndent()
-        )
+        printKDoc(acceptMethodKDoc(visitorParameter, dataParameter, resultTP, treeName))
     }
     printFunctionDeclaration(
         name = "accept",
@@ -291,6 +309,32 @@ fun SmartPrinter.printTransformMethod(
     println()
 }
 
+private fun acceptChildrenKDoc(visitorParameter: FunctionParameter, dataParameter: FunctionParameter?) = buildString {
+    append("Runs the provided [")
+    append(visitorParameter.name)
+    append("] on subtrees with roots in this node's children.\n\n")
+    append("Basically, calls `accept(")
+    append(visitorParameter.name)
+    if (dataParameter != null) {
+        append(", ")
+        append(dataParameter.name)
+    }
+    append(")` on each child of this node.\n\n")
+    append("Does **not** run [")
+    append(visitorParameter.name)
+    append("] on this node itself.\n\n")
+    append("@param ")
+    append(visitorParameter.name)
+    append(" The visitor for children to accept.")
+    if (dataParameter != null) {
+        append("\n@param ")
+        append(dataParameter.name)
+        append(" An arbitrary context to pass to each invocation of [")
+        append(visitorParameter.name)
+        append("]'s methods.")
+    }
+}
+
 context(ImportCollector)
 fun SmartPrinter.printAcceptChildrenMethod(
     element: FieldContainer<*>,
@@ -303,18 +347,7 @@ fun SmartPrinter.printAcceptChildrenMethod(
     println()
     val visitorParameter = FunctionParameter("visitor", visitorClass.withArgs(visitorResultType, dataTP))
     if (!override) {
-        printKDoc(
-            """
-            Runs the provided [${visitorParameter.name}] on subtrees with roots in this node's children.
-            
-            Basically, calls `accept(${visitorParameter.name}, ${dataParameter.name})` on each child of this node.
-            
-            Does **not** run [${visitorParameter.name}] on this node itself.
-            
-            @param ${visitorParameter.name} The visitor for children to accept.
-            @param ${dataParameter.name} An arbitrary context to pass to each invocation of [${visitorParameter.name}]'s methods.
-            """.trimIndent()
-        )
+        printKDoc(acceptChildrenKDoc(visitorParameter, dataParameter))
     }
     printFunctionDeclaration(
         name = "acceptChildren",
@@ -381,15 +414,18 @@ fun SmartPrinter.printTransformChildrenMethod(
 }
 
 context(ImportCollector)
-fun SmartPrinter.printAcceptVoidMethod(visitorType: ClassRef<*>) {
+fun SmartPrinter.printAcceptVoidMethod(visitorType: ClassRef<*>, treeName: String) {
     val visitorParameter = FunctionParameter("visitor", visitorType)
-    printFunctionDeclaration("accept", listOf(visitorParameter), StandardTypes.unit)
+    val returnType = StandardTypes.unit
+    printKDoc(acceptMethodKDoc(visitorParameter, null, returnType, treeName))
+    printFunctionDeclaration("accept", listOf(visitorParameter), returnType)
     println(" = accept(", visitorParameter.name, ", null)")
 }
 
 context(ImportCollector)
 fun SmartPrinter.printAcceptChildrenVoidMethod(visitorType: ClassRef<*>) {
     val visitorParameter = FunctionParameter("visitor", visitorType)
+    printKDoc(acceptChildrenKDoc(visitorParameter, null))
     printFunctionDeclaration("acceptChildren", listOf(visitorParameter), StandardTypes.unit)
     println(" = acceptChildren(", visitorParameter.name, ", null)")
 }
