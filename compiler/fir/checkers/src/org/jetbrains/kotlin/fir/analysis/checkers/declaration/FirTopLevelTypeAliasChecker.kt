@@ -24,7 +24,7 @@ object FirTopLevelTypeAliasChecker : FirTypeAliasChecker() {
         }
 
         fun containsTypeParameter(type: ConeKotlinType): Boolean {
-            val unwrapped = type.lowerBoundIfFlexible().unwrapDefinitelyNotNull()
+            val unwrapped = type.unwrapFlexibleAndDefinitelyNotNull()
 
             if (unwrapped is ConeTypeParameterType) {
                 return true

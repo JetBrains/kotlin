@@ -77,5 +77,5 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker() {
         ref.unwrapBound().mapNotNull { extractTypeParamName(it.coneType) }.toSet()
 
     private fun extractTypeParamName(type: ConeKotlinType): Name? =
-        (type.lowerBoundIfFlexible().unwrapDefinitelyNotNull() as? ConeTypeParameterType)?.lookupTag?.name
+        (type.unwrapFlexibleAndDefinitelyNotNull() as? ConeTypeParameterType)?.lookupTag?.name
 }

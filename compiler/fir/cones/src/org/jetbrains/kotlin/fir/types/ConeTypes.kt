@@ -118,6 +118,10 @@ fun ConeSimpleKotlinType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
     }
 }
 
+fun ConeKotlinType.unwrapFlexibleAndDefinitelyNotNull(): ConeKotlinType {
+    return lowerBoundIfFlexible().unwrapDefinitelyNotNull()
+}
+
 class ConeCapturedTypeConstructor(
     val projection: ConeTypeProjection,
     var supertypes: List<ConeKotlinType>? = null,
