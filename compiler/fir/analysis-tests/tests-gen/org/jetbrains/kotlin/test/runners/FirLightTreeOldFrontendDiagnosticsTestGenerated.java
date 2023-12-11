@@ -25195,6 +25195,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("destructuringDeclarationWithInvoke.kt")
+            public void testDestructuringDeclarationWithInvoke() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/destructuringDeclarationWithInvoke.kt");
+            }
+
+            @Test
             @TestMetadata("EqualsOperatorOverrideHierarchies.kt")
             public void testEqualsOperatorOverrideHierarchies() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/EqualsOperatorOverrideHierarchies.kt");
