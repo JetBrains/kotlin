@@ -60,6 +60,8 @@
 
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
+        <deploy-snapshot-url>sonatype-nexus-staging</deploy-snapshot-url>
+        <deploy-snapshot-repo>https://oss.sonatype.org/content/repositories/snapshots/</deploy-snapshot-repo>
     </properties>
 
     <prerequisites>
@@ -72,8 +74,8 @@
             <url>${deploy-url}</url>
         </repository>
         <snapshotRepository>
-            <id>sonatype-nexus-staging</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <id>${deploy-snapshot-repo}</id>
+            <url>${deploy-snapshot-url}</url>
         </snapshotRepository>
     </distributionManagement>
 

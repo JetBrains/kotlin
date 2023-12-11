@@ -991,6 +991,16 @@ tasks {
         workingDir = rootProject.projectDir.resolve("libraries")
         commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests")
     }
+    register<Exec>("mvnPublish") {
+        group = "publishing"
+        workingDir = rootProject.projectDir.resolve("libraries")
+        commandLine = getMvnwCmd() + listOf(
+            "clean", "deploy", "--activate-profiles=noTest",
+            "-Dinvoker.skip=true", "-DskipTests",
+            "-Ddeploy-snapshot-repo=local",
+            "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}"
+        )
+    }
 }
 
 val zipCompiler by tasks.registering(Zip::class) {

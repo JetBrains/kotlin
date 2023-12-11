@@ -18,7 +18,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform { }
     val kotlinVersion = version
     doFirst {
-        val defaultMavenLocal = Paths.get(System.getProperty("user.home"), ".m2", "repository").toAbsolutePath()
+        val defaultMavenLocal = rootProject.projectDir.resolve("build/repo").absolutePath
         val mavenLocal = System.getProperty("maven.repo.local") ?: defaultMavenLocal
         systemProperty("maven.repo.local", mavenLocal)
         systemProperty("kotlin.version", kotlinVersion)
