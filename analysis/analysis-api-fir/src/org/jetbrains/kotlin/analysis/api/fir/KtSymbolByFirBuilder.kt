@@ -542,20 +542,7 @@ internal class KtSymbolByFirBuilder(
      */
     private inline fun <reified T : FirCallableDeclaration> T.unwrapUseSiteSubstitutionOverride(): T? {
         val originalDeclaration = originalForSubstitutionOverride ?: return null
-
-        val containingClass = getContainingMemberOrSelf().getContainingClass(rootSession) ?: return null
-        val originalContainingClass = originalDeclaration.getContainingMemberOrSelf().getContainingClass(rootSession) ?: return null
-
-        // If substitution override does not change the containing class of the FIR declaration,
-        // it is a use-site substitution override
-        if (containingClass != originalContainingClass) return null
-
-        return originalDeclaration
-    }
-
-    private fun FirCallableDeclaration.getContainingMemberOrSelf(): FirCallableDeclaration = when (this) {
-        is FirValueParameter -> containingFunctionSymbol.fir
-        else -> this
+        return originalDeclaration.takeIf { this.origin is FirDeclarationOrigin.SubstitutionOverride.CallSite }
     }
 
     /**
