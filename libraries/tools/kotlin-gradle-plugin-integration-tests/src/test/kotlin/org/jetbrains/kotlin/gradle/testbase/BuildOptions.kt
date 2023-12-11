@@ -13,13 +13,11 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMEN
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.*
-import kotlin.io.path.absolutePathString
 
 data class BuildOptions(
     val logLevel: LogLevel = LogLevel.INFO,
@@ -93,6 +91,8 @@ data class BuildOptions(
         val restrictedDistribution: Boolean? = null,
         val useXcodeMessageStyle: Boolean? = null,
         val version: String? = null,
+        val cacheOrchestration: String? = null,
+        val incremental: Boolean? = null,
     )
 
     fun toArguments(
@@ -259,6 +259,12 @@ data class BuildOptions(
         }
         nativeOptions.version?.let {
             arguments.add("-Pkotlin.native.version=${it}")
+        }
+        nativeOptions.cacheOrchestration?.let {
+            arguments.add("-Pkotlin.native.cacheOrchestration=${it}")
+        }
+        nativeOptions.incremental?.let {
+            arguments.add("-Pkotlin.incremental.native=${it}")
         }
 
     }
