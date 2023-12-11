@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 
-import kotlinx.cinterop.cValuesOf
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.toCValues
-import kotlinx.cinterop.toKString
+import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.MemoryModel
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -424,7 +421,7 @@ internal class StackLocalsManagerImpl(
 
             val objectHeader = structGep(type, stackSlot, 0, "objHeader")
             val typeInfo = codegen.typeInfoForAllocation(irClass)
-            setTypeInfoForLocalObject(objectHeader, typeInfo)
+            setTypeInfoForLocalObject(runtime.objHeaderType, objectHeader, typeInfo)
             val gcRootSetSlot = createRootSetSlot()
             StackLocal(null, irClass, stackSlot, objectHeader, gcRootSetSlot)
         }
@@ -477,7 +474,7 @@ internal class StackLocalsManagerImpl(
             val arraySlot = LLVMBuildAlloca(builder, arrayType, "")!!
             // Set array size in ArrayHeader.
             val arrayHeaderSlot = structGep(arrayType, arraySlot, 0, "arrayHeader")
-            setTypeInfoForLocalObject(arrayHeaderSlot, typeInfo)
+            setTypeInfoForLocalObject(runtime.arrayHeaderType, arrayHeaderSlot, typeInfo)
             val sizeField = structGep(runtime.arrayHeaderType, arrayHeaderSlot, 1, "count_")
             store(count, sizeField)
 
@@ -542,8 +539,8 @@ internal class StackLocalsManagerImpl(
         }
     }
 
-    private fun setTypeInfoForLocalObject(objectHeader: LLVMValueRef, typeInfoPointer: LLVMValueRef) = with(functionGenerationContext) {
-        val typeInfo = structGep(runtime.objHeaderType, objectHeader, 0, "typeInfoOrMeta_")
+    private fun setTypeInfoForLocalObject(headerType: LLVMTypeRef, header: LLVMValueRef, typeInfoPointer: LLVMValueRef) = with(functionGenerationContext) {
+        val typeInfo = structGep(headerType, header, 0, "typeInfoOrMeta_")
         // Set tag OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER.
         val typeInfoValue = intToPtr(or(ptrToInt(typeInfoPointer, codegen.intPtrType),
                 codegen.immThreeIntPtrType), kTypeInfoPtr)
