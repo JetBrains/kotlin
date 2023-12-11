@@ -122,7 +122,6 @@ internal class ExportedElement(
         val kind: ElementKind,
         val scope: ExportedElementScope,
         val declaration: DeclarationDescriptor,
-        val owner: CAdapterGenerator,
         val typeTranslator: CAdapterTypeTranslator,
 ) {
     init {
@@ -157,6 +156,20 @@ internal class ExportedElement(
 
     private fun KotlinType.includeToSignature() = !this.isUnit()
 
+    private fun paramsToUniqueNames(params: List<ParameterDescriptor>): Map<ParameterDescriptor, String> {
+        val paramNamesRecorded = mutableMapOf<String, Int>()
+        return params.associate {
+            val name = translateName(it.name)
+            val count = paramNamesRecorded.getOrPut(name) { 0 }
+            paramNamesRecorded[name] = count + 1
+            if (count == 0) {
+                it to name
+            } else {
+                it to "$name${count.toString()}"
+            }
+        }
+    }
+
     private fun makeCFunctionSignature(shortName: Boolean): List<SignatureElement> {
         if (!isFunction) {
             throw Error("only for functions")
@@ -169,7 +182,7 @@ internal class ExportedElement(
             else ->
                 SignatureElement(uniqueName(original, shortName), original.returnType!!)
         }
-        val uniqueNames = owner.paramsToUniqueNames(original.explicitParameters)
+        val uniqueNames = paramsToUniqueNames(original.explicitParameters)
         val params = ArrayList(original.explicitParameters
                 .filter { it.type.includeToSignature() }
                 .map { SignatureElement(uniqueNames[it]!!, it.type) })
@@ -225,7 +238,7 @@ internal class ExportedElement(
 
     fun makeClassDeclaration(): String {
         assert(isClass)
-        val typeGetter = "extern \"C\" ${owner.prefix}_KType* ${cname}_type(void);"
+        val typeGetter = "extern \"C\" ${typeTranslator.prefix}_KType* ${cname}_type(void);"
         val instanceGetter = if (isSingletonObject) {
             val objectClassC = typeTranslator.translateType((declaration as ClassDescriptor).defaultType)
             """
@@ -391,21 +404,6 @@ internal class CAdapterGenerator(
 ) : DeclarationDescriptorVisitor<Boolean, Void?> {
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = typeTranslator.prefix
-    private val paramNamesRecorded = mutableMapOf<String, Int>()
-
-    internal fun paramsToUniqueNames(params: List<ParameterDescriptor>): Map<ParameterDescriptor, String> {
-        paramNamesRecorded.clear()
-        return params.associate {
-            val name = translateName(it.name)
-            val count = paramNamesRecorded.getOrPut(name) { 0 }
-            paramNamesRecorded[name] = count + 1
-            if (count == 0) {
-                it to name
-            } else {
-                it to "$name${count.toString()}"
-            }
-        }
-    }
 
     private fun visitChildren(descriptors: Collection<DeclarationDescriptor>) {
         for (descriptor in descriptors) {
@@ -419,13 +417,13 @@ internal class CAdapterGenerator(
 
     override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, ignored: Void?): Boolean {
         if (!isExportedFunction(descriptor)) return true
-        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
+        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, typeTranslator)
         return true
     }
 
     override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, ignored: Void?): Boolean {
         if (!isExportedFunction(descriptor)) return true
-        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
+        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, typeTranslator)
         return true
     }
 
@@ -439,7 +437,7 @@ internal class CAdapterGenerator(
         scopes.last().scopes += classScope
         scopes.push(classScope)
         // Add type getter.
-        ExportedElement(ElementKind.TYPE, scopes.last(), descriptor, this, typeTranslator)
+        ExportedElement(ElementKind.TYPE, scopes.last(), descriptor, typeTranslator)
         visitChildren(descriptor.getConstructors())
         visitChildren(DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().memberScope))
         scopes.pop()
@@ -455,13 +453,13 @@ internal class CAdapterGenerator(
 
     override fun visitPropertyGetterDescriptor(descriptor: PropertyGetterDescriptor, ignored: Void?): Boolean {
         if (!isExportedFunction(descriptor)) return true
-        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
+        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, typeTranslator)
         return true
     }
 
     override fun visitPropertySetterDescriptor(descriptor: PropertySetterDescriptor, ignored: Void?): Boolean {
         if (!isExportedFunction(descriptor)) return true
-        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
+        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, typeTranslator)
         return true
     }
 
@@ -550,24 +548,20 @@ internal class CAdapterGenerator(
         moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
         return CAdapterExportedElements(typeTranslator, scopes)
     }
-
-    private val simpleNameMapping = mapOf(
-            "<this>" to "thiz",
-            "<set-?>" to "set"
-    )
-
-    private fun translateName(name: Name): String {
-        val nameString = name.asString()
-        return when {
-            simpleNameMapping.contains(nameString) -> simpleNameMapping[nameString]!!
-            cKeywords.contains(nameString) -> "${nameString}_"
-            name.isSpecial -> nameString.replace("[<> ]".toRegex(), "_")
-            else -> nameString
-        }
-    }
-
-    private var functionIndex = 0
-    fun nextFunctionIndex() = functionIndex++
 }
 
+private val simpleNameMapping = mapOf(
+        "<this>" to "thiz",
+        "<set-?>" to "set"
+)
+
+private fun translateName(name: Name): String {
+    val nameString = name.asString()
+    return when {
+        simpleNameMapping.contains(nameString) -> simpleNameMapping[nameString]!!
+        cKeywords.contains(nameString) -> "${nameString}_"
+        name.isSpecial -> nameString.replace("[<> ]".toRegex(), "_")
+        else -> nameString
+    }
+}
 
