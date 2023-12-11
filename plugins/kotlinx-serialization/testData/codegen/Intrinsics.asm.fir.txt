@@ -59,7 +59,7 @@ public final class Box : java/lang/Object {
 
     public java.lang.String toString()
 
-    public final static void write$Self(Box self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc, kotlinx.serialization.KSerializer typeSerial0)
+    public final static void write$Self$main(Box self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc, kotlinx.serialization.KSerializer typeSerial0)
 }
 
 public final class IntrinsicsKt : java/lang/Object {
@@ -263,5 +263,5 @@ public final class Simple : java/lang/Object {
 
     public final java.lang.String getLastName()
 
-    public final static void write$Self(Simple self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc)
+    public final static void write$Self$main(Simple self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc)
 }

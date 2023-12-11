@@ -56,7 +56,7 @@ class IrPreGenerator(
         val method = irClass.addFunction {
             name = SerialEntityNames.WRITE_SELF_NAME
             returnType = compilerContext.irBuiltIns.unitType
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = if (irClass.modality == Modality.FINAL) DescriptorVisibilities.INTERNAL else DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
             origin = SERIALIZATION_PLUGIN_ORIGIN
         }
@@ -118,7 +118,7 @@ class IrPreGenerator(
         if (irClass.findSerializableSyntheticConstructor() != null) return
         val ctor = irClass.addConstructor {
             origin = SERIALIZATION_PLUGIN_ORIGIN
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = if (irClass.modality == Modality.FINAL) DescriptorVisibilities.INTERNAL else DescriptorVisibilities.PUBLIC
         }.apply { excludeFromJsExport() }
         val markerClassSymbol =
             compilerContext.getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_CTOR_MARKER_NAME.asString())

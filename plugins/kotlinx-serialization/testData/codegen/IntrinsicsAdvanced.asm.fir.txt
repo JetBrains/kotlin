@@ -205,5 +205,5 @@ public final class Simple : java/lang/Object {
 
     public final java.lang.String getLastName()
 
-    public final static void write$Self(Simple self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc)
+    public final static void write$Self$main(Simple self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc)
 }
