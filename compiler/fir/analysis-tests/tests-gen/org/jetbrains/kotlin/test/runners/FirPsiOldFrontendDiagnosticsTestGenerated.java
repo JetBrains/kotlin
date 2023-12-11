@@ -22420,6 +22420,30 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("syntheticPropertyFromKotlinGetter_javaOrigin.kt")
+                public void testSyntheticPropertyFromKotlinGetter_javaOrigin() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlinGetter_javaOrigin.kt");
+                }
+
+                @Test
+                @TestMetadata("syntheticPropertyFromKotlinGetter_kotlinOrigin.kt")
+                public void testSyntheticPropertyFromKotlinGetter_kotlinOrigin() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlinGetter_kotlinOrigin.kt");
+                }
+
+                @Test
+                @TestMetadata("syntheticPropertyFromKotlinGetter_mixedOrigin_1.kt")
+                public void testSyntheticPropertyFromKotlinGetter_mixedOrigin_1() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlinGetter_mixedOrigin_1.kt");
+                }
+
+                @Test
+                @TestMetadata("syntheticPropertyFromKotlinGetter_mixedOrigin_2.kt")
+                public void testSyntheticPropertyFromKotlinGetter_mixedOrigin_2() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlinGetter_mixedOrigin_2.kt");
+                }
+
+                @Test
                 @TestMetadata("unitVsVoid.kt")
                 public void testUnitVsVoid() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/properties/unitVsVoid.kt");
