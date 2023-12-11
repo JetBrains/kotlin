@@ -1151,61 +1151,13 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
 
     open val shouldExportKDoc = false
 
-    fun build(): List<String> = mutableListOf<String>().apply {
-        addImports(foundationImports)
-        addImports(getAdditionalImports())
-        add("")
-
-        if (classForwardDeclarations.isNotEmpty()) {
-            add("@class ${
-                classForwardDeclarations.joinToString {
-                    buildString {
-                        append(it.className)
-                        formatGenerics(this, it.typeDeclarations)
-                    }
-                }
-            };")
-            add("")
-        }
-
-        if (protocolForwardDeclarations.isNotEmpty()) {
-            add("@protocol ${protocolForwardDeclarations.joinToString()};")
-            add("")
-        }
-
-        add("NS_ASSUME_NONNULL_BEGIN")
-        add("#pragma clang diagnostic push")
-        listOf(
-            "-Wunknown-warning-option",
-
-            // Protocols don't have generics, classes do. So generated header may contain
-            // overriding property with "incompatible" type, e.g. `Generic<T>`-typed property
-            // overriding `Generic<id>`. Suppress these warnings:
-            "-Wincompatible-property-type",
-
-            "-Wnullability"
-        ).forEach {
-            add("#pragma clang diagnostic ignored \"$it\"")
-        }
-        add("")
-
-        // If _Nullable_result is not supported, then use _Nullable:
-        add("#pragma push_macro(\"$objcNullableResultAttribute\")")
-        add("#if !__has_feature(nullability_nullable_result)")
-        add("#undef $objcNullableResultAttribute")
-        add("#define $objcNullableResultAttribute $objcNullableAttribute")
-        add("#endif")
-        add("")
-
-        stubs.forEach {
-            addAll(StubRenderer.render(it, shouldExportKDoc))
-            add("")
-        }
-
-        add("#pragma pop_macro(\"$objcNullableResultAttribute\")")
-        add("#pragma clang diagnostic pop")
-        add("NS_ASSUME_NONNULL_END")
-    }
+    fun build(): List<String> = ObjCHeader(
+        stubs = stubs,
+        classForwardDeclarations = classForwardDeclarations,
+        protocolForwardDeclarations = protocolForwardDeclarations,
+        additionalImports = getAdditionalImports(),
+        exportKDoc = shouldExportKDoc
+    ).lines
 
     @InternalKotlinNativeApi
     fun buildInterface(): ObjCExportedInterface {
