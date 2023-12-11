@@ -456,7 +456,9 @@ internal val RedundantCoercionsCleaningPhase = createFileLoweringPhase(
 internal val PropertyAccessorInlinePhase = createFileLoweringPhase(
         name = "PropertyAccessorInline",
         description = "Property accessor inline lowering",
-        lowering = ::PropertyAccessorInlineLowering,
+        lowering = { context: Context ->
+            PropertyAccessorInlineLowering(context, insertImplicitCasts = false)
+        },
 )
 
 internal val UnboxInlinePhase = createFileLoweringPhase(
