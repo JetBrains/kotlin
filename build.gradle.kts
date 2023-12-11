@@ -1119,37 +1119,13 @@ afterEvaluate {
 /**
  * Unused declarations annotated with annotations from this list will not be reported by the "Unused symbols" inspection.
  */
-val entryPointAnnotations = listOf(
-    "org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI",
-)
-
-afterEvaluate {
-    // A workaround for IDEA-84055
-    val entryPointsComponent = buildString {
-        appendLine("  <component name=\"EntryPointsManager\">")
-        appendLine("    <list size=\"${entryPointAnnotations.size}\">")
-        for ((i, annotation) in entryPointAnnotations.withIndex()) {
-            appendLine("      <item index=\"$i\" class=\"java.lang.String\" itemvalue=\"$annotation\" />")
-        }
-        appendLine("    </list>")
-        appendLine("  </component>")
-    }
-    rootDir.resolve(".idea/misc.xml").run {
-        try {
-            writeText(readText().replace("</project>", "$entryPointsComponent</project>"))
-        } catch (e: FileNotFoundException) {
-            writeText(
-                """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <project version="4">
-                $entryPointsComponent
-                </project>
-                """.trimIndent(),
-            )
-        }
-    }
+val entryPointAnnotations by extra {
+    listOf(
+        "org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI",
+    )
 }
 
 afterEvaluate {
+    patchIdeaMiscXml()
     checkExpectedGradlePropertyValues()
 }
