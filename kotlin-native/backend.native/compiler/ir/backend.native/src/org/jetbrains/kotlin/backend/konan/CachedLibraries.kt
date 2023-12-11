@@ -145,19 +145,12 @@ class CachedLibraries(
         }
     }
 
-    private val cacheDirsContents = mutableMapOf<String, Set<String>>()
-    private val librariesFileDirs = mutableMapOf<KotlinLibrary, List<File>>()
-
     private fun selectCache(library: KotlinLibrary, cacheDir: File): Cache? {
         // See Linker.renameOutput why is it ok to have an empty cache directory.
-        val cacheDirContents = cacheDirsContents.getOrPut(cacheDir.absolutePath) {
-            cacheDir.listFilesOrEmpty.map { it.absolutePath }.toSet()
-        }
+        val cacheDirContents = cacheDir.listFilesOrEmpty.map { it.absolutePath }.toSet()
         if (cacheDirContents.isEmpty()) return null
         val cacheBinaryPartDir = cacheDir.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
-        val cacheBinaryPartDirContents = cacheDirsContents.getOrPut(cacheBinaryPartDir.absolutePath) {
-            cacheBinaryPartDir.listFilesOrEmpty.map { it.absolutePath }.toSet()
-        }
+        val cacheBinaryPartDirContents = cacheBinaryPartDir.listFilesOrEmpty.map { it.absolutePath }.toSet()
         val baseName = getCachedLibraryName(library)
         val dynamicFile = cacheBinaryPartDir.child(getArtifactName(target, baseName, CompilerOutputKind.DYNAMIC_CACHE))
         val staticFile = cacheBinaryPartDir.child(getArtifactName(target, baseName, CompilerOutputKind.STATIC_CACHE))
@@ -169,8 +162,8 @@ class CachedLibraries(
             dynamicFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.DYNAMIC, dynamicFile.absolutePath)
             staticFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.STATIC, staticFile.absolutePath)
             else -> {
-                val libraryFileDirs = librariesFileDirs.getOrPut(library) {
-                    library.getFilesWithFqNames().map { cacheDir.child(CacheSupport.cacheFileId(it.fqName, it.filePath)) }
+                val libraryFileDirs = library.getFilesWithFqNames().map {
+                    cacheDir.child(CacheSupport.cacheFileId(it.fqName, it.filePath))
                 }
                 Cache.PerFile(target, Kind.STATIC, cacheDir.absolutePath, libraryFileDirs,
                         complete = cacheDirContents.containsAll(libraryFileDirs.map { it.absolutePath }))
@@ -181,6 +174,21 @@ class CachedLibraries(
     private val uniqueNameToLibrary = allLibraries.associateBy { it.uniqueName }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
+    private val cacheNameToImplicitDirMapping: Map<String, File> = implicitCacheDirectories.flatMap {
+        dir -> dir.listFilesOrEmpty.map {
+            it -> it.name to it
+        }
+    }.toMap()
+
+    private fun selectCacheForLibrary(library: KotlinLibrary): Cache? {
+        return sequenceOf(
+            cacheNameToImplicitDirMapping[getPerFileCachedLibraryName(library)],
+            cacheNameToImplicitDirMapping[getCachedLibraryName(library)]
+        ).filterNotNull()
+        .mapNotNull { selectCache(library, it) }
+        .firstOrNull()
+    }
+
     private val allCaches: Map<KotlinLibrary, Cache> = allLibraries.mapNotNull { library ->
         val explicitPath = explicitCaches[library]
 
@@ -189,10 +197,7 @@ class CachedLibraries(
                     ?: error("No cache found for library ${library.libraryName} at $explicitPath")
         } else {
             val libraryPath = library.libraryFile.absolutePath
-            implicitCacheDirectories.firstNotNullOfOrNull { dir ->
-                selectCache(library, dir.child(getPerFileCachedLibraryName(library)))
-                        ?: selectCache(library, dir.child(getCachedLibraryName(library)))
-            }
+            selectCacheForLibrary(library)
                     ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.absolutePath) } }
                             ?.let {
                                 val dir = computeVersionedCacheDirectory(it, library, uniqueNameToLibrary, uniqueNameToHash)
