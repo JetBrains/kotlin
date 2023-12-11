@@ -9,20 +9,9 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.formver.viper.ast.Info
-import org.jetbrains.kotlin.formver.viper.ast.unwrap
-import org.jetbrains.kotlin.formver.viper.errors.ErrorReason
-import org.jetbrains.kotlin.formver.viper.errors.extractInfoFromFunctionArgument
 
 sealed interface SourceRole {
-    data object ParamFunctionLeakageCheck : SourceRole {
-        /**
-         * Retrieves the leaking function parameter symbol from an error reason.
-         * This method is specifically used for identifying the function parameter that violates the `callsInPlace` contract.
-         */
-        fun ErrorReason.fetchLeakingFunction(): FirBasedSymbol<*> =
-            extractInfoFromFunctionArgument(0).unwrap<FirSymbolHolder>().firSymbol
-    }
-
+    data object ParamFunctionLeakageCheck : SourceRole
     data class CallsInPlaceEffect(val paramSymbol: FirBasedSymbol<*>, val kind: EventOccurrencesRange) : SourceRole
     data class ConditionalEffect(val effect: ReturnsEffect, val condition: Condition) : SourceRole
     data class FirSymbolHolder(val firSymbol: FirBasedSymbol<*>) : SourceRole, Condition

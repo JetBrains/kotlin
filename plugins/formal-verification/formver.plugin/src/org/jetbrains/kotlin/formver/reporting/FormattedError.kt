@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.formver.PluginErrors
 import org.jetbrains.kotlin.formver.embeddings.SourceRole
-import org.jetbrains.kotlin.formver.embeddings.SourceRole.ParamFunctionLeakageCheck.fetchLeakingFunction
+import org.jetbrains.kotlin.formver.viper.ast.info
+import org.jetbrains.kotlin.formver.viper.ast.unwrap
 import org.jetbrains.kotlin.formver.viper.errors.VerificationError
-import org.jetbrains.kotlin.formver.viper.errors.getInfoOrNull
 
 sealed interface FormattedError {
     fun report(reporter: DiagnosticReporter, source: KtSourceElement?, context: CheckerContext)
@@ -50,7 +50,10 @@ class CallsInPlaceError(private val sourceRole: SourceRole.CallsInPlaceEffect) :
 
 class LeakingLambdaError(private val error: VerificationError) : FormattedError {
     override fun report(reporter: DiagnosticReporter, source: KtSourceElement?, context: CheckerContext) {
-        reporter.reportOn(source, PluginErrors.LAMBDA_MAY_LEAK, error.reason.fetchLeakingFunction(), context)
+        // The leaking function symbol is always contained in the first argument of the error's reason.
+        val faultPropositionInfo = error.unverifiableProposition.asCallable().arg(0).info
+        val leakingFunctionSymbol = faultPropositionInfo.unwrap<SourceRole.FirSymbolHolder>().firSymbol
+        reporter.reportOn(source, PluginErrors.LAMBDA_MAY_LEAK, leakingFunctionSymbol, context)
     }
 }
 
@@ -78,10 +81,28 @@ class DefaultError(private val error: VerificationError) : FormattedError {
 }
 
 fun VerificationError.formatUserFriendly(): FormattedError? =
-    when (val sourceRole = getInfoOrNull<SourceRole>()) {
+    when (val sourceRole = lookupSourceRole()) {
         is SourceRole.ReturnsEffect -> ReturnsEffectError(sourceRole)
         is SourceRole.CallsInPlaceEffect -> CallsInPlaceError(sourceRole)
         is SourceRole.ParamFunctionLeakageCheck -> LeakingLambdaError(this)
         is SourceRole.ConditionalEffect -> ConditionalEffectError(sourceRole)
         else -> null
     }
+
+/**
+ * Find the contained [SourceRole] within a verification error.
+ * If the role is not found, then returns `null`.
+ */
+private fun VerificationError.lookupSourceRole(): SourceRole? {
+    /**
+     * Lookup strategy:
+     * The source role can be embedded either in the error's location node, or in the fault proposition.
+     *
+     * As an example, `PreconditionInCallFalse` errors have as offending node result the call-site of the called method.
+     * But the actual info we are interested in is on the pre-condition, contained in the reason's offending node.
+     */
+    return when (val locationNodeRole = locationNode.getInfoOrNull<SourceRole>()) {
+        null -> unverifiableProposition.getInfoOrNull<SourceRole>()
+        else -> locationNodeRole
+    }
+}

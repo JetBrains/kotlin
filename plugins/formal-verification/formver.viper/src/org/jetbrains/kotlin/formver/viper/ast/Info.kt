@@ -48,5 +48,8 @@ inline fun <reified I> Info.unwrap(): I = when (this) {
     else -> error("The metadata does not contain an information of type ${I::class}.")
 }
 
-val viper.silver.ast.Node.info: viper.silver.ast.Info
+private val viper.silver.ast.Node.info: viper.silver.ast.Info
     get() = prettyMetadata._2()
+
+val AstWrapper.Node.info: Info
+    get() = Info.fromSilver(node.info)
