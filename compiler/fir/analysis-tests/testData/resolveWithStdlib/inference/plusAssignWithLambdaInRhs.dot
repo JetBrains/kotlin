@@ -52,7 +52,7 @@ digraph plusAssignWithLambdaInRhs_kt {
     11 -> {12} [style=dotted];
     12 -> {13} [style=dotted];
     13 -> {14} [style=dotted];
-    15 -> {16} [style=dotted];
+    15 -> {16} [style=dotted label="Postponed"];
     16 -> {17} [style=dotted];
     17 -> {18} [style=dotted];
 
@@ -175,11 +175,11 @@ digraph plusAssignWithLambdaInRhs_kt {
     45 -> {46};
     46 -> {47};
     47 -> {48};
-    49 -> {50};
+    49 -> {50} [label="Postponed"];
     50 -> {51};
     51 -> {52};
     53 -> {55};
-    54 -> {55};
+    54 -> {55} [label="Postponed"];
     55 -> {56};
     56 -> {59};
     56 -> {57} [style=dotted];

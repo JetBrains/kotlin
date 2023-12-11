@@ -10,13 +10,13 @@ fun testSafeCaptureVarInInitializer() {
 
     val s = when (val y = run { x = 42; 32 }) {
         0 -> {
-            x.inc() // TODO fix smart casts for captured variables
+            x<!UNSAFE_CALL!>.<!>inc() // TODO fix smart casts for captured variables
             "0"
         }
         else -> "!= 0"
     }
 
-    x.inc() // TODO fix smart casts for captured variables
+    x<!UNSAFE_CALL!>.<!>inc() // TODO fix smart casts for captured variables
 }
 
 

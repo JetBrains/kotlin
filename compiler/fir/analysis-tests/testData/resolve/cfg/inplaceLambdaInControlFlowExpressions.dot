@@ -128,7 +128,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     34 -> {36};
     35 -> {37};
     36 -> {37} [color=green];
-    36 -> {40} [color=red];
+    36 -> {40} [color=red label="Postponed"];
     37 -> {38};
     38 -> {39};
     39 -> {40};
@@ -216,7 +216,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     57 -> {59};
     58 -> {60};
     59 -> {60} [color=green];
-    59 -> {69} [color=red];
+    59 -> {69} [color=red label="Postponed"];
     60 -> {61};
     61 -> {62};
     62 -> {63 69};
@@ -281,7 +281,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     83 -> {85};
     84 -> {86};
     85 -> {86} [color=green];
-    85 -> {87} [color=red];
+    85 -> {87} [color=red label="Postponed"];
     86 -> {87};
     87 -> {88};
     88 -> {89};

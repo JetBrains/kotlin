@@ -118,7 +118,7 @@ digraph inPlaceLambdas_kt {
     29 -> {30};
     30 -> {32};
     31 -> {33};
-    32 -> {33};
+    32 -> {33} [label="Postponed"];
     33 -> {34};
     34 -> {35};
     35 -> {36};
@@ -155,13 +155,12 @@ digraph inPlaceLambdas_kt {
                 color=blue
                 52 [label="Function call arguments enter"];
                 53 [label="Access variable R|<local>/x|"];
-                54 [label="Smart cast: R|<local>/x|"];
-                55 [label="Function call arguments exit"];
+                54 [label="Function call arguments exit"];
             }
-            56 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
-            57 [label="Exit block"];
+            55 [label="Function call: R|<local>/x|.<Unresolved name: bar>#()" style="filled" fillcolor=yellow];
+            56 [label="Exit block"];
         }
-        58 [label="Exit function test_2" style="filled" fillcolor=red];
+        57 [label="Exit function test_2" style="filled" fillcolor=red];
     }
     39 -> {40};
     40 -> {41};
@@ -176,96 +175,96 @@ digraph inPlaceLambdas_kt {
     47 -> {48};
     48 -> {50};
     49 -> {51};
-    50 -> {51};
+    50 -> {51} [label="Postponed"];
     51 -> {52};
     52 -> {53};
     53 -> {54};
     54 -> {55};
     55 -> {56};
     56 -> {57};
-    57 -> {58};
 
     subgraph cluster_20 {
         color=red
-        59 [label="Enter function test_3" style="filled" fillcolor=red];
+        58 [label="Enter function test_3" style="filled" fillcolor=red];
         subgraph cluster_21 {
             color=blue
-            60 [label="Enter block"];
+            59 [label="Enter block"];
             subgraph cluster_22 {
                 color=blue
-                61 [label="Enter when"];
+                60 [label="Enter when"];
                 subgraph cluster_23 {
                     color=blue
-                    62 [label="Enter when branch condition "];
-                    63 [label="Access variable R|<local>/x|"];
-                    64 [label="Type operator: (R|<local>/x| is R|A|)"];
-                    65 [label="Exit when branch condition"];
+                    61 [label="Enter when branch condition "];
+                    62 [label="Access variable R|<local>/x|"];
+                    63 [label="Type operator: (R|<local>/x| is R|A|)"];
+                    64 [label="Exit when branch condition"];
                 }
-                66 [label="Synthetic else branch"];
-                67 [label="Enter when branch result"];
+                65 [label="Synthetic else branch"];
+                66 [label="Enter when branch result"];
                 subgraph cluster_24 {
                     color=blue
-                    68 [label="Enter block"];
+                    67 [label="Enter block"];
                     subgraph cluster_25 {
                         color=blue
-                        69 [label="Function call arguments enter"];
-                        70 [label="Postponed enter to lambda"];
+                        68 [label="Function call arguments enter"];
+                        69 [label="Postponed enter to lambda"];
                         subgraph cluster_26 {
                             color=blue
-                            71 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                            70 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                             subgraph cluster_27 {
                                 color=blue
-                                72 [label="Enter block"];
+                                71 [label="Enter block"];
                                 subgraph cluster_28 {
                                     color=blue
-                                    73 [label="Function call arguments enter"];
-                                    74 [label="Access variable R|<local>/x|"];
-                                    75 [label="Smart cast: R|<local>/x|"];
-                                    76 [label="Function call arguments exit"];
+                                    72 [label="Function call arguments enter"];
+                                    73 [label="Access variable R|<local>/x|"];
+                                    74 [label="Smart cast: R|<local>/x|"];
+                                    75 [label="Function call arguments exit"];
                                 }
-                                77 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
-                                78 [label="Access variable R|<local>/x|"];
-                                79 [label="Smart cast: R|<local>/x|"];
-                                80 [label="Type operator: (R|<local>/x| as R|B|)"];
-                                81 [label="Exit block"];
+                                76 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
+                                77 [label="Access variable R|<local>/x|"];
+                                78 [label="Smart cast: R|<local>/x|"];
+                                79 [label="Type operator: (R|<local>/x| as R|B|)"];
+                                80 [label="Exit block"];
                             }
-                            82 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                            81 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                         }
-                        83 [label="Function call arguments exit"];
+                        82 [label="Function call arguments exit"];
                     }
-                    84 [label="Postponed exit from lambda"];
-                    85 [label="Function call: R|kotlin/run|<R|B|>(...)" style="filled" fillcolor=yellow];
+                    83 [label="Postponed exit from lambda"];
+                    84 [label="Function call: R|kotlin/run|<R|B|>(...)" style="filled" fillcolor=yellow];
                     subgraph cluster_29 {
                         color=blue
-                        86 [label="Function call arguments enter"];
-                        87 [label="Access variable R|<local>/x|"];
-                        88 [label="Smart cast: R|<local>/x|"];
-                        89 [label="Function call arguments exit"];
+                        85 [label="Function call arguments enter"];
+                        86 [label="Access variable R|<local>/x|"];
+                        87 [label="Smart cast: R|<local>/x|"];
+                        88 [label="Function call arguments exit"];
                     }
-                    90 [label="Function call: R|<local>/x|.R|/B.bar|()" style="filled" fillcolor=yellow];
-                    91 [label="Exit block"];
+                    89 [label="Function call: R|<local>/x|.<Unresolved name: bar>#()" style="filled" fillcolor=yellow];
+                    90 [label="Exit block"];
                 }
-                92 [label="Exit when branch result"];
-                93 [label="Exit when"];
+                91 [label="Exit when branch result"];
+                92 [label="Exit when"];
             }
-            94 [label="Exit block"];
+            93 [label="Exit block"];
         }
-        95 [label="Exit function test_3" style="filled" fillcolor=red];
+        94 [label="Exit function test_3" style="filled" fillcolor=red];
     }
+    58 -> {59};
     59 -> {60};
     60 -> {61};
     61 -> {62};
     62 -> {63};
     63 -> {64};
-    64 -> {65};
-    65 -> {66 67};
-    66 -> {93};
+    64 -> {65 66};
+    65 -> {92};
+    66 -> {67};
     67 -> {68};
     68 -> {69};
-    69 -> {70};
-    70 -> {71 83};
-    70 -> {84} [style=dotted];
-    70 -> {71} [style=dashed];
+    69 -> {70 82};
+    69 -> {83} [style=dotted];
+    69 -> {70} [style=dashed];
+    70 -> {71};
     71 -> {72};
     72 -> {73};
     73 -> {74};
@@ -276,9 +275,9 @@ digraph inPlaceLambdas_kt {
     78 -> {79};
     79 -> {80};
     80 -> {81};
-    81 -> {82};
+    81 -> {83};
     82 -> {84};
-    83 -> {85};
+    83 -> {84} [label="Postponed"];
     84 -> {85};
     85 -> {86};
     86 -> {87};
@@ -289,6 +288,5 @@ digraph inPlaceLambdas_kt {
     91 -> {92};
     92 -> {93};
     93 -> {94};
-    94 -> {95};
 
 }

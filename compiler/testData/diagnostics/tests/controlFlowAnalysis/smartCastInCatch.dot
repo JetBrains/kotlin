@@ -467,7 +467,7 @@ digraph smartCastInCatch_fir_kt {
     148 -> {150};
     149 -> {151};
     150 -> {151} [color=green];
-    150 -> {163} [color=red];
+    150 -> {163} [color=red label="Postponed"];
     151 -> {152};
     152 -> {153};
     153 -> {154 163};

@@ -245,7 +245,7 @@ digraph lambdaInWhenBranch_kt {
     57 -> {59};
     58 -> {60};
     59 -> {60} [color=green];
-    59 -> {63} [color=red];
+    59 -> {63} [color=red label="Postponed"];
     60 -> {61};
     61 -> {62};
     62 -> {63};

@@ -1062,7 +1062,7 @@ digraph castInTryWithJump_fir_kt {
     344 -> {345} [style=dotted];
     345 -> {347} [style=dotted];
     346 -> {348} [style=dotted];
-    347 -> {348} [style=dotted];
+    347 -> {348} [style=dotted label="Postponed"];
     348 -> {349} [style=dotted];
     349 -> {350} [style=dotted];
     350 -> {351} [style=dotted];

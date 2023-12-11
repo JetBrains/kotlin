@@ -55,8 +55,9 @@ abstract class PathAwareControlFlowGraphVisitor<I : ControlFlowInfo<I, *, *>> :
                     persistentMapOf(NormalPath to info)
                 }
             }
-            // A normal path forwards all data. (Non-normal paths should only have data in finally blocks.)
+            // A normal or postponed path forwards all data. (Non-normal paths should only have data in finally blocks.)
             label == NormalPath -> data
+            label == PostponedPath -> data
             // Labeled edge from a jump statement to a `finally` block forks flow. Usually we'd only have
             // NormalPath data here, but technically it's possible (though questionable) to jump from a `finally`
             // (discarding the exception or aborting a previous jump in the process) so merge all data just in case.

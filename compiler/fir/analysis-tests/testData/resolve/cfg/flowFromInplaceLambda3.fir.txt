@@ -77,7 +77,7 @@ FILE: flowFromInplaceLambda3.kt
             R|<local>/x| = String()
         }
         )
-        R|<local>/x|.R|kotlin/String.length|
+        R|<local>/x|.<Unresolved name: length>#
     }
     public final fun test2(): R|kotlin/Unit| {
         lvar x: R|kotlin/Any?|
@@ -88,7 +88,7 @@ FILE: flowFromInplaceLambda3.kt
         }
         )
         R|<local>/x|.<Unresolved name: length>#
-        R|<local>/x|.R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
     }
     public final fun test3(): R|kotlin/Unit| {
         lvar x: R|kotlin/Any?|
@@ -99,7 +99,7 @@ FILE: flowFromInplaceLambda3.kt
         }
         )
         R|<local>/x|.<Unresolved name: length>#
-        R|<local>/x|.R|kotlin/Int.inc|()
+        R|<local>/x|.<Unresolved name: inc>#()
     }
     public final fun test4(): R|kotlin/Unit| {
         lvar x: R|kotlin/Any?|

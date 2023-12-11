@@ -212,8 +212,8 @@ digraph propertiesAndInitBlocks_kt {
     48 -> {49} [style=dotted];
     49 -> {50} [style=dotted];
     51 -> {53};
-    52 -> {53};
     52 -> {9} [color=green style=dashed];
+    52 -> {53} [label="Postponed"];
     53 -> {54};
     54 -> {55} [color=green];
     55 -> {56};

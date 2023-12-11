@@ -145,7 +145,7 @@ digraph returnValuesFromLambda_kt {
     38 -> {39};
     39 -> {41};
     40 -> {42};
-    41 -> {42};
+    41 -> {42} [label="Postponed"];
     42 -> {43};
     43 -> {44};
     44 -> {45};
@@ -204,7 +204,7 @@ digraph returnValuesFromLambda_kt {
     57 -> {58} [style=dotted];
     58 -> {60};
     59 -> {61};
-    60 -> {61};
+    60 -> {61} [label="Postponed"];
     61 -> {62};
     62 -> {63};
     63 -> {64};
@@ -255,7 +255,7 @@ digraph returnValuesFromLambda_kt {
     73 -> {74} [style=dotted];
     74 -> {76} [style=dotted];
     75 -> {77} [style=dotted];
-    76 -> {77} [style=dotted];
+    76 -> {77} [style=dotted label="Postponed"];
     77 -> {78} [style=dotted];
     78 -> {79} [style=dotted];
     79 -> {80} [style=dotted];

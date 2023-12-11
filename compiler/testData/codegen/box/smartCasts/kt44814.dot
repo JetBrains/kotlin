@@ -772,7 +772,7 @@ digraph kt44814_kt {
     207 -> {209};
     208 -> {195} [color=green style=dashed];
     208 -> {209} [color=green];
-    208 -> {216} [style=dotted];
+    208 -> {216} [style=dotted label="Postponed"];
     209 -> {210};
     210 -> {211 215};
     211 -> {212};
@@ -817,7 +817,7 @@ digraph kt44814_kt {
     246 -> {247 249};
     247 -> {248};
     248 -> {255};
-    249 -> {255} [color=red];
+    249 -> {255} [color=red label="Postponed"];
     250 -> {251};
     251 -> {252};
     252 -> {253};

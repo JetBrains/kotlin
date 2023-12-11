@@ -14,7 +14,7 @@ fun test1(x: String?) {
         1,
         run { x<!UNSAFE_CALL!>.<!>length; 123 } // Bad (resolution order undefined)
     )
-    x.length // OK (x as String unconditional)
+    x<!UNSAFE_CALL!>.<!>length // Bad: KT-37838 -> OK (x as String unconditional)
 }
 
 fun test2(x: String?) {
@@ -23,7 +23,7 @@ fun test2(x: String?) {
         someCompletedCall(1),
         run { x<!UNSAFE_CALL!>.<!>length; 123 } // Bad (resolution order undefined)
     )
-    x.length // OK (x as String unconditional)
+    x<!UNSAFE_CALL!>.<!>length // OK (x as String unconditional)
 }
 
 fun test3(x: String?) {
@@ -32,7 +32,7 @@ fun test3(x: String?) {
         if (true) 1 else 2,
         run { x<!UNSAFE_CALL!>.<!>length; 123 } // Bad (resolution order undefined)
     )
-    x.length // OK (x as String unconditional)
+    x<!UNSAFE_CALL!>.<!>length // Bad: KT-37838 -> OK (x as String unconditional)
 }
 
 fun test4(x: String?) {
@@ -62,7 +62,7 @@ fun test6(x: String?) {
         1,
         run { x<!UNSAFE_CALL!>.<!>length; 123 } // Bad (resolution order undefined)
     )
-    x<!UNSAFE_CALL!>.<!>length // OK (x as String in both branches)
+    x<!UNSAFE_CALL!>.<!>length // Bad: KT-37838 -> OK (x as String in both branches)
 }
 
 fun test7(x: String?) {

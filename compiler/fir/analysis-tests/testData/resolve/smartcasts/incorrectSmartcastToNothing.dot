@@ -187,7 +187,7 @@ digraph incorrectSmartcastToNothing_kt {
     57 -> {58 60};
     58 -> {59};
     59 -> {61};
-    60 -> {61} [color=red];
+    60 -> {61} [color=red label="Postponed"];
     61 -> {62};
     62 -> {63};
     63 -> {64};

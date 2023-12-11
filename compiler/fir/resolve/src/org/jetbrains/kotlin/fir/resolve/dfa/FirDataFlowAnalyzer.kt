@@ -1280,23 +1280,32 @@ abstract class FirDataFlowAnalyzer(
     private fun CFGNode<*>.buildDefaultFlow(
         builder: (FlowPath, MutableFlow) -> Unit,
     ): MutableFlow {
-        val previousFlows = previousNodes.mapNotNull { node ->
+        val previousFlows = mutableListOf<PersistentFlow>()
+        val statementFlows = mutableListOf<PersistentFlow>()
+
+        for (node in previousNodes) {
             val edge = edgeFrom(node)
-            if (!usedInDfa(edge)) return@mapNotNull null
+            if (!usedInDfa(edge)) continue
 
             // `MergePostponedLambdaExitsNode` nodes form a parallel data flow graph. We never compute
             // data flow for any of them until reaching a completed call.
             if (node is MergePostponedLambdaExitsNode && !node.flowInitialized) node.mergeIncomingFlow()
 
             // For CFGNodes that are the end of alternate flows, use the alternate flow associated with the edge label.
-            if (node is FinallyBlockExitNode) {
+            val flow = if (node is FinallyBlockExitNode) {
                 val alternatePath = FlowPath.CfgEdge(edge.label, node.fir)
                 node.getAlternateFlow(alternatePath) ?: node.flow
             } else {
                 node.flow
             }
+            previousFlows.add(flow)
+            if (edge.label != PostponedPath) {
+                statementFlows.add(flow)
+            }
         }
-        val result = logicSystem.joinFlow(previousFlows, isUnion)
+
+        val result = logicSystem.joinFlow(previousFlows, statementFlows, isUnion)
+
         if (graphBuilder.lastNodeOrNull == this) {
             // Here it is, the new `lastNode`. If the previous state is the only predecessor, then there is actually
             // nothing to update; `addTypeStatement` has already ensured we have the correct information.
@@ -1305,7 +1314,9 @@ abstract class FirDataFlowAnalyzer(
             }
             currentReceiverState = result
         }
-        return result.also { builder(FlowPath.Default, it) }
+
+        builder(FlowPath.Default, result)
+        return result
     }
 
     private fun CFGNode<*>.buildAlternateFlow(
@@ -1313,25 +1324,34 @@ abstract class FirDataFlowAnalyzer(
         builder: (FlowPath, MutableFlow) -> Unit,
     ): MutableFlow {
         val alternateFlowStart = this is FinallyBlockEnterNode
-        val previousFlows = previousNodes.mapNotNull { node ->
+        val previousFlows = mutableListOf<PersistentFlow>()
+        val statementFlows = mutableListOf<PersistentFlow>()
+
+        for (node in previousNodes) {
             val edge = edgeFrom(node)
-            if (!usedInDfa(edge)) return@mapNotNull null
+            if (!usedInDfa(edge)) continue
 
             // For CFGNodes that cause alternate flow paths to be created, only edges with matching labels should be merged. However, when
             // an alternate flow is being propagated through one of these CFGNodes - i.e., when the FirElements do not match - only
             // NormalPath edges should be merged.
             if (alternateFlowStart) {
                 if (path.fir == this.fir && edge.label != path.label) {
-                    return@mapNotNull null
+                    continue
                 } else if (path.fir != this.fir && edge.label != NormalPath) {
-                    return@mapNotNull null
+                    continue
                 }
             }
 
-            node.getAlternateFlow(path) ?: node.flow
+            val flow = node.getAlternateFlow(path) ?: node.flow
+            previousFlows.add(flow)
+            if (edge.label != PostponedPath) {
+                statementFlows.add(flow)
+            }
         }
-        val result = logicSystem.joinFlow(previousFlows, isUnion)
-        return result.also { builder(path, it) }
+
+        val result = logicSystem.joinFlow(previousFlows, statementFlows, isUnion)
+        builder(path, result)
+        return result
     }
 
     // Generally when calling some method on `graphBuilder`, one of the nodes it returns is the new `lastNode`.

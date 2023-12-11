@@ -31,7 +31,7 @@ fun <K> materialize(): K = null!!
 
 fun basic(x: Any?) {
     exactlyOnce { x as Int }
-    x.inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
 }
 
 fun completedCallExactlyOnce(x: Any?, y: Any?) {
@@ -41,7 +41,7 @@ fun completedCallExactlyOnce(x: Any?, y: Any?) {
         y as Int,
         exactlyOnce { x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
     ).inc() // OK
-    x.inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
     y.inc() // OK
 }
 
@@ -51,7 +51,7 @@ fun completedCallAtLeastOnce(x: Any?, y: Any?) {
         y as Int,
         atLeastOnce { x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
     ).inc() // OK
-    x.inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
     y.inc() // OK
 }
 
@@ -91,8 +91,8 @@ fun incompleteCallExactlyOnce(x: Any, y: Any) {
         id(exactlyOnce { x as Int; y.<!UNRESOLVED_REFERENCE!>inc<!>(); x.inc(); materialize() }),
         exactlyOnce { y as Int; x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
     ).inc() // OK
-    x.inc() // OK
-    y.inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
+    y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
 }
 
 fun incompleteCallAtLeastOnce(x: Any, y: Any) {
@@ -100,8 +100,8 @@ fun incompleteCallAtLeastOnce(x: Any, y: Any) {
         id(atLeastOnce { x as Int; y.<!UNRESOLVED_REFERENCE!>inc<!>(); x.inc(); materialize() }),
         atLeastOnce { y as Int; x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
     ).inc() // OK
-    x.inc() // OK
-    y.inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
+    y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
 }
 
 fun incompleteCallAtMostOnce(x: Any, y: Any) {

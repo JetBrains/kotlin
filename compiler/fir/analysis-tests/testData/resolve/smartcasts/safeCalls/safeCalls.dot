@@ -256,7 +256,7 @@ digraph safeCalls_kt {
     79 -> {80};
     80 -> {81};
     82 -> {84};
-    83 -> {84};
+    83 -> {84} [label="Postponed"];
     84 -> {87};
     85 -> {86};
     86 -> {87};
@@ -407,7 +407,7 @@ digraph safeCalls_kt {
     127 -> {128} [style=dotted];
     128 -> {130} [style=dotted];
     129 -> {131} [style=dotted];
-    130 -> {131} [style=dotted];
+    130 -> {131} [style=dotted label="Postponed"];
     131 -> {132} [style=dotted];
     132 -> {133 142} [style=dotted];
     133 -> {134} [style=dotted];

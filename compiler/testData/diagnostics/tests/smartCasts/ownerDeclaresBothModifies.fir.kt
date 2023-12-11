@@ -7,7 +7,7 @@ fun foo(arg: Int?) {
         x.hashCode()
         x = null
     }
-    if (<!SENSELESS_COMPARISON!>x != null<!>) x = 42
+    if (x != null) x = 42
     // Unsafe because of lambda
     x<!UNSAFE_CALL!>.<!>hashCode()
 }

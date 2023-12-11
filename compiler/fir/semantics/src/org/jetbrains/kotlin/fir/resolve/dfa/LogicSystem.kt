@@ -21,7 +21,15 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         return !isNullableNothing
     }
 
-    fun joinFlow(flows: Collection<PersistentFlow>, union: Boolean): MutableFlow {
+    /**
+     * Creates the next [Flow] by joining a set of previous [Flow]s.
+     *
+     * @param flows All [PersistentFlow]s which flow into the join flow. These will determine assignments and variable aliases for the
+     * resulting join flow.
+     * @param statementFlows A *subset* of [flows] used to determine what [TypeStatement]s will be copied to the join flow.
+     * @param union Determines if [TypeStatement]s from different flows should be combined with union or intersection logic.
+     */
+    fun joinFlow(flows: Collection<PersistentFlow>, statementFlows: Collection<PersistentFlow>, union: Boolean): MutableFlow {
         when (flows.size) {
             0 -> return MutableFlow()
             1 -> return flows.first().fork()
@@ -37,7 +45,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         } else {
             result.copyCommonAliases(flows)
         }
-        result.copyStatements(flows, commonFlow, union)
+        result.copyStatements(statementFlows, commonFlow, union)
         // TODO: compute common implications?
         return result
     }

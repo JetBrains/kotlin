@@ -128,7 +128,7 @@ finally {
     26 -> {28};
     27 -> {20} [color=green style=dashed];
     27 -> {28} [color=green];
-    27 -> {35} [color=red];
+    27 -> {35} [color=red label="Postponed"];
     28 -> {29};
     29 -> {30};
     30 -> {31};
@@ -223,7 +223,7 @@ finally {
     51 -> {52};
     53 -> {55};
     54 -> {55} [color=green];
-    54 -> {62} [color=red];
+    54 -> {62} [color=red label="Postponed"];
     55 -> {56};
     56 -> {57};
     57 -> {58};

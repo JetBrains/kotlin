@@ -106,6 +106,10 @@ object UncaughtExceptionPath : EdgeLabel {
     override val label: String get() = "onUncaughtException"
 }
 
+object PostponedPath : EdgeLabel {
+    override val label: String get() = "Postponed"
+}
+
 enum class EdgeKind(
     val usedInDfa: Boolean, // propagate flow to alive nodes
     val usedInDeadDfa: Boolean, // propagate flow to dead nodes

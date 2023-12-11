@@ -135,7 +135,7 @@ digraph delegatedConstructorArguments_kt {
     12 -> {14};
     13 -> {6} [color=green style=dashed];
     13 -> {14} [color=green];
-    13 -> {15} [color=red];
+    13 -> {15} [color=red label="Postponed"];
     14 -> {15};
     15 -> {30} [color=green label="return@/Test.Test"];
     15 -> {45} [color=red];
@@ -153,7 +153,7 @@ digraph delegatedConstructorArguments_kt {
     26 -> {28};
     27 -> {20} [color=green style=dashed];
     27 -> {28} [color=green];
-    27 -> {29} [color=red];
+    27 -> {29} [color=red label="Postponed"];
     28 -> {29};
     29 -> {30} [color=green label="return@/Test.Test"];
     29 -> {55} [color=red];

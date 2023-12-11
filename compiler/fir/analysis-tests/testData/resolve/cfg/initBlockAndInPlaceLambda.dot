@@ -98,7 +98,7 @@ digraph initBlockAndInPlaceLambda_kt {
     21 -> {22};
     22 -> {24};
     23 -> {25};
-    24 -> {25};
+    24 -> {25} [label="Postponed"];
     25 -> {26};
     26 -> {27};
     27 -> {28};

@@ -47,8 +47,8 @@ fun test3(x: Any?) {
     var p: Any? = x
     p.<!UNRESOLVED_REFERENCE!>length<!> // Bad
     run2({ p = null; n() }, { p = ""; 123 })
-    p<!UNSAFE_CALL!>.<!>length // Bad: p can be null
-    p?.length // OK: p is String | Nothing? = String?
+    p.<!UNRESOLVED_REFERENCE!>length<!> // Bad: p can be null
+    p?.<!UNRESOLVED_REFERENCE!>length<!> // Bad: KT-37838 -> OK: p is String | Nothing? = String?
 }
 
 interface I1 { val x: Int }
@@ -61,16 +61,16 @@ fun test4(x: Any?) {
         { x as I1; x.<!UNRESOLVED_REFERENCE!>y<!>; n() }, // Bad: may or may not be called first
         { x as I2; x.<!UNRESOLVED_REFERENCE!>x<!>; 123 } // Bad: may or may not be called first
     )
-    x.x // OK: x is I1 & I2
-    x.y // OK: x is I1 & I2
+    x.<!UNRESOLVED_REFERENCE!>x<!> // Bad: KT-37838 -> OK: x is I1 & I2
+    x.<!UNRESOLVED_REFERENCE!>y<!> // Bad: KT-37838 -> OK: x is I1 & I2
 }
 
 fun test5(x: Any?, q: String?) {
     var p: Any? = x
     p.<!UNRESOLVED_REFERENCE!>length<!> // Bad
     run2({ p as Int; 123 }, { p = q; n() })
-    p<!UNSAFE_CALL!>.<!>length // Bad: p is String? | (String? & Int) = String?
-    p?.length // OK: p is String?
+    p.<!UNRESOLVED_REFERENCE!>length<!> // Bad: p is String? | (String? & Int) = String?
+    p?.<!UNRESOLVED_REFERENCE!>length<!> // Bad: KT-37838 -> OK: p is String?
 }
 
 fun test6() {

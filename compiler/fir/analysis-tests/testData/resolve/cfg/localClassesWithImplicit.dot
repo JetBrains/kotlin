@@ -447,8 +447,8 @@ digraph localClassesWithImplicit_kt {
     58 -> {59};
     59 -> {61};
     60 -> {62};
-    61 -> {62};
     61 -> {47} [color=green style=dashed];
+    61 -> {62} [label="Postponed"];
     62 -> {63};
     63 -> {66};
     63 -> {64} [style=dotted];
@@ -490,8 +490,8 @@ digraph localClassesWithImplicit_kt {
     99 -> {100};
     100 -> {102};
     101 -> {103};
-    102 -> {103};
     102 -> {70} [color=green style=dashed];
+    102 -> {103} [label="Postponed"];
     103 -> {104};
     104 -> {107};
     104 -> {105} [style=dotted];
@@ -531,8 +531,8 @@ digraph localClassesWithImplicit_kt {
     134 -> {135};
     135 -> {137};
     136 -> {138};
-    137 -> {138};
     137 -> {123} [color=green style=dashed];
+    137 -> {138} [label="Postponed"];
     138 -> {139};
     139 -> {142};
     139 -> {140} [style=dotted];
@@ -574,8 +574,8 @@ digraph localClassesWithImplicit_kt {
     175 -> {176};
     176 -> {178};
     177 -> {179};
-    178 -> {179};
     178 -> {146} [color=green style=dashed];
+    178 -> {179} [label="Postponed"];
     179 -> {180};
     180 -> {183};
     180 -> {181} [style=dotted];

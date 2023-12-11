@@ -333,7 +333,7 @@ class ControlFlowGraphBuilder {
                 if (kind.usedInCfa || !exit.isDead) {
                     // Since `node` is a union node, it is dead iff any input is dead. For once, `propagateDeadness`
                     // semantics are correct without an `updateDeadStatus`.
-                    addEdge(exit, node, preferredKind = kind)
+                    addEdge(exit, node, label = PostponedPath, preferredKind = kind)
                 }
             }
         }
@@ -381,7 +381,7 @@ class ControlFlowGraphBuilder {
         } else {
             for ((exit, kind) in currentLevelExits) {
                 // `node` is a merge node for many inputs anyhow so someone will call `updateDeadStatus` on it.
-                addEdge(exit, node, preferredKind = kind, propagateDeadness = false)
+                addEdge(exit, node, label = PostponedPath, preferredKind = kind, propagateDeadness = false)
             }
         }
     }

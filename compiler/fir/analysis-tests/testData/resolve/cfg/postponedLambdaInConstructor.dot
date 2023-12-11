@@ -100,7 +100,7 @@ digraph postponedLambdaInConstructor_kt {
     24 -> {26};
     25 -> {27};
     26 -> {27} [color=green];
-    26 -> {28} [color=red];
+    26 -> {28} [color=red label="Postponed"];
     27 -> {28};
     28 -> {29};
     29 -> {30} [color=green];

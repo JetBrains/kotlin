@@ -229,7 +229,7 @@ digraph delegateWithAnonymousObject_kt {
     60 -> {61} [style=dotted];
     62 -> {64};
     63 -> {64} [color=green];
-    63 -> {68} [color=red];
+    63 -> {68} [color=red label="Postponed"];
     64 -> {65};
     65 -> {66};
     66 -> {67};
