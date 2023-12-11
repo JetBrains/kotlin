@@ -19,10 +19,6 @@ import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 
 abstract class IrTypeBase(val kotlinType: KotlinType?) : IrType(), IrTypeProjection {
     override val type: IrType get() = this
-
-    override fun toString(): String {
-        return "IrTypeBase(${kotlinType.toString()})"
-    }
 }
 
 class IrErrorTypeImpl(
