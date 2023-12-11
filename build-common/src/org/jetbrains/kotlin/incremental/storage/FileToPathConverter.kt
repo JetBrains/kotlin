@@ -47,9 +47,7 @@ private class FileDescriptor(private val pathConverter: FileToPathConverter) : K
         // If we use a RelocatableFileToPathConverter instead, the file paths will be normalized first, so we'll get the same hash codes:
         //      [In "/path/to/project1"] File("src/foo.kt").hashCode() = 789
         //      [In "/path/to/project2"] File("src/foo.kt").hashCode() = 789
-        // It's also important to get the hash code using `File.hashCode()` instead of `String.hashCode()` because the hashCode() method
-        // needs to account for case-insensitive filesystems.
-        return File(pathConverter.toPath(file)).hashCode()
+        return pathConverter.toPath(file).hashCode()
     }
 
     override fun isEqual(file1: File, file2: File): Boolean {
