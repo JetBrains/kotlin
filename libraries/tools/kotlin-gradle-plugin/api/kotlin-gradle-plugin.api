@@ -606,6 +606,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultip
 	public abstract fun registerDependencyResolver (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;)V
 	public abstract fun registerDependencyTransformer (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;)V
 	public abstract fun registerExtrasSerializationExtension (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtension;)V
+	public abstract fun registerImportAction (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImportAction;)V
 	public abstract fun resolveDependencies (Ljava/lang/String;)Ljava/util/Set;
 	public abstract fun resolveDependencies (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
 	public abstract fun resolveDependenciesSerialized (Ljava/lang/String;)Ljava/util/List;
@@ -676,6 +677,11 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 	public final fun isSharedNative ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
 	public final fun isSingleKotlinTarget ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
 	public final fun isSinglePlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImportAction {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImportAction$Companion;
+	public abstract fun prepareIdeImport (Lorg/gradle/api/Project;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImportKt {

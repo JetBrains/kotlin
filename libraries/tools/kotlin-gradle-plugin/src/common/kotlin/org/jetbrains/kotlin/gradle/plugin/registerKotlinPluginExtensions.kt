@@ -7,63 +7,23 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.artifacts.*
-import org.jetbrains.kotlin.gradle.artifacts.KotlinJsKlibArtifact
-import org.jetbrains.kotlin.gradle.artifacts.KotlinJvmJarArtifact
-import org.jetbrains.kotlin.gradle.artifacts.KotlinNativeHostSpecificMetadataArtifact
-import org.jetbrains.kotlin.gradle.artifacts.KotlinNativeKlibArtifact
-import org.jetbrains.kotlin.gradle.artifacts.KotlinTargetArtifact
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.AndroidMainSourceSetConventionsChecker
-import org.jetbrains.kotlin.gradle.dsl.IosSourceSetConventionChecker
-import org.jetbrains.kotlin.gradle.dsl.PlatformSourceSetConventionsChecker
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.AndroidPluginWithoutAndroidTargetChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.AndroidSourceSetLayoutV1SourceSetsNotFoundChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.CommonMainOrTestWithDependsOnChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.DeprecatedKotlinNativeTargetsChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.DisabledCinteropCommonizationInHmppProjectChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.DisabledNativeTargetsChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.DuplicateSourceSetChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.ExperimentalTryNextUsageChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.IncorrectNativeDependenciesChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.InternalGradlePropertiesUsageChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.JsEnvironmentChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KotlinSourceSetTreeDependsOnMismatchChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KotlinTargetAlreadyDeclaredChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.MissingNativeStdlibChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.NoKotlinTargetsDeclaredChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.PreHmppDependenciesUsageChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnusedSourceSetsChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.WasmSourceSetsNotFoundChecker
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportActionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTaskSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.GlobalProjectStructureMetadataStorageSetupAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformTargetPresetAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.MultiplatformPublishingSetupAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.SyncLanguageSettingsWithKotlinExtensionSetupAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.UserDefinedAttributesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationProcessorSideEffect
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCreateResourcesTaskSideEffect
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCreateSourcesJarTaskSideEffect
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.DeprecatedMppGradlePropertiesMigrationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsReportSetupAction
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
 import org.jetbrains.kotlin.gradle.targets.*
-import org.jetbrains.kotlin.gradle.targets.ConfigureBuildSideEffect
-import org.jetbrains.kotlin.gradle.targets.CreateArtifactsSideEffect
-import org.jetbrains.kotlin.gradle.targets.CreateDefaultCompilationsSideEffect
-import org.jetbrains.kotlin.gradle.targets.CreateTargetConfigurationsSideEffect
-import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
-import org.jetbrains.kotlin.gradle.targets.NativeForwardImplementationToApiElementsSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.ConfigureFrameworkExportSideEffect
@@ -109,6 +69,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, AddBuildListenerForXCodeSetupAction)
             register(project, CreateFatFrameworksSetupAction)
             register(project, KotlinRegisterCompilationArchiveTasksExtension)
+            register(project, IdeMultiplatformImportActionSetupAction)
         }
     }
 

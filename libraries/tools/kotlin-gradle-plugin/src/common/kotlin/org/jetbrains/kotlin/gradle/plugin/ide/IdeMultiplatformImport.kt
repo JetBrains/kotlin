@@ -15,10 +15,15 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtensionBuilder
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Priority.Companion.high
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Priority.Companion.low
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Priority.Companion.normal
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Priority.Companion.veryHigh
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -117,6 +122,16 @@ interface IdeMultiplatformImport {
     fun registerExtrasSerializationExtension(
         extension: IdeaKotlinExtrasSerializationExtension,
     )
+
+    /**
+     * Registers a [IdeMultiplatformImportAction] which will be invoked only if an IDE/Gradle sync (import) is running.
+     * This action is guaranteed to run before the Kotlin Multiplatform Model is being built.
+     * There is no 'guarantee' whether this action will be running during configuration phase or as a first step
+     * of model building. This is considered an implementation detail.
+     * For further details please read [IdeMultiplatformImportAction]
+     */
+    @ExternalKotlinTargetApi
+    fun registerImportAction(action: IdeMultiplatformImportAction)
 
     /**
      * Any [IdeDependencyResolver] has to be registered for a given dependency resolution phase in which it participates

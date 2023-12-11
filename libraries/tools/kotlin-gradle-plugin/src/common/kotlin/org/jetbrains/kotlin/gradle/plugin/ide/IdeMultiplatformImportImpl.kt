@@ -127,6 +127,10 @@ internal class IdeMultiplatformImportImpl(
         registeredExtrasSerializationExtensions.add(extension)
     }
 
+    override fun registerImportAction(action: IdeMultiplatformImportAction) {
+        IdeMultiplatformImportAction.extensionPoint.register(extension.project, action)
+    }
+
     private fun createDependencyResolver(): IdeDependencyResolver {
         return IdeDependencyResolver(
             DependencyResolutionPhase.values().map { phase -> createDependencyResolver(phase) }
