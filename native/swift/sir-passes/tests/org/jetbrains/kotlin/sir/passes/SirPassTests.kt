@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.sir.mock.MockKotlinType
 import org.jetbrains.kotlin.sir.mock.MockParameter
 import org.jetbrains.kotlin.sir.passes.asserts.assertSirFunctionsEquals
 import org.jetbrains.kotlin.sir.passes.mocks.MockSirFunction
+import org.jetbrains.kotlin.sir.passes.util.runWithAsserts
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.sir.passes.run
 import org.jetbrains.sir.passes.translation.ForeignIntoSwiftFunctionTranslationPass
+import org.jetbrains.sir.passes.utility.assertValid
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
@@ -38,9 +40,8 @@ class SirPassTests {
             visibility = SirVisibility.PUBLIC
         }
         mySirElement.parent = module
-
         val myPass = ForeignIntoSwiftFunctionTranslationPass()
-        val result = myPass.run(mySirElement) as? SirFunction
+        val result = myPass.runWithAsserts(mySirElement, null) as? SirFunction
         assertNotNull(result, "SirFunction should be produced")
         val exp = MockSirFunction(
             name = "foo",
@@ -94,9 +95,8 @@ class SirPassTests {
             visibility = SirVisibility.PUBLIC
         }
         mySirElement.parent = module
-
         val myPass = ForeignIntoSwiftFunctionTranslationPass()
-        val result = myPass.run(mySirElement) as? SirFunction
+        val result = myPass.runWithAsserts(mySirElement, null) as? SirFunction
         assertNotNull(result, "SirFunction should be produced")
         val exp = MockSirFunction(
             name = "foo",

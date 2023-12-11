@@ -31,7 +31,14 @@ internal abstract class DeclarationParentVisitor : SirVisitor<Unit, Nothing?>() 
     }
 
     override fun visitDeclaration(declaration: SirDeclaration, data: Nothing?) {
-        handleParent(declaration, declarationParentStack.peekFirst())
+        // Special case if visitor is started not from the module node.
+        // In this case we assume that parent is set properly.
+        val currentParent = if (declarationParentStack.size == 0) {
+            declaration.parent
+        } else {
+            declarationParentStack.peekFirst()
+        }
+        handleParent(declaration, currentParent)
 
         if (declaration is SirDeclarationParent) {
             declarationParentStack.push(declaration)
