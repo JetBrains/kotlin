@@ -31,13 +31,28 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
      */
     class SearchRoot(val searchRootPath: File, val allowLookupByRelativePath: Boolean = false, val isDeprecated: Boolean = false) {
         fun lookUp(libraryPath: File): LookupResult {
-            if (libraryPath.isAbsolute)
+            if (libraryPath.isAbsolute) {
+                // Look up by the absolute path if it is indeed an absolute path.
                 return LookupResult.Found(lookUpByAbsolutePath(libraryPath) ?: return LookupResult.NotFound)
+            }
 
-            if (!allowLookupByRelativePath && libraryPath.nameSegments.size > 1)
+            val isDefinitelyRelativePath = libraryPath.nameSegments.size > 1
+            if (isDefinitelyRelativePath && !allowLookupByRelativePath) {
+                // Lookup by the relative path is disallowed, but the path is definitely a relative path.
                 return LookupResult.NotFound
+            }
 
-            val resolvedLibrary = lookUpByAbsolutePath(File(searchRootPath, libraryPath)) ?: return LookupResult.NotFound
+            // First, try to resolve by the relative path.
+            val resolvedLibrary = lookUpByAbsolutePath(File(searchRootPath, libraryPath))
+                ?: run {
+                    if (!isDefinitelyRelativePath && libraryPath.extension.isEmpty()) {
+                        // If the path actually looks like an unique name of the library, try to guess the name of the KLIB file.
+                        // TODO: This logic is unreliable and needs to be replaced by the new KLIB resolver in the future.
+                        lookUpByAbsolutePath(File(searchRootPath, "${libraryPath.path}.$KLIB_FILE_EXTENSION"))
+                    } else null
+                }
+                ?: return LookupResult.NotFound
+
             return if (isDeprecated)
                 LookupResult.FoundWithWarning(
                     library = resolvedLibrary,
@@ -54,7 +69,7 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
                 when {
                     absoluteLibraryPath.isFile -> {
                         // It's a really existing file.
-                        when (absoluteLibraryPath.extension.toLowerCase()) {
+                        when (absoluteLibraryPath.extension) {
                             KLIB_FILE_EXTENSION -> absoluteLibraryPath
                             "jar" -> {
                                 // A special workaround for old JS stdlib, that was packed in a JAR file.
