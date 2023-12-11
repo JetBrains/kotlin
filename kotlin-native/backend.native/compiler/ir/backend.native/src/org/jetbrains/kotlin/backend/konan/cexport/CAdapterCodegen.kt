@@ -9,10 +9,9 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.isOverridable
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 
 /**
  * Second phase of C Export: build bitcode bridges from C wrappers to Kotlin functions.
@@ -28,14 +27,13 @@ internal class CAdapterCodegen(
     fun buildCAdapter(codegenElement: CAdapterCodegenElement): Unit = with(codegenElement) {
         when (this) {
             is CAdapterCodegenElement.Function -> {
-                val function = exportedElement.declaration as FunctionDescriptor
                 val irFunction = symbol.owner
                 exportedElement.cname = "_konan_function_${nextFunctionIndex()}"
                 val signature = LlvmFunctionSignature(irFunction, this@CAdapterCodegen)
                 val bridgeFunctionProto = signature.toProto(exportedElement.cname, null, LLVMLinkage.LLVMExternalLinkage)
                 // If function is virtual, we need to resolve receiver properly.
                 generateFunction(codegen, bridgeFunctionProto) {
-                    val callee = if (!DescriptorUtils.isTopLevelDeclaration(function) && irFunction.isOverridable) {
+                    val callee = if (!irFunction.isTopLevelDeclaration && irFunction.isOverridable) {
                         codegen.getVirtualFunctionTrampoline(irFunction as IrSimpleFunction)
                     } else {
                         // KT-45468: Alias insertion may not be handled by LLVM properly, in case callee is in the cache.
