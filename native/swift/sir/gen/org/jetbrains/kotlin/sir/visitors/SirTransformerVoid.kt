@@ -38,17 +38,17 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
     final override fun transformDeclaration(declaration: SirDeclaration, data: Nothing?): SirDeclaration =
         transformDeclaration(declaration)
 
-    open fun transformForeignDeclaration(foreignDeclaration: SirForeignDeclaration): SirDeclaration =
-        transformDeclaration(foreignDeclaration)
+    open fun transformForeignDeclaration(declaration: SirForeignDeclaration): SirDeclaration =
+        transformDeclaration(declaration)
 
-    final override fun transformForeignDeclaration(foreignDeclaration: SirForeignDeclaration, data: Nothing?): SirDeclaration =
-        transformForeignDeclaration(foreignDeclaration)
+    final override fun transformForeignDeclaration(declaration: SirForeignDeclaration, data: Nothing?): SirDeclaration =
+        transformForeignDeclaration(declaration)
 
-    open fun transformNamedDeclaration(namedDeclaration: SirNamedDeclaration): SirDeclaration =
-        transformDeclaration(namedDeclaration)
+    open fun transformNamedDeclaration(declaration: SirNamedDeclaration): SirDeclaration =
+        transformDeclaration(declaration)
 
-    final override fun transformNamedDeclaration(namedDeclaration: SirNamedDeclaration, data: Nothing?): SirDeclaration =
-        transformNamedDeclaration(namedDeclaration)
+    final override fun transformNamedDeclaration(declaration: SirNamedDeclaration, data: Nothing?): SirDeclaration =
+        transformNamedDeclaration(declaration)
 
     open fun transformEnum(enum: SirEnum): SirDeclaration =
         transformNamedDeclaration(enum)
@@ -74,9 +74,9 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
     final override fun transformFunction(function: SirFunction, data: Nothing?): SirDeclaration =
         transformFunction(function)
 
-    open fun transformForeignFunction(foreignFunction: SirForeignFunction): SirDeclaration =
-        transformCallable(foreignFunction)
+    open fun transformForeignFunction(function: SirForeignFunction): SirDeclaration =
+        transformCallable(function)
 
-    final override fun transformForeignFunction(foreignFunction: SirForeignFunction, data: Nothing?): SirDeclaration =
-        transformForeignFunction(foreignFunction)
+    final override fun transformForeignFunction(function: SirForeignFunction, data: Nothing?): SirDeclaration =
+        transformForeignFunction(function)
 }

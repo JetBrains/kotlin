@@ -50,8 +50,8 @@ abstract class SirTransformer<in D> : SirVisitor<SirElement, D>() {
         return transformDeclaration(foreignDeclaration, data)
     }
 
-    final override fun visitForeignDeclaration(foreignDeclaration: SirForeignDeclaration, data: D): SirDeclaration {
-        return transformForeignDeclaration(foreignDeclaration, data)
+    final override fun visitForeignDeclaration(declaration: SirForeignDeclaration, data: D): SirDeclaration {
+        return transformForeignDeclaration(declaration, data)
     }
 
 
@@ -59,8 +59,8 @@ abstract class SirTransformer<in D> : SirVisitor<SirElement, D>() {
         return transformDeclaration(namedDeclaration, data)
     }
 
-    final override fun visitNamedDeclaration(namedDeclaration: SirNamedDeclaration, data: D): SirDeclaration {
-        return transformNamedDeclaration(namedDeclaration, data)
+    final override fun visitNamedDeclaration(declaration: SirNamedDeclaration, data: D): SirDeclaration {
+        return transformNamedDeclaration(declaration, data)
     }
 
     open fun transformEnum(enum: SirEnum, data: D): SirDeclaration {
@@ -99,7 +99,7 @@ abstract class SirTransformer<in D> : SirVisitor<SirElement, D>() {
         return transformCallable(foreignFunction, data)
     }
 
-    final override fun visitForeignFunction(foreignFunction: SirForeignFunction, data: D): SirDeclaration {
-        return transformForeignFunction(foreignFunction, data)
+    final override fun visitForeignFunction(function: SirForeignFunction, data: D): SirDeclaration {
+        return transformForeignFunction(function, data)
     }
 }

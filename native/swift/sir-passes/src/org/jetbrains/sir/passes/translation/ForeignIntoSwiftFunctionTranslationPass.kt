@@ -30,18 +30,18 @@ public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothi
             return element
         }
 
-        override fun transformForeignFunction(foreignFunction: SirForeignFunction): SirDeclaration {
-            val kotlinOrigin = (foreignFunction.origin as? SirOrigin.ForeignEntity)?.entity as? KotlinFunction
-                ?: return foreignFunction
+        override fun transformForeignFunction(function: SirForeignFunction): SirDeclaration {
+            val kotlinOrigin = (function.origin as? SirOrigin.ForeignEntity)?.entity as? KotlinFunction
+                ?: return function
             return buildFunction {
-                origin = foreignFunction.origin
-                visibility = foreignFunction.visibility
+                origin = function.origin
+                visibility = function.visibility
                 name = kotlinOrigin.fqName.last()
                 kotlinOrigin.parameters.mapTo(parameters) { it.toSir() }
 
                 returnType = kotlinOrigin.returnType.toSir()
             }.apply {
-                parent = foreignFunction.parent
+                parent = function.parent
             }
         }
     }

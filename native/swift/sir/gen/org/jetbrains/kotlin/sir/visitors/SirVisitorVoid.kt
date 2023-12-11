@@ -46,20 +46,20 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitElement(declaration)
     }
 
-    final override fun visitForeignDeclaration(foreignDeclaration: SirForeignDeclaration, data: Nothing?) {
-        visitForeignDeclaration(foreignDeclaration)
+    final override fun visitForeignDeclaration(declaration: SirForeignDeclaration, data: Nothing?) {
+        visitForeignDeclaration(declaration)
     }
 
-    open fun visitForeignDeclaration(foreignDeclaration: SirForeignDeclaration) {
-        visitDeclaration(foreignDeclaration)
+    open fun visitForeignDeclaration(declaration: SirForeignDeclaration) {
+        visitDeclaration(declaration)
     }
 
-    final override fun visitNamedDeclaration(namedDeclaration: SirNamedDeclaration, data: Nothing?) {
-        visitNamedDeclaration(namedDeclaration)
+    final override fun visitNamedDeclaration(declaration: SirNamedDeclaration, data: Nothing?) {
+        visitNamedDeclaration(declaration)
     }
 
-    open fun visitNamedDeclaration(namedDeclaration: SirNamedDeclaration) {
-        visitDeclaration(namedDeclaration)
+    open fun visitNamedDeclaration(declaration: SirNamedDeclaration) {
+        visitDeclaration(declaration)
     }
 
     final override fun visitEnum(enum: SirEnum, data: Nothing?) {
@@ -94,11 +94,11 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitCallable(function)
     }
 
-    final override fun visitForeignFunction(foreignFunction: SirForeignFunction, data: Nothing?) {
-        visitForeignFunction(foreignFunction)
+    final override fun visitForeignFunction(function: SirForeignFunction, data: Nothing?) {
+        visitForeignFunction(function)
     }
 
-    open fun visitForeignFunction(foreignFunction: SirForeignFunction) {
-        visitCallable(foreignFunction)
+    open fun visitForeignFunction(function: SirForeignFunction) {
+        visitCallable(function)
     }
 }

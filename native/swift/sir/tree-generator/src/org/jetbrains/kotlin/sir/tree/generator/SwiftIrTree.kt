@@ -43,6 +43,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
     val foreignDeclaration by sealedElement {
         parent(declaration)
+
+        visitorParameterName = "declaration"
     }
 
     val named by sealedElement {
@@ -53,6 +55,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = declaration
         parent(declaration)
         parent(named)
+
+        visitorParameterName = "declaration"
     }
 
     val enum: Element by element {
@@ -86,5 +90,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = callable
         parent(callable)
         parent(foreignDeclaration)
+
+        visitorParameterName = "function"
     }
 }
