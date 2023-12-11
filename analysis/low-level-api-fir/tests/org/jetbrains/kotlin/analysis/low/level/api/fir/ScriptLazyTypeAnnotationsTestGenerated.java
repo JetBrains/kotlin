@@ -444,6 +444,18 @@ public class ScriptLazyTypeAnnotationsTestGenerated extends AbstractScriptLazyTy
         }
 
         @Test
+        @TestMetadata("receiverAsImplicitReturnTypePropagationScript.kts")
+        public void testReceiverAsImplicitReturnTypePropagationScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/receiverAsImplicitReturnTypePropagationScript.kts");
+        }
+
+        @Test
+        @TestMetadata("receiverAsImplicitReturnTypeScript.kts")
+        public void testReceiverAsImplicitReturnTypeScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/receiverAsImplicitReturnTypeScript.kts");
+        }
+
+        @Test
         @TestMetadata("superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts")
         public void testSuperTypeCallNameClashWithAnnotationImplicitConstructorScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts");
@@ -605,6 +617,18 @@ public class ScriptLazyTypeAnnotationsTestGenerated extends AbstractScriptLazyTy
         @TestMetadata("propertyTypeCollisionAndAnnotationsScript.kts")
         public void testPropertyTypeCollisionAndAnnotationsScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/propertyTypeCollisionAndAnnotationsScript.kts");
+        }
+
+        @Test
+        @TestMetadata("receiverAsImplicitReturnTypePropagationScript.kts")
+        public void testReceiverAsImplicitReturnTypePropagationScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/receiverAsImplicitReturnTypePropagationScript.kts");
+        }
+
+        @Test
+        @TestMetadata("receiverAsImplicitReturnTypeScript.kts")
+        public void testReceiverAsImplicitReturnTypeScript() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/receiverAsImplicitReturnTypeScript.kts");
         }
 
         @Test
