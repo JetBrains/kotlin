@@ -41068,6 +41068,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("stubCallOnReceiver.kt")
+                public void testStubCallOnReceiver() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/stubCallOnReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("stubCallOnVariable.kt")
+                public void testStubCallOnVariable() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/stubCallOnVariable.kt");
+                }
+
+                @Test
                 @TestMetadata("suspendCallsWithErrors.kt")
                 public void testSuspendCallsWithErrors() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/suspendCallsWithErrors.kt");

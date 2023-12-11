@@ -291,6 +291,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
 
     // When a lambda is converted to a SAM type, the expression is wrapped in an extra node
     object SamConversion : KtFakeSourceElementKind()
+
+    // For it.functionFromAny() calls on a stub type
+    object CastToAnyForStubTypes : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

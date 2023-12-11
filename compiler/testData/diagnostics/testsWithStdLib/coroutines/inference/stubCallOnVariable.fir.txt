@@ -1,4 +1,4 @@
-FILE: kt36220.kt
+FILE: stubCallOnVariable.kt
     public final class TypeDefinition<KotlinType : R|kotlin/Any|> : R|kotlin/Any| {
         public constructor<KotlinType : R|kotlin/Any|>(): R|TypeDefinition<KotlinType>| {
             super<R|kotlin/Any|>()
@@ -13,7 +13,7 @@ FILE: kt36220.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/experimental/ExperimentalTypeInference|))) public final fun <KotlinType : R|kotlin/Any|> defineType(definition: R|TypeDefinition<KotlinType>.() -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun <KotlinType : R|kotlin/Any|> defineType(definition: R|TypeDefinition<KotlinType>.() -> kotlin/Unit|): R|kotlin/Unit| {
         ^defineType R|kotlin/TODO|()
     }
     public final fun main(): R|kotlin/Unit| {
@@ -23,7 +23,8 @@ FILE: kt36220.kt
             }
             )
             this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.serialize: R|kotlin/Unit|>|(<L> = serialize@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Any?| <inline=NoInline>  {
-                ^ (R|<local>/it| as R|kotlin/Any|).R|kotlin/Any.toString|()
+                lval i: R|kotlin/Int| = R|<local>/it|
+                ^ (R|<local>/i| as R|kotlin/Any|).R|kotlin/Any.toString|()
             }
             )
         }
