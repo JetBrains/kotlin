@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.withIndent
 internal class TransformerVoidPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
-) : AbstractVisitorPrinter<Element, Field>(printer) {
+) : AbstractTransformerPrinter<Element, Field>(printer) {
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = emptyList()

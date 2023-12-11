@@ -31,7 +31,7 @@ fun main(args: Array<String>) {
             firDefaultVisitorType to ::VisitorPrinter.bind(true),
             firVisitorVoidType to ::VisitorVoidPrinter,
             firDefaultVisitorVoidType to ::DefaultVisitorVoidPrinter,
-            firTransformerType to ::TransformerPrinter,
+            firTransformerType to ::TransformerPrinter.bind(model.rootElement),
         ),
         ImplementationConfigurator,
         BuilderConfigurator,

@@ -20,10 +20,8 @@ class Element(name: String, override val propertyName: String) : AbstractElement
 
     override val otherParents: MutableList<ClassRef<*>> = mutableListOf()
 
-    override val visitorParameterName: String = when (val parameterName = name.replaceFirstChar(Char::lowercaseChar)) {
-        "class" -> "klass"
-        else -> parameterName
-    }
+    override val visitorParameterName: String
+        get() = safeDecapitalizedName
 
     override val hasAcceptMethod: Boolean
         get() = true

@@ -79,3 +79,9 @@ internal fun <Field : AbstractField<*>> List<Field>.reorderFieldsIfNecessary(ord
 
 val ImplementationKind.hasLeafBuilder: Boolean
     get() = this == ImplementationKind.FinalClass || this == ImplementationKind.OpenClass
+
+val AbstractElement<*, *, *>.safeDecapitalizedName: String
+    get() = when (name) {
+        "Class" -> "klass"
+        else -> name.replaceFirstChar(Char::lowercaseChar)
+    }

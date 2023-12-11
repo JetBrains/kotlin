@@ -17,7 +17,7 @@ internal class TransformerPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
     private val rootElement: Element,
-) : AbstractVisitorPrinter<Element, Field>(printer) {
+) : AbstractTransformerPrinter<Element, Field>(printer) {
 
     override val visitorSuperType: ClassRef<PositionTypeParameterRef>
         get() = elementVisitorType.withArgs(rootElement, dataTypeVariable)
@@ -29,9 +29,6 @@ internal class TransformerPrinter(
         get() = dataTypeVariable
 
     override fun visitMethodReturnType(element: Element) = element.getTransformExplicitType()
-
-    override val allowTypeParametersInVisitorMethods: Boolean
-        get() = false
 
     context(ImportCollector)
     override fun printMethodsForElement(element: Element) {

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.tree.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.firTransformerType
-import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.model.FieldList
 import org.jetbrains.kotlin.fir.tree.generator.model.FieldWithDefault
@@ -91,5 +90,3 @@ fun Field.getMutableType(forBuilder: Boolean = false): TypeRefWithNullability = 
     is FieldWithDefault -> if (isMutable) origin.getMutableType() else typeRef
     else -> typeRef
 }
-
-val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.replaceFirstChar(Char::lowercaseChar)
