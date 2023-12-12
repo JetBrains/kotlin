@@ -38413,6 +38413,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("importNestedTypeFromTypeAlias.kt")
+            public void testImportNestedTypeFromTypeAlias() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/importNestedTypeFromTypeAlias.kt");
+            }
+
+            @Test
             @TestMetadata("inGenerics.kt")
             public void testInGenerics() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/inGenerics.kt");
