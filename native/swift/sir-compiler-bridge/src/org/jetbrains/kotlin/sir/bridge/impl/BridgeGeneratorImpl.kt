@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
-private const val exportAnnotationFqName = "kotlin.native.internal.ExportForCppRuntime"
+private const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
 private const val stdintHeader = "stdint.h"
 
 internal class BridgeGeneratorImpl : BridgeGenerator {

@@ -1,18 +1,18 @@
-import kotlin.native.internal.ExportForCppRuntime
+import kotlin.native.internal.ExportedBridge
 
-@ExportForCppRuntime("namespace1_main_foobar")
+@ExportedBridge("namespace1_main_foobar")
 public fun namespace1_main_foobar(): Int {
     val result = namespace1.main.foobar()
     return result
 }
 
-@ExportForCppRuntime("namespace1_foo")
+@ExportedBridge("namespace1_foo")
 public fun namespace1_foo(): Int {
     val result = namespace1.foo()
     return result
 }
 
-@ExportForCppRuntime("namespace2_bar")
+@ExportedBridge("namespace2_bar")
 public fun namespace2_bar(): Int {
     val result = namespace2.bar()
     return result
