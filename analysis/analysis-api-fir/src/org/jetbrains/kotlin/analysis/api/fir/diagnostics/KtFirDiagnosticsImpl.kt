@@ -1460,6 +1460,11 @@ internal class NoExplicitReturnTypeInApiModeWarningImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.NoExplicitReturnTypeInApiModeWarning
 
+internal class AnonymousSuspendFunctionImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KtFirDiagnostic.AnonymousSuspendFunction
+
 internal class ValueClassNotTopLevelImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

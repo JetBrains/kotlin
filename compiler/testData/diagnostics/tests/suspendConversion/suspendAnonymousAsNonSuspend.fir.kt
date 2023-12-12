@@ -4,6 +4,6 @@ fun <T> produce(arg: () -> T): T = arg()
 
 fun main() {
     produce {
-        <!ARGUMENT_TYPE_MISMATCH!>suspend fun() {}<!> // CCE
+        <!ARGUMENT_TYPE_MISMATCH!><!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun() {}<!> // CCE
     }
 }

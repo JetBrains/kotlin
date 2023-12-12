@@ -1691,6 +1691,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ANONYMOUS_SUSPEND_FUNCTION) { firDiagnostic ->
+        AnonymousSuspendFunctionImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.VALUE_CLASS_NOT_TOP_LEVEL) { firDiagnostic ->
         ValueClassNotTopLevelImpl(
             firDiagnostic as KtPsiDiagnostic,

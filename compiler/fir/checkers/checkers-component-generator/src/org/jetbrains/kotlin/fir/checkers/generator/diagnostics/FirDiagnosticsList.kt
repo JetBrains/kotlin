@@ -516,6 +516,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val NO_EXPLICIT_RETURN_TYPE_IN_API_MODE by error<KtDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING by warning<KtDeclaration>(PositioningStrategy.DECLARATION_NAME)
+
+        val ANONYMOUS_SUSPEND_FUNCTION by error<KtDeclaration>(PositioningStrategy.SUSPEND_MODIFIER)
     }
 
     val VALUE_CLASSES by object : DiagnosticGroup("Value classes") {

@@ -96,6 +96,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_USED_A
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_FUNCTION_WITH_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_INITIALIZER_IN_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_SUSPEND_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.API_NOT_AVAILABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARGUMENT_PASSED_TWICE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARGUMENT_TYPE_MISMATCH
@@ -1155,6 +1156,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE, "Return type must be specified in explicit API mode.")
         map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING, "Visibility must be specified in explicit API mode.")
         map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING, "Return type must be specified in explicit API mode.")
+        map.put(ANONYMOUS_SUSPEND_FUNCTION, "Anonymous suspend functions are prohibited.")
 
         map.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''.", TO_STRING, TO_STRING)
         map.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members.")

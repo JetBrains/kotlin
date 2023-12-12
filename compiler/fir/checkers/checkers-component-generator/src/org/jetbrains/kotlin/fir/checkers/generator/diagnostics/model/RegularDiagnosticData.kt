@@ -66,6 +66,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     LATEINIT_MODIFIER,
     INLINE_OR_VALUE_MODIFIER,
     INNER_MODIFIER,
+    SUSPEND_MODIFIER,
     SELECTOR_BY_QUALIFIED,
     REFERENCE_BY_QUALIFIED,
     REFERENCED_NAME_BY_QUALIFIED,

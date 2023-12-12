@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnonymousFunctio
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFiniteBoundRestrictionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirInlinedLambdaNonSourceAnnotationsChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencySupertypeChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirSuspendAnonymousFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
@@ -195,6 +196,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirAnonymousFunctionParametersChecker,
             FirInlinedLambdaNonSourceAnnotationsChecker,
             FirAnonymousFunctionSyntaxChecker,
+            FirSuspendAnonymousFunctionChecker,
         )
 
     override val anonymousInitializerCheckers: Set<FirAnonymousInitializerChecker>

@@ -1220,6 +1220,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NoExplicitReturnTypeInApiModeWarning::class
     }
 
+    interface AnonymousSuspendFunction : KtFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = AnonymousSuspendFunction::class
+    }
+
     interface ValueClassNotTopLevel : KtFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = ValueClassNotTopLevel::class
     }

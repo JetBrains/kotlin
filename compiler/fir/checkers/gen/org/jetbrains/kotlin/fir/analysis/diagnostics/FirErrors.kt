@@ -358,6 +358,7 @@ object FirErrors {
     val NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING: KtDiagnosticFactory0 by warning0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_START_TO_NAME)
     val NO_EXPLICIT_RETURN_TYPE_IN_API_MODE: KtDiagnosticFactory0 by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING: KtDiagnosticFactory0 by warning0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val ANONYMOUS_SUSPEND_FUNCTION: KtDiagnosticFactory0 by error0<KtDeclaration>(SourceElementPositioningStrategies.SUSPEND_MODIFIER)
 
     // Value classes
     val VALUE_CLASS_NOT_TOP_LEVEL: KtDiagnosticFactory0 by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)

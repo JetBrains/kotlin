@@ -1,7 +1,7 @@
 // FIR_DUMP
 
 fun foo() {
-    suspend fun() {
+    <!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun() {
         bar()
     }
 }

@@ -2028,6 +2028,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
             }
 
             @Test
+            @TestMetadata("suspendAnonymousFunction.kt")
+            public void testSuspendAnonymousFunction() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/suspendAnonymousFunction.kt");
+            }
+
+            @Test
             @TestMetadata("testIllegalAnnotationClass.kt")
             public void testTestIllegalAnnotationClass() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/testIllegalAnnotationClass.kt");
