@@ -322,6 +322,7 @@ private fun printVersionRequirement(versionRequirement: KmVersionRequirement): S
                 KmVersionRequirementVersionKind.LANGUAGE_VERSION -> "language version"
                 KmVersionRequirementVersionKind.COMPILER_VERSION -> "compiler version"
                 KmVersionRequirementVersionKind.API_VERSION -> "API version"
+                KmVersionRequirementVersionKind.UNKNOWN -> "unknown requirement"
             }
         ).append(" ").append(version)
 

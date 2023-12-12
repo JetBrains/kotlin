@@ -983,4 +983,20 @@ public enum class KmVersionRequirementVersionKind {
      * Indicates that certain API version is required.
      */
     API_VERSION,
+
+    /**
+     * Represents a version requirement not successfully parsed from the metadata.
+     *
+     * The old metadata format (from Kotlin 1.3 and earlier) did not have enough information for correct parsing of version requirements in some cases,
+     * so a stub of this kind is inserted instead.
+     *
+     * [KmVersionRequirement] with this kind always has [KmVersionRequirementLevel.HIDDEN] level, `256.256.256` [KmVersionRequirement.version],
+     * and `null` [KmVersionRequirement.errorCode] and [KmVersionRequirement.message].
+     *
+     * Version requirements of this kind are being ignored by writers (i.e., are not written back).
+     *
+     * See the following issues for details: [KT-60870](https://youtrack.jetbrains.com/issue/KT-60870), [KT-25120](https://youtrack.jetbrains.com/issue/KT-25120)
+     */
+    UNKNOWN
+    ;
 }

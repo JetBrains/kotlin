@@ -1034,6 +1034,10 @@ public class KmVersionRequirement : KmVersionRequirementVisitor() {
         visitor.visitVersion(version.major, version.minor, version.patch)
         visitor.visitEnd()
     }
+
+    override fun toString(): String {
+        return "KmVersionRequirement(kind=$kind, level=$level, version=$version, errorCode=$errorCode, message=$message)"
+    }
 }
 
 /**

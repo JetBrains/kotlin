@@ -1106,6 +1106,7 @@ public final class kotlinx/metadata/KmVersionRequirement : kotlinx/metadata/KmVe
 	public final fun setLevel (Lkotlinx/metadata/KmVersionRequirementLevel;)V
 	public final fun setMessage (Ljava/lang/String;)V
 	public final fun setVersion (Lkotlinx/metadata/KmVersion;)V
+	public fun toString ()Ljava/lang/String;
 	public fun visit (Lkotlinx/metadata/KmVersionRequirementVersionKind;Lkotlinx/metadata/KmVersionRequirementLevel;Ljava/lang/Integer;Ljava/lang/String;)V
 	public fun visitVersion (III)V
 }
@@ -1123,6 +1124,7 @@ public final class kotlinx/metadata/KmVersionRequirementVersionKind : java/lang/
 	public static final field API_VERSION Lkotlinx/metadata/KmVersionRequirementVersionKind;
 	public static final field COMPILER_VERSION Lkotlinx/metadata/KmVersionRequirementVersionKind;
 	public static final field LANGUAGE_VERSION Lkotlinx/metadata/KmVersionRequirementVersionKind;
+	public static final field UNKNOWN Lkotlinx/metadata/KmVersionRequirementVersionKind;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlinx/metadata/KmVersionRequirementVersionKind;
 	public static fun values ()[Lkotlinx/metadata/KmVersionRequirementVersionKind;

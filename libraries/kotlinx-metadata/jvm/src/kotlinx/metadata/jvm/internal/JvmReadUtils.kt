@@ -12,23 +12,26 @@ import kotlinx.metadata.KmPackage
 import kotlinx.metadata.internal.toKmClass
 import kotlinx.metadata.internal.toKmLambda
 import kotlinx.metadata.internal.toKmPackage
-import kotlinx.metadata.jvm.KmModule
-import kotlinx.metadata.jvm.KmPackageParts
-import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.jvm.UnstableMetadataApi
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import kotlinx.metadata.jvm.*
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion as CompilerMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 
 internal object JvmReadUtils {
+
+
+    private fun isLessThan14(annotationData: Metadata): Boolean {
+        return JvmMetadataVersion(annotationData.metadataVersion) < JvmMetadataVersion(1, 4, 0)
+    }
+
     internal fun readKmClass(annotationData: Metadata): KmClass {
         val (strings, proto) = JvmProtoBufUtil.readClassDataFrom(annotationData.requireNotEmpty(), annotationData.data2)
-        return proto.toKmClass(strings)
+        return proto.toKmClass(strings, isLessThan14(annotationData))
     }
 
     internal fun readKmPackage(annotationData: Metadata): KmPackage {
         val (strings, proto) = JvmProtoBufUtil.readPackageDataFrom(annotationData.requireNotEmpty(), annotationData.data2)
-        return proto.toKmPackage(strings)
+        return proto.toKmPackage(strings, isLessThan14(annotationData))
     }
 
     internal fun readKmLambda(annotationData: Metadata): KmLambda? {
@@ -37,7 +40,7 @@ internal object JvmReadUtils {
                 JvmProtoBufUtil.readFunctionDataFrom(data1, annotationData.data2)
             } ?: return null
         val (strings, proto) = functionData
-        return proto.toKmLambda(strings)
+        return proto.toKmLambda(strings, isLessThan14(annotationData))
     }
 
     internal fun readMetadataImpl(annotationData: Metadata, lenient: Boolean): KotlinClassMetadata {
@@ -72,7 +75,7 @@ internal object JvmReadUtils {
         }
 
         for (classProto in data.moduleData.optionalAnnotations) {
-            v.optionalAnnotationClasses.add(classProto.toKmClass(data.moduleData.nameResolver))
+            v.optionalAnnotationClasses.add(classProto.toKmClass(data.moduleData.nameResolver, false))
         }
         return v
     }
@@ -80,21 +83,21 @@ internal object JvmReadUtils {
     private fun checkMetadataVersionForRead(annotationData: Metadata, lenient: Boolean) {
         if (annotationData.metadataVersion.isEmpty())
             throw IllegalArgumentException("Provided Metadata instance does not have metadataVersion in it and therefore is malformed and cannot be read.")
-        val jvmMetadataVersion = JvmMetadataVersion(
+        val jvmMetadataVersion = CompilerMetadataVersion(
             annotationData.metadataVersion,
             (annotationData.extraInt and (1 shl 3)/* see JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG */) != 0
         )
         throwIfNotCompatible(jvmMetadataVersion, lenient)
     }
 
-    internal fun throwIfNotCompatible(jvmMetadataVersion: JvmMetadataVersion, lenient: Boolean) {
+    internal fun throwIfNotCompatible(jvmMetadataVersion: CompilerMetadataVersion, lenient: Boolean) {
         val isAtLeast110 = jvmMetadataVersion.isAtLeast(1, 1, 0)
         val isCompatible = if (lenient) isAtLeast110 else jvmMetadataVersion.isCompatibleWithCurrentCompilerVersion()
         if (!isCompatible) {
             // Kotlin 1.0 produces classfiles with metadataVersion = 1.1.0, while 1.0.0 represents unsupported pre-1.0 Kotlin (see JvmMetadataVersion.kt:39)
             val postfix =
                 if (!isAtLeast110) "while minimum supported version is 1.1.0 (Kotlin 1.0)."
-                else "while maximum supported version is ${if (jvmMetadataVersion.isStrictSemantics) JvmMetadataVersion.INSTANCE else JvmMetadataVersion.INSTANCE_NEXT}. To support newer versions, update the kotlinx-metadata-jvm library."
+                else "while maximum supported version is ${if (jvmMetadataVersion.isStrictSemantics) CompilerMetadataVersion.INSTANCE else CompilerMetadataVersion.INSTANCE_NEXT}. To support newer versions, update the kotlinx-metadata-jvm library."
             throw IllegalArgumentException("Provided Metadata instance has version $jvmMetadataVersion, $postfix")
         }
     }
