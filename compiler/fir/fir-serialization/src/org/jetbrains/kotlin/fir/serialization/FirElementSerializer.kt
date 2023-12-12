@@ -411,27 +411,19 @@ class FirElementSerializer private constructor(
     ): List<T> {
         val foundInScope = buildList {
             val memberScope = unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
-            processScope(memberScope) l@{
+            processScope(memberScope) {
                 val declaration = it.fir as T
                 val dispatchReceiverLookupTag = declaration.dispatchReceiverClassLookupTagOrNull()
                 // Special case for data/value class equals/hashCode/toString, see KT-57510
-                val isOverrideOfAnyFunctionInDataOrValueClass = this@collectDeclarations is FirRegularClass &&
+                val isFakeOverrideOfAnyFunctionInDataOrValueClass = this@collectDeclarations is FirRegularClass &&
                         (this@collectDeclarations.isData || this@collectDeclarations.isInline) &&
                         dispatchReceiverLookupTag?.classId == StandardClassIds.Any && !declaration.isFinal
-                if (declaration.isSubstitutionOrIntersectionOverride) {
-                    if (!isOverrideOfAnyFunctionInDataOrValueClass) {
-                        return@l
-                    }
-                } else if (!(declaration.isStatic || declaration is FirConstructor)) {
-                    // non-intersection or substitution fake override
-                    if (dispatchReceiverLookupTag != this@collectDeclarations.symbol.toLookupTag()) {
-                        if (!isOverrideOfAnyFunctionInDataOrValueClass) {
-                            return@l
-                        }
-                    }
+                if (isFakeOverrideOfAnyFunctionInDataOrValueClass ||
+                    !declaration.isSubstitutionOrIntersectionOverride &&
+                    (declaration.isStatic || declaration is FirConstructor || dispatchReceiverLookupTag == this@collectDeclarations.symbol.toLookupTag())
+                ) {
+                    add(declaration)
                 }
-
-                add(declaration)
             }
 
             for (declaration in declarations) {
