@@ -210,7 +210,7 @@ class KotlinMetadataTargetConfigurator :
         val compilationFactory: KotlinCompilationFactory<out KotlinCompilation<*>> = when {
             isNativeSourceSet -> KotlinSharedNativeCompilationFactory(
                 target = target,
-                konanTargets = platformCompilations.map { (it as AbstractKotlinNativeCompilation).konanTarget }.toSet(),
+                konanTargets = platformCompilations.map { (it as KotlinNativeCompilation).konanTarget }.toSet(),
                 defaultSourceSet = sourceSet
             )
 
