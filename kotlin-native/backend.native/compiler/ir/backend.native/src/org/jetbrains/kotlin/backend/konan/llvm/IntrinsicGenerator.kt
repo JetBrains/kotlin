@@ -4,9 +4,9 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.MemoryModel
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.ir.isConstantConstructorIntrinsic
+import org.jetbrains.kotlin.backend.konan.ir.isTypedIntrinsic
 import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
-import org.jetbrains.kotlin.backend.konan.descriptors.isConstantConstructorIntrinsic
-import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.llvm.objc.genObjCSelector
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrElement

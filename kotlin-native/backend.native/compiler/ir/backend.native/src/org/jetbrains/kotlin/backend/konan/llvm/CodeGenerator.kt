@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.konan.MemoryModel
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
-import org.jetbrains.kotlin.backend.konan.descriptors.ClassGlobalHierarchyInfo
+import org.jetbrains.kotlin.backend.konan.ir.ClassGlobalHierarchyInfo
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable

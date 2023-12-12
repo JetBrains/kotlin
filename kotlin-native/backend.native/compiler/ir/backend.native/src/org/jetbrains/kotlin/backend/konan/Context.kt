@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
-import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
-import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
-import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
+import org.jetbrains.kotlin.backend.konan.ir.BridgeDirections
+import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
+import org.jetbrains.kotlin.backend.konan.ir.GlobalHierarchyAnalysisResult
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata

@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kotlin.backend.konan.descriptors
+package org.jetbrains.kotlin.backend.konan.ir
 
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager

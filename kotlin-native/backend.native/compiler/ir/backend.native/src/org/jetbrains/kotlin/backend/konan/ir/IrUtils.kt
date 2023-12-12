@@ -3,11 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kotlin.backend.konan.descriptors
+package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
-import org.jetbrains.kotlin.backend.konan.ir.getSuperInterfaces
+import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
+import org.jetbrains.kotlin.backend.konan.descriptors.arraysWithFixedSizeItems
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
 import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.Modality

@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.descriptors.externalSymbolOrThrow
-import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
+import org.jetbrains.kotlin.backend.konan.ir.externalSymbolOrThrow
+import org.jetbrains.kotlin.backend.konan.ir.isAbstract
 import org.jetbrains.kotlin.backend.konan.ir.isUnit
 import org.jetbrains.kotlin.backend.konan.serialization.AbstractKonanIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrClass

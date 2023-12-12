@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAnd
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.InlineFunctionOriginInfo
-import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
+import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI

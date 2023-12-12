@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.name.Name
 
-fun DeclarationDescriptor.deepPrint() {
-    this.accept(DeepPrintVisitor(PrintVisitor()), 0)
-}
-
 internal val String.synthesizedName get() = Name.identifier(this.synthesizedString)
 
 internal val String.synthesizedString get() = "\$$this"

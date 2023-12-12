@@ -9,13 +9,9 @@ import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
-import org.jetbrains.kotlin.backend.konan.descriptors.OverriddenFunctionInfo
-import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
-import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
+import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.isUnit
-import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator

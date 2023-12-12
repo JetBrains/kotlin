@@ -13,6 +13,11 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.BridgeDirection
+import org.jetbrains.kotlin.backend.konan.ir.BridgeDirectionKind
+import org.jetbrains.kotlin.backend.konan.ir.BridgeDirections
+import org.jetbrains.kotlin.backend.konan.ir.OverriddenFunctionInfo
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns

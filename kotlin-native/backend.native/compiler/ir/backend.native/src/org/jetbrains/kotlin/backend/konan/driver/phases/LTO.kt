@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.phaser.ActionState
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.driver.utilities.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
+import org.jetbrains.kotlin.backend.konan.ir.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
