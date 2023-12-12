@@ -4,7 +4,6 @@
 
 package org.jetbrains.dokka.analysis.java
 
-import com.intellij.psi.PsiMethod
 import org.jetbrains.dokka.InternalDokkaApi
 
 @InternalDokkaApi
@@ -19,7 +18,6 @@ public object ReturnJavadocTag : JavadocTag("return")
 public object SinceJavadocTag : JavadocTag("since")
 
 public class ParamJavadocTag(
-    public val method: PsiMethod,
     public val paramName: String,
     public val paramIndex: Int
 ) : JavadocTag(name) {
