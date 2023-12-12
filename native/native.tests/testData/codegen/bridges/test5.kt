@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.test5
-
 import kotlin.test.*
 
 // non-generic interface, generic impl, vtable call + interface call
@@ -32,8 +30,4 @@ fun box(): String {
     if (c.size != 57) return "fail 4"
 
     return "OK"
-}
-
-@Test fun runTest() {
-    println(box())
 }

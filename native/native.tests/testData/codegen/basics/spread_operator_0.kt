@@ -3,16 +3,17 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.spread_operator_0
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
+fun box(): String {
   val list0 = _arrayOf("K", "o", "t", "l", "i", "n")
   val list1 = _arrayOf("l", "a","n", "g", "u", "a", "g", "e")
   val list = foo(list0, list1)
-  println(list.toString())
+
+  val expected = listOf("K", "o", "t", "l", "i", "n", " ", "i", "s", " ", "c", "o", "o", "l", " ", "l", "a", "n", "g", "u", "a", "g", "e")
+  if (list != expected)
+    return "FAIL: $list"
+  return "OK"
 }
 
 

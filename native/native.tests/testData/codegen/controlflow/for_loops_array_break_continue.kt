@@ -1,21 +1,24 @@
-package codegen.controlflow.for_loops_array_break_continue
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     val intArray = intArrayOf(4, 0, 3, 5)
 
     val emptyArray = arrayOf<Any>()
 
     for (element in intArray) {
-        print(element)
+        sb.append(element)
         if (element == 3) {
             break
         }
     }
-    println()
+    sb.appendLine()
     for (element in emptyArray) {
-        print(element)
+        sb.append(element)
     }
-    println()
+    sb.appendLine()
+
+    assertEquals("403\n\n", sb.toString())
+    return "OK"
 }

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.classDelegation.method
-
 import kotlin.test.*
 
 interface A<T> {
@@ -20,9 +18,9 @@ class C(a: A<String>) : A<String> by a
 fun box(): String {
     val c = C(B())
     val a: A<String> = c
-    return c.foo() + a.foo()
-}
-
-@Test fun runTest() {
-    println(box())
+    val cfoo = c.foo()
+    if (cfoo != "OK") return "FAIL cfoo: $cfoo"
+    val afoo = a.foo()
+    if (afoo != "OK") return "FAIL afoo: $afoo"
+    return "OK"
 }

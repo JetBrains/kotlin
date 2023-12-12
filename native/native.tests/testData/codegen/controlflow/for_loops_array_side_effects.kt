@@ -1,23 +1,33 @@
-package codegen.controlflow.for_loops_array_side_effects
-
 import kotlin.test.*
 
+val sb = StringBuilder()
+
 private fun <T> sideEffect(array: T): T {
-    println("side-effect")
+    sb.appendLine("side-effect")
     return array
 }
 
-@Test fun runTest() {
+fun box(): String {
     val intArray = intArrayOf(4, 0, 3, 5)
 
     val emptyArray = arrayOf<Any>()
 
     for (element in sideEffect(intArray)) {
-        print(element)
+        sb.append(element.toString())
     }
-    println()
+    sb.appendLine()
     for (element in sideEffect(emptyArray)) {
-        print(element)
+        sb.append(element.toString())
     }
-    println()
+    sb.appendLine()
+
+    assertEquals("""
+        side-effect
+        4035
+        side-effect
+
+
+        """.trimIndent(), sb.toString())
+
+    return "OK"
 }

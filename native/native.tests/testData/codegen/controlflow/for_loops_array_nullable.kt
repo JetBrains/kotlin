@@ -1,16 +1,19 @@
-package codegen.controlflow.for_loops_array_nullable
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 private fun nullableArray(a: Array<Int>): Array<Int>? {
     return a
 }
 
-@Test fun nullable() {
+fun box(): String {
     val array = arrayOf(1, 2, 3)
     nullableArray(array)?.let {
         for (elem in it) {
-            print(elem)
+            sb.append(elem)
         }
     }
+
+    assertEquals("123", sb.toString())
+    return "OK"
 }

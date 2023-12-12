@@ -3,15 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.boxing.boxing1
-
 import kotlin.test.*
 
+val sb = StringBuilder()
+
 fun foo(arg: Any) {
-    println(arg.toString())
+    sb.appendLine(arg.toString())
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo(1)
     foo(2u)
     foo(false)
@@ -24,4 +24,17 @@ fun foo(arg: Any) {
     foo(nonConstUInt)
     foo(nonConstBool)
     foo(nonConstString)
+
+    assertEquals("""
+        1
+        2
+        false
+        Hello
+        1
+        2
+        false
+        Hello
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

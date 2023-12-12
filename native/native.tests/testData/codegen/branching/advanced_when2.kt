@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.branching.advanced_when2
-
 import kotlin.test.*
 
 fun advanced_when2(i: Int): Int {
@@ -18,6 +16,9 @@ fun advanced_when2(i: Int): Int {
   return value
 }
 
-@Test fun runTest() {
-  if (advanced_when2(10) != 42) throw Error()
+fun box(): String {
+  val res = advanced_when2(10)
+  if (res != 42) return "FAIL $res"
+
+  return "OK"
 }

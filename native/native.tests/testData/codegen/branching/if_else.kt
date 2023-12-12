@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.branching.if_else
-
 import kotlin.test.*
 
 fun if_else(b: Boolean): Int {
@@ -12,6 +10,9 @@ fun if_else(b: Boolean): Int {
   else   return 24
 }
 
-@Test fun runTest() {
-  if (if_else(false) != 24) throw Error()
+fun box(): String {
+  val res = if_else(false)
+  if (res != 24) return "FAIL: $res"
+
+  return "OK"
 }

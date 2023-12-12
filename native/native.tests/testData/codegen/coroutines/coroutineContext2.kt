@@ -3,12 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.coroutines.coroutineContext2
-
 import kotlin.test.*
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
+
+val sb = StringBuilder()
 
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
     companion object : EmptyContinuation()
@@ -21,6 +21,12 @@ fun builder(c: suspend () -> Unit) {
 
 suspend fun foo() = coroutineContext
 
-@Test fun runTest() {
-    builder { println(foo()) }
+fun box(): String {
+    builder { sb.appendLine(foo()) }
+
+    assertEquals("""
+        EmptyCoroutineContext
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

@@ -3,9 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.coroutines.functionReference_eqeq_name
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 suspend fun foo(x: Int) = x
 
@@ -13,7 +13,7 @@ class Foo(val x: Int) {
     suspend fun bar() = x
 }
 
-@Test fun runTest() {
+fun box(): String {
     val ref1 = ::foo
     val rec = Foo(42)
     val ref2 = rec::bar
@@ -29,4 +29,6 @@ class Foo(val x: Int) {
     assertFalse(ref2 == ref4)
     assertTrue(ref2 == ref5)
     assertFalse(ref6 == ref2)
+
+    return "OK"
 }

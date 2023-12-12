@@ -3,13 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.array_to_any
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
+fun box(): String {
     foo().hashCode()
+
+    return "OK"
 }
 
 fun foo(): Any {

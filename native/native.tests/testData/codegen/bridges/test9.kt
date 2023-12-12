@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.test9
-
 import kotlin.test.*
 
 // abstract class vtable call
@@ -29,8 +27,4 @@ fun box(): String {
         a.foo() != "Z" -> "Fail #3"
         else -> "OK"
     }
-}
-
-@Test fun runTest() {
-    println(box())
 }

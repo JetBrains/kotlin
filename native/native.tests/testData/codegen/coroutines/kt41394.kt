@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.coroutines.kt41394
-
 import kotlin.test.*
 
 import kotlin.coroutines.*
@@ -29,7 +27,7 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-@Test fun runTest() {
+fun box(): String {
     var result = ""
 
     builder {
@@ -37,4 +35,6 @@ fun builder(c: suspend () -> Unit) {
     }
 
     assertEquals("zzz42", result)
+
+    return "OK"
 }

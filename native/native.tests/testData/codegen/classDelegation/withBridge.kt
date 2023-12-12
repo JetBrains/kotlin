@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.classDelegation.withBridge
-
 import kotlin.test.*
 
 interface A<T> {
@@ -30,8 +28,4 @@ fun box(): String {
         z1b.foo( 0) != "B" -> "Fail #3"
         else -> "OK"
     }
-}
-
-@Test fun runTest() {
-    println(box())
 }

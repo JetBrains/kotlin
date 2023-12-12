@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.coroutines.controlFlow_chain
-
 import kotlin.test.*
 
 import kotlin.coroutines.*
@@ -25,13 +23,14 @@ fun builder(c: suspend () -> Unit) {
 }
 
 // See https://github.com/JetBrains/kotlin-native/issues/3476
-@Test fun runTest() {
+fun box(): String {
     var result = 0
     builder {
         foo().bar()
         result = 1
     }
     assertEquals(1, result)
+    return "OK"
 }
 
 class Foo {

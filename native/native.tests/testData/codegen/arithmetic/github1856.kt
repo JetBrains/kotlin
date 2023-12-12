@@ -1,5 +1,3 @@
-package codegen.arithmetic.github1856
-
 import kotlin.test.*
 
 object RGBA {
@@ -18,9 +16,10 @@ object RGBA {
     }
 }
 
-@Test
-fun main() {
+fun box(): String {
     val source = listOf(0xFFFFFFFF.toInt(), 0xFFFFFF77.toInt(), 0x777777FF.toInt(), 0x77777777.toInt())
     val expect = listOf(-1, -137, 2000107383, 2000107319)
     assertEquals(expect, source.map { RGBA.premultiplyFastInt(it) })
+
+    return "OK"
 }

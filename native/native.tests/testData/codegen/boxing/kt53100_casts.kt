@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package codegen.boxing.kt53100_casts
-
 import kotlin.test.*
 
 // Reproducer is copied from FloatingPointParser.unaryMinus()
@@ -16,7 +14,12 @@ inline fun <reified T> unaryMinus(value: T): T {
     }
 }
 
-@Test fun runTest(){
-    println(unaryMinus(0.0))
-    println(unaryMinus(0.0f))
+fun box(): String {
+    val res1 = unaryMinus(0.0).toString()
+    if (res1 != "-0.0") return "FAIL 1: $res1"
+
+    val res2 = unaryMinus(0.0f).toString()
+    if (res2 != "-0.0") return "FAIL 2: $res2"
+
+    return "OK"
 }

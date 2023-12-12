@@ -3,19 +3,20 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.boxing.boxing0
-
 import kotlin.test.*
 
 class Box<T>(t: T) {
     var value = t
 }
 
-@Test fun runTest() {
+fun box(): String {
     val box: Box<Int> = Box<Int>(17)
-    println(box.value)
+    if (box.value != 17) return "FAIL 1: ${box.value}"
+
     val nonConst = 17
     val box2: Box<Int> = Box<Int>(nonConst)
-    println(box2.value)
+    if (box2.value != 17) return "FAIL 1: ${box2.value}"
+
+    return "OK"
 }
 

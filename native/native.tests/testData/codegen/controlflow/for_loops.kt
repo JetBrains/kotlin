@@ -3,81 +3,102 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.controlflow.for_loops
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
 
     // Simple loops
     for (i in 0..4) {
-        print(i)
+        sb.append(i)
     }
-    println()
+    sb.appendLine()
 
     for (i in 0 until 4) {
-        print(i)
+        sb.append(i)
     }
-    println()
+    sb.appendLine()
 
     for (i in 4 downTo 0) {
-        print(i)
+        sb.append(i)
     }
-    println()
-    println()
+    sb.appendLine()
+    sb.appendLine()
 
     // Steps
     for (i in 0..4 step 2) {
-        print(i)
+        sb.append(i)
     }
-    println()
+    sb.appendLine()
 
     for (i in 0 until 4 step 2) {
-        print(i)
+        sb.append(i)
     }
-    println()
+    sb.appendLine()
 
     for (i in 4 downTo 0 step 2) {
-        print(i)
+        sb.append(i)
     }
-    println()
-    println()
+    sb.appendLine()
+    sb.appendLine()
 
 
     // Two steps
     for (i in 0..6 step 2 step 3) {
-        print(i)
+        sb.append(i)
     }
-    println()
+    sb.appendLine()
 
     for (i in 0 until 6 step 2 step 3) {
-        print(i)
+        sb.append(i)
     }
-    println()
+    sb.appendLine()
 
     for (i in 6 downTo 0 step 2 step 3) {
-        print(i)
+        sb.append(i)
     }
-    println()
-    println()
+    sb.appendLine()
+    sb.appendLine()
 
     // Without constants
     val a = 0
     val b = 4
     val s = 2
     for (i in a..b step s) {
-        print(i)
+        sb.append(i)
     }
-    println()
+    sb.appendLine()
 
     for (i in a until b step s) {
-        print(i)
+        sb.append(i)
     }
-    println()
+    sb.appendLine()
 
     for (i in b downTo a step s) {
-        print(i)
+        sb.append(i)
     }
-    println()
-    println()
+    sb.appendLine()
+    sb.appendLine()
+
+    assertEquals("""
+        01234
+        0123
+        43210
+        
+        024
+        02
+        420
+        
+        036
+        03
+        630
+        
+        024
+        02
+        420
+
+
+        """.trimIndent(), sb.toString())
+    return "OK"
 }

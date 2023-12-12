@@ -5,6 +5,8 @@
 
 class A {
   companion object {
-    fun foo() = "comp"
+    fun foo() = "OK"
   }
 }
+
+fun box() = A.foo()

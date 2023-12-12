@@ -63,9 +63,57 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
         }
 
         @Test
-        @TestMetadata("basic.kt")
-        public void testBasic() throws Exception {
-            runTest("native/native.tests/testData/codegen/arithmetic/basic.kt");
+        @TestMetadata("basic_charConversions.kt")
+        public void testBasic_charConversions() throws Exception {
+            runTest("native/native.tests/testData/codegen/arithmetic/basic_charConversions.kt");
+        }
+
+        @Test
+        @TestMetadata("basic_charCornerCases.kt")
+        public void testBasic_charCornerCases() throws Exception {
+            runTest("native/native.tests/testData/codegen/arithmetic/basic_charCornerCases.kt");
+        }
+
+        @Test
+        @TestMetadata("basic_compareIntToFloat.kt")
+        public void testBasic_compareIntToFloat() throws Exception {
+            runTest("native/native.tests/testData/codegen/arithmetic/basic_compareIntToFloat.kt");
+        }
+
+        @Test
+        @TestMetadata("basic_doubleBasic.kt")
+        public void testBasic_doubleBasic() throws Exception {
+            runTest("native/native.tests/testData/codegen/arithmetic/basic_doubleBasic.kt");
+        }
+
+        @Test
+        @TestMetadata("basic_integralToFloat.kt")
+        public void testBasic_integralToFloat() throws Exception {
+            runTest("native/native.tests/testData/codegen/arithmetic/basic_integralToFloat.kt");
+        }
+
+        @Test
+        @TestMetadata("basic_kt37412.kt")
+        public void testBasic_kt37412() throws Exception {
+            runTest("native/native.tests/testData/codegen/arithmetic/basic_kt37412.kt");
+        }
+
+        @Test
+        @TestMetadata("basic_selfComparison.kt")
+        public void testBasic_selfComparison() throws Exception {
+            runTest("native/native.tests/testData/codegen/arithmetic/basic_selfComparison.kt");
+        }
+
+        @Test
+        @TestMetadata("basic_shifts.kt")
+        public void testBasic_shifts() throws Exception {
+            runTest("native/native.tests/testData/codegen/arithmetic/basic_shifts.kt");
+        }
+
+        @Test
+        @TestMetadata("basic_uintTests.kt")
+        public void testBasic_uintTests() throws Exception {
+            runTest("native/native.tests/testData/codegen/arithmetic/basic_uintTests.kt");
         }
 
         @Test
@@ -94,9 +142,21 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
         }
 
         @Test
-        @TestMetadata("associatedObjects1.kt")
-        public void testAssociatedObjects1() throws Exception {
-            runTest("native/native.tests/testData/codegen/associatedObjects/associatedObjects1.kt");
+        @TestMetadata("associatedObjects1_testBasics1.kt")
+        public void testAssociatedObjects1_testBasics1() throws Exception {
+            runTest("native/native.tests/testData/codegen/associatedObjects/associatedObjects1_testBasics1.kt");
+        }
+
+        @Test
+        @TestMetadata("associatedObjects1_testGlobalOptimizations1.kt")
+        public void testAssociatedObjects1_testGlobalOptimizations1() throws Exception {
+            runTest("native/native.tests/testData/codegen/associatedObjects/associatedObjects1_testGlobalOptimizations1.kt");
+        }
+
+        @Test
+        @TestMetadata("associatedObjects1_testGlobalOptimizations2.kt")
+        public void testAssociatedObjects1_testGlobalOptimizations2() throws Exception {
+            runTest("native/native.tests/testData/codegen/associatedObjects/associatedObjects1_testGlobalOptimizations2.kt");
         }
     }
 
@@ -288,9 +348,105 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
         }
 
         @Test
-        @TestMetadata("arraysForLoops.kt")
-        public void testArraysForLoops() throws Exception {
-            runTest("native/native.tests/testData/codegen/bce/arraysForLoops.kt");
+        @TestMetadata("bceCases.kt")
+        public void testBceCases() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/bceCases.kt");
+        }
+
+        @Test
+        @TestMetadata("customGetter.kt")
+        public void testCustomGetter() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/customGetter.kt");
+        }
+
+        @Test
+        @TestMetadata("delegatedProperty.kt")
+        public void testDelegatedProperty() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/delegatedProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("differentArrays.kt")
+        public void testDifferentArrays() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/differentArrays.kt");
+        }
+
+        @Test
+        @TestMetadata("differentObjects.kt")
+        public void testDifferentObjects() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/differentObjects.kt");
+        }
+
+        @Test
+        @TestMetadata("forDownToSize.kt")
+        public void testForDownToSize() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/forDownToSize.kt");
+        }
+
+        @Test
+        @TestMetadata("forDownToWithStep.kt")
+        public void testForDownToWithStep() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/forDownToWithStep.kt");
+        }
+
+        @Test
+        @TestMetadata("forEachIndexedTest.kt")
+        public void testForEachIndexedTest() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/forEachIndexedTest.kt");
+        }
+
+        @Test
+        @TestMetadata("forEachIndicies.kt")
+        public void testForEachIndicies() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/forEachIndicies.kt");
+        }
+
+        @Test
+        @TestMetadata("forIndiciesWithStep.kt")
+        public void testForIndiciesWithStep() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/forIndiciesWithStep.kt");
+        }
+
+        @Test
+        @TestMetadata("forRangeToSize.kt")
+        public void testForRangeToSize() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/forRangeToSize.kt");
+        }
+
+        @Test
+        @TestMetadata("forRangeToWithStep.kt")
+        public void testForRangeToWithStep() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/forRangeToWithStep.kt");
+        }
+
+        @Test
+        @TestMetadata("forReversed.kt")
+        public void testForReversed() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/forReversed.kt");
+        }
+
+        @Test
+        @TestMetadata("forUntilSize.kt")
+        public void testForUntilSize() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/forUntilSize.kt");
+        }
+
+        @Test
+        @TestMetadata("forWithIndex.kt")
+        public void testForWithIndex() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/forWithIndex.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritance.kt")
+        public void testInheritance() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/inheritance.kt");
+        }
+
+        @Test
+        @TestMetadata("withGetter.kt")
+        public void testWithGetter() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/withGetter.kt");
         }
     }
 
@@ -513,30 +669,6 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
         }
 
         @Test
-        @TestMetadata("linkTest2_lib.kt")
-        public void testLinkTest2_lib() throws Exception {
-            runTest("native/native.tests/testData/codegen/bridges/linkTest2_lib.kt");
-        }
-
-        @Test
-        @TestMetadata("linkTest2_main.kt")
-        public void testLinkTest2_main() throws Exception {
-            runTest("native/native.tests/testData/codegen/bridges/linkTest2_main.kt");
-        }
-
-        @Test
-        @TestMetadata("linkTest_lib.kt")
-        public void testLinkTest_lib() throws Exception {
-            runTest("native/native.tests/testData/codegen/bridges/linkTest_lib.kt");
-        }
-
-        @Test
-        @TestMetadata("linkTest_main.kt")
-        public void testLinkTest_main() throws Exception {
-            runTest("native/native.tests/testData/codegen/bridges/linkTest_main.kt");
-        }
-
-        @Test
         @TestMetadata("nativePointed.kt")
         public void testNativePointed() throws Exception {
             runTest("native/native.tests/testData/codegen/bridges/nativePointed.kt");
@@ -694,18 +826,6 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
         }
 
         @Test
-        @TestMetadata("linkTest_lib.kt")
-        public void testLinkTest_lib() throws Exception {
-            runTest("native/native.tests/testData/codegen/classDelegation/linkTest_lib.kt");
-        }
-
-        @Test
-        @TestMetadata("linkTest_main.kt")
-        public void testLinkTest_main() throws Exception {
-            runTest("native/native.tests/testData/codegen/classDelegation/linkTest_main.kt");
-        }
-
-        @Test
         @TestMetadata("method.kt")
         public void testMethod() throws Exception {
             runTest("native/native.tests/testData/codegen/classDelegation/method.kt");
@@ -737,9 +857,33 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
         }
 
         @Test
-        @TestMetadata("contracts.kt")
-        public void testContracts() throws Exception {
-            runTest("native/native.tests/testData/codegen/contracts/contracts.kt");
+        @TestMetadata("contractForCast.kt")
+        public void testContractForCast() throws Exception {
+            runTest("native/native.tests/testData/codegen/contracts/contractForCast.kt");
+        }
+
+        @Test
+        @TestMetadata("isNullString.kt")
+        public void testIsNullString() throws Exception {
+            runTest("native/native.tests/testData/codegen/contracts/isNullString.kt");
+        }
+
+        @Test
+        @TestMetadata("nonNullSmartCast.kt")
+        public void testNonNullSmartCast() throws Exception {
+            runTest("native/native.tests/testData/codegen/contracts/nonNullSmartCast.kt");
+        }
+
+        @Test
+        @TestMetadata("require.kt")
+        public void testRequire() throws Exception {
+            runTest("native/native.tests/testData/codegen/contracts/require.kt");
+        }
+
+        @Test
+        @TestMetadata("runLambdaForVal.kt")
+        public void testRunLambdaForVal() throws Exception {
+            runTest("native/native.tests/testData/codegen/contracts/runLambdaForVal.kt");
         }
     }
 

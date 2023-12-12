@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.superSetterCall
-
 import kotlin.test.*
 
 open class C {
@@ -31,12 +29,15 @@ class C3: C2() {
         }
 }
 
-@Test
-fun runTest() {
+fun box(): String {
     val c1 = C1()
     val c3 = C3()
     c1.p2 = "zzz"
     c3.p2 = "zzz"
-    println(c1.p2)
-    println(c3.p2)
+    val c1p2 = c1.p2
+    if (c1p2 != "<prop:C1><prop:C>zzz") return "FAIL 1: "
+    val c3p2 = c3.p2
+    if (c3p2 != "<prop:C3><prop:C>zzz") return "FAIL 2: "
+
+    return "OK"
 }

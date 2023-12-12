@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.coroutines.functionReference_simple
-
 import kotlin.test.*
 
 import kotlin.coroutines.*
@@ -26,7 +24,7 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-@Test fun runTest() {
+fun box(): String {
     var result = 0
 
     val ref = ::suspendHere
@@ -35,5 +33,6 @@ fun builder(c: suspend () -> Unit) {
         result = foo(ref)
     }
 
-    println(result)
+    assertEquals(42, result)
+    return "OK"
 }

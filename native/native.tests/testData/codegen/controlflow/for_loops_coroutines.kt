@@ -3,19 +3,29 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.controlflow.for_loops_coroutines
-
 import kotlin.test.*
 
 import kotlin.coroutines.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     val sq = sequence {
         for (i in 0..6 step 2) {
-            print("before: $i ")
+            sb.append("before: $i ")
             yield(i)
-            println("after: $i")
+            sb.appendLine("after: $i")
         }
     }
-    println("Got: ${sq.joinToString(separator = " ")}")
+    sb.appendLine("Got: ${sq.joinToString(separator = " ")}")
+
+    assertEquals("""
+        before: 0 after: 0
+        before: 2 after: 2
+        before: 4 after: 4
+        before: 6 after: 6
+        Got: 0 2 4 6
+        
+        """.trimIndent(), sb.toString())
+    return "OK"
 }

@@ -3,14 +3,17 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.branching.when_with_try1
-
 import kotlin.test.*
 
-@Test fun runTest() {
-    println(foo(Any()))
-    println(foo("zzz"))
-    println(foo("42"))
+fun box(): String {
+    val res1 = foo(Any())
+    if (res1 != null) return "FAIL 1: $res1"
+    val res2 = foo("zzz")
+    if (res2 != null) return "FAIL 2: $res2"
+    val res3 = foo("42")
+    if (res3 != 42)  return "FAIL 3: $res3"
+
+    return "OK"
 }
 
 fun foo(value: Any): Int? {

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.safe_cast
-
 import kotlin.test.*
 
 open class A
@@ -23,10 +21,11 @@ fun safe_cast_negative(): Boolean {
   return foo(c) == null
 }
 
-@Test
-fun runTest() {
+fun box(): String {
   val safeCastPositive = safe_cast_positive().toString()
   val safeCastNegative = safe_cast_negative().toString()
-  println("safe_cast_positive: " + safeCastPositive)
-  println("safe_cast_negative: " + safeCastNegative)
+  if (safeCastPositive != "true") return "FAIL safeCastPositive"
+  if (safeCastNegative != "true") return "FAIL safeCastNegative"
+
+  return "OK"
 }

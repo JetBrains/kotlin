@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.test18
-
 import kotlin.test.*
 
 // overriden function returns Unit
@@ -16,7 +14,9 @@ open class B: A() {
     override fun foo(): Unit { }
 }
 
-@Test fun runTest() {
+fun box(): String {
     val a: A = B()
-    println(a.foo())
+    val afoo = a.foo()
+    if (afoo != Unit) return "FAIL $afoo"
+    return "OK"
 }
