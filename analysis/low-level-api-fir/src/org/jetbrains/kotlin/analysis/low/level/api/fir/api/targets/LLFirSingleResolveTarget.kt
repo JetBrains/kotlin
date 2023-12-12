@@ -11,12 +11,16 @@ import org.jetbrains.kotlin.fir.declarations.*
 /**
  * [LLFirResolveTarget] representing single target to resolve. The [target] can be any of [FirElementWithResolveState]
  */
-internal class LLFirSingleResolveTarget(
-    firFile: FirFile,
-    containerClasses: List<FirRegularClass>,
-    target: FirElementWithResolveState,
-) : LLFirResolveTarget(firFile, containerClasses, target) {
-    constructor(firFile: FirFile) : this(firFile, emptyList(), firFile)
+internal class LLFirSingleResolveTarget : LLFirResolveTarget {
+    constructor(firFile: FirFile) : super(firFile, emptyList(), firFile)
+
+    constructor(
+        firFile: FirFile,
+        containerClasses: List<FirRegularClass>,
+        target: FirElementWithResolveState,
+    ) : super(firFile, containerClasses, target)
+
+    constructor(target: FirElementWithResolveState) : super(null, emptyList(), target)
 
     override fun visitTargetElement(
         element: FirElementWithResolveState,

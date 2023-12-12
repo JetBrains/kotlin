@@ -73,7 +73,7 @@ internal abstract class LLFirTargetResolver(
      */
     private fun resolveDependencies(target: FirElementWithResolveState) {
         if (skipDependencyTargetResolutionStep || target is FirFileAnnotationsContainer) return
-        resolveTarget.firFile.annotationsContainer?.lazyResolveToPhase(resolverPhase)
+        resolveTarget.firFile?.annotationsContainer?.lazyResolveToPhase(resolverPhase)
 
         val originalDeclaration = (target as? FirCallableDeclaration)?.originalIfFakeOverrideOrDelegated()
         when {

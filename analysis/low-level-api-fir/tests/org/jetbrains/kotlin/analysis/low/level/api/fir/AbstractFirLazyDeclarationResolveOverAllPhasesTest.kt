@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -42,7 +41,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             } else {
                 val firFile = firResolveSession.getOrBuildFirFile(ktFile)
                 val designations = LLFirResolveMultiDesignationCollector.getDesignationsToResolve(elementToResolve)
-                listOf(firFile).plus(designations.map { it.firFile }).distinct()
+                listOf(firFile).plus(designations.mapNotNull { it.firFile }).distinct()
             }
 
             val basePhase = elementToResolve.resolvePhase

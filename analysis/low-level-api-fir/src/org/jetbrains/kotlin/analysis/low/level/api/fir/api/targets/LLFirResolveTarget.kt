@@ -25,9 +25,12 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
  */
 internal sealed class LLFirResolveTarget(
     /**
-     * [FirFile] where the targets are located
+     * [FirFile] where the targets are located.
+     * Can be null if [target] does not belong to any file.
+     * E.g., fake overrides.
+     * @see org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
      */
-    val firFile: FirFile,
+    val firFile: FirFile?,
 
     /**
      * The list of [FirRegularClass] which are the required to go from file to target declarations in the top-down order.
@@ -48,17 +51,26 @@ internal sealed class LLFirResolveTarget(
 
     /**
      * Visit [path], [target] and optionally its subgraph.
-     * Each nested declaration will be wrapped with corresponding [withFile], [withClass] and [withScript] recursively.
+     * Each nested declaration will be wrapped with corresponding [LLFirResolveTargetVisitor.withFile],
+     * [LLFirResolveTargetVisitor.withRegularClass] and [LLFirResolveTargetVisitor.withScript] recursively.
      */
     fun visit(visitor: LLFirResolveTargetVisitor) {
         if (target is FirFile) {
             visitor.performAction(target)
         }
 
-        visitor.withFile(firFile) {
-            val pathIterator = path.iterator()
-            goToTarget(pathIterator, visitor)
+        if (firFile != null) {
+            visitor.withFile(firFile) {
+                goToTarget(visitor)
+            }
+        } else {
+            goToTarget(visitor)
         }
+    }
+
+    private fun goToTarget(visitor: LLFirResolveTargetVisitor) {
+        val pathIterator = path.iterator()
+        goToTarget(pathIterator, visitor)
     }
 
     private fun goToTarget(
@@ -102,7 +114,7 @@ internal sealed class LLFirResolveTarget(
         append(this@LLFirResolveTarget::class.simpleName)
         append("(")
         buildList {
-            add(firFile.name)
+            firFile?.name?.let(::add)
             path.mapTo(this) {
                 when (it) {
                     is FirRegularClass -> it.name
@@ -130,8 +142,8 @@ internal sealed class LLFirResolveTarget(
     }
 }
 
-private fun pathWithScript(firFile: FirFile, path: List<FirRegularClass>, target: FirElementWithResolveState): List<FirDeclaration> {
-    if (target is FirFile || target is FirFileAnnotationsContainer || target is FirScript) return path
+private fun pathWithScript(firFile: FirFile?, path: List<FirRegularClass>, target: FirElementWithResolveState): List<FirDeclaration> {
+    if (firFile == null || target is FirFile || target is FirFileAnnotationsContainer || target is FirScript) return path
     val firScript = firFile.declarations.singleOrNull() as? FirScript ?: return path
     return listOf(firScript) + path
 }
