@@ -231,7 +231,7 @@ internal class AndroidProjectHandler(
         }
 
         val javaTask = variantData.getJavaTaskProvider()
-        val kotlinTask = compilation.compileKotlinTaskProvider
+        @Suppress("UNCHECKED_CAST") val kotlinTask = compilation.compileTaskProvider as TaskProvider<KotlinCompile>
         compilation.androidVariant.forEachJavaSourceDir { sources ->
             kotlinTask.configure {
                 it.setSource(sources.dir)
