@@ -12,6 +12,14 @@ import org.jetbrains.kotlin.formver.viper.ast.Info
 
 sealed interface SourceRole {
     data object ParamFunctionLeakageCheck : SourceRole
+
+    data class ListElementAccessCheck(val accessType: AccessCheckType) : SourceRole {
+        enum class AccessCheckType {
+            LESS_THAN_ZERO,
+            GREATER_THAN_LIST_SIZE
+        }
+    }
+
     data class CallsInPlaceEffect(val paramSymbol: FirBasedSymbol<*>, val kind: EventOccurrencesRange) : SourceRole
     data class ConditionalEffect(val effect: ReturnsEffect, val condition: Condition) : SourceRole
     data class FirSymbolHolder(val firSymbol: FirBasedSymbol<*>) : SourceRole, Condition

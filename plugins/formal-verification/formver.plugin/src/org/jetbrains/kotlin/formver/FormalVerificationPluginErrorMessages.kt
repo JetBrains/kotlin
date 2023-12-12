@@ -61,5 +61,11 @@ object FormalVerificationPluginErrorMessages : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING,
             CommonRenderers.STRING
         )
+        put(
+            PluginErrors.POSSIBLE_INDEX_OUT_OF_BOUND,
+            "Invalid index for {0}, the index may be {1}.",
+            CommonRenderers.STRING,
+            CommonRenderers.STRING
+        )
     }
 }

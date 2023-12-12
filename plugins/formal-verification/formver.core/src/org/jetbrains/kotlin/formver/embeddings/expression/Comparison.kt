@@ -45,8 +45,10 @@ data class GtCmp(
 data class GeCmp(
     override val left: ExpEmbedding,
     override val right: ExpEmbedding,
+    override val sourceRole: SourceRole? = null,
 ) : ComparisonExpression {
-    override fun toViper(ctx: LinearizationContext) = Exp.GeCmp(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition)
+    override fun toViper(ctx: LinearizationContext) =
+        Exp.GeCmp(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition, sourceRole.asInfo)
 }
 
 data class EqCmp(

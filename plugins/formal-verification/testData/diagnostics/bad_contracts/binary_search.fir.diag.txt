@@ -90,7 +90,7 @@ method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin
   ensures ret.special$size == local$toIndex - local$fromIndex
 
 
-/binary_search.kt:(305,313): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int might not hold. Assertion local$arr.special$size > local0$mid might not hold.
+/binary_search.kt:(305,313): warning: Invalid index for list 'arr', the index may be greater than the list's size.
 
 /binary_search.kt:(511,531): info: Generated Viper text for mid_decreased_by_one:
 field special$size: Int
@@ -184,7 +184,7 @@ method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin
   ensures ret.special$size == local$toIndex - local$fromIndex
 
 
-/binary_search.kt:(726,734): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int might not hold. Assertion local0$mid >= 0 might not hold.
+/binary_search.kt:(726,734): warning: Invalid index for list 'arr', the index may be less than zero.
 
 /binary_search.kt:(932,964): info: Generated Viper text for mid_decreased_by_one_in_rec_call:
 field special$size: Int
@@ -331,4 +331,4 @@ method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$col
   ensures this.special$size == old(this.special$size)
 
 
-/binary_search.kt:(1608,1616): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int might not hold. Assertion local0$mid >= 0 might not hold.
+/binary_search.kt:(1608,1616): warning: Invalid index for list 'arr', the index may be less than zero.

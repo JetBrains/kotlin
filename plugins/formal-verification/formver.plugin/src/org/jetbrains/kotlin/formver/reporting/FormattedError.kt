@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.formver.PluginErrors
 import org.jetbrains.kotlin.formver.embeddings.SourceRole
 import org.jetbrains.kotlin.formver.viper.ast.info
 import org.jetbrains.kotlin.formver.viper.ast.unwrap
+import org.jetbrains.kotlin.formver.viper.ast.unwrapOr
 import org.jetbrains.kotlin.formver.viper.errors.VerificationError
 
 sealed interface FormattedError {
@@ -80,12 +82,40 @@ class DefaultError(private val error: VerificationError) : FormattedError {
     }
 }
 
+class IndexOutOfBoundError(private val error: VerificationError, private val sourceRole: SourceRole.ListElementAccessCheck) :
+    FormattedError {
+
+    private val SourceRole.ListElementAccessCheck.AccessCheckType.asUserFriendlyMessage: String
+        get() = when (this) {
+            SourceRole.ListElementAccessCheck.AccessCheckType.LESS_THAN_ZERO -> "less than zero"
+            SourceRole.ListElementAccessCheck.AccessCheckType.GREATER_THAN_LIST_SIZE -> "greater than the list's size"
+        }
+
+    override fun report(reporter: DiagnosticReporter, source: KtSourceElement?, context: CheckerContext) {
+        /**
+         * When we are dealing with inlined expressions returning a list, we do not have access to any list symbol.
+         * Therefore, we do not report any name since the compiler would highlight the sub-expression causing the problem.
+         */
+        val targetListInfo = error.locationNode.asCallable().arg(0).info
+        val targetList = targetListInfo.unwrapOr<SourceRole.FirSymbolHolder> { null }
+        val listMsg = when (targetList) {
+            null -> "the following list sub-expression"
+            else -> {
+                val listName = FirDiagnosticRenderers.DECLARATION_NAME.render(targetList.firSymbol)
+                "list '${listName}'"
+            }
+        }
+        reporter.reportOn(source, PluginErrors.POSSIBLE_INDEX_OUT_OF_BOUND, listMsg, sourceRole.accessType.asUserFriendlyMessage, context)
+    }
+}
+
 fun VerificationError.formatUserFriendly(): FormattedError? =
     when (val sourceRole = lookupSourceRole()) {
         is SourceRole.ReturnsEffect -> ReturnsEffectError(sourceRole)
         is SourceRole.CallsInPlaceEffect -> CallsInPlaceError(sourceRole)
-        is SourceRole.ParamFunctionLeakageCheck -> LeakingLambdaError(this)
         is SourceRole.ConditionalEffect -> ConditionalEffectError(sourceRole)
+        is SourceRole.ParamFunctionLeakageCheck -> LeakingLambdaError(this)
+        is SourceRole.ListElementAccessCheck -> IndexOutOfBoundError(this, sourceRole)
         else -> null
     }
 

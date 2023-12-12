@@ -1,4 +1,40 @@
-/list.kt:(91,105): info: Generated Viper text for empty_list_get:
+/list.kt:(91,110): info: Generated Viper text for empty_list_expr_get:
+field special$size: Int
+
+method global$fun_empty_list_expr_get$fun_take$$return$T_Unit()
+  returns (ret$0: dom$Unit)
+{
+  var local0$s: Int
+  var anonymous$0: Ref
+  anonymous$0 := pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$kotlin$collections$global$class_List()
+  local0$s := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(anonymous$0,
+    0)
+  label label$ret$0
+}
+
+method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
+  local$index: Int)
+  returns (ret: Int)
+  requires acc(this.special$size, write)
+  requires this.special$size >= 0
+  requires local$index >= 0
+  requires this.special$size > local$index
+  ensures acc(this.special$size, write)
+  ensures this.special$size >= 0
+  ensures this.special$size == old(this.special$size)
+
+
+method pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$kotlin$collections$global$class_List()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  ensures acc(ret.special$size, write)
+  ensures ret.special$size >= 0
+  ensures ret.special$size == 0
+
+
+/list.kt:(127,146): warning: Invalid index for the following list sub-expression, the index may be greater than the list's size.
+
+/list.kt:(168,182): info: Generated Viper text for empty_list_get:
 field special$size: Int
 
 method global$fun_empty_list_get$fun_take$$return$T_Unit()
@@ -32,9 +68,9 @@ method pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$
   ensures ret.special$size == 0
 
 
-/list.kt:(162,171): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int might not hold. Assertion local0$myList.special$size > 0 might not hold.
+/list.kt:(239,248): warning: Invalid index for list 'myList', the index may be greater than the list's size.
 
-/list.kt:(193,204): info: Generated Viper text for unsafe_last:
+/list.kt:(270,281): info: Generated Viper text for unsafe_last:
 field special$size: Int
 
 method global$fun_unsafe_last$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Int(local$l: Ref)
@@ -63,9 +99,9 @@ method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$col
   ensures this.special$size == old(this.special$size)
 
 
-/list.kt:(238,251): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int might not hold. Assertion local$l.special$size - 1 >= 0 might not hold.
+/list.kt:(315,328): warning: Invalid index for list 'l', the index may be less than zero.
 
-/list.kt:(273,280): info: Generated Viper text for add_get:
+/list.kt:(350,357): info: Generated Viper text for add_get:
 field special$size: Int
 
 method global$fun_add_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$return$T_Unit(local$l: Ref)
@@ -107,4 +143,4 @@ method pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kot
   ensures this.special$size == old(this.special$size)
 
 
-/list.kt:(329,333): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int might not hold. Assertion local$l.special$size > 1 might not hold.
+/list.kt:(406,410): warning: Invalid index for list 'l', the index may be greater than the list's size.

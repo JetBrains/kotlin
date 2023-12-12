@@ -8,7 +8,7 @@ fun <!VIPER_TEXT!>mid_increased_by_one<!>(arr: List<Int>, target: Int): Boolean 
     val mid = arr.size / 2 + 1 // if arr.size == 1, mid is out of bounds
     return when {
         arr.isEmpty() -> false
-        <!VIPER_VERIFICATION_ERROR!>arr[mid]<!> == target -> true
+        <!POSSIBLE_INDEX_OUT_OF_BOUND!>arr[mid]<!> == target -> true
         arr[mid] < target -> mid_increased_by_one(arr.subList(mid + 1, size), target)
         else -> mid_increased_by_one(arr.subList(0, mid), target)
     }
@@ -20,7 +20,7 @@ fun <!VIPER_TEXT!>mid_decreased_by_one<!>(arr: List<Int>, target: Int): Boolean 
     val mid = arr.size / 2 - 1 // if arr.size == 1, mid is out of bounds
     return when {
         arr.isEmpty() -> false
-        <!VIPER_VERIFICATION_ERROR!>arr[mid]<!> == target -> true
+        <!POSSIBLE_INDEX_OUT_OF_BOUND!>arr[mid]<!> == target -> true
         arr[mid] < target -> mid_decreased_by_one(arr.subList(mid + 1, size), target)
         else -> mid_decreased_by_one(arr.subList(0, mid), target)
     }
@@ -48,7 +48,7 @@ fun <!VIPER_TEXT!>unsafe_binary_search<!>(arr: List<Int>, target: Int, left: Int
     val mid = left + (right - left) / 2
 
     return when {
-        <!VIPER_VERIFICATION_ERROR!>arr[mid]<!> == target -> true
+        <!POSSIBLE_INDEX_OUT_OF_BOUND!>arr[mid]<!> == target -> true
         arr[mid] < target -> unsafe_binary_search(arr, target, mid + 1, right)
         else -> unsafe_binary_search(arr, target, left, mid - 1)
     }
