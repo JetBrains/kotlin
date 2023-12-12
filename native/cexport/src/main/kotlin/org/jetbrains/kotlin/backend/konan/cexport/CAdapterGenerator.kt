@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.backend.konan.cexport
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
-import org.jetbrains.kotlin.backend.konan.cKeywords
-import org.jetbrains.kotlin.backend.konan.isInlined
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeRuntimeNames
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
@@ -25,19 +23,22 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-internal enum class ScopeKind {
+@InternalKotlinNativeApi
+enum class ScopeKind {
     TOP,
     CLASS,
     PACKAGE
 }
 
-internal enum class ElementKind {
+@InternalKotlinNativeApi
+enum class ElementKind {
     FUNCTION,
     PROPERTY,
     TYPE
 }
 
-internal enum class DefinitionKind {
+@InternalKotlinNativeApi
+enum class DefinitionKind {
     C_HEADER_DECLARATION,
     C_HEADER_STRUCT,
     C_SOURCE_DECLARATION,
@@ -77,15 +78,17 @@ internal fun AnnotationDescriptor.properValue(key: String) =
 
 private fun functionImplName(descriptor: DeclarationDescriptor, default: String, shortName: Boolean): String {
     assert(descriptor is FunctionDescriptor)
-    val annotation = descriptor.annotations.findAnnotation(RuntimeNames.cnameAnnotation) ?: return default
+    val annotation = descriptor.annotations.findAnnotation(cnameAnnotation) ?: return default
     val key = if (shortName) "shortName" else "externName"
     val value = annotation.properValue(key)
     return value.takeIf { value != null && value.isNotEmpty() } ?: default
 }
 
-internal data class SignatureElement(val name: String, val type: KotlinType)
+@InternalKotlinNativeApi
+data class SignatureElement(val name: String, val type: KotlinType)
 
-internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
+@InternalKotlinNativeApi
+class ExportedElementScope(val kind: ScopeKind, val name: String) {
     val elements = mutableListOf<ExportedElement>()
     val scopes = mutableListOf<ExportedElementScope>()
     private val scopeNames = mutableSetOf<String>()
@@ -118,7 +121,10 @@ internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
     }
 }
 
-internal class ExportedElement(
+private val cnameAnnotation = NativeRuntimeNames.Annotations.cNameClassId.asSingleFqName()
+
+@InternalKotlinNativeApi
+class ExportedElement(
         val kind: ElementKind,
         val scope: ExportedElementScope,
         val declaration: DeclarationDescriptor,
@@ -144,9 +150,9 @@ internal class ExportedElement(
     val isTopLevelFunction: Boolean
         get() {
             if (declaration !is FunctionDescriptor ||
-                    !declaration.annotations.hasAnnotation(RuntimeNames.cnameAnnotation))
+                    !declaration.annotations.hasAnnotation(cnameAnnotation))
                 return false
-            val annotation = declaration.annotations.findAnnotation(RuntimeNames.cnameAnnotation)!!
+            val annotation = declaration.annotations.findAnnotation(cnameAnnotation)!!
             val externName = annotation.properValue("externName")
             return externName != null && externName.isNotEmpty()
         }
@@ -399,7 +405,8 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
 /**
  * First phase of C export: walk given declaration descriptors and create [CAdapterExportedElements] from them.
  */
-internal class CAdapterGenerator(
+@InternalKotlinNativeApi
+class CAdapterGenerator(
         private val typeTranslator: CAdapterTypeTranslator,
 ) : DeclarationDescriptorVisitor<Boolean, Void?> {
     private val scopes = mutableListOf<ExportedElementScope>()

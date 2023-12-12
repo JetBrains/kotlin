@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_DEFAULT
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegenElement
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*

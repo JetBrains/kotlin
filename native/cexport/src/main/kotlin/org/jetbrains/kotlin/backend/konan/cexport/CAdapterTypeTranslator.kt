@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-internal class CAdapterTypeTranslator(
-        val prefix: String,
-        val builtIns: KotlinBuiltIns,
+@InternalKotlinNativeApi
+class CAdapterTypeTranslator(
+    val prefix: String,
+    val builtIns: KotlinBuiltIns,
 ) {
     private fun translateTypeFull(type: KotlinType): Pair<String, String> =
             if (isMappedToVoid(type)) {
@@ -26,16 +27,18 @@ internal class CAdapterTypeTranslator(
                 translateNonVoidTypeFull(type)
             }
 
-    internal fun isMappedToReference(type: KotlinType) =
+    @InternalKotlinNativeApi
+    fun isMappedToReference(type: KotlinType) =
             !isMappedToVoid(type) && !isMappedToString(type) &&
                     type.binaryTypeIsReference()
 
-    fun isMappedToString(binaryType: BinaryType<ClassDescriptor>): Boolean =
+    private fun isMappedToString(binaryType: BinaryType<ClassDescriptor>): Boolean =
             when (binaryType) {
                 is BinaryType.Primitive -> false
                 is BinaryType.Reference -> binaryType.types.first() == builtIns.string
             }
 
+    @InternalKotlinNativeApi
     fun isMappedToString(type: KotlinType): Boolean =
             isMappedToString(type.computeBinaryType())
 

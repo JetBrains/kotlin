@@ -28,11 +28,11 @@ import java.io.File
  *  @param cppAdapterFile C++ source that will be populated with glue code between K/N runtime and exported API.
  */
 internal class CAdapterApiExporter(
-        private val elements: CAdapterExportedElements,
-        private val headerFile: File,
-        private val defFile: File?,
-        private val cppAdapterFile: File,
-        private val target: KonanTarget,
+    private val elements: CAdapterExportedElements,
+    private val headerFile: File,
+    private val defFile: File?,
+    private val cppAdapterFile: File,
+    private val target: KonanTarget,
 ) {
     private val typeTranslator = elements.typeTranslator
     private val builtIns = elements.typeTranslator.builtIns

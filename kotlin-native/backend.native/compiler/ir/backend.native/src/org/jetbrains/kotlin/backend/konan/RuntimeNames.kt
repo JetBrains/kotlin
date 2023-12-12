@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 object RuntimeNames {
     val symbolNameAnnotation = NativeRuntimeNames.Annotations.symbolNameClassId.asSingleFqName()
-    val cnameAnnotation = NativeRuntimeNames.Annotations.cNameClassId.asSingleFqName()
     val frozenAnnotation = FqName("kotlin.native.internal.Frozen")
     val exportForCppRuntime = NativeRuntimeNames.Annotations.exportForCppRuntimeClassId.asSingleFqName()
     val exportedBridge = NativeRuntimeNames.Annotations.exportedBridgeClassId.asSingleFqName()

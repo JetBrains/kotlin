@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.konan.cexport.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterApiExporter
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterTypeTranslator
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.getExportedDependencies
 import java.io.File
