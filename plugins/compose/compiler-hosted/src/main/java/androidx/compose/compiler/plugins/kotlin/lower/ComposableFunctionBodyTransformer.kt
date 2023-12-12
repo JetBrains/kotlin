@@ -3720,15 +3720,17 @@ class ComposableFunctionBodyTransformer(
             ) {
                 it.result = it.result.asReplaceableGroup(resultScope)
             }
+
+            if (resultsWithCalls == 1 && resultScope.hasComposableCalls) {
+                // Realize all groups in the branch result with a conditional call - making sure
+                // that nested control structures are wrapped correctly.
+                resultScope.realizeCoalescableGroup()
+            }
         }
 
         return when {
-            resultsWithCalls == 1 ->
-                transformed.asCoalescableGroup(resultScopes.single { it.hasComposableCalls })
-            needsWrappingGroup ->
-                transformed.asCoalescableGroup(whenScope)
-            else ->
-                transformed
+            resultsWithCalls == 1 || needsWrappingGroup -> transformed.asCoalescableGroup(whenScope)
+            else -> transformed
         }
     }
 
