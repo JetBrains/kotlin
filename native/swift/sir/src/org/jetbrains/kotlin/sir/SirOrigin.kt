@@ -10,7 +10,14 @@ sealed interface SirOrigin {
 
     data class ExternallyDefined(val name: String) : Synthetic
 
-    data class ForeignEntity(val entity: KotlinEntity): SirOrigin
+    data class Namespace(val path: List<String>) : Synthetic
+
+    sealed interface Foreign : SirOrigin {
+        val path: List<String>
+
+        /** Value for nodes of origin unrepresentable or non-viable yet known to be foreign. */
+        data class Unknown(override val path: List<String> = emptyList()) : Foreign
+    }
 
     /**
      * Value for nodes of unknown or non-viable origin

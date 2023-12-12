@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.sir.passes
 
-import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.SirFunction
+import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirParameter
+import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.builder.buildForeignFunction
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.constants.*
@@ -26,12 +29,10 @@ class SirPassTests {
             name = "demo"
         }
         val mySirElement = buildForeignFunction {
-            origin = SirOrigin.ForeignEntity(
-                MockFunction(
-                    fqName = listOf("foo"),
-                    parameters = emptyList(),
-                    returnType = MockKotlinType(BOOLEAN),
-                )
+            origin = MockFunction(
+                fqName = listOf("foo"),
+                parameters = emptyList(),
+                returnType = MockKotlinType(BOOLEAN),
             )
             visibility = SirVisibility.PUBLIC
         }
@@ -55,41 +56,39 @@ class SirPassTests {
             name = "demo"
         }
         val mySirElement = buildForeignFunction {
-            origin = SirOrigin.ForeignEntity(
-                MockFunction(
-                    fqName = listOf("foo"),
-                    parameters = listOf(
-                        MockParameter(
-                            name = "arg1",
-                            type = MockKotlinType(name = BYTE)
-                        ),
-                        MockParameter(
-                            name = "arg2",
-                            type = MockKotlinType(name = SHORT)
-                        ),
-                        MockParameter(
-                            name = "arg3",
-                            type = MockKotlinType(name = INT)
-                        ),
-                        MockParameter(
-                            name = "arg4",
-                            type = MockKotlinType(name = LONG)
-                        ),
-                        MockParameter(
-                            name = "arg5",
-                            type = MockKotlinType(name = DOUBLE)
-                        ),
-                        MockParameter(
-                            name = "arg6",
-                            type = MockKotlinType(name = FLOAT)
-                        ),
-                        MockParameter(
-                            name = "arg7",
-                            type = MockKotlinType(name = BOOLEAN)
-                        )
+            origin = MockFunction(
+                fqName = listOf("foo"),
+                parameters = listOf(
+                    MockParameter(
+                        name = "arg1",
+                        type = MockKotlinType(name = BYTE)
                     ),
-                    returnType = MockKotlinType(name = BYTE),
-                )
+                    MockParameter(
+                        name = "arg2",
+                        type = MockKotlinType(name = SHORT)
+                    ),
+                    MockParameter(
+                        name = "arg3",
+                        type = MockKotlinType(name = INT)
+                    ),
+                    MockParameter(
+                        name = "arg4",
+                        type = MockKotlinType(name = LONG)
+                    ),
+                    MockParameter(
+                        name = "arg5",
+                        type = MockKotlinType(name = DOUBLE)
+                    ),
+                    MockParameter(
+                        name = "arg6",
+                        type = MockKotlinType(name = FLOAT)
+                    ),
+                    MockParameter(
+                        name = "arg7",
+                        type = MockKotlinType(name = BOOLEAN)
+                    )
+                ),
+                returnType = MockKotlinType(name = BYTE),
             )
             visibility = SirVisibility.PUBLIC
         }

@@ -8,7 +8,6 @@ package org.jetbrains.sir.passes.translation
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildFunction
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
-import org.jetbrains.kotlin.sir.KotlinFunction
 import org.jetbrains.kotlin.sir.constants.*
 import org.jetbrains.kotlin.sir.visitors.SirTransformerVoid
 import org.jetbrains.sir.passes.SirPass
@@ -22,7 +21,7 @@ import java.lang.IllegalStateException
  * or `element` does not contain origin of type `SirOrigin.KotlinEntity.Function`,
  * returns original element.
  */
-public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothing?> {
+public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothing?, SirElement> {
 
     private class Transformer : SirTransformerVoid() {
         override fun <E : SirElement> transformElement(element: E): E {
@@ -31,7 +30,7 @@ public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothi
         }
 
         override fun transformForeignFunction(function: SirForeignFunction): SirDeclaration {
-            val kotlinOrigin = (function.origin as? SirOrigin.ForeignEntity)?.entity as? KotlinFunction
+            val kotlinOrigin = function.origin as? SirKotlinOrigin.Function
                 ?: return function
             return buildFunction {
                 origin = function.origin
@@ -49,12 +48,12 @@ public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothi
     override fun run(element: SirElement, data: Nothing?): SirElement = element.transform(Transformer())
 }
 
-private fun KotlinParameter.toSir(): SirParameter = SirParameter(
+private fun SirKotlinOrigin.Parameter.toSir(): SirParameter = SirParameter(
     argumentName = name,
     type = type.toSir(),
 )
 
-private fun KotlinType.toSir(): SirType = SirNominalType(
+private fun SirKotlinOrigin.Type.toSir(): SirType = SirNominalType(
     type = when (this.name) {
         BYTE -> SirSwiftModule.int8
         SHORT -> SirSwiftModule.int16

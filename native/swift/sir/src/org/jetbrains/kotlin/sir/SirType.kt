@@ -13,7 +13,9 @@ class SirNominalType(
 ) : SirType {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SirNominalType) return false
+        if (other != null && this::class != other::class) return false
+
+        other as SirNominalType
 
         if (type != other.type) return false
         if (parent != other.parent) return false
@@ -30,4 +32,14 @@ class SirNominalType(
 
 class SirExistentialType(
     // TODO: Protocols. For now, only `any Any` is supported
-) : SirType
+) : SirType {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other != null && this::class != other::class) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+}

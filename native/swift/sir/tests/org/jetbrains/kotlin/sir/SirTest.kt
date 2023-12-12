@@ -26,19 +26,8 @@ class SirTest {
 
     private fun produceSwiftElement(): Any {
         return buildEnum {
-            origin = SirOrigin.ForeignEntity(
-                MockFunction(
-                    fqName = listOf("foo"),
-                    parameters = listOf(
-                        MockParameter(
-                            name = "arg1",
-                            type = MockKotlinType(BYTE),
-                        )
-                    ),
-                    returnType = MockKotlinType("kotlin/Byte")
-                )
-            )
-            name = "MyEnum"
+            origin = SirOrigin.Unknown
+            name = "name"
             visibility = SirVisibility.PUBLIC
         }
     }

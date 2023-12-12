@@ -13,29 +13,27 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildForeignFunction
 
 internal fun KtNamedFunction.toForeignFunction(): SirForeignFunction = buildForeignFunction {
-    origin = SirOrigin.ForeignEntity(
-        AAFunction(this@toForeignFunction)
-    )
+    origin = AAFunction(this@toForeignFunction)
 }
 
-private fun KtValueParameterSymbol.toSirParam(): KotlinParameter = AAParameter(
+private fun KtValueParameterSymbol.toSirParam(): SirKotlinOrigin.Parameter = AAParameter(
     name = name.toString(),
     type = AAKotlinType(name = returnType.toString())
 )
 
 private class AAFunction(
     private val originalFunction: KtNamedFunction
-) : KotlinFunction {
+) : SirKotlinOrigin.Function {
     override val fqName: List<String>
         get() = originalFunction.fqName?.pathSegments()?.toListString() ?: emptyList()
 
-    override val parameters: List<KotlinParameter>
+    override val parameters: List<SirKotlinOrigin.Parameter>
         get() = analyze(originalFunction) {
             val function = originalFunction.getFunctionLikeSymbol()
             function.valueParameters.map { it.toSirParam() }
         }
 
-    override val returnType: KotlinType
+    override val returnType: SirKotlinOrigin.Type
         get() = analyze(originalFunction) {
             val function = originalFunction.getFunctionLikeSymbol()
             AAKotlinType(name = function.returnType.toString())
@@ -44,11 +42,11 @@ private class AAFunction(
 }
 private data class AAParameter(
     override val name: String,
-    override val type: KotlinType
-) : KotlinParameter
+    override val type: SirKotlinOrigin.Type
+) : SirKotlinOrigin.Parameter
 
 private data class AAKotlinType(
     override val name: String
-) : KotlinType
+) : SirKotlinOrigin.Type
 
 private fun List<Name>.toListString() = map { it.asString() }
