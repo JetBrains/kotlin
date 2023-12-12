@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.boxing.box_cache0
-
 import kotlin.test.*
 
 fun <T> areSame(arg1: T, arg2: T): Boolean {
@@ -15,7 +13,7 @@ fun Boolean.oneIfTrueElseZero(): Int {
     return if (this) 1 else 0
 }
 
-@Test fun runTest() {
+fun box(): String {
     var acc = 0
     val range = 1000
 
@@ -24,35 +22,37 @@ fun Boolean.oneIfTrueElseZero(): Int {
             acc += areSame(i, j).oneIfTrueElseZero()
         }
     }
-    println(acc)
+    if (acc != 2) "FAIL 1: $acc"
 
     acc = 0
     for (i in Byte.MIN_VALUE..Byte.MAX_VALUE) {
         acc += areSame(i, i).oneIfTrueElseZero()
     }
-    println(acc)
+    if (acc != 256) "FAIL 2: $acc"
 
     acc = 0
     for (i in Short.MIN_VALUE..Short.MAX_VALUE) {
         acc += areSame(i, i).oneIfTrueElseZero()
     }
-    println(acc)
+    if (acc != 256) "FAIL 3: $acc"
 
     acc = 0
     for (i in 0.toChar()..range.toChar()) {
         acc += areSame(i, i).oneIfTrueElseZero()
     }
-    println(acc)
+    if (acc != 256) "FAIL 4: $acc"
 
     acc = 0
     for (i in -range..range) {
         acc += areSame(i, i).oneIfTrueElseZero()
     }
-    println(acc)
+    if (acc != 256) "FAIL 5: $acc"
 
     acc = 0
     for (i in -range.toLong()..range.toLong()) {
         acc += areSame(i, i).oneIfTrueElseZero()
     }
-    println(acc)
+    if (acc != 256) "FAIL 6: $acc"
+
+    return "OK"
 }

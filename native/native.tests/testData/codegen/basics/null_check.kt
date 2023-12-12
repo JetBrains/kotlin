@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.null_check
-
 import kotlin.test.*
 
 //--- Test "eqeq" -------------------------------------------------------------//
@@ -31,10 +29,11 @@ fun null_check_eqeqeq2() : Boolean {
   return check_eqeqeq(null)
 }
 
-@Test
-fun runTest() {
-  if (null_check_eqeq1())    throw Error()
-  if (!null_check_eqeq2())   throw Error()
-  if (null_check_eqeqeq1())  throw Error()
-  if (!null_check_eqeqeq2()) throw Error()
+fun box(): String {
+  if (null_check_eqeq1())    return "FAIL null_check_eqeq1()"
+  if (!null_check_eqeq2())   return "FAIL !null_check_eqeq2()"
+  if (null_check_eqeqeq1())  return "FAIL null_check_eqeqeq1()"
+  if (!null_check_eqeqeq2()) return "FAIL !null_check_eqeqeq2()"
+
+  return "OK"
 }

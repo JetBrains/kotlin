@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.branching.when4
-
 import kotlin.test.*
 
 fun when5(i: Int): Int {
@@ -16,4 +14,11 @@ fun when5(i: Int): Int {
     4 -> return 1
   }
   return 24
+}
+
+fun box(): String {
+  val res = when5(5)
+  if (res != 24) return "FAIL $res"
+
+  return "OK"
 }

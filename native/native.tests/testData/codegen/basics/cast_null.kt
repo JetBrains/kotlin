@@ -3,12 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.cast_null
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
+fun box(): String {
     testCast(null, false)
     testCastToNullable(null, true)
     testCastToNullable(TestKlass(), true)
@@ -16,14 +13,14 @@ fun runTest() {
     testCastNotNullableToNullable(TestKlass(), true)
     testCastNotNullableToNullable("", false)
 
-    println("Ok")
+    return "OK"
 }
 
 class TestKlass
 
 fun ensure(b: Boolean) {
     if (!b) {
-        println("Error")
+        throw Error("Error")
     }
 }
 

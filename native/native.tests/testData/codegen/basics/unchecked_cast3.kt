@@ -3,17 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.unchecked_cast3
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
+fun box(): String {
     testCast<TestKlass>(TestKlass(), true)
     testCast<TestKlass>(null, false)
     testCastToNullable<TestKlass>(null, true)
 
-    println("Ok")
+    return "OK"
 }
 
 class TestKlass

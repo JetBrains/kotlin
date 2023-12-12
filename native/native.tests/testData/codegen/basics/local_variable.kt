@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.local_variable
-
 import kotlin.test.*
 
 fun local_variable(a: Int) : Int {
@@ -13,7 +11,7 @@ fun local_variable(a: Int) : Int {
   return b
 }
 
-@Test
-fun runTest() {
+fun box(): String {
   if (local_variable(3) != 14) throw Error()
+  return "OK"
 }

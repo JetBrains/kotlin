@@ -3,16 +3,16 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.boxing.boxing13
-
 import kotlin.test.*
 
+val sb = StringBuilder()
+
 fun is42(x: Any?) {
-    println(x == 42)
-    println(42 == x)
+    sb.appendLine(x == 42)
+    sb.appendLine(42 == x)
 }
 
-@Test fun runTest() {
+fun box(): String {
     is42(16)
     is42(42)
     is42("42")
@@ -22,4 +22,21 @@ fun is42(x: Any?) {
     is42(nonConst16)
     is42(nonConst42)
     is42(nonConst42String)
+
+    assertEquals("""
+        false
+        false
+        true
+        true
+        false
+        false
+        false
+        false
+        true
+        true
+        false
+        false
+        
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

@@ -3,7 +3,6 @@
  * that can be found in the LICENSE file.
  */
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-package codegen.bridges.nativePointed
 
 import kotlinx.cinterop.*
 import kotlin.test.*
@@ -16,8 +15,10 @@ class CImpl : C() {
     override fun foo(x: Int) = null
 }
 
-@Test fun runTest() {
+fun box(): String {
     val c: C = CImpl()
     assertNull(c.foo(42))
+
+    return "OK"
 }
 

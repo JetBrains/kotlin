@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.coroutines.functionReference_lambdaAsSuspendLambda
-
 import kotlin.test.*
 
 import kotlin.coroutines.*
@@ -14,6 +12,8 @@ fun foo(block: (Continuation<Unit>) -> Any?) {
     block as (suspend () -> Unit)
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo {}
+
+    return "OK"
 }

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.test16
-
 import kotlin.test.*
 
 interface A {
@@ -21,9 +19,14 @@ open class B: C() {
 
 fun bar(c: C) = c.foo()
 
-@Test fun runTest() {
+fun box(): String {
     val b = B()
     val c: C = b
-    println(bar(b))
-    println(bar(c))
+    val barb = bar(b)
+    if (barb != "OK") return "FAIL b: $barb"
+
+    val barc = bar(c)
+    if (barc != "OK") return "FAIL c: $barc"
+
+    return "OK"
 }

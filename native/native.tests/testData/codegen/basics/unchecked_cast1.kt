@@ -3,24 +3,26 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.unchecked_cast1
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     foo<String>("17")
     bar<String>("17")
     foo<String>(42)
     bar<String>(42)
+
+    assertEquals("17\n17\n42\n42\n", sb.toString())
+    return "OK"
 }
 
 fun <T> foo(x: Any?) {
     val y = x as T
-    println(y.toString())
+    sb.appendLine(y.toString())
 }
 
 fun <T> bar(x: Any?) {
     val y = x as? T
-    println(y.toString())
+    sb.appendLine(y.toString())
 }

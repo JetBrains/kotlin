@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.signature
-
 import kotlin.test.*
 
 class A { }
@@ -29,6 +27,8 @@ abstract class AbstractClass(): ExtendsInterface<C> {
     public override fun parse(source: A): C = C()
 }
 
-@Test fun runTest() {
+fun box(): String {
     val array = object : AbstractClass() { }.parse(B())
+
+    return "OK"
 }

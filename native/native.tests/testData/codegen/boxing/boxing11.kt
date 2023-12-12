@@ -3,11 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.boxing.boxing11
-
 import kotlin.test.*
 
-fun printInt(x: Int) = println(x)
+val sb = StringBuilder()
+
+fun printInt(x: Int) = sb.appendLine(x)
 
 class Foo(val value: Int?) {
     fun foo() {
@@ -15,7 +15,10 @@ class Foo(val value: Int?) {
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     Foo(17).foo()
     Foo(null).foo()
+
+    assertEquals("17\n42\n", sb.toString())
+    return "OK"
 }

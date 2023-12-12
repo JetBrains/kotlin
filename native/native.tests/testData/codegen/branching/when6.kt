@@ -3,13 +3,13 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.branching.when6
-
 import kotlin.test.*
 
 fun foo() {
 }
 
-@Test fun runTest() {
+fun box(): String {
     if (true) foo() else foo()
+
+    return "OK"
 }

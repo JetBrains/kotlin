@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.test4
-
 import kotlin.test.*
 
 // vtable call + interface call
@@ -22,9 +20,13 @@ open class A {
 
 open class B: A(), Z, Y
 
-@Test fun runTest() {
+fun box(): String {
     val z: Z = B()
     val y: Y = z as Y
-    println(z.foo().toString())
-    println(y.foo().toString())
+    val res1 = z.foo().toString()
+    if (res1 != "42") return "FAIL 1: $res1"
+    val res2 = y.foo().toString()
+    if (res2 != "42") return "FAIL 2: $res2"
+
+    return "OK"
 }

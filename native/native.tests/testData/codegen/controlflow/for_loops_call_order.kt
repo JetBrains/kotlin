@@ -3,17 +3,25 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.controlflow.for_loops_call_order
-
 import kotlin.test.*
 
-fun f1(): Int { print("1"); return 0 }
-fun f2(): Int { print("2"); return 6 }
-fun f3(): Int { print("3"); return 2 }
-fun f4(): Int { print("4"); return 3 }
+val sb = StringBuilder()
 
-@Test fun runTest() {
-    for (i in f1()..f2() step f3() step f4()) { }; println()
-    for (i in f1() until f2() step f3() step f4()) {}; println()
-    for (i in f2() downTo f1() step f3() step f4()) {}; println()
+fun f1(): Int { sb.append(1); return 0 }
+fun f2(): Int { sb.append(2); return 6 }
+fun f3(): Int { sb.append(3); return 2 }
+fun f4(): Int { sb.append(4); return 3 }
+
+fun box(): String {
+    for (i in f1()..f2() step f3() step f4()) { }; sb.appendLine()
+    for (i in f1() until f2() step f3() step f4()) {}; sb.appendLine()
+    for (i in f2() downTo f1() step f3() step f4()) {}; sb.appendLine()
+
+    assertEquals("""
+        1234
+        1234
+        2134
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

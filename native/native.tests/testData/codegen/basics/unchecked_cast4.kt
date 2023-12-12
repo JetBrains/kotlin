@@ -3,12 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.unchecked_cast4
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
+fun box(): String {
     CI1I2().uncheckedCast<CI1I2>()
     CI1I2().uncheckedCast<OtherCI1I2>()
 
@@ -16,7 +13,7 @@ fun runTest() {
         Any().uncheckedCast<CI1I2>()
     }
 
-    println("Ok")
+    return "OK"
 }
 
 fun <R : C> Any?.uncheckedCast() where R : I1, R : I2 {

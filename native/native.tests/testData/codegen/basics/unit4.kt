@@ -3,16 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.unit4
-
-import kotlin.test.*
-
-@Test
-fun runTest() {
+fun box(): String {
     for (x in 0 .. 8) {
         foo(x, Unit)
     }
-    println("Done")
+    return "OK"
 }
 
 var global = 42
@@ -39,7 +34,7 @@ fun foo(x: Int, unit: Unit) {
     }
 
     if (y !== Unit) {
-        println("Fail at x = $x")
+        throw Error("Fail at x = $x")
     }
 }
 

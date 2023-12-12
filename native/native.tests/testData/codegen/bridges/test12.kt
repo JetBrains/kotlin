@@ -3,9 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.test12
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 abstract class A<in T> {
     abstract fun foo(x: T)
@@ -13,13 +13,13 @@ abstract class A<in T> {
 
 class B : A<Int>() {
     override fun foo(x: Int) {
-        println("B: $x")
+        sb.appendLine("B: $x")
     }
 }
 
 class C : A<Any>() {
     override fun foo(x: Any) {
-        println("C: $x")
+        sb.appendLine("C: $x")
     }
 }
 
@@ -27,7 +27,10 @@ fun foo(arg: A<Int>) {
     arg.foo(42)
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo(B())
     foo(C())
+
+    assertEquals("B: 42\nC: 42\n", sb.toString())
+    return "OK"
 }

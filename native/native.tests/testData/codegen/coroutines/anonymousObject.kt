@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.coroutines.anonymousObject
-
 import kotlin.test.*
 
 import kotlin.coroutines.*
@@ -41,10 +39,14 @@ fun create() = object: I {
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
+    val sb = StringBuilder()
+
     builder {
         val z = create()
-        z.foo { suspendHere(); println(it) }
+        z.foo { suspendHere(); sb.append(it) }
         z.bar("zzz")
     }
+    assertEquals("zzz", sb.toString())
+    return "OK"
 }

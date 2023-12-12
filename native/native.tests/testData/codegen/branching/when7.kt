@@ -3,12 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.branching.when7
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     main(emptyArray())
+
+    return "OK"
 }
 
 fun main(args: Array<String>) {

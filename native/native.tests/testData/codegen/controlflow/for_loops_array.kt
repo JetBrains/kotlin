@@ -1,6 +1,6 @@
-package codegen.controlflow.for_loops_array
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 fun <T : ByteArray> genericArray(data : T): Int {
     var sum = 0
@@ -18,23 +18,28 @@ fun IntArray.sum(): Int {
     return sum
 }
 
-@Test fun runTest() {
+fun box(): String {
     val intArray = intArrayOf(4, 0, 3, 5)
 
     val emptyArray = arrayOf<Any>()
 
     for (element in intArray) {
-        print(element)
+        sb.append(element)
     }
-    println()
+    sb.appendLine()
     for (element in emptyArray) {
-        print(element)
+        sb.append(element)
     }
-    println()
+    sb.appendLine()
 
     val byteArray = byteArrayOf(1, -1)
-    println(genericArray(byteArray))
+    sb.append(genericArray(byteArray))
+    sb.appendLine()
 
     val fives = intArrayOf(5, 5, 5, -5, -5, -5)
-    println(fives.sum())
+    sb.append(fives.sum())
+    sb.appendLine()
+
+    assertEquals("4035\n\n0\n0\n", sb.toString())
+    return "OK"
 }

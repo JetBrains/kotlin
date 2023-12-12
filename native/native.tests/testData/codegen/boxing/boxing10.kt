@@ -3,16 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.boxing.boxing10
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     val FALSE: Boolean? = false
 
     if (FALSE != null) {
         do {
-            println("Ok")
+            return "OK"
         } while (FALSE)
     }
+    return "FAIL"
 }

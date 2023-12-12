@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.const_infinity
-
 import kotlin.test.*
 
 //Original issue here https://youtrack.jetbrains.com/issue/KT-37212
@@ -13,9 +11,10 @@ const val fpInfConst = 1.0F / 0.0F
 @Suppress("DIVISION_BY_ZERO")
 val fpInfVal = 1.0F / 0.0F
 
-@Test
-fun runTest() {
+fun box(): String {
     assertEquals(fpInfConst, Float.POSITIVE_INFINITY)
     assertEquals(fpInfVal, Float.POSITIVE_INFINITY)
     assertEquals(fpInfConst, fpInfVal)
+
+    return "OK"
 }

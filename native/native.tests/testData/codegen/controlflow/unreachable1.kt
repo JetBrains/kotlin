@@ -3,15 +3,18 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.controlflow.unreachable1
-
 import kotlin.test.*
 
-@Test fun runTest() {
-    println(foo())
+val sb = StringBuilder()
+
+fun box(): String {
+    sb.append(foo())
+
+    assertEquals("1", sb.toString())
+    return "OK"
 }
 
 fun foo(): Int {
     return 1
-    println("After return")
+    sb.appendLine("After return")
 }

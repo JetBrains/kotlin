@@ -3,7 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.special
 
 import kotlin.test.*
 
@@ -28,19 +27,15 @@ private object NotEmptyMap : MutableMap<Any, Int> {
 fun box(): String {
     val n = NotEmptyMap as MutableMap<Any?, Any?>
 
-    if (n.get(null) != null) return "fail 1"
-    if (n.containsKey(null)) return "fail 2"
-    if (n.containsValue(null)) return "fail 3"
-    if (n.remove(null) != null) return "fail 4"
+    if (n.get(null) != null) return "FAIL 1: $n"
+    if (n.containsKey(null)) return "FAIL 2: $n"
+    if (n.containsValue(null)) return "FAIL 3: $n"
+    if (n.remove(null) != null) return "FAIL 4: $n"
 
-    if (n.get(1) == null) return "fail 5"
-    if (!n.containsKey("")) return "fail 6"
-    if (!n.containsValue(3)) return "fail 7"
-    if (n.remove("") == null) return "fail 8"
+    if (n.get(1) == null) return "FAIL 5: $n"
+    if (!n.containsKey("")) return "FAIL 6: $n"
+    if (!n.containsValue(3)) return "FAIL 7: $n"
+    if (n.remove("") == null) return "FAIL 8: $n"
 
-    return "Ok"
-}
-
-@Test fun runTest() {
-    println(box())
+    return "OK"
 }

@@ -5,23 +5,18 @@
 
 // FILE: 1.kt
 
-package codegen.annotations.annotations0
-
 import kotlin.test.*
-import kotlinx.serialization.*
 
 @SerialInfo
 annotation class Foo(val x: Int, val y: String)
 
-@Test fun runTest() {
-    val foo = @Suppress("ANNOTATION_CLASS_CONSTRUCTOR_CALL") Foo(42, "17")
+fun box(): String {
+    val foo = @Suppress("ANNOTATION_CLASS_CONSTRUCTOR_CALL") Foo(42, "OK")
     assertEquals(foo.x, 42)
-    assertEquals(foo.y, "17")
+    return foo.y
 }
 
 // FILE: 2.kt
-
-package kotlinx.serialization
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 annotation class SerialInfo
