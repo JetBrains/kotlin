@@ -19,8 +19,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLFirReversedBlackBoxCodegenBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractErrorResistanceTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractOutOfContentRootLazyDeclarationResolveScopeBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractOutOfContentRootWholeFileResolvePhaseTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractScriptLazyDeclarationResolveScopeBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractScriptWholeFileResolvePhaseTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceLazyDeclarationResolveScopeBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceWholeFileResolvePhaseTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
@@ -84,6 +87,18 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractStdLibSourcesLazyDeclarationResolveTest> {
             model("lazyResolveStdlibSources")
+        }
+
+        testClass<AbstractSourceLazyDeclarationResolveScopeBasedTest> {
+            model("lazyResolveScopes", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractOutOfContentRootLazyDeclarationResolveScopeBasedTest> {
+            model("lazyResolveScopes", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptLazyDeclarationResolveScopeBasedTest> {
+            model("lazyResolveScopes", pattern = TestGeneratorUtil.KTS)
         }
 
         testClass<AbstractErrorResistanceTest> {
