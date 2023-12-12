@@ -30,8 +30,8 @@ private class ObjCExportNamerImpl : KtObjCExportNamer {
         val resolvedObjCNameAnnotation = symbol.resolveObjCNameAnnotation()
 
         return ObjCExportClassOrProtocolName(
-            objCName = resolvedObjCNameAnnotation.objCName ?: symbol.nameOrAnonymous.asString(),
-            swiftName = resolvedObjCNameAnnotation.swiftName ?: symbol.nameOrAnonymous.asString()
+            objCName = resolvedObjCNameAnnotation?.objCName ?: symbol.nameOrAnonymous.asString(),
+            swiftName = resolvedObjCNameAnnotation?.swiftName ?: symbol.nameOrAnonymous.asString()
         )
     }
 
@@ -40,8 +40,8 @@ private class ObjCExportNamerImpl : KtObjCExportNamer {
         val resolveObjCNameAnnotation = symbol.resolveObjCNameAnnotation()
 
         return ObjCExportPropertyName(
-            objCName = resolveObjCNameAnnotation.objCName ?: symbol.name.asString(),
-            swiftName = resolveObjCNameAnnotation.swiftName ?: symbol.name.asString()
+            objCName = resolveObjCNameAnnotation?.objCName ?: symbol.name.asString(),
+            swiftName = resolveObjCNameAnnotation?.swiftName ?: symbol.name.asString()
         )
     }
 }

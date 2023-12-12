@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue.KtStringConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
@@ -43,30 +45,28 @@ internal class KtResolvedObjCNameAnnotation(
 )
 
 context(KtAnalysisSession)
-internal fun KtAnnotatedSymbol.resolveObjCNameAnnotation(): KtResolvedObjCNameAnnotation {
-    var objCName: String? = null
-    var swiftName: String? = null
-    var isExact = false
-
-    annotationsList.annotations.find { it.classId?.asSingleFqName() == KonanFqNames.objCName }?.let { annotation ->
-        annotation.arguments.forEach { argument ->
-            when (argument.name.identifier) {
-                "name" -> objCName = argument.expression.let { it as? KtConstantAnnotationValue }
-                    ?.constantValue?.let { it as KtStringConstantValue }
-                    ?.value
-                "swiftName" -> swiftName = argument.expression.let { it as? KtConstantAnnotationValue }
-                    ?.constantValue?.let { it as KtStringConstantValue }
-                    ?.value
-                "exact" -> isExact = argument.expression.let { it as? KtConstantAnnotationValue }
-                    ?.constantValue?.let { it as KtConstantValue.KtBooleanConstantValue }
-                    ?.value ?: isExact
-            }
-        }
-    }
+internal fun KtAnnotatedSymbol.resolveObjCNameAnnotation(): KtResolvedObjCNameAnnotation? {
+    val annotation = annotationsList.annotations.find { it.classId?.asSingleFqName() == KonanFqNames.objCName } ?: return null
 
     return KtResolvedObjCNameAnnotation(
-        objCName = objCName,
-        swiftName = swiftName,
-        isExact = isExact
+        objCName = annotation.findArgument("name")?.resolveStringConstantValue(),
+        swiftName = annotation.findArgument("swiftName")?.resolveStringConstantValue(),
+        isExact = annotation.findArgument("exact")?.resolveBooleanConstantValue() ?: false
     )
+}
+
+private fun KtAnnotationApplicationWithArgumentsInfo.findArgument(name: String): KtNamedAnnotationValue? {
+    return arguments.find { it.name.identifier == name }
+}
+
+private fun KtNamedAnnotationValue.resolveStringConstantValue(): String? {
+    return expression.let { it as? KtConstantAnnotationValue }?.constantValue
+        ?.let { it as? KtStringConstantValue }
+        ?.value
+}
+
+private fun KtNamedAnnotationValue.resolveBooleanConstantValue(): Boolean? {
+    return expression.let { it as? KtConstantAnnotationValue }?.constantValue
+        ?.let { it as? KtConstantValue.KtBooleanConstantValue }
+        ?.value
 }
