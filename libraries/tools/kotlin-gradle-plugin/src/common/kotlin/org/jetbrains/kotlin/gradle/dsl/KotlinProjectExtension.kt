@@ -248,7 +248,6 @@ abstract class KotlinJsProjectExtension(project: Project) :
 
     @Suppress("DEPRECATION")
     private fun jsInternal(
-        compiler: KotlinJsCompilerType? = null,
         body: KotlinJsTargetDsl.() -> Unit,
     ): KotlinJsTargetDsl {
         if (!targetFuture.isCompleted) {
@@ -266,9 +265,10 @@ abstract class KotlinJsProjectExtension(project: Project) :
     }
 
     fun js(
+        @Suppress("UNUSED_PARAMETER") // KT-64275
         compiler: KotlinJsCompilerType = defaultJsCompilerType,
         body: KotlinJsTargetDsl.() -> Unit = { },
-    ): KotlinJsTargetDsl = jsInternal(compiler, body)
+    ): KotlinJsTargetDsl = jsInternal(body)
 
     fun js(
         compiler: String,

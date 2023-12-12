@@ -20,7 +20,6 @@ interface KotlinTargetContainerWithJsPresetFunctions :
         configure: KotlinJsTargetDsl.() -> Unit = { }
     ): KotlinJsTargetDsl = jsInternal(
         name,
-        compiler,
         configure
     )
 
@@ -78,7 +77,6 @@ interface KotlinTargetContainerWithJsPresetFunctions :
 
 private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
     name: String = "js",
-    compiler: KotlinJsCompilerType? = null,
     configure: KotlinJsTargetDsl.() -> Unit
 ): KotlinJsTargetDsl {
     @Suppress("UNCHECKED_CAST", "DEPRECATION")
