@@ -377,6 +377,9 @@ class DeclarationGenerator(
             val fields = mutableListOf<WasmStructFieldDeclaration>()
             fields.add(WasmStructFieldDeclaration("vtable", vtableRefGcType, false))
             fields.add(WasmStructFieldDeclaration("itable", classITableRefGcType, false))
+            fields.add(WasmStructFieldDeclaration("typeId", WasmI32, false))
+            fields.add(WasmStructFieldDeclaration("_hashCode", WasmI32, true))
+
             declaration.allFields(irBuiltIns).mapTo(fields) {
                 WasmStructFieldDeclaration(
                     name = it.name.toString(),

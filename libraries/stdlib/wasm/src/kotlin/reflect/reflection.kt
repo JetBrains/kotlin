@@ -34,7 +34,7 @@ internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
         is DoubleArray -> PrimitiveClasses.doubleArrayClass
         is KClass<*> -> KClass::class
         is Array<*> -> PrimitiveClasses.arrayClass
-        else -> getKClass(getTypeInfoTypeDataByPtr(e.typeInfo))
+        else -> getKClass(getTypeInfoTypeDataByPtr(wasmGetTypeIdField(e)))
     } as KClass<T>
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")

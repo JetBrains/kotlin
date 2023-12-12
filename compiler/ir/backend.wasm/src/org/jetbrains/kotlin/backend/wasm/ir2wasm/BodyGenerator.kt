@@ -338,10 +338,8 @@ class BodyGenerator(
             body.buildIf("this_init")
             generateAnyParameters(parentClass.symbol, location)
             val irFields: List<IrField> = parentClass.allFields(backendContext.irBuiltIns)
-            irFields.forEachIndexed { index, field ->
-                if (index > 1) {
-                    generateDefaultInitializerForType(context.transformType(field.type), body)
-                }
+            irFields.forEach { field ->
+                generateDefaultInitializerForType(context.transformType(field.type), body)
             }
             body.buildStructNew(context.referenceGcType(parentClass.symbol), location)
             body.buildSetLocal(thisParameter, location)
@@ -435,7 +433,7 @@ class BodyGenerator(
                 //TODO: check why it could be needed
                 generateRefCast(receiver.type, klass.defaultType, location)
 
-                body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(0), location)
+                body.buildStructGet(context.referenceGcType(klass.symbol), WasmSymbol(WasmStructLayout.VTABLE_FIELD_INDEX), location)
                 body.buildStructGet(context.referenceVTableGcType(klass.symbol), WasmSymbol(vfSlot), location)
                 body.buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(context.referenceFunctionType(function.symbol)))
                 body.commentGroupEnd()
@@ -445,7 +443,7 @@ class BodyGenerator(
                     generateExpression(call.dispatchReceiver!!)
 
                     body.commentGroupStart { "interface call: ${function.fqNameWhenAvailable}" }
-                    body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
+                    body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(WasmStructLayout.ITABLE_FIELD_INDEX), location)
 
                     val classITableReference = context.referenceClassITableGcType(symbol)
                     body.buildRefCastStatic(classITableReference, location)
@@ -527,6 +525,18 @@ class BodyGenerator(
         val location = call.getSourceLocation()
 
         when (function.symbol) {
+            wasmSymbols.wasmGetTypeIdField -> {
+                body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(WasmStructLayout.TYPE_ID_FIELD_INDEX), location)
+            }
+
+            wasmSymbols.wasmGetHashCodeField -> {
+                body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(WasmStructLayout.HASH_CODE_FIELD_INDEX), location)
+            }
+
+            wasmSymbols.wasmSetHashCodeField -> {
+                body.buildStructSet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(WasmStructLayout.HASH_CODE_FIELD_INDEX), location)
+            }
+
             wasmSymbols.wasmTypeId -> {
                 val klass = call.getTypeArgument(0)!!.getClass()
                     ?: error("No class given for wasmTypeId intrinsic")
@@ -544,7 +554,7 @@ class BodyGenerator(
                     body.buildBlock("isInterface", WasmI32) { outerLabel ->
                         body.buildBlock("isInterface", WasmRefNullType(WasmHeapType.Simple.Struct)) { innerLabel ->
                             body.buildGetLocal(parameterLocal, location)
-                            body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
+                            body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(WasmStructLayout.ITABLE_FIELD_INDEX), location)
 
                             body.buildBrOnCastInstr(
                                 WasmOp.BR_ON_CAST_FAIL,

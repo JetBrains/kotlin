@@ -183,7 +183,7 @@ class WasmModuleCodegenContext(
     fun getStructFieldRef(field: IrField): WasmSymbol<Int> {
         val klass = field.parentAsClass
         val metadata = getClassMetadata(klass.symbol)
-        val fieldId = metadata.fields.indexOf(field) + 2 //Implicit vtable and vtable field
+        val fieldId = metadata.fields.indexOf(field) + WasmStructLayout.NUMBER_OF_IMPLICIT_FIELDS
         return WasmSymbol(fieldId)
     }
 

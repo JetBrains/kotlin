@@ -103,8 +103,8 @@ public class String internal @WasmPrimitiveConstructor constructor(
         val otherLength = otherString.length
         if (thisLength != otherLength) return false
 
-        val thisHash = this._hashCode
-        val otherHash = other._hashCode
+        val thisHash = wasmGetHashCodeField(this)
+        val otherHash = wasmGetHashCodeField(other)
         if (thisHash != otherHash && thisHash != 0 && otherHash != 0) return false
 
         val thisChars = this.chars
@@ -119,7 +119,7 @@ public class String internal @WasmPrimitiveConstructor constructor(
     public override fun toString(): String = this
 
     public override fun hashCode(): Int {
-        if (_hashCode != 0) return _hashCode
+        if (wasmGetHashCodeField(this) != 0) return wasmGetHashCodeField(this)
         val thisLength = this.length
         if (thisLength == 0) return 0
 
@@ -128,8 +128,8 @@ public class String internal @WasmPrimitiveConstructor constructor(
         repeat(thisLength) {
             hash = (hash shl 5) - hash + thisChars.get(it).code
         }
-        _hashCode = hash
-        return _hashCode
+        wasmSetHashCodeField(this, hash)
+        return wasmGetHashCodeField(this)
     }
 }
 

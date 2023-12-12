@@ -13,11 +13,6 @@ import kotlin.random.*
  * The root of the Kotlin class hierarchy. Every Kotlin class has [Any] as a superclass.
  */
 public open class Any @WasmPrimitiveConstructor constructor() {
-    // Pointer to runtime type info
-    // Initialized by a compiler
-    @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-    internal var typeInfo: Int
-
     /**
      * Indicates whether some other object is "equal to" this one. Implementations must fulfil the following
      * requirements:
@@ -39,7 +34,6 @@ public open class Any @WasmPrimitiveConstructor constructor() {
      * * Whenever it is invoked on the same object more than once, the `hashCode` method must consistently return the same integer, provided no information used in `equals` comparisons on the object is modified.
      * * If two objects are equal according to the `equals()` method, then calling the `hashCode` method on each of the two objects must produce the same integer result.
      */
-    internal var _hashCode: Int = 0
     public open fun hashCode(): Int {
         return identityHashCode()
     }
@@ -48,7 +42,7 @@ public open class Any @WasmPrimitiveConstructor constructor() {
      * Returns a string representation of the object.
      */
     public open fun toString(): String {
-        val typeInfoPtr = this.typeInfo
+        val typeInfoPtr = wasmGetTypeIdField(this)
         val packageName = getPackageName(typeInfoPtr)
         val simpleName = getSimpleName(typeInfoPtr)
         val qualifiedName = if (packageName.isEmpty()) simpleName else "$packageName.$simpleName"
@@ -60,7 +54,8 @@ public open class Any @WasmPrimitiveConstructor constructor() {
 // Don't inline it into usages, specifically to `hashCode`. 
 // It was extracted to remove `toString`'s dependency on `hashCode`, which improves output size when DCE is involved.
 private fun Any.identityHashCode(): Int {
-    if (_hashCode == 0)
-        _hashCode = Random.nextInt(1, Int.MAX_VALUE)
-    return _hashCode
+    if (wasmGetHashCodeField(this) == 0) {
+        wasmSetHashCodeField(this, Random.nextInt(1, Int.MAX_VALUE))
+    }
+    return wasmGetHashCodeField(this)
 }

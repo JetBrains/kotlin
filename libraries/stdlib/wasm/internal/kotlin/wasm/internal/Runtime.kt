@@ -7,6 +7,21 @@
 
 package kotlin.wasm.internal
 
+/** Set hidden built-in hashCode field */
+@ExcludedFromCodegen
+internal fun wasmSetHashCodeField(obj: Any, value: Int): Unit =
+    implementedAsIntrinsic
+
+/** Get hidden built-in hashCode field */
+@ExcludedFromCodegen
+internal fun wasmGetHashCodeField(obj: Any): Int =
+    implementedAsIntrinsic
+
+/** Get hidden built-in typeID field */
+@ExcludedFromCodegen
+internal fun wasmGetTypeIdField(obj: Any): Int =
+    implementedAsIntrinsic
+
 internal const val CHAR_SIZE_BYTES = 2
 
 internal fun unsafeRawMemoryToWasmCharArray(srcAddr: Int, dstOffset: Int, dstLength: Int, dst: WasmCharArray) {

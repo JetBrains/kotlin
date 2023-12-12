@@ -5,6 +5,7 @@
 package kotlin.reflect.wasm.internal
 
 import kotlin.reflect.*
+import kotlin.wasm.internal.*
 import kotlin.wasm.internal.TypeInfoData
 import kotlin.wasm.internal.getSuperTypeId
 import kotlin.wasm.internal.isInterfaceById
@@ -36,7 +37,7 @@ internal class KClassImpl<T : Any>(internal val typeData: TypeInfoData) : KClass
         if (typeData.packageName.isEmpty()) typeData.typeName else "${typeData.packageName}.${typeData.typeName}"
 
     private fun checkSuperTypeInstance(obj: Any): Boolean {
-        var typeId = obj.typeInfo
+        var typeId = wasmGetTypeIdField(obj)
         while (typeId != -1) {
             if (typeData.typeId == typeId) return true
             typeId = getSuperTypeId(typeId)

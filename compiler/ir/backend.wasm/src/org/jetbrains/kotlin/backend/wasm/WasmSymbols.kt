@@ -230,6 +230,9 @@ class WasmSymbols(
     val startUnitTests = maybeGetFunction("startUnitTests", kotlinTestPackage)
 
     val wasmTypeId = getInternalFunction("wasmTypeId")
+    val wasmGetTypeIdField = getInternalFunction("wasmGetTypeIdField")
+    val wasmGetHashCodeField = getInternalFunction("wasmGetHashCodeField")
+    val wasmSetHashCodeField = getInternalFunction("wasmSetHashCodeField")
 
     val wasmIsInterface = getInternalFunction("wasmIsInterface")
 

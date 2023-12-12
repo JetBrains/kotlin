@@ -17,5 +17,5 @@ private fun throwJsError(message: String?, wasmTypeName: String?, stack: Externa
 }
 
 internal fun throwAsJsException(t: Throwable): Nothing {
-    throwJsError(t.message, getSimpleName(t.typeInfo), t.jsStack)
+    throwJsError(t.message, getSimpleName(wasmGetTypeIdField(t)), t.jsStack)
 }

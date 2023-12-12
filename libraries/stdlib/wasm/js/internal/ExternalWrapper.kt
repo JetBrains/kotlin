@@ -25,10 +25,10 @@ internal class JsExternalBox @WasmPrimitiveConstructor constructor(val ref: Exte
         }
 
     override fun hashCode(): Int {
-        var hashCode = _hashCode
+        var hashCode = wasmGetHashCodeField(this)
         if (hashCode != 0) return hashCode
         hashCode = externrefHashCode(ref)
-        _hashCode = hashCode
+        wasmSetHashCodeField(this, hashCode)
         return hashCode
     }
 }

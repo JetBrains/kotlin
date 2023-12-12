@@ -8,6 +8,7 @@ package kotlin
 import kotlin.wasm.internal.ExternalInterfaceType
 import kotlin.wasm.internal.getSimpleName
 import kotlin.wasm.internal.jsToKotlinStringAdapter
+import kotlin.wasm.internal.wasmGetTypeIdField
 
 /**
  * The base class for all errors and exceptions. Only instances of this class can be thrown or caught.
@@ -43,7 +44,7 @@ public open class Throwable(public open val message: String?, public open val ca
      * followed by the exception message if it is not null.
      */
     public override fun toString(): String {
-        val s = getSimpleName(this.typeInfo)
+        val s = getSimpleName(wasmGetTypeIdField(this))
         return if (message != null) s + ": " + message.toString() else s
     }
 }
