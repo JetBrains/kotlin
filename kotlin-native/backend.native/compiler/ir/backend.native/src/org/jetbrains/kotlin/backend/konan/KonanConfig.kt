@@ -127,7 +127,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val runtimeLogs: Map<LoggingTag, LoggingLevel> by lazy {
-        val default = LoggingTag.entries.associateWith { LoggingLevel.None }
+        val default = LoggingTag.entries.associateWith { if (it == LoggingTag.GC) LoggingLevel.Debug else LoggingLevel.None }
 
         val cfgString = configuration.get(KonanConfigKeys.RUNTIME_LOGS) ?: return@lazy default
 

@@ -54,7 +54,7 @@ struct VerificationMarkTraits {
 inline void checkAllAliveObjectsMarked() {
     if (!compiler::gcCheckMarkCorrectness()) return;
 
-    auto fakeHandle = GCHandle::invalid();
+    auto fakeHandle = GCHandle::createFakeForTests();
     VerificationMarkTraits::MarkQueue markQueue;
     gc::collectRootSet<VerificationMarkTraits>(fakeHandle, markQueue, [](mm::ThreadData&) { return true; });
     gc::Mark<VerificationMarkTraits>(fakeHandle, markQueue);

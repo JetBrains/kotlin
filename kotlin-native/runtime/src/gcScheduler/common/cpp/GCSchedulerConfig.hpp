@@ -61,6 +61,7 @@ struct GCSchedulerConfig {
                 // (either `autoTune == false`, so `targetHeapBytes` is fixed; or `maxHeapBytes`
                 // is lower than infinity).
                 // TODO: Figure out what to do with OOMs.
+                return false;
                 return autoTune.load() && maxHeapBytes.load() == std::numeric_limits<int64_t>::max();
         }
     }

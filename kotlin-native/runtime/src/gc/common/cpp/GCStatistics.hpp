@@ -50,6 +50,7 @@ public:
     static GCHandle getByEpoch(uint64_t epoch);
     static std::optional<GCHandle> currentEpoch() noexcept;
     static GCHandle invalid();
+    static GCHandle fake();
     static void ClearForTests();
 
     uint64_t getEpoch() const {
