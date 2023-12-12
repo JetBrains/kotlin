@@ -3,14 +3,10 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.unit2
-
-import kotlin.test.*
-
-@Test
-fun runTest() {
+fun box(): String {
     val x = foo()
-    println(x.toString())
+    if (x.toString() != "kotlin.Unit") return "FAIL: $x"
+    return "OK"
 }
 
 fun foo() {

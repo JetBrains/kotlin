@@ -1,8 +1,8 @@
-package codegen.controlflow.for_loops_array_nested
-
 import kotlin.test.*
 
-@Test fun arrayOfArrays() {
+val sb = StringBuilder()
+
+fun box(): String {
     val metaArray = arrayOf(
             arrayOf(1, 2, 3),
             arrayOf("Hello"),
@@ -13,13 +13,22 @@ import kotlin.test.*
         inner@for (elem in array) {
             if (elem is IntProgression) {
                 for (i in elem) {
-                    print(i)
+                    sb.append(i)
                 }
                 continue@inner
             } else {
-                print(elem)
+                sb.append(elem)
             }
         }
-        println()
+        sb.appendLine()
     }
+
+    assertEquals("""
+            123
+            Hello
+            
+            12345678910
+
+        """.trimIndent(), sb.toString())
+    return "OK"
 }

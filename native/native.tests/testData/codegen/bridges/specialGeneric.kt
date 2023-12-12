@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.specialGeneric
-
 import kotlin.test.*
 
 interface Element {
@@ -35,10 +33,11 @@ internal class MySet<E : Element> : Set<E> {
 
 fun set(): Set<Any> = MySet<Element>()
 
-@Test
-fun testMySet() {
+fun box(): String {
     val set = set()
-    assertFalse(set.contains(Any()))
-    assertFalse(set.contains(NotContainedElement))
-    assertTrue(set.contains(ContainedElement))
+    if (set.contains(Any())) return "FAIL 1: $set"
+    if (set.contains(NotContainedElement)) return "FAIL 2: $set"
+    if (!set.contains(ContainedElement)) return "FAIL 3: $set"
+
+    return "OK"
 }

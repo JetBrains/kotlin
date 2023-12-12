@@ -3,19 +3,22 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.boxing.boxing4
-
 import kotlin.test.*
 
-fun printInt(x: Int) = println(x)
+val sb = StringBuilder()
+
+fun printInt(x: Int) = sb.appendLine(x)
 
 fun foo(arg: Any?) {
     if (arg is Int? && arg != null)
         printInt(arg)
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo(16)
     val nonConst = 16
     foo(nonConst)
+
+    assertEquals("16\n16\n", sb.toString())
+    return "OK"
 }

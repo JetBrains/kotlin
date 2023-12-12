@@ -3,13 +3,13 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.boxing.boxing2
-
 import kotlin.test.*
 
-fun printInt(x: Int) = println(x)
-fun printBoolean(x: Boolean) = println(x)
-fun printUInt(x: UInt) = println(x)
+val sb = StringBuilder()
+
+fun printInt(x: Int) = sb.appendLine(x.toString())
+fun printBoolean(x: Boolean) = sb.appendLine(x.toString())
+fun printUInt(x: UInt) = sb.appendLine(x.toString())
 
 fun foo(arg: Any) {
     if (arg is Int)
@@ -19,10 +19,10 @@ fun foo(arg: Any) {
     else if (arg is UInt)
         printUInt(arg)
     else
-        println("other")
+        sb.appendLine("other")
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo(1)
     foo(2u)
     foo(true)
@@ -35,4 +35,17 @@ fun foo(arg: Any) {
     foo(nonConstUInt)
     foo(nonConstBool)
     foo(nonConstString)
+
+    assertEquals("""
+        1
+        2
+        true
+        other
+        1
+        2
+        true
+        other
+        
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

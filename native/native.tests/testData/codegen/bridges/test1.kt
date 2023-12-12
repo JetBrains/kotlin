@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.test1
-
 import kotlin.test.*
 
 // interface call, bridge overridden
@@ -20,8 +18,11 @@ open class B : A() {
     override fun foo(x: Int) : Int = 42
 }
 
-@Test fun runTest() {
+fun box(): String {
     val z1: A = B()
-    println((z1.foo(1) + 1000).toString())
+    val res = (z1.foo(1) + 1000).toString()
+    if (res != "1042") return "FAIL: $res"
+
+    return "OK"
 }
 

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.superFunCall
-
 import kotlin.test.*
 
 open class C {
@@ -22,8 +20,11 @@ class C3: C2() {
     override fun f() = super<C2>.f() + "<fun:C3>"
 }
 
-@Test
-fun runTest() {
-    println(C1().f())
-    println(C3().f())
+fun box(): String {
+    val c1f = C1().f()
+    if (c1f != "<fun:C><fun:C1>") return "FAIL 1: $c1f"
+    val c3f = C3().f()
+    if (c3f != "<fun:C><fun:C3>") return "FAIL 2: $c3f"
+
+    return "OK"
 }

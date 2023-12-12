@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.branching.when5
-
 import kotlin.test.*
 
 fun when5(i: Int): Int {
@@ -18,6 +16,9 @@ fun when5(i: Int): Int {
   }
 }
 
-@Test fun runTest() {
-  if (when5(2) != 3) throw Error()
+fun box(): String {
+  val res = when5(2)
+  if (res != 3) return "FAIL $res"
+
+  return "OK"
 }

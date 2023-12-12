@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.test2
-
 import kotlin.test.*
 
 // vtable call, bridge inherited
@@ -18,9 +16,13 @@ open class C : A() {
 
 open class D: C()
 
-@Test fun runTest() {
+fun box(): String {
     val c = D()
     val a: A = c
-    println(c.foo().toString())
-    println(a.foo().toString())
+    val res1 = c.foo().toString()
+    if (res1 != "42") return "FAIL 1: $res1"
+    val res2 = a.foo().toString()
+    if (res2 != "42") return "FAIL 2: $res2"
+
+    return "OK"
 }

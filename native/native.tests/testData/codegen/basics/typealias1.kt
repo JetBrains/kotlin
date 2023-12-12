@@ -3,13 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.typealias1
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
-    println(Bar(42).x)
+fun box(): String {
+    val x = Bar(42).x
+    if (x != 42 ) return "FAIL: $x"
+        return "OK"
 }
 
 class Foo(val x: Int)

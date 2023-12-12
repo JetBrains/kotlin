@@ -1,18 +1,21 @@
-package codegen.controlflow.for_loops_array_indices
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     val intArray = intArrayOf(4, 0, 3, 5)
 
     val emptyArray = arrayOf<Any>()
 
     for (index in intArray.indices) {
-        print(index)
+        sb.append(index)
     }
-    println()
+    sb.appendLine()
     for (index in emptyArray.indices) {
-        print(index)
+        sb.append(index)
     }
-    println()
+    sb.appendLine()
+
+    assertEquals("0123\n\n", sb.toString())
+    return "OK"
 }

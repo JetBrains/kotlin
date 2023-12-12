@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.branching.when2
-
 import kotlin.test.*
 
 fun when2(i: Int): Int {
@@ -14,6 +12,9 @@ fun when2(i: Int): Int {
   }
 }
 
-@Test fun runTest() {
-  if (when2(0) != 42) throw Error()
+fun box(): String {
+  val res = when2(0)
+  if (res != 42) return "FAIL $res"
+
+  return "OK"
 }

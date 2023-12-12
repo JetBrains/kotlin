@@ -3,22 +3,18 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.expression_as_statement
-
 import kotlin.test.*
 
 fun foo() {
     Any() as String
 }
 
-@Test
-fun runTest() {
+fun box(): String {
     try {
         foo()
     } catch (e: Throwable) {
-        println("Ok")
-        return
+        return "OK"
     }
 
-    println("Fail")
+    return "Fail"
 }

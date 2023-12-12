@@ -17,11 +17,13 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-fun main() {
+fun box(): String {
     var result = 0
 
     val f: () -> Unit = { result = 42 }
     builder(f)
 
     assertEquals(42, result)
+
+    return "OK"
 }

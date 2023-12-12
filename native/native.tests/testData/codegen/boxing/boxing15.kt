@@ -3,14 +3,17 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.boxing.boxing15
-
 import kotlin.test.*
 
-@Test fun runTest() {
-    println(foo(17))
+fun box(): String {
+    val res1 = foo(17)
+    if (res1 != 17) return "FAIL 1: $res1"
+
     val nonConst = 17
-    println(foo(nonConst))
+    val res2 = foo(nonConst)
+    if (res2 != 17) return "FAIL 2: $res2"
+
+    return "OK"
 }
 
 fun <T : Int> foo(x: T): Int = x

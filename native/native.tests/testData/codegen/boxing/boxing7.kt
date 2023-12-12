@@ -3,11 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.boxing.boxing7
-
 import kotlin.test.*
 
-fun printInt(x: Int) = println(x)
+val sb = StringBuilder()
+
+fun printInt(x: Int) = sb.appendLine(x)
 
 fun foo(arg: Any) {
     val argAsInt = try {
@@ -18,11 +18,14 @@ fun foo(arg: Any) {
     printInt(argAsInt)
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo(1)
     foo("Hello")
     val nonConstInt = 1
     val nonConstString = "Hello"
     foo(nonConstInt)
     foo(nonConstString)
+
+    assertEquals("1\n0\n1\n0\n", sb.toString())
+    return "OK"
 }

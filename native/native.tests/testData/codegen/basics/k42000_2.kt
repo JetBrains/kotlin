@@ -1,14 +1,13 @@
-package codegen.basics.k42000_2
-
 import kotlin.test.*
 
 // https://youtrack.jetbrains.com/issue/KT-42000
 
-@Test
-fun runTest() {
+fun box(): String {
     assertFailsWith<Error> {
         when (1) {
             else -> throw Error()
         } as String
     }
+
+    return "OK"
 }

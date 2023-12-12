@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.classDelegation.generic
-
 import kotlin.test.*
 
 open class Content() {
@@ -24,7 +22,3 @@ object Impl : ContentBox<Content> {
 class ContentBoxDelegate<T : Content>() : ContentBox<T> by (Impl as ContentBox<T>)
 
 fun box() = ContentBoxDelegate<Content>().get().toString()
-
-@Test fun runTest() {
-    println(box())
-}

@@ -3,14 +3,17 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.controlflow.break1
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     loop@ while (true) {
-        println("Body")
+        sb.appendLine("Body")
         break
     }
-    println("Done")
+    sb.appendLine("Done")
+
+    assertEquals("Body\nDone\n", sb.toString())
+    return "OK"
 }

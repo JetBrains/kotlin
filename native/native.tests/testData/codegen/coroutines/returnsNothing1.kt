@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.coroutines.returnsNothing1
-
 import kotlin.test.*
 
 import kotlin.coroutines.*
@@ -32,9 +30,9 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-@Test fun runTest() {
+fun box(): String {
     builder {
         bar()
     }
-    println("OK")
+    return "OK"
 }

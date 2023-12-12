@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.superGetterCall
-
 import kotlin.test.*
 
 open class C {
@@ -22,8 +20,11 @@ class C3: C2() {
     override val p1 = super<C2>.p1 + "<prop:C3>"
 }
 
-@Test
-fun runTest() {
-    println(C1().p1)
-    println(C3().p1)
+fun box(): String {
+    val c1p1 = C1().p1
+    if (c1p1 != "<prop:C><prop:C1>") return "FAIL 1: $c1p1"
+    val c3p1 = C3().p1
+    if (c3p1 != "<prop:C><prop:C3>") return "FAIl 2: $c3p1"
+
+    return "OK"
 }

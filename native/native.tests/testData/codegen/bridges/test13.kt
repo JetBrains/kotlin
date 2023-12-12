@@ -3,13 +3,13 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.test13
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 open class A<T> {
     open fun T.foo() {
-        println(this.toString())
+        sb.appendLine(this.toString())
     }
 
     fun bar(x: T) {
@@ -19,13 +19,16 @@ open class A<T> {
 
 open class B: A<Int>() {
     override fun Int.foo() {
-        println(this)
+        sb.appendLine(this.toString())
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     val b = B()
     val a = A<Int>()
     b.bar(42)
     a.bar(42)
+
+    assertEquals("42\n42\n", sb.toString())
+    return "OK"
 }

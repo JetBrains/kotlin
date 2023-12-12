@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package codegen.coroutines.inheritance
-
 import kotlin.test.*
 
 import kotlin.coroutines.*
@@ -35,15 +33,16 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-@Test fun runTest() {
+fun box(): String {
     var result = 0
 
     builder {
         result = SuspendHere()()
     }
-    println(result)
+    assertEquals(42, result)
     builder {
         result = SuspendHereLegacy()()
     }
-    println(result)
+    assertEquals(43, result)
+    return "OK"
 }

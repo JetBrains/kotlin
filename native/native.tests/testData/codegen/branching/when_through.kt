@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.branching.when_through
-
 import kotlin.test.*
 
 fun when_through(i: Int): Int {
@@ -18,6 +16,9 @@ fun when_through(i: Int): Int {
   return value
 }
 
-@Test fun runTest() {
-  if (when_through(2) != 1) throw Error()
+fun box(): String {
+  val res = when_through(2)
+  if (res != 1) return "FAIL $res"
+
+  return "OK"
 }

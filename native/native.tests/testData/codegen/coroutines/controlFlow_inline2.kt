@@ -3,12 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.coroutines.controlFlow_inline2
-
 import kotlin.test.*
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
+
+val sb = StringBuilder()
 
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
     companion object : EmptyContinuation()
@@ -16,7 +16,7 @@ open class EmptyContinuation(override val context: CoroutineContext = EmptyCorou
 }
 
 suspend fun s1(): Int = suspendCoroutineUninterceptedOrReturn { x ->
-    println("s1")
+    sb.appendLine("s1")
     x.resume(42)
     COROUTINE_SUSPENDED
 }
@@ -30,12 +30,19 @@ inline suspend fun inline_s2(): Int {
     return x
 }
 
-@Test fun runTest() {
+fun box(): String {
     var result = 0
 
     builder {
         result = inline_s2()
     }
 
-    println(result)
+    sb.appendLine(result)
+
+    assertEquals("""
+        s1
+        42
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

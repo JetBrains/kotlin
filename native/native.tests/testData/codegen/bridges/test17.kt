@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.test17
-
 import kotlin.test.*
 
 // abstract bridge
@@ -22,13 +20,19 @@ class D: C() {
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     val d = D()
     val c: C = d
     val b: B<Int> = d
     val a: A<Int> = d
-    println(d.foo())
-    println(c.foo())
-    println(b.foo())
-    println(a.foo())
+    val foo0 = d.foo()
+    if (foo0 != 42) return "FAIL d: $foo0"
+    val foo1 = c.foo()
+    if (foo1 != 42) return "FAIL c: $foo1"
+    val foo2 = b.foo()
+    if (foo2 != 42) return "FAIL b: $foo2"
+    val foo3 = a.foo()
+    if (foo3 != 42) return "FAIL a: $foo3"
+
+    return "OK"
 }

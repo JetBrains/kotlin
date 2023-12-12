@@ -2,9 +2,6 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
-package codegen.basics.check_type
-
 import kotlin.test.*
 
 interface I
@@ -37,12 +34,13 @@ fun isTypeOfInterface(a: Any) : Boolean {
 
 //-----------------------------------------------------------------------------//
 
-@Test
-fun runTest() {
-  println(isTypeOf(A()))
-  println(isTypeOf(null))
-  println(isTypeNullableOf(A()))
-  println(isTypeNullableOf(null))
-  println(isNotTypeOf(B()))
-  println(isTypeOfInterface(A()))
+fun box(): String {
+  if (!isTypeOf(A())) return "FAIL !isTypeOf(A())"
+  if (isTypeOf(null)) return "FAIL isTypeOf(null)"
+  if (!isTypeNullableOf(A())) return "FAIL !isTypeNullableOf(A())"
+  if (!isTypeNullableOf(null)) return "FAIL !isTypeNullableOf(null)"
+  if (!isNotTypeOf(B())) return "FAIL !isNotTypeOf(B())"
+  if (!isTypeOfInterface(A())) return "FAIL !isTypeOfInterface(A())"
+
+  return "OK"
 }

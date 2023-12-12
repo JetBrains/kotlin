@@ -3,14 +3,17 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.boxing.boxing14
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     42.println()
     val nonConst = 42
     nonConst.println()
+
+    assertEquals("42\n42\n", sb.toString())
+    return "OK"
 }
 
-fun <T> T.println() = println(this.toString())
+fun <T> T.println() = sb.appendLine(this)

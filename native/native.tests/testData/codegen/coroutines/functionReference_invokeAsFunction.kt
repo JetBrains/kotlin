@@ -3,12 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.coroutines.functionReference_invokeAsFunction
-
 import kotlin.test.*
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
+
+val sb = StringBuilder()
 
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
     companion object : EmptyContinuation()
@@ -21,8 +21,14 @@ class Foo(val x: Int) {
 
 suspend fun foo(x: Int) = x
 
-@Test fun runTest() {
+fun box(): String {
     val ref = Foo(42)::bar
 
-    println((ref as Function2<Int, Continuation<Int>, Any?>)(117, EmptyContinuation))
+    sb.appendLine((ref as Function2<Int, Continuation<Int>, Any?>)(117, EmptyContinuation))
+
+    assertEquals("""
+        159
+        
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

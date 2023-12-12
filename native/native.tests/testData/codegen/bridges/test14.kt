@@ -3,14 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.bridges.test14
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 open class A<T, U> {
     open fun foo(x: T, y: U) {
-        println(x.toString())
-        println(y.toString())
+        sb.appendLine(x.toString())
+        sb.appendLine(y.toString())
     }
 }
 
@@ -35,19 +35,32 @@ fun zzz(a: A<Int, Int>) {
     a.foo(42, 56)
 }
 
-@Test fun runTest() {
+fun box(): String {
     val b = B()
     zzz(b)
     val a = A<Int, Int>()
     zzz(a)
-    println(b.z)
-    println(b.q)
+    sb.appendLine(b.z.toString())
+    sb.appendLine(b.q.toString())
     val i1: I1<Int> = b
     i1.foo(56, 42)
-    println(b.z)
-    println(b.q)
+    sb.appendLine(b.z.toString())
+    sb.appendLine(b.q.toString())
     val i2: I2<Int> = b
     i2.foo(156, 142)
-    println(b.z)
-    println(b.q)
+    sb.appendLine(b.z.toString())
+    sb.appendLine(b.q.toString())
+
+    assertEquals("""
+        42
+        56
+        42
+        56
+        56
+        42
+        156
+        142
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

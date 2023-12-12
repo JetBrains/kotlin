@@ -3,11 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.unit1
-
-import kotlin.test.*
-
-@Test
-fun runTest() {
-    println(println("First").toString())
+fun box(): String {
+    val unit = println("First")
+    if (unit.toString() != "kotlin.Unit") return "FAIL 1: $unit"
+    return "OK"
 }

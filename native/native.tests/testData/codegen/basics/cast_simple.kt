@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.cast_simple
-
 import kotlin.test.*
 
 open class A() {}
@@ -18,7 +16,8 @@ fun castTest(): Boolean {
   return true
 }
 
-@Test
-fun runTest() {
+fun box(): String {
   if (!castTest()) throw Error()
+
+  return "OK"
 }

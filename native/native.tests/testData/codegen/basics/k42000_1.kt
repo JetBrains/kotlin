@@ -1,10 +1,9 @@
-package codegen.basics.k42000_1
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
+fun box(): String {
     assertTrue(Reproducer().repro() > 0)
+
+    return "OK"
 }
 
 // Based on https://youtrack.jetbrains.com/issue/KT-42000#focus=Comments-27-4404934.0-0

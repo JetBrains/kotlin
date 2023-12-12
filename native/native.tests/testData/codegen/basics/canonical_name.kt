@@ -3,9 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.basics.canonical_name
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 interface I<U, T> {
   fun foo(a: U): T
@@ -20,8 +20,8 @@ class A2
 //-----------------------------------------------------------------------------//
 
 class A : I<A1, A2> {
-  override fun foo(a: A1): A2 { println("A:foo"); return A2() }
-  override fun qux(a: A2): A1 { println("A:qux"); return A1() }
+  override fun foo(a: A1): A2 { sb.appendLine("A:foo"); return A2() }
+  override fun qux(a: A2): A1 { sb.appendLine("A:qux"); return A1() }
 }
 
 //-----------------------------------------------------------------------------//
@@ -33,7 +33,9 @@ fun <U, V> baz(i: I<U, V>, u: U, v:V) {
 
 //-----------------------------------------------------------------------------//
 
-@Test
-fun runTest() {
+fun box(): String {
   baz<A1, A2>(A(), A1(), A2())
+
+  assertEquals("A:foo\nA:qux\n", sb.toString())
+  return "OK"
 }

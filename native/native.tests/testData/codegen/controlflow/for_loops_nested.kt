@@ -3,66 +3,78 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.controlflow.for_loops_nested
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     // Simple
     for (i in 0..2) {
         for (j in 0..2) {
-            print("$i$j ")
+            sb.append("$i$j ")
         }
     }
-    println()
+    sb.appendLine()
 
     // Break
     l1@for (i in 0..2) {
         l2@for (j in 0..2) {
-            print("$i$j ")
+            sb.append("$i$j ")
             if (j == 1) break
         }
     }
-    println()
+    sb.appendLine()
 
     l1@for (i in 0..2) {
         l2@for (j in 0..2) {
-            print("$i$j ")
+            sb.append("$i$j ")
             if (j == 1) break@l2
         }
     }
-    println()
+    sb.appendLine()
 
     l1@for (i in 0..2) {
         l2@for (j in 0..2) {
-            print("$i$j ")
+            sb.append("$i$j ")
             if (j == 1) break@l1
         }
     }
-    println()
+    sb.appendLine()
 
     // Continue
     l1@for (i in 0..2) {
         l2@for (j in 0..2) {
             if (j == 1) continue
-            print("$i$j ")
+            sb.append("$i$j ")
         }
     }
-    println()
+    sb.appendLine()
 
     l1@for (i in 0..2) {
         l2@for (j in 0..2) {
             if (j == 1) continue@l2
-            print("$i$j ")
+            sb.append("$i$j ")
         }
     }
-    println()
+    sb.appendLine()
 
     l1@for (i in 0..2) {
         l2@for (j in 0..2) {
             if (j == 1) continue@l1
-            print("$i$j ")
+            sb.append("$i$j ")
         }
     }
-    println()
+    sb.appendLine()
+
+    assertEquals("""
+        00 01 02 10 11 12 20 21 22 
+        00 01 10 11 20 21 
+        00 01 10 11 20 21 
+        00 01 
+        00 02 10 12 20 22 
+        00 02 10 12 20 22 
+        00 10 20 
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }
