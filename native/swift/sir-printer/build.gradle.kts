@@ -4,6 +4,10 @@ plugins {
 
 description = "Printer for SIR"
 
+kotlin {
+    explicitApi()
+}
+
 dependencies {
     compileOnly(kotlinStdlib())
 

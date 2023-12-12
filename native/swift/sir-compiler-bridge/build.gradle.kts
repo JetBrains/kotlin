@@ -4,6 +4,10 @@ plugins {
 
 description = "SIR to Kotlin bindings generator"
 
+kotlin {
+    explicitApi()
+}
+
 dependencies {
     compileOnly(kotlinStdlib())
 

@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.sir.analysisapi.transformers.toForeignFunction
 /**
  * A root interface for classes that produce Swift IR elements.
  */
-interface SirFactory {
-    fun build(fromFile: KtFile): List<SirDeclaration>
+public interface SirFactory {
+    public fun build(fromFile: KtFile): List<SirDeclaration>
 }
 
-class SirGenerator : SirFactory {
+public class SirGenerator : SirFactory {
     override fun build(fromFile: KtFile): List<SirDeclaration> = analyze(fromFile) {
         val res = mutableListOf<SirForeignFunction>()
         fromFile.accept(Visitor(res))

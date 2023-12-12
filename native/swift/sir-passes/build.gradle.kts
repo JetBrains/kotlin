@@ -4,6 +4,10 @@ plugins {
 
 description = "Infrastructure of transformations over SIR"
 
+kotlin {
+    explicitApi()
+}
+
 dependencies {
     compileOnly(kotlinStdlib())
 

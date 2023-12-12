@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.sir.SirElement
  * Swift IR is supposed to be transformed by a series of passes.
  * This is a base interface that all such passes should implement.
  */
-interface SirPass<out R, in T> {
+public interface SirPass<out R, in T> {
 
     /**
      * Executes the pass over the given [SirElement].
@@ -20,5 +20,5 @@ interface SirPass<out R, in T> {
      * @param data Additional data that is required to run the pass.
      * @return The result of the pass.
      */
-    fun run(element: SirElement, data: T): R
+    public fun run(element: SirElement, data: T): R
 }

@@ -96,7 +96,7 @@ private fun bridgeParameter(parameter: SirParameter): BridgeParameter {
     )
 }
 
-fun createBridgeParameterName(kotlinName: String): String {
+public fun createBridgeParameterName(kotlinName: String): String {
     // TODO: Post-process because C has stricter naming conventions.
     return kotlinName
 }
@@ -111,7 +111,7 @@ internal data class CBridgeParameter(
     val type: CType,
 )
 
-enum class CType(val repr: String) {
+public enum class CType(public val repr: String) {
     Bool("_Bool"),
 
     Int8("int8_t"),

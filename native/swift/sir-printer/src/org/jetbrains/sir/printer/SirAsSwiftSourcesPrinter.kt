@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.utils.SmartPrinter
 
 private const val DEFAULT_INDENT: String = "    "
 
-class SirAsSwiftSourcesPrinter : SirVisitor<Unit, SmartPrinter>() {
-    fun print(element: SirElement): String = buildString {
+public class SirAsSwiftSourcesPrinter : SirVisitor<Unit, SmartPrinter>() {
+    public fun print(element: SirElement): String = buildString {
         element.accept(this@SirAsSwiftSourcesPrinter, SmartPrinter(this))
     }.trim()
 
-    override fun visitModule(module: SirModule, data: SmartPrinter) = with(data) {
+    override fun visitModule(module: SirModule, data: SmartPrinter): Unit = with(data) {
         module.declarations.forEach {
             it.accept(this@SirAsSwiftSourcesPrinter, this)
             if (module.declarations.last() != it) {

@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.sir.bridge.impl.KotlinBridgePrinter
  * @param function SIR function we are generating bridge for
  * @param bridgeName C name of the bridge
  */
-class BridgeRequest(
-    val function: SirFunction,
-    val bridgeName: String,
-    val fqName: List<String>,
+public class BridgeRequest(
+    public val function: SirFunction,
+    public val bridgeName: String,
+    public val fqName: List<String>,
 )
 
 /**
@@ -27,9 +27,9 @@ class BridgeRequest(
  * Abstracts away all nuances of Kotlin compiler ABI, making it possible
  * to call Kotlin code from other environments.
  */
-class FunctionBridge(
-    val kotlinFunctionBridge: KotlinFunctionBridge,
-    val cDeclarationBridge: CFunctionBridge,
+public class FunctionBridge(
+    public val kotlinFunctionBridge: KotlinFunctionBridge,
+    public val cDeclarationBridge: CFunctionBridge,
 )
 
 /**
@@ -38,9 +38,9 @@ class FunctionBridge(
  * @param lines with function declaration.
  * @param headerDependencies required headers.
  */
-class CFunctionBridge(
-    val lines: List<String>,
-    val headerDependencies: List<String>,
+public class CFunctionBridge(
+    public val lines: List<String>,
+    public val headerDependencies: List<String>,
 )
 
 /**
@@ -49,39 +49,39 @@ class CFunctionBridge(
  * @param lines definition of Kotlin bridge.
  * @param packageDependencies required packages to make sources compile.
  */
-class KotlinFunctionBridge(
-    val lines: List<String>,
-    val packageDependencies: List<String>,
+public class KotlinFunctionBridge(
+    public val lines: List<String>,
+    public val packageDependencies: List<String>,
 )
 
 /**
  * Generates [FunctionBridge] that binds SIR function to its Kotlin origin.
  */
-interface BridgeGenerator {
-    fun generate(request: BridgeRequest): FunctionBridge
+public interface BridgeGenerator {
+    public fun generate(request: BridgeRequest): FunctionBridge
 }
 
 /**
  * A common interface for classes that serialize [FunctionBridge] in some form.
  */
-interface BridgePrinter {
+public interface BridgePrinter {
     /**
      * Populate printer with an additional [bridge].
      */
-    fun add(bridge: FunctionBridge)
+    public fun add(bridge: FunctionBridge)
 
     /**
      * Outputs the aggregated result.
      */
-    fun print(): Sequence<String>
+    public fun print(): Sequence<String>
 }
 
-fun createBridgeGenerator(): BridgeGenerator =
+public fun createBridgeGenerator(): BridgeGenerator =
     BridgeGeneratorImpl()
 
-fun createCBridgePrinter(): BridgePrinter =
+public fun createCBridgePrinter(): BridgePrinter =
     CBridgePrinter()
 
-fun createKotlinBridgePrinter(): BridgePrinter =
+public fun createKotlinBridgePrinter(): BridgePrinter =
     KotlinBridgePrinter()
 

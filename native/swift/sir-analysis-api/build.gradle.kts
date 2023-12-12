@@ -4,6 +4,10 @@ plugins {
 
 description = "Build Swift IR from Analysis API"
 
+kotlin {
+    explicitApi()
+}
+
 dependencies {
     compileOnly(kotlinStdlib())
 

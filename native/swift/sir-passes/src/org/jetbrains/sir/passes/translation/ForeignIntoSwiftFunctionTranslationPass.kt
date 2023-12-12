@@ -22,7 +22,7 @@ import java.lang.IllegalStateException
  * or `element` does not contain origin of type `SirOrigin.KotlinEntity.Function`,
  * returns original element.
  */
-class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Unit> {
+public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Unit> {
 
     private class Transformer : SirTransformer<Unit>() {
         override fun <E : SirElement> transformElement(element: E, data: Unit): E {
