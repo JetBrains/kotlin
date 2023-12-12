@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.kotlinNativeDist
+
 description = "Swift Export Compiler Plugin"
 
 plugins {
@@ -23,6 +25,10 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
 
+    testImplementation(project(":kotlin-native:backend.native"))
+    testRuntimeOnly(project(":kotlin-native:utilities:basic-utils"))
+    testRuntimeOnly(project(":kotlin-native:Interop:Runtime"))
+    testRuntimeOnly(project(":native:base"))
 
     testApi(intellijCore())
 }
@@ -56,4 +62,8 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     inputs.dir(testDataDir)
     useJUnitPlatform()
+
+    doFirst {
+        systemProperty("kotlin.native.home", kotlinNativeDist)
+    }
 }

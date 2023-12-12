@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.native.FirNativeOverrideChecker
+import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
@@ -39,6 +40,8 @@ internal inline fun <F> PhaseContext.firFrontend(
     val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
 
     // FIR
+    FirAnalysisHandlerExtension.analyze(input.project, input.configuration)?.let { return FirOutput.ShouldNotGenerateCode }
+
     val extensionRegistrars = FirExtensionRegistrar.getInstances(input.project)
     val mainModuleName = Name.special("<${config.moduleId}>")
     val syntaxErrors = files.fold(false) { errorsFound, file -> fileHasSyntaxErrors(file) or errorsFound }

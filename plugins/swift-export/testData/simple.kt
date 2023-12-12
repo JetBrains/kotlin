@@ -11,6 +11,6 @@ fun bar(): Int = 321
 // FILE: main.kt
 package namespace1.main
 
-import namespace1
-import namespace2
+import namespace1.*
+import namespace2.*
 fun foobar(): Int = foo() + bar()

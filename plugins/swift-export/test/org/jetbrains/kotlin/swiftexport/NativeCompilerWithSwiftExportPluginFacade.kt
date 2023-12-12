@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.swiftexport
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.cli.bc.K2Native
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.psi.KtFile
@@ -24,7 +24,7 @@ import java.util.zip.ZipOutputStream
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 
-internal class JvmCompilerWithSwiftExportPluginFacade(
+internal class NativeCompilerWithSwiftExportPluginFacade(
     private val testServices: TestServices,
 ) : AbstractTestFacade<ResultingArtifact.Source, SwiftExportArtifact>() {
     override val inputKind: TestArtifactKind<ResultingArtifact.Source>
@@ -44,7 +44,7 @@ internal class JvmCompilerWithSwiftExportPluginFacade(
         outputDir.mkdirs()
 
         runTest(
-            K2JVMCompiler(),
+            K2Native(),
             ktFiles,
             outputDir
         )
@@ -78,7 +78,7 @@ internal class JvmCompilerWithSwiftExportPluginFacade(
 
         val outputPath = listOf(
             "-language-version", "2.0",
-            "-d", tmpDir.resolve("out").absolutePath
+            "-produce", "library",
         )
 
         val (output, exitCode) = CompilerTestUtil.executeCompiler(
