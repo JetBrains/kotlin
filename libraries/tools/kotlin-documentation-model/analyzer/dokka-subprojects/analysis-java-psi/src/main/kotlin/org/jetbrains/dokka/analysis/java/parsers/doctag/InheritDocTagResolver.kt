@@ -78,19 +78,26 @@ internal class InheritDocTagResolver(
         paramTag: ParamJavadocTag,
     ): List<DocumentationContent> {
         val parameterIndex = paramTag.paramIndex
+        if (parameterIndex < 0) return emptyList()
 
-        val methods = (currentElement.owner as? PsiMethod)
-            ?.let { method -> lowestMethodsWithTag(method, paramTag) }
-            .orEmpty()
+        val isTypeParameter = paramTag.paramName.startsWith("<")
+
+        // while @param can be used for both classes and functions,
+        //  it can be inherited only for functions
+        val methods = (currentElement.owner as? PsiMethod)?.let {
+            lowestMethodsWithTag(it, paramTag)
+        }.orEmpty()
 
         return methods.flatMap {
-            if (parameterIndex >= it.parameterList.parametersCount || parameterIndex < 0) {
-                return@flatMap emptyList()
-            }
+            val parameterName = when {
+                isTypeParameter -> it.typeParameters.getOrNull(parameterIndex)?.name
+                else -> it.parameterList.parameters.getOrNull(parameterIndex)?.name
+            } ?: return@flatMap emptyList()
 
-            val closestTag = docCommentFinder.findClosestToElement(it)
-            val hasTag = closestTag?.hasTag(paramTag) ?: false
-            closestTag?.takeIf { hasTag }?.resolveTag(ParamJavadocTag(it, "", parameterIndex)) ?: emptyList()
+            docCommentFinder.findClosestToElement(it)
+                ?.takeIf { it.hasTag(paramTag) }
+                ?.resolveTag(ParamJavadocTag(parameterName, parameterIndex))
+                ?: emptyList()
         }
     }
 
