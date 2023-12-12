@@ -274,6 +274,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
                 "BUILT_PRODUCTS_DIR" to iosBuildProductsDir(true).absolutePathString(),
             )
+            println("ENV_VARS: $environmentVariables")
             buildAndFail(
                 ":shared:embedAndSignAppleFrameworkForXcode",
                 environmentVariables = EnvironmentalVariables(environmentVariables)
