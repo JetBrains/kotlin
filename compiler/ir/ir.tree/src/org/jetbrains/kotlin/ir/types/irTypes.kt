@@ -31,7 +31,7 @@ private fun IrType.withNullability(newNullability: Boolean): IrType =
         else -> this
     }
 
-private fun IrSimpleType.withNullability(newNullability: Boolean): IrSimpleType {
+fun IrSimpleType.withNullability(newNullability: Boolean): IrSimpleType {
     val requiredNullability = if (newNullability) SimpleTypeNullability.MARKED_NULLABLE else SimpleTypeNullability.DEFINITELY_NOT_NULL
     return if (nullability == requiredNullability)
         this
