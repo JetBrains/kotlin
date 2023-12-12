@@ -1308,6 +1308,11 @@ public class IncrementalFirICLightTreeJvmCompilerRunnerTestGenerated extends Abs
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType/");
             }
 
+            @TestMetadata("changeGetterType")
+            public void testChangeGetterType() throws Exception {
+                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeGetterType/");
+            }
+
             @TestMetadata("changeMethodToPropertyInInheritance")
             public void testChangeMethodToPropertyInInheritance() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeMethodToPropertyInInheritance/");
@@ -1451,6 +1456,19 @@ public class IncrementalFirICLightTreeJvmCompilerRunnerTestGenerated extends Abs
 
                 public void testAllFilesPresentInChangeFieldType() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^classToPackageFacade)"), TargetBackend.JVM_IR, true);
+                }
+            }
+
+            @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeGetterType")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ChangeGetterType extends AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInChangeGetterType() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeGetterType"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^classToPackageFacade)"), TargetBackend.JVM_IR, true);
                 }
             }
 
