@@ -71,13 +71,22 @@ fun main() {
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
             }
             testClass<AbstractClassicNativeIrTextTest> {
-                model("ir/irText")
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k2")
+                )
             }
             testClass<AbstractFirLightTreeNativeIrTextTest> {
-                model("ir/irText")
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
             }
             testClass<AbstractFirPsiNativeIrTextTest> {
-                model("ir/irText")
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
             }
         }
 

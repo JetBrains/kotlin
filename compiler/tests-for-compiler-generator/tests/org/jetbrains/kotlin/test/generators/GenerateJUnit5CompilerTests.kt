@@ -124,7 +124,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractClassicJvmIrTextTest> {
-                model("ir/irText")
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k2")
+                )
             }
 
             testClass<AbstractClassicJvmIrSourceRangesTest> {
@@ -376,11 +379,17 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractFirLightTreeJvmIrTextTest> {
-                model("ir/irText")
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
             }
 
             testClass<AbstractFirPsiJvmIrTextTest> {
-                model("ir/irText")
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
             }
 
             testClass<AbstractFirLightTreeJvmIrSourceRangesTest> {

@@ -232,15 +232,24 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractClassicJsIrTextTest> {
-                model("ir/irText")
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k2")
+                )
             }
 
             testClass<AbstractFirLightTreeJsIrTextTest> {
-                model("ir/irText")
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
             }
 
             testClass<AbstractFirPsiJsIrTextTest> {
-                model("ir/irText")
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
             }
 
             testClass<AbstractFirJsCodegenBoxTest> {

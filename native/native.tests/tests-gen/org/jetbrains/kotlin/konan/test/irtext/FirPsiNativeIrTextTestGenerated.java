@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextTest {
     @Test
     public void testAllFilesPresentInIrText() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "declarations/multiplatform/k1");
     }
 
     @Nested
@@ -363,7 +363,7 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     public class Declarations {
         @Test
         public void testAllFilesPresentInDeclarations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "multiplatform/k1");
         }
 
         @Test
@@ -938,47 +938,7 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
         public class Multiplatform {
             @Test
             public void testAllFilesPresentInMultiplatform() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform/k1")
-            @TestDataPath("$PROJECT_ROOT")
-            public class K1 {
-                @Test
-                public void testAllFilesPresentInK1() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform/k1"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-                }
-
-                @Test
-                @TestMetadata("expectClassInherited.kt")
-                public void testExpectClassInherited() throws Exception {
-                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectClassInherited.kt");
-                }
-
-                @Test
-                @TestMetadata("expectIntersectionOverride.kt")
-                public void testExpectIntersectionOverride() throws Exception {
-                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectIntersectionOverride.kt");
-                }
-
-                @Test
-                @TestMetadata("expectMemberInNotExpectClass.kt")
-                public void testExpectMemberInNotExpectClass() throws Exception {
-                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectMemberInNotExpectClass.kt");
-                }
-
-                @Test
-                @TestMetadata("expectedEnumClass.kt")
-                public void testExpectedEnumClass() throws Exception {
-                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectedEnumClass.kt");
-                }
-
-                @Test
-                @TestMetadata("expectedSealedClass.kt")
-                public void testExpectedSealedClass() throws Exception {
-                    runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectedSealedClass.kt");
-                }
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "k1");
             }
 
             @Nested
