@@ -1313,6 +1313,11 @@ public class IncrementalK1JvmCompilerRunnerTestGenerated extends AbstractIncreme
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType/");
             }
 
+            @TestMetadata("changeMethodToPropertyInInheritance")
+            public void testChangeMethodToPropertyInInheritance() throws Exception {
+                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeMethodToPropertyInInheritance/");
+            }
+
             @TestMetadata("changePropertyOverrideType")
             public void testChangePropertyOverrideType() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changePropertyOverrideType/");
@@ -1446,6 +1451,19 @@ public class IncrementalK1JvmCompilerRunnerTestGenerated extends AbstractIncreme
 
                 public void testAllFilesPresentInChangeFieldType() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
+                }
+            }
+
+            @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeMethodToPropertyInInheritance")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ChangeMethodToPropertyInInheritance extends AbstractIncrementalK1JvmCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInChangeMethodToPropertyInInheritance() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeMethodToPropertyInInheritance"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
