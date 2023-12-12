@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
 /**
  * [AbstractLowLevelApiModifiablePsiSingleFileTest] applies additional configuration to support the modification of PSI during the test.
+ *
+ * NOTE: Modifiable PSI tests must not be used until KT-63650 is fixed.
  */
 abstract class AbstractLowLevelApiModifiablePsiSingleFileTest : AbstractLowLevelApiSingleFileTest() {
     override val configurator: AnalysisApiTestConfigurator get() = AnalysisApiFirModifiablePsiSourceTestConfigurator
