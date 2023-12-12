@@ -8,7 +8,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
@@ -31,7 +33,7 @@ data class KotlinWebpackConfig(
     var outputFileName: String? = entry?.name,
     var configDirectory: File? = null,
     var reportEvaluatedConfigFile: File? = null,
-    var devServer: Provider<DevServer>? = null,
+    val devServerProperty: Property<DevServer>? = null,
     var watchOptions: WatchOptions? = null,
     var experiments: MutableSet<String> = mutableSetOf(),
     override val rules: KotlinWebpackRulesContainer,
@@ -54,6 +56,17 @@ data class KotlinWebpackConfig(
     val progressReporterPathFilterInput: String?
         get() = npmProjectDir?.get()?.let { npmProjectDir -> progressReporterPathFilter?.relativeOrAbsolute(npmProjectDir) }
 
+    @get:Internal
+    @Deprecated(
+        "This property is deprecated and will be removed in future. Use devServerProperty instead",
+        replaceWith = ReplaceWith("devServerProperty")
+    )
+    var devServer: DevServer?
+        get() = devServerProperty?.get()
+        set(value) {
+            devServerProperty?.set(value)
+        }
+
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableSetOf<RequiredKotlinJsDependency>().also {
             it.add(
@@ -69,7 +82,7 @@ data class KotlinWebpackConfig(
                 )
             }
 
-            if (devServer != null && devServer!!.isPresent) {
+            if (devServerProperty != null && devServerProperty!!.isPresent) {
                 it.add(
                     versions.webpackDevServer
                 )
@@ -176,10 +189,10 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendDevServer() {
-        if (devServer != null && devServer!!.isPresent) {
+        if (devServerProperty != null && devServerProperty!!.isPresent) {
 
             appendLine("// dev server")
-            appendLine("config.devServer = ${json(devServer!!.get())};")
+            appendLine("config.devServer = ${json(devServerProperty!!.get())};")
             appendLine()
         }
 
