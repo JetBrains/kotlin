@@ -1,6 +1,6 @@
-element: e
+element: this
 implicit receivers:
-  type: ERROR(Cannot infer argument for type parameter T)
+  type: test.Receiver
   owner symbol: KtFirAnonymousFunctionSymbol
 
 scopes:
@@ -13,8 +13,13 @@ scopes:
   TypeScope, index = 1
     packages: 0
     classifiers: 0
-    callables: 0
-    constructors: 0
+    callables: 4
+      fun fromReceiver()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
 
   LocalScope, index = 2
     packages: 0
@@ -28,40 +33,30 @@ scopes:
     callables: 0
     constructors: 0
 
-  LocalScope, index = 4
+  ExplicitSimpleImportingScope, index = 4
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 5
+  PackageMemberScope, index = 5
     packages: 0
-    classifiers: 0
+    classifiers: 3
+      class Receiver
+      class Base(value: test.Receiver.() -> kotlin.Unit)
+      class Child : test.Base()
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 6
-    packages: 6
-      META-INF
-      java
-      javax
-      kotlin
-      org
-      sun
-    classifiers: 0
-    callables: 1
-      fun test()
-    constructors: 0
+  DefaultSimpleImportingScope, index = 6
 
   DefaultSimpleImportingScope, index = 7
 
-  DefaultSimpleImportingScope, index = 8
-
-  ExplicitStarImportingScope, index = 9
+  ExplicitStarImportingScope, index = 8
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 10
+  DefaultStarImportingScope, index = 9
 
