@@ -1,3 +1,7 @@
+// FIR_IDENTICAL
+// KT-64271
+// IGNORE_BACKEND_K2: JVM_IR
+
 typealias Some = (Any) -> String?
 
 object Factory {

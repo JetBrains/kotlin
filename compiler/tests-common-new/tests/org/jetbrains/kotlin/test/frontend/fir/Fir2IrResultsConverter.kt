@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 fun TestModule.shouldUseIrFakeOverrideBuilder(): Boolean {
-    return CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in directives
+    return !targetPlatform.isJvm() || CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in directives
 }
 
 class Fir2IrResultsConverter(

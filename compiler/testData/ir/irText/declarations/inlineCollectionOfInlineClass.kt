@@ -1,3 +1,7 @@
+// FIR_IDENTICAL
+// KT-64271
+// IGNORE_BACKEND_K2: JVM_IR
+
 inline class IT(val x: Int)
 
 inline class InlineMutableSet(private val ms: MutableSet<IT>) : MutableSet<IT> {

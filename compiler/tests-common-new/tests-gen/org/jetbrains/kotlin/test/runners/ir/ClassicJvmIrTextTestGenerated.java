@@ -281,6 +281,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
         }
 
         @Test
+        @TestMetadata("overriddenEquals.kt")
+        public void testOverriddenEquals() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/overriddenEquals.kt");
+        }
+
+        @Test
         @TestMetadata("primaryConstructor.kt")
         public void testPrimaryConstructor() throws Exception {
             runTest("compiler/testData/ir/irText/classes/primaryConstructor.kt");

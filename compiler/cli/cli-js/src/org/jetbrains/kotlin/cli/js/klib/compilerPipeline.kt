@@ -251,8 +251,7 @@ fun transformFirToIr(
             inlineConstTracker = null,
             expectActualTracker = moduleStructure.compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
             allowNonCachedDeclarations = false,
-            useIrFakeOverrideBuilder =
-            moduleStructure.compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
+            useIrFakeOverrideBuilder = true
         ),
         IrGenerationExtension.getInstances(moduleStructure.project),
         signatureComposer = DescriptorSignatureComposerStub(JsManglerDesc),

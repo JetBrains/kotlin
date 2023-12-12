@@ -84,7 +84,8 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
               c: GET_VAR 'c: kotlin.CharSequence declared in <root>.A.B.copy' type=kotlin.CharSequence origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.A.B) returnType:kotlin.String
         overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
+          public open fun toString (): kotlin.String declared in <root>.A
+          public open fun toString (): kotlin.String declared in kotlin.CharSequence
         $this: VALUE_PARAMETER name:<this> type:<root>.A.B
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A.B'
@@ -96,7 +97,8 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
               CONST String type=kotlin.String value=")"
       FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.A.B) returnType:kotlin.Int
         overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+          public open fun hashCode (): kotlin.Int declared in <root>.A
+          public open fun hashCode (): kotlin.Int declared in kotlin.CharSequence
         $this: VALUE_PARAMETER name:<this> type:<root>.A.B
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.A.B'
@@ -105,7 +107,8 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
                 receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.hashCode' type=<root>.A.B origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.A.B, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.CharSequence
         $this: VALUE_PARAMETER name:<this> type:<root>.A.B
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
         BLOCK_BODY

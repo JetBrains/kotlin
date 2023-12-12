@@ -106,7 +106,7 @@ internal fun PhaseContext.fir2Ir(
             inlineConstTracker = null,
             expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
             allowNonCachedDeclarations = false,
-            useIrFakeOverrideBuilder = configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
+            useIrFakeOverrideBuilder = true,
     )
     val (irModuleFragment, components, pluginContext, irActualizedResult) = input.firResult.convertToIrAndActualize(
             NativeFir2IrExtensions,

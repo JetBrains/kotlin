@@ -207,6 +207,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/outerClassAccess.kt");
         }
 
+        @TestMetadata("overriddenEquals.kt")
+        public void testOverriddenEquals() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/overriddenEquals.kt");
+        }
+
         @TestMetadata("primaryConstructor.kt")
         public void testPrimaryConstructor() throws Exception {
             runTest("compiler/testData/ir/irText/classes/primaryConstructor.kt");

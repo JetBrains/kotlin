@@ -1,0 +1,72 @@
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
+open class Base {
+  // CHECK:
+  //   Mangled name: Base#<init>(){}
+  //   Public signature: /Base.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Base#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Base.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Base#equals(kotlin.Any?){}
+  //   Public signature: /Base.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
+  override operator fun equals(other: Any?): Boolean
+
+}
+
+// CHECK:
+//   Mangled name: Child1
+//   Public signature: /Child1|null[0]
+class Child1 : Base, I {
+  // CHECK:
+  //   Mangled name: Child1#<init>(){}
+  //   Public signature: /Child1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Child1#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Child1.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Child1#equals(kotlin.Any?){}
+  //   Public signature: /Child1.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+}
+
+// CHECK:
+//   Mangled name: Child2
+//   Public signature: /Child2|null[0]
+class Child2 : Base, I {
+  // CHECK:
+  //   Mangled name: Child2#<init>(){}
+  //   Public signature: /Child2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Child2#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Child2.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Child2#equals(kotlin.Any?){}
+  //   Public signature: /Child2.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+interface I {
+}
+

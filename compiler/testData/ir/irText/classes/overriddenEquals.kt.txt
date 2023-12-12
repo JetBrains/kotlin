@@ -1,0 +1,33 @@
+open class Base {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    return EQEQEQ(arg0 = <this>, arg1 = other)
+  }
+
+}
+
+interface I {
+}
+
+class Child1 : Base, I {
+  constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Child2 : I, Base {
+  constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+}
