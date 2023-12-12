@@ -19820,6 +19820,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("publicMethodCallViaPackagePrivateCommon.kt")
+        public void testPublicMethodCallViaPackagePrivateCommon() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/publicMethodCallViaPackagePrivateCommon.kt");
+        }
+
+        @Test
         @TestMetadata("SamWithReceiverMavenProjectImportHandler.kt")
         public void testSamWithReceiverMavenProjectImportHandler() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SamWithReceiverMavenProjectImportHandler.kt");
