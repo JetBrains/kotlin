@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
 import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import java.lang.ref.ReferenceQueue
 import java.lang.ref.SoftReference
 import java.util.concurrent.ConcurrentHashMap
@@ -20,7 +21,8 @@ import java.util.concurrent.ConcurrentHashMap
  * The cleaner may be invoked multiple times by the cache, in any thread. Implementations of [SoftValueCleaner] must ensure that the
  * operation is repeatable and thread-safe.
  */
-internal fun interface SoftValueCleaner<V> {
+@LLFirInternals
+fun interface SoftValueCleaner<V> {
     /**
      * Cleans up after [value] has been removed from the cache or garbage-collected.
      *
@@ -43,7 +45,8 @@ internal fun interface SoftValueCleaner<V> {
  * @param getCleaner Returns the [SoftValueCleaner] that should be invoked after [V] has been collected or removed from the cache. The
  *  function will be invoked once when the value is added to the cache.
  */
-internal class CleanableSoftValueCache<K : Any, V : Any>(
+@LLFirInternals
+class CleanableSoftValueCache<K : Any, V : Any>(
     private val getCleaner: (V) -> SoftValueCleaner<V>,
 ) {
     private val backingMap = ConcurrentHashMap<K, SoftReferenceWithCleanup<K, V>>()
