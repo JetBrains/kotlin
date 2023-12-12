@@ -7,11 +7,16 @@ package org.jetbrains.kotlin.code
 
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.isTeamCityBuild
+import org.junit.jupiter.api.DynamicTest
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
-import kotlin.test.Test
+import java.util.stream.Stream
+import kotlin.streams.asSequence
+import kotlin.streams.asStream
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -39,39 +44,48 @@ class ArtifactsTest {
         "org.jetbrains.kotlin.fus-statistics-gradle-plugin.gradle.plugin",
     )
 
-    @Test
-    fun verifyArtifactFiles() {
-        val visitedPoms = mutableSetOf<Path>()
-        val actualPoms = Files.find(
-            localRepoPath,
-            Integer.MAX_VALUE,
-            { path: Path, fileAttributes: BasicFileAttributes ->
-                fileAttributes.isRegularFile
-                        && "${path.fileName}".endsWith(".pom", ignoreCase = true)
-                        && path.contains(Paths.get(kotlinVersion))
-            })
-        actualPoms.forEach { actual ->
+    @TestFactory
+    fun generateArtifactTests(): Stream<DynamicTest> {
+        return findActualPoms().map { actual ->
             val expectedPomPath = actual.toExpectedPath()
-            if ("${expectedPomPath.parent.fileName}" !in excludedProjects) {
-                val actualString = actual.toFile().readText().replace(kotlinVersion, "ArtifactsTest.version")
-                assertEqualsToFile(expectedPomPath, actualString)
-                visitedPoms.add(expectedPomPath)
-            } else {
-                if (isTeamCityBuild) fail("Excluded project in actual artifacts: $actual")
+            DynamicTest.dynamicTest(expectedPomPath.fileName.toString()) {
+                if ("${expectedPomPath.parent.fileName}" !in excludedProjects) {
+                    val actualString = actual.toFile().readText().replace(kotlinVersion, "ArtifactsTest.version")
+                    assertEqualsToFile(expectedPomPath, actualString)
+                } else {
+                    if (isTeamCityBuild) fail("Excluded project in actual artifacts: $actual")
+                }
             }
-        }
+        }.asStream()
+    }
 
-        val expectedPoms = Files.find(
-            expectedRepoPath,
-            Integer.MAX_VALUE,
-            { path: Path, fileAttributes: BasicFileAttributes ->
-                fileAttributes.isRegularFile
-                        && "${path.fileName}".endsWith(".pom", ignoreCase = true)
-            })
-        expectedPoms.forEach {
-            assertTrue(it in visitedPoms, "Missing actual pom for expected pom: $it")
+    @Test
+    fun allExpectedPomsPresentInActual() {
+        val publishedPoms = findActualPoms()
+            .map { it.toExpectedPath() }
+            .filter { "${it.parent.fileName}" !in excludedProjects }.toSet()
+
+        findExpectedPoms().forEach { expected ->
+            assertTrue(expected in publishedPoms, "Missing actual pom for expected pom: $expected")
         }
     }
+
+    private fun findActualPoms() = Files.find(
+        localRepoPath,
+        Integer.MAX_VALUE,
+        { path: Path, fileAttributes: BasicFileAttributes ->
+            fileAttributes.isRegularFile
+                    && "${path.fileName}".endsWith(".pom", ignoreCase = true)
+                    && path.contains(Paths.get(kotlinVersion))
+        }).asSequence()
+
+    private fun findExpectedPoms() = Files.find(
+        expectedRepoPath,
+        Integer.MAX_VALUE,
+        { path: Path, fileAttributes: BasicFileAttributes ->
+            fileAttributes.isRegularFile
+                    && "${path.fileName}".endsWith(".pom", ignoreCase = true)
+        }).asSequence()
 
     /**
      * convert:
