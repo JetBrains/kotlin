@@ -37,7 +37,7 @@ internal val BuildDFGPhase = createSimpleNamedCompilerPhase<NativeGenerationStat
         postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, generationState, irModule ->
             val context = generationState.context
-            val symbolTable = DataFlowIR.SymbolTable(context, DataFlowIR.Module(irModule.descriptor))
+            val symbolTable = DataFlowIR.SymbolTable(context, DataFlowIR.Module())
             ModuleDFG(emptyMap(), symbolTable)
         },
         op = { generationState, irModule ->

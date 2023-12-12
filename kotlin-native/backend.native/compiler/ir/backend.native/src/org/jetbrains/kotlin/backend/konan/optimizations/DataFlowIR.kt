@@ -109,7 +109,7 @@ internal object DataFlowIR {
         }
     }
 
-    class Module(val descriptor: ModuleDescriptor) {
+    class Module {
         var numberOfFunctions = 0
         var numberOfClasses = 0
     }

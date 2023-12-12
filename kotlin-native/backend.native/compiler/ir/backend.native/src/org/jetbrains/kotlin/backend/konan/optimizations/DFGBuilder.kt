@@ -160,7 +160,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
     private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
-    private val module = DataFlowIR.Module(irModule.descriptor)
+    private val module = DataFlowIR.Module()
     private val symbolTable = DataFlowIR.SymbolTable(context, module)
 
     // Possible values of a returnable block.
