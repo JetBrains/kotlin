@@ -25,7 +25,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDirectory
@@ -194,7 +193,7 @@ internal class AndroidProjectHandler(
         val kotlinTask = tasksProvider.registerKotlinJVMTask(
             project,
             compilation.compileKotlinTaskName,
-            compilation.compilerOptions.options as KotlinJvmCompilerOptions,
+            compilation.compilerOptions.options,
             configAction
         )
 
