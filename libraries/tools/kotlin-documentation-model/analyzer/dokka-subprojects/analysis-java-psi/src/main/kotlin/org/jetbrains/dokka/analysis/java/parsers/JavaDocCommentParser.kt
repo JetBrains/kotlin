@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.analysis.java.parsers
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
@@ -73,18 +74,38 @@ internal class JavaPsiDocCommentParser(
         analysedElement: PsiNamedElement
     ): TagWrapper? {
         val paramName = tag.dataElements.firstOrNull()?.text.orEmpty()
+        val paramIndex = when (analysedElement) {
+            // for functions `@param` can be used with both generics and arguments
+            //  if it's for generics,
+            //  then `paramName` will be in the form of `<T>`, where `T` is a type parameter name
+            is PsiMethod -> when {
+                paramName.startsWith('<') -> {
+                    val pName = paramName.removeSurrounding("<", ">")
+                    analysedElement.typeParameters.indexOfFirst { it.name == pName }
+                }
 
-        // can be a PsiClass if @param is referencing class generics, like here:
-        // https://github.com/biojava/biojava/blob/2417c230be36e4ba73c62bb3631b60f876265623/biojava-core/src/main/java/org/biojava/nbio/core/alignment/SimpleProfilePair.java#L43
-        // not supported at the moment
-        val method = analysedElement as? PsiMethod ?: return null
-        val paramIndex = method.parameterList.parameters.map { it.name }.indexOf(paramName)
+                else -> analysedElement.parameterList.parameters.indexOfFirst { it.name == paramName }
+            }
+
+            // for classes `@param` can be used with generics and `record` components
+            is PsiClass -> when {
+                paramName.startsWith('<') -> {
+                    val pName = paramName.removeSurrounding("<", ">")
+                    analysedElement.typeParameters.indexOfFirst { it.name == pName }
+                }
+
+                else -> analysedElement.recordComponents.indexOfFirst { it.name == paramName }
+            }
+
+            // if `@param` tag is on any other element - ignore it
+            else -> return null
+        }
 
         val docTags = psiDocTagParser.parseAsParagraph(
             psiElements = tag.contentElementsWithSiblingIfNeeded().drop(1),
             commentResolutionContext = CommentResolutionContext(
                 comment = docComment,
-                tag = ParamJavadocTag(method, paramName, paramIndex)
+                tag = ParamJavadocTag(paramName, paramIndex)
             )
         )
         return Param(root = wrapTagIfNecessary(docTags), name = paramName)
