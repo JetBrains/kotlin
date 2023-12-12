@@ -1747,6 +1747,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("companionAnnotations.kt")
+            public void testCompanionAnnotations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/companionAnnotations.kt");
+            }
+
+            @Test
             @TestMetadata("constantFromOuterScopeAsAnnotaionParameter.kt")
             public void testConstantFromOuterScopeAsAnnotaionParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/constantFromOuterScopeAsAnnotaionParameter.kt");

@@ -491,16 +491,21 @@ open class FirTypeResolveTransformer(
             }
         }
 
-        session.nestedClassifierScope(firClass)?.let(scopesToAdd::add)
         if (firClass is FirRegularClass) {
-            val companionObject = firClass.companionObjectSymbol?.fir
-            if (companionObject != null) {
-                session.nestedClassifierScope(companionObject)?.let(scopesToAdd::add)
-            }
+            // Companion scope is added before static scope,
+            // i.e., static scope is checked first during resolution (scopes are in reverse order).
+            // This is because we can qualify companion scope using `Companion.` if we want to explicitly refer to a declaration in the
+            // companion.
+            firClass.companionObjectSymbol?.fir
+                ?.let(session::nestedClassifierScope)
+                ?.let(scopesToAdd::add)
+
+            session.nestedClassifierScope(firClass)?.let(scopesToAdd::add)
 
             addScopes(scopesToAdd)
             addTypeParametersScope(firClass)
         } else {
+            session.nestedClassifierScope(firClass)?.let(scopesToAdd::add)
             addScopes(scopesToAdd)
         }
 
