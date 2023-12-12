@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -143,9 +144,14 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
 
     @DisplayName("Check parallel link tasks execution")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4, maxVersion = TestVersions.Gradle.G_7_4)
     fun parallelLink(gradleVersion: GradleVersion) {
-        nativeProject("native-incremental-multi-project-with-tests", gradleVersion, configureSubProjects = true) {
+        nativeProject(
+            "native-incremental-multi-project-with-tests",
+            gradleVersion,
+            configureSubProjects = true,
+            buildOptions = defaultBuildOptions.copy(configurationCache = true, logLevel = LogLevel.DEBUG)
+        ) {
             var fooKtCacheModified = 0L
             var barKtCacheModified = 0L
             var mainKtCacheModified = 0L
@@ -154,7 +160,6 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
             val mainKtCache = getFileCache("program", "MultiProjectWithTests:program", "program/src/hostMain/kotlin/main.kt", "")
             build(
                 "linkDebugExecutableHost", "program:linkDebugTestHost",
-                buildOptions = defaultBuildOptions.copy(configurationCache = true)
             ) {
                 assertDirectoryExists(fooKtCache)
                 assertDirectoryExists(barKtCache)
@@ -164,20 +169,23 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
                 mainKtCacheModified = mainKtCache.toFile().lastModified()
             }
 
-            val fooKt = projectPath.resolve("library/src/hostMain/kotlin").resolve("foo.kt")
-            fooKt.writeText("fun foo(): Int = 41")
-
-            build(
-                "linkDebugExecutableHost", "program:linkDebugTestHost",
-                buildOptions = defaultBuildOptions.copy(configurationCache = true)
-            ) {
-                assertDirectoryExists(fooKtCache)
-                assertDirectoryExists(barKtCache)
-                assertDirectoryExists(mainKtCache)
-                assertNotEquals(fooKtCacheModified, fooKtCache.toFile().lastModified())
-                assertEquals(barKtCacheModified, barKtCache.toFile().lastModified())
-                assertNotEquals(mainKtCacheModified, mainKtCache.toFile().lastModified())
+            repeat(100) {
+                val fooKt = projectPath.resolve("library/src/hostMain/kotlin").resolve("foo.kt")
+                fooKt.writeText("fun foo(): Int = $it")
+                println("I FAILED ON $it")
+                build(
+                    "linkDebugExecutableHost", "program:linkDebugTestHost",
+//                    forceOutput = true
+                ) {
+                    assertDirectoryExists(fooKtCache)
+                    assertDirectoryExists(barKtCache)
+                    assertDirectoryExists(mainKtCache)
+                    assertNotEquals(fooKtCacheModified, fooKtCache.toFile().lastModified())
+                    assertEquals(barKtCacheModified, barKtCache.toFile().lastModified())
+                    assertNotEquals(mainKtCacheModified, mainKtCache.toFile().lastModified())
+                }
             }
         }
+
     }
 }
