@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import com.android.build.api.attributes.BuildTypeAttr
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
-import com.android.build.gradle.api.*
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
@@ -115,7 +114,7 @@ internal class AndroidProjectHandler(
      */
     private fun addKotlinDependenciesToAndroidSourceSets(project: Project) {
         fun addDependenciesToAndroidSourceSet(
-            androidSourceSet: AndroidSourceSet,
+            @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet,
             apiConfigurationName: String,
             implementationConfigurationName: String,
             compileOnlyConfigurationName: String,
@@ -159,7 +158,8 @@ internal class AndroidProjectHandler(
             task.dependsOn(project.provider {
                 val androidUnitTestTasks = mutableListOf<Any>()
                 project.forAllAndroidVariants { variant ->
-                    if (variant is UnitTestVariant) {
+                    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+                    if (variant is DeprecatedAndroidUnitTestVariant) {
                         // There's no API for getting the Android unit test tasks from the variant, so match them by name:
                         androidUnitTestTasks.add(project.provider {
                             project.tasks.matching { it.name == lowerCamelCaseName("test", variant.name) }
@@ -172,7 +172,7 @@ internal class AndroidProjectHandler(
     }
 
     private fun preprocessVariant(
-        variantData: BaseVariant,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variantData: DeprecatedAndroidBaseVariant,
         compilation: KotlinJvmAndroidCompilation,
         project: Project,
         tasksProvider: KotlinTasksProvider
@@ -218,7 +218,7 @@ internal class AndroidProjectHandler(
     }
 
     private fun postprocessVariant(
-        variantData: BaseVariant,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variantData: DeprecatedAndroidBaseVariant,
         compilation: KotlinJvmAndroidCompilation,
         project: Project,
         androidExt: BaseExtension,
@@ -247,7 +247,7 @@ internal class AndroidProjectHandler(
         compilation: KotlinJvmAndroidCompilation,
         androidPlugin: BasePlugin,
         androidExt: BaseExtension,
-        variantData: BaseVariant,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variantData: DeprecatedAndroidBaseVariant,
         javaTask: TaskProvider<out AbstractCompile>,
         kotlinTask: TaskProvider<out KotlinCompile>
     ) {
@@ -303,13 +303,19 @@ internal class AndroidProjectHandler(
         )
     }
 
-    fun getFlavorNames(variant: BaseVariant): List<String> = variant.productFlavors.map { it.name }
+    fun getFlavorNames(
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
+    ): List<String> = variant.productFlavors.map { it.name }
 
-    fun getBuildTypeName(variant: BaseVariant): String = variant.buildType.name
+    fun getBuildTypeName(
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
+    ): String = variant.buildType.name
 
     // TODO the return type is actually `AbstractArchiveTask | TaskProvider<out AbstractArchiveTask>`;
     //      change the signature once the Android Gradle plugin versions that don't support task providers are dropped
-    fun getLibraryOutputTask(variant: BaseVariant): Any? {
+    fun getLibraryOutputTask(
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
+    ): Any? {
         val getPackageLibraryProvider = variant.javaClass.methods
             .find { it.name == "getPackageLibraryProvider" && it.parameterCount == 0 }
 
@@ -317,11 +323,15 @@ internal class AndroidProjectHandler(
             @Suppress("UNCHECKED_CAST")
             getPackageLibraryProvider(variant) as TaskProvider<out AbstractArchiveTask>
         } else {
-            (variant as? LibraryVariant)?.packageLibrary
+            @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+            (variant as? DeprecatedAndroidLibraryVariant)?.packageLibrary
         }
     }
 
-    fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) {
+    fun setUpDependencyResolution(
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant,
+        compilation: KotlinJvmAndroidCompilation
+    ) {
         val project = compilation.target.project
 
         compilation.compileDependencyFiles = variant.compileConfiguration.apply {
@@ -362,16 +372,21 @@ internal class AndroidProjectHandler(
     }
 }
 
-internal fun getTestedVariantData(variantData: BaseVariant): BaseVariant? = when (variantData) {
-    is TestVariant -> variantData.testedVariant
-    is UnitTestVariant -> variantData.testedVariant as? BaseVariant
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+internal fun getTestedVariantData(
+    variantData: DeprecatedAndroidBaseVariant
+): DeprecatedAndroidBaseVariant? = when (variantData) {
+    is DeprecatedAndroidTestVariant -> variantData.testedVariant
+    is DeprecatedAndroidUnitTestVariant -> variantData.testedVariant as? DeprecatedAndroidBaseVariant
     else -> null
 }
 
-internal fun getVariantName(variant: BaseVariant): String = variant.name
+internal fun getVariantName(
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
+): String = variant.name
 
-@Suppress("UNCHECKED_CAST")
-internal fun BaseVariant.getJavaTaskProvider(): TaskProvider<out JavaCompile> =
+@Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION")
+internal fun DeprecatedAndroidBaseVariant.getJavaTaskProvider(): TaskProvider<out JavaCompile> =
     this::class.java.methods.firstOrNull { it.name == "getJavaCompileProvider" }
         ?.invoke(this) as? TaskProvider<JavaCompile>
         ?: @Suppress("DEPRECATION") javaCompile.thisTaskProvider
@@ -390,7 +405,8 @@ class AndroidTestedVariantArtifactsFilter(
     private fun initFilteredFiles(): Lazy<Set<File>> {
         return lazy {
             artifactCollection.filter {
-                it.id.componentIdentifier is TestedComponentIdentifier ||
+                @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+                it.id.componentIdentifier is DeprecatedAndroidTestedComponentIdentifier ||
                         // If tests depend on the main classes transitively, through a test dependency on another module which
                         // depends on this module, then there's no artifact with a TestedComponentIdentifier, so consider the artifact of the
                         // current module a friend path, too:
@@ -415,21 +431,22 @@ class AndroidTestedVariantArtifactsFilter(
     }
 }
 
-internal inline fun BaseVariant.forEachKotlinSourceSet(
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+internal inline fun DeprecatedAndroidBaseVariant.forEachKotlinSourceSet(
     project: Project, action: (KotlinSourceSet) -> Unit
-) {
-    sourceSets
-        .forEach { provider -> action(project.findKotlinSourceSet(provider) ?: return@forEach) }
+) = sourceSets.forEach { provider ->
+    action(project.findKotlinSourceSet(provider) ?: return@forEach)
 }
 
-internal inline fun BaseVariant.forEachKotlinSourceDirectorySet(
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+internal inline fun DeprecatedAndroidBaseVariant.forEachKotlinSourceDirectorySet(
     project: Project, action: (SourceDirectorySet) -> Unit
-) {
-    sourceSets
-        .forEach { androidSourceSet -> action(project.findKotlinSourceSet(androidSourceSet)?.kotlin ?: return@forEach) }
+) = sourceSets.forEach { androidSourceSet ->
+    action(project.findKotlinSourceSet(androidSourceSet)?.kotlin ?: return@forEach)
 }
 
-internal inline fun BaseVariant.forEachJavaSourceDir(action: (ConfigurableFileTree) -> Unit) {
-    getSourceFolders(SourceKind.JAVA).forEach(action)
-}
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+internal inline fun DeprecatedAndroidBaseVariant.forEachJavaSourceDir(
+    action: (ConfigurableFileTree) -> Unit
+) = getSourceFolders(DeprecatedAndroidSourceKind.JAVA).forEach(action)
 
