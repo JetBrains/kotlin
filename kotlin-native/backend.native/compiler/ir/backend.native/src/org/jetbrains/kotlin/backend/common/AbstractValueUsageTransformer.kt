@@ -70,6 +70,8 @@ internal abstract class AbstractValueUsageTransformer(
     private fun IrExpression.useForField(field: IrField): IrExpression =
             this.useAs(field.type)
 
+    protected open fun IrCall.useAsCallResult(): IrExpression = this
+
     protected open fun IrExpression.useAsReturnValue(returnTarget: IrReturnTargetSymbol): IrExpression =
             when (returnTarget) {
                 is IrSimpleFunctionSymbol -> this.useAs(returnTarget.owner.returnType)
@@ -105,7 +107,9 @@ internal abstract class AbstractValueUsageTransformer(
             }
         }
 
-        return expression
+        return if (expression is IrCall)
+            expression.useAsCallResult()
+        else expression
     }
 
     override fun visitBlockBody(body: IrBlockBody): IrBody {

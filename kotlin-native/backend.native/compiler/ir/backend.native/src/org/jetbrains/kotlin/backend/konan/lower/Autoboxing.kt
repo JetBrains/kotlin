@@ -79,12 +79,14 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         is IrReturnableBlockSymbol -> this.useAs(returnTarget.owner.type)
     }
 
+    override fun IrCall.useAsCallResult(): IrExpression {
+        val actualType = if (this.symbol == symbols.reinterpret) this.getTypeArgument(1)!!
+        else this.callTarget.returnType
+        return this.adaptIfNecessary(actualType, type)
+    }
+
     override fun IrExpression.useAs(type: IrType): IrExpression {
         val actualType = when (this) {
-            is IrCall -> {
-                if (this.symbol == symbols.reinterpret) this.getTypeArgument(1)!!
-                else this.callTarget.returnType
-            }
             is IrGetField -> this.symbol.owner.type
 
             is IrTypeOperatorCall -> when (this.operator) {
