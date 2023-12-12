@@ -1,5 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: ANY
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 

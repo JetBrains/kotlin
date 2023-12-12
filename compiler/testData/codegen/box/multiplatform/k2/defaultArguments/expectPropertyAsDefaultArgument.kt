@@ -1,6 +1,4 @@
-// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, WASM
-// IGNORE_NATIVE_K1: mode=ONE_STAGE_MULTI_MODULE
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-57263
 
 // MODULE: common

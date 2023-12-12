@@ -1,5 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE, WASM
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-57181
 // WITH_STDLIB
 

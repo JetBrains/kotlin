@@ -1,6 +1,5 @@
-// !LANGUAGE: +MultiPlatformProjects
-// !OPT_IN: kotlin.ExperimentalMultiplatform
-// IGNORE_BACKEND_K1: WASM, JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE
+// LANGUAGE: +MultiPlatformProjects
+// OPT_IN: kotlin.ExperimentalMultiplatform
 // WITH_STDLIB
 
 // MODULE: common

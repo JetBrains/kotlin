@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
-//   IGNORE_REASON: KT-59355 is fixed only in K2
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-59355
 

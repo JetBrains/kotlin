@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: ANY
 // TARGET_BACKEND: JS, JS_IR, JS_IR_ES6
 // WITH_STDLIB
 

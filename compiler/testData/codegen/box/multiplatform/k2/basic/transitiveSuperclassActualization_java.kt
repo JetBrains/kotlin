@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: ANY
-//   IGNORE_REASON: new rules for supertypes matching are implemented only in K2
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-59356
 

@@ -1,7 +1,5 @@
 // IGNORE_BACKEND: JVM, JVM_IR
-// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, WASM
-// IGNORE_NATIVE_K1: mode=ONE_STAGE_MULTI_MODULE
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 // FILE: common.kt
