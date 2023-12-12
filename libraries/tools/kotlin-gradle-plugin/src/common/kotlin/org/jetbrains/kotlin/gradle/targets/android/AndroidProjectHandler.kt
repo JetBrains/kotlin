@@ -22,7 +22,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.InvalidPluginException
 import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -310,21 +310,13 @@ internal class AndroidProjectHandler(
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
     ): String = variant.buildType.name
 
-    // TODO the return type is actually `AbstractArchiveTask | TaskProvider<out AbstractArchiveTask>`;
-    //      change the signature once the Android Gradle plugin versions that don't support task providers are dropped
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
     fun getLibraryOutputTask(
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
-    ): Any? {
-        val getPackageLibraryProvider = variant.javaClass.methods
-            .find { it.name == "getPackageLibraryProvider" && it.parameterCount == 0 }
-
-        return if (getPackageLibraryProvider != null) {
-            @Suppress("UNCHECKED_CAST")
-            getPackageLibraryProvider(variant) as TaskProvider<out AbstractArchiveTask>
-        } else {
-            @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
-            (variant as? DeprecatedAndroidLibraryVariant)?.packageLibrary
-        }
+        variant: DeprecatedAndroidBaseVariant
+    ): TaskProvider<Zip>? = if (variant is DeprecatedAndroidLibraryVariant) {
+        variant.packageLibraryProvider
+    } else {
+        null
     }
 
     fun setUpDependencyResolution(
