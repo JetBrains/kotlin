@@ -39,9 +39,7 @@ internal class JavaDocComment(val comment: PsiDocComment) : DocComment {
         val resolvedParamElements = comment.resolveTag(tag)
             .filterIsInstance<PsiDocTag>()
             .map { it.contentElementsWithSiblingIfNeeded() }
-            .firstOrNull {
-                it.firstOrNull()?.text == tag.method.parameterList.parameters[tag.paramIndex].name
-            }.orEmpty()
+            .firstOrNull { it.firstOrNull()?.text == tag.paramName }.orEmpty()
 
         return resolvedParamElements
             .withoutReferenceLink()
