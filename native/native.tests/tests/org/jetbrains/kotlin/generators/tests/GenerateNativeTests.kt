@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Tag
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
+    val k2BoxTestDir = listOf("multiplatform/k2")
 
     generateTestGroupSuiteWithJUnit5 {
         // Codegen box tests.
@@ -36,7 +37,7 @@ fun main() {
                     provider<UseExtTestCaseGroupProvider>(),
                 )
             ) {
-                model("codegen/box", targetBackend = TargetBackend.NATIVE)
+                model("codegen/box", targetBackend = TargetBackend.NATIVE, excludeDirs = k2BoxTestDir)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
             }
             testClass<AbstractNativeCodegenBoxTest>(
@@ -46,7 +47,7 @@ fun main() {
                     *noPartialLinkage()
                 )
             ) {
-                model("codegen/box", targetBackend = TargetBackend.NATIVE)
+                model("codegen/box", targetBackend = TargetBackend.NATIVE, excludeDirs = k2BoxTestDir)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
             }
             testClass<AbstractNativeCodegenBoxTest>(

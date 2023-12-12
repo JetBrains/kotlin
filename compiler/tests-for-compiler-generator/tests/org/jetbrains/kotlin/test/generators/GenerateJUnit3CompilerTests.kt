@@ -85,7 +85,8 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                         "compileKotlinAgainstKotlin",
                         "testsWithJava9",
                         "testsWithJava15",
-                        "testsWithJava17"
+                        "testsWithJava17",
+                        "multiplatform/k2",
                     )
                 )
             }

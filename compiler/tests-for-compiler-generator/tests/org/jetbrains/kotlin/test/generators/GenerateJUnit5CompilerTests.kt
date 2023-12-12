@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
+    val k2BoxTestDir = listOf("multiplatform/k2")
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testsRoot = "compiler/tests-common-new/tests-gen", testDataRoot = "compiler/testData") {
@@ -72,15 +73,15 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractBlackBoxCodegenTest> {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = k2BoxTestDir)
             }
 
             testClass<AbstractIrBlackBoxCodegenTest> {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = k2BoxTestDir)
             }
 
             testClass<AbstractIrBlackBoxCodegenWithIrInlinerTest> {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = k2BoxTestDir)
             }
 
             testClass<AbstractSteppingTest> {

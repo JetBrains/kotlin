@@ -17,9 +17,9 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     // Common configuration shared between K1 and K2 tests:
-    val jvmOnlyBoxTests = listOf(
-        "compileKotlinAgainstKotlin",
-    )
+    val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
+    val k2BoxTestDir = "multiplatform/k2"
+
     val jsTranslatorTestPattern = "^([^_](.+))\\.kt$"
     val jsTranslatorReflectionPattern = "^(findAssociatedObject(InSeparatedFile)?)\\.kt$"
     val jsTranslatorEsModulesExcludedDirs = listOf(
@@ -90,7 +90,7 @@ fun main(args: Array<String>) {
 
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractK1WasmCodegenBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
 
             testClass<AbstractK1WasmCodegenBoxInlineTest> {

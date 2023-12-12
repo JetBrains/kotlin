@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.js.testOld.klib.AbstractFirJsKlibEvolutionTest
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    val jvmOnlyBoxTests = listOf(
-        "compileKotlinAgainstKotlin",
-    )
-
+    val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
+    val k2BoxTestDir = "multiplatform/k2"
     val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
 
     // TODO: repair these tests
@@ -160,11 +158,11 @@ fun main(args: Array<String>) {
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
 
             testClass<AbstractIrJsCodegenBoxTest> {
-                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
+                model("codegen/box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
 
             testClass<AbstractIrJsCodegenBoxErrorTest> {
-                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
+                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
 
             testClass<AbstractIrJsCodegenInlineTest> {
@@ -172,7 +170,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIrJsES6CodegenBoxTest> {
-                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
+                model("codegen/box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
 
             testClass<AbstractIrJsES6CodegenBoxErrorTest> {
