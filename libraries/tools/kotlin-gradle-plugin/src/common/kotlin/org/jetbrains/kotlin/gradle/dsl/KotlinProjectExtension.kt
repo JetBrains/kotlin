@@ -305,7 +305,6 @@ abstract class KotlinJsProjectExtension(project: Project) :
         "Needed for IDE import using the MPP import mechanism",
         level = DeprecationLevel.HIDDEN
     )
-    @Suppress("DEPRECATION")
     fun getTargets(): NamedDomainObjectContainer<KotlinTarget>? =
         targetFuture.lenient.getOrNull()?.let { target ->
             target.project.container(KotlinTarget::class.java)
