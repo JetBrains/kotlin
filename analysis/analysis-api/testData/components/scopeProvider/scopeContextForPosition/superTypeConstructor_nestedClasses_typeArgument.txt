@@ -1,0 +1,109 @@
+element: Base.NestedFromClass
+implicit receivers:
+scopes:
+  ExplicitSimpleImportingScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 1
+    packages: 0
+    classifiers: 3
+      KtNamedClassOrObjectSymbol:
+        annotationsList: []
+        classIdIfNonLocal: test/BaseInterface
+        classKind: INTERFACE
+        companionObject: null
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        modality: ABSTRACT
+        name: BaseInterface
+        origin: SOURCE
+        superTypes: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Any
+        ]
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        visibility: Public
+      KtNamedClassOrObjectSymbol:
+        annotationsList: []
+        classIdIfNonLocal: test/Base
+        classKind: CLASS
+        companionObject: null
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        modality: OPEN
+        name: Base
+        origin: SOURCE
+        superTypes: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: test/BaseInterface
+        ]
+        symbolKind: TOP_LEVEL
+        typeParameters: [
+          KtTypeParameterSymbol(T)
+        ]
+        visibility: Public
+      KtNamedClassOrObjectSymbol:
+        annotationsList: []
+        classIdIfNonLocal: test/Child
+        classKind: CLASS
+        companionObject: null
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        modality: FINAL
+        name: Child
+        origin: SOURCE
+        superTypes: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: [
+              KtUsualClassType:
+                annotationsList: []
+                ownTypeArguments: []
+                type: test/Base.NestedFromClass
+            ]
+            type: test/Base<test/Base.NestedFromClass>
+        ]
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        visibility: Public
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 2
+
+  DefaultSimpleImportingScope, index = 3
+
+  ExplicitStarImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 5
+

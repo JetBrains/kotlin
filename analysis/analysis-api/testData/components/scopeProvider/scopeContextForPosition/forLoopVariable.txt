@@ -4,22 +4,7 @@ scopes:
   LocalScope, index = 0
     packages: 0
     classifiers: 0
-    callables: 1
-      KtLocalVariableSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: null
-        contextReceivers: []
-        isExtension: false
-        isVal: true
-        name: loopVar
-        origin: SOURCE
-        receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
-          type: kotlin/Int
-        symbolKind: LOCAL
-        typeParameters: []
+    callables: 0
     constructors: 0
 
   LocalScope, index = 1

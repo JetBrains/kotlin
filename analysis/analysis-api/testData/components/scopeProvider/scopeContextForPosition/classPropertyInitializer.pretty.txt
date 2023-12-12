@@ -1,0 +1,55 @@
+element: value
+implicit receivers:
+  type: test.Child
+  owner symbol: KtFirNamedClassOrObjectSymbol
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 1
+      constructorParam: kotlin.Int
+    constructors: 0
+
+  TypeScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 9
+      val constructorProp: kotlin.Int
+      fun childMember(): kotlin.Int
+      val childProp: kotlin.Int
+      val value: kotlin.Int
+      fun baseMember(): kotlin.Int
+      val baseProp: kotlin.Int
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor(constructorProp: kotlin.Int, constructorParam: kotlin.Int)
+
+  ExplicitSimpleImportingScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 3
+    packages: 0
+    classifiers: 2
+      class Base(value: kotlin.Int)
+      class Child(constructorProp: kotlin.Int, constructorParam: kotlin.Int) : test.Base()
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 4
+
+  DefaultSimpleImportingScope, index = 5
+
+  ExplicitStarImportingScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 7
+
