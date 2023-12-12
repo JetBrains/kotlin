@@ -1,0 +1,24 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/Jaba.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/Jaba.java
+End of files
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/AppKt.class
+End of files
+Compiling files:
+  src/app.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Kotlin: Overload resolution ambiguity:
+public final var isFoo: Boolean defined in Jaba
+public open fun isFoo(): Boolean defined in Jaba
+

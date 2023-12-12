@@ -1536,6 +1536,11 @@ public class IncrementalK1JvmJpsTestGenerated extends AbstractIncrementalK1JvmJp
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignatureStatic/");
             }
 
+            @TestMetadata("changeSyntheticProperty")
+            public void testChangeSyntheticProperty() throws Exception {
+                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSyntheticProperty/");
+            }
+
             @TestMetadata("constantChanged")
             public void testConstantChanged() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantChanged/");
@@ -1748,6 +1753,19 @@ public class IncrementalK1JvmJpsTestGenerated extends AbstractIncrementalK1JvmJp
 
                 public void testAllFilesPresentInChangeSignatureStatic() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignatureStatic"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                }
+            }
+
+            @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSyntheticProperty")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ChangeSyntheticProperty extends AbstractIncrementalK1JvmJpsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInChangeSyntheticProperty() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSyntheticProperty"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
                 }
             }
 
