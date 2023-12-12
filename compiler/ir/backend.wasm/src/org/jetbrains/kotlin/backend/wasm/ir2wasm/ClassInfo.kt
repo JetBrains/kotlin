@@ -54,8 +54,28 @@ private fun IrType.toWasmSignatureType(irBuiltIns: IrBuiltIns): IrType =
     }
 
 private fun IrSimpleType.toWasmSignatureSimpleType(irBuiltIns: IrBuiltIns): IrSimpleType {
+    // Special case: Kotlin allows overloading functions based on Array type arguments
+    if (this.classifier == irBuiltIns.arrayClass) {
+        return irBuiltIns.arrayClass.createType(
+            hasQuestionMark = isNullable(),
+            arguments = arguments.map { it.toWasmSignatureTypeArgument(irBuiltIns) }
+        )
+    }
+
     val klass = (this.erasedUpperBound?.symbol ?: irBuiltIns.anyClass).owner
     return klass.defaultType.withNullability(this.isNullable())
+}
+
+private fun IrTypeArgument.toWasmSignatureTypeArgument(irBuiltIns: IrBuiltIns): IrTypeArgument {
+    return when (this) {
+        is IrStarProjection -> this
+        is IrTypeProjection -> {
+            when (val type = type) {
+                is IrSimpleType -> type.toWasmSignatureSimpleType(irBuiltIns)
+                else -> this
+            }
+        }
+    }
 }
 
 class VirtualMethodMetadata(
