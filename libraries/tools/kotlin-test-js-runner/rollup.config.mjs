@@ -6,9 +6,9 @@
 import typescript from '@rollup/plugin-typescript';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import {terser} from "rollup-plugin-terser";
+import terser from '@rollup/plugin-terser';
 
-const pckg = require('./package.json');
+import pckg from "./package.json" assert { type: 'json' };
 
 export default [
     {
