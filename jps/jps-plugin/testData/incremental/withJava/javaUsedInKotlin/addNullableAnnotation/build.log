@@ -1,0 +1,30 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/Base.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/Base.java
+End of files
+Cleaning output files:
+  out/production/module/Derived.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/Derived.java
+End of files
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/Usage.class
+End of files
+Compiling files:
+  src/Usage.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Type mismatch: inferred type is String? but String was expected
+

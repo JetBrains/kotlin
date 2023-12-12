@@ -1299,6 +1299,11 @@ public class IncrementalK1JvmCompilerRunnerTestGenerated extends AbstractIncreme
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
             }
 
+            @TestMetadata("addNullableAnnotation")
+            public void testAddNullableAnnotation() throws Exception {
+                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/addNullableAnnotation/");
+            }
+
             public void testAllFilesPresentInJavaUsedInKotlin() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
             }
@@ -1416,6 +1421,19 @@ public class IncrementalK1JvmCompilerRunnerTestGenerated extends AbstractIncreme
             @TestMetadata("removeGetter")
             public void testRemoveGetter() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/removeGetter/");
+            }
+
+            @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/addNullableAnnotation")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class AddNullableAnnotation extends AbstractIncrementalK1JvmCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInAddNullableAnnotation() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/addNullableAnnotation"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
+                }
             }
 
             @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType")
