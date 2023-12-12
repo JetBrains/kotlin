@@ -20,8 +20,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
+import org.jetbrains.kotlin.fir.types.typeApproximator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class FirInvokeResolveTowerExtension(
@@ -221,7 +224,16 @@ internal class FirInvokeResolveTowerExtension(
             }
         } else {
             if (useImplicitReceiverAsBuiltinInvokeArgument) {
-                require(explicitReceiver.type.fullyExpandedType(context.session).isExtensionFunctionType)
+                if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+                    val session = context.session
+                    val fullyExpandedType = explicitReceiver.type.fullyExpandedType(session)
+                    require(
+                        (session.typeApproximator.approximateToSuperType(
+                            fullyExpandedType,
+                            TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+                        ) ?: fullyExpandedType).isExtensionFunctionType
+                    )
+                }
                 manager.enqueueResolverTask {
                     task.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
                         invokeFunctionInfo, explicitReceiver,
