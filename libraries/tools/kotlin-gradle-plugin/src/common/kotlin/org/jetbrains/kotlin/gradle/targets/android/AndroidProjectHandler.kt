@@ -24,7 +24,6 @@ import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDirectory
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
-import org.jetbrains.kotlin.gradle.tasks.thisTaskProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.tooling.includeKotlinToolingMetadataInApk
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
@@ -230,7 +228,7 @@ internal class AndroidProjectHandler(
             compilation.associateWith(testedCompilation)
         }
 
-        val javaTask = variantData.getJavaTaskProvider()
+        val javaTask = variantData.javaCompileProvider
         @Suppress("UNCHECKED_CAST") val kotlinTask = compilation.compileTaskProvider as TaskProvider<KotlinCompile>
         compilation.androidVariant.forEachJavaSourceDir { sources ->
             kotlinTask.configure {
@@ -375,12 +373,6 @@ internal fun getTestedVariantData(
 internal fun getVariantName(
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
 ): String = variant.name
-
-@Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION")
-internal fun DeprecatedAndroidBaseVariant.getJavaTaskProvider(): TaskProvider<out JavaCompile> =
-    this::class.java.methods.firstOrNull { it.name == "getJavaCompileProvider" }
-        ?.invoke(this) as? TaskProvider<JavaCompile>
-        ?: @Suppress("DEPRECATION") javaCompile.thisTaskProvider
 
 /** Filter for the AGP test variant classpath artifacts. */
 class AndroidTestedVariantArtifactsFilter(

@@ -15,7 +15,6 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import javax.inject.Inject
@@ -56,6 +55,6 @@ open class KotlinJvmAndroidCompilation @Inject internal constructor(
         get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinJvmCompilerOptions>>
 
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>
-        get() = androidVariant.getJavaTaskProvider()
+        get() = androidVariant.javaCompileProvider
 
 }

@@ -5,12 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskProvider
-
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_JVM_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JVM incremental compilation"
 const val USING_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JS incremental compilation"
-
-internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
-    get() = checkNotNull(project.locateTask<T>(name))
