@@ -14,6 +14,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.PluginDescriptor
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.io.FileUtil
@@ -346,21 +347,29 @@ object StandaloneProjectFactory {
         roots: Collection<Path>,
         environment: KotlinCoreProjectEnvironment,
     ): GlobalSearchScope {
-        if (roots.isEmpty()) return GlobalSearchScope.EMPTY_SCOPE
-        val virtualFiles = getVirtualFilesForLibraryRootsRecursively(roots, environment)
-        return GlobalSearchScope.filesScope(environment.project, virtualFiles)
-    }
+        val virtualFileUrls = getVirtualFileUrlsForLibraryRootsRecursively(roots, environment)
 
-    fun getVirtualFilesForLibraryRootsRecursively(
-        roots: Collection<Path>,
-        environment: KotlinCoreProjectEnvironment,
-    ): Collection<VirtualFile> {
-        val virtualFilesByRoots = getVirtualFilesForLibraryRoots(roots, environment)
-        return buildList {
-            addAll(virtualFilesByRoots)
-            virtualFilesByRoots.flatMapTo(this) { LibraryUtils.getAllVirtualFilesFromRoot(it, includeRoot = true) }
+        return object : GlobalSearchScope(environment.project) {
+            override fun contains(file: VirtualFile): Boolean = file.url in virtualFileUrls
+
+            override fun isSearchInModuleContent(aModule: Module): Boolean = false
+
+            override fun isSearchInLibraries(): Boolean = true
+
+            override fun toString(): String = virtualFileUrls.toString()
         }
     }
+
+    private fun getVirtualFileUrlsForLibraryRootsRecursively(
+        roots: Collection<Path>,
+        environment: KotlinCoreProjectEnvironment,
+    ): Set<String> =
+        buildSet {
+            for (root in getVirtualFilesForLibraryRoots(roots, environment)) {
+                LibraryUtils.getAllVirtualFilesFromRoot(root, includeRoot = true)
+                    .mapTo(this) { it.url }
+            }
+        }
 
     fun getVirtualFilesForLibraryRoots(
         roots: Collection<Path>,
