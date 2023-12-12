@@ -24,9 +24,9 @@ internal fun FirDesignationWithFile.asResolveTarget(): LLFirSingleResolveTarget 
  * The owning session must be a resolvable one.
  */
 internal fun LLFirResolveTarget.resolve(phase: FirResolvePhase) {
-    val session = firFile.llFirResolvableSession
-        ?: errorWithAttachment("Resolvable session expected, got '${firFile.llFirSession::class.java}'") {
-            withEntry("firSession", firFile.llFirSession) { it.toString() }
+    val session = target.llFirResolvableSession
+        ?: errorWithAttachment("Resolvable session expected, got '${target.llFirSession::class.java}'") {
+            withEntry("firSession", target.llFirSession) { it.toString() }
         }
 
     val lazyDeclarationResolver = session.moduleComponents.firModuleLazyDeclarationResolver

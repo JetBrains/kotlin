@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
@@ -325,7 +325,7 @@ private class LLFirBodyTargetResolver(
         LLFirDeclarationModificationService.bodyResolved(target, resolverPhase)
     }
 
-    protected fun resolveScript(script: FirScript) {
+    private fun resolveScript(script: FirScript) {
         transformer.declarationsTransformer.withScript(script) {
             script.parameters.forEach { it.transformSingle(transformer, ResolutionMode.ContextIndependent) }
             script.transformDeclarations(
@@ -346,7 +346,7 @@ private class LLFirBodyTargetResolver(
 }
 
 internal object BodyStateKeepers {
-    val SCRIPT: StateKeeper<FirScript, FirDesignationWithFile> = stateKeeper { script, designation ->
+    val SCRIPT: StateKeeper<FirScript, FirDesignation> = stateKeeper { script, designation ->
         val oldDeclarations = script.declarations
         if (oldDeclarations.none { it.isElementWhichShouldBeResolvedAsPartOfScript }) return@stateKeeper
 
@@ -365,7 +365,7 @@ internal object BodyStateKeepers {
         add(FirScript::controlFlowGraphReference, FirScript::replaceControlFlowGraphReference)
     }
 
-    private val RESULT_PROPERTY: StateKeeper<FirScript, FirDesignationWithFile> = stateKeeper { script, _ ->
+    private val RESULT_PROPERTY: StateKeeper<FirScript, FirDesignation> = stateKeeper { script, _ ->
         val resultedProperty = script.findResultProperty() ?: return@stateKeeper
         add(
             provider = { resultedProperty.bodyResolveState },
@@ -383,16 +383,16 @@ internal object BodyStateKeepers {
         )
     }
 
-    val CODE_FRAGMENT: StateKeeper<FirCodeFragment, FirDesignationWithFile> = stateKeeper { _, _ ->
+    val CODE_FRAGMENT: StateKeeper<FirCodeFragment, FirDesignation> = stateKeeper { _, _ ->
         add(FirCodeFragment::block, FirCodeFragment::replaceBlock, ::blockGuard)
     }
 
-    val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer, FirDesignationWithFile> = stateKeeper { _, _ ->
+    val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer, FirDesignation> = stateKeeper { _, _ ->
         add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody, ::blockGuard)
         add(FirAnonymousInitializer::controlFlowGraphReference, FirAnonymousInitializer::replaceControlFlowGraphReference)
     }
 
-    val FUNCTION: StateKeeper<FirFunction, FirDesignationWithFile> = stateKeeper { function, designation ->
+    val FUNCTION: StateKeeper<FirFunction, FirDesignation> = stateKeeper { function, designation ->
         if (function.isCertainlyResolved) {
             if (!isCallableWithSpecialBody(function)) {
                 entityList(function.valueParameters, VALUE_PARAMETER, designation)
@@ -413,12 +413,12 @@ internal object BodyStateKeepers {
         add(FirFunction::controlFlowGraphReference, FirFunction::replaceControlFlowGraphReference)
     }
 
-    val CONSTRUCTOR: StateKeeper<FirConstructor, FirDesignationWithFile> = stateKeeper { _, designation ->
+    val CONSTRUCTOR: StateKeeper<FirConstructor, FirDesignation> = stateKeeper { _, designation ->
         add(FUNCTION, designation)
         add(FirConstructor::delegatedConstructor, FirConstructor::replaceDelegatedConstructor, ::delegatedConstructorCallGuard)
     }
 
-    val VARIABLE: StateKeeper<FirVariable, FirDesignationWithFile> = stateKeeper { variable, _ ->
+    val VARIABLE: StateKeeper<FirVariable, FirDesignation> = stateKeeper { variable, _ ->
         add(FirVariable::returnTypeRef, FirVariable::replaceReturnTypeRef)
 
         if (!isCallableWithSpecialBody(variable)) {
@@ -427,7 +427,7 @@ internal object BodyStateKeepers {
         }
     }
 
-    private val VALUE_PARAMETER: StateKeeper<FirValueParameter, FirDesignationWithFile> = stateKeeper { valueParameter, _ ->
+    private val VALUE_PARAMETER: StateKeeper<FirValueParameter, FirDesignation> = stateKeeper { valueParameter, _ ->
         if (valueParameter.defaultValue != null) {
             add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::expressionGuard)
         }
@@ -435,12 +435,12 @@ internal object BodyStateKeepers {
         add(FirValueParameter::controlFlowGraphReference, FirValueParameter::replaceControlFlowGraphReference)
     }
 
-    val FIELD: StateKeeper<FirField, FirDesignationWithFile> = stateKeeper { _, designation ->
+    val FIELD: StateKeeper<FirField, FirDesignation> = stateKeeper { _, designation ->
         add(VARIABLE, designation)
         add(FirField::controlFlowGraphReference, FirField::replaceControlFlowGraphReference)
     }
 
-    val PROPERTY: StateKeeper<FirProperty, FirDesignationWithFile> = stateKeeper { property, designation ->
+    val PROPERTY: StateKeeper<FirProperty, FirDesignation> = stateKeeper { property, designation ->
         if (property.bodyResolveState >= FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) {
             return@stateKeeper
         }
@@ -459,7 +459,7 @@ internal object BodyStateKeepers {
 }
 
 context(StateKeeperBuilder)
-private fun StateKeeperScope<FirFunction, FirDesignationWithFile>.preserveContractBlock(function: FirFunction) {
+private fun StateKeeperScope<FirFunction, FirDesignation>.preserveContractBlock(function: FirFunction) {
     val oldBody = function.body
     if (oldBody == null || oldBody is FirLazyBlock) {
         return

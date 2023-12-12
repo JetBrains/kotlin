@@ -20,8 +20,7 @@ internal object LLFirLazyResolverRunner {
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
         val lazyResolver = LLFirLazyPhaseResolverByPhase.getByPhase(phase)
-        val firFile = target.firFile
-        val session = firFile.moduleData.session
+        val session = target.target.moduleData.session
         lockProvider.withGlobalLock {
             lockProvider.withGlobalPhaseLock(phase) {
                 lazyResolver.resolve(target, lockProvider, session, scopeSession, towerDataContextCollector)

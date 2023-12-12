@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal abstract class LLFirAbstractBodyTargetResolver(
@@ -68,8 +67,8 @@ internal abstract class LLFirAbstractBodyTargetResolver(
         }
     }
 
-    protected fun <T : FirElementWithResolveState> resolve(target: T, keeper: StateKeeper<T, FirDesignationWithFile>) {
-        val firDesignation = FirDesignationWithFile(nestedClassesStack, target, resolveTarget.firFile)
+    protected fun <T : FirElementWithResolveState> resolve(target: T, keeper: StateKeeper<T, FirDesignation>) {
+        val firDesignation = FirDesignation(nestedClassesStack, target)
         resolveWithKeeper(target, firDesignation, keeper, { FirLazyBodiesCalculator.calculateBodies(firDesignation) }) {
             rawResolve(target)
         }

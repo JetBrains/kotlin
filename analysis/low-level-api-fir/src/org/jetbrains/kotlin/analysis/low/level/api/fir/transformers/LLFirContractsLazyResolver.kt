@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
@@ -193,11 +193,11 @@ private class LLFirContractsTargetResolver(
 }
 
 private object ContractStateKeepers {
-    private val CONTRACT_DESCRIPTION_OWNER: StateKeeper<FirContractDescriptionOwner, FirDesignationWithFile> = stateKeeper { _, _ ->
+    private val CONTRACT_DESCRIPTION_OWNER: StateKeeper<FirContractDescriptionOwner, FirDesignation> = stateKeeper { _, _ ->
         add(FirContractDescriptionOwner::contractDescription, FirContractDescriptionOwner::replaceContractDescription)
     }
 
-    private val BODY_OWNER: StateKeeper<FirFunction, FirDesignationWithFile> = stateKeeper { declaration, _ ->
+    private val BODY_OWNER: StateKeeper<FirFunction, FirDesignation> = stateKeeper { declaration, _ ->
         if (declaration is FirContractDescriptionOwner && declaration.contractDescription is FirRawContractDescription) {
             // No need to change the body, contract is declared separately
             return@stateKeeper
@@ -208,22 +208,22 @@ private object ContractStateKeepers {
         }
     }
 
-    val SIMPLE_FUNCTION: StateKeeper<FirSimpleFunction, FirDesignationWithFile> = stateKeeper { _, designation ->
+    val SIMPLE_FUNCTION: StateKeeper<FirSimpleFunction, FirDesignation> = stateKeeper { _, designation ->
         add(CONTRACT_DESCRIPTION_OWNER, designation)
         add(BODY_OWNER, designation)
     }
 
-    val CONSTRUCTOR: StateKeeper<FirConstructor, FirDesignationWithFile> = stateKeeper { _, designation ->
+    val CONSTRUCTOR: StateKeeper<FirConstructor, FirDesignation> = stateKeeper { _, designation ->
         add(CONTRACT_DESCRIPTION_OWNER, designation)
         add(BODY_OWNER, designation)
     }
 
-    private val PROPERTY_ACCESSOR: StateKeeper<FirPropertyAccessor, FirDesignationWithFile> = stateKeeper { _, designation ->
+    private val PROPERTY_ACCESSOR: StateKeeper<FirPropertyAccessor, FirDesignation> = stateKeeper { _, designation ->
         add(CONTRACT_DESCRIPTION_OWNER, designation)
         add(BODY_OWNER, designation)
     }
 
-    val PROPERTY: StateKeeper<FirProperty, FirDesignationWithFile> = stateKeeper { property, designation ->
+    val PROPERTY: StateKeeper<FirProperty, FirDesignation> = stateKeeper { property, designation ->
         entity(property.getter, PROPERTY_ACCESSOR, designation)
         entity(property.setter, PROPERTY_ACCESSOR, designation)
     }

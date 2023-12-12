@@ -253,7 +253,7 @@ private fun handleExceptionFromResolve(
     designation: LLFirResolveTarget,
     toPhase: FirResolvePhase,
 ): Nothing {
-    val session = designation.firFile.llFirSession
+    val session = designation.target.llFirSession
     val moduleData = session.llFirModuleData
     val module = moduleData.ktModule
 
