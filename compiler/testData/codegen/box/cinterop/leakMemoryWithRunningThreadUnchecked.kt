@@ -7,11 +7,11 @@ void test_RunInNewThread(void (*)());
 // FILE: leakMemoryWithRunningThreadUnchecked.h
 #ifdef __cplusplus
 extern "C" {
-    #endif
+#endif
 
-    void test_RunInNewThread(void (*)());
+void test_RunInNewThread(void (*)());
 
-    #ifdef __cplusplus
+#ifdef __cplusplus
 }
 #endif
 

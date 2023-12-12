@@ -9,11 +9,11 @@
 // FILE: auxiliaryCppSources.h
 #ifdef __cplusplus
 extern "C" {
-    #endif
+#endif
 
-    const char* name();
+const char* name();
 
-    #ifdef __cplusplus
+#ifdef __cplusplus
 }
 #endif
 
@@ -23,7 +23,7 @@ extern "C" {
 
 static std::string _name = "OK";
 
-const char* name() {
+extern "C" const char* name() {
     return _name.c_str();
 }
 
