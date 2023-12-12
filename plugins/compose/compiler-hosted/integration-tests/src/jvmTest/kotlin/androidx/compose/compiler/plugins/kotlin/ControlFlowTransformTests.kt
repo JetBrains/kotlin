@@ -2409,4 +2409,22 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             }
         """
     )
+
+    @Test
+    fun testIfWithEarlyReturnInsideInlineLambda() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable fun Test() {
+                run {
+                    if (true) {
+                        return@run
+                    } else {
+                        Test()
+                        return@run
+                    }
+                }
+            }
+        """
+    )
 }
