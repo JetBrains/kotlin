@@ -1353,6 +1353,16 @@ public class IncrementalFirICLightTreeJvmCompilerRunnerTestGenerated extends Abs
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSyntheticProperty/");
             }
 
+            @TestMetadata("changeSyntheticProperty2")
+            public void testChangeSyntheticProperty2() throws Exception {
+                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSyntheticProperty2/");
+            }
+
+            @TestMetadata("changeSyntheticProperty3")
+            public void testChangeSyntheticProperty3() throws Exception {
+                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSyntheticProperty3/");
+            }
+
             @TestMetadata("constantChanged")
             public void testConstantChanged() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantChanged/");
@@ -1578,6 +1588,32 @@ public class IncrementalFirICLightTreeJvmCompilerRunnerTestGenerated extends Abs
 
                 public void testAllFilesPresentInChangeSyntheticProperty() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSyntheticProperty"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^classToPackageFacade)"), TargetBackend.JVM_IR, true);
+                }
+            }
+
+            @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSyntheticProperty2")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ChangeSyntheticProperty2 extends AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInChangeSyntheticProperty2() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSyntheticProperty2"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^classToPackageFacade)"), TargetBackend.JVM_IR, true);
+                }
+            }
+
+            @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSyntheticProperty3")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ChangeSyntheticProperty3 extends AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInChangeSyntheticProperty3() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSyntheticProperty3"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^classToPackageFacade)"), TargetBackend.JVM_IR, true);
                 }
             }
 
