@@ -319,7 +319,7 @@ internal class AndroidProjectHandler(
         null
     }
 
-    fun setUpDependencyResolution(
+    private fun setUpDependencyResolution(
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant,
         compilation: KotlinJvmAndroidCompilation
     ) {
