@@ -5,7 +5,7 @@ import kotlinx.android.parcel.*
 import android.os.Parcel
 import android.os.Parcelable
 
-object <!DEPRECATED_PARCELER!>Parceler1<!> : Parceler<String> {
+object Parceler1 : Parceler<String> {
     override fun create(parcel: Parcel) = parcel.readInt().toString()
 
     override fun String.write(parcel: Parcel, flags: Int) {
@@ -13,7 +13,7 @@ object <!DEPRECATED_PARCELER!>Parceler1<!> : Parceler<String> {
     }
 }
 
-object <!DEPRECATED_PARCELER!>Parceler2<!> : Parceler<List<String>> {
+object Parceler2 : Parceler<List<String>> {
     override fun create(parcel: Parcel) = listOf(parcel.readString()!!)
 
     override fun List<String>.write(parcel: Parcel, flags: Int) {
@@ -32,11 +32,11 @@ data class Test(
     val x by lazy { "foo" }
 }
 
-interface <!DEPRECATED_PARCELER!>ParcelerForUser<!>: Parceler<User>
+interface ParcelerForUser: Parceler<User>
 
 <!DEPRECATED_ANNOTATION!>@Parcelize<!>
 class User(val name: String) : Parcelable {
-    private companion object : ParcelerForUser {
+    private companion <!DEPRECATED_PARCELER!>object<!> : ParcelerForUser {
         override fun User.write(parcel: Parcel, flags: Int) {
             parcel.writeString(name)
         }
