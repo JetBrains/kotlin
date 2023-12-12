@@ -705,6 +705,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                         endOffset = endOffset,
                         name = name,
                         explicitReceiver = receiver,
+                        isAssignable = function.shouldParametersBeAssignable()
                     )
                 }
             }
@@ -750,7 +751,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 origin = origin,
                 name = valueParameter.name,
                 type = type,
-                isAssignable = false,
+                isAssignable = valueParameter.containingFunctionSymbol.fir.shouldParametersBeAssignable(),
                 symbol = IrValueParameterSymbolImpl(),
                 index = index,
                 varargElementType = valueParameter.varargElementType?.toIrType(typeOrigin),
@@ -1025,4 +1026,9 @@ internal fun IrDeclarationParent?.isExternalParent(): Boolean {
         returns(true) implies (this@isExternalParent != null)
     }
     return this is Fir2IrLazyClass || this is IrExternalPackageFragment
+}
+
+context(Fir2IrComponents)
+internal fun FirCallableDeclaration?.shouldParametersBeAssignable(): Boolean {
+    return extensions.parametersAreAssignable && this?.isTailRec == true
 }

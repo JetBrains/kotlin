@@ -16,6 +16,12 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface Fir2IrExtensions {
     val irNeedsDeserialization: Boolean
+
+    /**
+     * Determines if parameters of tailrec functions should be generated with isAssignable = true
+     */
+    val parametersAreAssignable: Boolean
+
     val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>
 
     fun generateOrGetFacadeClass(declaration: IrMemberWithContainerSource, components: Fir2IrComponents): IrClass?
@@ -33,6 +39,9 @@ interface Fir2IrExtensions {
 
     object Default : Fir2IrExtensions {
         override val irNeedsDeserialization: Boolean
+            get() = false
+
+        override val parametersAreAssignable: Boolean
             get() = false
 
         override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList()

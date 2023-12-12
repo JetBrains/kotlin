@@ -54598,6 +54598,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("varargInTailrec.kt")
+        public void testVarargInTailrec() throws Exception {
+            runTest("compiler/testData/codegen/box/vararg/varargInTailrec.kt");
+        }
+
+        @Test
         @TestMetadata("varargsAndFunctionLiterals.kt")
         public void testVarargsAndFunctionLiterals() throws Exception {
             runTest("compiler/testData/codegen/box/vararg/varargsAndFunctionLiterals.kt");

@@ -562,6 +562,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     endOffset: Int = this.endOffset,
     name: Name = SpecialNames.THIS,
     explicitReceiver: FirReceiverParameter? = null,
+    isAssignable: Boolean = false
 ): IrValueParameter {
     return symbolTable.irFactory.createValueParameter(
         startOffset = startOffset,
@@ -569,7 +570,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
         origin = thisOrigin,
         name = name,
         type = thisType,
-        isAssignable = false,
+        isAssignable = isAssignable,
         symbol = IrValueParameterSymbolImpl(),
         index = UNDEFINED_PARAMETER_INDEX,
         varargElementType = null,

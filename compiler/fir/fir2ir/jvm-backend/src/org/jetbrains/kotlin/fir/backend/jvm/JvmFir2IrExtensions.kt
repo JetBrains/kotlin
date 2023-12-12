@@ -35,6 +35,7 @@ class JvmFir2IrExtensions(
     private val irDeserializer: JvmIrDeserializer,
     private val mangler: KotlinMangler.IrMangler,
 ) : Fir2IrExtensions, JvmGeneratorExtensions {
+    override val parametersAreAssignable: Boolean get() = true
     override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList() // TODO: KT-61370, KT-61804
     override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
     override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
