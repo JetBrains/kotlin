@@ -1398,6 +1398,11 @@ public class IncrementalK2FirICJvmCompilerRunnerTestGenerated extends AbstractIn
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/notChangeSignature/");
             }
 
+            @TestMetadata("potentialSamAdapter")
+            public void testPotentialSamAdapter() throws Exception {
+                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/potentialSamAdapter/");
+            }
+
             @TestMetadata("rawErrorTypeDuringSerialization")
             public void testRawErrorTypeDuringSerialization() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/rawErrorTypeDuringSerialization/");
@@ -1665,6 +1670,19 @@ public class IncrementalK2FirICJvmCompilerRunnerTestGenerated extends AbstractIn
 
                 public void testAllFilesPresentInNotChangeSignature() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/notChangeSignature"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^classToPackageFacade)"), TargetBackend.JVM_IR, true);
+                }
+            }
+
+            @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/potentialSamAdapter")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class PotentialSamAdapter extends AbstractIncrementalK2FirICJvmCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInPotentialSamAdapter() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/potentialSamAdapter"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^classToPackageFacade)"), TargetBackend.JVM_IR, true);
                 }
             }
 
