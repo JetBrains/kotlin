@@ -85,7 +85,7 @@ open class AbstractFirLocalVariableTestBase(val parser: FirParser) : AbstractLoc
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureDumpHandlersForCodegenTest()
+        builder.configureDumpHandlersForCodegenTest(isFir = true)
         builder.configureFirParser(parser)
     }
 }

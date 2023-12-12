@@ -105,9 +105,11 @@ fun TestConfigurationBuilder.applyDumpSmapDirective() {
     }
 }
 
-fun TestConfigurationBuilder.configureDumpHandlersForCodegenTest() {
+fun TestConfigurationBuilder.configureDumpHandlersForCodegenTest(isFir: Boolean = false) {
     configureIrHandlersStep {
         dumpHandlersForConverterStep()
+        if (isFir)
+            useAfterAnalysisCheckers(::FirIrDumpIdenticalChecker)
     }
     configureJvmArtifactsHandlersStep {
         dumpHandlersForBackendStep()

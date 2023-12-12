@@ -82,7 +82,7 @@ open class AbstractFirSteppingTestBase(val parser: FirParser) : AbstractStepping
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureDumpHandlersForCodegenTest()
+        builder.configureDumpHandlersForCodegenTest(isFir = true)
         builder.configureFirParser(parser)
     }
 }

@@ -71,7 +71,7 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
                 ::FirMetaInfoDiffSuppressor
             )
 
-            configureDumpHandlersForCodegenTest()
+            configureDumpHandlersForCodegenTest(isFir = true)
 
             baseFirBlackBoxCodegenTestDirectivesConfiguration()
         }
