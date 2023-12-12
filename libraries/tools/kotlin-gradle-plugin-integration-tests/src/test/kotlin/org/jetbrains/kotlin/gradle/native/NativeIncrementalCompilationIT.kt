@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -158,6 +159,44 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
             val fooKtCache = getFileCache("program", "MultiProjectWithTests:library", "library/src/hostMain/kotlin/foo.kt", "")
             val barKtCache = getFileCache("program", "MultiProjectWithTests:program", "program/src/hostMain/kotlin/bar.kt", "")
             val mainKtCache = getFileCache("program", "MultiProjectWithTests:program", "program/src/hostMain/kotlin/main.kt", "")
+
+// // TODO(Dmitrii Krasnov): need at leas TestVersions.Gradle.G_8_0 to make it parallel
+//            val synchronisationBlock =
+//                """
+//
+//                abstract class CountDownService : BuildService<BuildServiceParameters.None> {
+//                    val countDownLatch = CountDownLatch(2)
+//                }
+//
+//                val serviceProvider = gradle.sharedServices.registerIfAbsent("countDownLatchService", CountDownService::class.java) {
+//
+//                }
+//
+//                tasks.named("linkDebugExecutableHost").configure {
+//                    val serviceProvider = gradle.sharedServices.registerIfAbsent("countDownLatchService", CountDownService::class.java) {
+//
+//                    }
+//                    doFirst {
+//
+//                        serviceProvider.get().countDownLatch.countDown()
+//                        serviceProvider.get().countDownLatch.await()
+//                    }
+//                }
+//                tasks.named("linkDebugTestHost").configure {
+//                    val serviceProvider = gradle.sharedServices.registerIfAbsent("countDownLatchService", CountDownService::class.java) {
+//
+//                    }
+//                    doFirst {
+//
+//                        serviceProvider.get().countDownLatch.countDown()
+//                        serviceProvider.get().countDownLatch.await()
+//                    }
+//                }
+//                """.trimIndent()
+            // we are adding synchronisation before compileKotlinLinux execution in each subproject for making
+            // at least the execution of these tasks parallel
+//            subProject("program").buildGradleKts.appendText(synchronisationBlock)
+
             build(
                 "linkDebugExecutableHost", "program:linkDebugTestHost",
             ) {
