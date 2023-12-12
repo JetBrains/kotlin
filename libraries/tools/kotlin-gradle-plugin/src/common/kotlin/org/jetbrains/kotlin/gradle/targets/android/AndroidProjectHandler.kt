@@ -182,7 +182,7 @@ internal class AndroidProjectHandler(
         val variantDataName = getVariantName(variantData)
         logger.kotlinDebug("Process variant [$variantDataName]")
 
-        val defaultSourceSet = project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName)
+        val defaultSourceSet = project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSet.name)
 
         val configAction = KotlinCompileConfig(KotlinCompilationInfo(compilation))
         configAction.configureTask { task ->
