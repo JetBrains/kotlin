@@ -2,12 +2,12 @@
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
-    val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    val buildee = build {
         typeVariableMutableProperty = {}
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>checkExactType<!><<!CANNOT_INFER_PARAMETER_TYPE!>Buildee<() -> Unit><!>>(buildee)
+    checkExactType<Buildee<() -> Unit>>(buildee)
 }
 
 

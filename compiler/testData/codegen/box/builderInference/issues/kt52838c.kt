@@ -1,6 +1,5 @@
 // ISSUE: KT-52838
 
-// IGNORE_BACKEND_K2: ANY
 // REASON: red code (see corresponding diagnostic test)
 
 fun box(): String {
