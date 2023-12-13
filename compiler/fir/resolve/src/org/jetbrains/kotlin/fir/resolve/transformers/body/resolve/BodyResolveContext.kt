@@ -440,6 +440,11 @@ class BodyResolveContext(
         }
     }
 
+    /**
+     * Changes to the order of scopes should also be reflected in
+     * [org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer.withClassScopes].
+     * Otherwise, we get different behavior between type resolve and body resolve phases.
+     */
     fun <T> withScopesForClass(
         owner: FirClass,
         holder: SessionHolder,

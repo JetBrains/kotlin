@@ -461,6 +461,11 @@ open class FirTypeResolveTransformer(
 
     fun removeOuterTypeParameterScope(firClass: FirClass): Boolean = !firClass.isInner && !firClass.isLocal
 
+    /**
+     * Changes to the order of scopes should also be reflected in
+     * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext.withScopesForClass].
+     * Otherwise, we get different behavior between type resolve and body resolve phases.
+     */
     inline fun <R> withClassScopes(
         firClass: FirClass,
         crossinline actionInsideStaticScope: () -> Unit = {},
