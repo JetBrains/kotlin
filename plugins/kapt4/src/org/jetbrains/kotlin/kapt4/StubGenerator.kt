@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.kotlin.kapt3.base.KaptOptions
+import org.jetbrains.kotlin.kapt3.base.javac.kaptError
 import org.jetbrains.kotlin.kapt3.stubs.MembersPositionComparator
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.utils.Printer
@@ -466,7 +467,9 @@ private class StubGenerator(
 
             private fun convertDotQualifiedExpression(dotQualifiedExpression: KtDotQualifiedExpression): String? {
                 val qualifier = dotQualifiedExpression.lastChild as? KtNameReferenceExpression ?: return null
-                val name = qualifier.text.takeIf { isValidIdentifier(it) } ?: "InvalidFieldName"
+                val name = qualifier.text.takeIf { isValidIdentifier(it) } ?: "InvalidFieldName".also {
+                    onError("'${qualifier.text.removeSurrounding("`")}' is an invalid Java enum value name")
+                }
                 val lhs = when (val left = dotQualifiedExpression.firstChild) {
                     is KtNameReferenceExpression -> left.getReferencedName()
                     is KtDotQualifiedExpression -> convertDotQualifiedExpression(left) ?: return null

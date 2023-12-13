@@ -85,11 +85,7 @@ private fun run(
         WriterBackedKaptLogger(isVerbose = false),
     )
     val onError = { message: String ->
-        if (context.options[KaptFlag.STRICT]) {
-            context.reportKaptError(*message.split("\n").toTypedArray())
-        } else {
-            context.logger.warn(message)
-        }
+        context.reportKaptError(*message.split("\n").toTypedArray())
     }
     return context to generateStubs(module, files, options, onError, metadataRenderer = { renderMetadata(it) })
 }
