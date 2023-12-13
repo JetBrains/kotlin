@@ -45,8 +45,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     KtAnnotated,
     KtElement,
     PsiClassOwner,
-    PsiNamedElement,
-    PsiModifiableCodeBlock {
+    PsiNamedElement {
 
     @Volatile
     private var isScript: Boolean? = null
@@ -295,7 +294,8 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
 
     override fun getPsiOrParent(): KtElement = this
 
-    override fun shouldChangeModificationCount(place: PsiElement): Boolean {
+    @Suppress("unused") //keep for compatibility with potential plugins
+    fun shouldChangeModificationCount(@Suppress("UNUSED_PARAMETER") place: PsiElement): Boolean {
         // Modification count for Kotlin files is tracked entirely by KotlinCodeBlockModificationListener
         return false
     }

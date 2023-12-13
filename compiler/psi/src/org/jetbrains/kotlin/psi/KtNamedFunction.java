@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiModifiableCodeBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunctionStub>
-        implements KtFunction, KtDeclarationWithInitializer, PsiModifiableCodeBlock {
+        implements KtFunction, KtDeclarationWithInitializer {
     public KtNamedFunction(@NotNull ASTNode node) {
         super(node);
     }
@@ -263,7 +262,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
         return getParent() instanceof KtFile;
     }
 
-    @Override
+    @SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins
     public boolean shouldChangeModificationCount(PsiElement place) {
         // Suppress Java check for out-of-block
         return false;
