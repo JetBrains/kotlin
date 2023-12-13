@@ -1827,7 +1827,7 @@ internal object EscapeAnalysis {
             val intraproceduralAnalysisResult =
                     IntraproceduralAnalysis(context, moduleDFG, externalModulesDFG, callGraph).analyze()
             InterproceduralAnalysis(context, generationState, callGraph, intraproceduralAnalysisResult, externalModulesDFG, lifetimes,
-                    propagateExiledToHeapObjects = context.config.memoryModel != MemoryModel.EXPERIMENTAL
+                    propagateExiledToHeapObjects = context.config.memoryModel != MemoryModel.EXPERIMENTAL || context.config.gc == GC.CONCURRENT_MARK_AND_SWEEP
             ).analyze()
         } catch (t: Throwable) {
             val extraUserInfo =
