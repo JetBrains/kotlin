@@ -1035,6 +1035,10 @@ public class KmVersionRequirement : KmVersionRequirementVisitor() {
         visitor.visitEnd()
     }
 
+    /**
+     * Returns the String representation of this KmVersionRequirement object, consisting of
+     * [kind], [level], [version], [errorCode], and [message].
+     */
     override fun toString(): String {
         return "KmVersionRequirement(kind=$kind, level=$level, version=$version, errorCode=$errorCode, message=$message)"
     }
