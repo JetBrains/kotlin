@@ -14,25 +14,37 @@ import org.jetbrains.org.objectweb.asm.Label
 object OrOr : IntrinsicMethod() {
 
     private class BooleanDisjunction(
-        val arg0: IrExpression, val arg1: IrExpression, codegen: ExpressionCodegen, val data: BlockInfo
+        val left: IrExpression, val right: IrExpression, codegen: ExpressionCodegen, val data: BlockInfo
     ) : BooleanValue(codegen) {
 
         override fun jumpIfFalse(target: Label) {
             val stayLabel = Label()
-            arg0.accept(codegen, data).coerceToBoolean().jumpIfTrue(stayLabel)
-            arg1.accept(codegen, data).coerceToBoolean().jumpIfFalse(target)
+            val leftValue = left.accept(codegen, data).coerceToBoolean()
+            markLineNumber(left)
+            leftValue.jumpIfTrue(stayLabel)
+            val rightValue = right.accept(codegen, data).coerceToBoolean()
+            markLineNumber(right)
+            rightValue.jumpIfFalse(target)
             mv.visitLabel(stayLabel)
         }
 
         override fun jumpIfTrue(target: Label) {
-            arg0.accept(codegen, data).coerceToBoolean().jumpIfTrue(target)
-            arg1.accept(codegen, data).coerceToBoolean().jumpIfTrue(target)
+            val leftValue = left.accept(codegen, data).coerceToBoolean()
+            markLineNumber(left)
+            leftValue.jumpIfTrue(target)
+            val rightValue = right.accept(codegen, data).coerceToBoolean()
+            markLineNumber(right)
+            rightValue.jumpIfTrue(target)
         }
 
         override fun discard() {
             val end = Label()
-            arg0.accept(codegen, data).coerceToBoolean().jumpIfTrue(end)
-            arg1.accept(codegen, data).discard()
+            val leftValue = left.accept(codegen, data).coerceToBoolean()
+            markLineNumber(left)
+            leftValue.jumpIfTrue(end)
+            val rightValue = right.accept(codegen, data)
+            markLineNumber(right)
+            rightValue.discard()
             mv.visitLabel(end)
         }
     }

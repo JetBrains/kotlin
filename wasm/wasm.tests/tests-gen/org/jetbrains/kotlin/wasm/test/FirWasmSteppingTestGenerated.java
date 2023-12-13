@@ -596,6 +596,48 @@ public class FirWasmSteppingTestGenerated extends AbstractFirWasmSteppingTest {
     }
 
     @Test
+    @TestMetadata("whenInConjunction.kt")
+    public void testWhenInConjunction() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenInConjunction.kt");
+    }
+
+    @Test
+    @TestMetadata("whenInDisjunction.kt")
+    public void testWhenInDisjunction() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenInDisjunction.kt");
+    }
+
+    @Test
+    @TestMetadata("whenInGeneralObjectComparison.kt")
+    public void testWhenInGeneralObjectComparison() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenInGeneralObjectComparison.kt");
+    }
+
+    @Test
+    @TestMetadata("whenInNegation.kt")
+    public void testWhenInNegation() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenInNegation.kt");
+    }
+
+    @Test
+    @TestMetadata("whenInNullComparison.kt")
+    public void testWhenInNullComparison() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenInNullComparison.kt");
+    }
+
+    @Test
+    @TestMetadata("whenInPrimitiveToObjectComparison.kt")
+    public void testWhenInPrimitiveToObjectComparison() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenInPrimitiveToObjectComparison.kt");
+    }
+
+    @Test
+    @TestMetadata("whenInZeroComparison.kt")
+    public void testWhenInZeroComparison() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenInZeroComparison.kt");
+    }
+
+    @Test
     @TestMetadata("whenIsChecks.kt")
     public void testWhenIsChecks() throws Exception {
         runTest("compiler/testData/debug/stepping/whenIsChecks.kt");

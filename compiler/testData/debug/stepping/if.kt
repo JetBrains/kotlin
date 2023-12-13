@@ -20,7 +20,7 @@ inline fun getB(): Int {
 // test.kt:15 box
 // test.kt:7 box
 // test.kt:12 getA
-// test.kt:7 box
+// test.kt:6 box
 // test.kt:9 box
 // test.kt:15 box
 // test.kt:9 box

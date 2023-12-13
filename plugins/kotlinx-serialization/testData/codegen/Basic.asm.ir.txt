@@ -681,16 +681,16 @@ public final class OptionalUser : java/lang/Object {
           LDC ()
           LDC ()
           INVOKESPECIAL (User, <init>, (Ljava/lang/String;Ljava/lang/String;)V)
+        LABEL (L4)
+        LINENUMBER (9)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, areEqual, (Ljava/lang/Object;Ljava/lang/Object;)Z)
-          IFNE (L4)
+          IFNE (L5)
           ICONST_1
           GOTO (L2)
-        LABEL (L4)
+        LABEL (L5)
           ICONST_0
         LABEL (L2)
-          IFEQ (L5)
-        LABEL (L6)
-        LINENUMBER (9)
+          IFEQ (L6)
           ALOAD (1)
           ALOAD (2)
           ICONST_0
@@ -699,7 +699,7 @@ public final class OptionalUser : java/lang/Object {
           ALOAD (0)
           GETFIELD (OptionalUser, user, LUser;)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, encodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V)
-        LABEL (L5)
+        LABEL (L6)
           RETURN
         LABEL (L7)
     }
