@@ -116,6 +116,11 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - classWithMustBeDocumentedAnnotation`() {
+        doTest(headersTestDataDir.resolve("classWithMustBeDocumentedAnnotation"))
+    }
+
+    @Test
     fun `test - functionWithMustBeDocumentedAnnotation`() {
         doTest(headersTestDataDir.resolve("functionWithMustBeDocumentedAnnotation"))
     }

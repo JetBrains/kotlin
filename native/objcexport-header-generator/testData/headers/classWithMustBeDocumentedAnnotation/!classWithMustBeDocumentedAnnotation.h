@@ -18,14 +18,15 @@ NS_ASSUME_NONNULL_BEGIN
 #define _Nullable_result _Nullable
 #endif
 
-__attribute__((objc_subclassing_restricted))
-@interface FooKt : Base
 
 /**
  * @note annotations
  *   ImportantAnnotation
 */
-+ (void)fooMyParameter:(NSString *)myParameter __attribute__((swift_name("foo(myParameter:)")));
+__attribute__((objc_subclassing_restricted))
+@interface Foo : Base
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 #pragma pop_macro("_Nullable_result")
