@@ -5,8 +5,8 @@
 
 fun test() {
     val buildee = selectBuildee(
-        build <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ setTypeVariable(TargetType()) }<!>,
-        build <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{}<!>
+        build { setTypeVariable(TargetType()) },
+        build {}
     )
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
