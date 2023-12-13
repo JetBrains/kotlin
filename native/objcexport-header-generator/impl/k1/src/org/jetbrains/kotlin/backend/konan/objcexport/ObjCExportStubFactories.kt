@@ -21,7 +21,12 @@ fun ObjCExportStubOrigin(descriptor: DeclarationDescriptor?): ObjCExportStubOrig
         return ObjCExportStubOrigin.Source(descriptor.name, descriptor.findKDocString(), (descriptor.source as? PsiSourceElement)?.psi)
     }
 
-    return ObjCExportStubOrigin.Binary(descriptor.name, descriptor.extractSerializedKdocString())
+    /*
+    This case is somewhat unexpected/esoteric:
+    We expect the descriptor to either implement `DeserializedDescriptor` or `DeclarationDescriptorWithSource` (or both)
+    The returned 'Binary' is a defensive measure.
+     */
+    return ObjCExportStubOrigin.Binary(descriptor.name, kdoc = null)
 }
 
 
