@@ -6,6 +6,9 @@
 package org.jetbrains.sir.passes
 
 import org.jetbrains.kotlin.sir.SirElement
+import org.jetbrains.kotlin.sir.SirModule
+
+public typealias SirModulePass = SirPass<SirModule, Nothing?, SirModule>
 
 /**
  * Swift IR is supposed to be transformed by a series of passes.
@@ -23,4 +26,4 @@ public interface SirPass<in E : SirElement, in T, out R> {
     public fun run(element: E, data: T): R
 }
 
-public fun <E : SirElement, R> SirPass<E, Unit, R>.run(element: E): R = this.run(element, Unit)
+public fun <E : SirElement, R> SirPass<E, Nothing?, R>.run(element: E): R = this.run(element, null)

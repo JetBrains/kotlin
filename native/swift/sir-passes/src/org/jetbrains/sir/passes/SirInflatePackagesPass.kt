@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.sir.visitors.SirTransformer
  * Pass that for every occurring declaration in package x.y.z generates a mirroring type scope and puts it there.
  * Right now, enums without cases are used for namespace simulation.
  */
-public class SirInflatePackagesPass : SirPass<SirModule, Unit, SirModule> {
+public class SirInflatePackagesPass : SirModulePass {
     private data class Namespace(
         val elements: MutableList<SirDeclaration> = mutableListOf(),
         val children: MutableMap<String, Namespace> = mutableMapOf(),
@@ -79,7 +79,7 @@ public class SirInflatePackagesPass : SirPass<SirModule, Unit, SirModule> {
         }.also(SirDeclarationContainer::fixParents)
     }
 
-    public override fun run(element: SirModule, data: Unit): SirModule = element.transform(Transformer, Context())
+    public override fun run(element: SirModule, data: Nothing?): SirModule = element.transform(Transformer, Context())
 }
 
 private fun SirDeclarationContainer.fixParents() = declarations

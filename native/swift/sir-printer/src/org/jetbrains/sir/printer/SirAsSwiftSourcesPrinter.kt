@@ -8,6 +8,7 @@ package org.jetbrains.sir.printer
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.visitors.SirVisitorVoid
 import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 
 private const val DEFAULT_INDENT: String = "    "
 
@@ -44,6 +45,14 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
                 " { fatalError() }",
             ).joinToString(separator = ""),
         )
+    }
+
+    override fun visitEnum(enum: SirEnum): Unit = with(printer) {
+        println("enum ${enum.name.swiftIdentifier} {")
+        withIndent {
+            enum.acceptChildren(SirAsSwiftSourcesPrinter(printer))
+        }
+        println("}")
     }
 
     override fun visitForeignFunction(function: SirForeignFunction) {} // we do not write foreign nodes

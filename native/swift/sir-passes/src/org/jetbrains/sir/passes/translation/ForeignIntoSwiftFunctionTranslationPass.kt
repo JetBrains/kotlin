@@ -21,7 +21,7 @@ import java.lang.IllegalStateException
  * or `element` does not contain origin of type `SirOrigin.KotlinEntity.Function`,
  * returns original element.
  */
-public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothing?, SirElement> {
+public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothing?, SirDeclaration> {
 
     private class Transformer : SirTransformerVoid() {
         override fun <E : SirElement> transformElement(element: E): E {
@@ -45,7 +45,7 @@ public class ForeignIntoSwiftFunctionTranslationPass : SirPass<SirElement, Nothi
         }
     }
 
-    override fun run(element: SirElement, data: Nothing?): SirElement = element.transform(Transformer())
+    override fun run(element: SirElement, data: Nothing?): SirDeclaration = element.transform(Transformer())
 }
 
 private fun SirKotlinOrigin.Parameter.toSir(): SirParameter = SirParameter(
