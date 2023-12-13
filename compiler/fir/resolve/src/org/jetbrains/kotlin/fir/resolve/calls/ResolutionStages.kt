@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isFun
-import org.jetbrains.kotlin.fir.declarations.utils.isInfix
-import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.matchingParameterFunctionType
@@ -760,6 +757,8 @@ internal object CheckCallModifiers : CheckerStage() {
 internal object CheckHiddenDeclaration : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val symbol = candidate.symbol as? FirCallableSymbol<*> ?: return
+        /** Actual declarations are checked by [FirDeprecationChecker] */
+        if (symbol.isActual) return
         val deprecation = symbol.getDeprecation(context.session, callInfo.callSite)
         if (deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN || isHiddenForThisCallSite(symbol, callInfo, candidate)) {
             sink.yieldDiagnostic(HiddenCandidate)

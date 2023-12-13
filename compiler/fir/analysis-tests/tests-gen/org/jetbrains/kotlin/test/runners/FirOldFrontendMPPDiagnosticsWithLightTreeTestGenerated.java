@@ -1388,6 +1388,22 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/deprecatedAnnotation")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DeprecatedAnnotation {
+        @Test
+        public void testAllFilesPresentInDeprecatedAnnotation() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/deprecatedAnnotation"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("hidden.kt")
+        public void testHidden() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/deprecatedAnnotation/hidden.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/enum")
     @TestDataPath("$PROJECT_ROOT")
     public class Enum {
