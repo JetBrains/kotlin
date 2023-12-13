@@ -20,7 +20,7 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
     abstract fun getFirFileToCompare(testDataFile: File): File?
 
     fun firAndClassicContentsAreEquals(testDataFile: File, trimLines: Boolean = false): Boolean {
-        val classicFile = getClassicFileToCompare(testDataFile) ?: return true
+        val classicFile = getClassicFileToCompare(testDataFile) ?: return false
         val firFile = getFirFileToCompare(testDataFile) ?: return true
         return contentsAreEquals(classicFile, firFile, trimLines)
     }
