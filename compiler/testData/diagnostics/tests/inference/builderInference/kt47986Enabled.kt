@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: +ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 class Foo<K>
 

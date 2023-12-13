@@ -1,1 +1,3 @@
 /kt47986Disabled.fir.kt:(249,257): error: Not enough information to infer type argument for 'K'.
+
+/kt47986Disabled.fir.kt:(268,271): error: Not enough information to infer type argument for 'K'.
