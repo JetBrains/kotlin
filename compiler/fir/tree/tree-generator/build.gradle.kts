@@ -16,7 +16,6 @@ dependencies {
     implementation(project(":compiler:fir:cones"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 
     runtimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
 }

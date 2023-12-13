@@ -15,7 +15,6 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     compileOnly(libs.guava)
 }
 

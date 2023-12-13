@@ -18,7 +18,6 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     compileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
 
     testCompileOnly(project(":compiler:cli-common"))
