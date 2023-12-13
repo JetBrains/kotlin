@@ -1,12 +1,16 @@
+// IGNORE_ERRORS
+// IGNORE_FIR_DIAGNOSTICS
+// DIAGNOSTICS: -NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER -BREAK_OR_CONTINUE_OUTSIDE_A_LOOP -UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE -NO_VALUE_FOR_PARAMETER -NOT_A_LOOP_LABEL -UNRESOLVED_REFERENCE -TYPE_MISMATCH -BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY -TOO_MANY_ARGUMENTS -CONDITION_TYPE_MISMATCH
+// ERROR_POLICY: SEMANTIC
 // LANGUAGE: +BreakContinueInInlineLambdas
-// IGNORE_BACKEND_K2: JVM_IR
-// IGNORE_BACKEND: JS_IR
-// !IGNORE_ERRORS
-// DIAGNOSTICS: -NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER -BREAK_OR_CONTINUE_OUTSIDE_A_LOOP -UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE -NO_VALUE_FOR_PARAMETER -NOT_A_LOOP_LABEL -UNRESOLVED_REFERENCE -TYPE_MISMATCH -BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY
 // WITH_STDLIB
+// SKIP_KLIB_TEST
 
-// KT-61141: NPE at org.jetbrains.kotlin.psi2ir.generators.ArgumentsGenerationUtilsKt.pregenerateValueArgumentsUsing()
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND_K2: JVM_IR
+// ^^^ The IrErrorCallExpression inside the body of test1() function is dumped in a different way on JVM K1 and JVM K2.
+//     That is because `IrErrorCallExpression.description` includes a signature of a local lambda, which is mangled
+//     differently on K1 and K2. This is not a problem since signatures for local entities do not participate in IR-linkage.
+//     But the test needs to be muted.
 
 inline fun foo(block: () -> Unit) { block() }
 
