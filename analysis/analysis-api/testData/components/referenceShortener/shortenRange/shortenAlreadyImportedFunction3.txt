@@ -1,4 +1,6 @@
 Before shortening: Outer.Inner.foo()
+with default settings:
+[qualifier] Outer.Inner
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [qualifier] Outer.Inner

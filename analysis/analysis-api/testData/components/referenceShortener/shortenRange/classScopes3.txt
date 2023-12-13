@@ -1,4 +1,6 @@
 Before shortening: my.simple.name.ClassFarAway.check()
+with default settings:
+[qualifier] my.simple.name.ClassFarAway
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [qualifier] my.simple.name.ClassFarAway

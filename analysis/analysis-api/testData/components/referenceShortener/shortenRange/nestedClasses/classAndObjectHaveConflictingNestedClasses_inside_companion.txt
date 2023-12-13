@@ -2,6 +2,9 @@ Before shortening: fun usage(
             first: test.OuterClass.Nested,
             second: test.OuterClass.Companion.Nested,
         ) {}
+with default settings:
+[type] test.OuterClass
+[type] test.OuterClass.Companion.Nested
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [type] test.OuterClass

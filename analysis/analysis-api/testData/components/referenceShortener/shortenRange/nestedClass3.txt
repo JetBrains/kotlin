@@ -1,4 +1,6 @@
 Before shortening: Inner.Companion.foo(1, false, "bar")
+with default settings:
+[qualifier] Inner.Companion
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [qualifier] Inner.Companion

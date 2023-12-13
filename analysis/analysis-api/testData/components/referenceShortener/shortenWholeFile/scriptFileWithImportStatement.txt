@@ -1,3 +1,5 @@
+with default settings:
+[type] a.b.c.dependency.Foo.Nested
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [type] a.b.c.dependency.Foo.Nested

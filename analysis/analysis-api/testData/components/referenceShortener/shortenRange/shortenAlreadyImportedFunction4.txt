@@ -1,4 +1,6 @@
 Before shortening: Base.foo()
+with default settings:
+[qualifier] Base.foo()
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [qualifier] Base.foo()

@@ -1,4 +1,6 @@
 Before shortening: Receiver.foo
+with default settings:
+[qualifier] Receiver.foo
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [qualifier] Receiver.foo

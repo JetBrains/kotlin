@@ -1,4 +1,6 @@
 Before shortening: dependency.Foo.unresolved
+with default settings:
+[kdoc] dependency.Foo
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [kdoc] dependency.Foo
