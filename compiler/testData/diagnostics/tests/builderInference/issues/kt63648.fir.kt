@@ -4,7 +4,7 @@
 fun test() {
     val buildee = <!NEW_INFERENCE_ERROR!>build {
         setTypeVariable(TargetType())
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>getTypeVariable().consumeDifferentTypeReceiver()<!>
+        getTypeVariable().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>consumeDifferentTypeReceiver<!>()
     }<!>
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

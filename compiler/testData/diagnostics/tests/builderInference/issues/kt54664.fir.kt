@@ -4,11 +4,11 @@
 fun test() {
     val buildee = build {
         setTypeVariable(TargetType())
-        consumeDifferentTypeCallable(<!ARGUMENT_TYPE_MISMATCH!>this::getTypeVariable<!>)
+        consumeDifferentTypeCallable(this::<!INAPPLICABLE_CANDIDATE!>getTypeVariable<!>)
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<TargetType>>(buildee)
+    checkExactType<Buildee<TargetType>>(<!ARGUMENT_TYPE_MISMATCH!>buildee<!>)
 }
 
 
