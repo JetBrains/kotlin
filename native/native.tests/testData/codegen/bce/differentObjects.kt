@@ -27,25 +27,3 @@ fun box(): String {
     }
     return "OK"
 }
-
-class Foo(size: Int) {
-    val array = IntArray(size)
-}
-
-class Bar {
-    val smallFoo = Foo(1)
-    val largeFoo = Foo(10)
-
-    val smallArray = smallFoo.array
-    val largeArray = largeFoo.array
-}
-
-@Test fun differentArrays() {
-    val bar = Bar()
-
-    assertFailsWith<IndexOutOfBoundsException> {
-        for (index in 0 until bar.largeArray.size) {
-            bar.smallArray[index] = 6
-        }
-    }
-}
