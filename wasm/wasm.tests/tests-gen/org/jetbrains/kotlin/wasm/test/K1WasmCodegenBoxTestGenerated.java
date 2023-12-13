@@ -7882,6 +7882,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("deserializedSuspendFunctionProperty.kt")
+        public void testDeserializedSuspendFunctionProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/deserializedSuspendFunctionProperty.kt");
+        }
+
+        @Test
         @TestMetadata("dispatchResume.kt")
         public void testDispatchResume() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/dispatchResume.kt");

@@ -8874,6 +8874,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/coroutines/delegatedSuspendMember.kt");
         }
 
+        @TestMetadata("deserializedSuspendFunctionProperty.kt")
+        public void testDeserializedSuspendFunctionProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/deserializedSuspendFunctionProperty.kt");
+        }
+
         @TestMetadata("dispatchResume.kt")
         public void testDispatchResume() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/dispatchResume.kt");
