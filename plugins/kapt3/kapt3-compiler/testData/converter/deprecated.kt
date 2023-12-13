@@ -1,4 +1,3 @@
-// FIR_BLOCKED: KT-60960
 package deprecated
 
 @Deprecated("Deprecated annotation")

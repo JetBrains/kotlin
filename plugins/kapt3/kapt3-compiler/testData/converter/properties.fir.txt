@@ -60,8 +60,10 @@ public final class Test {
     private final java.lang.Class<?> constJavaClassValue = null;
     @org.jetbrains.annotations.NotNull()
     private final kotlin.reflect.KClass<?> constClassValue = null;
+    @java.lang.Deprecated()
     private boolean isBoolean = false;
     @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
     private kotlin.Unit unit;
 
     public Test() {
@@ -93,6 +95,7 @@ public final class Test {
         return null;
     }
 
+    @java.lang.Deprecated()
     public final boolean isBoolean() {
         return false;
     }
@@ -102,10 +105,12 @@ public final class Test {
     public static void isBoolean$annotations() {
     }
 
+    @java.lang.Deprecated()
     public final void setBoolean(boolean p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
     public final kotlin.Unit getUnit() {
         return null;
     }
@@ -115,6 +120,7 @@ public final class Test {
     public static void getUnit$annotations() {
     }
 
+    @java.lang.Deprecated()
     public final void setUnit(@org.jetbrains.annotations.NotNull()
     kotlin.Unit p0) {
     }

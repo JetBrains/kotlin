@@ -477,8 +477,17 @@ private class StubGenerator(
 
             private fun Printer.printModifiers(modifierListOwner: PsiModifierListOwner) {
                 val withIndentation = modifierListOwner !is PsiParameter
+                var isDeprecated = (modifierListOwner as? PsiDocCommentOwner)?.isDeprecated == true
+                var hasJavaDeprecated = false
                 for (annotation in modifierListOwner.annotations) {
                     printAnnotation(annotation, withIndentation)
+                    isDeprecated = isDeprecated || (annotation.qualifiedName == "kotlin.Deprecated")
+                    hasJavaDeprecated = hasJavaDeprecated || (annotation.qualifiedName == "java.lang.Deprecated")
+                }
+                if (isDeprecated && !hasJavaDeprecated) {
+                    if (withIndentation)
+                        println("@java.lang.Deprecated")
+                    else printWithNoIndent("@java.lang.Deprecated ")
                 }
 
                 if (withIndentation) printIndent()
