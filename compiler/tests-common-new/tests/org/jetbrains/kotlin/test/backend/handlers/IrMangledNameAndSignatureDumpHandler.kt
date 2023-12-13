@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -226,14 +227,13 @@ class IrMangledNameAndSignatureDumpHandler(
                 addSignatureTo(signatures, symbol.signature, ComputedBy.FE, isPublic = true)
                 addSignatureTo(signatures, symbol.privateSignature, ComputedBy.FE, isPublic = false)
 
-                descriptorMangler.addSignatureMangledNameTo(signatureMangledNames, symbol.descriptor)
-
-                ((declaration as? IrMetadataSourceOwner)?.metadata as? FirMetadataSource)?.fir?.let {
-                    firMangler?.addSignatureMangledNameTo(
-                        signatureMangledNames,
-                        it
-                    )
-                }
+                val firDeclaration: FirDeclaration? = ((declaration as? IrMetadataSourceOwner)?.metadata as? FirMetadataSource)?.fir
+                if (firDeclaration != null) {
+                    // Dump only FIR-based signature mangled names if there is FIR available. In this mode no descriptors are used
+                    // for computing signature mangled names.
+                    firMangler?.addSignatureMangledNameTo(signatureMangledNames, firDeclaration)
+                } else
+                    descriptorMangler.addSignatureMangledNameTo(signatureMangledNames, symbol.descriptor)
             }
 
             fun printActualMangledNamesAndSignatures() {

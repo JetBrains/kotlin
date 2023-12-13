@@ -1,13 +1,7 @@
+// TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FULL_JDK
 // JVM_TARGET: 1.8
-// IGNORE_BACKEND: JS_IR
-
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR JS_IR NATIVE
-// ^ KT-57788: Fix computing mangled names of types with @EnhancedNullability from IR-based declaration descriptors
-
-// KT-61141: ImplicitReceiverStack & PersistentImplicitReceiverStack miss fake overrides `forEach` & `spliterator`
-// IGNORE_BACKEND: NATIVE
 
 interface SymbolOwner<E : SymbolOwner<E>>
 

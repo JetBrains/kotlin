@@ -2387,12 +2387,6 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
         }
 
         @Test
-        @TestMetadata("ImplicitReceiverStack.kt")
-        public void testImplicitReceiverStack() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/ImplicitReceiverStack.kt");
-        }
-
-        @Test
         @TestMetadata("inapplicableCollectionSet.kt")
         public void testInapplicableCollectionSet() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/inapplicableCollectionSet.kt");
