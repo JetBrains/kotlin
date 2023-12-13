@@ -4,7 +4,7 @@
 fun test() {
     val buildee = build {
         setTypeVariable(TargetType())
-        letForTypeVariable { it.<!NONE_APPLICABLE!>extensionProduceConcreteType<!>() }
+        letForTypeVariable { it.<!OVERLOAD_RESOLUTION_AMBIGUITY!>extensionProduceConcreteType<!>() }
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
