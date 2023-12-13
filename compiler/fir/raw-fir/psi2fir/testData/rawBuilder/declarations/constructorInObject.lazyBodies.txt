@@ -1,5 +1,5 @@
 FILE: constructorInObject.kt
-    public? final? object A : R|kotlin/Any| {
+    public final? object A : R|kotlin/Any| {
         public? constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -7,7 +7,7 @@ FILE: constructorInObject.kt
         init { LAZY_BLOCK }
 
     }
-    public? final? enum class B : R|kotlin/Enum<B>| {
+    public final? enum class B : R|kotlin/Enum<B>| {
         private constructor(): R|B| {
             LAZY_super<R|kotlin/Enum<B>|>
         }
@@ -23,12 +23,12 @@ FILE: constructorInObject.kt
             public get(): R|kotlin/enums/EnumEntries<B>|
 
     }
-    public? final? class C : R|kotlin/Any| {
+    public final? class C : R|kotlin/Any| {
         public? constructor(): R|C| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? companion object Companion : R|kotlin/Any| {
+        public final? companion object Companion : R|kotlin/Any| {
             public? constructor(): R|C.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }

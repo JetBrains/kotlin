@@ -1,5 +1,5 @@
 FILE: classWithWrongSuperCall.kt
-    public? open class A : R|kotlin/Any| {
+    public open class A : R|kotlin/Any| {
         public? constructor(init: ( A.() -> Unit )): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -8,31 +8,31 @@ FILE: classWithWrongSuperCall.kt
             public? get(): String
 
     }
-    public? final? object B : A {
+    public final? object B : A {
         private constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public? final? object C : A {
+    public final? object C : A {
         private constructor(): R|C| {
             LAZY_super<A>
         }
 
     }
-    public? final? class D : A {
+    public final? class D : A {
         public? constructor(): R|D| {
             LAZY_super<A>
         }
 
     }
-    public? final? class E : A {
+    public final? class E : A {
         public? constructor(): R|E| {
             LAZY_super<A>
         }
 
     }
-    public? final? class F : A {
+    public final? class F : A {
         public? error_constructor(): R|F| {
             LAZY_super<A>
         }
@@ -42,7 +42,7 @@ FILE: classWithWrongSuperCall.kt
         }
 
     }
-    public? final? class G : A {
+    public final? class G : A {
         public? error_constructor(): R|G| {
             LAZY_super<A>
         }
@@ -52,7 +52,7 @@ FILE: classWithWrongSuperCall.kt
         }
 
     }
-    public? final? class H : A {
+    public final? class H : A {
         public? constructor(): R|H| {
             LAZY_super<<implicit>>
         }

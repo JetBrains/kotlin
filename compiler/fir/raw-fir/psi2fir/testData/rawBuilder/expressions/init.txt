@@ -1,5 +1,5 @@
 FILE: init.kt
-    public? final? class WithInit : R|kotlin/Any| {
+    public final? class WithInit : R|kotlin/Any| {
         public? [ContainingClassKey=WithInit] constructor(x: Int): R|WithInit| {
             super<R|kotlin/Any|>()
         }

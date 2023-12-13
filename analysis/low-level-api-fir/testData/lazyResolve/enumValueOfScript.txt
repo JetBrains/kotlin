@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] enumValueOfScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumValueOfScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumValueOfScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumValueOfScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumValueOfScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumValueOfScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(SUPER_TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -124,7 +124,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-enumValueOfScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -308,3 +308,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enumValueOfScript.kts
                 public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
 
         }
+

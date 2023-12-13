@@ -12,7 +12,7 @@ FILE: unary.kt
         }
 
     }
-    public? final? class X : R|kotlin/Any| {
+    public final? class X : R|kotlin/Any| {
         public? [ContainingClassKey=X] constructor([CorrespondingProperty=/X.i] i: Int): R|X| {
             super<R|kotlin/Any|>()
         }
@@ -42,7 +42,7 @@ FILE: unary.kt
         }
 
     }
-    public? final? class Y : R|kotlin/Any| {
+    public final? class Y : R|kotlin/Any| {
         public? [ContainingClassKey=Y] constructor([CorrespondingProperty=/Y.arr] arr: Array<Int>): R|Y| {
             super<R|kotlin/Any|>()
         }

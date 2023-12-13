@@ -1,5 +1,5 @@
 FILE: external.kt
-    public? final? external class External : R|kotlin/Any| {
+    public final? external class External : R|kotlin/Any| {
         public? constructor(): R|External| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -8,7 +8,7 @@ FILE: external.kt
     public? final? external fun foo(): String
     public? final? external val x: Int
         public? external get(): Int
-    public? final? class NotExternal : R|kotlin/Any| {
+    public final? class NotExternal : R|kotlin/Any| {
         public? constructor(): R|NotExternal| {
             LAZY_super<R|kotlin/Any|>
         }

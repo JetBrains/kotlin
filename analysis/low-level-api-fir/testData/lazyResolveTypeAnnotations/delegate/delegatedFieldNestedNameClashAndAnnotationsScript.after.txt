@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsScript.kt
 
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
@@ -38,10 +38,10 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsScript.kt
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: @Anno[Unresolved](LAZY_EXPRESSION) second.Base = R|<local>/prop|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): @Anno[Unresolved](LAZY_EXPRESSION) second.Base
 
-            public? final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
             }
 
-            public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }

@@ -14,7 +14,7 @@ Tower Data Context:
     Element 6
         Scope: FirScriptDeclarationsScope
             Classifiers:
-                FirRegularClassSymbol public? final? class ScriptClass : R|kotlin/Any|
+                FirRegularClassSymbol public final? class ScriptClass : R|kotlin/Any|
             Functions
                 FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
                 FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
@@ -32,7 +32,7 @@ Tower Data Context:
             SCRIPT: <script-scriptStatement.kts>
                 lval args: R|kotlin/Array<kotlin/String>|
 
-                public? final? class ScriptClass : R|kotlin/Any|
+                public final? class ScriptClass : R|kotlin/Any|
                 public final fun scriptFunction(): R|kotlin/Int|
                 public? final? fun unusedScriptFunction(p: String): <implicit>
                 init

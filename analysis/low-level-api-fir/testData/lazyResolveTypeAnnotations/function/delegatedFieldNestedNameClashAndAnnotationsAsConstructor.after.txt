@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
         }
 
         public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {

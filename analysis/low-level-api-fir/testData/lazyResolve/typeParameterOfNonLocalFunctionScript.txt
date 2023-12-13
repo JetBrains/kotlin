@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfNonLocalFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -20,7 +20,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -68,7 +68,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] class X : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -209,3 +209,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfNonLocalFunctionScript.kts
             }
 
         }
+

@@ -1,18 +1,18 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationConflict.kt
-    public? final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
                 LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
             }
@@ -33,19 +33,19 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationConflict.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
-    public? final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
                 LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
             }
@@ -66,19 +66,19 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
-    public? final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
                 LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
             }
@@ -99,19 +99,19 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
-    public? final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public? final? [ResolvedTo(COMPANION_GENERATION)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
                 LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
             }
@@ -132,19 +132,19 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
-    public? final? [ResolvedTo(SUPER_TYPES)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public? final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
                 LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
             }
@@ -165,19 +165,19 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
-    public? final? [ResolvedTo(TYPES)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public? final? [ResolvedTo(TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final? [ResolvedTo(TYPES)] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
                 LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
             }
@@ -210,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
                 LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
             }
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
                 LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
             }
@@ -276,7 +276,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
                 LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
             }
@@ -309,7 +309,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
                 LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
             }

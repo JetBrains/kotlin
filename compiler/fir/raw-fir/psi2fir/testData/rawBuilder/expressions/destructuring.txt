@@ -1,5 +1,5 @@
 FILE: destructuring.kt
-    public? final? data class Some : R|kotlin/Any| {
+    public final? data class Some : R|kotlin/Any| {
         public? [ContainingClassKey=Some] constructor([CorrespondingProperty=/Some.first] first: Int, [CorrespondingProperty=/Some.second] second: Double, [CorrespondingProperty=/Some.third] third: String): R|Some| {
             super<R|kotlin/Any|>()
         }

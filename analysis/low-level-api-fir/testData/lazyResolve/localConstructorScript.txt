@@ -6,7 +6,7 @@ FILE: [ResolvedTo(RAW_FIR)] localConstructorScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -24,7 +24,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(TYPES)] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -322,3 +322,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localConstructorScript.kts
             }
 
         }
+

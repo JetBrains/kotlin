@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Enum<X>|>
             }
@@ -21,7 +21,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Enum<X>|>
             }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -94,7 +94,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Enum<X>|>
             }
@@ -111,7 +111,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Enum<X>|>
             }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Enum<X>|>
             }
@@ -201,7 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] class B : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -229,7 +229,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Enum<X>|>
             }
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(TYPES)] class B : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -274,7 +274,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Enum<X>|>
             }
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Enum<X>|>
             }
@@ -336,7 +336,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -364,7 +364,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Enum<X>|>
             }
@@ -381,7 +381,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -410,7 +410,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
+        public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Enum<X>|>
             }
@@ -427,7 +427,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -587,3 +587,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationParametersScript.kts
             }
 
         }
+

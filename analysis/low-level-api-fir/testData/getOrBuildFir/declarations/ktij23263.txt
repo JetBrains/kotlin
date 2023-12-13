@@ -7,7 +7,7 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] ktij23263.kt
-    public? final? [ResolvedTo(RAW_FIR)] class InitOrderDemo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class InitOrderDemo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InitOrderDemo] constructor([ResolvedTo(RAW_FIR)] name: String): R|InitOrderDemo| {
             LAZY_super<R|kotlin/Any|>
         }

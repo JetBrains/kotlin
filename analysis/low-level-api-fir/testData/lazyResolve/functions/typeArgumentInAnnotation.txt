@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeArgumentInAnnotation.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeArgumentInAnnotation.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }

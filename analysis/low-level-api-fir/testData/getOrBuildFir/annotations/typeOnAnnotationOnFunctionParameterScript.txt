@@ -14,7 +14,7 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnFunctionParameterScript.kts
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun t([ResolvedTo(ANNOTATION_ARGUMENTS)] addCommaWarning: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit| {
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }

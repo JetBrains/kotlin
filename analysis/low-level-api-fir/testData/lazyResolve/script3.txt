@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] script3.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-script3.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-script3.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
     SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <script-script3.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
     SCRIPT: [ResolvedTo(COMPANION_GENERATION)] <script-script3.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
     SCRIPT: [ResolvedTo(SUPER_TYPES)] <script-script3.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-script3.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
     SCRIPT: [ResolvedTo(STATUS)] <script-script3.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -270,7 +270,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
     SCRIPT: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] <script-script3.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -308,7 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
     SCRIPT: [ResolvedTo(CONTRACTS)] <script-script3.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -346,7 +346,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
     SCRIPT: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <script-script3.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -384,7 +384,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
     SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-script3.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -422,7 +422,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-script3.kts>
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }

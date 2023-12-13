@@ -488,7 +488,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                 val isLocal = context.inLocalContext
                 val status = FirDeclarationStatusImpl(
-                    if (isLocal) Visibilities.Local else modifiers.getVisibility(),
+                    if (isLocal) Visibilities.Local else modifiers.getVisibility(publicByDefault = true),
                     modifiers.getModality(isClassOrObject = true)
                 ).apply {
                     isExpect = classIsExpect
@@ -1250,7 +1250,7 @@ class LightTreeRawFirDeclarationBuilder(
                     name = typeAliasName
                     val isLocal = context.inLocalContext
                     status = FirDeclarationStatusImpl(
-                        if (isLocal) Visibilities.Local else modifiers.getVisibility(),
+                        if (isLocal) Visibilities.Local else modifiers.getVisibility(publicByDefault = true),
                         Modality.FINAL,
                     ).apply {
                         isExpect = typeAliasIsExpect

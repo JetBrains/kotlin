@@ -7,7 +7,7 @@ R|<local>/f2|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|><In
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] noReceiverOnLambda.kt
-    public? final? [ResolvedTo(RAW_FIR)] class SomeTest : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class SomeTest : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SomeTest] constructor(): R|SomeTest| {
             LAZY_super<R|kotlin/Any|>
         }

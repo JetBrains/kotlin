@@ -12,7 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Foo.Nested| {
                 LAZY_super<R|kotlin/Any|>
             }

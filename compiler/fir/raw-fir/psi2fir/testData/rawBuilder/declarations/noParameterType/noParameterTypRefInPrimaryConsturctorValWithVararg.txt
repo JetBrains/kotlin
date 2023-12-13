@@ -1,5 +1,5 @@
 FILE: noParameterTypRefInPrimaryConsturctorValWithVararg.kt
-    public? final? class X : R|kotlin/Any| {
+    public final? class X : R|kotlin/Any| {
         public? [ContainingClassKey=X] constructor([CorrespondingProperty=/X.x] vararg x: R|kotlin/Array<out ERROR CLASS: No type for parameter>|): R|X| {
             super<R|kotlin/Any|>()
         }

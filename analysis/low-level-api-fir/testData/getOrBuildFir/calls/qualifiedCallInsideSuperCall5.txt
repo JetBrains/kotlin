@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall5.kt
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] get(): R|kotlin/String|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] object B : A {
+    public final? [ResolvedTo(RAW_FIR)] object B : A {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }

@@ -34,7 +34,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionImplicitType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public? final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun func(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>| {

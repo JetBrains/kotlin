@@ -1,17 +1,17 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] superTypeCallNameClash.kt
-    public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class MyClass : Base {
+    public final? [ResolvedTo(RAW_FIR)] class MyClass : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -22,18 +22,18 @@ FILE: [ResolvedTo(RAW_FIR)] superTypeCallNameClash.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
-    public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class MyClass : Base {
+    public final? [ResolvedTo(RAW_FIR)] class MyClass : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -44,18 +44,18 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
-    public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : Base {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -66,18 +66,18 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
-    public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [ResolvedTo(COMPANION_GENERATION)] class MyClass : Base {
+    public final? [ResolvedTo(COMPANION_GENERATION)] class MyClass : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -88,18 +88,18 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
-    public? open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] class MyClass : R|second/Base| {
+    public final? [ResolvedTo(SUPER_TYPES)] class MyClass : R|second/Base| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -110,18 +110,18 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
-    public? open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [ResolvedTo(TYPES)] class MyClass : R|second/Base| {
+    public final? [ResolvedTo(TYPES)] class MyClass : R|second/Base| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
-    public? open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
             LAZY_super<Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
-    public? open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
             LAZY_super<Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
-    public? open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -187,7 +187,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
             LAZY_super<Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
-    public? open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
             LAZY_super<Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
-    public? open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -231,7 +231,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
             LAZY_super<Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -253,7 +253,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClash.kt
             super<R|second/Base|>()
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }

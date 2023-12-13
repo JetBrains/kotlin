@@ -1,5 +1,5 @@
 FILE: nestedClass.kt
-    public? abstract class Base : R|kotlin/Any| {
+    public abstract class Base : R|kotlin/Any| {
         public? constructor(s: String): R|Base| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -8,19 +8,19 @@ FILE: nestedClass.kt
             public? get(): String
 
     }
-    public? final? class Outer : R|kotlin/Any| {
+    public final? class Outer : R|kotlin/Any| {
         public? constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? class Derived : Base {
+        public final? class Derived : Base {
             public? constructor(s: String): R|Outer.Derived| {
                 LAZY_super<Base>
             }
 
         }
 
-        public? final? object Obj : Base {
+        public final? object Obj : Base {
             private constructor(): R|Outer.Obj| {
                 LAZY_super<Base>
             }

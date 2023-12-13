@@ -1,14 +1,14 @@
 FILE: typeAliasWithGeneric.kt
-    public? open class A : R|kotlin/Any| {
+    public open class A : R|kotlin/Any| {
         public? constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? interface B<S, T : A> : R|kotlin/Any| {
+    public final? interface B<S, T : A> : R|kotlin/Any| {
     }
-    public? final typealias C<T> = B<T, A>
-    public? final? class D : C<A> {
+    public final typealias C<T> = B<T, A>
+    public final? class D : C<A> {
         public? constructor(): R|D| {
             LAZY_super<<implicit>>
         }

@@ -19,7 +19,7 @@ Tower Data Context:
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] orRight.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val isValid: Boolean
             public? [ResolvedTo(RAW_FIR)] get(): Boolean
 

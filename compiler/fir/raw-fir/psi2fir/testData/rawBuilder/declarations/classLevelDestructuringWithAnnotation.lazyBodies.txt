@@ -1,5 +1,5 @@
 FILE: classLevelDestructuringWithAnnotation.kt
-    public? final? class Foo : R|kotlin/Any| {
+    public final? class Foo : R|kotlin/Any| {
         public? constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }

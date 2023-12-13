@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] superCallAnnotationScript.kts
 
         }
 
-        public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }

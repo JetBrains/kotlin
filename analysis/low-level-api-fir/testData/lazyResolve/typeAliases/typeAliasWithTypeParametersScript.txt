@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeAliasWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeAliasWithTypeParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> = Map<T, K>
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> = Map<T, K>
 
 
 IMPORTS:
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeAliasWithTypeParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> = Map<T, K>
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> = Map<T, K>
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeAliasWithTypeParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] typealias ResolveMe<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K> = Map<T, K>
+        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] typealias ResolveMe<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K> = Map<T, K>
 
 
 COMPANION_GENERATION:
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeAliasWithTypeParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final [ResolvedTo(COMPANION_GENERATION)] typealias ResolveMe<[ResolvedTo(COMPANION_GENERATION)] T : Int, [ResolvedTo(COMPANION_GENERATION)] K> = Map<T, K>
+        public final [ResolvedTo(COMPANION_GENERATION)] typealias ResolveMe<[ResolvedTo(COMPANION_GENERATION)] T : Int, [ResolvedTo(COMPANION_GENERATION)] K> = Map<T, K>
 
 
 SUPER_TYPES:
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeAliasWithTypeParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final [ResolvedTo(SUPER_TYPES)] typealias ResolveMe<[ResolvedTo(SUPER_TYPES)] T : Int, [ResolvedTo(SUPER_TYPES)] K> = R|kotlin/collections/Map<T, K>|
+        public final [ResolvedTo(SUPER_TYPES)] typealias ResolveMe<[ResolvedTo(SUPER_TYPES)] T : Int, [ResolvedTo(SUPER_TYPES)] K> = R|kotlin/collections/Map<T, K>|
 
 
 TYPES:
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeAliasWithTypeParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final [ResolvedTo(TYPES)] typealias ResolveMe<[ResolvedTo(TYPES)] T : R|kotlin/Int|, [ResolvedTo(TYPES)] K> = R|kotlin/collections/Map<T, K>|
+        public final [ResolvedTo(TYPES)] typealias ResolveMe<[ResolvedTo(TYPES)] T : R|kotlin/Int|, [ResolvedTo(TYPES)] K> = R|kotlin/collections/Map<T, K>|
 
 
 STATUS:
@@ -113,3 +113,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasWithTypeParametersScript.kts
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] typealias ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> = R|kotlin/collections/Map<T, K>|
+

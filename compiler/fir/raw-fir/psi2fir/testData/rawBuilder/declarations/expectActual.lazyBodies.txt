@@ -1,10 +1,10 @@
 FILE: expectActual.kt
-    public? final? expect class MyClass : R|kotlin/Any| {
+    public final? expect class MyClass : R|kotlin/Any| {
     }
     public? final? expect fun foo(): String
     public? final? expect val x: Int
         public? get(): Int
-    public? final? actual class MyClass : R|kotlin/Any| {
+    public final? actual class MyClass : R|kotlin/Any| {
         public? constructor(): R|MyClass| {
             LAZY_super<R|kotlin/Any|>
         }

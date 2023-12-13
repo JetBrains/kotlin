@@ -1,5 +1,5 @@
 FILE: classReference.kt
-    public? final? class A : R|kotlin/Any| {
+    public final? class A : R|kotlin/Any| {
         public? [ContainingClassKey=A] constructor(): R|test/A| {
             super<R|kotlin/Any|>()
         }

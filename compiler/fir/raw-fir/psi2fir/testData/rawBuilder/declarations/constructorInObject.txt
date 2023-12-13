@@ -1,5 +1,5 @@
 FILE: constructorInObject.kt
-    public? final? object A : R|kotlin/Any| {
+    public final? object A : R|kotlin/Any| {
         public? [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -8,7 +8,7 @@ FILE: constructorInObject.kt
         }
 
     }
-    public? final? enum class B : R|kotlin/Enum<B>| {
+    public final? enum class B : R|kotlin/Enum<B>| {
         private [ContainingClassKey=B] constructor(): R|B| {
             super<R|kotlin/Enum<B>|>()
         }
@@ -34,12 +34,12 @@ FILE: constructorInObject.kt
             public get(): R|kotlin/enums/EnumEntries<B>|
 
     }
-    public? final? class C : R|kotlin/Any| {
+    public final? class C : R|kotlin/Any| {
         public? [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? companion object Companion : R|kotlin/Any| {
+        public final? companion object Companion : R|kotlin/Any| {
             public? [ContainingClassKey=Companion] constructor(): R|C.Companion| {
                 super<R|kotlin/Any|>()
             }

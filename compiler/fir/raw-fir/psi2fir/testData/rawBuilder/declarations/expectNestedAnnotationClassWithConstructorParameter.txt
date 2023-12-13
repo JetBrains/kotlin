@@ -1,6 +1,6 @@
 FILE: expectNestedAnnotationClassWithConstructorParameter.kt
-    public? final? expect class Outer : R|kotlin/Any| {
-        public? final? expect annotation class AnnotationNested : R|kotlin/Annotation| {
+    public final? expect class Outer : R|kotlin/Any| {
+        public final? expect annotation class AnnotationNested : R|kotlin/Annotation| {
             public? expect [ContainingClassKey=AnnotationNested] constructor([CorrespondingProperty=/Outer.AnnotationNested.p] p: String = String()): R|Outer.AnnotationNested|
 
             public? final? expect [IsFromPrimaryConstructor=true] val p: String = R|<local>/p|

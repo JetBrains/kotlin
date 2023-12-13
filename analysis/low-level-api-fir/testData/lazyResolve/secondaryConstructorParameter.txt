@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] secondaryConstructorParameter.kt
-    public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(RAW_FIR)] secondaryConstructorParameter.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
-    public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
-    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
-    public? final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
-    public? final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -95,7 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
-    public? final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
             LAZY_super<R|kotlin/Any|>
         }

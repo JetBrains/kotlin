@@ -1,7 +1,7 @@
 FILE: script.kts
     SCRIPT: <script-script.kts>
 
-        public? final? class Builder : R|kotlin/Any| {
+        public final? class Builder : R|kotlin/Any| {
             public? [ContainingClassKey=Builder] constructor(): R|Builder| {
                 super<R|kotlin/Any|>()
             }
@@ -14,7 +14,7 @@ FILE: script.kts
                 println#(version#)
             }
 
-            public? final? class Nested : R|kotlin/Any| {
+            public final? class Nested : R|kotlin/Any| {
                 public? [ContainingClassKey=Nested] constructor(): R|Builder.Nested| {
                     super<R|kotlin/Any|>()
                 }

@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] classWithTypeParameters.kt
-    public? final? [ResolvedTo(RAW_FIR)] class ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] classWithTypeParameters.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
-    public? final? [ResolvedTo(RAW_FIR)] class ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
-    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ResolveMe<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K> : R|kotlin/Any| {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ResolveMe<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
-    public? final? [ResolvedTo(COMPANION_GENERATION)] class ResolveMe<[ResolvedTo(COMPANION_GENERATION)] T : Int, [ResolvedTo(COMPANION_GENERATION)] K> : R|kotlin/Any| {
+    public final? [ResolvedTo(COMPANION_GENERATION)] class ResolveMe<[ResolvedTo(COMPANION_GENERATION)] T : Int, [ResolvedTo(COMPANION_GENERATION)] K> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(COMPANION_GENERATION)] T : Int, [ResolvedTo(COMPANION_GENERATION)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
-    public? final? [ResolvedTo(SUPER_TYPES)] class ResolveMe<[ResolvedTo(SUPER_TYPES)] T : Int, [ResolvedTo(SUPER_TYPES)] K> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] class ResolveMe<[ResolvedTo(SUPER_TYPES)] T : Int, [ResolvedTo(SUPER_TYPES)] K> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(SUPER_TYPES)] T : Int, [ResolvedTo(SUPER_TYPES)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
-    public? final? [ResolvedTo(TYPES)] class ResolveMe<[ResolvedTo(TYPES)] T : R|kotlin/Int|, [ResolvedTo(TYPES)] K> : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] class ResolveMe<[ResolvedTo(TYPES)] T : R|kotlin/Int|, [ResolvedTo(TYPES)] K> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(TYPES)] T : R|kotlin/Int|, [ResolvedTo(TYPES)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }

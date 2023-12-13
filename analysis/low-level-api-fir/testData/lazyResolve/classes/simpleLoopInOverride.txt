@@ -1,89 +1,89 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] simpleLoopInOverride.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] interface Foo1 : Foo2 {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] interface Foo1 : Foo2 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    public? final? [ResolvedTo(COMPANION_GENERATION)] interface Foo1 : Foo2 {
+    public final? [ResolvedTo(COMPANION_GENERATION)] interface Foo1 : Foo2 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
-    public? final? [ResolvedTo(TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+    public final? [ResolvedTo(TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
@@ -94,11 +94,11 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
@@ -109,11 +109,11 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
@@ -124,11 +124,11 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
@@ -139,11 +139,11 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
@@ -154,11 +154,11 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
@@ -169,11 +169,11 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
         public abstract override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
         public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }

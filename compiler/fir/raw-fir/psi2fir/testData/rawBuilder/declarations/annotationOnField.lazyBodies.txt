@@ -1,11 +1,11 @@
 FILE: annotationOnField.kt
-    public? final? annotation class Ann : R|kotlin/Annotation| {
+    public final? annotation class Ann : R|kotlin/Annotation| {
         public? constructor(): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? class CustomDelegate : R|kotlin/Any| {
+    public final? class CustomDelegate : R|kotlin/Any| {
         public? constructor(): R|CustomDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -13,7 +13,7 @@ FILE: annotationOnField.kt
         public? final? operator fun getValue(thisRef: Any?, prop: KProperty<*>): String { LAZY_BLOCK }
 
     }
-    @FIELD:Ann() public? final? class SomeClass : R|kotlin/Any| {
+    @FIELD:Ann() public final? class SomeClass : R|kotlin/Any| {
         @FIELD:Ann() public? constructor(): R|SomeClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -33,7 +33,7 @@ FILE: annotationOnField.kt
         @FIELD:Ann() public? final? fun anotherFun(@FIELD:Ann() s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? final? class WithPrimaryConstructor : R|kotlin/Any| {
+    public final? class WithPrimaryConstructor : R|kotlin/Any| {
         public? constructor(a: String): R|WithPrimaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }

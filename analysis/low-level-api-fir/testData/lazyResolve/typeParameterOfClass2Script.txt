@@ -4,12 +4,12 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfClass2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -25,12 +25,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -46,12 +46,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? inner [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Second<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Second<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -67,12 +67,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? inner [ResolvedTo(COMPANION_GENERATION)] class Second<[ResolvedTo(COMPANION_GENERATION)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(COMPANION_GENERATION)] class Second<[ResolvedTo(COMPANION_GENERATION)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(COMPANION_GENERATION)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -88,12 +88,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] class MyClass<[ResolvedTo(SUPER_TYPES)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] class MyClass<[ResolvedTo(SUPER_TYPES)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(SUPER_TYPES)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? inner [ResolvedTo(SUPER_TYPES)] class Second<[ResolvedTo(SUPER_TYPES)] Type2, [ResolvedTo(SUPER_TYPES)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(SUPER_TYPES)] class Second<[ResolvedTo(SUPER_TYPES)] Type2, [ResolvedTo(SUPER_TYPES)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(SUPER_TYPES)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -109,12 +109,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] class MyClass<[ResolvedTo(TYPES)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] class MyClass<[ResolvedTo(TYPES)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(TYPES)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? inner [ResolvedTo(TYPES)] class Second<[ResolvedTo(TYPES)] Type2, [ResolvedTo(TYPES)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(TYPES)] class Second<[ResolvedTo(TYPES)] Type2, [ResolvedTo(TYPES)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(TYPES)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -269,3 +269,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfClass2Script.kts
             }
 
         }
+

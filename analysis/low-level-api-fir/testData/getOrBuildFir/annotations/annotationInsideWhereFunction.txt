@@ -16,9 +16,9 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereFunction.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> foo([ResolvedTo(ANNOTATION_ARGUMENTS)] t: R|T|): R|T| {
         ^foo R|<local>/t|

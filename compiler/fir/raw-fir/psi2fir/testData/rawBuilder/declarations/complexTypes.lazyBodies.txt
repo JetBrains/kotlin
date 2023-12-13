@@ -1,10 +1,10 @@
 FILE: complexTypes.kt
-    public? final? class C<T, out S> : R|kotlin/Any| {
+    public final? class C<T, out S> : R|kotlin/Any| {
         public? constructor<T, out S>(): R|a/b/C<T, S>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? inner class D<R, in P, Outer(T), out Outer(S)> : R|kotlin/Any| {
+        public final? inner class D<R, in P, Outer(T), out Outer(S)> : R|kotlin/Any| {
             public? a/b/C<T, S>.constructor<R, in P>(): R|a/b/C.D<R, P, T, S>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -12,7 +12,7 @@ FILE: complexTypes.kt
         }
 
     }
-    public? final? interface Test : R|kotlin/Any| {
+    public final? interface Test : R|kotlin/Any| {
         public? final? val x: a.b.C<out CharSequence, *>.D<in List<*>, *>
             public? get(): a.b.C<out CharSequence, *>.D<in List<*>, *>
 

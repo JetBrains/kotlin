@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] nestedClassAsAnnotationArgument2.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Special : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Special : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Special.why] why: KClass<*>): R|Special| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,14 +9,14 @@ FILE: [ResolvedTo(RAW_FIR)] nestedClassAsAnnotationArgument2.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] get(): KClass<*>
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Special[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] class Nested<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] T> : @Special[Unresolved](LAZY_EXPRESSION) Interface {
+        @Special[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class Nested<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] T> : @Special[Unresolved](LAZY_EXPRESSION) Interface {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] T>(): R|Outer.Nested<T>| {
                 LAZY_super<<implicit>>
             }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(RAW_FIR)] nestedClassAsAnnotationArgument2.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Special : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Special : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Special.why] why: KClass<*>): R|Special| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -36,14 +36,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] get(): KClass<*>
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Special[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] class Nested<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] T> : @Special[Unresolved](LAZY_EXPRESSION) Interface {
+        @Special[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class Nested<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] T> : @Special[Unresolved](LAZY_EXPRESSION) Interface {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] T>(): R|Outer.Nested<T>| {
                 LAZY_super<<implicit>>
             }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Special : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Special : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Special.why] why: KClass<*>): R|Special| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -63,14 +63,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] get(): KClass<*>
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Special[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Nested<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : @Special[Unresolved](LAZY_EXPRESSION) Interface {
+        @Special[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Nested<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : @Special[Unresolved](LAZY_EXPRESSION) Interface {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T>(): R|Outer.Nested<T>| {
                 LAZY_super<<implicit>>
             }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Special : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Special : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Special.why] why: KClass<*>): R|Special| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,14 +90,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] get(): KClass<*>
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Special[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] class Nested<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPANION_GENERATION)] T> : @Special[Unresolved](LAZY_EXPRESSION) Interface {
+        @Special[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPANION_GENERATION)] class Nested<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPANION_GENERATION)] T> : @Special[Unresolved](LAZY_EXPRESSION) Interface {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPANION_GENERATION)] T>(): R|Outer.Nested<T>| {
                 LAZY_super<<implicit>>
             }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Special.why] why: KClass<*>): R|Special| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -117,14 +117,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] get(): KClass<*>
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Special[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] class Nested<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(SUPER_TYPES)] T> : R|@R|Special|(LAZY_EXPRESSION)  Interface| {
+        @Special[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(SUPER_TYPES)] class Nested<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(SUPER_TYPES)] T> : R|@R|Special|(LAZY_EXPRESSION)  Interface| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor<@Special[Unresolved](LAZY_EXPRESSION) [ResolvedTo(SUPER_TYPES)] T>(): R|Outer.Nested<T>| {
                 LAZY_super<<implicit>>
             }
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Special.why] why: KClass<*>): R|Special| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -144,14 +144,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] get(): KClass<*>
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
     }
-    public? final? [ResolvedTo(TYPES)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Special|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] class Nested<@R|Special|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] T> : R|@R|Special|(LAZY_EXPRESSION)  Interface| {
+        @R|Special|[Types](LAZY_EXPRESSION) public final? [ResolvedTo(TYPES)] class Nested<@R|Special|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] T> : R|@R|Special|(LAZY_EXPRESSION)  Interface| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor<@R|Special|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] T>(): R|Outer.Nested<T>| {
                 LAZY_super<<implicit>>
             }
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Special.why] why: KClass<*>): R|Special| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] get(): KClass<*>
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
     }
     public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
@@ -189,7 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Special.why] why: KClass<*>): R|Special| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] get(): KClass<*>
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
     }
     public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
@@ -216,7 +216,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Special.why] why: KClass<*>): R|Special| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] get(): KClass<*>
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
     }
     public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Special : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Special.why] why: KClass<*>): R|Special| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -252,7 +252,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Special] get(): KClass<*>
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
     }
     public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
@@ -279,7 +279,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassAsAnnotationArgument2.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Special] get(): R|kotlin/reflect/KClass<*>|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
     }
     public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {

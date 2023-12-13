@@ -24,7 +24,7 @@ FILE: [ResolvedTo(IMPORTS)] function.kts
 
             public final [ResolvedTo(STATUS)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedBuilder : Builder {
+            public final? [ResolvedTo(RAW_FIR)] class NestedBuilder : Builder {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedBuilder] constructor(): R|Builder.NestedBuilder| {
                     LAZY_super<Builder>
                 }

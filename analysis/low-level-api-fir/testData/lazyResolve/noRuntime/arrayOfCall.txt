@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] arrayOfCall.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -12,7 +12,7 @@ FILE: [ResolvedTo(RAW_FIR)] arrayOfCall.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -24,7 +24,7 @@ FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
-    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Ann : R|kotlin/Annotation| {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Ann : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
-    public? final? [ResolvedTo(COMPANION_GENERATION)] annotation class Ann : R|kotlin/Annotation| {
+    public final? [ResolvedTo(COMPANION_GENERATION)] annotation class Ann : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -48,7 +48,7 @@ FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
-    public? final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+    public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
-    public? final? [ResolvedTo(TYPES)] annotation class Ann : R|kotlin/Annotation| {
+    public final? [ResolvedTo(TYPES)] annotation class Ann : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }

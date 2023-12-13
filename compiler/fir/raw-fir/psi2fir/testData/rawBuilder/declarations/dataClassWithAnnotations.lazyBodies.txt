@@ -1,5 +1,5 @@
 FILE: dataClassWithAnnotations.kt
-    @Anno(LAZY_EXPRESSION) public? final? data class Derived : @Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Nested<@Anno(LAZY_EXPRESSION) NestedNested>> {
+    @Anno(LAZY_EXPRESSION) public final? data class Derived : @Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Nested<@Anno(LAZY_EXPRESSION) NestedNested>> {
         @Anno(LAZY_EXPRESSION) public? constructor(@Anno(LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno(LAZY_EXPRESSION) b: @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>>, c: @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>>): R|Derived| {
             LAZY_super<@Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Nested<@Anno(LAZY_EXPRESSION) NestedNested>>>
         }

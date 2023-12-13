@@ -1,5 +1,5 @@
 FILE: destructuring.kt
-    public? final? data class Some : R|kotlin/Any| {
+    public final? data class Some : R|kotlin/Any| {
         public? constructor(first: Int, second: Double, third: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }

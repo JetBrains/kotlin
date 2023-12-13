@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] propertyWithExplicitTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,12 +9,12 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
             LAZY_super<<implicit>>
         }
 
-        public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithExplicitTypeUnavailable.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -44,12 +44,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
             LAZY_super<<implicit>>
         }
 
-        public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -79,12 +79,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
             LAZY_super<<implicit>>
         }
 
-        public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -114,12 +114,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
             LAZY_super<<implicit>>
         }
 
-        public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -140,7 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -149,12 +149,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
             LAZY_super<<implicit>>
         }
 
-        public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -184,12 +184,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
             LAZY_super<<implicit>>
         }
 
-        public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -210,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -219,12 +219,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
             LAZY_super<<implicit>>
         }
 
-        public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -245,7 +245,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -254,12 +254,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
             LAZY_super<<implicit>>
         }
 
-        public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -289,12 +289,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
             LAZY_super<<implicit>>
         }
 
-        public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -315,7 +315,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }

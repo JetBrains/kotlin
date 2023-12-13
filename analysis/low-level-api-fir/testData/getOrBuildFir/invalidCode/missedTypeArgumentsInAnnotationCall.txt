@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] missedTypeArgumentsInAnnotationCall.kt
     package usage
 
-    public? final? [ResolvedTo(RAW_FIR)] annotation class B<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class B<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor<[ResolvedTo(RAW_FIR)] T>(): R|usage/B<T>| {
             LAZY_super<R|kotlin/Any|>
         }

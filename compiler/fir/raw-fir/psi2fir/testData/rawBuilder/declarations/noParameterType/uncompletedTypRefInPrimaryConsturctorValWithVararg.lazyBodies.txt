@@ -1,5 +1,5 @@
 FILE: uncompletedTypRefInPrimaryConsturctorValWithVararg.kt
-    public? final? class X : R|kotlin/Any| {
+    public final? class X : R|kotlin/Any| {
         public? constructor(vararg x: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|X| {
             LAZY_super<R|kotlin/Any|>
         }

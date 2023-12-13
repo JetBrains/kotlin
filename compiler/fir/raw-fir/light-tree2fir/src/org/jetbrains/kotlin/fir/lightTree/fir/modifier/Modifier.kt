@@ -50,13 +50,13 @@ open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
 
     fun hasLateinit(): Boolean = hasFlag(ModifierFlag.MEMBER_LATEINIT)
 
-    fun getVisibility(): Visibility {
+    fun getVisibility(publicByDefault: Boolean = false): Visibility {
         return when {
             hasFlag(ModifierFlag.VISIBILITY_PRIVATE) -> Visibilities.Private
             hasFlag(ModifierFlag.VISIBILITY_PUBLIC) -> Visibilities.Public
             hasFlag(ModifierFlag.VISIBILITY_PROTECTED) -> Visibilities.Protected
             hasFlag(ModifierFlag.VISIBILITY_INTERNAL) -> Visibilities.Internal
-            else -> Visibilities.Unknown
+            else -> if (publicByDefault) Visibilities.Public else Visibilities.Unknown
         }
     }
 

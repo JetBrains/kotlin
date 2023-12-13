@@ -1,5 +1,5 @@
 FILE: localDeclarationsInEnumEntry.kt
-    public? final? enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
+    public final? enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
         private constructor(): R|SomeEnum| {
             LAZY_super<R|kotlin/Enum<SomeEnum>|>
         }

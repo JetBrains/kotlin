@@ -1,11 +1,11 @@
 FILE: F.kt
-    public? open class A : R|kotlin/Any| {
+    public open class A : R|kotlin/Any| {
         public? [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? class B : A {
+    public final? class B : A {
         public? [ContainingClassKey=B] constructor(): R|B| {
             super<<implicit>>()
         }

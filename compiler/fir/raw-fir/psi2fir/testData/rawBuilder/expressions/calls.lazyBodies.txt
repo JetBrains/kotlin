@@ -2,7 +2,7 @@ FILE: calls.kt
     public? final? infix fun Int.distance(y: Int): <implicit> { LAZY_BLOCK }
     public? final? fun test(): Int { LAZY_BLOCK }
     public? final? fun testRegular(): Int { LAZY_BLOCK }
-    public? final? class My : R|kotlin/Any| {
+    public final? class My : R|kotlin/Any| {
         public? constructor(x: Int): R|My| {
             LAZY_super<R|kotlin/Any|>
         }

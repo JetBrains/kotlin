@@ -4,21 +4,21 @@ FILE: [ResolvedTo(RAW_FIR)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class resolveMe : A {
+        public open [ResolvedTo(RAW_FIR)] class resolveMe : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<A>
             }
@@ -32,21 +32,21 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class resolveMe : A {
+        public open [ResolvedTo(RAW_FIR)] class resolveMe : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<A>
             }
@@ -60,21 +60,21 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public? open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class resolveMe : A {
+        public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class resolveMe : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<A>
             }
@@ -88,21 +88,21 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public? open [ResolvedTo(COMPANION_GENERATION)] class resolveMe : A {
+        public open [ResolvedTo(COMPANION_GENERATION)] class resolveMe : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<A>
             }
@@ -116,21 +116,21 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public? open [ResolvedTo(SUPER_TYPES)] class resolveMe : R|A| {
+        public open [ResolvedTo(SUPER_TYPES)] class resolveMe : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<A>
             }
@@ -144,21 +144,21 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public? open [ResolvedTo(TYPES)] class resolveMe : R|A| {
+        public open [ResolvedTo(TYPES)] class resolveMe : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<A>
             }
@@ -172,14 +172,14 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
@@ -200,14 +200,14 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
@@ -228,14 +228,14 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
@@ -256,14 +256,14 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
@@ -284,14 +284,14 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypesScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public open [ResolvedTo(RAW_FIR)] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
@@ -360,3 +360,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypesScript.kts
             }
 
         }
+

@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] constructor(): R|test/Base.Nested| {
                 LAZY_super<R|kotlin/Any|>
             }

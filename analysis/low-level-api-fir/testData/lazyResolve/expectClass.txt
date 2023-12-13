@@ -1,31 +1,31 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] expectClass.kt
-    public? final? expect [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? expect [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
     }
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] expectClass.kt
-    public? final? expect [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? expect [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] expectClass.kt
-    public? final? expect [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo : R|kotlin/Any| {
+    public final? expect [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo : R|kotlin/Any| {
     }
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] expectClass.kt
-    public? final? expect [ResolvedTo(COMPANION_GENERATION)] class Foo : R|kotlin/Any| {
+    public final? expect [ResolvedTo(COMPANION_GENERATION)] class Foo : R|kotlin/Any| {
     }
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] expectClass.kt
-    public? final? expect [ResolvedTo(SUPER_TYPES)] class Foo : R|kotlin/Any| {
+    public final? expect [ResolvedTo(SUPER_TYPES)] class Foo : R|kotlin/Any| {
     }
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] expectClass.kt
-    public? final? expect [ResolvedTo(TYPES)] class Foo : R|kotlin/Any| {
+    public final? expect [ResolvedTo(TYPES)] class Foo : R|kotlin/Any| {
     }
 
 STATUS:

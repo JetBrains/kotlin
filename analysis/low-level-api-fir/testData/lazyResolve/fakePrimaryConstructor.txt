@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] fakePrimaryConstructor.kt
-    public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -11,7 +11,7 @@ FILE: [ResolvedTo(RAW_FIR)] fakePrimaryConstructor.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructor.kt
-    public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructor.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructor.kt
-    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Problem : R|kotlin/Any| {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Problem : R|kotlin/Any| {
         public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructor.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructor.kt
-    public? final? [ResolvedTo(COMPANION_GENERATION)] class Problem : R|kotlin/Any| {
+    public final? [ResolvedTo(COMPANION_GENERATION)] class Problem : R|kotlin/Any| {
         public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Problem] constructor(): R|Problem| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructor.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructor.kt
-    public? final? [ResolvedTo(SUPER_TYPES)] class Problem : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] class Problem : R|kotlin/Any| {
         public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Problem] constructor(): R|Problem| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructor.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructor.kt
-    public? final? [ResolvedTo(TYPES)] class Problem : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] class Problem : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Problem] constructor(): R|Problem| {
             LAZY_super<R|kotlin/Any|>
         }

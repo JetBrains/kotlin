@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] secondaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorParameterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorParameterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorParameterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorParameterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorParameterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-secondaryConstructorParameterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }

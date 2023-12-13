@@ -1,11 +1,11 @@
 FILE: annotationOnField.kt
-    public? final? annotation class Ann : R|kotlin/Annotation| {
+    public final? annotation class Ann : R|kotlin/Annotation| {
         public? [ContainingClassKey=Ann] constructor(): R|Ann| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? class CustomDelegate : R|kotlin/Any| {
+    public final? class CustomDelegate : R|kotlin/Any| {
         public? [ContainingClassKey=CustomDelegate] constructor(): R|CustomDelegate| {
             super<R|kotlin/Any|>()
         }
@@ -15,7 +15,7 @@ FILE: annotationOnField.kt
         }
 
     }
-    @FIELD:Ann() public? final? class SomeClass : R|kotlin/Any| {
+    @FIELD:Ann() public final? class SomeClass : R|kotlin/Any| {
         @FIELD:Ann() public? [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
             super<R|kotlin/Any|>()
         }
@@ -41,7 +41,7 @@ FILE: annotationOnField.kt
         }
 
     }
-    public? final? class WithPrimaryConstructor : R|kotlin/Any| {
+    public final? class WithPrimaryConstructor : R|kotlin/Any| {
         public? [ContainingClassKey=WithPrimaryConstructor] constructor([CorrespondingProperty=/WithPrimaryConstructor.a] a: String): R|WithPrimaryConstructor| {
             super<R|kotlin/Any|>()
         }

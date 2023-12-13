@@ -1,5 +1,5 @@
 FILE: annotationsOnParenthesizedTypes.kt
-    public? final? interface AnnotationsOnParenthesizedTypes : R|kotlin/Any| {
+    public final? interface AnnotationsOnParenthesizedTypes : R|kotlin/Any| {
         public? final? fun B<@A() C>.receiverArgument(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? fun parameter(a: @A() C): R|kotlin/Unit| { LAZY_BLOCK }
@@ -28,13 +28,13 @@ FILE: annotationsOnParenthesizedTypes.kt
             public? get(): ( (@A() C) -> C )
 
     }
-    @Target(LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? annotation class A : R|kotlin/Annotation| {
+    @Target(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? annotation class A : R|kotlin/Annotation| {
         public? constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? interface B<T> : R|kotlin/Any| {
+    public final? interface B<T> : R|kotlin/Any| {
     }
-    public? final? interface C : R|kotlin/Any| {
+    public final? interface C : R|kotlin/Any| {
     }

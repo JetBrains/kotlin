@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] initializerConflict.kt
         }
 
     }
-    public? final [ResolvedTo(SUPER_TYPES)] typealias Foo = R|one/two/A|
+    public final [ResolvedTo(SUPER_TYPES)] typealias Foo = R|one/two/A|
     public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|one/two/Foo| {
             LAZY_super<R|kotlin/Any|>

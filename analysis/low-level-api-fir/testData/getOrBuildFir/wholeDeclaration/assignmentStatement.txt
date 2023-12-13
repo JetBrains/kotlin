@@ -24,7 +24,7 @@ FILE: [ResolvedTo(IMPORTS)] assignmentStatement.kts
                 println#(version#)
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedBuilder : Builder {
+            public final? [ResolvedTo(RAW_FIR)] class NestedBuilder : Builder {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedBuilder] constructor(): R|Builder.NestedBuilder| {
                     LAZY_super<Builder>
                 }

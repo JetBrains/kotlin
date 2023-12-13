@@ -1,5 +1,5 @@
 FILE: annotationsOnParenthesizedTypes.kt
-    public? final? interface AnnotationsOnParenthesizedTypes : R|kotlin/Any| {
+    public final? interface AnnotationsOnParenthesizedTypes : R|kotlin/Any| {
         public? final? fun B<@A() C>.receiverArgument(): R|kotlin/Unit| {
         }
 
@@ -31,13 +31,13 @@ FILE: annotationsOnParenthesizedTypes.kt
             public? [ContainingClassKey=AnnotationsOnParenthesizedTypes] get(): ( (@A() C) -> C )
 
     }
-    @Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#) public? final? annotation class A : R|kotlin/Annotation| {
+    @Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#) public final? annotation class A : R|kotlin/Annotation| {
         public? [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final? interface B<T> : R|kotlin/Any| {
+    public final? interface B<T> : R|kotlin/Any| {
     }
-    public? final? interface C : R|kotlin/Any| {
+    public final? interface C : R|kotlin/Any| {
     }

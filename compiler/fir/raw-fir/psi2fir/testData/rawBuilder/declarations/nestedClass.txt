@@ -1,5 +1,5 @@
 FILE: nestedClass.kt
-    public? abstract class Base : R|kotlin/Any| {
+    public abstract class Base : R|kotlin/Any| {
         public? [ContainingClassKey=Base] constructor([CorrespondingProperty=/Base.s] s: String): R|Base| {
             super<R|kotlin/Any|>()
         }
@@ -8,19 +8,19 @@ FILE: nestedClass.kt
             public? [ContainingClassKey=Base] get(): String
 
     }
-    public? final? class Outer : R|kotlin/Any| {
+    public final? class Outer : R|kotlin/Any| {
         public? [ContainingClassKey=Outer] constructor(): R|Outer| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? class Derived : Base {
+        public final? class Derived : Base {
             public? [ContainingClassKey=Derived] constructor(s: String): R|Outer.Derived| {
                 super<Base>(s#)
             }
 
         }
 
-        public? final? object Obj : Base {
+        public final? object Obj : Base {
             private [ContainingClassKey=Obj] constructor(): R|Outer.Obj| {
                 super<Base>(String())
             }

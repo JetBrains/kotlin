@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeParameterOfNonLocalFunction.kt
-    public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -11,7 +11,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfNonLocalFunction.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
-    public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
-    public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
-    public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
-    public? final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
-    public? final? [ResolvedTo(TYPES)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }

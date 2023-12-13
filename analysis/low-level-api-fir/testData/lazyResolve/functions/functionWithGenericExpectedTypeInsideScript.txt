@@ -4,14 +4,14 @@ FILE: [ResolvedTo(RAW_FIR)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<<implicit>>
             }
@@ -29,14 +29,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<<implicit>>
             }
@@ -54,14 +54,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<<implicit>>
             }
@@ -79,14 +79,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<<implicit>>
             }
@@ -104,14 +104,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<<implicit>>
             }
@@ -129,14 +129,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<<implicit>>
             }
@@ -154,14 +154,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<<implicit>>
             }
@@ -179,14 +179,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithGenericExpectedTypeInsideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<<implicit>>
             }
@@ -204,14 +204,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-functionWithGenericExpectedTypeInsideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<<implicit>>
             }
@@ -231,14 +231,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-functionWithGenericExpectedTypeInsideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<<implicit>>
             }
@@ -258,14 +258,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-functionWithGenericExpectedTypeInsideScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<<implicit>>
             }
@@ -335,3 +335,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithGenericExpectedTypeInsideScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(BODY_RESOLVE)] lval x: R|Foo<kotlin/String>| = R|/bar|()
         }
+

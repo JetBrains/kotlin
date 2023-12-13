@@ -1,5 +1,5 @@
 FILE: lambda.kt
-    public? final? data class Tuple : R|kotlin/Any| {
+    public final? data class Tuple : R|kotlin/Any| {
         public? constructor(x: Int, y: Int): R|Tuple| {
             LAZY_super<R|kotlin/Any|>
         }

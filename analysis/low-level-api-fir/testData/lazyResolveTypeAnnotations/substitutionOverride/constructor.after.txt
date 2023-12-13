@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] constructor.kt
         }
 
     }
-    public? abstract [ResolvedTo(SUPER_TYPES)] class AbstractClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public abstract [ResolvedTo(SUPER_TYPES)] class AbstractClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) t: @Anno[Unresolved](LAZY_EXPRESSION) T): R|second/AbstractClass<T>| {
             LAZY_super<R|kotlin/Any|>
         }

@@ -1,7 +1,7 @@
 FILE: script.kts
     SCRIPT: <script-script.kts>
 
-        public? final? class Builder : R|kotlin/Any| {
+        public final? class Builder : R|kotlin/Any| {
             public? constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -12,7 +12,7 @@ FILE: script.kts
 
             public? final? fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public? final? class Nested : R|kotlin/Any| {
+            public final? class Nested : R|kotlin/Any| {
                 public? constructor(): R|Builder.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }

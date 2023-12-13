@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] functionInValueClass.kt
-    @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -14,7 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] functionInValueClass.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
-    @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
-    @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
-    @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
-    @JvmInline[Unresolved]() public? final? inline [ResolvedTo(SUPER_TYPES)] class Value : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(SUPER_TYPES)] class Value : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public? final? inline [ResolvedTo(TYPES)] class Value : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class Value : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }

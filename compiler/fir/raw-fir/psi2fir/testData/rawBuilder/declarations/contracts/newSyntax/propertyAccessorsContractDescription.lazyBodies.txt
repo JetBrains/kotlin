@@ -1,5 +1,5 @@
 FILE: propertyAccessorsContractDescription.kt
-    public? final? class MyClass : R|kotlin/Any| {
+    public final? class MyClass : R|kotlin/Any| {
         public? constructor(): R|MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -13,7 +13,7 @@ FILE: propertyAccessorsContractDescription.kt
             public? set(value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? final? class AnotherClass : R|kotlin/Any| {
+    public final? class AnotherClass : R|kotlin/Any| {
         public? constructor(multiplier: Int): R|AnotherClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -31,7 +31,7 @@ FILE: propertyAccessorsContractDescription.kt
              { LAZY_BLOCK }
 
     }
-    public? final? class SomeClass : R|kotlin/Any| {
+    public final? class SomeClass : R|kotlin/Any| {
         public? constructor(multiplier: Int?): R|SomeClass| {
             LAZY_super<R|kotlin/Any|>
         }

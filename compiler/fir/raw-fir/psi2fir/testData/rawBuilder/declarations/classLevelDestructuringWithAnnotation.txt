@@ -1,5 +1,5 @@
 FILE: classLevelDestructuringWithAnnotation.kt
-    public? final? class Foo : R|kotlin/Any| {
+    public final? class Foo : R|kotlin/Any| {
         public? [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             super<R|kotlin/Any|>()
         }

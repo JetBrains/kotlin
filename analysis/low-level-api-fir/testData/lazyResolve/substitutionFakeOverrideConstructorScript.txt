@@ -4,14 +4,14 @@ FILE: [ResolvedTo(RAW_FIR)] substitutionFakeOverrideConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? abstract [ResolvedTo(RAW_FIR)] class SubClass : AbstractClass<Int> {
+        public abstract [ResolvedTo(RAW_FIR)] class SubClass : AbstractClass<Int> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<AbstractClass<Int>>
             }
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] t: T): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -25,14 +25,14 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? abstract [ResolvedTo(RAW_FIR)] class SubClass : AbstractClass<Int> {
+        public abstract [ResolvedTo(RAW_FIR)] class SubClass : AbstractClass<Int> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<AbstractClass<Int>>
             }
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] t: T): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -46,14 +46,14 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? abstract [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class SubClass : AbstractClass<Int> {
+        public abstract [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class SubClass : AbstractClass<Int> {
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<AbstractClass<Int>>
             }
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] t: T): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -67,14 +67,14 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? abstract [ResolvedTo(COMPANION_GENERATION)] class SubClass : AbstractClass<Int> {
+        public abstract [ResolvedTo(COMPANION_GENERATION)] class SubClass : AbstractClass<Int> {
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<AbstractClass<Int>>
             }
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] t: T): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -88,14 +88,14 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? abstract [ResolvedTo(SUPER_TYPES)] class SubClass : R|second/AbstractClass<kotlin/Int>| {
+        public abstract [ResolvedTo(SUPER_TYPES)] class SubClass : R|second/AbstractClass<kotlin/Int>| {
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<AbstractClass<R|kotlin/Int|>>
             }
 
         }
 
-        public? abstract [ResolvedTo(SUPER_TYPES)] class AbstractClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(SUPER_TYPES)] class AbstractClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] t: T): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -109,14 +109,14 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideConstructorScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? abstract [ResolvedTo(TYPES)] class SubClass : R|second/AbstractClass<kotlin/Int>| {
+        public abstract [ResolvedTo(TYPES)] class SubClass : R|second/AbstractClass<kotlin/Int>| {
             public? [ResolvedTo(TYPES)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<kotlin/Int>|>
             }
 
         }
 
-        public? abstract [ResolvedTo(SUPER_TYPES)] class AbstractClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(SUPER_TYPES)] class AbstractClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] t: T): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }

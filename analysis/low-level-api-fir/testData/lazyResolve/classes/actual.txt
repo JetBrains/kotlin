@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] actual.kt
-    public? final? actual [ResolvedTo(RAW_FIR)] class Actual : R|kotlin/Any| {
+    public final? actual [ResolvedTo(RAW_FIR)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -10,7 +10,7 @@ FILE: [ResolvedTo(RAW_FIR)] actual.kt
         public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(RAW_FIR)] actual.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    public? final? actual [ResolvedTo(RAW_FIR)] class Actual : R|kotlin/Any| {
+    public final? actual [ResolvedTo(RAW_FIR)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
         public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    public? final? actual [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Actual : R|kotlin/Any| {
+    public final? actual [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
         public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -69,7 +69,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    public? final? actual [ResolvedTo(COMPANION_GENERATION)] class Actual : R|kotlin/Any| {
+    public final? actual [ResolvedTo(COMPANION_GENERATION)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
         public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    public? final? actual [ResolvedTo(SUPER_TYPES)] class Actual : R|kotlin/Any| {
+    public final? actual [ResolvedTo(SUPER_TYPES)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
         public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    public? final? actual [ResolvedTo(TYPES)] class Actual : R|kotlin/Any| {
+    public final? actual [ResolvedTo(TYPES)] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -125,7 +125,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
         public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
         public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
         public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
         public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -217,7 +217,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
         public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
         public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -263,7 +263,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
         public final [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] val a: R|kotlin/Int| = Int(1)
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Actual] get(): R|kotlin/Int|
 
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
+        public final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
                 LAZY_super<R|kotlin/Any|>
             }

@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
         }
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class Unrelated : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] class Unrelated : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] constructor(): R|foo/Unrelated| {
             LAZY_super<R|kotlin/Any|>
         }

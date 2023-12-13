@@ -12,7 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedNestedClassAsAnnotationArgument.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Special] get(): R|kotlin/reflect/KClass<*>|
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
     }
     public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {

@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypeScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface A : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] interface A : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : R|A| {

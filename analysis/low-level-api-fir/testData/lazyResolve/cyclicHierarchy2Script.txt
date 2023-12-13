@@ -4,22 +4,22 @@ FILE: [ResolvedTo(RAW_FIR)] cyclicHierarchy2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface ResolveMe : A, E {
+        public final? [ResolvedTo(RAW_FIR)] interface ResolveMe : A, E {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
+        public final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface D : ResolveMe {
+        public final? [ResolvedTo(RAW_FIR)] interface D : ResolveMe {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface E : F {
+        public final? [ResolvedTo(RAW_FIR)] interface E : F {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface F : D, C {
+        public final? [ResolvedTo(RAW_FIR)] interface F : D, C {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -29,22 +29,22 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface ResolveMe : A, E {
+        public final? [ResolvedTo(RAW_FIR)] interface ResolveMe : A, E {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
+        public final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface D : ResolveMe {
+        public final? [ResolvedTo(RAW_FIR)] interface D : ResolveMe {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface E : F {
+        public final? [ResolvedTo(RAW_FIR)] interface E : F {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface F : D, C {
+        public final? [ResolvedTo(RAW_FIR)] interface F : D, C {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -54,22 +54,22 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] interface ResolveMe : A, E {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] interface ResolveMe : A, E {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
+        public final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface D : ResolveMe {
+        public final? [ResolvedTo(RAW_FIR)] interface D : ResolveMe {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface E : F {
+        public final? [ResolvedTo(RAW_FIR)] interface E : F {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface F : D, C {
+        public final? [ResolvedTo(RAW_FIR)] interface F : D, C {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -79,22 +79,22 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] interface ResolveMe : A, E {
+        public final? [ResolvedTo(COMPANION_GENERATION)] interface ResolveMe : A, E {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
+        public final? [ResolvedTo(RAW_FIR)] interface C : ResolveMe {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface D : ResolveMe {
+        public final? [ResolvedTo(RAW_FIR)] interface D : ResolveMe {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface E : F {
+        public final? [ResolvedTo(RAW_FIR)] interface E : F {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface F : D, C {
+        public final? [ResolvedTo(RAW_FIR)] interface F : D, C {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -104,22 +104,22 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -129,22 +129,22 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
+        public final? [ResolvedTo(TYPES)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -157,19 +157,19 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
         public abstract [ResolvedTo(STATUS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -182,19 +182,19 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
         public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -207,19 +207,19 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
         public abstract [ResolvedTo(CONTRACTS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -232,19 +232,19 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
         public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -257,19 +257,19 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
         public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -282,19 +282,19 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
         public abstract [ResolvedTo(BODY_RESOLVE)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /ResolveMe> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface E : <ERROR TYPE REF: Loop in supertype: /E -> /F> {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+        public final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
         }
 
 
@@ -321,3 +321,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] cyclicHierarchy2Script.kts
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface NonLoopedInterface : R|C| {
         }
+

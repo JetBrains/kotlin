@@ -1,12 +1,12 @@
 FILE: typeParameterVsNested.kt
-    public? final? interface Some : R|kotlin/Any| {
+    public final? interface Some : R|kotlin/Any| {
     }
-    public? abstract class My<T : Some> : R|kotlin/Any| {
+    public abstract class My<T : Some> : R|kotlin/Any| {
         public? constructor<T : Some>(): R|test/My<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? inner class T<Outer(T) : Some> : R|kotlin/Any| {
+        public final? inner class T<Outer(T) : Some> : R|kotlin/Any| {
             public? test/My<T>.constructor(): R|test/My.T<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -24,7 +24,7 @@ FILE: typeParameterVsNested.kt
         public? abstract val z: test.My.T
             public? get(): test.My.T
 
-        public? final? class Some : T {
+        public final? class Some : T {
             public? constructor(): R|test/My.Some| {
                 LAZY_super<T>
             }

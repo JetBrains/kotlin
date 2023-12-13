@@ -1,24 +1,24 @@
 FILE: danglingAnnotationsClassLevel.kt
-    public? final? class A : R|kotlin/Any| {
+    public final? class A : R|kotlin/Any| {
         public? constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
         @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
     }
-    public? final? class B : R|kotlin/Any| {
+    public final? class B : R|kotlin/Any| {
         public? constructor(): R|B| {
             LAZY_super<R|kotlin/Any|>
         }
 
         @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
     }
-    public? final? class Outer : R|kotlin/Any| {
+    public final? class Outer : R|kotlin/Any| {
         public? constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? class Inner : R|kotlin/Any| {
+        public final? class Inner : R|kotlin/Any| {
             public? constructor(): R|Outer.Inner| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -29,5 +29,5 @@ FILE: danglingAnnotationsClassLevel.kt
         public? final? fun withLocal(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? final? interface I : R|kotlin/Any| {
+    public final? interface I : R|kotlin/Any| {
     }

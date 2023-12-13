@@ -147,15 +147,16 @@ open class PsiRawFirBuilder(
     override val PsiElement.isVararg: Boolean
         get() = (this as? KtParameter)?.isVarArg == true
 
-    private val KtModifierListOwner.visibility: Visibility
-        get() = with(modifierList) {
+    private fun KtModifierListOwner.getVisibility(publicByDefault: Boolean = false): Visibility =
+        with(modifierList) {
             when {
-                this == null -> Visibilities.Unknown
+                this == null -> null
                 hasModifier(PRIVATE_KEYWORD) -> Visibilities.Private
                 hasModifier(PUBLIC_KEYWORD) -> Visibilities.Public
                 hasModifier(PROTECTED_KEYWORD) -> Visibilities.Protected
-                else -> if (hasModifier(INTERNAL_KEYWORD)) Visibilities.Internal else Visibilities.Unknown
-            }
+                hasModifier(INTERNAL_KEYWORD) -> Visibilities.Internal
+                else -> null
+            } ?: if (publicByDefault) Visibilities.Public else Visibilities.Unknown
         }
 
     private val KtDeclaration.modality: Modality?
@@ -496,8 +497,9 @@ open class PsiRawFirBuilder(
             accessorAnnotationsFromProperty: List<FirAnnotation>,
             parameterAnnotationsFromProperty: List<FirAnnotation>,
         ): FirPropertyAccessor? {
+            val defaultVisibility = this?.getVisibility()
             val accessorVisibility =
-                if (this?.visibility != null && this.visibility != Visibilities.Unknown) this.visibility else property.visibility
+                if (defaultVisibility != null && defaultVisibility != Visibilities.Unknown) defaultVisibility else property.getVisibility()
             // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
             val status =
                 FirDeclarationStatusImpl(accessorVisibility, this?.modality).apply {
@@ -610,8 +612,9 @@ open class PsiRawFirBuilder(
             propertyReturnType: FirTypeRef,
             annotationsFromProperty: List<FirAnnotationCall>,
         ): FirBackingField {
-            val componentVisibility = if (this?.visibility != null && this.visibility != Visibilities.Unknown) {
-                this.visibility
+            val defaultVisibility = this?.getVisibility()
+            val componentVisibility = if (defaultVisibility != null && defaultVisibility != Visibilities.Unknown) {
+                defaultVisibility
             } else {
                 Visibilities.Private
             }
@@ -708,7 +711,7 @@ open class PsiRawFirBuilder(
 
         private fun KtParameter.toFirProperty(firParameter: FirValueParameter): FirProperty {
             require(hasValOrVar())
-            val status = FirDeclarationStatusImpl(visibility, modality).apply {
+            val status = FirDeclarationStatusImpl(getVisibility(), modality).apply {
                 isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                 isActual = hasActualModifier()
                 isOverride = hasModifier(OVERRIDE_KEYWORD)
@@ -762,7 +765,7 @@ open class PsiRawFirBuilder(
                         baseModuleData,
                         FirDeclarationOrigin.Source,
                         returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
-                        visibility,
+                        getVisibility(),
                         symbol,
                         isInline = hasModifier(INLINE_KEYWORD),
                     ).also { getter ->
@@ -774,7 +777,7 @@ open class PsiRawFirBuilder(
                         baseModuleData,
                         FirDeclarationOrigin.Source,
                         returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
-                        visibility,
+                        getVisibility(),
                         symbol,
                         parameterAnnotations = parameterAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
                         isInline = hasModifier(INLINE_KEYWORD),
@@ -1154,7 +1157,7 @@ open class PsiRawFirBuilder(
                     else -> Visibilities.Unknown
                 }
 
-                val explicitVisibility = this?.visibility?.takeUnless { it == Visibilities.Unknown }
+                val explicitVisibility = this?.getVisibility()?.takeUnless { it == Visibilities.Unknown }
                 val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility(), Modality.FINAL).apply {
                     isExpect = this@toFirConstructor?.hasExpectModifier() == true || this@PsiRawFirBuilder.context.containerIsExpect
                     isActual = this@toFirConstructor?.hasActualModifier() == true || isImplicitlyActual
@@ -1507,7 +1510,7 @@ open class PsiRawFirBuilder(
                         else -> throw AssertionError("Unexpected class or object: ${classOrObject.text}")
                     }
                     val status = FirDeclarationStatusImpl(
-                        if (isLocal) Visibilities.Local else classOrObject.visibility,
+                        if (isLocal) Visibilities.Local else classOrObject.getVisibility(publicByDefault = true),
                         classOrObject.modality,
                     ).apply {
                         isExpect = classIsExpect
@@ -1703,7 +1706,10 @@ open class PsiRawFirBuilder(
                         origin = FirDeclarationOrigin.Source
                         name = typeAlias.nameAsSafeName
                         val isLocal = context.inLocalContext
-                        status = FirDeclarationStatusImpl(if (isLocal) Visibilities.Local else typeAlias.visibility, Modality.FINAL).apply {
+                        status = FirDeclarationStatusImpl(
+                            if (isLocal) Visibilities.Local else typeAlias.getVisibility(publicByDefault = true),
+                            Modality.FINAL
+                        ).apply {
                             isExpect = typeAliasIsExpect
                             isActual = typeAlias.hasActualModifier()
                         }
@@ -1755,7 +1761,7 @@ open class PsiRawFirBuilder(
                         symbol = functionSymbol as FirNamedFunctionSymbol
                         dispatchReceiverType = runIf(!isLocalFunction) { currentDispatchReceiverType() }
                         status = FirDeclarationStatusImpl(
-                            if (isLocalFunction) Visibilities.Local else function.visibility,
+                            if (isLocalFunction) Visibilities.Local else function.getVisibility(),
                             function.modality,
                         ).apply {
                             isExpect = function.hasExpectModifier() || context.containerIsExpect
@@ -1972,7 +1978,7 @@ open class PsiRawFirBuilder(
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = selfTypeRef
-                    val explicitVisibility = visibility
+                    val explicitVisibility = getVisibility()
                     status = FirDeclarationStatusImpl(explicitVisibility, Modality.FINAL).apply {
                         isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                         isActual = hasActualModifier()
@@ -2150,7 +2156,7 @@ open class PsiRawFirBuilder(
                                 parameterAnnotationsFromProperty = propertyAnnotations.filterUseSiteTarget(SETTER_PARAMETER)
                             )
 
-                            status = FirDeclarationStatusImpl(visibility, modality).apply {
+                            status = FirDeclarationStatusImpl(getVisibility(), modality).apply {
                                 isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                                 isActual = hasActualModifier()
                                 isOverride = hasModifier(OVERRIDE_KEYWORD)

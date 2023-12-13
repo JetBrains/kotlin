@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] fromLocalHierarchyToOuter.kt
-    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -10,7 +10,7 @@ FILE: [ResolvedTo(RAW_FIR)] fromLocalHierarchyToOuter.kt
         public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+    public open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
             LAZY_super<TopLevelClass>
         }
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(RAW_FIR)] fromLocalHierarchyToOuter.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
-    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -32,7 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
         public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+    public open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
             LAZY_super<TopLevelClass>
         }
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
-    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
         public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+    public open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
             LAZY_super<TopLevelClass>
         }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
-    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
         public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+    public open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
             LAZY_super<TopLevelClass>
         }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
-    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -98,7 +98,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
         public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+    public open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
             LAZY_super<TopLevelClass>
         }
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
-    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
         public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+    public open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
             LAZY_super<TopLevelClass>
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
-    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -142,7 +142,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
         public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+    public open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
             LAZY_super<TopLevelClass>
         }
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
-    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -164,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
         public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+    public open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
             LAZY_super<TopLevelClass>
         }
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
-    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
         public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+    public open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
             LAZY_super<TopLevelClass>
         }
@@ -219,7 +219,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
-    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -229,7 +229,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
         public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+    public open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
             LAZY_super<TopLevelClass>
         }
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
-    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -272,7 +272,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
         public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+    public open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
             LAZY_super<TopLevelClass>
         }

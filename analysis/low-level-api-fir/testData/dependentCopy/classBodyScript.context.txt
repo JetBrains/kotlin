@@ -14,7 +14,7 @@ Tower Data Context:
     Element 6
         Scope: FirScriptDeclarationsScope
             Classifiers:
-                FirRegularClassSymbol public? final? class A : R|kotlin/Any|
+                FirRegularClassSymbol public final? class A : R|kotlin/Any|
     Element 7
         Scope: FirLocalScope
             Classifiers:
@@ -27,7 +27,7 @@ Tower Data Context:
             SCRIPT: <script-classBodyScript.kts>
                 lval args: R|kotlin/Array<kotlin/String>|
 
-                public? final? class A : R|kotlin/Any|
+                public final? class A : R|kotlin/Any|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
                 Label: <script>
     Element 9

@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] complexLocalHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-complexLocalHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-complexLocalHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-complexLocalHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
@@ -262,3 +262,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] complexLocalHierarchyScript.kts
             }
 
         }
+

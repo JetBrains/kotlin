@@ -2,7 +2,7 @@ FILE: for.kt
     public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? fun fooLabeled(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? fun bar(list: List<String>): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? data class Some : R|kotlin/Any| {
+    public final? data class Some : R|kotlin/Any| {
         public? constructor(x: Int, y: Int): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }

@@ -12,7 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationImplicitConstruc
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public? open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -27,14 +27,14 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationImplicitConstruc
             LAZY_super<@R|second/Anno|[Types](i = Int(1).R|kotlin/Int.plus|(R|second/outer|)) Base>
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }

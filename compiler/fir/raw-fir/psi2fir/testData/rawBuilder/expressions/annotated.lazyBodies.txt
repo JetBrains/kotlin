@@ -1,12 +1,12 @@
 FILE: annotated.kt
-    @Target(LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention(LAZY_EXPRESSION) public? final? annotation class Ann : R|kotlin/Annotation| {
+    @Target(LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention(LAZY_EXPRESSION) public final? annotation class Ann : R|kotlin/Annotation| {
         public? constructor(): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? fun foo(arg: Int): Int { LAZY_BLOCK }
-    public? final? data class Two : R|kotlin/Any| {
+    public final? data class Two : R|kotlin/Any| {
         public? constructor(x: Int, y: Int): R|Two| {
             LAZY_super<R|kotlin/Any|>
         }

@@ -1,10 +1,10 @@
 FILE: super.kt
-    public? final? interface A : R|kotlin/Any| {
+    public final? interface A : R|kotlin/Any| {
         public? final? fun foo(): R|kotlin/Unit| {
         }
 
     }
-    public? final? interface B : R|kotlin/Any| {
+    public final? interface B : R|kotlin/Any| {
         public? final? fun foo(): R|kotlin/Unit| {
         }
 
@@ -12,7 +12,7 @@ FILE: super.kt
         }
 
     }
-    public? final? class C : A, B {
+    public final? class C : A, B {
         public? [ContainingClassKey=C] constructor(): R|C| {
             super<<implicit>>()
         }

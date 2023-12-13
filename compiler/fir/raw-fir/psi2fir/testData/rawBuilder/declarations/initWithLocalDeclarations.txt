@@ -1,5 +1,5 @@
 FILE: initWithLocalDeclarations.kt
-    public? final? class A : R|kotlin/Any| {
+    public final? class A : R|kotlin/Any| {
         public? [ContainingClassKey=A] constructor(): R|util/A| {
             super<R|kotlin/Any|>()
         }

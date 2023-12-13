@@ -1,54 +1,54 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] complexLocalHierarchy.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
         local open [ResolvedTo(RAW_FIR)] class A : B {
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         local open [ResolvedTo(RAW_FIR)] class A : B {
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
-    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
         local open [ResolvedTo(RAW_FIR)] class A : B {

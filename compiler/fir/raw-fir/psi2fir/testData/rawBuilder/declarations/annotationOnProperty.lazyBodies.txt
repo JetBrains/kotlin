@@ -1,5 +1,5 @@
 FILE: annotationOnProperty.kt
-    public? final? annotation class Ann : R|kotlin/Annotation| {
+    public final? annotation class Ann : R|kotlin/Annotation| {
         public? constructor(): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -11,7 +11,7 @@ FILE: annotationOnProperty.kt
         public? get(): Int
     @Ann() public? final? val z: Int = LAZY_EXPRESSION
         public? get(): Int
-    public? final? class Some : R|kotlin/Any| {
+    public final? class Some : R|kotlin/Any| {
         public? constructor(x: Int, y: Int, @CONSTRUCTOR_PARAMETER:Ann() z: Int, w: Int): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }

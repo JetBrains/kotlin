@@ -1,5 +1,5 @@
 FILE: enums.kt
-    public? final? enum class Order : R|kotlin/Enum<Order>| {
+    public final? enum class Order : R|kotlin/Enum<Order>| {
         private constructor(): R|Order| {
             LAZY_super<R|kotlin/Enum<Order>|>
         }
@@ -17,7 +17,7 @@ FILE: enums.kt
             public get(): R|kotlin/enums/EnumEntries<Order>|
 
     }
-    public? final? enum class Planet : R|kotlin/Enum<Planet>| {
+    public final? enum class Planet : R|kotlin/Enum<Planet>| {
         private constructor(m: Double, r: Double): R|Planet| {
             LAZY_super<R|kotlin/Enum<Planet>|>
         }
@@ -36,7 +36,7 @@ FILE: enums.kt
 
         public? abstract fun sayHello(): R|kotlin/Unit|
 
-        public? final? companion object Companion : R|kotlin/Any| {
+        public final? companion object Companion : R|kotlin/Any| {
             private constructor(): R|Planet.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -56,7 +56,7 @@ FILE: enums.kt
             public get(): R|kotlin/enums/EnumEntries<Planet>|
 
     }
-    public? final? enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
+    public final? enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
         private constructor(signature: String = LAZY_EXPRESSION): R|PseudoInsn| {
             LAZY_super<R|kotlin/Enum<PseudoInsn>|>
         }
