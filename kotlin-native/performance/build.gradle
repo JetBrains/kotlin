@@ -121,7 +121,9 @@ task clean {
             dependsOn "${it.path}:clean"
         }
     }
-    delete(layout.buildDirectory)
+    doLast {
+        delete(layout.buildDirectory)
+    }
 }
 
 defaultTasks 'konanRun'
