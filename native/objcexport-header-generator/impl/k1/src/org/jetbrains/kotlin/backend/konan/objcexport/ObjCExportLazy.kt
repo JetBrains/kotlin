@@ -417,7 +417,8 @@ private abstract class LazyObjCInterface(
     override val superClassGenerics: List<ObjCNonNullReferenceType>
         get() = realStub.superClassGenerics
 
-    final override val comment: Nothing? = null
+    final override val comment: ObjCComment?
+        get() = realStub.comment
 }
 
 private abstract class LazyObjCProtocol(
@@ -425,8 +426,6 @@ private abstract class LazyObjCProtocol(
 ) : ObjCProtocol() {
 
     override val name: String = name.objCName
-
-    override val comment: Nothing? = null
 
     override val attributes: List<String> = name.toNameAttributes()
 
@@ -439,6 +438,9 @@ private abstract class LazyObjCProtocol(
 
     override val superProtocols: List<String>
         get() = realStub.superProtocols
+
+    final override val comment: ObjCComment?
+        get() = realStub.comment
 }
 
 internal fun createNamerConfiguration(configuration: ObjCExportLazy.Configuration): ObjCExportNamer.Configuration {
