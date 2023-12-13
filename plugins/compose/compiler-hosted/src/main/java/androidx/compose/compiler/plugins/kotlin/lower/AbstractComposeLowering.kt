@@ -1277,8 +1277,8 @@ abstract class AbstractComposeLowering(
         startOffset: Int = this.startOffset,
         endOffset: Int = this.endOffset,
         type: IrType,
-        before: List<IrExpression> = emptyList(),
-        after: List<IrExpression> = emptyList()
+        before: List<IrStatement> = emptyList(),
+        after: List<IrStatement> = emptyList()
     ): IrContainerExpression {
         return IrBlockImpl(
             startOffset,
