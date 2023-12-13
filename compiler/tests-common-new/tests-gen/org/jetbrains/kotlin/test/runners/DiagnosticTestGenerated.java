@@ -44961,6 +44961,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("intersectionOfPrimitiveBasedFunctions.kt")
+            public void testIntersectionOfPrimitiveBasedFunctions() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/intersectionOfPrimitiveBasedFunctions.kt");
+            }
+
+            @Test
             @TestMetadata("invalidFqName.kt")
             public void testInvalidFqName() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/invalidFqName.kt");
