@@ -1,4 +1,6 @@
 Before shortening: Outer.OtherNested()
+with default settings:
+[qualifier] Outer.OtherNested()
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [qualifier] Outer.OtherNested()

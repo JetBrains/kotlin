@@ -1,4 +1,5 @@
 Before shortening: MyClass.prop
+with default settings:
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 with SHORTEN_AND_IMPORT:

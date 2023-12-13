@@ -1,3 +1,6 @@
+with default settings:
+[qualifier] one.A
+[qualifier] one.B
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [qualifier] one.A

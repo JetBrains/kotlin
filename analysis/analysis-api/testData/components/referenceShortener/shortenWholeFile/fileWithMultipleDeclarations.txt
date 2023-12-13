@@ -1,3 +1,6 @@
+with default settings:
+[type] A.B
+[qualifier] C.D.Companion.foo()
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [type] A.B

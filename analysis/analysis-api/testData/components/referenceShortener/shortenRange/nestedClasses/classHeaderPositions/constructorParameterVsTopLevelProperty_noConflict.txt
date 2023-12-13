@@ -10,6 +10,11 @@ Before shortening: class Foo(bigProperty: String) {
         return test.bigProperty
     }
 }
+with default settings:
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty
+[qualifier] test.bigProperty
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [qualifier] test.bigProperty

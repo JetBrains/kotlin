@@ -1,4 +1,6 @@
 Before shortening: val foo = object : Outer.Nested() {}
+with default settings:
+[type] Outer.Nested
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [type] Outer.Nested

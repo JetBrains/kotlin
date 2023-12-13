@@ -2,6 +2,8 @@ Before shortening: fun usage() {
         Middle.test()
         Base.test()
     }
+with default settings:
+[qualifier] Middle.test()
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
 [qualifier] Middle.test()
