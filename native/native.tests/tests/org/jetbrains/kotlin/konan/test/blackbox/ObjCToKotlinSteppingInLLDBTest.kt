@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.incremental.createDirectory
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFrameworkCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
@@ -24,12 +25,9 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 
-@EnforcedHostTarget
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 // FIXME: With -opt these tests can't set a breakpoint in inlined "fun bar()"
 @EnforcedProperty(ClassLevelProperty.OPTIMIZATION_MODE, propertyValue = "DEBUG")
-// FIXME: With Rosetta the step-out and step-over tests stop on the line after "[KotlinLibKt bar]"
-@EnforcedProperty(ClassLevelProperty.TEST_TARGET, propertyValue = "macos_arm64")
 class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
 
     @Test
@@ -157,7 +155,8 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         kotlinFileName: String,
         testName: String,
     ) {
-        if (!targets.testTarget.family.isAppleFamily) { Assumptions.abort<Nothing>("This test is supported only on Apple targets") }
+        // FIXME: With Rosetta the step-out and step-over tests stop on the line after "[KotlinLibKt bar]"
+        if (targets.testTarget != KonanTarget.MACOS_ARM64) { Assumptions.abort<Nothing>("This test is supported only on Apple targets") }
 
         val kotlinFrameworkName = "Kotlin"
         val clangMainSources = """
