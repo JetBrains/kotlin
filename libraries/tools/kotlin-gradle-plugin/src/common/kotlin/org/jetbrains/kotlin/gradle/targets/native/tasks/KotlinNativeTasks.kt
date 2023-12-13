@@ -1097,6 +1097,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:NormalizeLineEndings
+    @get:Optional
     abstract val definitionFile: RegularFileProperty
 
     @get:Internal
@@ -1158,7 +1159,9 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
                 addArg("-o", outputFile.absolutePath)
 
                 addArgIfNotNull("-target", konanTarget.visibleName)
-                addArgIfNotNull("-def", definitionFile.getFile().canonicalPath)
+                if (definitionFile.isPresent) {
+                    addArgIfNotNull("-def", definitionFile.getFile().canonicalPath)
+                }
                 addArgIfNotNull("-pkg", packageName)
 
                 addFileArgs("-header", headers)

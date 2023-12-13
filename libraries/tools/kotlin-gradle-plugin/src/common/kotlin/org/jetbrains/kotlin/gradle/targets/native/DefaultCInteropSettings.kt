@@ -27,7 +27,7 @@ import java.io.File
 import javax.inject.Inject
 
 abstract class DefaultCInteropSettings @Inject internal constructor(
-    private val params: Params
+    private val params: Params,
 ) : CInteropSettings {
 
     internal data class Params(
@@ -35,7 +35,7 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
         val identifier: CInteropIdentifier,
         val dependencyConfigurationName: String,
         val interopProcessingTaskName: String,
-        val services: Services
+        val services: Services,
     ) {
         open class Services @Inject constructor(
             val providerFactory: ProviderFactory,
@@ -74,8 +74,10 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
 
     @Deprecated("Deprecated. Please, use definitionFile.", ReplaceWith("definitionFile"))
     val defFileProperty: Property<File> = params.services.objectFactory.property<File>().convention(
-        params.services.projectLayout.projectDirectory.file("src/nativeInterop/cinterop/$name.def").asFile
+        getDefaultCinteropDefinitionFile().takeIf { it.exists() }
     )
+
+    private fun getDefaultCinteropDefinitionFile(): File = params.services.projectLayout.projectDirectory.file("src/nativeInterop/cinterop/$name.def").asFile
 
     val definitionFile: RegularFileProperty = params.services.objectFactory.fileProperty().convention(
         params.services.projectLayout.file(defFileProperty)
