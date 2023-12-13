@@ -365,6 +365,15 @@ tasks.register("distStdlibCache") {
 def stdlib = 'klib/common/stdlib'
 def stdlibDefaultComponent = "$stdlib/default"
 
+tasks.register("distStdlib", Copy) {
+    from(project(":kotlin-native:runtime")
+            .tasks
+            .named("nativeStdlib")
+            .map { it.outputs }
+    )
+    destinationDir project.file("$distDir/$stdlib")
+}
+
 tasks.register("crossDistRuntime") {
     dependsOn.addAll(targetList.collect { "${it}CrossDistRuntime" })
 }
@@ -373,51 +382,11 @@ tasks.register("crossDistPlatformLibs") {
     dependsOn.addAll(targetList.collect { "${it}PlatformLibs" })
 }
 
-tasks.register("crossDistStdlib") {
-    dependsOn.addAll(targetList.collect { "${it}CrossDistStdlib" })
-}
-
 tasks.register("crossDistStdlibCache") {
     dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCache" })
 }
 
 targetList.each { target ->
-    tasks.register("${target}CrossDistStdlib", Copy) {
-        dependsOn ":kotlin-native:runtime:${target}Stdlib"
-        // TODO: add explicit dependency on host task with IR klib stdlib parts
-        // As for now it is possibly to build up distribution from the tc-dist to crossdist
-        // by request of tests that need cross-targets or platform libs. It may create undesired
-        // issues with overwriting the file being used by the concurrent build/test.
-        // This building (by request) should be turned off when this to-do is fixed.
-//        if (target != hostName) {
-//            dependsOn ":kotlin-native:${hostName}CrossDistStdlib"
-//        }
-
-        destinationDir project.file("$distDir/$stdlib")
-
-        from(project(':kotlin-native:runtime').file("build/${target}Stdlib")) {
-            if (target == hostName) {
-                include('**')
-            } else {
-                // We don't want to rewrite stdlib parts as they are the same and may be already used
-                // by the other build phases like caching.
-                include('*/targets/**')
-                include('*/manifest')
-            }
-            eachFile {
-                if (name == 'manifest') {
-                    def existingManifest = file("$destinationDir/$path")
-                    if (existingManifest.exists()) {
-                        UtilsKt.mergeManifestsByTargets(project, file, existingManifest)
-                        exclude()
-                    }
-                }
-            }
-        }
-
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    }
-
     tasks.register("${target}CrossDistBitcodeCopy", Copy) {
         def bitcodeFiles = configurations.runtimeBitcode.incoming.artifactView {
             attributes {
@@ -434,7 +403,7 @@ targetList.each { target ->
     }
 
     tasks.register("${target}CrossDistRuntime", Copy) {
-        dependsOn ":kotlin-native:${target}CrossDistStdlib"
+        dependsOn ":kotlin-native:distStdlib"
         dependsOn "${target}CrossDistBitcodeCopy"
 
         destinationDir project.file("$distDir/$stdlibDefaultComponent")
@@ -449,7 +418,7 @@ targetList.each { target ->
 
     if (target in cacheableTargetNames) {
         tasks.register("${target}StdlibCache", Copy) {
-            dependsOn "${target}CrossDistStdlib"
+            dependsOn "distStdlib"
             dependsOn ":kotlin-native:runtime:${target}StdlibCache"
 
             destinationDir project.file("$distDir/klib/cache/")
@@ -477,6 +446,7 @@ tasks.register("dist") {
     dependsOn "distCompiler",
             "distRuntime",
             "distDef",
+            "distStdlib",
             "distStdlibCache"
 }
 
@@ -484,7 +454,7 @@ tasks.register("crossDist") {
     dependsOn "distCompiler",
             "crossDistRuntime",
             "distDef",
-            "crossDistStdlib",
+            "distStdlib",
             "crossDistStdlibCache"
 }
 

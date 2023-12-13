@@ -570,43 +570,43 @@ konanArtifacts {
     }
 }
 
-targetList.forEach { targetName ->
-    val stdlibTask = tasks.register("${targetName}Stdlib", Copy::class.java) {
-        require(::stdlibBuildTask.isInitialized)
-        dependsOn(stdlibBuildTask)
-        dependsOn("${targetName}Runtime")
+val stdlibTask = tasks.register<Copy>("nativeStdlib") {
+    require(::stdlibBuildTask.isInitialized)
 
-        into(project.layout.buildDirectory.dir("${targetName}Stdlib"))
+    from(stdlibBuildTask.map { it.outputs })
+    into(project.layout.buildDirectory.dir("nativeStdlib"))
 
-        from(project.layout.buildDirectory.dir("stdlib/${hostName}/stdlib"))
+    eachFile {
+        if (name == "manifest") {
+            // Stdlib is a common library that doesn't depend on anything target-specific.
+            // The current compiler can't create a library with manifest file that lists all supported targets.
+            // So, add all supported targets to the manifest file.
+            KFile(file.absolutePath).run {
+                val props = loadProperties()
+                props[KLIB_PROPERTY_NATIVE_TARGETS] = targetList.joinToString(separator = " ")
 
-        if (targetName != hostName) {
-            doLast {
-                // Change target in manifest file
-                with(KFile(destinationDir.resolve("default/manifest").absolutePath)) {
-                    val props = loadProperties()
-                    props[KLIB_PROPERTY_NATIVE_TARGETS] = targetName
-                    val version = props[KLIB_PROPERTY_COMPILER_VERSION]
-                    check(version == kotlinVersion) {
-                        "Manifest file ($this) processing: $version was found while $kotlinVersion was expected"
-                    }
-                    saveProperties(props)
+                // Check that we didn't get other than the requested version from cache, previous build or due to some other build issue
+                val versionFromManifest = props[KLIB_PROPERTY_COMPILER_VERSION]
+                check(versionFromManifest == kotlinVersion) {
+                    "Manifest file ($this) processing: $versionFromManifest was found while $kotlinVersion was expected"
                 }
+
+                saveProperties(props)
             }
         }
     }
+}
 
-    val cacheableTargetNames: List<String> by project
+val cacheableTargetNames: List<String> by project
 
-    if (targetName in cacheableTargetNames) {
-        tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
-            target = targetName
-            originalKlib.fileProvider(stdlibTask.map { it.destinationDir })
-            klibUniqName = "stdlib"
-            cacheRoot = project.layout.buildDirectory.dir("cache/$targetName").get().asFile.absolutePath
+cacheableTargetNames.forEach { targetName ->
+    tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
+        target = targetName
+        originalKlib.fileProvider(stdlibTask.map { it.destinationDir })
+        klibUniqName = "stdlib"
+        cacheRoot = project.layout.buildDirectory.dir("cache/$targetName").get().asFile.absolutePath
 
-            dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
-        }
+        dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
     }
 }
 

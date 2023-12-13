@@ -2,7 +2,6 @@
  * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(ExperimentalStdlibApi::class)
 
 package org.jetbrains.kotlin
 
@@ -12,15 +11,10 @@ import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.konan.properties.loadProperties
-import org.jetbrains.kotlin.konan.properties.propertyList
-import org.jetbrains.kotlin.konan.properties.saveProperties
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 import java.nio.file.Path
-import org.jetbrains.kotlin.konan.file.File as KFile
-import org.gradle.api.tasks.TaskProvider
-import kotlin.collections.HashSet
 
 /**
  * Copy-pasted from [org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS]
@@ -328,66 +322,6 @@ fun targetSupportsCoreSymbolication(targetName: String) =
 
 fun targetSupportsThreads(targetName: String) =
     HostManager().targetByName(targetName).supportsThreads()
-
-fun Project.mergeManifestsByTargets(source: File, destination: File) {
-    logger.info("Merging manifests: $source -> $destination")
-
-    val sourceFile = KFile(source.absolutePath)
-    val sourceProperties = sourceFile.loadProperties()
-
-    val destinationFile = KFile(destination.absolutePath)
-    val destinationProperties = destinationFile.loadProperties()
-
-    // check that all properties except for KLIB_PROPERTY_NATIVE_TARGETS are equivalent
-    val mismatchedProperties = (sourceProperties.keys + destinationProperties.keys)
-        .asSequence()
-        .map { it.toString() }
-        .filterNot { it == KLIB_PROPERTY_NATIVE_TARGETS || it == KLIB_PROPERTY_COMPILER_VERSION }
-        .sorted()
-        .mapNotNull { propertyKey: String ->
-            val sourceProperty: String? = sourceProperties.getProperty(propertyKey)
-            val destinationProperty: String? = destinationProperties.getProperty(propertyKey)
-            when {
-                sourceProperty == null -> "\"$propertyKey\" is absent in $sourceFile"
-                destinationProperty == null -> "\"$propertyKey\" is absent in $destinationFile"
-                sourceProperty == destinationProperty -> {
-                    // properties match, OK
-                    null
-                }
-                sourceProperties.propertyList(propertyKey, escapeInQuotes = true).toSet() ==
-                        destinationProperties.propertyList(propertyKey, escapeInQuotes = true).toSet() -> {
-                    // properties match, OK
-                    null
-                }
-                else -> "\"$propertyKey\" differ: [$sourceProperty] vs [$destinationProperty]"
-            }
-        }
-        .toList()
-
-    check(mismatchedProperties.isEmpty()) {
-        buildString {
-            appendln("Found mismatched properties while merging manifest files: $source -> $destination")
-            mismatchedProperties.joinTo(this, "\n")
-        }
-    }
-
-    // merge KLIB_PROPERTY_NATIVE_TARGETS property
-    val sourceNativeTargets = sourceProperties.propertyList(KLIB_PROPERTY_NATIVE_TARGETS)
-    val destinationNativeTargets = destinationProperties.propertyList(KLIB_PROPERTY_NATIVE_TARGETS)
-
-    val mergedNativeTargets = HashSet<String>().apply {
-        addAll(sourceNativeTargets)
-        addAll(destinationNativeTargets)
-    }
-
-    destinationProperties[KLIB_PROPERTY_NATIVE_TARGETS] = mergedNativeTargets.joinToString(" ")
-
-    // Get KLIB_PROPERTY_COMPILER_VERSION source property and override the version
-    destinationProperties[KLIB_PROPERTY_COMPILER_VERSION] = sourceProperties.getProperty(KLIB_PROPERTY_COMPILER_VERSION)
-
-    // Now save the properties to the destination file
-    destinationFile.saveProperties(destinationProperties)
-}
 
 fun Project.buildStaticLibrary(cSources: Collection<File>, output: File, objDir: File) {
     delete(objDir)
