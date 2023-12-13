@@ -17110,6 +17110,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("assignmentUsingIncompletePCLACall.kt")
+                public void testAssignmentUsingIncompletePCLACall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/assignmentUsingIncompletePCLACall.kt");
+                }
+
+                @Test
                 @TestMetadata("bothOuterAndProperConstraints.kt")
                 public void testBothOuterAndProperConstraints() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/bothOuterAndProperConstraints.kt");
@@ -17407,6 +17413,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
                 public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
+                }
+
+                @Test
+                @TestMetadata("singleBranchConditionLastStatementInLambda.kt")
+                public void testSingleBranchConditionLastStatementInLambda() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/singleBranchConditionLastStatementInLambda.kt");
                 }
 
                 @Test

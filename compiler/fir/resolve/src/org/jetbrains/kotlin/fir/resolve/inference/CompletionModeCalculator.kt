@@ -33,8 +33,6 @@ fun Candidate.computeCompletionMode(
         // Full if return type for call has no type variables
         csBuilder.isProperType(currentReturnType) -> ConstraintSystemCompletionMode.FULL
 
-        csBuilder.usesOuterCs -> ConstraintSystemCompletionMode.PARTIAL
-
         else -> CalculatorForNestedCall(
             this, currentReturnType, csBuilder, components.trivialConstraintTypeInferenceOracle
         ).computeCompletionMode()
