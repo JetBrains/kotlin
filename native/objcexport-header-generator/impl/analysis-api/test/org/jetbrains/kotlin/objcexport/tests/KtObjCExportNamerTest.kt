@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.objcexport.ObjCExportNamer
+import org.jetbrains.kotlin.objcexport.KtObjCExportNamer
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -18,7 +18,7 @@ class KtObjCExportNamerTest(
     private val inlineSourceCodeAnalysis: InlineSourceCodeAnalysis,
 ) {
 
-    private val namer = ObjCExportNamer()
+    private val namer = KtObjCExportNamer()
 
     @Test
     fun `test - simple class`() {

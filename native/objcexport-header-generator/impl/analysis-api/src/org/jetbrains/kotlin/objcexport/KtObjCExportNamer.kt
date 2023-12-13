@@ -20,7 +20,7 @@ interface KtObjCExportNamer {
     fun getPropertyName(symbol: KtPropertySymbol): ObjCExportPropertyName
 }
 
-fun ObjCExportNamer(): KtObjCExportNamer {
+fun KtObjCExportNamer(): KtObjCExportNamer {
     return ObjCExportNamerImpl()
 }
 

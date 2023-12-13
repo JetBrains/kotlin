@@ -10,8 +10,9 @@ kotlin {
 }
 
 dependencies {
-    api(project(":native:objcexport-header-generator"))
     api(project(":analysis:analysis-api"))
+    api(project(":compiler:psi"))
+    api(project(":native:objcexport-header-generator"))
 
     testImplementation(projectTests(":native:objcexport-header-generator"))
     testApi(project(":analysis:analysis-api-standalone"))
