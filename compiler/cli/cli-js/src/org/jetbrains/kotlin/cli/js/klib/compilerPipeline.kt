@@ -242,17 +242,7 @@ fun transformFirToIr(
     val firResult = FirResult(firOutputs)
     return firResult.convertToIrAndActualize(
         fir2IrExtensions,
-        Fir2IrConfiguration(
-            languageVersionSettings = moduleStructure.compilerConfiguration.languageVersionSettings,
-            diagnosticReporter = diagnosticsReporter,
-            linkViaSignatures = false,
-            evaluatedConstTracker = moduleStructure.compilerConfiguration
-                .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
-            inlineConstTracker = null,
-            expectActualTracker = moduleStructure.compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
-            allowNonCachedDeclarations = false,
-            useIrFakeOverrideBuilder = true
-        ),
+        Fir2IrConfiguration.forKlibCompilation(moduleStructure.compilerConfiguration, diagnosticsReporter),
         IrGenerationExtension.getInstances(moduleStructure.project),
         signatureComposer = DescriptorSignatureComposerStub(JsManglerDesc),
         irMangler = JsManglerIr,

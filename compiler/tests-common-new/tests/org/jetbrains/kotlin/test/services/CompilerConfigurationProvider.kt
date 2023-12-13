@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
@@ -128,6 +129,11 @@ fun TargetPlatform.platformToEnvironmentConfigFiles() = when {
 fun createCompilerConfiguration(module: TestModule, configurators: List<AbstractEnvironmentConfigurator>): CompilerConfiguration {
     val configuration = CompilerConfiguration()
     configuration[CommonConfigurationKeys.MODULE_NAME] = module.name
+
+    if (module.targetPlatform.isJvm() && CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in module.directives) {
+        // For non-JVM platforms, the IR-based fake override builder is enabled unconditionally; on JVM it must be enabled manually.
+        configuration.put(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER, true)
+    }
 
     if (JsEnvironmentConfigurationDirectives.GENERATE_STRICT_IMPLICIT_EXPORT in module.directives) {
         configuration.put(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT, true)

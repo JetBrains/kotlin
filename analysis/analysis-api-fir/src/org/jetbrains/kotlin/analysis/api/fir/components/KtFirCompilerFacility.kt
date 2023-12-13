@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
@@ -261,17 +260,7 @@ internal class KtFirCompilerFacility(
         effectiveConfiguration: CompilerConfiguration,
         irGeneratorExtensions: List<IrGenerationExtension>
     ): Fir2IrActualizedResult {
-        val fir2IrConfiguration = Fir2IrConfiguration(
-            session.languageVersionSettings,
-            diagnosticReporter,
-            linkViaSignatures = false,
-            evaluatedConstTracker = effectiveConfiguration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER]
-                ?: EvaluatedConstTracker.create(),
-            inlineConstTracker = effectiveConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
-            expectActualTracker = effectiveConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
-            allowNonCachedDeclarations = true,
-            useIrFakeOverrideBuilder = effectiveConfiguration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
-        )
+        val fir2IrConfiguration = Fir2IrConfiguration.forAnalysisApi(effectiveConfiguration, session.languageVersionSettings, diagnosticReporter)
         val firResult = FirResult(listOf(ModuleCompilerAnalyzedOutput(session, session.getScopeSession(), firFiles)))
 
         return firResult.convertToIrAndActualize(

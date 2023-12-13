@@ -93,17 +93,7 @@ internal fun PhaseContext.fir2Ir(
     }
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
-    val fir2IrConfiguration = Fir2IrConfiguration(
-            languageVersionSettings = configuration.languageVersionSettings,
-            diagnosticReporter = diagnosticsReporter,
-            linkViaSignatures = false,
-            evaluatedConstTracker = configuration
-                    .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
-            inlineConstTracker = null,
-            expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
-            allowNonCachedDeclarations = false,
-            useIrFakeOverrideBuilder = true,
-    )
+    val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(configuration, diagnosticsReporter)
     val (irModuleFragment, components, pluginContext, irActualizedResult) = input.firResult.convertToIrAndActualize(
             NativeFir2IrExtensions,
             fir2IrConfiguration,

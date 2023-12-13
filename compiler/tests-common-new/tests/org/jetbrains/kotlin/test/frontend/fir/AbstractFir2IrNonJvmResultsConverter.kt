@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -67,24 +68,6 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
             }
         }
 
-    private fun createFir2IrConfiguration(
-        module: TestModule,
-        configuration: CompilerConfiguration,
-        diagnosticReporter: BaseDiagnosticsCollector
-    ): Fir2IrConfiguration {
-        return Fir2IrConfiguration(
-            languageVersionSettings = configuration.languageVersionSettings,
-            diagnosticReporter = diagnosticReporter,
-            linkViaSignatures = true,
-            evaluatedConstTracker = configuration
-                .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
-            inlineConstTracker = null,
-            expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
-            allowNonCachedDeclarations = false,
-            useIrFakeOverrideBuilder = module.shouldUseIrFakeOverrideBuilder()
-        )
-    }
-
     private fun transformInternal(
         module: TestModule,
         inputArtifact: FirOutputArtifact
@@ -99,7 +82,12 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
         val libraries = resolveLibraries(module, compilerConfiguration)
         val (dependencies, builtIns) = loadResolvedLibraries(libraries, compilerConfiguration.languageVersionSettings, testServices)
 
-        val fir2IrConfiguration = createFir2IrConfiguration(module, compilerConfiguration, diagnosticReporter)
+        val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(
+            compilerConfiguration,
+            diagnosticReporter,
+            // FIXME(KT-64809): This is for irText tests. Remove this when we stop building signatures from FIR entirely.
+            linkViaSignatures = LanguageSettingsDirectives.LINK_VIA_SIGNATURES in module.directives,
+        )
         val fir2irResult = inputArtifact.toFirResult().convertToIrAndActualize(
             Fir2IrExtensions.Default,
             fir2IrConfiguration,

@@ -83,17 +83,7 @@ class Fir2IrJvmResultsConverter(
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
         val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
-        val fir2IrConfiguration = Fir2IrConfiguration(
-            languageVersionSettings = module.languageVersionSettings,
-            diagnosticReporter = diagnosticReporter,
-            linkViaSignatures = compilerConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
-            evaluatedConstTracker = compilerConfiguration
-                .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
-            inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
-            expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
-            allowNonCachedDeclarations = false,
-            useIrFakeOverrideBuilder = module.shouldUseIrFakeOverrideBuilder(),
-        )
+        val fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(compilerConfiguration, diagnosticReporter)
 
         val fir2irResult = inputArtifact.toFirResult().convertToIrAndActualize(
             fir2IrExtensions,

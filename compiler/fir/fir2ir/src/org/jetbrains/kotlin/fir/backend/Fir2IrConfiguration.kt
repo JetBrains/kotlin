@@ -16,25 +16,28 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.ir.util.SymbolTable
 
 /**
- * @param linkViaSignatures enables calculation of signatures for IR symbols and filling the SymbolTable with them.
- *  This parameter should be set to true if caller will rely on the content of the symbol table in future (like for KLib generation)
+ * @param linkViaSignatures Enables calculation of signatures for IR symbols and filling the [SymbolTable] with them.
+ *  This parameter should be set to `true` if the caller relies on the content of the symbol table in the future.
+ *  Note: this parameter is to be removed ([KT-64809](https://youtrack.jetbrains.com/issue/KT-64809)).
  *
  * @param allowNonCachedDeclarations
- *  Normally, FIR-to-IR caches all declarations it meets in a compiled module.
+ *  Normally, FIR2IR caches all declarations it meets in a compiled module.
  *  It means asking for an IR element of a non-cached declaration is a sign of inconsistent state.
  *  Code generation in the IDE is trickier, though, as declarations from any module can be potentially referenced.
  *  For such a scenario, there is a flag that relaxes consistency checks.
  *
- *  @param useIrFakeOverrideBuilder enables creation of fake-overrides using IR f/o generator instead of FIR2IR one. KT-61514
+ * @param useIrFakeOverrideBuilder Enables creation of fake-overrides using the IR f/o generator instead of the FIR2IR one.
+ *  See [KT-61514](https://youtrack.jetbrains.com/issue/KT-61514).
  */
-data class Fir2IrConfiguration(
+class Fir2IrConfiguration private constructor(
     val languageVersionSettings: LanguageVersionSettings,
     val diagnosticReporter: DiagnosticReporter,
     val linkViaSignatures: Boolean,
@@ -43,4 +46,63 @@ data class Fir2IrConfiguration(
     val expectActualTracker: ExpectActualTracker?,
     val allowNonCachedDeclarations: Boolean,
     val useIrFakeOverrideBuilder: Boolean,
-)
+) {
+
+    companion object {
+        fun forJvmCompilation(
+            compilerConfiguration: CompilerConfiguration,
+            diagnosticReporter: DiagnosticReporter,
+        ): Fir2IrConfiguration =
+            Fir2IrConfiguration(
+                languageVersionSettings = compilerConfiguration.languageVersionSettings,
+                diagnosticReporter = diagnosticReporter,
+                linkViaSignatures = compilerConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
+                evaluatedConstTracker = compilerConfiguration.putIfAbsent(
+                    CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
+                    EvaluatedConstTracker.create(),
+                ),
+                inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+                expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
+                allowNonCachedDeclarations = false,
+                useIrFakeOverrideBuilder = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
+            )
+
+        fun forKlibCompilation(
+            compilerConfiguration: CompilerConfiguration,
+            diagnosticReporter: DiagnosticReporter,
+            linkViaSignatures: Boolean = false, // FIXME(KT-64809): This parameter is only used in irText tests, we need to remove it.
+        ): Fir2IrConfiguration =
+            Fir2IrConfiguration(
+                languageVersionSettings = compilerConfiguration.languageVersionSettings,
+                diagnosticReporter = diagnosticReporter,
+                linkViaSignatures = linkViaSignatures,
+                evaluatedConstTracker = compilerConfiguration.putIfAbsent(
+                    CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
+                    EvaluatedConstTracker.create(),
+                ),
+                inlineConstTracker = null,
+                expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
+                allowNonCachedDeclarations = false,
+                useIrFakeOverrideBuilder = true,
+            )
+
+        fun forAnalysisApi(
+            compilerConfiguration: CompilerConfiguration,
+            languageVersionSettings: LanguageVersionSettings,
+            diagnosticReporter: DiagnosticReporter,
+        ): Fir2IrConfiguration =
+            Fir2IrConfiguration(
+                languageVersionSettings = languageVersionSettings,
+                diagnosticReporter = diagnosticReporter,
+                linkViaSignatures = false,
+                evaluatedConstTracker = compilerConfiguration.putIfAbsent(
+                    CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
+                    EvaluatedConstTracker.create(),
+                ),
+                inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+                expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
+                allowNonCachedDeclarations = true,
+                useIrFakeOverrideBuilder = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
+            )
+    }
+}
