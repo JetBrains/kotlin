@@ -17122,6 +17122,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("assignmentUsingIncompletePCLACall.kt")
+                public void testAssignmentUsingIncompletePCLACall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/assignmentUsingIncompletePCLACall.kt");
+                }
+
+                @Test
                 @TestMetadata("bothOuterAndProperConstraints.kt")
                 public void testBothOuterAndProperConstraints() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/bothOuterAndProperConstraints.kt");
@@ -17392,6 +17398,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("nestedLambdasWithOverloadResolutionByReturnType.kt")
+                public void testNestedLambdasWithOverloadResolutionByReturnType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdasWithOverloadResolutionByReturnType.kt");
+                }
+
+                @Test
                 @TestMetadata("newTvFromLamdaAreNotCountedAsProper.kt")
                 public void testNewTvFromLamdaAreNotCountedAsProper() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/newTvFromLamdaAreNotCountedAsProper.kt");
@@ -17419,6 +17431,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
                 public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
+                }
+
+                @Test
+                @TestMetadata("singleBranchConditionLastStatementInLambda.kt")
+                public void testSingleBranchConditionLastStatementInLambda() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/singleBranchConditionLastStatementInLambda.kt");
                 }
 
                 @Test
