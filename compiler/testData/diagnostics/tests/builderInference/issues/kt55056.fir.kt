@@ -2,10 +2,10 @@
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
-    val buildee = <!NEW_INFERENCE_ERROR!>build {
+    val buildee = build {
         setTypeVariable(TargetType())
-        consumeDifferentType(extensionReplaceOutProjectedTypeVariable(DifferentType()))
-    }<!>
+        consumeDifferentType(<!ARGUMENT_TYPE_MISMATCH!>extensionReplaceOutProjectedTypeVariable(DifferentType())<!>)
+    }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
     checkExactType<Buildee<TargetType>>(buildee)

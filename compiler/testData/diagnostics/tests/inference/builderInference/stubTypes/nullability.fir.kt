@@ -25,27 +25,27 @@ fun <R1 : R2, R2> build4(x: R2, block: TestInterface<R1>.() -> Unit): R1 = TODO(
 fun test(a: String?) {
     val ret1 = build {
         emit(1)
-        get()<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
+        get()<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>("")
         val x = get()
-        x<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
+        x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>("")
         x <!USELESS_ELVIS!>?: 1<!>
         x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         ""
     }
     val ret2 = build2 {
         emit(1)
-        get()<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
+        get()<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>("")
         val x = get()
-        x<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
+        x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>("")
         x <!USELESS_ELVIS!>?: 1<!>
         x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         ""
     }
     val ret3 = build3 {
         emit(1)
-        get()<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
+        get()<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>("")
         val x = get()
-        x<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
+        x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>("")
         x <!USELESS_ELVIS!>?: 1<!>
         x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         ""
