@@ -24,13 +24,14 @@ fun Test(%composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     val foo = <block>{
+      val tmp0_remember%arg%0 = CInt(%composer, 0)
       %composer.startReplaceableGroup(<>)
       sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
-      val tmp0_group = %composer.cache(%composer.changed(CInt(%composer, 0))) {
+      val tmp1_group = %composer.cache(%composer.changed(tmp0_remember%arg%0)) {
         Foo()
       }
       %composer.endReplaceableGroup()
-      tmp0_group
+      tmp1_group
     }
     if (isTraceInProgress()) {
       traceEventEnd()
