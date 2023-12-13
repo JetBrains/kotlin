@@ -121,13 +121,13 @@ private fun externrefToDouble(ref: ExternalInterfaceType): Double =
 private fun intToExternref(x: Int): JsNumber =
     js("x")
 
-private fun longToExternref(x: Long): ExternalInterfaceType =
+private fun longToExternref(x: Long): JsBigInt =
     js("x")
 
-private fun booleanToExternref(x: Boolean): ExternalInterfaceType =
+private fun booleanToExternref(x: Boolean): JsBoolean =
     js("x")
 
-private fun floatToExternref(x: Float): ExternalInterfaceType =
+private fun floatToExternref(x: Float): JsNumber =
     js("x")
 
 private fun doubleToExternref(x: Double): JsNumber =
@@ -368,7 +368,7 @@ private fun kotlinUShortToJsNumberUnsafe(x: Int): JsNumber =
 private fun kotlinUIntToJsNumberUnsafe(x: Int): JsNumber =
     js("x >>> 0")
 
-private fun kotlinULongToJsBigIntUnsafe(x: Long): ExternalInterfaceType =
+private fun kotlinULongToJsBigIntUnsafe(x: Long): JsBigInt =
     js("x & 0xFFFFFFFFFFFFFFFFn")
 
 internal fun kotlinUByteToJsNumber(x: UByte): JsNumber =
@@ -380,25 +380,25 @@ internal fun kotlinUShortToJsNumber(x: UShort): JsNumber =
 internal fun kotlinUIntToJsNumber(x: UInt): JsNumber =
     kotlinUIntToJsNumberUnsafe(x.toInt())
 
-internal fun kotlinULongToJsBigInt(x: ULong): ExternalInterfaceType =
+internal fun kotlinULongToJsBigInt(x: ULong): JsBigInt =
     kotlinULongToJsBigIntUnsafe(x.toLong())
 
-internal fun kotlinLongToExternRefAdapter(x: Long): ExternalInterfaceType =
+internal fun kotlinLongToExternRefAdapter(x: Long): JsBigInt =
     longToExternref(x)
 
-internal fun kotlinFloatToExternRefAdapter(x: Float): ExternalInterfaceType =
+internal fun kotlinFloatToExternRefAdapter(x: Float): JsNumber =
     floatToExternref(x)
 
 internal fun kotlinDoubleToExternRefAdapter(x: Double): JsNumber =
     doubleToExternref(x)
 
-internal fun kotlinByteToExternRefAdapter(x: Byte): ExternalInterfaceType =
+internal fun kotlinByteToExternRefAdapter(x: Byte): JsNumber =
     intToExternref(x.toInt())
 
-internal fun kotlinShortToExternRefAdapter(x: Short): ExternalInterfaceType =
+internal fun kotlinShortToExternRefAdapter(x: Short): JsNumber =
     intToExternref(x.toInt())
 
-internal fun kotlinCharToExternRefAdapter(x: Char): ExternalInterfaceType =
+internal fun kotlinCharToExternRefAdapter(x: Char): JsNumber =
     intToExternref(x.code)
 
 internal fun newJsArray(): ExternalInterfaceType =
