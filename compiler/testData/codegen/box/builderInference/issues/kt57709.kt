@@ -2,7 +2,8 @@
 // WITH_STDLIB
 
 // IGNORE_LIGHT_ANALYSIS
-// IGNORE_BACKEND: ANY
+// IGNORE_BACKEND_K1: ANY
+// TARGET_BACKEND: JVM
 // REASON: red code (see corresponding diagnostic test)
 
 var result = ""
