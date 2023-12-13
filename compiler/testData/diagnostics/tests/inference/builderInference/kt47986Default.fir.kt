@@ -7,6 +7,6 @@ fun <K> Foo<K>.bar(x: Int = 1) {}
 
 fun main() {
     val x = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildFoo<!> {
-        bar()
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>()
     }
 }
