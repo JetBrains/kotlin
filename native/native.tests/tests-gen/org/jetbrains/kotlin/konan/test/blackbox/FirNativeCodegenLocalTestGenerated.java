@@ -432,6 +432,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
         }
 
         @Test
+        @TestMetadata("forUntilWithStep.kt")
+        public void testForUntilWithStep() throws Exception {
+            runTest("native/native.tests/testData/codegen/bce/forUntilWithStep.kt");
+        }
+
+        @Test
         @TestMetadata("forWithIndex.kt")
         public void testForWithIndex() throws Exception {
             runTest("native/native.tests/testData/codegen/bce/forWithIndex.kt");

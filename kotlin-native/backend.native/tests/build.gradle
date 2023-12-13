@@ -343,21 +343,6 @@ standaloneTest("object_globalInitializer") {
     source = "codegen/object/globalInitializer.kt"
 }
 
-tasks.register("check_type", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/check_type.kt"
-}
-
-tasks.register("safe_cast", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/safe_cast.kt"
-}
-
-tasks.register("typealias1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/typealias1.kt"
-}
-
 tasks.register("aritmetic", KonanLocalTest) {
     source = "codegen/function/arithmetic.kt"
 }
@@ -465,133 +450,6 @@ standaloneTest("unreachable_statement_after_return") {
     flags = ["-g", "-entry", "codegen.function.unreachable_statement_after_return.main"]
     source = "codegen/function/unreachableStatementAfterReturn.kt"
     useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_types", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_types.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_overflow", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_overflow.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_errors", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_errors.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_empty_range", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_empty_range.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_nested", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_nested.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_coroutines", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_coroutines.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_let_with_nullable", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_let_with_nullable.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_call_order", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_call_order.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_array_indices", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_array_indices.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_array", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_array.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_array_nested", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_array_nested.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_array_side_effects", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_array_side_effects.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_array_break_continue", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_array_break_continue.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_array_mutation", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_array_mutation.kt"
-    useGoldenData = true
-}
-
-tasks.register("codegen_controlflow_for_loops_array_nullable", KonanLocalTest) {
-    source = "codegen/controlflow/for_loops_array_nullable.kt"
-    useGoldenData = true
-}
-
-tasks.register("local_variable", KonanLocalTest) {
-    source = "codegen/basics/local_variable.kt"
-}
-
-tasks.register("canonical_name", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/canonical_name.kt"
-}
-
-tasks.register("cast_simple", KonanLocalTest) {
-    source = "codegen/basics/cast_simple.kt"
-}
-
-tasks.register("cast_null", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/cast_null.kt"
-}
-
-tasks.register("unchecked_cast1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/unchecked_cast1.kt"
-}
-
-tasks.register("unchecked_cast2", KonanLocalTest) {
-    enabled = false
-    useGoldenData = true
-    source = "codegen/basics/unchecked_cast2.kt"
-}
-
-tasks.register("unchecked_cast3", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/unchecked_cast3.kt"
-}
-
-tasks.register("unchecked_cast4", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/unchecked_cast4.kt"
-}
-
-tasks.register("null_check", KonanLocalTest) {
-    source = "codegen/basics/null_check.kt"
-}
-
-tasks.register("array_to_any", KonanLocalTest) {
-    source = "codegen/basics/array_to_any.kt"
 }
 
 standaloneTest("runtime_basic_init") {
@@ -850,21 +708,6 @@ standaloneTest("leakWorker") {
 
 standaloneTest("leakMemoryWithWorkerTermination") {
     source = "runtime/workers/leak_memory_with_worker_termination.kt"
-}
-
-tasks.register("superFunCall", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/superFunCall.kt"
-}
-
-tasks.register("superGetterCall", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/superGetterCall.kt"
-}
-
-tasks.register("superSetterCall", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/superSetterCall.kt"
 }
 
 tasks.register("enum0", KonanLocalTest) {
@@ -1232,113 +1075,6 @@ standaloneTest("initializers_static") {
     flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative', "-tr"]
 }
 
-tasks.register("arithmetic_basic", KonanLocalTest) {
-    source = "codegen/arithmetic/basic.kt"
-}
-
-tasks.register("arithmetic_division", KonanLocalTest) {
-    source = "codegen/arithmetic/division.kt"
-}
-
-tasks.register("arithmetic_github1856", KonanLocalTest) {
-    source = "codegen/arithmetic/github1856.kt"
-}
-
-tasks.register("bridges_test0", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test0.kt"
-}
-
-tasks.register("bridges_test1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test1.kt"
-}
-
-tasks.register("bridges_test2", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test2.kt"
-}
-
-tasks.register("bridges_test3", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test3.kt"
-}
-
-tasks.register("bridges_test4", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test4.kt"
-}
-
-tasks.register("bridges_test5", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test5.kt"
-}
-
-tasks.register("bridges_test6", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test6.kt"
-}
-
-tasks.register("bridges_test7", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test7.kt"
-}
-
-tasks.register("bridges_test8", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test8.kt"
-}
-
-tasks.register("bridges_test9", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test9.kt"
-}
-
-tasks.register("bridges_test10", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test10.kt"
-}
-
-tasks.register("bridges_test11", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test11.kt"
-}
-
-tasks.register("bridges_test12", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test12.kt"
-}
-
-tasks.register("bridges_test13", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test13.kt"
-}
-
-tasks.register("bridges_test14", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test14.kt"
-}
-
-tasks.register("bridges_test15", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test15.kt"
-}
-
-tasks.register("bridges_test16", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test16.kt"
-}
-
-tasks.register("bridges_test17", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test17.kt"
-}
-
-tasks.register("bridges_test18", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/test18.kt"
-}
-
 linkTest("bridges_linkTest") {
     useGoldenData = true
     source = "codegen/bridges/linkTest_main.kt"
@@ -1351,52 +1087,10 @@ linkTest("bridges_linkTest2") {
     lib = "codegen/bridges/linkTest2_lib.kt"
 }
 
-tasks.register("bridges_special", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/bridges/special.kt"
-}
-
-tasks.register("bridges_specialGeneric", KonanLocalTest) {
-    source = "codegen/bridges/specialGeneric.kt"
-}
-
-tasks.register("bridges_nativePointed", KonanLocalTest) {
-    source = "codegen/bridges/nativePointed.kt"
-}
-
-tasks.register("returnTypeSignature", KonanLocalTest) {
-    source = "codegen/bridges/returnTypeSignature.kt"
-}
-
-tasks.register("classDelegation_method", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/classDelegation/method.kt"
-}
-
-tasks.register("classDelegation_property", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/classDelegation/property.kt"
-}
-
-tasks.register("classDelegation_generic", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/classDelegation/generic.kt"
-}
-
-tasks.register("classDelegation_withBridge", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/classDelegation/withBridge.kt"
-}
-
 linkTest("classDelegation_linkTest") {
     useGoldenData = true
     source = "codegen/classDelegation/linkTest_main.kt"
     lib = "codegen/classDelegation/linkTest_lib.kt"
-}
-
-standaloneTest("contracts") {
-    flags = [ '-opt-in=kotlin.RequiresOptIn', '-tr' ]
-    source = "codegen/contracts/contracts.kt"
 }
 
 tasks.register("delegatedProperty_simpleVal", KonanLocalTest) {
@@ -1563,254 +1257,14 @@ tasks.register("ktype_nonReified", KonanLocalTest) {
     source = "codegen/ktype/nonReified.kt"
 }
 
-tasks.register("associatedObjects1", KonanLocalTest) {
-    source = "codegen/associatedObjects/associatedObjects1.kt"
-}
-
-tasks.register("coroutines_simple", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/simple.kt"
-}
-
-tasks.register("coroutines_degenerate1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/degenerate1.kt"
-}
-
-tasks.register("coroutines_degenerate2", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/degenerate2.kt"
-}
-
-tasks.register("coroutines_withReceiver", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/withReceiver.kt"
-}
-
-tasks.register("coroutines_correctOrder1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/correctOrder1.kt"
-}
-
-tasks.register("coroutines_controlFlow_chain", KonanLocalTest) {
-    source = "codegen/coroutines/controlFlow_chain.kt"
-}
-
-tasks.register("coroutines_controlFlow_if1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_if1.kt"
-}
-
-tasks.register("coroutines_controlFlow_if2", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_if2.kt"
-}
-
-tasks.register("coroutines_controlFlow_finally1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_finally1.kt"
-}
-
-tasks.register("coroutines_controlFlow_finally2", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_finally2.kt"
-}
-
-tasks.register("coroutines_controlFlow_finally3", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_finally3.kt"
-}
-
-tasks.register("coroutines_controlFlow_finally4", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_finally4.kt"
-}
-
-tasks.register("coroutines_controlFlow_finally5", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_finally5.kt"
-}
-
-tasks.register("coroutines_controlFlow_finally6", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_finally6.kt"
-}
-
-tasks.register("coroutines_controlFlow_finally7", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_finally7.kt"
-}
-
-tasks.register("coroutines_controlFlow_inline1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_inline1.kt"
-}
-
-tasks.register("coroutines_controlFlow_inline2", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_inline2.kt"
-}
-
-tasks.register("coroutines_controlFlow_inline3", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_inline3.kt"
-}
-
-tasks.register("coroutines_controlFlow_tryCatch1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_tryCatch1.kt"
-}
-
-tasks.register("coroutines_controlFlow_tryCatch2", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_tryCatch2.kt"
-}
-
-tasks.register("coroutines_controlFlow_tryCatch3", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_tryCatch3.kt"
-}
-
-tasks.register("coroutines_controlFlow_tryCatch4", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_tryCatch4.kt"
-}
-
-tasks.register("coroutines_controlFlow_tryCatch5", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_tryCatch5.kt"
-}
-
-tasks.register("coroutines_controlFlow_while1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_while1.kt"
-}
-
-tasks.register("coroutines_controlFlow_while2", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/controlFlow_while2.kt"
-}
-
-tasks.register("coroutines_returnsNothing1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/returnsNothing1.kt"
-}
-
-tasks.register("coroutines_returnsUnit1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/returnsUnit1.kt"
-}
-
-tasks.register("coroutines_coroutineContext1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/coroutineContext1.kt"
-}
-
-tasks.register("coroutines_coroutineContext2", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/coroutineContext2.kt"
-}
-
-tasks.register("coroutines_anonymousObject", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/anonymousObject.kt"
-}
-
-tasks.register("coroutines_functionReference_simple", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/functionReference_simple.kt"
-}
-
-tasks.register("coroutines_functionReference_eqeq_name", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/functionReference_eqeq_name.kt"
-}
-
-tasks.register("coroutines_functionReference_invokeAsFunction", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/functionReference_invokeAsFunction.kt"
-}
-
-tasks.register("coroutines_functionReference_lambdaAsSuspendLambda", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/functionReference_lambdaAsSuspendLambda.kt"
-}
-
-tasks.register("coroutines_kt41394", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/kt41394.kt"
-}
-
-tasks.register("coroutines_inheritance", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/coroutines/inheritance.kt"
-}
-
-standaloneTest('coroutines_suspendConversion') {
-    useGoldenData = true
-    source = "codegen/coroutines/suspendConversion.kt"
-    flags = ['-XXLanguage:+SuspendConversion']
-}
-
 tasks.register("stack_array", KonanLocalTest) {
     useGoldenData = true
     source = "codegen/escapeAnalysis/stack_array.kt"
 }
 
-tasks.register("if_else", KonanLocalTest) {
-    source = "codegen/branching/if_else.kt"
-}
-
 tasks.register("immutable_binary_blob_in_lambda", KonanLocalTest) {
     source = "lower/immutable_blob_in_lambda.kt"
     useGoldenData = true
-}
-
-tasks.register("when2", KonanLocalTest) {
-    source = "codegen/branching/when2.kt"
-}
-
-tasks.register("when5", KonanLocalTest) {
-    source = "codegen/branching/when5.kt"
-}
-
-tasks.register("when6", KonanLocalTest) {
-    source = "codegen/branching/when6.kt"
-}
-
-tasks.register("when7", KonanLocalTest) {
-    source = "codegen/branching/when7.kt"
-}
-
-tasks.register("when8", KonanLocalTest) {
-    source = "codegen/branching/when8.kt"
-    useGoldenData = true
-}
-
-tasks.register("when9", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/branching/when9.kt"
-}
-
-tasks.register("when_through", KonanLocalTest) {
-    source = "codegen/branching/when_through.kt"
-}
-
-tasks.register("advanced_when2", KonanLocalTest) {
-    source = "codegen/branching/advanced_when2.kt"
-}
-
-tasks.register("advanced_when5", KonanLocalTest) {
-    source = "codegen/branching/advanced_when5.kt"
-}
-
-tasks.register("when_with_try1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/branching/when_with_try1.kt"
-}
-
-tasks.register("arraysForLoops", KonanLocalTest) {
-    source = "codegen/bce/arraysForLoops.kt"
 }
 
 tasks.register("bool_yes", KonanLocalTest) {
@@ -1929,101 +1383,6 @@ tasks.register("throw0", KonanLocalTest) {
 tasks.register("statements0", KonanLocalTest) {
     useGoldenData = true
     source = "runtime/basic/statements0.kt"
-}
-
-standaloneTest("annotations0") {
-    source = "codegen/annotations/annotations0.kt"
-    flags = ['-tr']
-}
-
-tasks.register("boxing0", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing0.kt"
-}
-
-tasks.register("boxing1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing1.kt"
-}
-
-tasks.register("boxing2", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing2.kt"
-}
-
-tasks.register("boxing3", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing3.kt"
-}
-
-tasks.register("boxing4", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing4.kt"
-}
-
-tasks.register("boxing5", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing5.kt"
-}
-
-tasks.register("boxing6", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing6.kt"
-}
-
-tasks.register("boxing7", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing7.kt"
-}
-
-tasks.register("boxing8", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing8.kt"
-}
-
-tasks.register("boxing9", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing9.kt"
-}
-
-tasks.register("boxing10", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing10.kt"
-}
-
-tasks.register("boxing11", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing11.kt"
-}
-
-tasks.register("boxing12", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing12.kt"
-}
-
-tasks.register("boxing13", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing13.kt"
-}
-
-tasks.register("boxing14", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing14.kt"
-}
-
-tasks.register("boxing15", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/boxing15.kt"
-}
-
-tasks.register("kt53100_casts", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/kt53100_casts.kt"
-}
-
-tasks.register("boxCache0", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/boxing/box_cache0.kt"
 }
 
 tasks.register("interface0", KonanLocalTest) {
@@ -2316,21 +1675,6 @@ tasks.register("try4", KonanLocalTest) {
     source = "codegen/try/try4.kt"
 }
 
-tasks.register("unreachable1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/controlflow/unreachable1.kt"
-}
-
-tasks.register("break_continue", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/controlflow/break.kt"
-}
-
-tasks.register("break1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/controlflow/break1.kt"
-}
-
 standaloneTest("devirtualization_lateinitInterface") {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     useGoldenData = true
@@ -2377,11 +1721,6 @@ tasks.register("interfaceCallsNCasts_diamond", KonanLocalTest) {
     source = "codegen/interfaceCallsNCasts/diamond.kt"
 }
 
-tasks.register("spread_operator_0", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/spread_operator_0.kt"
-}
-
 tasks.register("main_exception", KonanLocalTest) {
     outputChecker = { s -> s.contains("kotlin.Error: Hello!") }
     expectedExitStatus = 1
@@ -2416,15 +1755,6 @@ tasks.register("initializers1", KonanLocalTest) {
     source = "runtime/basic/initializers1.kt"
 }
 
-
-tasks.register("concatenation", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/concatenation.kt"
-}
-
-tasks.register("const_infinity", KonanLocalTest) {
-    source = "codegen/basics/const_infinity.kt"
-}
 
 tasks.register("lambda1", KonanLocalTest) {
     useGoldenData = true
@@ -2563,11 +1893,6 @@ tasks.register("initializers7", KonanLocalTest) {
 
 tasks.register("initializers8", KonanLocalTest) {
     source = "runtime/basic/initializers8.kt"
-}
-
-tasks.register("expression_as_statement", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/expression_as_statement.kt"
 }
 
 tasks.register("codegen_escapeAnalysis_zeroOutObjectOnAlloc", KonanLocalTest) {
@@ -2715,34 +2040,6 @@ standaloneTest("array_out_of_memory") {
             outputChecker = { s -> s.contains("Out of memory trying to allocate") }
             break;
     }
-}
-
-tasks.register("unit1", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/unit1.kt"
-}
-
-tasks.register("unit2", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/unit2.kt"
-}
-
-tasks.register("unit3", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/unit3.kt"
-}
-
-tasks.register("unit4", KonanLocalTest) {
-    useGoldenData = true
-    source = "codegen/basics/unit4.kt"
-}
-
-tasks.register("kt42000_1", KonanLocalTest) {
-    source = "codegen/basics/k42000_1.kt"
-}
-
-tasks.register("kt42000_2", KonanLocalTest) {
-    source = "codegen/basics/k42000_2.kt"
 }
 
 tasks.register("inline0", KonanLocalTest) {
