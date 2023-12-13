@@ -12,16 +12,6 @@ import kotlin.reflect.*
 annotation class Associated1(val kClass: KClass<*>)
 
 @OptIn(ExperimentalAssociatedObjects::class)
-@AssociatedObjectKey
-@Retention(AnnotationRetention.BINARY)
-annotation class Associated2(val kClass: KClass<*>)
-
-@OptIn(ExperimentalAssociatedObjects::class)
-@AssociatedObjectKey
-@Retention(AnnotationRetention.BINARY)
-annotation class Associated3(val kClass: KClass<*>)
-
-@OptIn(ExperimentalAssociatedObjects::class)
 fun box(): String {
     val i1 = I1ImplHolder::class.findAssociatedObject<Associated1>()!! as I1
     assertEquals(42, i1.foo())
