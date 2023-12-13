@@ -5,7 +5,7 @@
 fun test() {
     val buildee = build {
         setTypeVariable(Any())
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>consumeBuildeeReceiver<!>()
+        consumeBuildeeReceiver()
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
