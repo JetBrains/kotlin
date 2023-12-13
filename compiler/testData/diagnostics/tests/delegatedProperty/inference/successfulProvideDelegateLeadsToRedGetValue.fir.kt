@@ -1,6 +1,6 @@
 // ISSUE: KT-61077
 
-val test: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>materializeDelegate()<!>
+val test: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>materializeDelegate()<!>
 
 fun <T: CharSequence> materializeDelegate(): Box<T> = TODO()
 
