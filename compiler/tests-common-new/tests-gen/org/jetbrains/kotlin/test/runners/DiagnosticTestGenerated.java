@@ -24485,6 +24485,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt64166.kt")
+            public void testKt64166() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/kt64166.kt");
+            }
+
+            @Test
             @TestMetadata("manyImplMemberNotImplemented.kt")
             public void testManyImplMemberNotImplemented() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/manyImplMemberNotImplemented.kt");

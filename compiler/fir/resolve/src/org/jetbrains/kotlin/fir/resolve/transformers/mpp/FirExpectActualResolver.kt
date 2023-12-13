@@ -37,6 +37,7 @@ object FirExpectActualResolver {
                     var actualContainingClass: FirRegularClassSymbol? = null
                     var expectContainingClass: FirRegularClassSymbol? = null
                     val candidates = when {
+                        callableId.isLocal -> return emptyMap()
                         classId != null -> {
                             actualContainingClass = useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)
                                 ?.fullyExpandedClass(useSiteSession)
@@ -49,7 +50,6 @@ object FirExpectActualResolver {
                                 else -> expectContainingClass?.getMembersForExpectClass(actualSymbol.name)
                             }.orEmpty()
                         }
-                        callableId.isLocal -> return emptyMap()
                         else -> {
                             val scope = FirPackageMemberScope(callableId.packageName, useSiteSession, useSiteSession.dependenciesSymbolProvider)
                             mutableListOf<FirCallableSymbol<*>>().apply {
