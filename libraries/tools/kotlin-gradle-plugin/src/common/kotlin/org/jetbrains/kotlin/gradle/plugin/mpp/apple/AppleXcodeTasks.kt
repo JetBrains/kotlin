@@ -21,12 +21,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
-import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
+import org.jetbrains.kotlin.gradle.utils.runCommand
+import org.jetbrains.kotlin.incremental.createDirectory
+import org.jetbrains.kotlin.incremental.deleteRecursivelyOrThrow
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
@@ -149,6 +152,8 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     val envSign = XcodeEnvironment.sign
 
     val frameworkTaskName = lowerCamelCaseName(AppleXcodeTasks.embedAndSignTaskPrefix, framework.namePrefix, AppleXcodeTasks.embedAndSignTaskPostfix)
+    val spmIntegrationTask = registerSPMPackageGenerationFromKlibs(framework)
+    registerSyntheticProjectBuildWithSPM().dependsOn(spmIntegrationTask)
 
     if (envBuildType == null || envTargets.isEmpty() || envEmbeddedFrameworksDir == null || envFrameworkSearchDir == null) {
         locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->
@@ -194,6 +199,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     embedAndSignTask.configure { task ->
         val frameworkFile = framework.outputFile
         task.dependsOn(assembleTask)
+        task.dependsOn(spmIntegrationTask)
         task.sourceFramework.fileProvider(appleFrameworkDir(envFrameworkSearchDir).map { it.resolve(frameworkFile.name) })
         task.destinationDirectory.set(envEmbeddedFrameworksDir)
         if (envSign != null) {
@@ -205,6 +211,126 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
                     it.commandLine("codesign", "--force", "--sign", envSign, "--", binary)
                 }
             }
+        }
+    }
+}
+
+private fun Project.registerSPMPackageGenerationFromKlibs(framework: Framework): TaskProvider<*> {
+    val frameworkBuildType = framework.buildType
+    val frameworkTarget = framework.target
+
+    val spmPackageGenTaskName = lowerCamelCaseName(
+        "generate",
+        framework.namePrefix, // Exported targets depend on `binaries.framework { export("") block }`
+        frameworkBuildType.getName(), // FIXME: Infer from build settings
+        "SPMPackage"
+    )
+
+    return locateOrRegisterTask<DefaultTask>(spmPackageGenTaskName) { task ->
+        task.group = BasePlugin.BUILD_GROUP
+        task.description = "Generates $frameworkBuildType ${frameworkTarget.name} SPM Package"
+        task.doLast {
+            val frameworkName = framework.outputFile.nameWithoutExtension
+            val spmSupportRoot = project.buildDir.resolve("SPMPackage")
+            if (spmSupportRoot.exists()) {
+                spmSupportRoot.deleteRecursivelyOrThrow()
+            }
+            spmSupportRoot.createDirectory()
+
+            val spmPackageRoot = spmSupportRoot.resolve(frameworkName)
+            spmPackageRoot.createDirectory()
+            val manifest = spmPackageRoot.resolve("Package.swift")
+            val sources = spmPackageRoot.resolve("Sources")
+            sources.createDirectory()
+
+            // FIXME: Transitive exportLibraries?
+            val modules = (listOf(frameworkName) + framework.linkTask.exportLibraries
+                .filter { it.extension == "klib" }
+                // FIXME: Check for exists() doesn't work because klibs don't exist at this point
+//                .filterKlibsPassedToCompiler()
+                .map { it.nameWithoutExtension })
+                .map { it + "_KotlinToSwift" }
+            modules.forEach {
+                val modulePath = sources.resolve(it)
+                modulePath.createDirectory()
+                val moduleSource = modulePath.resolve("Source.swift")
+                moduleSource.writeText(
+                    """
+                        // Swift Export's ".swift" file will be here
+                        import $frameworkName
+                        
+                        public func test() -> String {
+                            "\(Greeting().returnFromKotlin(foo: "${it}")) - ${(Int.MIN_VALUE..Int.MAX_VALUE).random()}"
+                        }
+                    """.trimIndent()
+                )
+            }
+
+            // FIXME: Specify platforms?
+            // FIXME: Dependencies graph
+            manifest.writeText("""
+                // swift-tools-version: 5.9
+                
+                import PackageDescription
+                let package = Package(
+                    name: "$frameworkName",
+                    products: [
+                        .library(
+                            name: "${frameworkName}Library",
+                            // FIXME: Kotlin import graph will be replacated as target dependencies
+                            targets: [${modules.map { "\"${it}\"" }.joinToString(", ")}]
+                        ),
+                    ],
+                    targets: [
+                        ${modules.map { ".target(name: \"${it}\")" }.joinToString(", ")}
+                    ]
+                )
+            """.trimIndent())
+        }
+    }
+}
+
+private fun Project.registerSyntheticProjectBuildWithSPM(): TaskProvider<*> {
+    return locateOrRegisterTask<DefaultTask>("buildSyntheticProjectWithSPM") { task ->
+        task.group = BasePlugin.BUILD_GROUP
+        task.description = "Builds synthetic project with SPM"
+        task.doLast {
+            val syntheticForSpm = project.buildDir.resolve("SPMPackage")
+            val syntheticProjectPath = syntheticForSpm.resolve("synthetic.xcodeproj")
+            syntheticProjectPath.mkdirs()
+            val pbxprojPath = syntheticProjectPath.resolve("project.pbxproj")
+            AppleXcodeTasks.javaClass.getResourceAsStream("/cocoapods/project.pbxproj")!!.use { resource ->
+                resource.copyTo(pbxprojPath.outputStream())
+            }
+
+            val builtProductsDirSetting = "BUILT_PRODUCTS_DIR"
+            val builtProductsDir = System.getenv(builtProductsDirSetting)
+            if (builtProductsDir.isEmpty()) {
+                error("Empty ${builtProductsDirSetting}: $builtProductsDir")
+            }
+            val buildSettings = setOf(
+                // FIXME: Use separate BUILT_PRODUCTS_DIR, pack libKotlin.a from .o files and copy only the archive
+                // FIXME: Resources?
+                "BUILT_PRODUCTS_DIR", "CONFIGURATION",
+                "ARCHS", "ONLY_ACTIVE_ARCH",
+                "OBJROOT", "SDKROOT", "SYMROOT",
+                "TARGET_DEVICE_IDENTIFIER", "TARGET_DEVICE_MODEL", "TARGET_DEVICE_OS_VERSION", "TARGET_DEVICE_PLATFORM_NAME"
+            )
+            // FIXME: Copy dynamic libraries?
+            runCommand(
+                listOf(
+                    "xcodebuild",
+                    "build",
+                    "-project", syntheticProjectPath.canonicalPath,
+                    // FIXME: Unhardcode from pbxproj
+                    "-scheme", "sharedLibrary",
+                    // FIXME: Infer destination from build settings
+                    "-destination", "generic/platform=iOS Simulator",
+                ) + System.getenv()
+                    .filter { (_, value) -> value.isNotEmpty() }
+                    .filter { (key, _) -> buildSettings.contains(key) }
+                    .map { (k, v) -> "$k=$v" }
+            )
         }
     }
 }

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,6 +24,7 @@
 		05F2820027BFF4EB00A213D9 /* macos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "macos.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		05F2821827BFF52C00A213D9 /* watchos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "watchos.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		05F2824827BFF63B00A213D9 /* tvos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tvos.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		05F2824827BFF73B00A213D9 /* shared */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = shared; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +32,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			    05F2825A27BFF65D00A213D9
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			    05F2825A27BFF65D00A213D9
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			    05F2825A27BFF65D00A213D9
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,6 +58,7 @@
 		05F281BA27BFA02500A213D9 = {
 			isa = PBXGroup;
 			children = (
+			    05F2824827BFF73B00A213D9 /* shared */,
 				05F281C627BFA08C00A213D9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,6 +90,9 @@
 			dependencies = (
 			);
 			name = "ios";
+			packageProductDependencies = (
+                05F2825A27BFF64D00A213D9 /* shared */,
+            );
 			productName = "ios";
 			productReference = 05F281E327BFA36E00A213D9 /* ios.app */;
 			productType = "com.apple.product-type.application";
@@ -149,21 +157,21 @@
 				LastUpgradeCheck = 1320;
 				TargetAttributes = {
 					05F281E227BFA36E00A213D9 = {
-						CreatedOnToolsVersion = 13.2.1;
+						CreatedOnToolsVersion = 15.0;
 					};
 					05F281FF27BFF4EB00A213D9 = {
-						CreatedOnToolsVersion = 13.2.1;
+						CreatedOnToolsVersion = 15.0;
 					};
 					05F2821727BFF52B00A213D9 = {
-						CreatedOnToolsVersion = 13.2.1;
+						CreatedOnToolsVersion = 15.0;
 					};
 					05F2824727BFF63B00A213D9 = {
-						CreatedOnToolsVersion = 13.2.1;
+						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
 			buildConfigurationList = 05F281BE27BFA02500A213D9 /* Build configuration list for PBXProject "shared" */;
-			compatibilityVersion = "Xcode 13.0";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -883,6 +891,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		05F2825A27BFF64D00A213D9 /* LocalLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = sharedLibrary;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+/* Begin PBXBuildFile section */
+		05F2825A27BFF65D00A213D9 /* LocalLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 05F2825A27BFF64D00A213D9 /* LocalLibrary */; };
+/* End PBXBuildFile section */
 	};
 	rootObject = 05F281BB27BFA02500A213D9 /* Project object */;
 }
