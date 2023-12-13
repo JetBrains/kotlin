@@ -87,12 +87,28 @@ public enum class ShortenStrategy {
         }
 
         public val defaultCallableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy = { symbol ->
-            if (symbol is KtEnumEntrySymbol) {
-                DO_NOT_SHORTEN
-            } else if (symbol is KtConstructorSymbol && symbol.containingClassIdIfNonLocal?.isNestedClass == true) {
-                SHORTEN_IF_ALREADY_IMPORTED
-            } else {
-                SHORTEN_AND_IMPORT
+            when (symbol) {
+                is KtEnumEntrySymbol -> DO_NOT_SHORTEN
+
+                is KtConstructorSymbol -> {
+                    val isNestedClassConstructor = symbol.containingClassIdIfNonLocal?.isNestedClass == true
+
+                    if (isNestedClassConstructor) {
+                        SHORTEN_IF_ALREADY_IMPORTED
+                    } else {
+                        SHORTEN_AND_IMPORT
+                    }
+                }
+
+                else -> {
+                    val isNotTopLevel = symbol.callableIdIfNonLocal?.classId != null
+
+                    if (isNotTopLevel) {
+                        SHORTEN_IF_ALREADY_IMPORTED
+                    } else {
+                        SHORTEN_AND_IMPORT
+                    }
+                }
             }
         }
     }
