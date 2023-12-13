@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
@@ -69,7 +70,10 @@ class ClassicFrontend2NativeIrConverter(
         val sourceFiles: List<KtFile> = psiFiles.values.toList()
         val translator = Psi2IrTranslator(
             configuration.languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors = false, configuration.partialLinkageConfig.isEnabled),
+            Psi2IrConfiguration(
+                ignoreErrors = CodegenTestDirectives.IGNORE_ERRORS in module.directives,
+                configuration.partialLinkageConfig.isEnabled
+            ),
             configuration.irMessageLogger::checkNoUnboundSymbols
         )
         val manglerDesc = KonanManglerDesc

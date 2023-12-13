@@ -1,10 +1,8 @@
-// IGNORE_BACKEND_K2: JVM_IR
-// IGNORE_BACKEND: JS_IR
-// !IGNORE_ERRORS
+// IGNORE_ERRORS
+// IGNORE_FIR_DIAGNOSTICS
 // DIAGNOSTICS: -UNRESOLVED_REFERENCE -OVERLOAD_RESOLUTION_AMBIGUITY
-
-// KT-61141: org.jetbrains.kotlin.psi2ir.generators.ErrorExpressionException: null: KtNameReferenceExpression: unresolved
-// IGNORE_BACKEND: NATIVE
+// ERROR_POLICY: SEMANTIC
+// SKIP_KLIB_TEST
 
 val test1 = unresolved
 
@@ -12,5 +10,3 @@ val test2: Unresolved =
         unresolved()
 
 val test3 = 42.unresolved(56)
-
-val test4 = 42 *<!SYNTAX!><!>

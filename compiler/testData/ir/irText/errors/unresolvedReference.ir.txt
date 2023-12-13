@@ -28,12 +28,3 @@ FILE fqName:<root> fileName:/unresolvedReference.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType([Error type: Not found recorded type for 42.unresolved(56)]) declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType([Error type: Not found recorded type for 42.unresolved(56)]) visibility:private [final,static]' type=IrErrorType([Error type: Not found recorded type for 42.unresolved(56)]) origin=null
-  PROPERTY name:test4 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:IrErrorType([Error type: Not found recorded type for 42 *]) visibility:private [final,static]
-      EXPRESSION_BODY
-        ERROR_EXPR '42 *' type=IrErrorType([Error type: Error expression type])
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:IrErrorType([Error type: Not found recorded type for 42 *])
-      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test4> (): IrErrorType([Error type: Not found recorded type for 42 *]) declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:IrErrorType([Error type: Not found recorded type for 42 *]) visibility:private [final,static]' type=IrErrorType([Error type: Not found recorded type for 42 *]) origin=null

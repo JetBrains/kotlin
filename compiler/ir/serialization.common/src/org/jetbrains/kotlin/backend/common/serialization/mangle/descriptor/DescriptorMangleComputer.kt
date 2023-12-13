@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.error.ErrorClassDescriptor
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
@@ -92,6 +93,10 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
             is SimpleType -> {
 
                 when (val classifier = type.constructor.declarationDescriptor) {
+                    is ErrorClassDescriptor -> {
+                        tBuilder.appendSignature(MangleConstant.ERROR_MARK)
+                        return
+                    }
                     is ClassDescriptor -> with(copy(MangleMode.FQNAME)) { classifier.visit() }
                     is TypeParameterDescriptor -> tBuilder.mangleTypeParameterReference(classifier)
                     else -> error("Unexpected classifier: $classifier")

@@ -134,6 +134,10 @@ open class FirMangleComputer(
 
     override fun mangleType(tBuilder: StringBuilder, type: ConeKotlinType, declarationSiteSession: FirSession) {
         when (type) {
+            is ConeErrorType -> {
+                tBuilder.appendSignature(MangleConstant.ERROR_MARK)
+            }
+
             is ConeLookupTagBasedType -> {
                 when (val symbol = type.lookupTag.toSymbol(declarationSiteSession)) {
                     is FirTypeAliasSymbol -> {
