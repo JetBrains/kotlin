@@ -9,3 +9,4 @@ import java.io.File
 
 val testDataDir = File("native/objcexport-header-generator/testData")
 val headersTestDataDir = testDataDir.resolve("headers")
+val baseDeclarationsDir = testDataDir.resolve("baseDeclarations")

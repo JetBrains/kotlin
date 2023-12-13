@@ -52,115 +52,14 @@ class ObjCExportTranslatorImpl(
 
     private val kotlinAnyName = namer.kotlinAnyName
 
-    override fun generateBaseDeclarations(): List<ObjCTopLevel> = buildTopLevel {
-        add {
-            objCInterface(namer.kotlinAnyName, superClass = "NSObject", members = buildMembers {
-                add { ObjCMethod(null, true, ObjCInstanceType, listOf("init"), emptyList(), listOf("unavailable")) }
-                add { ObjCMethod(null, false, ObjCInstanceType, listOf("new"), emptyList(), listOf("unavailable")) }
-                add { ObjCMethod(null, false, ObjCVoidType, listOf("initialize"), emptyList(), listOf("objc_requires_super")) }
-            })
-        }
-
-        // TODO: add comment to the header.
-        add {
-            ObjCInterfaceImpl(
-                namer.kotlinAnyName.objCName,
-                superProtocols = listOf("NSCopying"),
-                categoryName = "${namer.kotlinAnyName.objCName}Copying"
-            )
-        }
-
-        // TODO: only if appears
-        add {
-            val generics = listOf("ObjectType")
-            objCInterface(
-                namer.mutableSetName,
-                generics = generics,
-                superClass = "NSMutableSet",
-                superClassGenerics = generics
-            )
-        }
-
-        // TODO: only if appears
-        add {
-            val generics = listOf("KeyType", "ObjectType")
-            objCInterface(
-                namer.mutableMapName,
-                generics = generics,
-                superClass = "NSMutableDictionary",
-                superClassGenerics = generics
-            )
-        }
-
-        val nsErrorCategoryName = "NSError${namer.topLevelNamePrefix}KotlinException"
-        add {
-            ObjCInterfaceImpl("NSError", categoryName = nsErrorCategoryName, members = buildMembers {
-                add { ObjCProperty("kotlinException", null, ObjCNullableReferenceType(ObjCIdType), listOf("readonly")) }
-            })
-        }
-
-        genKotlinNumbers()
-    }
-
-    private fun StubBuilder<ObjCTopLevel>.genKotlinNumbers() {
-        val members = buildMembers {
-            NSNumberKind.entries.forEach {
-                add { nsNumberFactory(it, listOf("unavailable")) }
-            }
-            NSNumberKind.entries.forEach {
-                add { nsNumberInit(it, listOf("unavailable")) }
-            }
-        }
-        add {
-            objCInterface(
-                namer.kotlinNumberName,
-                superClass = "NSNumber",
-                members = members
-            )
-        }
-
-        NSNumberKind.entries.forEach {
-            if (it.mappedKotlinClassId != null) add {
-                genKotlinNumber(it.mappedKotlinClassId, it)
-            }
-        }
-    }
-
-    private fun genKotlinNumber(kotlinClassId: ClassId, kind: NSNumberKind): ObjCInterface {
-        val name = namer.numberBoxName(kotlinClassId)
-
-        val members = buildMembers {
-            add { nsNumberFactory(kind) }
-            add { nsNumberInit(kind) }
-        }
-        return objCInterface(
-            name,
-            superClass = namer.kotlinNumberName.objCName,
-            members = members
-        )
-    }
-
-    private fun nsNumberInit(kind: NSNumberKind, attributes: List<String> = emptyList()): ObjCMethod {
-        return ObjCMethod(
-            null,
-            false,
-            ObjCInstanceType,
-            listOf(kind.factorySelector),
-            listOf(ObjCParameter("value", null, kind.objCType)),
-            attributes
-        )
-    }
-
-    private fun nsNumberFactory(kind: NSNumberKind, attributes: List<String> = emptyList()): ObjCMethod {
-        return ObjCMethod(
-            null,
-            true,
-            ObjCInstanceType,
-            listOf(kind.initSelector),
-            listOf(ObjCParameter("value", null, kind.objCType)),
-            attributes
-        )
-    }
+    override fun generateBaseDeclarations(): List<ObjCTopLevel> = objCBaseDeclarations(
+        topLevelNamePrefix = namer.topLevelNamePrefix,
+        objCNameOfAny = namer.kotlinAnyName,
+        objCNameOfNumber = namer.kotlinNumberName,
+        objCNameOfMutableMap = namer.mutableMapName,
+        objCNameOfMutableSet = namer.mutableSetName,
+        objCNameForNumberBox = { classId -> namer.numberBoxName(classId) }
+    )
 
     override fun getClassIfExtension(receiverType: KotlinType): ClassDescriptor? =
         mapper.getClassIfCategory(receiverType)
