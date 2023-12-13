@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -175,7 +176,19 @@ private fun buildResultingTypeAndAdaptation(
                 contextReceivers = fir.contextReceivers.map { it.typeRef.coneType }
             ) to callableReferenceAdaptation
         }
-        is FirVariable -> createKPropertyType(fir, receiverType, returnTypeRef, candidate) to null
+        is FirVariable -> {
+            val returnType = returnTypeRef.type
+            val isMutable = fir.canBeMutableReference(candidate)
+            val propertyType = when {
+                isMutable && returnType.hasCapture() ->
+                    // capturing types in mutable property references is unsound in general
+                    context.inferenceComponents.resultTypeResolver.typeApproximator
+                        .approximateToSuperType(returnType, TypeApproximatorConfiguration.InternalTypesApproximation) as? ConeKotlinType
+                        ?: returnType
+                else -> returnType
+            }
+            createKPropertyType(receiverType, propertyType, isMutable) to null
+        }
         else -> ConeErrorType(ConeUnsupportedCallableReferenceTarget(candidate)) to null
     }
 }
@@ -480,20 +493,6 @@ class FirFakeArgumentForCallableReference(
 
 fun ConeKotlinType.isKCallableType(): Boolean {
     return this.classId == StandardClassIds.KCallable
-}
-
-private fun createKPropertyType(
-    propertyOrField: FirVariable,
-    receiverType: ConeKotlinType?,
-    returnTypeRef: FirResolvedTypeRef,
-    candidate: Candidate,
-): ConeKotlinType {
-    val propertyType = returnTypeRef.type
-    return org.jetbrains.kotlin.fir.resolve.createKPropertyType(
-        receiverType,
-        propertyType,
-        isMutable = propertyOrField.canBeMutableReference(candidate)
-    )
 }
 
 private fun FirVariable.canBeMutableReference(candidate: Candidate): Boolean {

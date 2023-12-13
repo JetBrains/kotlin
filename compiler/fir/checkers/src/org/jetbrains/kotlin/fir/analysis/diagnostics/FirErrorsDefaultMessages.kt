@@ -403,6 +403,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUTABLE_PROPERTY_WITH_CAPTURED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_PARAMETER_NOT_FOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAME_FOR_AMBIGUOUS_PARAMETER
@@ -1515,6 +1516,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE
         )
         map.put(UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS, "Class literals with empty left hand side are unsupported.")
+        map.put(MUTABLE_PROPERTY_WITH_CAPTURED_TYPE, "Captured type in mutable property reference. Usages of 'set' may lead to cast exceptions.")
 
         // Value classes
         map.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value class cannot be local or inner.")

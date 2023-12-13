@@ -2662,6 +2662,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MUTABLE_PROPERTY_WITH_CAPTURED_TYPE) { firDiagnostic ->
+        MutablePropertyWithCapturedTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NOTHING_TO_OVERRIDE) { firDiagnostic ->
         NothingToOverrideImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),

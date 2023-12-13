@@ -892,6 +892,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("lhsType")
         }
         val UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS by error<KtElement>()
+        val MUTABLE_PROPERTY_WITH_CAPTURED_TYPE by warning<PsiElement>()
     }
 
     val OVERRIDES by object : DiagnosticGroup("overrides") {

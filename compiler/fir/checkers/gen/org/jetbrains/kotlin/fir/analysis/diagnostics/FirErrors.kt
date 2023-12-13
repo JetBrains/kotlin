@@ -507,6 +507,7 @@ object FirErrors {
     val NULLABLE_TYPE_IN_CLASS_LITERAL_LHS: KtDiagnosticFactory0 by error0<KtExpression>()
     val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS: KtDiagnosticFactory1<ConeKotlinType> by error1<PsiElement, ConeKotlinType>()
     val UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS: KtDiagnosticFactory0 by error0<KtElement>()
+    val MUTABLE_PROPERTY_WITH_CAPTURED_TYPE: KtDiagnosticFactory0 by warning0<PsiElement>()
 
     // overrides
     val NOTHING_TO_OVERRIDE: KtDiagnosticFactory1<FirCallableSymbol<*>> by error1<KtModifierListOwner, FirCallableSymbol<*>>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)

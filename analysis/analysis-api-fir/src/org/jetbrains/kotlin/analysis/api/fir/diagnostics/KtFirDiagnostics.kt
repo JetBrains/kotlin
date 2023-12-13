@@ -1885,6 +1885,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = UnsupportedClassLiteralsWithEmptyLhs::class
     }
 
+    interface MutablePropertyWithCapturedType : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MutablePropertyWithCapturedType::class
+    }
+
     interface NothingToOverride : KtFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = NothingToOverride::class
         val declaration: KtCallableSymbol
