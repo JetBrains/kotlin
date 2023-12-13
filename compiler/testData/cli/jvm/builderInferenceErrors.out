@@ -1,4 +1,1 @@
-compiler/testData/cli/jvm/builderInferenceErrors.kt:6:9: error: overload resolution ambiguity between candidates: [@InlineOnly() fun println(message: Any?): Unit, @InlineOnly() fun println(message: Boolean): Unit, @InlineOnly() fun println(message: Byte): Unit, ...]
-        println(secondParameter)
-        ^
-COMPILATION_ERROR
+OK
