@@ -72,7 +72,7 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
     }
 
     override fun execute(parameters: Parameters) {
-        parameters.buildFlowServiceProperty.get().recordBuildFinished(
+        parameters.buildFlowServiceProperty.orNull?.recordBuildFinished(
             parameters.action.orNull, parameters.buildFailed.get()
         )
     }
