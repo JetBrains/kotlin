@@ -12,36 +12,23 @@ import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
 
-interface KtObjCExportNamer {
-    context(KtAnalysisSession)
-    fun getClassOrProtocolName(symbol: KtClassLikeSymbol): ObjCExportClassOrProtocolName
 
-    context(KtAnalysisSession)
-    fun getPropertyName(symbol: KtPropertySymbol): ObjCExportPropertyName
+context(KtAnalysisSession, KtObjCExportSession)
+fun KtClassLikeSymbol.getObjCClassOrProtocolName(): ObjCExportClassOrProtocolName {
+    val resolvedObjCNameAnnotation = resolveObjCNameAnnotation()
+
+    return ObjCExportClassOrProtocolName(
+        objCName = resolvedObjCNameAnnotation?.objCName ?: nameOrAnonymous.asString(),
+        swiftName = resolvedObjCNameAnnotation?.swiftName ?: nameOrAnonymous.asString()
+    )
 }
 
-fun KtObjCExportNamer(): KtObjCExportNamer {
-    return ObjCExportNamerImpl()
-}
+context(KtAnalysisSession, KtObjCExportSession)
+fun KtPropertySymbol.getObjCPropertyName(): ObjCExportPropertyName {
+    val resolveObjCNameAnnotation = resolveObjCNameAnnotation()
 
-private class ObjCExportNamerImpl : KtObjCExportNamer {
-    context(KtAnalysisSession)
-    override fun getClassOrProtocolName(symbol: KtClassLikeSymbol): ObjCExportClassOrProtocolName {
-        val resolvedObjCNameAnnotation = symbol.resolveObjCNameAnnotation()
-
-        return ObjCExportClassOrProtocolName(
-            objCName = resolvedObjCNameAnnotation?.objCName ?: symbol.nameOrAnonymous.asString(),
-            swiftName = resolvedObjCNameAnnotation?.swiftName ?: symbol.nameOrAnonymous.asString()
-        )
-    }
-
-    context(KtAnalysisSession)
-    override fun getPropertyName(symbol: KtPropertySymbol): ObjCExportPropertyName {
-        val resolveObjCNameAnnotation = symbol.resolveObjCNameAnnotation()
-
-        return ObjCExportPropertyName(
-            objCName = resolveObjCNameAnnotation?.objCName ?: symbol.name.asString(),
-            swiftName = resolveObjCNameAnnotation?.swiftName ?: symbol.name.asString()
-        )
-    }
+    return ObjCExportPropertyName(
+        objCName = resolveObjCNameAnnotation?.objCName ?: name.asString(),
+        swiftName = resolveObjCNameAnnotation?.swiftName ?: name.asString()
+    )
 }
