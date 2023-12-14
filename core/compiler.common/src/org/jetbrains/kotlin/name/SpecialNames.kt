@@ -88,6 +88,18 @@ object SpecialNames {
         return Name.special("<index_$idx>")
     }
 
+    private const val ANONYMOUS_PARAMETER_NAME_PREFIX = "anonymous parameter"
+
+    @JvmStatic
+    fun anonymousParameterName(index: Int): Name {
+        return Name.special("<$ANONYMOUS_PARAMETER_NAME_PREFIX $index>")
+    }
+
+    @JvmStatic
+    fun isAnonymousParameterName(name: Name): Boolean {
+        return name.isSpecial && name.asStringStripSpecialMarkers().startsWith(ANONYMOUS_PARAMETER_NAME_PREFIX)
+    }
+
     @JvmStatic
     fun safeIdentifier(name: Name?): Name {
         return if (name != null && !name.isSpecial) name else SAFE_IDENTIFIER_FOR_NO_NAME

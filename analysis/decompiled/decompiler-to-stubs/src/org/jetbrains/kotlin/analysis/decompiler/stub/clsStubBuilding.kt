@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
@@ -249,3 +250,11 @@ val MessageLite.annotatedCallableKind: AnnotatedCallableKind
 fun Name.ref() = StringRef.fromString(this.asString())!!
 
 fun FqName.ref() = StringRef.fromString(this.asString())!!
+
+fun computeParameterName(name: Name): Name {
+    return when {
+        name == SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
+        SpecialNames.isAnonymousParameterName(name) -> Name.identifier("_")
+        else -> name
+    }
+}

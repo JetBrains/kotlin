@@ -311,4 +311,10 @@ public class DecompiledKnmStubConsistencyFe10TestGenerated extends AbstractDecom
     public void testTypes() throws Exception {
         runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Types/");
     }
+
+    @Test
+    @TestMetadata("UnderscoreParameterName")
+    public void testUnderscoreParameterName() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/UnderscoreParameterName/");
+    }
 }

@@ -330,14 +330,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     ) {
         val parameterListStub = KotlinPlaceHolderStubImpl<KtParameterList>(parent, KtStubElementTypes.VALUE_PARAMETER_LIST)
         for ((index, valueParameterProto) in parameters.withIndex()) {
-            val paramName = when (val name = c.nameResolver.getName(valueParameterProto.name)) {
-                SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
-                else -> name
-            }
+            val parameterName = computeParameterName(c.nameResolver.getName(valueParameterProto.name))
             val hasDefaultValue = Flags.DECLARES_DEFAULT_VALUE.get(valueParameterProto.flags)
             val parameterStub = KotlinParameterStubImpl(
                 parameterListStub,
-                name = paramName.ref(),
+                name = parameterName.ref(),
                 fqName = null,
                 hasDefaultValue = hasDefaultValue,
                 hasValOrVar = false,

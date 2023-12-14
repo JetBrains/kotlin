@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
+import org.jetbrains.kotlin.analysis.decompiler.stub.computeParameterName
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -128,11 +130,8 @@ fun buildDecompiledText(
                             builder.append(descriptorRenderer.renderAnnotation(annotation))
                             builder.append(" ")
                         }
-                        val paramName = when (val name = parameterDescriptor.name) {
-                            SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
-                            else -> name
-                        }
-                        builder.append(paramName.asString()).append(": ")
+                        val parameterName = computeParameterName(parameterDescriptor.name)
+                        builder.append(parameterName.asString()).append(": ")
                             .append(descriptorRenderer.renderType(parameterDescriptor.type))
                         builder.append(")")
                         builder.append(" {").append(DECOMPILED_CODE_COMMENT).append(" }")
