@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt4
 
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
@@ -64,56 +65,63 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             }
         }
 
-        val standaloneAnalysisAPISession =
-            buildStandaloneAnalysisAPISession(classLoader = Kapt4AnalysisHandlerExtension::class.java.classLoader) {
-                @Suppress("DEPRECATION") // TODO: KT-61319 Kapt: remove usages of deprecated buildKtModuleProviderByCompilerConfiguration
-                buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
+        val projectDisposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project")
+        try {
+            val standaloneAnalysisAPISession =
+                buildStandaloneAnalysisAPISession(
+                    projectDisposable = projectDisposable,
+                    classLoader = Kapt4AnalysisHandlerExtension::class.java.classLoader) {
+                    @Suppress("DEPRECATION") // TODO: KT-61319 Kapt: remove usages of deprecated buildKtModuleProviderByCompilerConfiguration
+                    buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
 
-                registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-            }
-
-        val (module, files) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
-
-        optionsBuilder.apply {
-            projectBaseDir = projectBaseDir ?: module.project.basePath?.let(::File)
-            val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
-            compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
-            javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
-            classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
-        }
-
-        if (!optionsBuilder.checkOptions(logger, configuration)) return false
-        val options = optionsBuilder.build()
-        if (options[KaptFlag.VERBOSE]) {
-            logger.info(options.logString())
-        }
-
-        return try {
-            if (options.mode.generateStubs) {
-                generateAndSaveStubs(
-                    module,
-                    files,
-                    options,
-                    logger,
-                    configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES),
-                    configuration[CommonConfigurationKeys.METADATA_VERSION]
-                )
-
-            }
-            if (options.mode.runAnnotationProcessing) {
-                KaptContext(
-                    options,
-                    false,
-                    logger
-                ).use { context ->
-                    runProcessors(context, options)
+                    registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
                 }
-            }
-            true
 
-        } catch (e: Exception) {
-            logger.exception(e)
-            false
+            val (module, files) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
+
+            optionsBuilder.apply {
+                projectBaseDir = projectBaseDir ?: module.project.basePath?.let(::File)
+                val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
+                compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
+                javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
+                classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
+            }
+
+            if (!optionsBuilder.checkOptions(logger, configuration)) return false
+            val options = optionsBuilder.build()
+            if (options[KaptFlag.VERBOSE]) {
+                logger.info(options.logString())
+            }
+
+            return try {
+                if (options.mode.generateStubs) {
+                    generateAndSaveStubs(
+                        module,
+                        files,
+                        options,
+                        logger,
+                        configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES),
+                        configuration[CommonConfigurationKeys.METADATA_VERSION]
+                    )
+
+                }
+                if (options.mode.runAnnotationProcessing) {
+                    KaptContext(
+                        options,
+                        false,
+                        logger
+                    ).use { context ->
+                        runProcessors(context, options)
+                    }
+                }
+                true
+
+            } catch (e: Exception) {
+                logger.exception(e)
+                false
+            }
+        } finally {
+            Disposer.dispose(projectDisposable)
         }
     }
 
