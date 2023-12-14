@@ -1,36 +1,9 @@
 
 @file:OptIn(ExperimentalForeignApi::class)
-package codegen.intrinsics.interop_convert
 import kotlin.test.*
 import kotlinx.cinterop.*
 
-fun convertIntToShortOrNull(i: Int, b: Boolean): Short? = if (b) i.convert() else null
-fun narrowIntToShortOrNull(i: Int, b: Boolean): Short? = if (b) i.narrow() else null
-fun signExtendShortToIntOrNull(i: Short, b: Boolean): Int? = if (b) i.signExtend() else null
-
-@Test
-fun testNI() {
-    assertNull(convertIntToShortOrNull(0, false))
-    assertEquals(1, convertIntToShortOrNull(1, true))
-
-    assertNull(narrowIntToShortOrNull(2, false))
-    assertEquals(3, narrowIntToShortOrNull(3, true))
-
-    assertNull(signExtendShortToIntOrNull(4, false))
-    assertEquals(5, signExtendShortToIntOrNull(5, true))
-}
-
-@Test
-fun testConvertSimple() {
-    assertEquals(1, 257.convert<Byte>())
-    assertEquals(255u, (-1).convert<UByte>())
-    assertEquals(0, Long.MIN_VALUE.narrow<Int>())
-    assertEquals(-1, Long.MAX_VALUE.narrow<Short>())
-    assertEquals(-1L, (-1).signExtend<Long>())
-}
-
-@Test
-fun convertAll() {
+fun box(): String {
     val values = mutableListOf<Long>()
     for (value in listOf(
             0L,
@@ -54,6 +27,7 @@ fun convertAll() {
         testConvertAll(value.toLong())
         testConvertAll(value.toULong())
     }
+    return "OK"
 }
 
 fun testConvertAll(value: Byte) {
