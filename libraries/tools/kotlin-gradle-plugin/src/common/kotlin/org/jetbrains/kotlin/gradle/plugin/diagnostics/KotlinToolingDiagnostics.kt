@@ -679,6 +679,18 @@ object KotlinToolingDiagnostics {
         }
     }
 
+    object CInteropRequiredParametersNotSpecifiedError : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(): ToolingDiagnostic {
+            return build(
+                """
+                |For the Cinterop task, either the `definitionFile` or `packageName` parameter must be specified, however, neither has been provided.
+                |
+                |More info here: https://kotlinlang.org/docs/multiplatform-dsl-reference.html#cinterops 
+                """.trimMargin()
+            )
+        }
+    }
+
     object IncorrectNativeDependenciesWarning : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(targetName: String, compilationName: String, dependencies: List<String>) = build(
             """

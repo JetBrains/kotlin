@@ -128,6 +128,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, InternalGradlePropertiesUsageChecker)
         register(project, WasmSourceSetsNotFoundChecker)
         register(project, DuplicateSourceSetChecker)
+        register(project, CInteropInputChecker)
         register(project, IncorrectNativeDependenciesChecker)
 
         if (isMultiplatform) {

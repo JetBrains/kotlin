@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.createDirectories
@@ -91,6 +92,23 @@ class CinteropIT : KGPBaseTest() {
                     assertCommandLineArgumentsContainSequentially("-pkg", "cinterop")
                     assertCommandLineArgumentsDoNotContain("-def")
                 }
+            }
+        }
+    }
+
+    @DisplayName("KT-62800: validation fails if neither definitionFile nor packageName was specified")
+    @GradleTest
+    fun cinteropWithoutDefinitionFileAndPackageName(gradleVersion: GradleVersion) {
+        nativeProject("cinterop-with-header", gradleVersion = gradleVersion) {
+            buildGradleKts.replaceText("packageName(\"cinterop\")", "")
+            buildAndFail(":cinteropCinteropNative") {
+                assertOutputContains(
+                    """
+                    |For the Cinterop task, either the `definitionFile` or `packageName` parameter must be specified, however, neither has been provided.
+                    |
+                    |More info here: https://kotlinlang.org/docs/multiplatform-dsl-reference.html#cinterops 
+                    """.trimMargin()
+                )
             }
         }
     }
