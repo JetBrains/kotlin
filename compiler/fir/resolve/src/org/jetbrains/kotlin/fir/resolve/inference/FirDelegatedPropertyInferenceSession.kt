@@ -42,10 +42,12 @@ class FirDelegatedPropertyInferenceSession(
     private val nonTrivialParentSession: FirInferenceSession? =
         resolutionContext.bodyResolveContext.inferenceSession.takeIf { it !== DEFAULT }
 
+    private val parentConstraintSystem = ((delegateExpression as? FirResolvable)?.candidate()?.system
+        ?: (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.currentCommonSystem)
+        ?: components.session.inferenceComponents.createConstraintSystem()
     private val currentConstraintSystem =
-        (delegateExpression as? FirResolvable)?.candidate()?.system
-            ?: (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.currentCommonSystem
-            ?: components.session.inferenceComponents.createConstraintSystem()
+        prepareSharedBaseSystem(parentConstraintSystem, components.session.inferenceComponents)
+
     val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()
 
     private val unitType: ConeClassLikeType = components.session.builtinTypes.unitType.type
@@ -100,17 +102,19 @@ class FirDelegatedPropertyInferenceSession(
     private fun <T> T.isProvideDelegate() where T : FirResolvable, T : FirStatement =
         isAnyOfDelegateOperators() && (this as FirResolvable).candidate()?.callInfo?.name == OperatorNameConventions.PROVIDE_DELEGATE
 
-    override fun outerCSForCandidate(candidate: Candidate): ConstraintStorage? =
+    override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? =
         resolutionContext.bodyResolveContext.outerConstraintStorage.takeIf { it !== ConstraintStorage.Empty }
 
     fun completeSessionOrPostponeIfNonRoot(afterCompletion: (ConeSubstitutor) -> Unit) {
         check(!wasCompletionRun)
         wasCompletionRun = true
 
+        parentConstraintSystem.addOtherSystem(currentConstraintStorage)
+
         (nonTrivialParentSession as? FirBuilderInferenceSession2)?.apply {
             integrateChildSession(
                 partiallyResolvedCalls.map { it.first as FirStatement },
-                currentConstraintStorage,
+                parentConstraintSystem.currentStorage(),
                 afterCompletion,
             )
             return
@@ -118,7 +122,7 @@ class FirDelegatedPropertyInferenceSession(
 
         val completedCalls = completeCandidatesForRootSession()
 
-        val finalSubstitutor = currentConstraintSystem.asReadOnlyStorage()
+        val finalSubstitutor = parentConstraintSystem.asReadOnlyStorage()
             .buildAbstractResultingSubstitutor(components.session.typeContext) as ConeSubstitutor
 
         val callCompletionResultsWriter = callCompleter.createCompletionResultsWriter(
@@ -134,7 +138,7 @@ class FirDelegatedPropertyInferenceSession(
     }
 
     private fun completeCandidatesForRootSession(): List<FirResolvable> {
-        val commonSystem = currentConstraintSystem.apply { prepareForGlobalCompletion() }
+        val parentSystem = parentConstraintSystem.apply { prepareForGlobalCompletion() }
 
         val notCompletedCalls =
             buildList {
@@ -149,7 +153,7 @@ class FirDelegatedPropertyInferenceSession(
         resolutionContext.bodyResolveContext.withInferenceSession(DEFAULT) {
             @Suppress("UNCHECKED_CAST")
             components.callCompleter.completer.complete(
-                commonSystem.asConstraintSystemCompleterContext(),
+                parentSystem.asConstraintSystemCompleterContext(),
                 ConstraintSystemCompletionMode.FULL,
                 notCompletedCalls as List<FirStatement>,
                 unitType, resolutionContext
@@ -165,7 +169,7 @@ class FirDelegatedPropertyInferenceSession(
                     found
                 }.candidate
                 callCompleter.createPostponedArgumentsAnalyzer(resolutionContext).analyze(
-                    commonSystem,
+                    parentSystem,
                     lambdaAtom,
                     containingCandidateForLambda,
                 )
@@ -173,7 +177,7 @@ class FirDelegatedPropertyInferenceSession(
         }
 
         for (candidate in notCompletedCalls.mapNotNull { it.candidate() }) {
-            for (error in commonSystem.errors) {
+            for (error in parentSystem.errors) {
                 candidate.addDiagnostic(InferenceError(error))
             }
         }

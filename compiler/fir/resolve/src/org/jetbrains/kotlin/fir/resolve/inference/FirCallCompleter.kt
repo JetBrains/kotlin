@@ -388,6 +388,8 @@ class FirCallCompleter(
                         transformer.context.withOuterConstraintStorage(candidate.system.currentStorage()) {
                             lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
                         }
+
+                        applyResultsToMainCandidate()
                     }
                 } else {
                     transformer.context.inferenceSession.runLambdaCompletion(candidate) {

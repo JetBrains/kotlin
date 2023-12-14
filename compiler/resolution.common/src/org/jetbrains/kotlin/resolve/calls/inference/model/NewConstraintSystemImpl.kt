@@ -338,6 +338,8 @@ class NewConstraintSystemImpl(
     }
 
     private fun addOtherSystem(otherSystem: ConstraintStorage, isAddingOuter: Boolean, clearNotFixedTypeVariables: Boolean = false) {
+        runOuterCSRelatedAssertions(otherSystem, isAddingOuter)
+
         if (otherSystem.allTypeVariables.isNotEmpty()) {
             otherSystem.allTypeVariables.forEach {
                 transactionRegisterVariable(it.value)
@@ -369,7 +371,6 @@ class NewConstraintSystemImpl(
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
         storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
 
-        runOuterCSRelatedAssertions(otherSystem, isAddingOuter)
     }
 
 
@@ -383,9 +384,9 @@ class NewConstraintSystemImpl(
         require(storage.usesOuterCs)
 
         if (!isAddingOuter) {
-//            require(storage.outerSystemVariablesPrefixSize == otherSystem.outerSystemVariablesPrefixSize) {
-//                "Expected to be ${otherSystem.outerSystemVariablesPrefixSize}, but ${storage.outerSystemVariablesPrefixSize} found"
-//            }
+            require(storage.outerSystemVariablesPrefixSize == otherSystem.outerSystemVariablesPrefixSize) {
+                "Expected to be ${otherSystem.outerSystemVariablesPrefixSize}, but ${storage.outerSystemVariablesPrefixSize} found"
+            }
         }
     }
 

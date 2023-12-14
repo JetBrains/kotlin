@@ -39,7 +39,7 @@ fun test() {
         val x = get()
         <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>?.hashCode()
         x?.<!NONE_APPLICABLE!>equals<!>(1)
-        x<!UNSAFE_CALL!>.<!>equals("")
+        x.<!NONE_APPLICABLE!>equals<!>("")
     }
     val ret3 = build {
         emit(1)
@@ -59,12 +59,12 @@ fun test() {
         if (x != null) {
             <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
             x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
-            x.<!UNRESOLVED_REFERENCE!>equals<!>("")
-            x.hashCode()
-            x.toString()
-            x.test()
+            x.<!NONE_APPLICABLE!>equals<!>("")
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.hashCode()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.toString()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test()
             <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>test2()
-            x.test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test2()
         }
 
         ""
