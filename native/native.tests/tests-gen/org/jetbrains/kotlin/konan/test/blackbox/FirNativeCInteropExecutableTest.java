@@ -119,6 +119,12 @@ public class FirNativeCInteropExecutableTest extends AbstractNativeCInteropExecu
     }
 
     @Test
+    @TestMetadata("objcInstancetype")
+    public void testObjcInstancetype() throws Exception {
+        runTest("native/native.tests/testData/CInterop/executable/objcInstancetype/");
+    }
+
+    @Test
     @TestMetadata("toKString")
     public void testToKString() throws Exception {
         runTest("native/native.tests/testData/CInterop/executable/toKString/");

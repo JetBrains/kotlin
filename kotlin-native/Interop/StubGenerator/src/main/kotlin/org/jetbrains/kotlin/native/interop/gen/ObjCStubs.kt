@@ -388,7 +388,7 @@ internal abstract class ObjCContainerStubBuilder(
         methods -= superMethods
 
         // Add some special methods from super types:
-        methods += superMethods.filter { it.returnsInstancetype() || it.isInit }
+        methods += superMethods.filter { it.containsInstancetype() || it.isInit }
 
         // Add methods from adopted protocols that must be implemented according to Kotlin rules:
         if (container is ObjCClass) {
