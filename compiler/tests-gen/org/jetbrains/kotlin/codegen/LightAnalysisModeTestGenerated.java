@@ -13794,6 +13794,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/delegation/differentModules.kt");
         }
 
+        @TestMetadata("genericFunctionInGenericInterface.kt")
+        public void testGenericFunctionInGenericInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/delegation/genericFunctionInGenericInterface.kt");
+        }
+
         @TestMetadata("genericProperty.kt")
         public void testGenericProperty() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/genericProperty.kt");

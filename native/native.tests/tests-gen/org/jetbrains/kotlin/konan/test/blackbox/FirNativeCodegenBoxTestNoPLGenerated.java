@@ -14051,6 +14051,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
+            @TestMetadata("genericFunctionInGenericInterface.kt")
+            public void testGenericFunctionInGenericInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/delegation/genericFunctionInGenericInterface.kt");
+            }
+
+            @Test
             @TestMetadata("genericProperty.kt")
             public void testGenericProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/delegation/genericProperty.kt");

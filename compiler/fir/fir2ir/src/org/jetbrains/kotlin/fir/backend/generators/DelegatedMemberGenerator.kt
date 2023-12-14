@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -51,8 +53,9 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
     private val basePropertySymbols: MutableMap<IrProperty, Collection<FirPropertySymbol>> = mutableMapOf()
 
     private data class DeclarationBodyInfo(
-        val declaration: IrDeclaration,
-        val field: IrField,
+        val delegatedFirDeclaration: FirCallableDeclaration,
+        val delegatedIrDeclaration: IrDeclaration,
+        val irField: IrField,
         val delegateToSymbol: FirCallableSymbol<*>,
         val delegateToLookupTag: ConeClassLikeLookupTag?
     )
@@ -60,36 +63,36 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
     private val bodiesInfo = mutableListOf<DeclarationBodyInfo>()
 
     fun generateBodies() {
-        for ((declaration, irField, delegateToFirSymbol, delegateToLookupTag) in bodiesInfo) {
-            val delegatedDeclarationType = delegateToFirSymbol.fir.returnTypeRef.coneType.fullyExpandedType(session)
-            val callTypeCanBeNullable = Fir2IrImplicitCastInserter.typeCanBeEnhancedOrFlexibleNullable(delegatedDeclarationType)
-            when (declaration) {
+        for ((delegatedFirDeclaration, delegatedIrDeclaration, irField, delegateToFirSymbol, delegateToLookupTag) in bodiesInfo) {
+            when (delegatedIrDeclaration) {
                 is IrSimpleFunction -> {
                     val delegateToIrFunctionSymbol = declarationStorage.getIrFunctionSymbol(
-                        delegateToFirSymbol as FirNamedFunctionSymbol, delegateToLookupTag
+                        delegateToFirSymbol.unwrapCallRepresentative(delegateToLookupTag) as FirNamedFunctionSymbol,
+                        delegateToLookupTag
                     ) as? IrSimpleFunctionSymbol ?: continue
                     val body = createDelegateBody(
-                        irField, declaration, delegateToFirSymbol.fir, delegateToIrFunctionSymbol,
-                        callTypeCanBeNullable, isSetter = false
+                        irField, delegatedFirDeclaration, delegatedIrDeclaration, delegateToFirSymbol.fir, delegateToIrFunctionSymbol,
+                        isSetter = false
                     )
-                    declaration.body = body
+                    delegatedIrDeclaration.body = body
                 }
                 is IrProperty -> {
                     val delegateToIrPropertySymbol = declarationStorage.getIrPropertySymbol(
-                        delegateToFirSymbol as FirPropertySymbol, delegateToLookupTag
+                        delegateToFirSymbol.unwrapCallRepresentative(delegateToLookupTag) as FirPropertySymbol,
+                        delegateToLookupTag
                     ) as? IrPropertySymbol ?: continue
                     val delegateToGetterSymbol = declarationStorage.findGetterOfProperty(delegateToIrPropertySymbol)!!
-                    val getter = declaration.getter!!
+                    val getter = delegatedIrDeclaration.getter!!
                     getter.body = createDelegateBody(
-                        irField, getter, delegateToFirSymbol.fir, delegateToGetterSymbol,
-                        callTypeCanBeNullable, isSetter = false
+                        irField, delegatedFirDeclaration, getter, delegateToFirSymbol.fir, delegateToGetterSymbol,
+                        isSetter = false
                     )
-                    if (declaration.isVar) {
+                    if (delegatedIrDeclaration.isVar) {
                         val delegateToSetterSymbol = declarationStorage.findSetterOfProperty(delegateToIrPropertySymbol)!!
-                        val setter = declaration.setter!!
+                        val setter = delegatedIrDeclaration.setter!!
                         setter.body = createDelegateBody(
-                            irField, setter, delegateToFirSymbol.fir, delegateToSetterSymbol,
-                            callTypeCanBeNullable = false, isSetter = true
+                            irField, delegatedFirDeclaration, setter, delegateToFirSymbol.fir, delegateToSetterSymbol,
+                            isSetter = true
                         )
                     }
                 }
@@ -130,20 +133,16 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull()
                 ?: return@processAllFunctions
 
-            val irSubFunction = generateDelegatedFunction(
-                subClass, firSubClass, functionSymbol.fir
-            )
-
-            bodiesInfo += DeclarationBodyInfo(irSubFunction, irField, delegateToSymbol, delegateToLookupTag)
-            declarationStorage.cacheDelegationFunction(functionSymbol.fir, irSubFunction)
+            val delegatedFunction = functionSymbol.fir
+            val irSubFunction = generateDelegatedFunction(subClass, firSubClass, delegatedFunction)
+            bodiesInfo += DeclarationBodyInfo(delegatedFunction, irSubFunction, irField, delegateToSymbol, delegateToLookupTag)
+            declarationStorage.cacheDelegationFunction(delegatedFunction, irSubFunction)
         }
 
         subClassScope.processAllProperties { propertySymbol ->
             if (propertySymbol !is FirPropertySymbol) return@processAllProperties
 
-            val unwrapped =
-                propertySymbol.unwrapDelegateTarget(subClassLookupTag, firField)
-                    ?: return@processAllProperties
+            val unwrapped = propertySymbol.unwrapDelegateTarget(subClassLookupTag, firField) ?: return@processAllProperties
 
             val delegateToSymbol = findDelegateToSymbol(
                 unwrapped.symbol,
@@ -156,14 +155,11 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
                 delegateToScope::processOverriddenProperties
             ) ?: return@processAllProperties
 
-            val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull()
-                ?: return@processAllProperties
-
-            val irSubProperty = generateDelegatedProperty(
-                subClass, firSubClass, propertySymbol.fir
-            )
-            bodiesInfo += DeclarationBodyInfo(irSubProperty, irField, delegateToSymbol, delegateToLookupTag)
-            declarationStorage.cacheDelegatedProperty(propertySymbol.fir, irSubProperty)
+            val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull() ?: return@processAllProperties
+            val delegatedProperty = propertySymbol.fir
+            val irSubProperty = generateDelegatedProperty(subClass, firSubClass, delegatedProperty)
+            bodiesInfo += DeclarationBodyInfo(delegatedProperty, irSubProperty, irField, delegateToSymbol, delegateToLookupTag)
+            declarationStorage.cacheDelegatedProperty(delegatedProperty, irSubProperty)
         }
     }
 
@@ -174,19 +170,24 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
     ): S? {
         val unwrappedSymbol = symbol.unwrapUseSiteSubstitutionOverrides()
         var result: S? = null
-        // The purpose of this code is to find member in delegate-to scope
-        // which matches or overrides unwrappedSymbol (which is in turn taken from subclass scope).
+        /*
+         * The purpose of this code is to find member in delegate-to scope
+         * which matches or overrides unwrappedSymbol (which is in turn taken from subclass scope).
+         *
+         * Note that it's important to not unwrap call-site substitution override of the found function, because
+         *   later it will be used to compute the proper substituted type for call of this function
+         */
         processCallables(unwrappedSymbol.name) { candidateSymbol ->
             if (result != null) return@processCallables
             val unwrappedCandidateSymbol = candidateSymbol.unwrapUseSiteSubstitutionOverrides()
             if (unwrappedCandidateSymbol === unwrappedSymbol) {
-                result = unwrappedCandidateSymbol
+                result = candidateSymbol
                 return@processCallables
             }
             processOverridden(candidateSymbol) { overriddenSymbol ->
                 val unwrappedOverriddenSymbol = overriddenSymbol.unwrapUseSiteSubstitutionOverrides()
                 if (unwrappedOverriddenSymbol === unwrappedSymbol) {
-                    result = unwrappedCandidateSymbol
+                    result = candidateSymbol
                     ProcessorAction.STOP
                 } else {
                     ProcessorAction.NEXT
@@ -277,23 +278,38 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
      */
     private fun createDelegateBody(
         irField: IrField,
-        delegateFunction: IrSimpleFunction,
+        delegatedFirDeclaration: FirCallableDeclaration,
+        delegatedIrFunction: IrSimpleFunction,
         originalFirDeclaration: FirCallableDeclaration,
         originalFunctionSymbol: IrSimpleFunctionSymbol,
-        callTypeCanBeNullable: Boolean,
         isSetter: Boolean
     ): IrBlockBody {
         val startOffset = SYNTHETIC_OFFSET
         val endOffset = SYNTHETIC_OFFSET
         val body = irFactory.createBlockBody(startOffset, endOffset)
+
         val typeOrigin = when {
             originalFirDeclaration is FirPropertyAccessor && originalFirDeclaration.isSetter -> ConversionTypeOrigin.SETTER
             else -> ConversionTypeOrigin.DEFAULT
         }
 
+        val callTypeCanBeNullable: Boolean
         val callReturnType = when (isSetter) {
-            false -> originalFirDeclaration.returnTypeRef.toIrType(typeOrigin)
-            true -> irBuiltIns.unitType
+            false -> {
+                val substitution = originalFirDeclaration.typeParameters.zip(delegatedFirDeclaration.typeParameters)
+                    .map { (original, delegated) ->
+                        original.symbol to delegated.symbol.defaultType
+                    }.toMap()
+
+                val substitutor = substitutorByMap(substitution, session)
+                val substitutedType = substitutor.substituteOrSelf(originalFirDeclaration.returnTypeRef.coneType)
+                callTypeCanBeNullable = Fir2IrImplicitCastInserter.typeCanBeEnhancedOrFlexibleNullable(substitutedType)
+                substitutedType.toIrType(typeOrigin)
+            }
+            true -> {
+                callTypeCanBeNullable = false
+                irBuiltIns.unitType
+            }
         }
 
         val irCall = IrCallImpl(
@@ -310,8 +326,8 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
                 irField.type,
                 IrGetValueImpl(
                     startOffset, endOffset,
-                    delegateFunction.dispatchReceiverParameter?.type!!,
-                    delegateFunction.dispatchReceiverParameter?.symbol!!
+                    delegatedIrFunction.dispatchReceiverParameter?.type!!,
+                    delegatedIrFunction.dispatchReceiverParameter?.symbol!!
                 )
             )
 
@@ -327,16 +343,16 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             }
 
             extensionReceiver =
-                delegateFunction.extensionReceiverParameter?.let { extensionReceiver ->
+                delegatedIrFunction.extensionReceiverParameter?.let { extensionReceiver ->
                     IrGetValueImpl(startOffset, endOffset, extensionReceiver.type, extensionReceiver.symbol)
                 }
-            delegateFunction.valueParameters.forEach {
+            delegatedIrFunction.valueParameters.forEach {
                 putValueArgument(it.index, IrGetValueImpl(startOffset, endOffset, it.type, it.symbol))
             }
             for (index in originalFirDeclaration.typeParameters.indices) {
                 putTypeArgument(
                     index, IrSimpleTypeImpl(
-                        delegateFunction.typeParameters[index].symbol,
+                        delegatedIrFunction.typeParameters[index].symbol,
                         hasQuestionMark = false,
                         arguments = emptyList(),
                         annotations = emptyList()
@@ -344,7 +360,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
                 )
             }
         }
-        val resultType = delegateFunction.returnType
+        val resultType = delegatedIrFunction.returnType
 
         val irCastOrCall =
             if (callTypeCanBeNullable && !resultType.isNullable()) Fir2IrImplicitCastInserter.implicitNotNullCast(irCall)
@@ -353,7 +369,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         if (isSetter || originalDeclarationReturnType.isUnit || originalDeclarationReturnType.isNothing) {
             body.statements.add(irCastOrCall)
         } else {
-            val irReturn = IrReturnImpl(startOffset, endOffset, irBuiltIns.nothingType, delegateFunction.symbol, irCastOrCall)
+            val irReturn = IrReturnImpl(startOffset, endOffset, irBuiltIns.nothingType, delegatedIrFunction.symbol, irCastOrCall)
             body.statements.add(irReturn)
         }
         return body

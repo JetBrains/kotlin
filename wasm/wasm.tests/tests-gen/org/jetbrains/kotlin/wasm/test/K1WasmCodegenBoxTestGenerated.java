@@ -12658,6 +12658,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("genericFunctionInGenericInterface.kt")
+        public void testGenericFunctionInGenericInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/delegation/genericFunctionInGenericInterface.kt");
+        }
+
+        @Test
         @TestMetadata("genericProperty.kt")
         public void testGenericProperty() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/genericProperty.kt");
