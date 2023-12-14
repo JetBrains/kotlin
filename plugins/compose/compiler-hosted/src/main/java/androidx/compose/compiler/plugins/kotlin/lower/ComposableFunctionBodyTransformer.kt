@@ -2336,8 +2336,8 @@ class ComposableFunctionBodyTransformer(
         )
 
     fun IrExpression.wrap(
-        before: List<IrExpression> = emptyList(),
-        after: List<IrExpression> = emptyList()
+        before: List<IrStatement> = emptyList(),
+        after: List<IrStatement> = emptyList()
     ): IrContainerExpression {
         return if (after.isEmpty() || type.isNothing() || type.isUnit()) {
             wrap(startOffset, endOffset, type, before, after)
@@ -3052,9 +3052,25 @@ class ComposableFunctionBodyTransformer(
                 ::irInferredChanged
             }
 
+        // Hoist execution of input params outside of the remember group, similar to how it is
+        // handled with inlining.
+        val inputVals = inputArgs.mapIndexed { index, expr ->
+            val meta = inputArgMetas[index]
+
+            // Only create variables when reads introduce side effects
+            val trivialExpression = meta.isCertain || expr is IrGetValue || expr is IrConst<*>
+            if (!trivialExpression) {
+                irTemporary(expr, nameHint = "remember\$arg\$$index")
+            } else {
+                null
+            }
+        }
+        val inputExprs = inputVals.mapIndexed { index, variable ->
+            variable?.let { irGet(it) } ?: inputArgs[index]
+        }
         val invalidExpr = irIntrinsicRememberInvalid(
             isMemoizedLambda,
-            inputArgs,
+            inputExprs,
             inputArgMetas,
             changedFunction
         )
@@ -3070,40 +3086,18 @@ class ComposableFunctionBodyTransformer(
         if (usesDirty && metaMaskConsistent) {
             functionScope.recordIntrinsicRememberFixUp(
                 isMemoizedLambda,
-                inputArgs,
+                inputExprs,
                 inputArgMetas,
                 cacheCall
             )
         }
-        val blockScope = object : Scope.BlockScope("<intrinsic-remember>") {
-            val rememberFunction = expression.symbol.owner
-            val currentFunction = currentFunctionScope.function
-            override fun calculateHasSourceInformation(sourceInformationEnabled: Boolean) =
-                sourceInformationEnabled
 
-            override fun calculateSourceInfo(sourceInformationEnabled: Boolean): String? =
-                // forge a source information call to fake remember function with current file
-                // location to make sure tooling can identify the following group as remember.
-                if (sourceInformationEnabled) {
-                    buildString {
-                        append(rememberFunction.callInformation())
-                        super.calculateSourceInfo(true)?.also {
-                            append(it)
-                        }
-                        append(":")
-                        append(currentFunction.file.name)
-                        append("#")
-                        // Use runtime package hash to make sure tooling can identify it as such
-                        append(rememberFunction.packageHash().toString(36))
-                    }
-                } else {
-                    null
-                }
-        }
-
+        val blockScope = intrinsicRememberScope(expression)
         return inScope(blockScope) {
             cacheCall.wrap(
-                before = listOf(irStartReplaceableGroup(expression, blockScope)),
+                before = inputVals.filterNotNull() + listOf(
+                    irStartReplaceableGroup(expression, blockScope)
+                ),
                 after = listOf(irEndReplaceableGroup(scope = blockScope))
             )
         }.also { block ->
@@ -3114,6 +3108,34 @@ class ComposableFunctionBodyTransformer(
                 context.irTrace.record(ComposeWritableSlices.IS_STATIC_EXPRESSION, block, true)
             }
         }
+    }
+
+    private fun intrinsicRememberScope(
+        rememberCall: IrCall,
+    ) = object : Scope.BlockScope("<intrinsic-remember>") {
+        val rememberFunction = rememberCall.symbol.owner
+        val currentFunction = currentFunctionScope.function
+        override fun calculateHasSourceInformation(sourceInformationEnabled: Boolean) =
+            sourceInformationEnabled
+
+        override fun calculateSourceInfo(sourceInformationEnabled: Boolean): String? =
+        // forge a source information call to fake remember function with current file
+            // location to make sure tooling can identify the following group as remember.
+            if (sourceInformationEnabled) {
+                buildString {
+                    append(rememberFunction.callInformation())
+                    super.calculateSourceInfo(true)?.also {
+                        append(it)
+                    }
+                    append(":")
+                    append(currentFunction.file.name)
+                    append("#")
+                    // Use runtime package hash to make sure tooling can identify it as such
+                    append(rememberFunction.packageHash().toString(36))
+                }
+            } else {
+                null
+            }
     }
 
     private fun irIntrinsicRememberInvalid(
