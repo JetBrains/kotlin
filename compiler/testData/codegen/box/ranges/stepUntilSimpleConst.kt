@@ -14,10 +14,56 @@ fun box(): String {
     }
     assertEquals(2, count)
 
+    // UByte case1
+    count = 0
+    for (i in (0.toUByte() until 3.toUByte() step 2)) {
+        count += i.toInt()
+    }
+    assertEquals(2, count)
+
+    // UByte case2
+    count = 0
+    val uByteLast = 3.toUByte()
+    for (i in (0.toUByte() until uByteLast step 2)) {
+        count += i.toInt()
+    }
+    assertEquals(2, count)
+
+    // UByte case3
+    count = 0
+    val uByteLastRef = uByteLast
+    for (i in (0.toUByte() until uByteLastRef step 2)) {
+        count += i.toInt()
+    }
+    assertEquals(2, count)
+
     // Short
     count = 0
     for (i in (0.toShort() until 3.toShort() step 2)) {
         count += i
+    }
+    assertEquals(2, count)
+
+    // UShort case1
+    count = 0
+    for (i in (0.toUShort() until 3.toUShort() step 2)) {
+        count += i.toInt()
+    }
+    assertEquals(2, count)
+
+    // UShort case2
+    val uShortLast = 3.toUShort()
+    count = 0
+    for (i in (0.toUShort() until uShortLast step 2)) {
+        count += i.toInt()
+    }
+    assertEquals(2, count)
+
+    // UShort case3
+    val uShortLastRef = uShortLast
+    count = 0
+    for (i in (0.toUShort() until uShortLastRef step 2)) {
+        count += i.toInt()
     }
     assertEquals(2, count)
 

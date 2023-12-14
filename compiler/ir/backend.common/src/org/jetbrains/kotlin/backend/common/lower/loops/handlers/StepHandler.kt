@@ -275,12 +275,39 @@ internal class StepHandler(
             )
         }
 
-    private fun DeclarationIrBuilder.convertToLastInclusiveIfPossible(headerInfo: ProgressionHeaderInfo): ProgressionHeaderInfo? {
-        val originalLast = headerInfo.last as? IrConst<*> ?: return null
+    private fun IrGetValue.findConstInitializerIfExists(): IrConst<*>? {
+        return when (val initializer = (symbol.owner as? IrVariable)?.initializer) {
+            is IrGetValue -> initializer.findConstInitializerIfExists()
+            is IrCall -> initializer.extensionReceiver as? IrConst<*>
+            else -> null
+        }
+    }
 
-        val value = originalLast.value
-        val type = originalLast.type
-        val isMinValue = when (originalLast.kind) {
+    private fun toIrConstOrNull(expression: IrExpression): IrConst<*>? {
+        if (expression is IrConst<*>) return expression
+
+        val const = when (expression) {
+            is IrGetValue -> {
+                expression.findConstInitializerIfExists() ?: return null
+            }
+            is IrCall -> {
+                val fqName = expression.symbol.owner.kotlinFqName
+                val expectedFunctions = listOf(FqName("kotlin.toUShort"), FqName("kotlin.toUByte"))
+                if (fqName !in expectedFunctions) return null
+                expression.extensionReceiver as? IrConst<*> ?: return null
+            }
+            else -> return null
+        }
+
+        val targetClass = expression.type.getClass() ?: return null
+        return const.castIfNecessary(targetClass) as? IrConst<*>
+    }
+
+    private fun DeclarationIrBuilder.convertToLastInclusiveIfPossible(headerInfo: ProgressionHeaderInfo): ProgressionHeaderInfo? {
+        val last = toIrConstOrNull(headerInfo.last) ?: return null
+        val value = last.value
+        val type = last.type
+        val isMinValue = when (last.kind) {
             IrConstKind.Byte ->
                 value == Byte.MIN_VALUE && type.isByte() || value == UByte.MIN_VALUE.toByte() && type.isUByte()
             IrConstKind.Int ->
@@ -299,7 +326,7 @@ internal class StepHandler(
             callGetProgressionLastElementIfNecessary(
                 headerInfo.progressionType,
                 headerInfo.first,
-                headerInfo.last.decrement(),
+                last.decrement(),
                 headerInfo.step
             )
 
