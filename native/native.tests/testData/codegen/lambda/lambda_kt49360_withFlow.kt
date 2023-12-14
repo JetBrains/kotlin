@@ -1,33 +1,9 @@
-package codegen.lambda.lambda_kt49360
-
 import kotlin.test.*
 import kotlin.coroutines.*
 
 // To be tested with -g.
 
 // https://youtrack.jetbrains.com/issue/KT-49360
-
-fun testTrivialCreateBlock(result: Int): () -> Int {
-    return (if (result == 0) { { 0 } } else null) ?: { result }
-}
-
-@Test
-fun testTrivial() {
-    assertEquals(0, testTrivialCreateBlock(0)())
-    assertEquals(1, testTrivialCreateBlock(1)())
-}
-
-class Block(val block: () -> Int)
-
-fun testWrapBlockCreate(flag: Boolean): Block {
-    return (if (flag) Block { 11 } else null) ?: Block { 22 }
-}
-
-@Test
-fun testWrapBlock() {
-    assertEquals(11, testWrapBlockCreate(true).block())
-    assertEquals(22, testWrapBlockCreate(false).block())
-}
 
 // The Flow code below is taken from kotlinx.coroutines (some unrelated details removed).
 
@@ -84,8 +60,7 @@ fun testWithFlowMapNotNull(flow: Flow<Boolean>): Flow<Block> {
     }
 }
 
-@Test
-fun testWithFlow() {
+fun box(): String {
     lateinit var list1: List<Block>
     lateinit var list2: List<Block>
 
@@ -98,6 +73,8 @@ fun testWithFlow() {
     assertEquals(333, list1.single().block())
 
     assertEquals(0, list2.size)
+
+    return "OK"
 }
 
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
