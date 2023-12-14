@@ -72,22 +72,15 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
         is FirPropertyAccessor,
         -> {
             requireIsInstance<FirCallableDeclaration>(target)
+            // We shouldn't try to build a designation path for such fake declarations as they
+            // do not depend on outer classes during resolution
+            if (target.isCopyCreatedInScope) return emptyList()
 
             if (target.symbol.callableId.isLocal || target.status.visibility == Visibilities.Local) {
                 return null
             }
 
             val containingClassId = target.containingClassLookupTag()?.classId ?: return emptyList()
-
-            if (target.origin is FirDeclarationOrigin.SubstitutionOverride) {
-                val originalContainingClassId = target.originalForSubstitutionOverride?.containingClassLookupTag()?.classId
-                if (containingClassId == originalContainingClassId) {
-                    // Ugly temporary hack for call-site substitution overrides (KTIJ-24004).
-                    // Containing class ID from the origin cannot be used, as the origin might be in a different module.
-                    return emptyList()
-                }
-            }
-
             return collectDesignationPathWithContainingClass(target, containingClassId)
         }
 

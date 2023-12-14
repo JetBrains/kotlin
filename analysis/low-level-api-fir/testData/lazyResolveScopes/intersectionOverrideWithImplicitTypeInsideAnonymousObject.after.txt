@@ -2,7 +2,7 @@ public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE
     ^foo Q|kotlin/Unit|
 }
 
-public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String}, baseSymbol=FirIntersectionOverrideFunctionSymbol second/B.foo), IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/B.foo] fun foo([ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=<local>/x, SubstitutedOverrideOriginalKey=<local>/x] x: R|@R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String| = STUB): <implicit>
+public open [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/B.foo] fun foo([ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=<local>/x, SubstitutedOverrideOriginalKey=<local>/x] x: R|@R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String| = STUB): R|kotlin/Unit|
 
 public open [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=<local>/x, SubstitutedOverrideOriginalKey=<local>/x] x: R|T| = STUB): R|kotlin/Unit|
 
@@ -18,7 +18,7 @@ public open [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|F
     ^foo Q|kotlin/Unit|
 }
 
-public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String}, baseSymbol=FirIntersectionOverridePropertySymbol second/B.bar), IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: <implicit>
+public open [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: R|@R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String|
 
 
 
