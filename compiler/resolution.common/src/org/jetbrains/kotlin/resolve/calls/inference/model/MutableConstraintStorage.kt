@@ -46,6 +46,14 @@ class MutableVariableWithConstraints private constructor(
 
     private val mutableConstraints = if (constraints == null) SmartList() else SmartList(constraints)
 
+    /**
+     * The contract for mutating this list is that the only allowed mutation is appending items.
+     * In any other case, it must be set to `null`, so that it will be recomputed when [constraints] is called.
+     *
+     * The reason is that the list might be mutated while it's being iterated.
+     * For this reason, we use an index loop in
+     * [org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator.forEachConstraint].
+     */
     private var simplifiedConstraints: SmartList<Constraint>? = mutableConstraints
 
     val rawConstraintsCount get() = mutableConstraints.size

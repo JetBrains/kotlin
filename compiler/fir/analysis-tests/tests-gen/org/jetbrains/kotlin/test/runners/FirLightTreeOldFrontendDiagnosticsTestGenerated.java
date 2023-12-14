@@ -16915,6 +16915,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("recursiveGenericExtensionReceiver.kt")
+            public void testRecursiveGenericExtensionReceiver() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/recursiveGenericExtensionReceiver.kt");
+            }
+
+            @Test
             @TestMetadata("reportAboutUnresolvedReferenceAsUnresolved.kt")
             public void testReportAboutUnresolvedReferenceAsUnresolved() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/reportAboutUnresolvedReferenceAsUnresolved.kt");

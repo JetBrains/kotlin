@@ -27,7 +27,7 @@ class ConstraintIncorporator(
         // if such type variable is fixed then it is error
         fun getTypeVariable(typeConstructor: TypeConstructorMarker): TypeVariableMarker?
 
-        fun getConstraintsForVariable(typeVariable: TypeVariableMarker): Collection<Constraint>
+        fun getConstraintsForVariable(typeVariable: TypeVariableMarker): List<Constraint>
 
         fun addNewIncorporatedConstraint(
             lowerType: KotlinTypeMarker,
@@ -67,7 +67,7 @@ class ConstraintIncorporator(
 
         // \alpha <: constraint.type
         if (constraint.kind != ConstraintKind.LOWER) {
-            getConstraintsForVariable(typeVariable).forEach {
+            forEachConstraint(typeVariable) {
                 if (it.kind != ConstraintKind.UPPER) {
                     addNewIncorporatedConstraint(it.type, constraint.type, shouldBeTypeVariableFlexible, it.isNullabilityConstraint)
                 }
@@ -76,7 +76,7 @@ class ConstraintIncorporator(
 
         // constraint.type <: \alpha
         if (constraint.kind != ConstraintKind.UPPER) {
-            getConstraintsForVariable(typeVariable).forEach {
+            forEachConstraint(typeVariable) {
                 if (it.kind != ConstraintKind.LOWER) {
                     val isFromDeclaredUpperBound =
                         it.position.from is DeclaredUpperBoundConstraintPosition<*> && !it.type.typeConstructor().isTypeVariable()
@@ -89,6 +89,16 @@ class ConstraintIncorporator(
                     )
                 }
             }
+        }
+    }
+
+    private inline fun Context.forEachConstraint(typeVariable: TypeVariableMarker, action: (Constraint) -> Unit) {
+        // We use an indexed loop because the collection might be modified during the iteration.
+        // However, the only modification is appending, so we should be fine.
+        val constraints = getConstraintsForVariable(typeVariable)
+        var i = 0
+        while (i < constraints.size) {
+            action(constraints[i++])
         }
     }
 
