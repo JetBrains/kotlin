@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitProperty.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|))  kotlin/String>>>| {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|))  kotlin/String>>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
             LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|))  kotlin/String>>>|>
         }
@@ -199,7 +199,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitProperty.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|))  kotlin/String>>>| {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|))  kotlin/String>>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
             LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), R|second/constant|))  kotlin/String>>>|>
         }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 
 private object PostponedSymbolsForAnnotationResolutionKey : FirDeclarationDataKey()
 
@@ -74,4 +75,24 @@ internal fun FirDeclaration.forEachDeclarationWhichCanHavePostponedSymbols(actio
         }
         else -> {}
     }
+}
+
+/**
+ * @return a symbol which should be used as a member of [postponedSymbolsForAnnotationResolution] collection
+ *
+ * @see postponedSymbolsForAnnotationResolution
+ */
+internal fun FirBasedSymbol<*>.unwrapSymbolToPostpone(): FirBasedSymbol<*> = when (this) {
+    is FirValueParameterSymbol -> containingFunctionSymbol
+    else -> this
+}
+
+/**
+ * @return an [unwrapped][unwrapSymbolToPostpone] symbol which [can][cannotResolveAnnotationsOnDemand] be resolved on demand
+ *
+ * @see unwrapSymbolToPostpone
+ * @see cannotResolveAnnotationsOnDemand
+ */
+internal fun FirBasedSymbol<*>.symbolToPostponeIfCanBeResolvedOnDemand(): FirBasedSymbol<*>? {
+    return unwrapSymbolToPostpone().takeUnless { it.cannotResolveAnnotationsOnDemand() }
 }

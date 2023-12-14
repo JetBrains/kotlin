@@ -17,15 +17,14 @@ import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
-import org.jetbrains.kotlin.fir.scopes.callableCopySubstitutionForTypeUpdater
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -59,7 +58,7 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
      */
     private var anchorForForeignAnnotations: FirCallableSymbol<*>? = null
 
-    private inline fun <T> withAnchorForForeignAnnotations(symbol: FirCallableSymbol<*>, action: () -> T): T {
+    inline fun <T> withAnchorForForeignAnnotations(symbol: FirCallableSymbol<*>, action: () -> T): T {
         val previousSymbol = anchorForForeignAnnotations
         return try {
             anchorForForeignAnnotations = symbol
@@ -88,16 +87,8 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
      */
     fun postponeForeignAnnotationResolution(symbol: FirBasedSymbol<*>) {
         // We should unwrap local symbols to avoid recursion
-        val symbolToPostpone = when (symbol) {
-            is FirValueParameterSymbol -> symbol.containingFunctionSymbol
-            else -> symbol
-        }
-
         // We cannot resolve them on demand, so we shouldn't postpone them
-        if (symbolToPostpone.cannotResolveAnnotationsOnDemand()) {
-            return
-        }
-
+        val symbolToPostpone = symbol.symbolToPostponeIfCanBeResolvedOnDemand() ?: return
         val currentSymbol = anchorForForeignAnnotations ?: errorWithAttachment("Unexpected state: the current symbol have to be here") {
             withFirSymbolEntry("symbol to postpone", symbolToPostpone)
         }
@@ -152,40 +143,44 @@ internal class LLFirImplicitBodyTargetResolver(
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        when (target) {
-            is FirFunction -> {
+        when {
+            target is FirCallableDeclaration && target.isCopyCreatedInScope -> {
+                transformer.returnTypeCalculator.callableCopyTypeCalculator.computeReturnType(target)
+            }
+
+            target is FirFunction -> {
                 if (target.returnTypeRef is FirImplicitTypeRef) {
                     resolve(target, BodyStateKeepers.FUNCTION)
                 }
             }
 
-            is FirProperty -> {
+            target is FirProperty -> {
                 if (target.returnTypeRef is FirImplicitTypeRef || target.backingField?.returnTypeRef is FirImplicitTypeRef) {
                     resolve(target, BodyStateKeepers.PROPERTY)
                 }
             }
 
-            is FirField -> {
+            target is FirField -> {
                 if (target.returnTypeRef is FirImplicitTypeRef) {
                     resolve(target, BodyStateKeepers.FIELD)
                 }
             }
 
-            is FirScript -> {
+            target is FirScript -> {
                 if (target.declarations.any { it.isScriptDependentDeclaration }) {
                     resolve(target, BodyStateKeepers.SCRIPT)
                 }
             }
 
-            is FirRegularClass,
-            is FirTypeAlias,
-            is FirFile,
-            is FirCodeFragment,
-            is FirAnonymousInitializer,
-            is FirDanglingModifierList,
-            is FirFileAnnotationsContainer,
-            is FirEnumEntry,
-            is FirErrorProperty,
+            target is FirRegularClass ||
+                    target is FirTypeAlias ||
+                    target is FirFile ||
+                    target is FirCodeFragment ||
+                    target is FirAnonymousInitializer ||
+                    target is FirDanglingModifierList ||
+                    target is FirFileAnnotationsContainer ||
+                    target is FirEnumEntry ||
+                    target is FirErrorProperty
             -> {
                 // No implicit bodies here
             }
@@ -214,11 +209,6 @@ internal class LLFirImplicitBodyTargetResolver(
 
                     target
                 }
-            }
-
-            target is FirCallableDeclaration && target.attributes.callableCopySubstitutionForTypeUpdater != null -> {
-                transformer.returnTypeCalculator.callableCopyTypeCalculator.computeReturnType(target)
-                Unit
             }
 
             else -> super.rawResolve(target)

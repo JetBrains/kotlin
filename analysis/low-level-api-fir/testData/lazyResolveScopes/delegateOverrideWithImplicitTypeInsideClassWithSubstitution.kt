@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 annotation class Anno(val str: String)
 val constant = "const"
 

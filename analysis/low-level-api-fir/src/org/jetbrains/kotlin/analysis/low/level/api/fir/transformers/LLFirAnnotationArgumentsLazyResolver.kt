@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.AnnotationVisitorVoid
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationsAreResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.*
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -120,6 +122,7 @@ private class LLFirAnnotationArgumentsTargetResolver(
             symbolsToResolve = buildList {
                 target.forEachDeclarationWhichCanHavePostponedSymbols {
                     addAll(it.postponedSymbolsForAnnotationResolution.orEmpty())
+                    addOriginalSymbolsForCopyDeclarations(it)
                 }
             }
         }
@@ -129,6 +132,24 @@ private class LLFirAnnotationArgumentsTargetResolver(
         symbolsToResolve?.forEach { it.lazyResolveToPhase(resolverPhase) }
 
         return false
+    }
+
+    private fun MutableList<FirBasedSymbol<*>>.addOriginalSymbolsForCopyDeclarations(target: FirCallableDeclaration) {
+        if (!target.isSubstitutionOrIntersectionOverride) return
+
+        // It is fine to just visit the declaration recursively as copy declarations don't have a body
+        target.accept(ForeignAnnotationsCollector, ForeignAnnotationsContext(this, target.symbol))
+    }
+
+    private class ForeignAnnotationsContext(val collection: MutableCollection<FirBasedSymbol<*>>, val currentSymbol: FirCallableSymbol<*>)
+    private object ForeignAnnotationsCollector : AnnotationVisitorVoid<ForeignAnnotationsContext>() {
+        override fun visitAnnotation(annotation: FirAnnotation, data: ForeignAnnotationsContext) {}
+        override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: ForeignAnnotationsContext) {
+            val symbolToPostpone = annotationCall.containingDeclarationSymbol.symbolToPostponeIfCanBeResolvedOnDemand() ?: return
+            if (symbolToPostpone != data.currentSymbol) {
+                data.collection += symbolToPostpone
+            }
+        }
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -243,7 +242,7 @@ internal fun FirAbstractBodyResolveTransformerDispatcher.checkAnnotationCallIsRe
     checkAnnotationIsResolved(annotationCall, annotationContainer)
 }
 
-private object AnnotationChecker : FirVisitor<Unit, FirAnnotationContainer>() {
+private object AnnotationChecker : AnnotationVisitorVoid<FirAnnotationContainer>() {
     override fun visitAnnotation(annotation: FirAnnotation, data: FirAnnotationContainer) {
         checkAnnotationIsResolved(annotation, data)
     }
@@ -251,8 +250,16 @@ private object AnnotationChecker : FirVisitor<Unit, FirAnnotationContainer>() {
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirAnnotationContainer) {
         checkAnnotationIsResolved(annotationCall, data)
     }
+}
 
-    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: FirAnnotationContainer) {
+/**
+ * This visitor is responsible for visiting all annotations recursively
+ */
+internal abstract class AnnotationVisitorVoid<T> : FirVisitor<Unit, T>() {
+    abstract override fun visitAnnotation(annotation: FirAnnotation, data: T)
+    abstract override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: T)
+
+    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: T) {
         resolvedTypeRef.acceptChildren(this, data)
 
         resolvedTypeRef.coneType.forEachType {
@@ -262,7 +269,7 @@ private object AnnotationChecker : FirVisitor<Unit, FirAnnotationContainer>() {
         }
     }
 
-    override fun visitElement(element: FirElement, data: FirAnnotationContainer) {
+    override fun visitElement(element: FirElement, data: T) {
         element.acceptChildren(this, data)
     }
 }
