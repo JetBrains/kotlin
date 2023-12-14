@@ -2101,6 +2101,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("nestedAnnotationOnOuterClassDeclaration.kt")
+            public void testNestedAnnotationOnOuterClassDeclaration() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/nestedAnnotationOnOuterClassDeclaration.kt");
+            }
+
+            @Test
             @TestMetadata("nestedClassAsAnnotationParameter.kt")
             public void testNestedClassAsAnnotationParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/nestedClassAsAnnotationParameter.kt");

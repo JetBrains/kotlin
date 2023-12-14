@@ -721,10 +721,12 @@ open class SupertypeComputationSession {
             var isErrorInSupertypesFound = false
             val resultSupertypeRefs = mutableListOf<FirResolvedTypeRef>()
             for (supertypeRef in supertypeRefs) {
-                for (annotation in supertypeRef.annotations) {
-                    val resolvedType = annotation.resolvedType as? ConeClassLikeType ?: continue
-                    val typeArgumentClassLikeDeclaration = resolvedType.lookupTag.toSymbol(session)?.fir
-                    checkIsInLoop(typeArgumentClassLikeDeclaration, wasSubtypingInvolved, wereTypeArgumentsInvolved)
+                if (isTypeAlias) {
+                    for (annotation in supertypeRef.annotations) {
+                        val resolvedType = annotation.resolvedType as? ConeClassLikeType ?: continue
+                        val typeArgumentClassLikeDeclaration = resolvedType.lookupTag.toSymbol(session)?.fir
+                        checkIsInLoop(typeArgumentClassLikeDeclaration, wasSubtypingInvolved, wereTypeArgumentsInvolved)
+                    }
                 }
                 val supertypeFir = supertypeRef.firClassLike(session)
                 checkIsInLoop(supertypeFir, isSubtypingInvolved, wereTypeArgumentsInvolved)
