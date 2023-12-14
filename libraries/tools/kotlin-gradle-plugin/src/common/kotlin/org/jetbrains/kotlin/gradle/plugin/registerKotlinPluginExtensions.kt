@@ -70,6 +70,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, CreateFatFrameworksSetupAction)
             register(project, KotlinRegisterCompilationArchiveTasksExtension)
             register(project, IdeMultiplatformImportActionSetupAction)
+            register(project, KotlinLLDBScriptSetupAction)
         }
     }
 
