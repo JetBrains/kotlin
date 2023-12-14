@@ -97,6 +97,10 @@ internal fun checkConstantArguments(
             }
 
             for (exp in (expression as FirCall).arguments) {
+                if (exp is FirConstExpression<*> && exp.value == null) {
+                    return ConstantArgumentKind.NOT_CONST
+                }
+
                 if (exp is FirResolvedQualifier || exp is FirGetClassCall || exp.getExpandedType().isUnsignedType) {
                     return ConstantArgumentKind.NOT_CONST
                 }
