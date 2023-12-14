@@ -22,7 +22,7 @@ inline fun test(c: () -> Unit) {
         }
     }
     val l = { <!NON_LOCAL_RETURN_NOT_ALLOWED!>c<!>() }
-    <!USAGE_IS_NOT_INLINABLE!>c<!>.startCoroutine(EmptyContinuation)
+    c.<!NONE_APPLICABLE!>startCoroutine<!>(EmptyContinuation)
 }
 
 fun builder(c: suspend () -> Unit) {

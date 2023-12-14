@@ -20,7 +20,7 @@ inline fun test(noinline c: () -> Unit) {
         }
     }
     val l = { c() }
-    c.startCoroutine(EmptyContinuation)
+    c.<!NONE_APPLICABLE!>startCoroutine<!>(EmptyContinuation)
 }
 
 suspend fun calculate() = "OK"

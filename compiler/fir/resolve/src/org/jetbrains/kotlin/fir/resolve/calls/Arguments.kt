@@ -257,7 +257,7 @@ fun Candidate.resolvePlainArgumentType(
             capturedType
 
     // If the argument is of functional type and the expected type is a suspend function type, we need to do "suspend conversion."
-    if (expectedType != null) {
+    if (expectedType != null && !isReceiver) {
         argumentTypeWithCustomConversion(
             session, context.bodyResolveComponents.scopeSession, expectedType, argumentTypeForApplicabilityCheck
         )?.let {
