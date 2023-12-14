@@ -28,7 +28,7 @@ fun test() {
         variable = TargetType()
         <!BUILDER_INFERENCE_STUB_RECEIVER!>variable<!>.targetTypeMemberFunction()
         variable = <!ASSIGNMENT_TYPE_MISMATCH!>DifferentType()<!>
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>variable<!>.targetTypeMemberFunction()
+        variable.<!UNRESOLVED_REFERENCE!>targetTypeMemberFunction<!>()
         variable = TargetType()
         <!BUILDER_INFERENCE_STUB_RECEIVER!>variable<!>.targetTypeMemberFunction()
     }

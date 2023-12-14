@@ -26,9 +26,9 @@ class FirBuilderInferenceSession2(
     private val inferenceComponents: InferenceComponents,
 ) : FirInferenceSession() {
 
-    var currentCommonSystem = outerCandidate.system
+    var currentCommonSystem = prepareSharedBaseSystem(outerCandidate.system, inferenceComponents)
+        private set
 
-    private val initialOuterTypeVariables = outerCandidate.system.currentStorage().allTypeVariables.keys
     private val qualifiedAccessesToProcess = mutableSetOf<FirExpression>()
 
     override fun <T> shouldAvoidFullCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
@@ -87,6 +87,10 @@ class FirBuilderInferenceSession2(
         outerCandidate.postponedCalls += call
 
         (resolutionMode as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
+    }
+
+    fun applyResultsToMainCandidate() {
+        outerCandidate.system.replaceContentWith(currentCommonSystem.currentStorage())
     }
 
     fun integrateChildSession(
@@ -170,7 +174,7 @@ class FirBuilderInferenceSession2(
     private fun Candidate.isNotTrivial(): Boolean =
         usedOuterCs
 
-    override fun outerCSForCandidate(candidate: Candidate): ConstraintStorage? {
+    override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? {
         if (candidate.needsToBePostponed()) return currentCommonSystem.currentStorage()
         if (candidate.callInfo.arguments.any { it.isLambda() }) return currentCommonSystem.currentStorage()
         // TODO: context receivers
