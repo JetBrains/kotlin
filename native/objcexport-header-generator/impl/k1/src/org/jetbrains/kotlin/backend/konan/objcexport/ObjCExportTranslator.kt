@@ -628,9 +628,8 @@ class ObjCExportTranslatorImpl(
         val attributes = mutableListOf<String>()
 
         attributes += method.getSwiftPrivateAttribute() ?: swiftNameAttribute(swiftName)
-        if (baseMethodBridge.returnBridge is MethodBridge.ReturnValue.WithError.ZeroForError
-            && baseMethodBridge.returnBridge.successMayBeZero
-        ) {
+        val returnBridge = baseMethodBridge.returnBridge
+        if (returnBridge is MethodBridge.ReturnValue.WithError.ZeroForError && returnBridge.successMayBeZero) {
 
             // Method may return zero on success, but
             // standard Objective-C convention doesn't suppose this happening.

@@ -6,25 +6,31 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassType
 import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCComment
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocolImpl
+import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol {
+fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
     // TODO: check if this symbol shall be exposed in the first place
     require(classKind == KtClassKind.INTERFACE)
+    if (isVisibleInObjC()) return null
 
     // TODO: Check error type!
     val name = getObjCClassOrProtocolName()
 
-    // TODO: Build members
-    val members = emptyList<ObjCExportStub>()
+    val members = getMemberScope().getAllSymbols()
+        .filterIsInstance<KtCallableSymbol>()
+        .filter { memberSymbol -> memberSymbol.isVisibleInObjC() }
+        .mapNotNull { memberSymbol -> memberSymbol.translateToObjCExportStubOrNull() }
+        .toList()
 
     val superProtocols = superTypes
         .asSequence()
@@ -44,7 +50,7 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol {
         name = name.objCName,
         comment = comment,
         origin = getObjCStubOrigin(),
-        attributes = emptyList(),
+        attributes = name.toNameAttributes(),
         superProtocols = superProtocols,
         members = members
     )

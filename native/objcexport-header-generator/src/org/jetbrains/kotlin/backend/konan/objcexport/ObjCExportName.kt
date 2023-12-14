@@ -44,3 +44,12 @@ private data class ObjCExportPropertyNameImpl(
     override val swiftName: String,
     override val objCName: String,
 ) : ObjCExportPropertyName
+
+
+fun ObjCExportClassOrProtocolName.toNameAttributes(): List<String> = listOfNotNull(
+    binaryName.takeIf { it != objCName }?.let { objcRuntimeNameAttribute(it) },
+    swiftName.takeIf { it != objCName }?.let { swiftNameAttribute(it) }
+)
+
+private fun swiftNameAttribute(swiftName: String) = "swift_name(\"$swiftName\")"
+private fun objcRuntimeNameAttribute(name: String) = "objc_runtime_name(\"$name\")"

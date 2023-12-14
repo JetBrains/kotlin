@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind.INTERFACE
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
@@ -33,9 +34,10 @@ fun KtScope.translateToObjCHeader(): ObjCHeader {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
-private fun KtSymbol.translateToObjCExportStubOrNull(): ObjCExportStub? {
+internal fun KtSymbol.translateToObjCExportStubOrNull(): ObjCExportStub? {
     return when {
         this is KtClassOrObjectSymbol && classKind == INTERFACE -> translateToObjCProtocol()
+        this is KtPropertySymbol -> translateToObjCProperty()
         else -> null
     }
 }
