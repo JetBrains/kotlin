@@ -14,6 +14,9 @@ class Z(val x: Int)
 val z2 = Z(x.s.length)
 
 // FILE: main.kt
-fun main() {
-    println(z2.x)
+import kotlin.test.*
+
+fun box(): String {
+    assertEquals(3, z2.x)
+    return "OK"
 }

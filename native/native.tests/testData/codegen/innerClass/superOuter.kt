@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.innerClass.superOuter
-
 import kotlin.test.*
 
 open class Outer(val outer: String) {
@@ -16,7 +14,3 @@ open class Outer(val outer: String) {
 }
 
 fun box() = Outer("Fail").value()
-
-@Test fun runTest() {
-    println(box())
-}

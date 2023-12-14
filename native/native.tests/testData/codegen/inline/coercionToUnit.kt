@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.coercionToUnit
-
 import kotlin.test.*
 
 fun <T> myRun(action: () -> T): T = action()
@@ -17,6 +15,7 @@ fun foo(n: Number, b: Boolean) {
     }
 }
 
-@Test fun runTest() {
-    println(foo(42, false))
+fun box(): String {
+    assertEquals(Unit, foo(42, false))
+    return "OK"
 }

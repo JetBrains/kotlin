@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline20
-
 import kotlin.test.*
 
 @Suppress("NOTHING_TO_INLINE")
@@ -13,9 +11,9 @@ inline fun bar(block: () -> String) : String {
 }
 
 fun bar2() : String {
-    return bar { return "def" }
+    return bar { return "OK" }
 }
 
-@Test fun runTest() {
-    println(bar2())
+fun box(): String {
+    return bar2()
 }

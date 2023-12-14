@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline25
-
 import kotlin.test.*
 
 inline fun foo(block: String.() -> Unit) {
@@ -19,12 +17,14 @@ inline fun baz(block: String.() -> Unit) {
     block("Ok")
 }
 
-@Test fun runTest() {
+fun box(): String {
     bar {
-        println(it)
+        assertEquals("Ok", it)
     }
 
     baz {
-        println(this)
+        assertEquals("Ok", this)
     }
+
+    return "OK"
 }

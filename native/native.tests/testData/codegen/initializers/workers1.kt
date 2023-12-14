@@ -21,15 +21,25 @@ val z2 = Z(x.s.length)
 // FILE: main.kt
 @file:OptIn(ObsoleteWorkersApi::class)
 import kotlin.native.concurrent.*
+import kotlin.test.*
+
+val sb = StringBuilder()
 
 fun foo() {
     val worker = Worker.start()
     worker.execute(TransferMode.SAFE, { -> }, {
-        it -> println(z1.x)
+        it -> sb.appendLine(z1.x)
     }).consume { }
 }
 
-fun main() {
+fun box(): String {
     foo()
-    println(z2.x)
+    sb.appendLine(z2.x)
+
+    assertEquals("""
+        42
+        3
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

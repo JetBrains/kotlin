@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline23
-
 import kotlin.test.*
 
 inline fun <reified T> foo(i2: Any): T {
@@ -15,6 +13,7 @@ fun bar(i1: Int): Int {
     return foo<Int>(i1)
 }
 
-@Test fun runTest() {
-    println(bar(33))
+fun box(): String {
+    assertEquals(33, bar(33))
+    return "OK"
 }

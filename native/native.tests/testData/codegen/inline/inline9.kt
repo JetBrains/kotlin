@@ -3,9 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline9
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun foo(i3: Int, i4: Int): Int {
@@ -13,7 +13,7 @@ inline fun foo(i3: Int, i4: Int): Int {
 }
 
 fun quiz(i: Int) : Int {
-    println("hello")
+    sb.appendLine("hello")
     return i + 1
 }
 
@@ -21,6 +21,13 @@ fun bar(i1: Int, i2: Int): Int {
     return foo(quiz(i1), i2)
 }
 
-@Test fun runTest() {
-    println(bar(1, 2).toString())
+fun box(): String {
+    sb.appendLine(bar(1, 2).toString())
+
+    assertEquals("""
+        hello
+        6
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

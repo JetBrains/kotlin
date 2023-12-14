@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.sum
-
 import kotlin.test.*
 
 fun sumIB(a:Int, b:Byte  ) = a + b
@@ -16,7 +14,7 @@ fun sumID(a:Int, b:Double) = a + b
 
 fun modID(a:Int, b:Double) = a % b
 
-@Test fun runTest() {
+fun box(): String {
     if (sumIB(2, 3)    != 5)    throw Error()
     if (sumIS(2, 3)    != 5)    throw Error()
     if (sumII(2, 3)    != 5)    throw Error()
@@ -24,4 +22,6 @@ fun modID(a:Int, b:Double) = a % b
     if (sumIF(2, 3.0f) != 5.0f) throw Error()
     if (sumID(2, 3.0)  != 5.0)  throw Error()
     if (modID(5, 3.0)  != 2.0)  throw Error()
+
+    return "OK"
 }

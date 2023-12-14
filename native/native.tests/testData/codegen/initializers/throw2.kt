@@ -13,17 +13,24 @@ fun baz1() { }
 fun baz2() { }
 
 // FILE: main.kt
+import kotlin.test.*
+
 fun bar(x: Int) = if (x == 0) error("") else x
+
+val sb = StringBuilder()
 
 fun foo(x: Int) {
     try {
         bar(x)
         baz1()
     } catch (t: Throwable) {
-        println(y)
+        sb.appendLine(y)
     }
 }
 
-fun main() {
+fun box(): String {
     foo(0)
+
+    assertEquals("42\n", sb.toString())
+    return "OK"
 }

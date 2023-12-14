@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.defaults7
-
 import kotlin.test.*
 
 /**
@@ -16,10 +14,15 @@ import kotlin.test.*
  * to label %label_1 unwind label %cleanup_landingpad
  */
 
+val sb = StringBuilder()
+
 fun <T> foo(a : T, b : Int = 42){
-    println(b)
+    sb.append(b)
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo(1)
+
+    assertEquals("42", sb.toString())
+    return "OK"
 }

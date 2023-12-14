@@ -3,15 +3,25 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline24
-
 import kotlin.test.*
 
-fun foo() = println("foo")
-fun bar() = println("bar")
+val sb = StringBuilder()
+fun myPrintln(s: String): Unit {
+    sb.appendLine(s)
+}
+
+fun foo() = myPrintln("foo")
+fun bar() = myPrintln("bar")
 
 inline fun baz(x: Unit = foo(), y: Unit) {}
 
-@Test fun runTest() {
+fun box(): String {
     baz(y = bar())
+
+    assertEquals("""
+        bar
+        foo
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

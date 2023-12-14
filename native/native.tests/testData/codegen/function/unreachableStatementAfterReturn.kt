@@ -3,8 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package codegen.function.unreachable_statement_after_return
 import kotlin.coroutines.*
+import kotlin.test.*
 
 fun test1(): Any? {
     return 1
@@ -53,15 +53,17 @@ private fun <T> (suspend () -> T).runCoroutine() : T {
     return result as T
 }
 
-fun main() {
-    println(test1())
-    println(test2())
-    println(test3())
-    println(test4())
+fun box(): String {
+    assertEquals(1, test1())
+    assertEquals(2, test2())
+    assertEquals(3, test3())
+    assertEquals(4, test4())
 
-    println(::test5.runCoroutine())
-    println(::test6.runCoroutine())
-    println(::test7.runCoroutine())
-    println(::test8.runCoroutine())
+    assertEquals(5, ::test5.runCoroutine())
+    assertEquals(6, ::test6.runCoroutine())
+    assertEquals(7, ::test7.runCoroutine())
+    assertEquals(8, ::test8.runCoroutine())
+
+    return "OK"
 }
 

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.enum.lambdaInDefault
-
 import kotlin.test.*
 
 enum class Zzz(val value: String.() -> Int = {
@@ -13,6 +11,7 @@ enum class Zzz(val value: String.() -> Int = {
     Q()
 }
 
-@Test fun runTest() {
-    println(Zzz.Q)
+fun box(): String {
+    assertEquals("Q", Zzz.Q.toString())
+    return "OK"
 }

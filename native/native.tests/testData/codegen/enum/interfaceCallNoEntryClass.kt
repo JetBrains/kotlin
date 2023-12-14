@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.enum.interfaceCallNoEntryClass
-
 import kotlin.test.*
 
 interface A {
@@ -21,8 +19,9 @@ enum class Zzz(val zzz: String, val x: Int) : A {
     }
 }
 
-@Test fun runTest() {
-    println(Zzz.Z3.foo())
+fun box(): String {
+    assertEquals("('z3', 3)", Zzz.Z3.foo())
     val a: A = Zzz.Z3
-    println(a.foo())
+    assertEquals("('z3', 3)", a.foo())
+    return "OK"
 }

@@ -3,14 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.sum_silly
-
 import kotlin.test.*
-
-// FIXME: has no checks
 
 fun sum(a:Int, b:Int):Int {
  var c:Int
  c = a + b
  return c
+}
+
+fun box(): String {
+  assertEquals(50, sum(42, 8))
+  return "OK"
 }

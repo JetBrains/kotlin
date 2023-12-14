@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inlineClass.nestedInlineClasses
-
 import kotlin.test.*
 
 interface I {
@@ -15,7 +13,9 @@ interface I2 {
     inline class IC(val x: Int)
 }
 
-@Test fun runTest() {
+fun box(): String {
     assertEquals(42, I.IC(42).x)
     assertEquals(117, I2.IC(117).x)
+
+    return "OK"
 }

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.statementAsLastExprInBlock
-
 import kotlin.test.*
 
 fun foo() {
@@ -18,6 +16,7 @@ fun foo() {
     }
 }
 
-@Test fun runTest() {
-    println("OK")
+fun box(): String {
+    foo()
+    return "OK"
 }

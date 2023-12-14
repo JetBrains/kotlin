@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.innerClass.qualifiedThis
-
 import kotlin.test.*
 
 open class ABase
@@ -49,7 +47,3 @@ class A: ABase() { // implicit label @A
 }
 
 fun box() = A().B().bar(D())
-
-@Test fun runTest() {
-    println(box())
-}

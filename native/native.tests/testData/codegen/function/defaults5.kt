@@ -3,21 +3,24 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.defaults5
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 class TestClass(val x: Int) {
     fun foo(y: Int = x) {
-        println(y)
+        sb.appendLine(y)
     }
 }
 
 fun TestClass.bar(y: Int = x) {
-    println(y)
+    sb.appendLine(y)
 }
 
-@Test fun runTest() {
+fun box(): String {
     TestClass(5).foo()
     TestClass(6).bar()
+
+    assertEquals("5\n6\n", sb.toString())
+    return "OK"
 }

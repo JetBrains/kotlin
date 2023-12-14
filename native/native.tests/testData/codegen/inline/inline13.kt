@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline13
-
 import kotlin.test.*
 
 open class A<T1>()
@@ -19,6 +17,7 @@ fun bar(): Boolean {
     return foo<B<Int>>(B<Int>())
 }
 
-@Test fun runTest() {
-    println(bar().toString())
+fun box(): String {
+    assertTrue(bar())
+    return "OK"
 }

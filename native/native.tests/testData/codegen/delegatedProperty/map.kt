@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.delegatedProperty.map
-
 import kotlin.test.*
 
 class User(val map: Map<String, Any?>) {
@@ -12,11 +10,13 @@ class User(val map: Map<String, Any?>) {
     val age: Int     by map
 }
 
-@Test fun runTest() {
+fun box(): String {
     val user = User(mapOf(
             "name" to "John Doe",
             "age"  to 25
     ))
-    println(user.name) // Prints "John Doe"
-    println(user.age)  // Prints 25
+    assertEquals("John Doe", user.name)
+    assertEquals(25, user.age)
+
+    return "OK"
 }

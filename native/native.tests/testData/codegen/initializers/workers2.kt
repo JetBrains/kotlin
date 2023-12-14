@@ -14,11 +14,21 @@ val z = Z(42)
 // FILE: main.kt
 @file:OptIn(ObsoleteWorkersApi::class)
 import kotlin.native.concurrent.*
+import kotlin.test.*
 
-fun main() {
-    println(z.x)
+val sb = StringBuilder()
+
+fun box(): String {
+    sb.appendLine(z.x)
     val worker = Worker.start()
     worker.execute(TransferMode.SAFE, { -> }, {
-        it -> println(z.x)
+        it -> sb.appendLine(z.x)
     }).consume { }
+
+    assertEquals("""
+        42
+        42
+        
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

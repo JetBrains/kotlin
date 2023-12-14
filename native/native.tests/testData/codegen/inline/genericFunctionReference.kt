@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.genericFunctionReference
-
 import kotlin.test.*
 
 class Z<T>(val x: T)
@@ -13,7 +11,8 @@ inline fun<T, R> foo(x: T, f: (T) -> R): R {
     return f(x)
 }
 
-@Test fun runTest() {
+fun box(): String {
     val arr = Array(1) { foo(it, ::Z) }
-    println(arr[0].x)
+    assertEquals(0, arr[0].x)
+    return "OK"
 }

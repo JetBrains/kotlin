@@ -2,10 +2,11 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
-package codegen.enum.switchLowering
+// !LANGUAGE:-ProhibitComparisonOfIncompatibleEnums
 
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 enum class EnumA {
     A, B, C
@@ -23,7 +24,7 @@ fun produceEntry() = EnumA.A
 
 // Check that we fail on comparison of different enum types.
 fun differentEnums() {
-    println(when (produceEntry()) {
+    sb.appendLine(when (produceEntry()) {
         EnumB.A -> "EnumB.A"
         EnumA.A -> "EnumA.A"
         EnumA.B -> "EnumA.B"
@@ -35,8 +36,8 @@ fun differentEnums() {
 fun nullable() {
     val x: EnumA? = null
     when(x) {
-        EnumA.A -> println("fail")
-        else    -> println("ok")
+        EnumA.A -> sb.appendLine("fail")
+        else    -> sb.appendLine("ok")
     }
 }
 
@@ -46,23 +47,23 @@ fun operatorOverloading() {
 
     val y = E.ONE
     when(y) {
-        in E.ONE    -> println("Should not reach here")
-        else        -> println("ok")
+        in E.ONE    -> sb.appendLine("Should not reach here")
+        else        -> sb.appendLine("ok")
     }
 }
 
 fun smoke1() {
     when (produceEntry()) {
-        EnumA.B -> println("error")
-        EnumA.A -> println("ok")
-        EnumA.C -> println("error")
+        EnumA.B -> sb.appendLine("error")
+        EnumA.A -> sb.appendLine("ok")
+        EnumA.C -> sb.appendLine("error")
     }
 }
 
 fun smoke2() {
     when (produceEntry()) {
-        EnumA.B -> println("error")
-        else    -> println("ok")
+        EnumA.B -> sb.appendLine("error")
+        else    -> sb.appendLine("ok")
     }
 }
 
@@ -72,7 +73,7 @@ fun eB() = EnumA.B
 
 
 fun nestedWhen() {
-    println(when (eA()) {
+    sb.appendLine(when (eA()) {
         EnumA.A, EnumA.C -> when (eB()) {
             EnumA.B -> "ok"
             else -> "nope"
@@ -81,11 +82,22 @@ fun nestedWhen() {
     })
 }
 
-fun main() {
+fun box(): String {
     differentEnums()
     nullable()
     operatorOverloading()
     smoke1()
     smoke2()
     nestedWhen()
+
+    assertEquals("""
+        EnumA.A
+        ok
+        ok
+        ok
+        ok
+        ok
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

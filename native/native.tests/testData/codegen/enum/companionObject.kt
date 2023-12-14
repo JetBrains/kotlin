@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.enum.companionObject
-
 import kotlin.test.*
 
 enum class Game {
@@ -29,5 +27,3 @@ fun box(): String {
     if (Game.scissors != Game.SCISSORS) return "Fail 6"
     return "OK"
 }
-
-@Test fun runTest() = println(box())

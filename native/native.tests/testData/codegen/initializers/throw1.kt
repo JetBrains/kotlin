@@ -13,6 +13,8 @@ fun baz1() { }
 fun baz2() { }
 
 // FILE: main.kt
+import kotlin.test.*
+
 fun bar(x: Int) = if (x == 0) error("") else x
 
 fun foo(x: Int) {
@@ -22,7 +24,8 @@ fun foo(x: Int) {
     } catch (t: Throwable) { }
 }
 
-fun main() {
+fun box(): String {
     foo(0)
-    println(x)
+    assertEquals(42, x)
+    return "OK"
 }

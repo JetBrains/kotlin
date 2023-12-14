@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.defaults8
-
 import kotlin.test.*
 
 class Foo {
@@ -15,6 +13,8 @@ class Bar {
     fun test(x: Int = 2) = x
 }
 
-@Test fun runTest() {
-    println(Bar().test())
+fun box(): String {
+    assertEquals(2, Bar().test())
+
+    return "OK"
 }

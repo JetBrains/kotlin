@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.changingCapturedLocal
-
 import kotlin.test.*
 
 var log = ""
@@ -23,8 +21,4 @@ fun box(): String {
     if (x != 24) return "fail2: $x"
 
     return "OK"
-}
-
-@Test fun runTest() {
-    println(box())
 }

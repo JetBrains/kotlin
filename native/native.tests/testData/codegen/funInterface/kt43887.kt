@@ -3,7 +3,6 @@
  * that can be found in the LICENSE file.
  */
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-package codegen.funInterface.kt43887
 
 import kotlin.test.*
 
@@ -27,12 +26,14 @@ inline fun CPointer<heap_t>?.free(ptr: CPointer<*>?): Boolean {
     return heap_free(this, ptr)?.pointed?.value ?: false
 }
 
-@Test
-fun runTest(): Unit = memScoped {
+fun box(): String {
+  memScoped {
     val heap = Heap(1024)
 
     heap.use<IntVar> { ptr ->
         ptr.pointed.value = 40
         //println("PTR ${ptr.pointed}")
     }
+  }
+  return "OK"
 }

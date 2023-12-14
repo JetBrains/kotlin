@@ -32,8 +32,10 @@ val y2 = run { z3 = true; 117 }
 // FILE: main.kt
 import kotlin.test.*
 
-fun main() {
+fun box(): String {
     assertTrue(z1)
     assertTrue(z2)
     assertTrue(z3)
+
+    return "OK"
 }

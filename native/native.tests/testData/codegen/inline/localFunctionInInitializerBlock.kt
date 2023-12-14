@@ -3,9 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.localFunctionInInitializerBlock
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 class Foo {
     init {
@@ -14,9 +14,10 @@ class Foo {
 }
 
 inline fun bar() {
-    println({ "Ok" }())
+    sb.append({ "OK" }())
 }
 
-@Test fun runTest() {
+fun box(): String {
     Foo()
+    return sb.toString()
 }

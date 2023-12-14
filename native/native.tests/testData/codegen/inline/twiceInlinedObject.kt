@@ -3,26 +3,28 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.twiceInlinedObject
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 inline fun exec(f: () -> Unit) = f()
 
 inline fun test2() {
     val obj = object {
-        fun sayOk() = println("Ok")
+        fun sayOk() = sb.append("OK")
     }
     obj.sayOk()
 }
 
 inline fun noExec(f: () -> Unit) { }
 
-@Test fun runTest() {
+fun box(): String {
     exec {
         test2()
     }
     noExec {
         test2()
     }
+
+    return sb.toString()
 }
