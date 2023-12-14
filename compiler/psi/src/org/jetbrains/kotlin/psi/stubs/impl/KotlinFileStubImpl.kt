@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.impl.java.stubs.PsiClassStub
-import com.intellij.psi.stubs.PsiClassHolderFileStub
 import com.intellij.psi.stubs.PsiFileStubImpl
 import com.intellij.psi.tree.IStubFileElementType
 import org.jetbrains.kotlin.name.FqName
@@ -38,7 +35,7 @@ class KotlinFileStubImpl(
     private val facadeFqNameString: String?,
     val partSimpleName: String?,
     val facadePartSimpleNames: List<String>?,
-) : PsiFileStubImpl<KtFile>(ktFile), KotlinFileStub, PsiClassHolderFileStub<KtFile> {
+) : PsiFileStubImpl<KtFile>(ktFile), KotlinFileStub {
 
     constructor(ktFile: KtFile?, packageName: String, isScript: Boolean) : this(
         ktFile,
@@ -62,10 +59,6 @@ class KotlinFileStubImpl(
     override fun getType(): IStubFileElementType<KotlinFileStub> = KtFileElementType.INSTANCE
 
     override fun toString(): String = "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]"
-
-    override fun getClasses(): Array<PsiClass> {
-        return childrenStubs.filterIsInstance<PsiClassStub<*>>().map { it.psi }.toTypedArray()
-    }
 
     override fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub> {
         val importList = childrenStubs.firstOrNull { it.stubType == IMPORT_LIST } ?: return emptyList()
