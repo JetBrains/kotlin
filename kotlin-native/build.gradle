@@ -588,7 +588,7 @@ configure([bundleRegular, bundlePrebuilt]) {
     }
 
     // Calculating SHA-256 checksums for bundle artifacts
-    def archiveExtension = isWindows() ? '.zip' : 'tar.gz'
+    def archiveExtension = isWindows() ? 'zip' : 'tar.gz'
     def checksumFile = archiveBaseName.zip(archiveVersion) { name, version -> file("${buildDir}/${name}-${version}.${archiveExtension}.sha256") }
     outputs.file(checksumFile).withPropertyName("checksumFile")
 
