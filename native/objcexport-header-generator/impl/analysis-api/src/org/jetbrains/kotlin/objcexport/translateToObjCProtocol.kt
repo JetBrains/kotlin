@@ -43,7 +43,7 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol {
     return ObjCProtocolImpl(
         name = name.objCName,
         comment = comment,
-        origin = this.objCStubOrigin(),
+        origin = getObjCStubOrigin(),
         attributes = emptyList(),
         superProtocols = superProtocols,
         members = members

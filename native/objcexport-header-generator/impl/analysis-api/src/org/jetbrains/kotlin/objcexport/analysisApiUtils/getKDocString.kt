@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
-internal fun KtSymbol.findKDocString(): String? {
+internal fun KtSymbol.getKDocString(): String? {
     val psi = psi
     if (psi is KtDeclaration) {
         if (psi is KtPrimaryConstructor)

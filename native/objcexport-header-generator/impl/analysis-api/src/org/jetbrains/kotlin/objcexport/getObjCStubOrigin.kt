@@ -9,15 +9,15 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStubOrigin
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.findKDocString
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getKDocString
 
 context(KtAnalysisSession)
-fun KtSymbol.objCStubOrigin(): ObjCExportStubOrigin {
+fun KtSymbol.getObjCStubOrigin(): ObjCExportStubOrigin {
     // TODO: Differentiate origins
     // TODO: Extract kdoc from deserialized symbols
     return ObjCExportStubOrigin.Source(
         name = let { it as? KtPossiblyNamedSymbol }?.name,
         psi = psi,
-        kdoc = findKDocString()
+        kdoc = getKDocString()
     )
 }

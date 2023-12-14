@@ -6,22 +6,9 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
 
-
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtClassLikeSymbol.getObjCClassOrProtocolName(): ObjCExportClassOrProtocolName {
-    val resolvedObjCNameAnnotation = resolveObjCNameAnnotation()
-
-    return ObjCExportClassOrProtocolName(
-        objCName = resolvedObjCNameAnnotation?.objCName ?: nameOrAnonymous.asString(),
-        swiftName = resolvedObjCNameAnnotation?.swiftName ?: nameOrAnonymous.asString()
-    )
-}
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtPropertySymbol.getObjCPropertyName(): ObjCExportPropertyName {
