@@ -74,9 +74,10 @@ class Candidate(
     val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
         val system = constraintSystemFactory.createConstraintSystem()
 
-        val outerCs = runUnless(baseSystem.usesOuterCs) { inferenceSession.outerCSForCandidate(this) }
-        if (outerCs != null) {
-            system.addOuterSystem(outerCs)
+        val baseCSFromInferenceSession =
+            runUnless(baseSystem.usesOuterCs) { inferenceSession.baseConstraintStorageForCandidate(this) }
+        if (baseCSFromInferenceSession != null) {
+            system.setBaseSystem(baseCSFromInferenceSession)
             system.addOtherSystem(baseSystem)
         } else {
             system.setBaseSystem(baseSystem)

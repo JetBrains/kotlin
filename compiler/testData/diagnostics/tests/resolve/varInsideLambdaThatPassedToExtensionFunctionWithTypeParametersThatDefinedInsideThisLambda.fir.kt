@@ -12,6 +12,6 @@ fun test(){
             "Error: $x"
             x.<!UNRESOLVED_REFERENCE!>length<!>
         }
-        x<!UNSAFE_CALL!>.<!>length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
