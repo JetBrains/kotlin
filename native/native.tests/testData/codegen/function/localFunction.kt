@@ -3,13 +3,13 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.localFunction
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     val x = 1
-    fun local0() = println(x)
+    fun local0() = sb.appendLine(x)
     fun local1() {
         fun local2() {
             local1()
@@ -28,5 +28,6 @@ import kotlin.test.*
         }
     }
 
-    println("OK")
+    assertEquals("", sb.toString())
+    return "OK"
 }

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.plus_eq
-
 import kotlin.test.*
 
 fun plus_eq(a: Int): Int {
@@ -13,6 +11,7 @@ fun plus_eq(a: Int): Int {
   return b
 }
 
-@Test fun runTest() {
-  if (plus_eq(3) != 14) throw Error()
+fun box(): String {
+  assertEquals(14, plus_eq(3))
+  return "OK"
 }

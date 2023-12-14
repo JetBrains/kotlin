@@ -3,21 +3,28 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.delegatedProperty.packageLevel
-
 import kotlin.test.*
 
 import kotlin.reflect.KProperty
 
+val sb = StringBuilder()
+
 class Delegate {
     operator fun getValue(receiver: Any?, p: KProperty<*>): Int {
-        println(p.name)
+        sb.appendLine(p.name)
         return 42
     }
 }
 
 val x: Int by Delegate()
 
-@Test fun runTest() {
-    println(x)
+fun box(): String {
+    sb.appendLine(x)
+
+    assertEquals("""
+        x
+        42
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

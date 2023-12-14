@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.escapeAnalysis.negativeArraySize
-
 import kotlin.test.*
 
 const val size = -42
@@ -14,6 +12,8 @@ fun foo() {
     for (x in arr) println(x)
 }
 
-@Test fun runTest() {
+fun box(): String {
     assertFailsWith<IllegalArgumentException> { foo() }
+
+    return "OK"
 }

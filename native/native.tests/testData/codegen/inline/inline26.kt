@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline26
-
 import kotlin.test.*
 
 inline fun call(block1: () -> Unit, noinline block2: () -> Int): Int {
@@ -12,7 +10,9 @@ inline fun call(block1: () -> Unit, noinline block2: () -> Int): Int {
     return block2()
 }
 
-@Test fun runTest() {
+fun box(): String {
     var x = 5
-    println(call({ x = 7 }, x::toInt))
+    assertEquals(5, call({ x = 7 }, x::toInt))
+
+    return "OK"
 }

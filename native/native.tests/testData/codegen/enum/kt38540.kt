@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.enum.kt38540
-
 import kotlin.test.*
 
 public enum class Node(
@@ -99,9 +97,10 @@ public enum class Node(
     )
 }
 
-@Test
-fun runTest() {
+fun box(): String {
     assertTrue(Node.FIELD_REPORT.dependsOn.contains(Node.AG))
     assertTrue(Node.FIELD_REPORT.dependsOn.contains(Node.O))
     assertTrue(Node.FIELD_REPORT.dependsOn.contains(Node.J))
+
+    return "OK"
 }

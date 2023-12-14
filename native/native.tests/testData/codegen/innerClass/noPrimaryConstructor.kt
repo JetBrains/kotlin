@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.innerClass.noPrimaryConstructor
-
 import kotlin.test.*
 
 class Outer(val s: String) {
@@ -24,7 +22,7 @@ class Outer(val s: String) {
 
 }
 
-@Test fun runTest() {
-    println(Outer("OK").Inner(42).foo())
-    println(Outer("OK").Inner("zzz").foo())
+fun box(): String {
+    assertEquals("OK", Outer("OK").Inner(42).foo())
+    return Outer("OK").Inner("zzz").foo()
 }

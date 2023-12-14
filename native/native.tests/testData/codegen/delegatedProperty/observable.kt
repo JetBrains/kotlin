@@ -3,21 +3,28 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.delegatedProperty.observable
-
 import kotlin.test.*
 
 import kotlin.properties.Delegates
 
+val sb = StringBuilder()
+
 class User {
     var name: String by Delegates.observable("<no name>") {
         prop, old, new ->
-        println("$old -> $new")
+        sb.appendLine("$old -> $new")
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     val user = User()
     user.name = "first"
     user.name = "second"
+
+    assertEquals("""
+        <no name> -> first
+        first -> second
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

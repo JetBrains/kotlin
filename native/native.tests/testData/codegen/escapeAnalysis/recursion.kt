@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.escapeAnalysis.recursion
-
 import kotlin.test.*
 
 class A {
@@ -19,6 +17,8 @@ fun foo(k: Int, a1: A, a2: A): A {
     return foo(k - 1, a2, a3)
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo(3, A(), A()).toString()
+
+    return "OK"
 }

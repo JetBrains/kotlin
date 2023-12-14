@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.typeSubstitutionInFakeOverride
-
 import kotlin.test.*
 
 abstract class A {
@@ -21,6 +19,6 @@ class B : A() {
 
 class OK
 
-@Test fun runTest() {
-    println(B().bar())
+fun box(): String {
+    return B().bar()
 }

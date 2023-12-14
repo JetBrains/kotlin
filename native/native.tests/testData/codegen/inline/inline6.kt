@@ -3,24 +3,33 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline6
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun foo(body: () -> Unit) {
-    println("hello1")
+    sb.appendLine("hello1")
     body()
-    println("hello4")
+    sb.appendLine("hello4")
 }
 
 fun bar() {
     foo {
-        println("hello2")
-        println("hello3")
+        sb.appendLine("hello2")
+        sb.appendLine("hello3")
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     bar()
+
+    assertEquals("""
+        hello1
+        hello2
+        hello3
+        hello4
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

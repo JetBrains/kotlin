@@ -3,16 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.dataflow.scope1
-
 import kotlin.test.*
 
 var b = true
 
-@Test fun runTest() {
+fun box(): String {
     var x = 1
     if (b) {
         var x = 2
     }
-    println(x)
+    assertEquals(1, x)
+    return "OK"
 }

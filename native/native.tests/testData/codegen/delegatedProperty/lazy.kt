@@ -3,16 +3,24 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.delegatedProperty.lazy
-
 import kotlin.test.*
 
+val sb = StringBuilder()
+
 val lazyValue: String by lazy {
-    println("computed!")
+    sb.appendLine("computed!")
     "Hello"
 }
 
-@Test fun runTest() {
-    println(lazyValue)
-    println(lazyValue)
+fun box(): String {
+    sb.appendLine(lazyValue)
+    sb.appendLine(lazyValue)
+
+    assertEquals("""
+        computed!
+        Hello
+        Hello
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

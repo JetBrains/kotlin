@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.cycles.cycle
-
 import kotlin.test.*
 
 fun cycle(cnt: Int): Int {
@@ -15,7 +13,9 @@ fun cycle(cnt: Int): Int {
   return sum
 }
 
-@Test fun runTest() {
-  if (cycle(1) != 2) throw Error()
-  if (cycle(0) != 1) throw Error()
+fun box(): String {
+  assertEquals(2, cycle(1))
+  assertEquals(1, cycle(0))
+
+  return "OK"
 }

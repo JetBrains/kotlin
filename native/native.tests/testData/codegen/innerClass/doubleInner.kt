@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.innerClass.doubleInner
-
 import kotlin.test.*
 
 open class Father(val param: String) {
@@ -23,8 +21,4 @@ open class Father(val param: String) {
 
 fun box(): String {
     return Father("fail").Child("OK").Child2().work()
-}
-
-@Test fun runTest() {
-    println(box())
 }

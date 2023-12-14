@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.dataflow.uninitialized_val
-
 import kotlin.test.*
 
 fun foo(b: Boolean): Int {
@@ -18,9 +16,11 @@ fun foo(b: Boolean): Int {
     return x
 }
 
-@Test fun runTest() {
+fun box(): String {
     val uninitializedUnused: Int
 
-    println(foo(true))
-    println(foo(false))
+    assertEquals(1, foo(true))
+    assertEquals(2, foo(false))
+
+    return "OK"
 }

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inlineClass.valueClass0
-
 import kotlin.test.*
 
 // Based on KT-27225.
@@ -15,6 +13,7 @@ value class Second(val value: First) {
     constructor(c: Int) : this(First(c))
 }
 
-@Test fun runTest() {
+fun box(): String {
     assertEquals(Second(42).value.value, 42)
+    return "OK"
 }

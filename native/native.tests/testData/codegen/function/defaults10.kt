@@ -3,14 +3,13 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.defaults10
-
 import kotlin.test.*
 
 enum class A(one: Int, val two: Int = one) {
     FOO(42)
 }
 
-@Test fun runTest() {
-    println(A.FOO.two)
+fun box(): String {
+    assertEquals(42, (A.FOO.two))
+    return "OK"
 }

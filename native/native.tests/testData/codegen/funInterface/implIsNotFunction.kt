@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.funInterface.implIsNotFunction
-
 import kotlin.test.*
 
 fun interface Foo {
@@ -13,7 +11,7 @@ fun interface Foo {
 
 fun foo(f: Foo) = f is Function<*>
 
-@Test
-fun test() {
+fun box(): String {
     assertFalse(foo { "zzz" })
+    return "OK"
 }

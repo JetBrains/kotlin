@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline22
-
 import kotlin.test.*
 
 inline fun foo2(i2: Int): Int {
@@ -19,6 +17,7 @@ fun bar(): Int {
     return foo1(11)
 }
 
-@Test fun runTest() {
-    println(bar().toString())
+fun box(): String {
+    assertEquals(14, bar())
+    return "OK"
 }

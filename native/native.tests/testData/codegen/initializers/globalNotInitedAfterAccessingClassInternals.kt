@@ -23,7 +23,9 @@ class C {
 // FILE: main.kt
 import kotlin.test.*
 
-fun main() {
+fun box(): String {
     C().bar()
     assertFalse(z)
+
+    return "OK"
 }

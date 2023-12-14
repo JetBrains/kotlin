@@ -3,12 +3,10 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.boolean
-
-import kotlin.test.*
-
 fun bool_yes(): Boolean = true
 
-@Test fun runTest() {
-    if (!bool_yes()) throw Error()
+fun box(): String {
+    if (!bool_yes()) return "FAIL !bool_yes()"
+
+    return "OK"
 }

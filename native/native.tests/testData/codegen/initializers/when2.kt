@@ -11,11 +11,14 @@ private fun getY() = 42
 fun bar(x: Int) = x == 0
 
 // FILE: main.kt
+import kotlin.test.*
+
 fun foo(x: Int) {
     if (x > 0) bar(x)
 }
 
-fun main() {
+fun box(): String {
     foo(-1)
-    println(y)
+    assertEquals(42, y)
+    return "OK"
 }

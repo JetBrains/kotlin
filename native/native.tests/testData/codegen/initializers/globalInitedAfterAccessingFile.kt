@@ -21,7 +21,9 @@ fun bar() = 117
 // FILE: main.kt
 import kotlin.test.*
 
-fun main() {
+fun box(): String {
     bar()
     assertTrue(z)
+
+    return "OK"
 }

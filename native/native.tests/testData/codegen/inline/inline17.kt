@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline17
-
 import kotlin.test.*
 
 @Suppress("NOTHING_TO_INLINE")
@@ -18,6 +16,7 @@ fun bar(): List<Int> {
     return foo <Int> (1, 2)
 }
 
-@Test fun runTest() {
-    println(bar().toString())
+fun box(): String {
+    assertEquals("[1, 2]", bar().toString())
+    return "OK"
 }

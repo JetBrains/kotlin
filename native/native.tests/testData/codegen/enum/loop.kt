@@ -3,18 +3,25 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.enum.loop
-
 import kotlin.test.*
+
+val sb = StringBuilder()
+
 
 enum class Zzz {
     Z {
         init {
-            println(Z.name)
+            sb.appendLine(Z.name)
         }
     }
 }
 
-@Test fun runTest() {
-    println(Zzz.Z)
+fun box(): String {
+    sb.appendLine(Zzz.Z)
+    assertEquals("""
+        Z
+        Z
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

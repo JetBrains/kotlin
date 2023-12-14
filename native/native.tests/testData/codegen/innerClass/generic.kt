@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.innerClass.generic
-
 import kotlin.test.*
 
 class Outer {
@@ -17,8 +15,4 @@ fun box(): String {
     if (Outer().Inner("OK").box() != "OK") return "Fail"
     val x: Outer.Inner<String> = Outer().Inner("OK")
     return x.box()
-}
-
-@Test fun runTest() {
-    println(box())
 }

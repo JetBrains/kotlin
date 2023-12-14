@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.enum.vCallNoEntryClass
-
 import kotlin.test.*
 
 enum class Zzz(val zzz: String, val x: Int) {
@@ -17,6 +15,7 @@ enum class Zzz(val zzz: String, val x: Int) {
     }
 }
 
-@Test fun runTest() {
-    println(Zzz.Z3.toString())
+fun box(): String {
+    assertEquals("('z3', 3)", Zzz.Z3.toString())
+    return "OK"
 }
