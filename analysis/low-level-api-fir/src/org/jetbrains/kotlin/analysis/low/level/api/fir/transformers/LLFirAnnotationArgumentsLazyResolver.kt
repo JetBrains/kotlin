@@ -153,6 +153,9 @@ private class LLFirAnnotationArgumentsTargetResolver(
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
+        // There is no sense to resolve such declarations as they do not have their own annotations
+        if (target is FirCallableDeclaration && target.isCopyCreatedInScope) return
+
         resolveWithKeeper(
             target,
             target.llFirSession,

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
@@ -63,6 +64,9 @@ private class LLFirContractsTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         collectTowerDataContext(target)
+
+        // There is no sense to resolve such declarations as they do not have contracts
+        if (target is FirCallableDeclaration && target.isCopyCreatedInScope) return
 
         when (target) {
             is FirPrimaryConstructor, is FirErrorPrimaryConstructor -> {

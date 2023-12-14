@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
@@ -73,12 +74,14 @@ private class LLFirExpectActualMatchingTargetResolver(
     }
 }
 
-private fun FirMemberDeclaration.canHaveExpectCounterPart(): Boolean = when (this) {
-    is FirEnumEntry -> true
-    is FirProperty -> true
-    is FirConstructor -> true
-    is FirSimpleFunction -> true
-    is FirRegularClass -> true
-    is FirTypeAlias -> true
+private fun FirMemberDeclaration.canHaveExpectCounterPart(): Boolean = when {
+    // We shouldn't try to calculate expect/actual mapping for fake declarations
+    this is FirCallableDeclaration && isCopyCreatedInScope -> false
+    this is FirEnumEntry -> true
+    this is FirProperty -> true
+    this is FirConstructor -> true
+    this is FirSimpleFunction -> true
+    this is FirRegularClass -> true
+    this is FirTypeAlias -> true
     else -> false
 }

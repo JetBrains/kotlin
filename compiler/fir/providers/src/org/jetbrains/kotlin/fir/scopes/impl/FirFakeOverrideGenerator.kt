@@ -120,28 +120,24 @@ object FirFakeOverrideGenerator {
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
         callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null,
-    ): FirSimpleFunction {
-        checkStatusIsResolved(baseFunction)
+    ): FirSimpleFunction = buildSimpleFunction {
+        source = derivedClassLookupTag?.toSymbol(session)?.source ?: baseFunction.source
+        moduleData = session.nullableModuleData ?: baseFunction.moduleData
+        this.origin = origin
+        name = baseFunction.name
+        status = baseFunction.status.copy(newVisibility, newModality, isExpect = isExpect)
+        symbol = newSymbol
+        resolvePhase = origin.resolvePhaseForCopy
 
-        return buildSimpleFunction {
-            source = derivedClassLookupTag?.toSymbol(session)?.source ?: baseFunction.source
-            moduleData = session.nullableModuleData ?: baseFunction.moduleData
-            this.origin = origin
-            name = baseFunction.name
-            status = baseFunction.status.copy(newVisibility, newModality, isExpect = isExpect)
-            symbol = newSymbol
-            resolvePhase = baseFunction.resolvePhase
-
-            dispatchReceiverType = newDispatchReceiverType
-            attributes = baseFunction.attributes.copy()
-            typeParameters += configureAnnotationsTypeParametersAndSignature(
-                session, baseFunction, newParameterTypes, newTypeParameters,
-                newReceiverType, newContextReceiverTypes, newReturnType, callableCopySubstitutionForTypeUpdater, newSymbol
-            ).filterIsInstance<FirTypeParameter>()
-            deprecationsProvider = baseFunction.deprecationsProvider
-        }.apply {
-            containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseFunction) }
-        }
+        dispatchReceiverType = newDispatchReceiverType
+        attributes = baseFunction.attributes.copy()
+        typeParameters += configureAnnotationsTypeParametersAndSignature(
+            session, baseFunction, newParameterTypes, newTypeParameters,
+            newReceiverType, newContextReceiverTypes, newReturnType, callableCopySubstitutionForTypeUpdater, newSymbol
+        ).filterIsInstance<FirTypeParameter>()
+        deprecationsProvider = baseFunction.deprecationsProvider
+    }.apply {
+        containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseFunction) }
     }
 
     fun createCopyForFirConstructor(
@@ -157,46 +153,42 @@ object FirFakeOverrideGenerator {
         newTypeParameters: List<FirTypeParameterRef>?,
         isExpect: Boolean,
         callableCopySubstitutionForTypeUpdater: CallableCopySubstitution?,
-    ): FirConstructor {
-        checkStatusIsResolved(baseConstructor)
-
+    ): FirConstructor = buildConstructor {
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
-        return buildConstructor {
-            annotations += baseConstructor.annotations
-            source = derivedClassLookupTag?.toSymbol(session)?.source ?: baseConstructor.source
-            moduleData = session.nullableModuleData ?: baseConstructor.moduleData
-            this.origin = origin
-            receiverParameter = baseConstructor.receiverParameter?.let { receiverParameter ->
-                buildReceiverParameterCopy(receiverParameter) {
-                    typeRef = receiverParameter.typeRef.withReplacedConeType(null)
-                }
+        annotations += baseConstructor.annotations
+        source = derivedClassLookupTag?.toSymbol(session)?.source ?: baseConstructor.source
+        moduleData = session.nullableModuleData ?: baseConstructor.moduleData
+        this.origin = origin
+        receiverParameter = baseConstructor.receiverParameter?.let { receiverParameter ->
+            buildReceiverParameterCopy(receiverParameter) {
+                typeRef = receiverParameter.typeRef.withReplacedConeType(null)
             }
-
-            status = baseConstructor.status.copy(isExpect = isExpect)
-            symbol = fakeOverrideSymbol
-
-            typeParameters += configureAnnotationsTypeParametersAndSignature(
-                session,
-                baseConstructor,
-                newParameterTypes,
-                newTypeParameters,
-                newReceiverType = null,
-                newContextReceiverTypes,
-                newReturnType,
-                callableCopySubstitutionForTypeUpdater,
-                fakeOverrideSymbol
-            )
-
-            dispatchReceiverType = newDispatchReceiverType
-
-            resolvePhase = baseConstructor.resolvePhase
-            attributes = baseConstructor.attributes.copy()
-            deprecationsProvider = baseConstructor.deprecationsProvider
-        }.apply {
-            originalForSubstitutionOverrideAttr = baseConstructor
-            containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseConstructor) }
         }
+
+        status = baseConstructor.status.copy(isExpect = isExpect)
+        symbol = fakeOverrideSymbol
+
+        typeParameters += configureAnnotationsTypeParametersAndSignature(
+            session,
+            baseConstructor,
+            newParameterTypes,
+            newTypeParameters,
+            newReceiverType = null,
+            newContextReceiverTypes,
+            newReturnType,
+            callableCopySubstitutionForTypeUpdater,
+            fakeOverrideSymbol
+        )
+
+        dispatchReceiverType = newDispatchReceiverType
+
+        resolvePhase = origin.resolvePhaseForCopy
+        attributes = baseConstructor.attributes.copy()
+        deprecationsProvider = baseConstructor.deprecationsProvider
+    }.apply {
+        originalForSubstitutionOverrideAttr = baseConstructor
+        containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseConstructor) }
     }
 
     private fun FirFunctionBuilder.configureAnnotationsTypeParametersAndSignature(
@@ -277,6 +269,7 @@ object FirFakeOverrideGenerator {
         callableCopySubstitutionForTypeUpdater: CallableCopySubstitution?,
         origin: FirDeclarationOrigin,
     ) {
+        checkStatusIsResolved(baseFunction)
         annotations += baseFunction.annotations
 
         @Suppress("NAME_SHADOWING")
@@ -338,6 +331,8 @@ object FirFakeOverrideGenerator {
                 coneTypeOrNull = returnTypeRef.coneTypeOrNull
             }
         }
+
+        resolvePhase = origin.resolvePhaseForCopy
     }.apply {
         addOverrideAttributeIfNeeded(original)
     }
@@ -397,55 +392,51 @@ object FirFakeOverrideGenerator {
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
         callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null,
-    ): FirProperty {
-        checkStatusIsResolved(baseProperty)
+    ): FirProperty = buildProperty {
+        source = derivedClassLookupTag?.toSymbol(session)?.source ?: baseProperty.source
+        moduleData = session.nullableModuleData ?: baseProperty.moduleData
+        this.origin = origin
+        name = baseProperty.name
+        isVar = baseProperty.isVar
+        this.symbol = newSymbol
+        isLocal = false
+        status = baseProperty.status.copy(newVisibility, newModality, isExpect = isExpect)
 
-        return buildProperty {
-            source = derivedClassLookupTag?.toSymbol(session)?.source ?: baseProperty.source
-            moduleData = session.nullableModuleData ?: baseProperty.moduleData
-            this.origin = origin
-            name = baseProperty.name
-            isVar = baseProperty.isVar
-            this.symbol = newSymbol
-            isLocal = false
-            status = baseProperty.status.copy(newVisibility, newModality, isExpect = isExpect)
+        resolvePhase = origin.resolvePhaseForCopy
+        dispatchReceiverType = newDispatchReceiverType
+        attributes = baseProperty.attributes.copy()
+        typeParameters += configureAnnotationsTypeParametersAndSignature(
+            session,
+            baseProperty,
+            newTypeParameters,
+            newReceiverType,
+            newContextReceiverTypes,
+            newReturnType,
+            callableCopySubstitutionForTypeUpdater
+        )
+        deprecationsProvider = baseProperty.deprecationsProvider
 
-            resolvePhase = baseProperty.resolvePhase
-            dispatchReceiverType = newDispatchReceiverType
-            attributes = baseProperty.attributes.copy()
-            typeParameters += configureAnnotationsTypeParametersAndSignature(
-                session,
-                baseProperty,
-                newTypeParameters,
-                newReceiverType,
-                newContextReceiverTypes,
-                newReturnType,
-                callableCopySubstitutionForTypeUpdater
-            )
-            deprecationsProvider = baseProperty.deprecationsProvider
+        getter = baseProperty.getter?.buildCopyIfNeeded(
+            moduleData = session.nullableModuleData ?: baseProperty.moduleData,
+            origin = origin,
+            propertyReturnTypeRef = this@buildProperty.returnTypeRef,
+            propertySymbol = newSymbol,
+            dispatchReceiverType = dispatchReceiverType,
+            derivedClassLookupTag = derivedClassLookupTag,
+            baseProperty = baseProperty,
+        )
 
-            getter = baseProperty.getter?.buildCopyIfNeeded(
-                moduleData = session.nullableModuleData ?: baseProperty.moduleData,
-                origin = origin,
-                propertyReturnTypeRef = this@buildProperty.returnTypeRef,
-                propertySymbol = newSymbol,
-                dispatchReceiverType = dispatchReceiverType,
-                derivedClassLookupTag = derivedClassLookupTag,
-                baseProperty = baseProperty,
-            )
-
-            setter = baseProperty.setter?.buildCopyIfNeeded(
-                moduleData = session.nullableModuleData ?: baseProperty.moduleData,
-                origin = origin,
-                propertyReturnTypeRef = this@buildProperty.returnTypeRef,
-                propertySymbol = newSymbol,
-                dispatchReceiverType = dispatchReceiverType,
-                derivedClassLookupTag = derivedClassLookupTag,
-                baseProperty = baseProperty,
-            )
-        }.apply {
-            containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseProperty) }
-        }
+        setter = baseProperty.setter?.buildCopyIfNeeded(
+            moduleData = session.nullableModuleData ?: baseProperty.moduleData,
+            origin = origin,
+            propertyReturnTypeRef = this@buildProperty.returnTypeRef,
+            propertySymbol = newSymbol,
+            dispatchReceiverType = dispatchReceiverType,
+            derivedClassLookupTag = derivedClassLookupTag,
+            baseProperty = baseProperty,
+        )
+    }.apply {
+        containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseProperty) }
     }
 
     private fun FirPropertyAccessor.buildCopyIfNeeded(
@@ -487,7 +478,7 @@ object FirFakeOverrideGenerator {
             propertySymbol = propertySymbol,
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
-            resolvePhase = resolvePhase,
+            resolvePhase = origin.resolvePhaseForCopy,
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
         }
@@ -500,7 +491,7 @@ object FirFakeOverrideGenerator {
             propertySymbol = propertySymbol,
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
-            resolvePhase = resolvePhase,
+            resolvePhase = origin.resolvePhaseForCopy,
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
         }
@@ -511,6 +502,7 @@ object FirFakeOverrideGenerator {
             this.propertySymbol = propertySymbol
             this.dispatchReceiverType = dispatchReceiverType
             this.body = null
+            resolvePhase = origin.resolvePhaseForCopy
         }.also {
             if (it.isSetter) {
                 val originalParameter = it.valueParameters.first()
@@ -547,27 +539,25 @@ object FirFakeOverrideGenerator {
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
         callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null,
-    ): FirField {
-        return buildField {
-            source = baseField.source
-            moduleData = session.nullableModuleData ?: baseField.moduleData
-            this.origin = origin
-            name = baseField.name
-            isVar = baseField.isVar
-            this.symbol = newSymbol
-            status = baseField.status.copy(newVisibility, newModality, isExpect = isExpect)
+    ): FirField = buildField {
+        source = baseField.source
+        moduleData = session.nullableModuleData ?: baseField.moduleData
+        this.origin = origin
+        name = baseField.name
+        isVar = baseField.isVar
+        this.symbol = newSymbol
+        status = baseField.status.copy(newVisibility, newModality, isExpect = isExpect)
 
-            resolvePhase = baseField.resolvePhase
-            dispatchReceiverType = newDispatchReceiverType
-            attributes = baseField.attributes.copy()
-            configureAnnotationsAndSignature(
-                baseField, newReceiverType, newContextReceiverTypes, newReturnType,
-                callableCopySubstitutionForTypeUpdater, updateReceiver = false
-            )
-            deprecationsProvider = baseField.deprecationsProvider
-        }.apply {
-            containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseField) }
-        }
+        resolvePhase = origin.resolvePhaseForCopy
+        dispatchReceiverType = newDispatchReceiverType
+        attributes = baseField.attributes.copy()
+        configureAnnotationsAndSignature(
+            baseField, newReceiverType, newContextReceiverTypes, newReturnType,
+            callableCopySubstitutionForTypeUpdater, updateReceiver = false
+        )
+        deprecationsProvider = baseField.deprecationsProvider
+    }.apply {
+        containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseField) }
     }
 
     private fun FirPropertyBuilder.configureAnnotationsTypeParametersAndSignature(
@@ -652,6 +642,7 @@ object FirFakeOverrideGenerator {
         callableCopySubstitutionForTypeUpdater: CallableCopySubstitution?,
         updateReceiver: Boolean = true,
     ) {
+        checkStatusIsResolved(baseVariable)
         annotations += baseVariable.annotations
 
         @Suppress("NAME_SHADOWING")
@@ -690,29 +681,25 @@ object FirFakeOverrideGenerator {
         derivedClassLookupTag: ConeClassLikeLookupTag,
         newReturnType: ConeKotlinType?,
         origin: FirDeclarationOrigin.SubstitutionOverride,
-    ): FirFieldSymbol {
+    ): FirFieldSymbol = buildField {
         val symbol = FirFieldSymbol(CallableId(derivedClassLookupTag.classId, baseField.name))
-        buildField {
-            moduleData = session.nullableModuleData ?: baseField.moduleData
-            this.symbol = symbol
-            this.origin = origin
-            returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
+        moduleData = session.nullableModuleData ?: baseField.moduleData
+        this.symbol = symbol
+        this.origin = origin
+        returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
 
-            source = baseField.source
-            resolvePhase = baseField.resolvePhase
-            name = baseField.name
-            isVar = baseField.isVar
-            status = baseField.status
-            resolvePhase = baseField.resolvePhase
-            annotations += baseField.annotations
-            attributes = baseField.attributes.copy()
-            dispatchReceiverType = baseField.dispatchReceiverType
-        }.apply {
-            originalForSubstitutionOverrideAttr = baseField
-            containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseField) }
-        }
-        return symbol
-    }
+        source = baseField.source
+        name = baseField.name
+        isVar = baseField.isVar
+        status = baseField.status
+        resolvePhase = origin.resolvePhaseForCopy
+        annotations += baseField.annotations
+        attributes = baseField.attributes.copy()
+        dispatchReceiverType = baseField.dispatchReceiverType
+    }.apply {
+        originalForSubstitutionOverrideAttr = baseField
+        containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseField) }
+    }.symbol
 
     // Returns a list of type parameters, and a substitutor that should be used for all other types
     fun createNewTypeParametersAndSubstitutor(
@@ -730,7 +717,7 @@ object FirFakeOverrideGenerator {
                 source = typeParameter.source
                 moduleData = typeParameter.moduleData
                 this.origin = origin
-                resolvePhase = FirResolvePhase.DECLARATIONS
+                resolvePhase = origin.resolvePhaseForCopy
                 name = typeParameter.name
                 symbol = FirTypeParameterSymbol()
                 variance = typeParameter.variance
@@ -794,4 +781,24 @@ object FirFakeOverrideGenerator {
             withEntry("declarationStatus", member.status) { it.toString() }
         }
     }
+
+    /**
+     * In Low Level FIR we cannot be sure that all copied elements are already resolved,
+     * so we play safe with [FirResolvePhase.STATUS] phase in such cases.
+     * Example:
+     * ```kotlin
+     * class MyClass : BaseClass<@Anno("super $constant") Int>()
+     *
+     * abstract class BaseClass<T : @Anno("bound $constant") Number> {
+     *     var property: SCHEME
+     * }
+     * ```
+     * here we can have `BaseClass.property` already in [FirResolvePhase.BODY_RESOLVE] phase,
+     * but `MyClass` in [FirResolvePhase.STATUS].
+     * So [FirResolvePhase.BODY_RESOLVE] on the fake override will lead to the problem because
+     * effectively we will have unresolved `@Anno("super $constant")` annotation inside "fully resolve"
+     * function
+     */
+    private val FirDeclarationOrigin.resolvePhaseForCopy: FirResolvePhase
+        get() = if (isLazyResolvable) FirResolvePhase.STATUS else FirResolvePhase.BODY_RESOLVE
 }

@@ -59,37 +59,27 @@ internal object LLFirResolveMultiDesignationCollector {
         else -> throwUnexpectedFirElementError(this)
     }
 
-    private fun FirDeclaration.shouldBeResolved(): Boolean = when (origin) {
-        is FirDeclarationOrigin.Source,
-        is FirDeclarationOrigin.ImportedFromObjectOrStatic,
-        is FirDeclarationOrigin.Delegated,
-        is FirDeclarationOrigin.Synthetic,
-        is FirDeclarationOrigin.SubstitutionOverride,
-        is FirDeclarationOrigin.SamConstructor,
-        is FirDeclarationOrigin.WrappedIntegerOperator,
-        is FirDeclarationOrigin.IntersectionOverride,
-        is FirDeclarationOrigin.ScriptCustomization,
-        -> {
-            when (this) {
-                is FirFile -> true
-                is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> false
-                is FirSimpleFunction,
-                is FirProperty,
-                is FirPropertyAccessor,
-                is FirField,
-                is FirTypeAlias,
-                is FirConstructor,
-                -> true
-                else -> true
-            }
-        }
-        else -> {
+    private fun FirDeclaration.shouldBeResolved(): Boolean {
+        if (!origin.isLazyResolvable) {
             @OptIn(ResolveStateAccess::class)
             check(resolvePhase == FirResolvePhase.BODY_RESOLVE) {
                 "Expected body resolve phase for origin $origin but found $resolveState"
             }
 
-            false
+            return false
+        }
+
+        return when (this) {
+            is FirFile -> true
+            is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> false
+            is FirSimpleFunction,
+            is FirProperty,
+            is FirPropertyAccessor,
+            is FirField,
+            is FirTypeAlias,
+            is FirConstructor,
+            -> true
+            else -> true
         }
     }
 }
