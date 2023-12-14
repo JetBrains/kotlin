@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.pill
 
+import org.gradle.api.Named
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.*
@@ -51,25 +53,17 @@ class ModelParser(private val modulePrefix: String, private val globalExcludedDi
         val additionalOutputs = HashMap<OutputDir, List<OutputDir>>()
 
         for (project in rootProject.allprojects) {
-            val sourceSets = project.sourceSets?.toList() ?: emptyList()
-
-            for (sourceSet in sourceSets) {
+            for (sourceSet in computeAllSourceSets(project)) {
                 val path = makePath(project, sourceSet.name)
 
-                for (output in sourceSet.output.toList()) {
-                    artifacts[output.absolutePath] = listOf(path)
-                }
-
-                val jarTaskNameCandidates = buildList {
-                    add(sourceSet.jarTaskName)
-                    when (sourceSet.name) {
-                        SourceSet.MAIN_SOURCE_SET_NAME -> add("jvmJar")
-                        SourceSet.TEST_SOURCE_SET_NAME -> add("jvmJarForTests")
+                if (sourceSet is SourceSetWrapper.JavaSourceSet) {
+                    for (output in sourceSet.gradleSourceSet.output.toList()) {
+                        artifacts[output.absolutePath] = listOf(path)
                     }
                 }
 
-                val jarTask = jarTaskNameCandidates.firstNotNullOfOrNull { project.tasks.findByName(it) } as? Jar ?: continue
-                val embeddedTask = findEmbeddableTask(project, sourceSet)
+                val jarTask = sourceSet.findJarTask(project)
+                val embeddedTask = sourceSet.findEmbeddedTask(project)
 
                 for (task in listOfNotNull(jarTask, embeddedTask)) {
                     val archiveFile = task.archiveFile.get().asFile
@@ -100,14 +94,6 @@ class ModelParser(private val modulePrefix: String, private val globalExcludedDi
         }
 
         return artifacts
-    }
-
-    private fun findEmbeddableTask(project: Project, sourceSet: SourceSet): Jar? {
-        val jarName = sourceSet.jarTaskName
-        val embeddable = "embeddable"
-        val embeddedName = if (jarName == "jar") embeddable else jarName.dropLast("jar".length) +
-                embeddable.replaceFirstChar { it.uppercase() }
-        return project.tasks.findByName(embeddedName) as? Jar
     }
 
     private fun makePath(project: Project, sourceSetName: String): GradleProjectPath {
@@ -234,7 +220,7 @@ class ModelParser(private val modulePrefix: String, private val globalExcludedDi
 
             sourceSets += PSourceSet(
                 name = sourceSet.name,
-                forTests = sourceSet.isTestSourceSet,
+                forTests = SourceSetWrapper.JavaSourceSet(sourceSet).isTest,
                 sourceDirectories = sourceDirectories,
                 resourceDirectories = resourceDirectories,
                 kotlinOptions = kotlinCompileTask?.let { getKotlinOptions(it, project) },
@@ -352,12 +338,99 @@ class ModelParser(private val modulePrefix: String, private val globalExcludedDi
     }
 }
 
-private val SourceSet.isTestSourceSet: Boolean
-    get() = name == SourceSet.TEST_SOURCE_SET_NAME
-            || name == "testFixtures"
-            || name.endsWith("Test")
-            || name.endsWith("Tests")
-            || (extra.has("jpsKind") && extra.get("jpsKind") == SourceSet.TEST_SOURCE_SET_NAME)
+/**
+ * Returns both Java and Kotlin source sets, including multiplatform ones.
+ */
+internal fun computeAllSourceSets(project: Project): List<SourceSetWrapper> {
+    return buildList {
+        val existingNames = HashSet<String>()
+
+        for (javaSourceSet in project.sourceSets.orEmpty()) {
+            if (existingNames.add(javaSourceSet.name)) {
+                add(SourceSetWrapper.JavaSourceSet(javaSourceSet))
+            }
+        }
+
+        val kotlinExtension = project.extensions.findByName("kotlin")
+        if (kotlinExtension != null) {
+            // Calls 'KotlinSourceSetContainer.getSourceSets()'
+            val kotlinSourceSets = kotlinExtension.javaClass.getMethod("getSourceSets").invoke(kotlinExtension)
+            if (kotlinSourceSets is NamedDomainObjectContainer<*>) {
+                for (kotlinSourceSet in kotlinSourceSets) {
+                    val name = (kotlinSourceSet as Named).name
+                    if (existingNames.add(name)) {
+                        add(SourceSetWrapper.KotlinSourceSet(kotlinSourceSet))
+                    }
+                }
+            }
+        }
+    }
+}
+
+sealed class SourceSetWrapper(val name: String) {
+    class KotlinSourceSet(private val sourceSet: Named) : SourceSetWrapper(sourceSet.name) {
+        override val jarTaskCandidates: List<String>
+            get() {
+                // Production source sets (such as 'jvmMain') have a task without the 'Main' suffix, e.g. 'jvmJar'
+                return listOf("${baseName}Jar")
+            }
+
+        override fun findEmbeddedTask(project: Project): Jar? {
+            return null
+        }
+    }
+
+    class JavaSourceSet(val gradleSourceSet: SourceSet) : SourceSetWrapper(gradleSourceSet.name) {
+        override val jarTaskCandidates: List<String>
+            get() = buildList {
+                add(gradleSourceSet.jarTaskName)
+                when (gradleSourceSet.name) {
+                    SourceSet.MAIN_SOURCE_SET_NAME -> add("jvmJar")
+                    SourceSet.TEST_SOURCE_SET_NAME -> add("jvmJarForTests")
+                }
+            }
+
+        override val isTest: Boolean
+            get() {
+                if (gradleSourceSet.extra.has("jpsKind") && gradleSourceSet.extra.get("jpsKind") == SourceSet.TEST_SOURCE_SET_NAME) {
+                    return true
+                }
+
+                return super.isTest
+            }
+
+        override fun findEmbeddedTask(project: Project): Jar? {
+            val jarName = gradleSourceSet.jarTaskName
+            val embeddable = "embeddable"
+            val embeddedName = if (jarName == "jar") embeddable else jarName.dropLast("jar".length) +
+                    embeddable.replaceFirstChar { it.uppercase() }
+            return project.tasks.findByName(embeddedName) as? Jar
+        }
+    }
+
+    val baseName: String
+        get() = name.removeSuffix("Main")
+
+    open val isTest: Boolean
+        get() {
+            return name == SourceSet.TEST_SOURCE_SET_NAME
+                    || name == "testFixtures"
+                    || name.endsWith("Test")
+                    || name.endsWith("Tests")
+        }
+
+    protected abstract val jarTaskCandidates: List<String>
+
+    fun findJarTask(project: Project): Jar? {
+        return jarTaskCandidates.firstNotNullOfOrNull { project.tasks.findByName(it) } as? Jar
+    }
+
+    abstract fun findEmbeddedTask(project: Project): Jar?
+
+    override fun toString(): String {
+        return name
+    }
+}
 
 private fun Any.invokeInternal(name: String, instance: Any = this): Any? {
     val method = javaClass.methods.single { it.name.startsWith(name) && it.parameterTypes.isEmpty() }
@@ -368,7 +441,7 @@ private fun Any.invokeInternal(name: String, instance: Any = this): Any? {
 val Project.pillModuleName: String
     get() = path.removePrefix(":").replace(':', '.')
 
-val Project.sourceSets: SourceSetContainer?
+private val Project.sourceSets: SourceSetContainer?
     get() {
         val javaExtension = project.extensions.findByType<JavaPluginExtension>() ?: return null
         return javaExtension.sourceSets

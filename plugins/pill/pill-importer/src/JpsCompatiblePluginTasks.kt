@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
-import org.gradle.api.plugins.BasePluginExtension
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.getByType
 import org.jdom2.Element
 import org.jdom2.Verifier
 import org.jdom2.input.SAXBuilder
@@ -37,8 +34,7 @@ class JpsCompatiblePluginTasks(
             ":kotlin-stdlib-jdk7",
             ":kotlin-stdlib-jdk8",
             ":kotlin-reflect",
-            ":kotlin-test:kotlin-test-jvm",
-            ":kotlin-test:kotlin-test-junit",
+            ":kotlin-test",
             ":kotlin-script-runtime"
         )
 
@@ -287,18 +283,28 @@ class JpsCompatiblePluginTasks(
 
             for (path in DIST_LIBRARIES) {
                 val project = rootProject.findProject(path) ?: error("Project '$path' not found")
-                val archiveName = project.extensions.getByType<BasePluginExtension>().archivesName.get()
-                val classesJars = listOf(File(distLibDir, "$archiveName.jar")).filterExisting()
-                val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar")).filterExisting()
-                val sourceSets = project.extensions.getByType<JavaPluginExtension>().sourceSets
 
-                val applicableSourceSets = listOfNotNull(
-                    sourceSets.findByName(SourceSet.MAIN_SOURCE_SET_NAME),
-                    sourceSets.findByName("java9")
-                )
+                for (sourceSet in computeAllSourceSets(project)) {
+                    if (sourceSet.isTest) {
+                        continue
+                    }
 
-                val optLibrary = Optional.of(PLibrary(archiveName, classesJars, sourcesJars, originalName = path))
-                applicableSourceSets.forEach { ss -> result["$path/${ss.name}"] = optLibrary }
+                    val jarTask = sourceSet.findJarTask(project) ?: continue
+
+                    val archiveName = listOfNotNull(jarTask.archiveBaseName.get(), jarTask.archiveAppendix.orNull).joinToString("-")
+                    val classesJars = listOf(File(distLibDir, "$archiveName.jar")).filterExisting()
+                    val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar")).filterExisting()
+                    val optLibrary = Optional.of(PLibrary(archiveName, classesJars, sourcesJars, originalName = path))
+
+                    result[path + "/" + sourceSet.name] = optLibrary
+
+                    val java9SourceSetName = when (val sourceSetBaseName = sourceSet.baseName) {
+                        SourceSet.MAIN_SOURCE_SET_NAME -> "java9"
+                        else -> sourceSetBaseName + "Java9"
+                    }
+
+                    result["$path/$java9SourceSetName"] = optLibrary
+                }
             }
 
             for (path in IGNORED_LIBRARIES) {
