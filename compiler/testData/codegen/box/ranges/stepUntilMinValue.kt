@@ -4,44 +4,51 @@
 // 5 INVOKESTATIC kotlin/ranges/RangesKt.step
 // 4 INVOKESTATIC kotlin/ranges/URangesKt.step
 
-import kotlin.test.*
-
 fun box(): String {
     // Byte
-    val byteProgression = 0 until Byte.MIN_VALUE step 2
-    assertTrue(byteProgression.isEmpty())
+    for (i in (0 until Byte.MIN_VALUE step 2)) {
+        return "FAIL"
+    }
 
     // UByte
-    val uByteProgression = 0.toUByte() until UByte.MIN_VALUE step 2
-    assertTrue(uByteProgression.isEmpty())
+    for (i in (0.toUByte() until UByte.MIN_VALUE step 2)) {
+        return "FAIL"
+    }
 
     // Short
-    val shorProgression = 0 until Short.MIN_VALUE step 2
-    assertTrue(shorProgression.isEmpty())
+    for (i in (0 until Short.MIN_VALUE step 2)) {
+        return "FAIL"
+    }
 
     // UShort
-    val uShortProgression = 0.toUShort() until UShort.MIN_VALUE step 2
-    assertTrue(uShortProgression.isEmpty())
+    for (i in (0.toUShort() until UShort.MIN_VALUE step 2)) {
+        return "FAIL"
+    }
 
     // Int
-    val intProgression = 0 until Int.MIN_VALUE step 2
-    assertTrue(intProgression.isEmpty())
+    for (i in (0 until Int.MIN_VALUE step 2)) {
+        return "FAIL"
+    }
 
     // UInt
-    val uIntProgression = 0.toUInt() until UInt.MIN_VALUE step 2
-    assertTrue(uIntProgression.isEmpty())
+    for (i in (0.toUInt() until UInt.MIN_VALUE step 2)) {
+        return "FAIL"
+    }
 
     // Long
-    val longProgression = 0 until Long.MIN_VALUE step 2
-    assertTrue(longProgression.isEmpty())
+    for (i in (0 until Long.MIN_VALUE step 2)) {
+        return "FAIL"
+    }
 
     // ULong
-    val uLongProgression = 0UL until ULong.MIN_VALUE step 2L
-    assertTrue(uLongProgression.isEmpty())
+    for (i in (0UL until ULong.MIN_VALUE step 2L)) {
+        return "FAIL"
+    }
 
     // Char
-    val charProgression = Char.MIN_VALUE until Char.MIN_VALUE step 2
-    assertTrue(charProgression.isEmpty())
+    for (i in (Char.MIN_VALUE until Char.MIN_VALUE step 2)) {
+        return "FAIL"
+    }
 
     return "OK"
 }
