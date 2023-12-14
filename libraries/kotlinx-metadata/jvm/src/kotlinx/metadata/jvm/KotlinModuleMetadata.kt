@@ -168,7 +168,7 @@ public class KotlinModuleMetadata public constructor(
          * @throws IllegalArgumentException if [kmModule] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
          */
         @UnstableMetadataApi
-        @Deprecated("Use a KotlinModuleMetadata instance and its write() member function", level = DeprecationLevel.WARNING)
+        @Deprecated("Use a KotlinModuleMetadata instance and its write() member function", level = DeprecationLevel.ERROR)
         @JvmStatic
         @JvmOverloads
         public fun write(kmModule: KmModule, metadataVersion: JvmMetadataVersion = JvmMetadataVersion.LATEST_STABLE_SUPPORTED): ByteArray = wrapWriteIntoIAE {

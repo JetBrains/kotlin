@@ -639,7 +639,7 @@ public sealed class KotlinClassMetadata {
          */
         @JvmStatic
         @JvmOverloads
-        @Deprecated("Use a KotlinClassMetadata.Class instance and its write() member function", level = DeprecationLevel.WARNING)
+        @Deprecated("Use a KotlinClassMetadata.Class instance and its write() member function", level = DeprecationLevel.ERROR)
         public fun writeClass(
             kmClass: KmClass,
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
@@ -659,7 +659,7 @@ public sealed class KotlinClassMetadata {
          */
         @JvmStatic
         @JvmOverloads
-        @Deprecated("Use a KotlinClassMetadata.FileFacade instance and its write() member function", level = DeprecationLevel.WARNING)
+        @Deprecated("Use a KotlinClassMetadata.FileFacade instance and its write() member function", level = DeprecationLevel.ERROR)
         public fun writeFileFacade(
             kmPackage: KmPackage,
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
@@ -678,7 +678,7 @@ public sealed class KotlinClassMetadata {
          */
         @JvmStatic
         @JvmOverloads
-        @Deprecated("Use a KotlinClassMetadata.SyntheticClass instance and its write() member function", level = DeprecationLevel.WARNING)
+        @Deprecated("Use a KotlinClassMetadata.SyntheticClass instance and its write() member function", level = DeprecationLevel.ERROR)
         public fun writeLambda(
             kmLambda: KmLambda,
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
@@ -697,7 +697,7 @@ public sealed class KotlinClassMetadata {
          */
         @JvmStatic
         @JvmOverloads
-        @Deprecated("Use a KotlinClassMetadata.SyntheticClass instance and its write() member function", level = DeprecationLevel.WARNING)
+        @Deprecated("Use a KotlinClassMetadata.SyntheticClass instance and its write() member function", level = DeprecationLevel.ERROR)
         public fun writeSyntheticClass(
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
             extraInt: Int = 0,
@@ -718,7 +718,7 @@ public sealed class KotlinClassMetadata {
         @JvmOverloads
         @Deprecated(
             "Use a KotlinClassMetadata.MultiFileClassFacade instance and its write() member function",
-            level = DeprecationLevel.WARNING
+            level = DeprecationLevel.ERROR
         )
         public fun writeMultiFileClassFacade(
             partClassNames: List<String>, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
@@ -740,7 +740,7 @@ public sealed class KotlinClassMetadata {
         @JvmOverloads
         @Deprecated(
             "Use a KotlinClassMetadata.MultiFileClassPart instance and its write() member function",
-            level = DeprecationLevel.WARNING
+            level = DeprecationLevel.ERROR
         )
         public fun writeMultiFileClassPart(
             kmPackage: KmPackage,
@@ -769,7 +769,7 @@ public sealed class KotlinClassMetadata {
         @Deprecated(
             "read() throws an error if metadata version is too high. Use either readStrict() if you want to retain this behavior, or readLenient() if you want to try to read newer metadata.",
             ReplaceWith("KotlinClassMetadata.readStrict(annotationData)"),
-            DeprecationLevel.WARNING
+            DeprecationLevel.ERROR
         )
         public fun read(annotationData: Metadata): KotlinClassMetadata = readMetadataImpl(annotationData, lenient = false)
 
@@ -881,7 +881,7 @@ public sealed class KotlinClassMetadata {
          * @see Metadata.metadataVersion
          */
         @JvmField
-        @Deprecated("Use JvmMetadataVersion.LATEST_STABLE_SUPPORTED instead", ReplaceWith("JvmMetadataVersion.LATEST_STABLE_SUPPORTED"), DeprecationLevel.WARNING)
+        @Deprecated("Use JvmMetadataVersion.LATEST_STABLE_SUPPORTED instead", ReplaceWith("JvmMetadataVersion.LATEST_STABLE_SUPPORTED"), DeprecationLevel.ERROR)
         public val COMPATIBLE_METADATA_VERSION: IntArray = CompilerMetadataVersion.INSTANCE.toArray().copyOf()
 
     }

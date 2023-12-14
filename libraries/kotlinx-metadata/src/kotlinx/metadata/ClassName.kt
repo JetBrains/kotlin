@@ -25,7 +25,6 @@ public typealias ClassName = String // Not a value class because of Java usages
  */
 public fun ClassName.isLocalClassName(): Boolean = this.startsWith(".")
 
-// Deprecated since 0.6.1, should be error in 0.7.0+
 @Deprecated(
     "Renamed to isLocalClassName() to avoid confusion with String properties",
     ReplaceWith("isLocalClassName()"),

@@ -15,7 +15,6 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.full.primaryConstructor
 import kotlin.test.*
 
-@Suppress("DEPRECATION")
 class MetadataSmokeTest {
 
     @Test
@@ -127,11 +126,12 @@ class MetadataSmokeTest {
 
         class L
 
-        val l = (KotlinClassMetadata.read(L::class.java.getMetadata()) as KotlinClassMetadata.Class).kmClass.name
+        val l = (KotlinClassMetadata.readStrict(L::class.java.getMetadata()) as KotlinClassMetadata.Class).kmClass.name
         assertEquals(".kotlinx/metadata/test/MetadataSmokeTest\$jvmInternalName\$L", l)
         assertEquals("kotlinx/metadata/test/MetadataSmokeTest\$jvmInternalName\$L", l.toJvmInternalName())
 
-        val coroutineContextKey = (KotlinClassMetadata.read(CoroutineContext.Key::class.java.getMetadata()) as KotlinClassMetadata.Class).kmClass.name
+        val coroutineContextKey =
+            (KotlinClassMetadata.readStrict(CoroutineContext.Key::class.java.getMetadata()) as KotlinClassMetadata.Class).kmClass.name
 
         assertEquals("kotlin/coroutines/CoroutineContext.Key", coroutineContextKey)
         assertEquals("kotlin/coroutines/CoroutineContext\$Key", coroutineContextKey.toJvmInternalName())
@@ -141,7 +141,7 @@ class MetadataSmokeTest {
     fun lambdaVersionRequirement() {
         val x: suspend Int.(String, String) -> Unit = { _, _ -> }
         val annotation = x::class.java.getMetadata()
-        val metadata = KotlinClassMetadata.read(annotation) as KotlinClassMetadata.SyntheticClass
+        val metadata = KotlinClassMetadata.readStrict(annotation) as KotlinClassMetadata.SyntheticClass
         assertNotNull(metadata.kmLambda)
     }
 
@@ -186,7 +186,7 @@ class MetadataSmokeTest {
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.MultiFileClassPart(KmPackage(), "A", mv, 0).write() }
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.SyntheticClass(null, mv, 0).write() }
 
-        KotlinModuleMetadata.write(KmModule(), mv)
+        KotlinModuleMetadata(KmModule(), mv).write()
     }
 
     @Test
@@ -218,7 +218,7 @@ class MetadataSmokeTest {
         assertEquals("Lambda <no name provided>", displayName(b::class.java.getMetadata()))
     }
 
-    fun displayName(metadata: Metadata): String = when (val kcm = KotlinClassMetadata.read(metadata)) {
+    fun displayName(metadata: Metadata): String = when (val kcm = KotlinClassMetadata.readStrict(metadata)) {
         is KotlinClassMetadata.Class -> "Class ${kcm.kmClass.name}"
         is KotlinClassMetadata.FileFacade -> "File facade with functions: ${kcm.kmPackage.functions.joinToString { it.name }}"
         is KotlinClassMetadata.SyntheticClass -> kcm.kmLambda?.function?.name?.let { "Lambda $it" } ?: "Synthetic class"
@@ -226,5 +226,4 @@ class MetadataSmokeTest {
         is KotlinClassMetadata.MultiFileClassPart -> "Multifile class part ${kcm.facadeClassName}"
         is KotlinClassMetadata.Unknown -> "Unknown metadata"
     }
-
 }
