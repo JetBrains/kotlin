@@ -59,3 +59,6 @@ val KotlinBuildProperties.useFirWithLightTree: Boolean
 
 val KotlinBuildProperties.useFirTightIC: Boolean
     get() = getBoolean("kotlin.build.useFirIC")
+
+val KotlinBuildProperties.isSwiftExportPluginPublishingEnabled: Boolean
+    get() = getBoolean("kotlin-native.swift-export.enabled")
