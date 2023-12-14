@@ -1,0 +1,24 @@
+/viper_verify.kt:(125,137): info: Generated Viper text for verify_false:
+method global$fun_verify_false$fun_take$$return$T_Unit()
+  returns (ret$0: dom$Unit)
+{
+  assert false
+  label label$ret$0
+}
+
+/viper_verify.kt:(153,158): warning: Viper verification error: Assert might fail. Assertion false might not hold.
+
+/viper_verify.kt:(181,196): info: Generated Viper text for verify_compound:
+method global$fun_verify_compound$fun_take$$return$T_Unit()
+  returns (ret$0: dom$Unit)
+{
+  var anonymous$0: Bool
+  if (true) {
+    anonymous$0 := false
+  } else {
+    anonymous$0 := false}
+  assert anonymous$0
+  label label$ret$0
+}
+
+/viper_verify.kt:(212,225): warning: Viper verification error: Assert might fail. Assertion anonymous$0 might not hold.

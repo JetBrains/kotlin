@@ -139,8 +139,25 @@ object KotlinRunSpecialFunction : SpecialKotlinFunction {
     }
 }
 
+/**
+ * Represents the `verify` function defined in `org.jetbrains.kotlin.formver.plugin`.
+ */
+object SpecialVerifyFunction : SpecialKotlinFunction {
+    override val packageName: List<String> = listOf("org", "jetbrains", "kotlin", "formver", "plugin")
+    override val name: String = "verify"
+
+    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext): ExpEmbedding {
+        return Assert(args[0])
+    }
+
+    override val receiverType: TypeEmbedding? = null
+    override val paramTypes: List<TypeEmbedding> = listOf(BooleanTypeEmbedding)
+    override val returnType: TypeEmbedding = UnitTypeEmbedding
+}
+
 object SpecialKotlinFunctions {
     val byName = listOf(
+        SpecialVerifyFunction,
         KotlinContractFunction,
         KotlinIntPlusFunctionImplementation,
         KotlinIntMinusFunctionImplementation,

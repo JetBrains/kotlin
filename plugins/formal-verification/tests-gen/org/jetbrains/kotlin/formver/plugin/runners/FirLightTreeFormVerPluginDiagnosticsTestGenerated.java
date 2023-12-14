@@ -104,6 +104,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         public void testReturns_null() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/returns_null.kt");
         }
+
+        @Test
+        @TestMetadata("viper_verify.kt")
+        public void testViper_verify() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/viper_verify.kt");
+        }
     }
 
     @Nested
