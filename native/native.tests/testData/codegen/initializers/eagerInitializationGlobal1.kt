@@ -2,6 +2,8 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+// KT-64408: when undisabled (by removing next line), the compiled .kexe wrongly contains no tests
+// DISABLE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
 
 // FILE: lib.kt
 var z1 = false
@@ -25,7 +27,9 @@ val y = run { z2 = true; 117 }
 // FILE: main.kt
 import kotlin.test.*
 
-fun main() {
+fun box(): String {
     assertTrue(z1)
     assertTrue(z2)
+
+    return "OK"
 }

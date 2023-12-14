@@ -2,11 +2,12 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
-package codegen.escapeAnalysis.test9
+// TODO: check mentioned debug output of escape analyser
+import kotlin.test.*
 
 class H(val x: Int)
 
+// Note: intentional infinite recursion for F(String). Don't try to execute the code.
 class F(val s: String) {
     var g = F("")
     var h = H(0)
@@ -33,4 +34,8 @@ fun foo(a: A, f: F): H {
     return f.g.h
 }
 
-fun main() = println(foo(A(), F("zzz")).x)
+fun box(): String {
+    // When uncommented, execution of the following line would fall into infinite recursion
+    // assertEquals(0, foo(A(), F("zzz")).x)
+    return "OK"
+}

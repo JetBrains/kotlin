@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.cycles.cycle_for
-
 import kotlin.test.*
 
 fun cycle_for(arr: Array<Int>) : Int {
@@ -15,6 +13,8 @@ fun cycle_for(arr: Array<Int>) : Int {
   return sum
 }
 
-@Test fun runTest() {
-  if (cycle_for(Array(4, init = { it })) != 6) throw Error()
+fun box(): String {
+  assertEquals(6, cycle_for(Array(4, init = { it })))
+
+  return "OK"
 }

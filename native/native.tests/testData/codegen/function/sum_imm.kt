@@ -3,12 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.sum_imm
-
 import kotlin.test.*
 
 fun sum(a:Int): Int = a + 33
 
-@Test fun runTest() {
-    if (sum(2) != 35) throw Error()
+fun box(): String {
+    assertEquals(35, sum(2))
+    return "OK"
 }

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.correctOrderFunctionReference
-
 import kotlin.test.*
 
 class Foo(val a: String) {
@@ -33,8 +31,4 @@ fun box(): String {
     if (effects != "ABCDEF") return "fail 1: $effects"
 
     return if (result == "ABCEF") "OK" else "fail 2: $result"
-}
-
-@Test fun runTest() {
-    println(box())
 }

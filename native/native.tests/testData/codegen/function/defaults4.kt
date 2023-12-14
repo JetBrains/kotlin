@@ -3,20 +3,23 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.defaults4
-
 import kotlin.test.*
 
+val sb = StringBuilder()
+
 open class A {
-    open fun foo(x: Int = 42) = println(x)
+    open fun foo(x: Int = 42) = sb.append(x)
 }
 
 open class B : A()
 
 class C : B() {
-    override fun foo(x: Int) = println(x + 1)
+    override fun foo(x: Int) = sb.append(x + 1)
 }
 
-@Test fun runTest() {
+fun box(): String {
     C().foo()
+
+    assertEquals("43", sb.toString())
+    return "OK"
 }

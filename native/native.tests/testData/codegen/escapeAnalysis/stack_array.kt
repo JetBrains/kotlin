@@ -3,15 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package codegen.escapeAnalysis.stack_array
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     val array = IntArray(2)
     array[0] = 1
     array[1] = 2
     val check = array is IntArray
-    println(check)
-    println(array[0] + array[1])
+    assertTrue(check)
+    assertEquals(3, array[0] + array[1])
+
+    return "OK"
 }

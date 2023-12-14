@@ -3,15 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.delegatedProperty.simpleVal
-
 import kotlin.test.*
 
 import kotlin.reflect.KProperty
 
+val sb = StringBuilder()
+
 class Delegate {
     operator fun getValue(receiver: Any?, p: KProperty<*>): Int {
-        println(p.name)
+        sb.appendLine(p.name)
         return 42
     }
 }
@@ -20,6 +20,13 @@ class C {
     val x: Int by Delegate()
 }
 
-@Test fun runTest() {
-    println(C().x)
+fun box(): String {
+    sb.appendLine(C().x)
+
+    assertEquals("""
+        x
+        42
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

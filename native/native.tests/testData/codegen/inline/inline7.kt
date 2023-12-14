@@ -3,14 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline7
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun foo(vararg args: Int) {
     for (a in args) {
-        println(a.toString())
+        sb.appendLine(a.toString())
     }
 }
 
@@ -18,6 +18,14 @@ fun bar() {
     foo(1, 2, 3)
 }
 
-@Test fun runTest() {
+fun box(): String {
     bar()
+
+    assertEquals("""
+        1
+        2
+        3
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

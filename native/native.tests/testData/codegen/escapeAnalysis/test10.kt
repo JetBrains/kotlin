@@ -2,8 +2,8 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
-package codegen.escapeAnalysis.test10
+// TODO: check mentioned debug output of escape analyser
+import kotlin.test.*
 
 class G(val x: Int)
 
@@ -38,4 +38,7 @@ fun bar(): F {
     return u
 }
 
-fun main() = println(bar().g.x)
+fun box(): String {
+    assertEquals(42, bar().g.x)
+    return "OK"
+}

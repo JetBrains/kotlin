@@ -1,5 +1,5 @@
-class Foo(val box: String = "box")
+class Foo(val box: String = "OK")
 
-fun main() {
-    println(Foo().box)
+fun box(): String {
+    return Foo().box
 }

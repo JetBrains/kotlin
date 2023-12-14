@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.defaults9
-
 import kotlin.test.*
 
 class Foo {
@@ -13,4 +11,7 @@ class Foo {
     }
 }
 
-@Test fun runTest() = println(Foo().Bar().y)
+fun box(): String {
+    assertEquals(1, Foo().Bar().y)
+    return "OK"
+}

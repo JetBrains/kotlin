@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package codegen.function.nothingN_returning_safe_call
-
 import kotlin.test.*
 
 fun Any.nothing(): Nothing {
@@ -34,7 +32,7 @@ fun testLambda2() {
     block(null)
 }
 
-fun main() {
+fun box(): String {
     testFunction1(null)
     testFunction2(null)
     testFunction3(null)
@@ -43,4 +41,6 @@ fun main() {
 
     testLambda1()
     testLambda2()
+
+    return "OK"
 }

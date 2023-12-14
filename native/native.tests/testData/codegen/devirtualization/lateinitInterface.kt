@@ -1,3 +1,4 @@
+import kotlin.test.*
 interface I {
     fun foo(): Int
 }
@@ -10,5 +11,10 @@ fun main(args: Array<String>) {
     lateinit var a: I
     if (args.size == 0)
         a = A()
-    println(a.foo())
+    assertEquals(42, a.foo())
+}
+
+fun box(): String {
+    main(emptyArray())
+    return "OK"
 }

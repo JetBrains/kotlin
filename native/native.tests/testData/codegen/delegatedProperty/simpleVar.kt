@@ -3,22 +3,22 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.delegatedProperty.simpleVar
-
 import kotlin.test.*
 
 import kotlin.reflect.KProperty
+
+val sb = StringBuilder()
 
 class Delegate {
     var f: Int = 42
 
     operator fun getValue(receiver: Any?, p: KProperty<*>): Int {
-        println("get ${p.name}")
+        sb.appendLine("get ${p.name}")
         return f
     }
 
     operator fun setValue(receiver: Any?, p: KProperty<*>, value: Int) {
-        println("set ${p.name}")
+        sb.appendLine("set ${p.name}")
         f = value
     }
 }
@@ -27,9 +27,19 @@ class C {
     var x: Int by Delegate()
 }
 
-@Test fun runTest() {
+fun box(): String {
     val c = C()
-    println(c.x)
+    sb.appendLine(c.x)
     c.x = 117
-    println(c.x)
+    sb.appendLine(c.x)
+
+    assertEquals("""
+        get x
+        42
+        set x
+        get x
+        117
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

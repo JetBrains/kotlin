@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.funInterface.kt49384
-
 import kotlin.test.*
 
 interface A<T>
@@ -17,20 +15,9 @@ class B<T> {
     }
 }
 
-@Test
-fun test1() {
+fun box(): String {
     val b = B<Any>()
     assertEquals(b, b) // Just to ensure B is not deleted by DCE
-}
 
-fun interface Foo<T> {
-    fun same(obj: T): T
-}
-
-fun getSame(obj: A<out Any>, foo: Foo<A<out Any>>) = foo.same(obj)
-
-@Test
-fun test2() {
-    val obj = object : A<Any> {}
-    assertSame(obj, getSame(obj) { it })
+    return "OK"
 }

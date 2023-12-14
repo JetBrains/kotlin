@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.localObjectReturnedFromWhen
-
 import kotlin.test.*
 
 fun foo() {
@@ -15,7 +13,7 @@ fun foo() {
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo()
-    println("Ok")
+    return "OK"
 }

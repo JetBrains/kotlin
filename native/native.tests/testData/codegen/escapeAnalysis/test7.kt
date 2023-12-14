@@ -2,9 +2,9 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+// TODO: check mentioned debug output of escape analyser
 
-package codegen.escapeAnalysis.test7
-
+// Note: intentional infinite mutual recursion with `A(String)` and `C()`. Don't try to execute the code.
 class A(val s: String) {
     var h: String = ""
     var p: C = C()
@@ -49,4 +49,8 @@ fun foo(z: Boolean, c: C, b: B, s: String, d: D) {
     u.p = c
 }
 
-fun main() = println(foo(true, C(), B(), "zzz", D()))
+fun box(): String {
+    // When uncommented, execution of the following line would fall into infinite recursion
+    // foo(true, C(), B(), "zzz", D())
+    return "OK"
+}

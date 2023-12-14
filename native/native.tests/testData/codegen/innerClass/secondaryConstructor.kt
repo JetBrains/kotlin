@@ -3,16 +3,16 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.innerClass.secondaryConstructor
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 class Outer(val x: Int) {
     inner class Inner() {
         inner class InnerInner() {
 
             init {
-                println(x)
+                sb.appendLine(x)
             }
 
             lateinit var s: String
@@ -24,6 +24,9 @@ class Outer(val x: Int) {
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     Outer(42).Inner().InnerInner("zzz")
+
+    assertEquals("42\n", sb.toString())
+    return "OK"
 }

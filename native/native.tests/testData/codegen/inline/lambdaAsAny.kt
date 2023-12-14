@@ -3,14 +3,16 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.lambdaAsAny
-
 import kotlin.test.*
 
+val sb = StringBuilder()
+
 inline fun foo(x: Any) {
-    println(if (x === x) "Ok" else "Fail")
+    sb.append(if (x === x) "OK" else "FAIL")
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo { 42 }
+
+    return sb.toString()
 }

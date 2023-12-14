@@ -3,15 +3,13 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.escapeAnalysis.zeroOutObjectOnAlloc
-
 import kotlin.test.*
 
 class A {
     var x = 0
 }
 
-@Test fun runTest() {
+fun box(): String {
     var sum1 = 0
     var sum2 = 0
     for (i in 0 until 10) {
@@ -22,4 +20,6 @@ class A {
     }
     assertEquals(0, sum1)
     assertEquals(45, sum2)
+
+    return "OK"
 }

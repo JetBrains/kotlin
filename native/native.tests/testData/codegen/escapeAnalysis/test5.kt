@@ -2,12 +2,11 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
-package codegen.escapeAnalysis.test5
+// TODO: check mentioned debug output of escape analyser
 
 class A(val s: String)
 class B {
-    var f: A = A("qzz")
+    var f: A = A("OK")
 }
 class C {
     var g: B = B()
@@ -32,4 +31,4 @@ fun foo(c1: C, c2: C): B {
     return b
 }
 
-fun main() = println(foo(C(), C()))
+fun box(): String = foo(C(), C()).f.s

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.lambdaInDefaultValue
-
 import kotlin.test.*
 
 inline fun inlineFun(param: String, lambda: (String) -> String = { it }): String {
@@ -13,8 +11,4 @@ inline fun inlineFun(param: String, lambda: (String) -> String = { it }): String
 
 fun box(): String {
     return inlineFun("OK")
-}
-
-@Test fun runTest() {
-    println(box())
 }

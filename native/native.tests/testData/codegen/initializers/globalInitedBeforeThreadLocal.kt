@@ -21,6 +21,7 @@ private fun bar(): Int {
 // FILE: main.kt
 import kotlin.test.*
 
-fun main() {
+fun box(): String {
     assertEquals(y, 117)
+    return "OK"
 }

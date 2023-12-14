@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.initializers.correctOrder1
-
 import kotlin.test.*
 
 class TestClass {
@@ -17,6 +15,7 @@ class TestClass {
     val y = x
 }
 
-@Test fun runTest() {
-    println(TestClass().y)
+fun box(): String {
+    assertEquals(42, TestClass().y)
+    return "OK"
 }

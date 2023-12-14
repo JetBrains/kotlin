@@ -3,25 +3,34 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.inline21
-
 import kotlin.test.*
 
+val sb = StringBuilder()
+
 inline fun foo2(block2: () -> Int) : Int {
-    println("foo2")
+    sb.appendLine("foo2")
     return block2()
 }
 
 inline fun foo1(block1: () -> Int) : Int {
-    println("foo1")
+    sb.appendLine("foo1")
     return foo2(block1)
 }
 
 fun bar(block: () -> Int) : Int {
-    println("bar")
+    sb.appendLine("bar")
     return foo1(block)
 }
 
-@Test fun runTest() {
-    println(bar { 33 })
+fun box(): String {
+    sb.appendLine(bar { 33 })
+
+    assertEquals("""
+        bar
+        foo1
+        foo2
+        33
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

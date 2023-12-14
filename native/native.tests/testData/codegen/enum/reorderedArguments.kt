@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.enum.reorderedArguments
-
 import kotlin.test.*
 
 // Regression test for https://github.com/JetBrains/kotlin-native/issues/1779
@@ -28,7 +26,7 @@ enum class Bar(override val value: Foo) : Base<Foo> {
     E(Foo.E)
 }
 
-@Test fun runTest() {
+fun box(): String {
 
     assertEquals(Foo.A.a, 1)
     assertEquals(Foo.A.b, 0)
@@ -70,4 +68,5 @@ enum class Bar(override val value: Foo) : Base<Foo> {
     assertEquals(Bar.E.value.b, 1)
     assertEquals(Bar.E.value.c, 1)
 
+    return "OK"
 }

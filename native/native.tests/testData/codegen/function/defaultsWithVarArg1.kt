@@ -3,24 +3,32 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.defaultsWithVarArg1
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 fun foo(s: String = "", vararg args: Any) {
     if (args == null) {
-        println("Failed!")
+        sb.appendLine("Failed!")
     } else {
-        print("$s ")
+        sb.append("$s ")
         args.forEach {
-            print("$it")
+            sb.append("$it")
         }
-        println(", Correct!")
+        sb.appendLine(", Correct!")
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo("Hello")
     foo("Hello", "World")
     foo()
+
+    assertEquals("""
+        Hello , Correct!
+        Hello World, Correct!
+         , Correct!
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

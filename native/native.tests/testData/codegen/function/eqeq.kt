@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.eqeq
-
 import kotlin.test.*
 
 fun eqeqB  (a:Byte,   b:Byte  ) = a == b
@@ -35,7 +33,7 @@ fun neF  (a:Float,  b:Float ) = a != b
 fun helloString()   =  "Hello"
 fun goodbyeString() =  "Goodbye"
 
-@Test fun runTest() {
+fun box(): String {
     if (!eqeqB(3   , 3   )) throw Error()
     if (!eqeqS(3   , 3   )) throw Error()
     if (!eqeqI(3   , 3   )) throw Error()
@@ -61,4 +59,6 @@ fun goodbyeString() =  "Goodbye"
     if (geF   (2.0f , 3.0f )) throw Error()
     if (leF   (3.0f , 2.0f )) throw Error()
     if (neF   (2.0f , 2.0f )) throw Error()
+
+    return "OK"
 }

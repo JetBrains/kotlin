@@ -3,7 +3,6 @@
  * that can be found in the LICENSE file.
  */
 @file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")
-package codegen.inlineClass.customEquals
 
 import kotlin.test.*
 
@@ -11,6 +10,7 @@ private inline class Z(val data: Int) {
     override fun equals(other: Any?) = other is Z && data % 256 == other.data % 256
 }
 
-@Test fun runTest() {
+fun box(): String {
     assertTrue(Z(0) == Z(256))
+    return "OK"
 }

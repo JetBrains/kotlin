@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.enum.values
-
 import kotlin.test.*
 
 enum class E {
@@ -13,11 +11,13 @@ enum class E {
     E2
 }
 
-@Test fun runTest() {
-    println(E.values()[0].toString())
-    println(E.values()[1].toString())
-    println(E.values()[2].toString())
-    println(enumValues<E>()[0].toString())
-    println(enumValues<E>()[1].toString())
-    println(enumValues<E>()[2].toString())
+fun box(): String {
+    assertEquals("E3", E.values()[0].toString())
+    assertEquals("E1", E.values()[1].toString())
+    assertEquals("E2", E.values()[2].toString())
+    assertEquals("E3", enumValues<E>()[0].toString())
+    assertEquals("E1", enumValues<E>()[1].toString())
+    assertEquals("E2", enumValues<E>()[2].toString())
+
+    return "OK"
 }

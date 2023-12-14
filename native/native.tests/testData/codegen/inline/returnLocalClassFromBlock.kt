@@ -3,18 +3,19 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.returnLocalClassFromBlock
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 inline fun <R> call(block: ()->R): R {
     try {
         return block()
     } finally {
-        println("Zzz")
+        sb.append("OK")
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     call { class Z(); Z() }
+    return sb.toString()
 }

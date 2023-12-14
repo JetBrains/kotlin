@@ -22,9 +22,11 @@ object Z {
 // FILE: main.kt
 import kotlin.test.*
 
-fun main() {
+fun box(): String {
     Z.bar()
     assertFalse(z)
     assertEquals(42, Z.baz())
     assertTrue(z)
+
+    return "OK"
 }

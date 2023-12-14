@@ -1509,15 +1509,27 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
-        @TestMetadata("stack_array.kt")
-        public void testStack_array() throws Exception {
-            runTest("native/native.tests/testData/codegen/escapeAnalysis/stack_array.kt");
+        @TestMetadata("stackAllocatedString.kt")
+        public void testStackAllocatedString() throws Exception {
+            runTest("native/native.tests/testData/codegen/escapeAnalysis/stackAllocatedString.kt");
         }
 
         @Test
-        @TestMetadata("string.kt")
-        public void testString() throws Exception {
-            runTest("native/native.tests/testData/codegen/escapeAnalysis/string.kt");
+        @TestMetadata("stackNotAllocated.kt")
+        public void testStackNotAllocated() throws Exception {
+            runTest("native/native.tests/testData/codegen/escapeAnalysis/stackNotAllocated.kt");
+        }
+
+        @Test
+        @TestMetadata("stackNotAllocatedString.kt")
+        public void testStackNotAllocatedString() throws Exception {
+            runTest("native/native.tests/testData/codegen/escapeAnalysis/stackNotAllocatedString.kt");
+        }
+
+        @Test
+        @TestMetadata("stack_array.kt")
+        public void testStack_array() throws Exception {
+            runTest("native/native.tests/testData/codegen/escapeAnalysis/stack_array.kt");
         }
 
         @Test
@@ -1631,6 +1643,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         @TestMetadata("kt49384.kt")
         public void testKt49384() throws Exception {
             runTest("native/native.tests/testData/codegen/funInterface/kt49384.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49384_getSame.kt")
+        public void testKt49384_getSame() throws Exception {
+            runTest("native/native.tests/testData/codegen/funInterface/kt49384_getSame.kt");
         }
 
         @Test
@@ -1956,15 +1974,51 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
-        @TestMetadata("static.kt")
-        public void testStatic() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/static.kt");
+        @TestMetadata("static_arrays.kt")
+        public void testStatic_arrays() throws Exception {
+            runTest("native/native.tests/testData/codegen/initializers/static_arrays.kt");
         }
 
         @Test
-        @TestMetadata("testInfrastructure.kt")
-        public void testTestInfrastructure() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/testInfrastructure.kt");
+        @TestMetadata("static_constantObjectInFinally.kt")
+        public void testStatic_constantObjectInFinally() throws Exception {
+            runTest("native/native.tests/testData/codegen/initializers/static_constantObjectInFinally.kt");
+        }
+
+        @Test
+        @TestMetadata("static_kType.kt")
+        public void testStatic_kType() throws Exception {
+            runTest("native/native.tests/testData/codegen/initializers/static_kType.kt");
+        }
+
+        @Test
+        @TestMetadata("static_list.kt")
+        public void testStatic_list() throws Exception {
+            runTest("native/native.tests/testData/codegen/initializers/static_list.kt");
+        }
+
+        @Test
+        @TestMetadata("static_permanent.kt")
+        public void testStatic_permanent() throws Exception {
+            runTest("native/native.tests/testData/codegen/initializers/static_permanent.kt");
+        }
+
+        @Test
+        @TestMetadata("static_reifiedKType.kt")
+        public void testStatic_reifiedKType() throws Exception {
+            runTest("native/native.tests/testData/codegen/initializers/static_reifiedKType.kt");
+        }
+
+        @Test
+        @TestMetadata("static_smallIntIdentity.kt")
+        public void testStatic_smallIntIdentity() throws Exception {
+            runTest("native/native.tests/testData/codegen/initializers/static_smallIntIdentity.kt");
+        }
+
+        @Test
+        @TestMetadata("static_varargChange.kt")
+        public void testStatic_varargChange() throws Exception {
+            runTest("native/native.tests/testData/codegen/initializers/static_varargChange.kt");
         }
 
         @Test
@@ -2270,6 +2324,18 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         @TestMetadata("redundantCoercionsCleaner.kt")
         public void testRedundantCoercionsCleaner() throws Exception {
             runTest("native/native.tests/testData/codegen/inline/redundantCoercionsCleaner.kt");
+        }
+
+        @Test
+        @TestMetadata("redundantCoercionsCleanerKT48876.kt")
+        public void testRedundantCoercionsCleanerKT48876() throws Exception {
+            runTest("native/native.tests/testData/codegen/inline/redundantCoercionsCleanerKT48876.kt");
+        }
+
+        @Test
+        @TestMetadata("redundantCoercionsCleanerKT49356.kt")
+        public void testRedundantCoercionsCleanerKT49356() throws Exception {
+            runTest("native/native.tests/testData/codegen/inline/redundantCoercionsCleanerKT49356.kt");
         }
 
         @Test

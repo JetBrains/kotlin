@@ -2,8 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
-package codegen.escapeAnalysis.test6
+// TODO: check mentioned debug output of escape analyser
 
 class A(val s: String)
 class B {
@@ -37,4 +36,4 @@ fun foo(z: Boolean, c1: C, c2: C, a: A): B {
     return v
 }
 
-fun main() = println(foo(true, C(), C(), A("zzz")))
+fun box(): String = foo(true, C(), C(), A("OK")).f.s

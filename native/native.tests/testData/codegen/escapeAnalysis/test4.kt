@@ -2,8 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
-package codegen.escapeAnalysis.test4
+// TODO: check mentioned debug output of escape analyser
 
 class A(val s: String)
 class B {
@@ -27,4 +26,7 @@ fun foo(c1: C, c2: C) {
     c1.g.f = c2.g.f
 }
 
-fun main() = println(foo(C(), C()))
+fun box(): String {
+    foo(C(), C())
+    return "OK"
+}

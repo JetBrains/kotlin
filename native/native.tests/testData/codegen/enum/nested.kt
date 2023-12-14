@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.enum.nested
-
 import kotlin.test.*
 
 enum class Foo {
@@ -12,7 +10,9 @@ enum class Foo {
     enum class Bar { C }
 }
 
-@Test fun runTest() {
-    println(Foo.A)
-    println(Foo.Bar.C)
+fun box(): String {
+    assertEquals("A", Foo.A.toString())
+    assertEquals("C", Foo.Bar.C.toString())
+
+    return "OK"
 }

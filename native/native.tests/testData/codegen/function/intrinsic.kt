@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.intrinsic
-
 import kotlin.test.*
 
 // This code fails to link when bultins are taken from the 
@@ -18,6 +16,7 @@ fun intrinsic(b: Int): Int {
   return sum
 }
 
-@Test fun runTest() {
-  if (intrinsic(3) != 4) throw Error()
+fun box(): String {
+  assertEquals(4, intrinsic(3))
+  return "OK"
 }

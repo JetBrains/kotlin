@@ -3,10 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.function.defaults
-
-import kotlin.test.*
-
 /**
  * Created by minamoto on 12/26/16.
  */
@@ -48,7 +44,7 @@ fun foo(a: A = A.magic, b:Int = 0xdeadbeef.toInt()) = a.a
 fun bar(a:A, inc:Int = 0) = A(a.a + inc)
 
 
-@Test fun runTest() {
+fun box(): String {
 
 //  if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
 //    arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -98,5 +94,5 @@ fun bar(a:A, inc:Int = 0) = A(a.a + inc)
         println("A one + 1 failed")
         throw Error()
     }
-    println("all tests passed")
+    return "OK"
 }

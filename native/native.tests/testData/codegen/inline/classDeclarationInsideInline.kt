@@ -3,11 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.inline.classDeclarationInsideInline
-
 import kotlin.test.*
 
-fun f() {
+fun box(): String {
     run {
         class Test1<T : Number, G>(val x: T, val y: G) {
             override fun toString() = "test1: ${x.toDouble()}"
@@ -18,12 +16,9 @@ fun f() {
         }
 
         val v = Test2(Test1(1, Test2(Test1(1, 3))))
-        println(v.a)
-        println(v.a.x)
-        println(v.a.y)
+        assertEquals("test1: 1.0", v.a.toString())
+        assertEquals("1", v.a.x.toString())
+        assertEquals("test2", v.a.y.toString())
     }
-}
-
-@Test fun test() {
-    f()
+    return "OK"
 }
