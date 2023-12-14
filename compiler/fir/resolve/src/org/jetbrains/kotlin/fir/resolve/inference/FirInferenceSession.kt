@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 
 abstract class FirInferenceSession {
     companion object {
@@ -29,6 +30,16 @@ abstract class FirInferenceSession {
 
             override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
                 // Do nothing
+            }
+        }
+
+        @JvmStatic
+        protected fun prepareSharedBaseSystem(
+            outerSystem: NewConstraintSystemImpl,
+            components: InferenceComponents,
+        ): NewConstraintSystemImpl {
+            return components.createConstraintSystem().apply {
+                addOuterSystem(outerSystem.currentStorage())
             }
         }
     }
@@ -54,5 +65,5 @@ abstract class FirInferenceSession {
 
     open fun <R> onCandidatesResolution(call: FirFunctionCall, candidatesResolutionCallback: () -> R) = candidatesResolutionCallback()
 
-    open fun outerCSForCandidate(candidate: Candidate): ConstraintStorage? = null
+    open fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? = null
 }
