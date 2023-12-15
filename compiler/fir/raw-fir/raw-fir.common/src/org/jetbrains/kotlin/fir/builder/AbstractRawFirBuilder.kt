@@ -132,12 +132,12 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     }
 
     protected inline fun <T> withCapturedTypeParameters(
-        status: Boolean,
+        isInner: Boolean,
         declarationSource: KtSourceElement? = null,
         currentFirTypeParameters: List<FirTypeParameterRef>,
         block: () -> T,
     ): T {
-        addCapturedTypeParameters(status, declarationSource, currentFirTypeParameters)
+        addCapturedTypeParameters(isInner, declarationSource, currentFirTypeParameters)
         return try {
             block()
         } finally {
@@ -171,11 +171,11 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     }
 
     protected open fun addCapturedTypeParameters(
-        status: Boolean,
+        isInner: Boolean,
         declarationSource: KtSourceElement?,
         currentFirTypeParameters: List<FirTypeParameterRef>,
     ) {
-        context.pushFirTypeParameters(status, currentFirTypeParameters)
+        context.pushFirTypeParameters(isInner, currentFirTypeParameters)
     }
 
     fun callableIdForName(name: Name) =

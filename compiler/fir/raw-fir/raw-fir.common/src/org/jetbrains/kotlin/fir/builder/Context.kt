@@ -57,8 +57,8 @@ class Context<T> {
     val dispatchReceiverTypesStack = mutableListOf<ConeClassLikeType>()
     var containerIsExpect: Boolean = false
 
-    fun pushFirTypeParameters(isInnerOrLocal: Boolean, parameters: List<FirTypeParameterRef>) {
-        capturedTypeParameters.add(StatusFirTypeParameterSymbolList(isInnerOrLocal, parameters.map { it.symbol }))
+    fun pushFirTypeParameters(isInner: Boolean, parameters: List<FirTypeParameterRef>) {
+        capturedTypeParameters.add(StatusFirTypeParameterSymbolList(isInner, parameters.map { it.symbol }))
     }
 
     fun popFirTypeParameters() {
@@ -76,7 +76,7 @@ class Context<T> {
                 }
             }
 
-            if (!element.isInnerOrLocal) {
+            if (!element.isInner) {
                 break
             }
         }
@@ -193,5 +193,5 @@ class Context<T> {
         }
     }
 
-    data class StatusFirTypeParameterSymbolList(val isInnerOrLocal: Boolean, val list: List<FirTypeParameterSymbol> = listOf())
+    data class StatusFirTypeParameterSymbolList(val isInner: Boolean, val list: List<FirTypeParameterSymbol> = listOf())
 }

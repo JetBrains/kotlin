@@ -613,7 +613,6 @@ fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
                 is IrField -> current.parent
                 is IrClass -> when {
                     current.isInner -> current.parent as IrClass
-                    current.visibility == DescriptorVisibilities.LOCAL -> current.parent
                     else -> null
                 }
                 is IrConstructor -> current.parent as IrClass

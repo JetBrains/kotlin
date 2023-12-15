@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 fun ClassifierDescriptorWithTypeParameters.computeConstructorTypeParameters(): List<TypeParameterDescriptor> {
     val declaredParameters = declaredTypeParameters
 
-    if (!isInner && containingDeclaration !is CallableDescriptor) return declaredParameters
+    if (!isInner) return declaredParameters
 
     val parametersFromContainingFunctions =
         parents.takeWhile { it is CallableDescriptor }

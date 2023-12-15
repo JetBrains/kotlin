@@ -504,7 +504,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                 typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, classSymbol) }
 
-                withCapturedTypeParameters(status.isInner || isLocal, classNode.toFirSourceElement(), firTypeParameters) {
+                withCapturedTypeParameters(status.isInner, classNode.toFirSourceElement(), firTypeParameters) {
                     var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
                     buildRegularClass {
                         source = classNode.toFirSourceElement()

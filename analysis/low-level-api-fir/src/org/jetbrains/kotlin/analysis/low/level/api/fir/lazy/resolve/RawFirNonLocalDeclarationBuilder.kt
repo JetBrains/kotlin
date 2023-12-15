@@ -133,14 +133,14 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     }
 
     override fun addCapturedTypeParameters(
-        status: Boolean,
+        isInner: Boolean,
         declarationSource: KtSourceElement?,
         currentFirTypeParameters: List<FirTypeParameterRef>,
     ) {
         if (originalDeclaration is FirTypeParameterRefsOwner && declarationSource?.psi == originalDeclaration.psi) {
-            super.addCapturedTypeParameters(status, declarationSource, originalDeclaration.typeParameters)
+            super.addCapturedTypeParameters(isInner, declarationSource, originalDeclaration.typeParameters)
         } else {
-            super.addCapturedTypeParameters(status, declarationSource, currentFirTypeParameters)
+            super.addCapturedTypeParameters(isInner, declarationSource, currentFirTypeParameters)
         }
     }
 

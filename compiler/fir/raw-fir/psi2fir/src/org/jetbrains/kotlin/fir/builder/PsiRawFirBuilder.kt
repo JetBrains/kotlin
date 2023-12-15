@@ -1522,7 +1522,7 @@ open class PsiRawFirBuilder(
                         isExternal = classOrObject.hasModifier(EXTERNAL_KEYWORD)
                     }
 
-                    withCapturedTypeParameters(status.isInner || isLocal, sourceElement, listOf()) {
+                    withCapturedTypeParameters(status.isInner, sourceElement, listOf()) {
                         var delegatedFieldsMap: Map<Int, FirFieldSymbol>?
                         buildRegularClass {
                             source = sourceElement
@@ -1539,7 +1539,7 @@ open class PsiRawFirBuilder(
 
                             context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
                             context.pushFirTypeParameters(
-                                status.isInner || isLocal,
+                                status.isInner,
                                 typeParameters.subList(0, classOrObject.typeParameters.size)
                             )
 
