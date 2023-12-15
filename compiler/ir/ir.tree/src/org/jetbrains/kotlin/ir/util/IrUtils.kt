@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
@@ -1611,3 +1613,7 @@ val IrDeclaration.isExpect
     get() = this is IrClass && isExpect ||
             this is IrFunction && isExpect ||
             this is IrProperty && isExpect
+
+fun IrElement.sourceElement(): AbstractKtSourceElement? =
+    if (startOffset >= 0) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)
+    else null

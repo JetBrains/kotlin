@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
@@ -30,7 +28,3 @@ fun <E> MutableList<E>.push(element: E) = this.add(element)
 fun <E> MutableList<E>.pop() = this.removeAt(size - 1)
 
 fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
-
-fun IrElement.sourceElement(): AbstractKtSourceElement? =
-    if (startOffset >= 0) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)
-    else null
