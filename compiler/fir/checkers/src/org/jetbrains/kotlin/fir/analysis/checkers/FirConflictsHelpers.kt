@@ -16,11 +16,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTr
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isEffectivelyFinal
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirComponentCall
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.outerType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -512,6 +516,17 @@ private fun FirDeclarationCollector<*>.areNonConflictingCallables(
     }
 
     return session.declarationOverloadabilityHelper.isOverloadable(declaration, conflicting)
+}
+
+@OptIn(SymbolInternals::class)
+internal fun FirVariable.getDestructuredParameter(): FirValueParameter? {
+    val initializer = initializer
+    if (initializer !is FirComponentCall) return null
+    if (initializer.source?.kind !is KtFakeSourceElementKind.DesugaredComponentFunctionCall) return null
+    val receiver = initializer.dispatchReceiver ?: initializer.extensionReceiver ?: return null
+    if (receiver !is FirPropertyAccessExpression) return null
+    val calleeReference = receiver.calleeReference as? FirResolvedNamedReference ?: return null
+    return calleeReference.resolvedSymbol.fir as? FirValueParameter
 }
 
 /** Checks for redeclarations of value and type parameters, and local variables. */

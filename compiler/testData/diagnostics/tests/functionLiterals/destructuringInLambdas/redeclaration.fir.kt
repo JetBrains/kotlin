@@ -11,12 +11,12 @@ fun bar() {
         b checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     }
 
-    foo { (a, b), a ->
+    foo { (<!REDECLARATION!>a<!>, b), <!REDECLARATION!>a<!> ->
         a checkType { _<Int>() }
         b checkType { _<String>() }
     }
 
-    foo { a, (a, b) ->
+    foo { <!REDECLARATION!>a<!>, (<!REDECLARATION!>a<!>, b) ->
         a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
         b checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     }
