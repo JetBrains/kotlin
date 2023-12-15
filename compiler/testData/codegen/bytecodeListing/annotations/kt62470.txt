@@ -1,0 +1,31 @@
+@First
+@kotlin.Metadata
+final class E$E1 {
+    // source: 'kt62470.kt'
+    final inner class E$E1
+    method <init>(p0: java.lang.String, p1: int): void
+    public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+}
+
+@kotlin.Metadata
+public enum class E {
+    // source: 'kt62470.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
+    private synthetic final static field $VALUES: E[]
+    public final enum static @First field E1: E
+    final inner class E$E1
+    private synthetic final static method $values(): E[]
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int): void
+    public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
+    public static method valueOf(p0: java.lang.String): E
+    public static method values(): E[]
+}
+
+@kotlin.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class First {
+    // source: 'kt62470.kt'
+}

@@ -4,7 +4,7 @@ FILE: enumEntryWithAnnotations.kt
             super<R|kotlin/Enum<MyEnumClass>|>()
         }
 
-        @Anno(String(implicit)) @PROPERTY:Anno(String(explicit)) public final static [ContainingClassKey=MyEnumClass] enum entry ENUM_ENTRY: R|MyEnumClass| = object : R|MyEnumClass| {
+        @Anno(String(implicit)) @PROPERTY:Anno(String(explicit)) public final static [ContainingClassKey=MyEnumClass] enum entry ENUM_ENTRY: R|MyEnumClass| = @Anno(String(implicit)) @PROPERTY:Anno(String(explicit)) object : R|MyEnumClass| {
             private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|MyEnumClass|>()
             }

@@ -26,14 +26,14 @@ FILE: annotation.kt
             super<R|kotlin/Enum<My>|>()
         }
 
-        @base() public final static [ContainingClassKey=My] enum entry FIRST: R|My| = object : R|My| {
+        @base() public final static [ContainingClassKey=My] enum entry FIRST: R|My| = @base() object : R|My| {
             private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|My|>()
             }
 
         }
 
-        @base() public final static [ContainingClassKey=My] enum entry SECOND: R|My| = object : R|My| {
+        @base() public final static [ContainingClassKey=My] enum entry SECOND: R|My| = @base() object : R|My| {
             private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|My|>()
             }
@@ -89,14 +89,14 @@ FILE: annotation.kt
             super<R|kotlin/Enum<MyDerived>|>()
         }
 
-        @derived(IntegerLiteral(1)) public final static [ContainingClassKey=MyDerived] enum entry FIRST: R|MyDerived| = object : R|MyDerived| {
+        @derived(IntegerLiteral(1)) public final static [ContainingClassKey=MyDerived] enum entry FIRST: R|MyDerived| = @derived(IntegerLiteral(1)) object : R|MyDerived| {
             private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|MyDerived|>()
             }
 
         }
 
-        @derived(IntegerLiteral(1)) public final static [ContainingClassKey=MyDerived] enum entry SECOND: R|MyDerived| = object : R|MyDerived| {
+        @derived(IntegerLiteral(1)) public final static [ContainingClassKey=MyDerived] enum entry SECOND: R|MyDerived| = @derived(IntegerLiteral(1)) object : R|MyDerived| {
             private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|MyDerived|>()
             }

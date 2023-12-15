@@ -814,6 +814,9 @@ class LightTreeRawFirDeclarationBuilder(
                             scopeProvider = baseScopeProvider
                             symbol = FirAnonymousObjectSymbol(context.packageFqName)
                             status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                            enumEntry.getChildNodesByType(MODIFIER_LIST).forEach {
+                                annotations += convertAnnotationList(it)
+                            }
                             val enumClassWrapper = ClassWrapper(
                                 modifiers,
                                 ClassKind.ENUM_ENTRY,

@@ -24,7 +24,15 @@ context -> FirRegularClassSymbol correct
 
 @base()
 owner -> FirEnumEntrySymbol /My.FIRST
+context -> FirAnonymousObjectSymbol <anonymous> from FirEnumEntrySymbol /My.FIRST
+
+@base()
+owner -> FirEnumEntrySymbol /My.FIRST
 context -> FirEnumEntrySymbol /My.FIRST
+
+@base()
+owner -> FirEnumEntrySymbol /My.SECOND
+context -> FirAnonymousObjectSymbol <anonymous> from FirEnumEntrySymbol /My.SECOND
 
 @base()
 owner -> FirEnumEntrySymbol /My.SECOND
@@ -119,7 +127,15 @@ context -> FirRegularClassSymbol correctDerived
 
 @derived(IntegerLiteral(1))
 owner -> FirEnumEntrySymbol /MyDerived.FIRST
+context -> FirAnonymousObjectSymbol <anonymous> from FirEnumEntrySymbol /MyDerived.FIRST
+
+@derived(IntegerLiteral(1))
+owner -> FirEnumEntrySymbol /MyDerived.FIRST
 context -> FirEnumEntrySymbol /MyDerived.FIRST
+
+@derived(IntegerLiteral(1))
+owner -> FirEnumEntrySymbol /MyDerived.SECOND
+context -> FirAnonymousObjectSymbol <anonymous> from FirEnumEntrySymbol /MyDerived.SECOND
 
 @derived(IntegerLiteral(1))
 owner -> FirEnumEntrySymbol /MyDerived.SECOND

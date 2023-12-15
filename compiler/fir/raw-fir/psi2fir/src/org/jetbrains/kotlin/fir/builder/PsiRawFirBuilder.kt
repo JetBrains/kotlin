@@ -1423,6 +1423,7 @@ open class PsiRawFirBuilder(
                                     scopeProvider = this@PsiRawFirBuilder.baseScopeProvider
                                     symbol = FirAnonymousObjectSymbol(this@PsiRawFirBuilder.context.packageFqName)
                                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                                    ktEnumEntry.extractAnnotationsTo(this)
 
                                     val delegatedEntrySelfType = buildResolvedTypeRef {
                                         type =

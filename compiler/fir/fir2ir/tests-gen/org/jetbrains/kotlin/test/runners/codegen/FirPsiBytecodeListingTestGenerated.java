@@ -377,6 +377,12 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
         }
 
         @Test
+        @TestMetadata("kt62470.kt")
+        public void testKt62470() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/kt62470.kt");
+        }
+
+        @Test
         @TestMetadata("kt9320.kt")
         public void testKt9320() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/kt9320.kt");

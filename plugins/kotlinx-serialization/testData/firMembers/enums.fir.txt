@@ -21,14 +21,14 @@ FILE: enums.kt
             super<R|kotlin/Enum<WithNames>|>()
         }
 
-        @R|kotlinx/serialization/SerialName|(value = String(A)) public final static enum entry ENTRY1: R|WithNames| = object : R|WithNames| {
+        @R|kotlinx/serialization/SerialName|(value = String(A)) public final static enum entry ENTRY1: R|WithNames| = @R|kotlinx/serialization/SerialName|(value = String(A)) object : R|WithNames| {
             private constructor(): R|<anonymous>| {
                 super<R|WithNames|>()
             }
 
         }
 
-        @R|kotlinx/serialization/SerialName|(value = String(B)) public final static enum entry ENTRY2: R|WithNames| = object : R|WithNames| {
+        @R|kotlinx/serialization/SerialName|(value = String(B)) public final static enum entry ENTRY2: R|WithNames| = @R|kotlinx/serialization/SerialName|(value = String(B)) object : R|WithNames| {
             private constructor(): R|<anonymous>| {
                 super<R|WithNames|>()
             }

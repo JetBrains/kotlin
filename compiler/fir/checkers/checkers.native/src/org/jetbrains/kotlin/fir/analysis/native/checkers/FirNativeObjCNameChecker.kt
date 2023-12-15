@@ -40,6 +40,8 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
     private val exactName = Name.identifier("exact")
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration is FirAnonymousObject && declaration.classKind == ClassKind.ENUM_ENTRY) return
+
         checkDeclaration(declaration, context, reporter)
         if (declaration is FirCallableDeclaration && (declaration is FirSimpleFunction || declaration is FirProperty)) {
             val containingClass = context.containingDeclarations.lastOrNull() as? FirClass

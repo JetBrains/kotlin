@@ -48,6 +48,8 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.TestEnum.ENTRY2'
       class: CLASS ENUM_ENTRY name:ENTRY2 modality:FINAL visibility:private superTypes:[<root>.TestEnum]
+        annotations:
+          TestAnn(x = "ENTRY2")
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum.ENTRY2
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum.ENTRY2 [primary]
           BLOCK_BODY

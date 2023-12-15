@@ -286,7 +286,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @R|Anno|[Types]() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
+        @R|Anno|[Types]() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = @R|Anno|[Types]() object : R|Foo| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|Foo|>()
             }
@@ -317,7 +317,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enumEntry.kt
             super<R|kotlin/Enum<Foo>|>()
         }
 
-        @R|Anno|[Types]() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
+        @R|Anno|[Types]() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = @R|Anno|[Types]() object : R|Foo| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|Foo|>()
             }

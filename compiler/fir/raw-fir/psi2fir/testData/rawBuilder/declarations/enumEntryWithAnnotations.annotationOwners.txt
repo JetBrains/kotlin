@@ -20,6 +20,14 @@ context -> FirNamedFunctionSymbol /<anonymous>.foo from FirAnonymousObjectSymbol
 
 @Anno(String(implicit))
 owner -> FirEnumEntrySymbol /MyEnumClass.ENUM_ENTRY
+context -> FirAnonymousObjectSymbol <anonymous> from FirEnumEntrySymbol /MyEnumClass.ENUM_ENTRY
+
+@PROPERTY:Anno(String(explicit))
+owner -> FirEnumEntrySymbol /MyEnumClass.ENUM_ENTRY
+context -> FirAnonymousObjectSymbol <anonymous> from FirEnumEntrySymbol /MyEnumClass.ENUM_ENTRY
+
+@Anno(String(implicit))
+owner -> FirEnumEntrySymbol /MyEnumClass.ENUM_ENTRY
 context -> FirEnumEntrySymbol /MyEnumClass.ENUM_ENTRY
 
 @PROPERTY:Anno(String(explicit))
