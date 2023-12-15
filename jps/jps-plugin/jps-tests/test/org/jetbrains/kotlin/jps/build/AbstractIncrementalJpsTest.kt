@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestLookupTracker
+import org.jetbrains.kotlin.jps.build.KotlinBuilder.Companion.useDependencyGraph
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxtBuilder
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
@@ -617,7 +618,7 @@ private fun createMappingsDump(
     project: ProjectDescriptor,
     kotlinContext: KotlinCompileContext,
     lookupsDuringTest: Set<LookupSymbol>,
-) = if (System.getProperty("jps.use.dependency.graph", "false").toBoolean()) "" else
+) = if (useDependencyGraph) "" else
     createKotlinCachesDump(project, kotlinContext, lookupsDuringTest) + "\n\n\n" +
             createCommonMappingsDump(project) + "\n\n\n" +
             createJavaMappingsDump(project)
