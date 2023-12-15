@@ -223,6 +223,7 @@ class NewConstraintSystemImpl(
     // ConstraintSystemBuilder
     private fun transactionRegisterVariable(variable: TypeVariableMarker) {
         if (state != State.TRANSACTION) return
+        if (variable.freshTypeConstructor() in storage.allTypeVariables) return
         typeVariablesTransaction.add(variable)
     }
 
