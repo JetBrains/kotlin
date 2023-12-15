@@ -148,6 +148,8 @@ class BirImplChildElementList<E : BirElement?>(
         } else {
             elementArray =
                 if (count == 0) EMPTY_ELEMENT_ARRAY
+                // Nullable arrays are expected to be rarely resized,
+                // so allocate at the exact size.
                 else arrayOfNulls(count)
         }
         _size = count
