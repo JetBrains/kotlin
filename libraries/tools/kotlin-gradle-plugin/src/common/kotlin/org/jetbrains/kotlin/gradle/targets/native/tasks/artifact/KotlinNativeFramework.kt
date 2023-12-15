@@ -12,10 +12,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -77,7 +74,7 @@ class KotlinNativeFrameworkImpl(
         val resultTask = project.registerTask<Task>(taskName) { task ->
             task.group = BasePlugin.BUILD_GROUP
             task.description = "Assemble ${kind.description} '$artifactName' for ${target.visibleName}."
-            task.enabled = target.enabledOnCurrentHost
+            task.enabled = target.enabledOnCurrentHostForBinariesCompilation()
         }
 
         val librariesConfigurationName = project.registerLibsDependencies(target, artifactName, modules)
@@ -115,7 +112,7 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         listOf(target, kind.compilerOutputKind)
     ) { task ->
         task.description = "Assemble ${kind.description} '$name' for a target '${target.name}'."
-        task.enabled = target.enabledOnCurrentHost
+        task.enabled = target.enabledOnCurrentHostForBinariesCompilation()
         task.baseName.set(name)
         task.destinationDir.set(destinationDir)
         task.optimized.set(buildType.optimized)

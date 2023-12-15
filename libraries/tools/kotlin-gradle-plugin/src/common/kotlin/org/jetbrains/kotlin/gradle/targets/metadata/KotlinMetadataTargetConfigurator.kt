@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinMetadataConfigurationMetrics
@@ -221,7 +222,11 @@ class KotlinMetadataTargetConfigurator :
             configureMetadataDependenciesForCompilation(this@apply)
 
             if (isHostSpecific) {
-                if (platformCompilations.filterIsInstance<KotlinNativeCompilation>().none { it.konanTarget.enabledOnCurrentHost }) {
+                // This logic can be simplified, see KT-64523
+                val shouldBeDisabled = platformCompilations
+                    .filterIsInstance<KotlinNativeCompilation>()
+                    .none { it.konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider) }
+                if (shouldBeDisabled) {
                     // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
                     compileTaskProvider.configure { it.enabled = false }
                     // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
@@ -256,8 +261,6 @@ class KotlinMetadataTargetConfigurator :
     }
 
     private val ResolvedArtifactResult.isMpp: Boolean get() = variant.attributes.containsMultiplatformAttributes
-
-
 }
 
 

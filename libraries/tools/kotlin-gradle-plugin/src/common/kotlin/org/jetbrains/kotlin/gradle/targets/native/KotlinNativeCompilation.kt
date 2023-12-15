@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
@@ -83,7 +84,10 @@ open class KotlinNativeCompilation @Inject internal constructor(
 open class KotlinSharedNativeCompilation @Inject internal constructor(
     val konanTargets: List<KonanTarget>,
     compilation: KotlinCompilationImpl
-) : AbstractKotlinNativeCompilation(compilation, konanTargets.find { it.enabledOnCurrentHost } ?: konanTargets.first()),
+) : AbstractKotlinNativeCompilation(
+    compilation,
+    konanTargets.find { it.enabledOnCurrentHostForKlibCompilation(compilation.project.kotlinPropertiesProvider) } ?: konanTargets.first()
+),
     KotlinMetadataCompilation<KotlinCommonOptions> {
     override val target: KotlinMetadataTarget = compilation.target as KotlinMetadataTarget
 }

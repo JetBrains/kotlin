@@ -13,7 +13,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -73,7 +73,7 @@ class KotlinNativeLibraryImpl(
         val resultTask = project.registerTask<Task>(taskName) { task ->
             task.group = BasePlugin.BUILD_GROUP
             task.description = "Assemble all types of registered '$artifactName' ${kind.description} for ${target.visibleName}."
-            task.enabled = target.enabledOnCurrentHost
+            task.enabled = target.enabledOnCurrentHostForBinariesCompilation()
         }
         project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(resultTask)
 
@@ -86,7 +86,7 @@ class KotlinNativeLibraryImpl(
             ) { task ->
                 task.description = "Assemble ${kind.description} '$artifactName' for a target '${target.name}'."
                 task.destinationDir.set(project.layout.buildDirectory.dir("$outDir/${target.visibleName}/${buildType.visibleName}"))
-                task.enabled = target.enabledOnCurrentHost
+                task.enabled = target.enabledOnCurrentHostForBinariesCompilation()
                 task.baseName.set(artifactName)
                 task.optimized.set(buildType.optimized)
                 task.debuggable.set(buildType.debuggable)

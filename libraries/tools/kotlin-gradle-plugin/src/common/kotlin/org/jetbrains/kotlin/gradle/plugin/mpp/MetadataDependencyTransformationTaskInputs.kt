@@ -7,6 +7,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
@@ -37,8 +38,13 @@ internal class MetadataDependencyTransformationTaskInputs(
     @get:NormalizeLineEndings
     val hostSpecificMetadataConfigurationsToResolve: FileCollection = project.filesProvider {
         kotlinSourceSet.internal.compilations
-            .filter { compilation -> if (compilation is KotlinNativeCompilation) compilation.konanTarget.enabledOnCurrentHost else true }
-            .mapNotNull { compilation ->
+            .filter { compilation ->
+                if (compilation is KotlinNativeCompilation) {
+                    compilation.konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
+                } else {
+                    true
+                }
+            }.mapNotNull { compilation ->
                 compilation
                     .internal
                     .configurations
