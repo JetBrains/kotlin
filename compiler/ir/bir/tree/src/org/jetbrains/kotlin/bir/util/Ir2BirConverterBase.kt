@@ -227,10 +227,12 @@ abstract class Ir2BirConverterBase() {
     }
 
     protected fun BirMemberAccessExpression<*>.copyIrMemberAccessExpressionValueArguments(from: IrMemberAccessExpression<*>) {
-        valueArguments.ensureCapacity(from.valueArgumentsCount)
+        valueArguments.resetWithNulls(from.valueArgumentsCount)
         for (i in 0 until from.valueArgumentsCount) {
             val arg = from.getValueArgument(i)
-            valueArguments += arg?.let { copyElement(it) as BirExpression }
+            if (arg != null) {
+                valueArguments[i] = copyElement(arg) as BirExpression
+            }
         }
     }
 
