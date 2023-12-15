@@ -1432,7 +1432,7 @@ abstract class FirDataFlowAnalyzer(
             subGraph.completePostponedNodes()
         }
         for (node in nodes) {
-            if (node !is ClassExitNode && !node.flowInitialized && node !is PostponedLambdaExitNode) {
+            if (node !is ClassExitNode && !node.flowInitialized) {
                 node.mergeIncomingFlow()
             }
         }

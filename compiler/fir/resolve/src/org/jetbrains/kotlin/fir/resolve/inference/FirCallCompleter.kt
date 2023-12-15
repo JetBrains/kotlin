@@ -203,7 +203,7 @@ class FirCallCompleter(
         call: T,
         initialType: ConeKotlinType,
         analyzer: PostponedArgumentsAnalyzer? = null,
-    ) where T : FirResolvable, T : FirStatement {
+    ) where T : FirStatement {
         @Suppress("NAME_SHADOWING")
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         completer.complete(
