@@ -126,7 +126,10 @@ class FirDelegatedPropertyInferenceSession(
             }
 
             integrateChildSession(
-                partiallyResolvedCalls.map { it.first as FirStatement },
+                buildList {
+                    addIfNotNull(delegateExpression)
+                    partiallyResolvedCalls.mapTo(this) { it.first as FirStatement }
+                },
                 parentConstraintSystem.currentStorage(),
                 afterCompletion,
             )
