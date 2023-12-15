@@ -39,9 +39,7 @@ class BirImplChildElementList<E : BirElement?>(
 
 
     override fun set(index: Int, element: E): E {
-        checkElementIndex(index, _size)
-
-        val old = elementArray[index]
+        val old = super.get(index) as BirElementBase?
         if (element !== old) {
             parent.childReplaced(old, element)
             setInternal(index, element as BirElementBase?, old)
@@ -54,7 +52,15 @@ class BirImplChildElementList<E : BirElement?>(
     private fun setInternal(index: Int, element: BirElementBase?, old: BirElementBase?) {
         checkNewElement(element)
 
-        elementArray[index] = element
+        when (val elementArray = elementArray) {
+            is Array<*> -> {
+                @Suppress("UNCHECKED_CAST")
+                (elementArray as Array<BirElementBase?>)[index] = element
+            }
+            else -> {
+                this.elementArray = element
+            }
+        }
         old?.resetContainingList()
         element?.setContainingList()
     }
@@ -65,13 +71,32 @@ class BirImplChildElementList<E : BirElement?>(
 
         parent.childReplaced(null, element)
 
-        val newSize = _size + 1
+        val currentSize = _size
+        val newSize = currentSize + 1
         var elementArray = elementArray
-        if (elementArray.size <= newSize) {
-            elementArray = elementArray.copyOf(getNewCapacity(newSize))
-            this.elementArray = elementArray
+        if (elementArray is Array<*>) {
+            @Suppress("UNCHECKED_CAST")
+            elementArray as Array<BirElementBase?>
+
+            if (elementArray.size <= newSize) {
+                elementArray = elementArray.copyOf(getNewCapacity(newSize))
+                this.elementArray = elementArray
+            }
+            elementArray[currentSize] = element
+        } else {
+            if (currentSize == 0) {
+                this.elementArray = element
+            } else {
+                val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
+                if (currentSize == 1) {
+                    newArray[0] = elementArray as BirElementBase
+                }
+                newArray[currentSize] = element
+                elementArray = newArray
+                this.elementArray = elementArray
+            }
         }
-        elementArray[newSize - 1] = element
+
         _size = newSize
         element?.setContainingList()
         invalidate()
@@ -80,7 +105,8 @@ class BirImplChildElementList<E : BirElement?>(
     }
 
     override fun add(index: Int, element: E) {
-        val newSize = _size + 1
+        val currentSize = _size
+        val newSize = currentSize + 1
         checkElementIndex(index, newSize)
         checkNewElement(element)
         element as BirElementBase?
@@ -88,16 +114,34 @@ class BirImplChildElementList<E : BirElement?>(
         parent.childReplaced(null, element)
 
         var elementArray = elementArray
-        if (elementArray.size <= newSize) {
-            val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
-            elementArray.copyInto(newArray, 0, 0, index)
-            elementArray.copyInto(newArray, index + 1, index, _size)
-            elementArray = newArray
-            this.elementArray = elementArray
+        if (elementArray is Array<*>) {
+            @Suppress("UNCHECKED_CAST")
+            elementArray as Array<BirElementBase?>
+
+            if (elementArray.size <= newSize) {
+                val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
+                elementArray.copyInto(newArray, 0, 0, index)
+                elementArray.copyInto(newArray, index + 1, index, currentSize)
+                elementArray = newArray
+                this.elementArray = elementArray
+            } else {
+                elementArray.copyInto(elementArray, index + 1, index, currentSize)
+            }
+            elementArray[index] = element
         } else {
-            elementArray.copyInto(elementArray, index + 1, index, _size)
+            if (currentSize == 0 && index == 0) {
+                this.elementArray = element
+            } else {
+                val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
+                if (currentSize == 1) {
+                    newArray[if (index == 0) 1 else 0] = elementArray as BirElementBase
+                }
+                newArray[index] = element
+                elementArray = newArray
+                this.elementArray = elementArray
+            }
         }
-        elementArray[index] = element
+
         _size = newSize
         element?.setContainingList()
         invalidate()
@@ -111,27 +155,50 @@ class BirImplChildElementList<E : BirElement?>(
         }
 
         checkElementIndex(index, _size + 1)
+        val newElementsSize = elements.size
+        val currentSize = _size
+        val newSize = currentSize + newElementsSize
         var elementArray = elementArray
-        val newSize = _size + elements.size
-        if (elementArray.size <= newSize) {
-            val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
-            elementArray.copyInto(newArray, 0, 0, index)
-            elementArray.copyInto(newArray, index + elements.size, index, _size)
-            elementArray = newArray
-            this.elementArray = elementArray
+        if (elementArray is Array<*>) {
+            @Suppress("UNCHECKED_CAST")
+            elementArray as Array<BirElementBase?>
+            if (elementArray.size <= newSize) {
+                val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
+                elementArray.copyInto(newArray, 0, 0, index)
+                elementArray.copyInto(newArray, index + newElementsSize, index, currentSize)
+                elementArray = newArray
+                this.elementArray = elementArray
+            } else {
+                elementArray.copyInto(elementArray, index + newElementsSize, index, currentSize)
+            }
         } else {
-            elementArray.copyInto(elementArray, index + elements.size, index, _size)
+            if (newElementsSize == 1 && index == 0) {
+                this.elementArray = elements.iterator().next()
+            } else {
+                val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
+                if (currentSize == 1) {
+                    newArray[if (index == 0) newElementsSize else 0] = elementArray as BirElementBase
+                }
+                elementArray = newArray
+                this.elementArray = elementArray
+            }
         }
 
-        var i = index
-        for (element in elements) {
-            checkNewElement(element)
+        if (elementArray is Array<*>) {
+            @Suppress("UNCHECKED_CAST")
+            elementArray as Array<BirElementBase?>
 
-            parent.childReplaced(null, element)
+            var i = index
+            for (element in elements) {
+                checkNewElement(element)
 
-            elementArray[i++] = element as BirElementBase?
-            element?.setContainingList()
+                parent.childReplaced(null, element)
+
+                elementArray[i++] = element as BirElementBase?
+                element?.setContainingList()
+            }
         }
+
         _size = newSize
         invalidate()
 
@@ -143,15 +210,21 @@ class BirImplChildElementList<E : BirElement?>(
 
         clear()
 
-        if (elementArray.size == count) {
-            elementArray.fill(null)
+        if (count <= 1) {
+            elementArray = null
         } else {
-            elementArray =
-                if (count == 0) EMPTY_ELEMENT_ARRAY
+            val elementArray = elementArray
+            if (elementArray is Array<*> && elementArray.size == count) {
+                @Suppress("UNCHECKED_CAST")
+                elementArray as Array<BirElementBase?>
+                elementArray.fill(null)
+            } else {
                 // Nullable arrays are expected to be rarely resized,
                 // so allocate at the exact size.
-                else arrayOfNulls(count)
+                this.elementArray = arrayOfNulls<BirElementBase?>(count)
+            }
         }
+
         _size = count
         invalidate()
     }
@@ -168,9 +241,18 @@ class BirImplChildElementList<E : BirElement?>(
         val size = _size
         checkElementIndex(index, size)
 
+        val element: BirElementBase?
         val elementArray = elementArray
-        val element = elementArray[index]
-        elementArray.copyInto(elementArray, index, index + 1, size)
+        if (elementArray is Array<*>) {
+            @Suppress("UNCHECKED_CAST")
+            elementArray as Array<BirElementBase?>
+
+            element = elementArray[index]
+            elementArray.copyInto(elementArray, index, index + 1, size)
+        } else {
+            element = elementArray as BirElementBase?
+            this.elementArray = null
+        }
         _size = size - 1
 
         element?.resetContainingList()
@@ -225,7 +307,7 @@ class BirImplChildElementList<E : BirElement?>(
             return false
         }
 
-        setInternal(index, new, elementArray[index])
+        setInternal(index, new, super.get(index) as BirElementBase?)
         return true
     }
 
@@ -235,15 +317,39 @@ class BirImplChildElementList<E : BirElement?>(
         }
 
         val elementArray = elementArray
-        for (i in 0..<_size) {
-            val element = elementArray[i]
-            parent.childReplaced(element, null)
-            elementArray[i] = null
+        if (elementArray is Array<*>) {
+            @Suppress("UNCHECKED_CAST")
+            elementArray as Array<BirElementBase?>
+
+            for (i in 0..<_size) {
+                val element = elementArray[i]
+                parent.childReplaced(element, null)
+                elementArray[i] = null
+                element?.resetContainingList()
+            }
+        } else {
+            val element = elementArray as BirElementBase?
+            this.elementArray = null
             element?.resetContainingList()
         }
+
         _size = 0
         invalidate()
     }
+
+    fun ensureCapacity(capacity: Int) {
+        val elementArray = elementArray
+        if (capacity > 1 && capacity > getCurrentCapacity()) {
+            val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(capacity))
+            if (elementArray is Array<*>) {
+                (elementArray as Array<BirElementBase?>).copyInto(newArray, endIndex = _size)
+            } else {
+                newArray[0] = elementArray as BirElementBase?
+            }
+            this.elementArray = newArray
+        }
+    }
+
 
     private fun recordRead() {
         parent.recordPropertyRead(id)
@@ -258,12 +364,23 @@ class BirImplChildElementList<E : BirElement?>(
         val size = _size
         if (size == 0) return
 
-        val elementArray = elementArray
         val scope = BirElementVisitorScopeLite(visitor)
-        for (i in 0..<size) {
-            val element = elementArray[i]
-            if (element != null) {
-                visitor.invoke(scope, element)
+        when (val elementArray = elementArray) {
+            is Array<*> -> {
+                @Suppress("UNCHECKED_CAST")
+                elementArray as Array<BirElementBase?>
+                for (i in 0..<size) {
+                    val element = elementArray[i]
+                    if (element != null) {
+                        visitor.invoke(scope, element)
+                    }
+                }
+            }
+            else -> {
+                val element = elementArray as BirElementBase?
+                if (element != null) {
+                    visitor.invoke(scope, element)
+                }
             }
         }
     }
@@ -299,7 +416,10 @@ class BirImplChildElementList<E : BirElement?>(
             val i = index
 
             @Suppress("UNCHECKED_CAST")
-            val next = list.elementArray[i] as E
+            val next = when (val elementArray = list.elementArray) {
+                is Array<*> -> elementArray[i] as E
+                else -> elementArray as E
+            }
             index = i + 1
             return next
         }
