@@ -57,14 +57,31 @@ object LivenessAnalysis {
             }
         }
 
+        // May be used for debug purposes.
+        @Suppress("unused")
+        private fun BitSet.format() = buildString {
+            append('[')
+            var first = true
+            forEachBit {
+                if (!first) append(", ")
+                first = false
+                append(variables[it].name)
+            }
+            append(']')
+        }
+
         private fun getVariableId(variable: IrVariable) = variableIds.getOrPut(variable) {
             variables.add(variable)
             variables.lastIndex
         }
 
         private inline fun <T : IrElement> saveAndCompute(element: T, liveVariables: BitSet, compute: () -> BitSet): BitSet {
-            if (filter(element))
-                filteredElementEndsLV[element] = liveVariables.copy().also { it.or(catchesLV) }
+            if (filter(element)) {
+                // Merge with the previous because of the loops (see the comment there).
+                val elementLV = filteredElementEndsLV.getOrPut(element) { BitSet() }
+                elementLV.or(liveVariables)
+                elementLV.or(catchesLV)
+            }
             return compute()
         }
 
@@ -217,13 +234,15 @@ object LivenessAnalysis {
             loopEndsLV[loop] = data
             var bodyEndLV = loop.condition.accept(this, data)
             val body = loop.body ?: return bodyEndLV
-            var bodyStartLV: BitSet
+            val bodyStartLV = BitSet()
             // In practice, only one or two iterations seem to be enough, but the classic algorithm
             // loops until "saturation" (when nothing changes anymore).
             do {
                 loopStartsLV[loop] = bodyEndLV
-                bodyStartLV = body.accept(this, bodyEndLV)
-                val nextBodyEndLV = loop.condition.accept(this, bodyStartLV)
+                val curBodyStartLV = body.accept(this, bodyEndLV)
+                // Since it's unknown how many iterations the loop will execute, merge the live variables at each iteration.
+                bodyStartLV.or(curBodyStartLV)
+                val nextBodyEndLV = loop.condition.accept(this, curBodyStartLV)
                 val lvHaveChanged = nextBodyEndLV != bodyEndLV
                 bodyEndLV = nextBodyEndLV
             } while (lvHaveChanged)
