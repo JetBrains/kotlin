@@ -454,7 +454,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             task.description = "Generates a podspec file for '$artifactName' artifact"
             task.specName.set(artifactName)
             task.specVersion.set(project.version.takeIf { it != Project.DEFAULT_VERSION }.toString())
-            task.destinationDir.set(project.buildDir.resolve(artifact.outDir))
+            task.destinationDir.set(project.layout.buildDirectory.dir(artifact.outDir))
             task.attributes.set(podspecExtension.attributes)
             task.rawStatements.set(podspecExtension.rawStatements)
             task.dependencies.set(cocoapodsExtension.pods)
