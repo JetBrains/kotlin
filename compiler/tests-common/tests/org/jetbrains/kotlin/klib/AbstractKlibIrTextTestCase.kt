@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.klib
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import junit.framework.TestCase
+import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
@@ -24,6 +25,8 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.AbstractIrGeneratorTestCase
 import org.jetbrains.kotlin.ir.IrElement
@@ -139,16 +142,25 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
         return serializePackageFragment(moduleDescriptor, memberScope, ktFile.packageFqName)
     }
 
-    protected fun serializeModule(irModuleFragment: IrModuleFragment, bindingContext: BindingContext, stdlib: KotlinLibrary, containsErrorCode: Boolean): String {
+    private fun serializeModule(
+        irModuleFragment: IrModuleFragment,
+        bindingContext: BindingContext,
+        stdlib: KotlinLibrary,
+        containsErrorCode: Boolean,
+    ): String {
         val ktFiles = myFiles.psiFiles
         val serializedIr = JsIrModuleSerializer(
-                IrMessageLogger.None,
-                irModuleFragment.irBuiltins,
-                CompatibilityMode.CURRENT,
-                false,
-                emptyList(),
+            KtDiagnosticReporterWithImplicitIrBasedContext(
+                DiagnosticReporterFactory.createPendingReporter(),
                 myEnvironment.configuration.languageVersionSettings,
-            ).serializedIrModule(irModuleFragment)
+            ),
+            IrMessageLogger.None,
+            irModuleFragment.irBuiltins,
+            CompatibilityMode.CURRENT,
+            false,
+            emptyList(),
+            myEnvironment.configuration.languageVersionSettings,
+        ).serializedIrModule(irModuleFragment)
 
         val moduleDescriptor = irModuleFragment.descriptor
         val metadataSerializer = klibMetadataIncrementalSerializer(myEnvironment.configuration, myEnvironment.project, containsErrorCode)

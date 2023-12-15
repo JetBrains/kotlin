@@ -164,5 +164,7 @@ fun <
     irHandlersStep()
 
     facadeStep(backendFacade)
-    klibArtifactsHandlersStep()
+    klibArtifactsHandlersStep {
+        useHandlers(::JsBackendDiagnosticsHandler)
+    }
 }

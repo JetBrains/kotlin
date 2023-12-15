@@ -211,6 +211,15 @@ fun main(args: Array<String>) {
                 model("debug/localVariables")
             }
 
+            testClass<AbstractFirPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "FirPsiJsKlibDiagnosticsTestGenerated") {
+                model(
+                    relativeRootPath = "diagnostics/klibSerializationTests",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+
             testClass<AbstractFirPsiJsDiagnosticTest>(suiteTestClassName = "FirPsiJsOldFrontendDiagnosticsTestGenerated") {
                 model(
                     relativeRootPath = "diagnostics/testsWithJsStdLib",

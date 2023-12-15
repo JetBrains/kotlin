@@ -104,6 +104,11 @@ abstract class DescriptorRenderer {
         }
 
         @JvmField
+        val WITHOUT_MODIFIERS: DescriptorRenderer = withOptions {
+            modifiers = emptySet()
+        }
+
+        @JvmField
         val COMPACT_WITH_MODIFIERS: DescriptorRenderer = withOptions {
             withDefinedIn = false
         }

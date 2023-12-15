@@ -6,14 +6,23 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
 
-abstract class IrModuleSerializer<F : IrFileSerializer>(protected val messageLogger: IrMessageLogger, protected val compatibilityMode: CompatibilityMode, protected val normalizeAbsolutePaths: Boolean, protected val sourceBaseDirs: Collection<String>) {
-    abstract fun createSerializerForFile(file: IrFile): F
+abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
+    protected val diagnosticReporter: IrDiagnosticReporter,
+    protected val messageLogger: IrMessageLogger,
+    protected val compatibilityMode: CompatibilityMode,
+    protected val normalizeAbsolutePaths: Boolean,
+    protected val sourceBaseDirs: Collection<String>,
+    private val shouldCheckSignaturesOnUniqueness: Boolean,
+) {
+    abstract fun createSerializerForFile(file: IrFile): Serializer
 
     /**
      * Allows to skip [file] during serialization.
@@ -22,6 +31,8 @@ abstract class IrModuleSerializer<F : IrFileSerializer>(protected val messageLog
      */
     protected open fun backendSpecificFileFilter(file: IrFile): Boolean =
         true
+
+    protected abstract val globalDeclarationTable: GlobalDeclarationTable
 
     private fun serializeIrFile(file: IrFile): SerializedIrFile {
         val fileSerializer = createSerializerForFile(file)
@@ -33,6 +44,9 @@ abstract class IrModuleSerializer<F : IrFileSerializer>(protected val messageLog
             .filter { it.packageFragmentDescriptor !is FunctionInterfacePackageFragment }
             .filter(this::backendSpecificFileFilter)
             .map(this::serializeIrFile)
+        if (shouldCheckSignaturesOnUniqueness) {
+            globalDeclarationTable.clashDetector.reportErrorsTo(diagnosticReporter)
+        }
         return SerializedIrModule(serializedFiles)
     }
 }

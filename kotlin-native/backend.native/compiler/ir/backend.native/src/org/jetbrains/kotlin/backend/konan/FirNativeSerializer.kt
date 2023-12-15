@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.makeSerializedKlibMetadata
@@ -10,9 +11,13 @@ import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
 import org.jetbrains.kotlin.backend.konan.driver.phases.FirSerializerInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.SerializerOutput
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
 import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
@@ -65,8 +70,10 @@ internal fun PhaseContext.firSerializerBase(
     }
 
     val actualizedFirDeclarations = fir2IrInput?.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
-    return serializeNativeModule(
+    val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
+    val serializerOutput = serializeNativeModule(
             configuration = configuration,
+            diagnosticReporter = diagnosticReporter,
             messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
             sourceFiles,
             usedResolvedLibraries?.map { it.library as KonanLibrary },
@@ -95,6 +102,12 @@ internal fun PhaseContext.firSerializerBase(
                 produceHeaderKlib,
         )
     }
+    val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    diagnosticReporter.reportToMessageCollector(messageCollector, renderDiagnosticNames)
+    if (diagnosticReporter.hasErrors) {
+        throw KonanCompilationException("Compilation failed: there were errors during module serialization")
+    }
+    return serializerOutput
 }
 
 class KotlinFileSerializedData(
@@ -109,6 +122,7 @@ class KotlinFileSerializedData(
 
 internal fun PhaseContext.serializeNativeModule(
     configuration: CompilerConfiguration,
+    diagnosticReporter: DiagnosticReporter,
     messageLogger: IrMessageLogger,
     files: List<KtSourceFile>,
     dependencies: List<KonanLibrary>?,
@@ -125,9 +139,11 @@ internal fun PhaseContext.serializeNativeModule(
 
     val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
     val absolutePathNormalization = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false
+    val signatureClashChecks = configuration[CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS] ?: true
 
     val serializedIr = moduleFragment?.let {
         KonanIrModuleSerializer(
+                KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings),
                 messageLogger,
                 moduleFragment.irBuiltins,
                 CompatibilityMode.CURRENT,
@@ -135,7 +151,8 @@ internal fun PhaseContext.serializeNativeModule(
                 sourceBaseDirs = sourceBaseDirs,
                 languageVersionSettings = configuration.languageVersionSettings,
                 bodiesOnlyForInlines = bodiesOnlyForInlines,
-                skipPrivateApi = skipPrivateApi
+                skipPrivateApi = skipPrivateApi,
+                shouldCheckSignaturesOnUniqueness = signatureClashChecks,
         ).serializedIrModule(moduleFragment)
     }
 

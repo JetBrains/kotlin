@@ -109,7 +109,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
     }
 
-    private fun compileLibrary(
+    internal fun compileLibrary(
         settings: Settings,
         source: File,
         freeCompilerArgs: List<String> = emptyList(),
@@ -126,7 +126,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         return compilation.result
     }
 
-    private fun TestCompilationResult<*>.toOutput(): String {
+    internal fun TestCompilationResult<*>.toOutput(): String {
         check(this is TestCompilationResult.ImmediateResult<*>) { this }
         val loggedData = this.loggedData
         check(loggedData is LoggedData.CompilationToolCall) { loggedData::class }
@@ -152,4 +152,16 @@ class ClassicCompilerOutputTest : CompilerOutputTestBase()
 @Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
-class FirCompilerOutputTest : CompilerOutputTestBase()
+class FirCompilerOutputTest : CompilerOutputTestBase() {
+
+    @Test
+    fun testSignatureClashDiagnostics() {
+        // TODO: use the Compiler Core test infrastructure for testing these diagnostics (KT-64393)
+        val rootDir = File("native/native.tests/testData/compilerOutput/SignatureClashDiagnostics")
+        val settings = testRunSettings
+        val compilationResult = compileLibrary(settings, rootDir.resolve("main.kt"))
+        val goldenData = rootDir.resolve("output.txt")
+
+        KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
+    }
+}

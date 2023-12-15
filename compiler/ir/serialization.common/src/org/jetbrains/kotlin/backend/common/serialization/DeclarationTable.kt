@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.diagnostics.IdSignatureClashDetector
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -15,37 +16,24 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.render
 
-
-interface IdSignatureClashTracker {
-    fun commit(declaration: IrDeclaration, signature: IdSignature)
-
-    companion object {
-        val DEFAULT_TRACKER = object : IdSignatureClashTracker {
-            override fun commit(declaration: IrDeclaration, signature: IdSignature) {}
-        }
-    }
-}
-
-abstract class GlobalDeclarationTable(
-    private val mangler: KotlinMangler.IrMangler,
-    private val clashTracker: IdSignatureClashTracker
-) {
+abstract class GlobalDeclarationTable(private val mangler: KotlinMangler.IrMangler) {
     val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
+    internal val clashDetector = IdSignatureClashDetector()
 
     protected val table = hashMapOf<IrDeclaration, IdSignature>()
-
-    constructor(mangler: KotlinMangler.IrMangler) : this(mangler, IdSignatureClashTracker.DEFAULT_TRACKER)
 
     protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
         builtIns.knownBuiltins.forEach {
             val symbol = (it as IrSymbolOwner).symbol
-            table[it] = symbol.signature!!.also { id -> clashTracker.commit(it, id) }
+            table[it] = symbol.signature!!.also { id -> clashDetector.trackDeclaration(it, id) }
         }
     }
 
     open fun computeSignatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
         return table.getOrPut(declaration) {
-            publicIdSignatureComputer.composePublicIdSignature(declaration, compatibleMode).also { clashTracker.commit(declaration, it) }
+            publicIdSignatureComputer.composePublicIdSignature(declaration, compatibleMode).also {
+                clashDetector.trackDeclaration(declaration, it)
+            }
         }
     }
 

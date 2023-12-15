@@ -7,14 +7,16 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
-import org.jetbrains.kotlin.backend.common.serialization.IdSignatureClashTracker
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 
 class JsIrModuleSerializer(
+    diagnosticReporter: IrDiagnosticReporter,
     messageLogger: IrMessageLogger,
     irBuiltIns: IrBuiltIns,
     compatibilityMode: CompatibilityMode,
@@ -22,13 +24,17 @@ class JsIrModuleSerializer(
     sourceBaseDirs: Collection<String>,
     private val languageVersionSettings: LanguageVersionSettings,
     shouldCheckSignaturesOnUniqueness: Boolean = true,
-    private val jsIrFileMetadataFactory: JsIrFileMetadataFactory = JsIrFileEmptyMetadataFactory
-) : IrModuleSerializer<JsIrFileSerializer>(messageLogger, compatibilityMode, normalizeAbsolutePaths, sourceBaseDirs) {
+    private val jsIrFileMetadataFactory: JsIrFileMetadataFactory = JsIrFileEmptyMetadataFactory,
+) : IrModuleSerializer<JsIrFileSerializer>(
+    diagnosticReporter,
+    messageLogger,
+    compatibilityMode,
+    normalizeAbsolutePaths,
+    sourceBaseDirs,
+    shouldCheckSignaturesOnUniqueness,
+) {
 
-    private val globalDeclarationTable = JsGlobalDeclarationTable(
-        irBuiltIns,
-        if (shouldCheckSignaturesOnUniqueness) JsUniqIdClashTracker() else IdSignatureClashTracker.DEFAULT_TRACKER
-    )
+    override val globalDeclarationTable = JsGlobalDeclarationTable(irBuiltIns)
 
     override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =
         JsIrFileSerializer(

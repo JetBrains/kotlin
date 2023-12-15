@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectExportedNames
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -529,7 +529,11 @@ class GenerateIrRuntime {
 
 
     private fun doSerializeIrModule(module: IrModuleFragment): SerializedIrModule {
-        val serializedIr = JsIrModuleSerializer(
+        return JsIrModuleSerializer(
+            KtDiagnosticReporterWithImplicitIrBasedContext(
+                DiagnosticReporterFactory.createPendingReporter(),
+                configuration.languageVersionSettings,
+            ),
             IrMessageLogger.None,
             module.irBuiltins,
             CompatibilityMode.CURRENT,
@@ -537,7 +541,6 @@ class GenerateIrRuntime {
             emptyList(),
             configuration.languageVersionSettings,
         ).serializedIrModule(module)
-        return serializedIr
     }
 
     private fun doWriteIrModuleToStorage(serializedIrModule: SerializedIrModule, writer: KotlinLibraryOnlyIrWriter) {

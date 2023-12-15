@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.SerializedIrModule
@@ -44,7 +46,12 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
     val serializedIr = input.psiToIrOutput?.let {
         val ir = it.irModule
         KonanIrModuleSerializer(
-                messageLogger, ir.irBuiltins,
+                KtDiagnosticReporterWithImplicitIrBasedContext(
+                        DiagnosticReporterFactory.createPendingReporter(),
+                        config.languageVersionSettings
+                ),
+                messageLogger,
+                ir.irBuiltins,
                 compatibilityMode = CompatibilityMode.CURRENT,
                 normalizeAbsolutePaths = normalizeAbsolutePaths,
                 sourceBaseDirs = relativePathBase,

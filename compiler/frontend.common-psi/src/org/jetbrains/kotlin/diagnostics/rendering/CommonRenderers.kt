@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -60,6 +61,29 @@ object CommonRenderers {
                 if (iterator.hasNext()) {
                     append(", ")
                 }
+            }
+        }
+    }
+
+    @JvmStatic
+    fun <Declaration, Data> renderConflictingSignatureData(
+        signatureKind: String,
+        sortUsing: Comparator<Declaration>,
+        declarationRenderer: DiagnosticParameterRenderer<Declaration>,
+        renderSignature: StringBuilder.(Data) -> Unit,
+        declarations: (Data) -> Collection<Declaration>,
+    ) = Renderer<Data> { data ->
+        val sortedDeclarations = declarations(data).sortedWith(sortUsing)
+        val renderingContext = RenderingContext.Impl(sortedDeclarations)
+        buildString {
+            append("The following declarations have the same ")
+            append(signatureKind)
+            append(" signature (")
+            renderSignature(data)
+            appendLine("):")
+            sortedDeclarations.joinToWithBuffer(this, separator = "\n") { descriptor ->
+                append("    ")
+                append(declarationRenderer.render(descriptor, renderingContext))
             }
         }
     }
