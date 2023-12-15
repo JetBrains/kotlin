@@ -3839,6 +3839,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NoReflectionInClassPath::class
     }
 
+    interface SyntheticPropertyWithoutJavaOrigin : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = SyntheticPropertyWithoutJavaOrigin::class
+        val originalSymbol: KtFunctionLikeSymbol
+        val functionName: Name
+    }
+
     interface ImplementingFunctionInterface : KtFirDiagnostic<KtClassOrObject> {
         override val diagnosticClass get() = ImplementingFunctionInterface::class
     }

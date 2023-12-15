@@ -22,6 +22,11 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirQualifiedAccessJavaNullabilityWarningChecker,
         )
 
+    override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
+        get() = setOf(
+            FirSyntheticPropertyWithoutJavaOriginChecker,
+        )
+
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
         get() = setOf(
             FirUnsupportedSyntheticCallableReferenceChecker,

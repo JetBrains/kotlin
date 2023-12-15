@@ -36,22 +36,22 @@ fun test_1(a: A) {
 }
 
 fun test_2(b: B) {
-    b.x1
-    b.x2
-    b.x3
-    b.x4
+    b.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x1<!>
+    b.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x2<!>
+    b.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x3<!>
+    b.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x4<!>
 }
 
 fun test_3(c: C) {
-    c.x1
-    c.x2
-    c.x3
-    c.x4
+    c.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x1<!>
+    c.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x2<!>
+    c.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x3<!>
+    c.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x4<!>
 }
 
 fun test_4(d: D) {
-    d.x1
-    d.x2
-    d.x3
-    d.x4
+    d.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x1<!>
+    d.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x2<!>
+    d.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x3<!>
+    d.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>x4<!>
 }

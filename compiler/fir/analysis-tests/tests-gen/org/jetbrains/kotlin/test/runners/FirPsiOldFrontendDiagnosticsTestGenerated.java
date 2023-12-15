@@ -22444,6 +22444,24 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("syntheticPropertyFromKotlin_k1Like.kt")
+                public void testSyntheticPropertyFromKotlin_k1Like() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlin_k1Like.kt");
+                }
+
+                @Test
+                @TestMetadata("syntheticPropertyFromKotlin_warning.kt")
+                public void testSyntheticPropertyFromKotlin_warning() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlin_warning.kt");
+                }
+
+                @Test
+                @TestMetadata("syntheticPropertyThroughJava.kt")
+                public void testSyntheticPropertyThroughJava() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyThroughJava.kt");
+                }
+
+                @Test
                 @TestMetadata("unitVsVoid.kt")
                 public void testUnitVsVoid() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/properties/unitVsVoid.kt");

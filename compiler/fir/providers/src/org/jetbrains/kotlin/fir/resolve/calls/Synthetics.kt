@@ -5,21 +5,19 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidSyntheticPropertiesWithoutBaseJavaGetter
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope.SyntheticGetterCompatibility.*
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -126,7 +124,8 @@ class FirSyntheticPropertiesScope private constructor(
         if (getterReturnType?.isUnit == true && CompilerConeAttributes.EnhancedNullability !in getterReturnType.attributes) return
 
         // Should have Java among overridden _and_ don't have isHiddenEverywhereBesideSuperCalls among them
-        if (!getterSymbol.mayBeUsedAsGetterForSyntheticProperty()) return
+        val getterCompatibility = getterSymbol.computeGetterCompatibility()
+        if (getterCompatibility == Incompatible) return
 
         var matchingSetter: FirSimpleFunction? = null
         if (needCheckForSetter && getterReturnType != null) {
@@ -144,12 +143,13 @@ class FirSyntheticPropertiesScope private constructor(
             })
         }
 
-        val property = buildSyntheticProperty(propertyName, getter, matchingSetter)
+        val property = buildSyntheticProperty(propertyName, getter, matchingSetter, getterCompatibility)
         getter.originalForSubstitutionOverride?.let {
             property.originalForSubstitutionOverrideAttr = buildSyntheticProperty(
                 propertyName,
                 it,
-                matchingSetter?.originalForSubstitutionOverride ?: matchingSetter
+                matchingSetter?.originalForSubstitutionOverride ?: matchingSetter,
+                getterCompatibility
             )
         }
         val syntheticSymbol = property.symbol
@@ -161,7 +161,12 @@ class FirSyntheticPropertiesScope private constructor(
         processor(syntheticSymbol)
     }
 
-    private fun buildSyntheticProperty(propertyName: Name, getter: FirSimpleFunction, setter: FirSimpleFunction?): FirSyntheticProperty {
+    private fun buildSyntheticProperty(
+        propertyName: Name,
+        getter: FirSimpleFunction,
+        setter: FirSimpleFunction?,
+        getterCompatibility: SyntheticGetterCompatibility,
+    ): FirSyntheticProperty {
         val classLookupTag = getter.symbol.originalOrSelf().dispatchReceiverClassLookupTagOrNull()
         val packageName = classLookupTag?.classId?.packageFqName ?: getter.symbol.callableId.packageName
         val className = classLookupTag?.classId?.relativeClassName
@@ -176,6 +181,10 @@ class FirSyntheticPropertiesScope private constructor(
             delegateGetter = getter
             delegateSetter = setter
             deprecationsProvider = getDeprecationsProviderFromAccessors(session, getter, setter)
+        }.apply {
+            if (getterCompatibility != HasJavaOrigin) {
+                noJavaOrigin = true
+            }
         }
     }
 
@@ -235,23 +244,62 @@ class FirSyntheticPropertiesScope private constructor(
                 || processOverrides(getterSymbol, setterSymbolToCompare = setterSymbol)
     }
 
-    private fun FirNamedFunctionSymbol.mayBeUsedAsGetterForSyntheticProperty(): Boolean {
-        var result = false
-        var isHiddenEverywhereBesideSuperCalls = false
-        baseScope.processOverriddenFunctionsAndSelf(this) {
-            val unwrapped = it.unwrapFakeOverrides().fir
-            if (unwrapped.origin == FirDeclarationOrigin.Enhancement) {
-                result = true
-            }
+    private enum class SyntheticGetterCompatibility {
+        Incompatible,
+        HasKotlinOrigin,
+        HasJavaOrigin
+    }
 
-            if (unwrapped.isHiddenEverywhereBesideSuperCalls == true) {
+    /**
+     * This method computes if getter method can be used as base for synthetic property based on overridden hierarchy
+     * There are three kinds of compatibility:
+     * - `Incompatible` (obvious)
+     * - `HasJavaOrigin` indicates that this getter is based on root java function (ok to create property)
+     * - `HasKotlinOrigin` shows that there is no base java getter overridden. Property will be created only with some LV (KT-64358)
+     */
+    private fun FirNamedFunctionSymbol.computeGetterCompatibility(): SyntheticGetterCompatibility {
+        val kotlinBaseAllowed = !session.languageVersionSettings.supportsFeature(ForbidSyntheticPropertiesWithoutBaseJavaGetter)
+
+        var isHiddenEverywhereBesideSuperCalls = false
+        var result = Incompatible
+
+        val visited = mutableSetOf<MemberWithBaseScope<FirNamedFunctionSymbol>>()
+        fun checkJavaOrigin(symbol: FirNamedFunctionSymbol, scope: FirTypeScope) {
+            if (symbol.fir.isHiddenEverywhereBesideSuperCalls == true) {
                 isHiddenEverywhereBesideSuperCalls = true
             }
 
-            ProcessorAction.NEXT
+            val overriddenWithScope = scope.getDirectOverriddenFunctionsWithBaseScope(symbol)
+
+            if (symbol.origin == FirDeclarationOrigin.Enhancement) {
+                /**
+                 * If there is no overridden then we found java root and want to stick with it
+                 * Otherwise we are in the middle of the hierarchy, so leaf potentially can be from Kotlin
+                 */
+                val potentialResult = when {
+                    overriddenWithScope.isEmpty() -> HasJavaOrigin
+                    kotlinBaseAllowed -> HasKotlinOrigin
+                    else -> Incompatible
+                }
+                result = maxOf(result, potentialResult)
+            }
+
+            overriddenWithScope.forEach {
+                if (!visited.add(it)) return@forEach
+                checkJavaOrigin(it.member, it.baseScope)
+            }
         }
-        result = result || isJavaTypeOnThePath(this.dispatchReceiverType)
-        return result && !isHiddenEverywhereBesideSuperCalls
+
+        checkJavaOrigin(this, baseScope)
+
+        return when {
+            isHiddenEverywhereBesideSuperCalls -> Incompatible
+            result != Incompatible -> result
+            !kotlinBaseAllowed -> Incompatible
+            // This branch is needed for compatibility reasons, see KT-64358
+            isJavaTypeOnThePath(this.dispatchReceiverType) -> HasKotlinOrigin
+            else -> Incompatible
+        }
     }
 
     /*
@@ -310,3 +358,10 @@ class FirSyntheticPropertiesScope private constructor(
         }
     }
 }
+
+private object NoJavaOriginKey : FirDeclarationDataKey()
+private var FirSyntheticProperty.noJavaOrigin: Boolean? by FirDeclarationDataRegistry.data(NoJavaOriginKey)
+
+val FirSimpleSyntheticPropertySymbol.noJavaOrigin: Boolean
+    get() = (fir as FirSyntheticProperty).noJavaOrigin == true
+

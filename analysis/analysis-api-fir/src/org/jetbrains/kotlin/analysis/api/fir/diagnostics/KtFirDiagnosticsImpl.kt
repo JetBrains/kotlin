@@ -4635,6 +4635,13 @@ internal class NoReflectionInClassPathImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.NoReflectionInClassPath
 
+internal class SyntheticPropertyWithoutJavaOriginImpl(
+    override val originalSymbol: KtFunctionLikeSymbol,
+    override val functionName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.SyntheticPropertyWithoutJavaOrigin
+
 internal class ImplementingFunctionInterfaceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
