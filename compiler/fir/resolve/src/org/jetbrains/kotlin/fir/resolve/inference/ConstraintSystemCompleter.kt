@@ -260,18 +260,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             anyAnalyzed = true
         }
 
-        // For PCLA, we don't expect new TVs are fixed since they might be related to outer CS.
-        // But we really require all the lambdas should be analyzed fully for each PCLA-postponed top-level call.
-        if (anyAnalyzed && completionMode == ConstraintSystemCompletionMode.PARTIAL_PCLA) return true
-
-        val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms), postponedArguments, completionMode, topLevelType
-        )
-
-        // continue completion (rerun stages) only if ready for fixation variables with proper constraints have appeared
-        // (after analysing a lambda with the builder inference)
-        // otherwise we don't continue and report "not enough type information" error
-        return variableForFixation?.hasProperConstraint == true
+        return anyAnalyzed
     }
 
     private fun transformToAtomWithNewFunctionExpectedType(
