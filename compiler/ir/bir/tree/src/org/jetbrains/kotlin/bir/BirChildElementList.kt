@@ -65,7 +65,7 @@ abstract class BirChildElementList<E : BirElement?>(
 
 
     fun ensureCapacity(capacity: Int) {
-        if (elementArray.size <= capacity) {
+        if (elementArray.size < capacity) {
             val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(capacity))
             elementArray.copyInto(newArray, endIndex = _size)
             elementArray = newArray
