@@ -136,7 +136,7 @@ class FirCallCompletionResultsWriterTransformer(
             extensionReceiver = extensionReceiver?.transformSingle(integerOperatorApproximator, expectedExtensionReceiverType)
         }
 
-        (qualifiedAccessExpression as? FirQualifiedAccessExpression)?.apply {
+        qualifiedAccessExpression.apply {
             replaceCalleeReference(calleeReference.toResolvedReference())
             replaceDispatchReceiver(dispatchReceiver)
             replaceExtensionReceiver(extensionReceiver)
