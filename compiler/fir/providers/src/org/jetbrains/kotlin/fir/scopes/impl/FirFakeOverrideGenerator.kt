@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
@@ -297,18 +298,17 @@ object FirFakeOverrideGenerator {
                 }
             }
         }
+
         valueParameters += baseFunction.valueParameters.zip(
             newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
         ) { valueParameter, newType ->
-            buildValueParameterCopy(valueParameter) {
-                this.origin = origin
-                source = this@configureAnnotationsAndSignature.source ?: source
-                returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
-                symbol = FirValueParameterSymbol(valueParameter.name)
-                containingFunctionSymbol = fakeFunctionSymbol
-            }.apply {
-                originalForSubstitutionOverrideAttr = valueParameter
-            }
+            buildCopyForValueParameter(
+                valueParameter,
+                valueParameter.returnTypeRef.withReplacedConeType(newType),
+                origin,
+                fakeFunctionSymbol,
+                this@configureAnnotationsAndSignature.source ?: valueParameter.source
+            )
         }
 
         contextReceivers += baseFunction.contextReceivers.zip(
@@ -317,6 +317,30 @@ object FirFakeOverrideGenerator {
             buildContextReceiverCopy(contextReceiver) {
                 typeRef = contextReceiver.typeRef.withReplacedConeType(newType)
             }
+        }
+    }
+
+    private fun buildCopyForValueParameter(
+        original: FirValueParameter,
+        returnTypeRef: FirTypeRef,
+        origin: FirDeclarationOrigin,
+        containingFunctionSymbol: FirFunctionSymbol<*>,
+        source: KtSourceElement?
+    ): FirValueParameter = buildValueParameterCopy(original) {
+        this.origin = origin
+        this.source = source
+        this.returnTypeRef = returnTypeRef
+        symbol = FirValueParameterSymbol(original.name)
+        this.containingFunctionSymbol = containingFunctionSymbol
+    }.apply {
+        addOverrideAttributeIfNeeded(original)
+    }
+
+    private fun <T : FirCallableDeclaration> T.addOverrideAttributeIfNeeded(original: T) {
+        when (origin) {
+            FirDeclarationOrigin.IntersectionOverride -> originalForIntersectionOverrideAttr = original
+            is FirDeclarationOrigin.SubstitutionOverride -> originalForSubstitutionOverrideAttr = original
+            else -> {}
         }
     }
 
@@ -483,22 +507,21 @@ object FirFakeOverrideGenerator {
             this.body = null
         }.also {
             if (it.isSetter) {
-                val newParameter = buildValueParameterCopy(it.valueParameters.first()) {
-                    this.symbol = FirValueParameterSymbol(symbol.name)
-                    this.returnTypeRef = propertyReturnTypeRef
-                }
+                val originalParameter = it.valueParameters.first()
+                val newParameter = buildCopyForValueParameter(
+                    original = originalParameter,
+                    returnTypeRef = propertyReturnTypeRef,
+                    origin = origin,
+                    containingFunctionSymbol = it.symbol,
+                    source = originalParameter.source,
+                )
                 it.replaceValueParameters(listOf(newParameter))
             } else {
                 it.replaceReturnTypeRef(propertyReturnTypeRef)
             }
         }
     }.also { accessor ->
-        when (accessor.origin) {
-            FirDeclarationOrigin.IntersectionOverride -> accessor.originalForIntersectionOverrideAttr = this
-            is FirDeclarationOrigin.SubstitutionOverride -> accessor.originalForSubstitutionOverrideAttr = this
-            else -> {}
-        }
-
+        accessor.addOverrideAttributeIfNeeded(this)
         accessor.containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf {
             accessor is FirDefaultPropertyAccessor || shouldOverrideSetContainingClass(baseProperty)
         }

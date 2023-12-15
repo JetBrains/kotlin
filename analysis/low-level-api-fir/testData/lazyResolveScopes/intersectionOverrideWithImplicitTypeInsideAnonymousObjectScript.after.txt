@@ -2,9 +2,9 @@ public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE
     ^foo Q|kotlin/Unit|
 }
 
-public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String}, baseSymbol=FirIntersectionOverrideFunctionSymbol second/B.foo), IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/B.foo] fun foo([ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=<local>/x] x: R|@R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String| = LAZY_EXPRESSION): <implicit>
+public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String}, baseSymbol=FirIntersectionOverrideFunctionSymbol second/B.foo), IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/B.foo] fun foo([ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=<local>/x, SubstitutedOverrideOriginalKey=<local>/x] x: R|@R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String| = LAZY_EXPRESSION): <implicit>
 
-public open [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=<local>/x] x: R|T| = R|second/genericCall|<R|T|>()): R|kotlin/Unit|
+public open [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=<local>/x, SubstitutedOverrideOriginalKey=<local>/x] x: R|T| = R|second/genericCall|<R|T|>()): R|kotlin/Unit|
 
 public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=<local>/x] x: R|T| = R|second/genericCall|<R|T|>()): R|kotlin/Unit|
 

@@ -6,7 +6,7 @@ public open [ResolvedTo(BODY_RESOLVE)] fun isSchemeFile([ResolvedTo(BODY_RESOLVE
     ^isSchemeFile Boolean(true)
 }
 
-public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /BaseInterface.anotherFunction, containingClass=MyClass, delegateField=FirFieldSymbol /MyClass.$$delegate_0] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=<local>/name] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
+public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /BaseInterface.anotherFunction, containingClass=MyClass, delegateField=FirFieldSymbol /MyClass.$$delegate_0] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
 
 public open [ResolvedTo(BODY_RESOLVE)] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence|): R|kotlin/Boolean| {
     ^anotherFunction Boolean(true)
