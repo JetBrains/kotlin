@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
+import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -42,9 +43,12 @@ class FirDelegatedPropertyInferenceSession(
     private val nonTrivialParentSession: FirInferenceSession? =
         resolutionContext.bodyResolveContext.inferenceSession.takeIf { it !== DEFAULT }
 
-    private val parentConstraintSystem = ((delegateExpression as? FirResolvable)?.candidate()?.system
-        ?: (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.currentCommonSystem)
-        ?: components.session.inferenceComponents.createConstraintSystem()
+    private val delegateCandidate = (delegateExpression as? FirResolvable)?.candidate()
+    private val parentConstraintSystem =
+        delegateCandidate?.system
+            ?: (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.currentCommonSystem
+            ?: components.session.inferenceComponents.createConstraintSystem()
+
     private val currentConstraintSystem =
         prepareSharedBaseSystem(parentConstraintSystem, components.session.inferenceComponents)
 
@@ -75,7 +79,7 @@ class FirDelegatedPropertyInferenceSession(
     override fun <T> processPartiallyResolvedCall(
         call: T,
         resolutionMode: ResolutionMode,
-        completionMode: ConstraintSystemCompletionMode
+        completionMode: ConstraintSystemCompletionMode,
     ) where T : FirResolvable, T : FirStatement {
         if (wasCompletionRun || !call.isAnyOfDelegateOperators()) return
 
@@ -112,6 +116,15 @@ class FirDelegatedPropertyInferenceSession(
         parentConstraintSystem.addOtherSystem(currentConstraintStorage)
 
         (nonTrivialParentSession as? FirBuilderInferenceSession2)?.apply {
+            if (delegateCandidate != null) {
+                callCompleter.runCompletionForCall(
+                    delegateCandidate,
+                    ConstraintSystemCompletionMode.PARTIAL_PCLA,
+                    delegateExpression,
+                    components.initialTypeOfCandidate(delegateCandidate)
+                )
+            }
+
             integrateChildSession(
                 partiallyResolvedCalls.map { it.first as FirStatement },
                 parentConstraintSystem.currentStorage(),

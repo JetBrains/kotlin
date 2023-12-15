@@ -48,14 +48,14 @@ internal class TowerDataElementsForName3() {
 
 internal class TowerDataElementsForName4() {
     @OptIn(ExperimentalStdlibApi::class)
-    val reversedFilteredLocalScopes = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildList<!> l1@ {
+    val reversedFilteredLocalScopes = buildList l1@ {
         class Foo {
             val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
                 @OptIn(ExperimentalStdlibApi::class)
                 buildList {
                     for (i in lastIndex downTo 0) {
                         add("")
-                        this<!UNRESOLVED_LABEL!>@l1<!>.add("")
+                        this@l1.add("")
                     }
                 }
             }
