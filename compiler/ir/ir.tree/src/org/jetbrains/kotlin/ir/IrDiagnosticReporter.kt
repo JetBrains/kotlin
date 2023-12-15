@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext.DiagnosticContextImpl
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
@@ -19,6 +20,7 @@ interface IrDiagnosticReporter {
     fun at(irDeclaration: IrDeclaration): DiagnosticContextImpl
     fun at(irElement: IrElement, containingIrFile: IrFile): DiagnosticContextImpl
     fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): DiagnosticContextImpl
+    fun at(sourceElement: AbstractKtSourceElement?, irElement: IrElement, containingFile: IrFile): DiagnosticContextImpl
 }
 
 object IrDiagnosticRenderers {

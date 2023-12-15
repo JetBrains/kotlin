@@ -46,7 +46,7 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
     override fun at(irElement: IrElement, containingIrFile: IrFile): DiagnosticContextImpl =
         at(irElement.toSourceElement(containingIrFile), irElement, containingIrFile)
 
-    fun at(
+    override fun at(
         sourceElement: AbstractKtSourceElement?,
         irElement: IrElement,
         containingFile: IrFile
