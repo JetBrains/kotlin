@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.checkers.declarations.JsKlibEsModuleExportsChecker
 import org.jetbrains.kotlin.ir.backend.js.checkers.declarations.JsKlibOtherModuleExportsChecker
 import org.jetbrains.kotlin.ir.backend.js.checkers.expressions.JsKlibJsCodeCallChecker
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -34,11 +35,10 @@ object JsKlibCheckers {
         cleanFiles: List<SerializedIrFile>,
         dirtyModule: IrModuleFragment,
         exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>>,
-        diagnosticReporter: DiagnosticReporter,
+        diagnosticReporter: IrDiagnosticReporter,
         configuration: CompilerConfiguration
     ) {
         dirtyModule.acceptVoid(object : IrElementVisitorVoid {
-            private val reporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
             private val diagnosticContext = JsKlibDiagnosticContext(configuration)
 
             override fun visitElement(element: IrElement) {
@@ -54,7 +54,7 @@ object JsKlibCheckers {
             override fun visitModuleFragment(declaration: IrModuleFragment) {
                 val exportedDeclarations = JsKlibExportingDeclaration.collectDeclarations(cleanFiles, declaration.files, exportedNames)
                 for (checker in exportedDeclarationsCheckers) {
-                    checker.check(exportedDeclarations, this.diagnosticContext, reporter)
+                    checker.check(exportedDeclarations, this.diagnosticContext, diagnosticReporter)
                 }
                 super.visitModuleFragment(declaration)
             }
@@ -67,7 +67,7 @@ object JsKlibCheckers {
 
             override fun visitCall(expression: IrCall) {
                 for (checker in callCheckers) {
-                    checker.check(expression, this.diagnosticContext, reporter)
+                    checker.check(expression, this.diagnosticContext, diagnosticReporter)
                 }
                 super.visitCall(expression)
             }

@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.ir.backend.js.checkers.expressions
 import com.google.gwt.dev.js.parserExceptions.AbortParsingException
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCallChecker
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibDiagnosticContext
+import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.checkers.at
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds
 object JsKlibJsCodeCallChecker : JsKlibCallChecker {
     private val jsCodeFqName = JsStandardClassIds.Callables.JsCode.asSingleFqName()
 
-    override fun check(expression: IrCall, context: JsKlibDiagnosticContext, reporter: KtDiagnosticReporterWithImplicitIrBasedContext) {
+    override fun check(expression: IrCall, context: JsKlibDiagnosticContext, reporter: IrDiagnosticReporter) {
         // Do not check IR from K1, because there are corresponding K1 FE checks in JsCallChecker
         if (!context.compilerConfiguration.languageVersionSettings.languageVersion.usesK2) {
             return
@@ -66,7 +66,7 @@ object JsKlibJsCodeCallChecker : JsKlibCallChecker {
     private class JsErrorReporter(
         val codeExpression: IrExpression,
         val context: JsKlibDiagnosticContext,
-        val reporter: KtDiagnosticReporterWithImplicitIrBasedContext,
+        val reporter: IrDiagnosticReporter,
     ) : ErrorReporter {
         override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) {
             reporter.at(codeExpression, context).report(JsKlibErrors.JSCODE_WARNING, message)

@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 interface JsKlibExpressionChecker<E : IrExpression> {
-    fun check(expression: E, context: JsKlibDiagnosticContext, reporter: KtDiagnosticReporterWithImplicitIrBasedContext)
+    fun check(expression: E, context: JsKlibDiagnosticContext, reporter: IrDiagnosticReporter)
 }
 
 typealias JsKlibCallChecker = JsKlibExpressionChecker<IrCall>

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers.declarations
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.backend.js.checkers.*
 
 object JsKlibOtherModuleExportsChecker : JsKlibExportedDeclarationsChecker {
@@ -47,7 +47,7 @@ object JsKlibOtherModuleExportsChecker : JsKlibExportedDeclarationsChecker {
     override fun check(
         declarations: List<JsKlibExportingDeclaration>,
         context: JsKlibDiagnosticContext,
-        reporter: KtDiagnosticReporterWithImplicitIrBasedContext
+        reporter: IrDiagnosticReporter,
     ) {
         val clashes = collectClashes(declarations)
         for ((declaration, clashedWith) in clashes) {

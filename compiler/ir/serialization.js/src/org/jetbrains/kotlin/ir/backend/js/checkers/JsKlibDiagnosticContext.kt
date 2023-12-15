@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -40,14 +40,14 @@ class JsKlibDiagnosticContext(val compilerConfiguration: CompilerConfiguration) 
     }
 }
 
-fun KtDiagnosticReporterWithImplicitIrBasedContext.at(
+fun IrDiagnosticReporter.at(
     declaration: IrDeclaration,
     context: JsKlibDiagnosticContext,
 ): KtDiagnosticReporterWithContext.DiagnosticContextImpl {
     return context.containingFile?.let { at(declaration, it) } ?: at(declaration)
 }
 
-fun KtDiagnosticReporterWithImplicitIrBasedContext.at(
+fun IrDiagnosticReporter.at(
     irElement: IrElement,
     context: JsKlibDiagnosticContext,
 ): KtDiagnosticReporterWithContext.DiagnosticContextImpl {
