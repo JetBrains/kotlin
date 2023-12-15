@@ -103,6 +103,10 @@ internal fun checkConstantArguments(
                 checkConstantArguments(exp, session)?.let { return it }
             }
         }
+        expression is FirBinaryLogicExpression -> {
+            checkConstantArguments(expression.leftOperand, session)?.let { return it }
+            checkConstantArguments(expression.rightOperand, session)?.let { return it }
+        }
         expression is FirGetClassCall -> {
             var coneType = (expression as? FirCall)?.argument?.getExpandedType()
 

@@ -23952,9 +23952,27 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("binaryLogic.kt")
+                public void testBinaryLogic() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/binaryLogic.kt");
+                }
+
+                @Test
                 @TestMetadata("compare.kt")
                 public void testCompare() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/compare.kt");
+                }
+
+                @Test
+                @TestMetadata("complexBooleanInStringConcat_after.kt")
+                public void testComplexBooleanInStringConcat_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/complexBooleanInStringConcat_after.kt");
+                }
+
+                @Test
+                @TestMetadata("complexBooleanInStringConcat_before.kt")
+                public void testComplexBooleanInStringConcat_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/complexBooleanInStringConcat_before.kt");
                 }
 
                 @Test
