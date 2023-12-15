@@ -13,6 +13,7 @@
 # OWNER_LIST: "Kotlin Release"
 # OWNER_LIST: "Kotlin Apple Ecosystem"
 # OWNER_LIST: "Kotlin Language Evolution"
+# OWNER_LIST: "Kotlin in Fleet"
 # OWNER_LIST: Mikhail.Glukhikh
 # OWNER_LIST: Yan.Zhulanow
 # OWNER_LIST: Dmitry.Gridin
@@ -360,6 +361,7 @@
 /native/commonizer/ "Kotlin Apple Ecosystem"
 /native/commonizer-api/ "Kotlin Apple Ecosystem"
 /native/commonizer-embeddable/ "Kotlin Apple Ecosystem"
+/native/objcexport-header-generator/impl/analysis-api/ "Kotlin in Fleet"
 
 /plugins/allopen/ "Kotlin Compiler Core"
 /plugins/android-extensions/ "Kotlin Compiler Core"
