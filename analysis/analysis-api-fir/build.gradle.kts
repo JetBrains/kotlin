@@ -90,17 +90,22 @@ dependencies {
 }
 
 val generateCode by tasks.registering(NoDebugJavaExec::class) {
-    val generatorRoot = "$projectDir/analysis/analysis-api-fir/analysis-api-fir-generator/src/"
+    val generatorRoot =
+        layout.projectDirectory.dir("analysis-api-fir-generator/src")
+    val outputDir =
+        layout.projectDirectory.dir("src/org/jetbrains/kotlin/analysis/api/fir/diagnostics")
 
     val generatorConfigurationFiles = fileTree(generatorRoot) {
         include("**/*.kt")
     }
 
     inputs.files(generatorConfigurationFiles)
+    outputs.dirs(outputDir)
 
     workingDir = rootDir
     classpath = generatorClasspath
     mainClass.set("org.jetbrains.kotlin.analysis.api.fir.generator.MainKt")
+    args = listOf(outputDir.asFile.relativeTo(rootDir).path)
     systemProperties["line.separator"] = "\n"
 }
 

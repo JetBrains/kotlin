@@ -5,19 +5,22 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.generator
 
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
-import org.jetbrains.kotlin.fir.checkers.generator.getGenerationPath
 import org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs.FirDiagnosticToKtDiagnosticConverterRenderer
 import org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs.KtDiagnosticClassImplementationRenderer
 import org.jetbrains.kotlin.analysis.api.fir.generator.rendererrs.KtDiagnosticClassRenderer
-import java.nio.file.Path
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
+import java.io.File
 
 object DiagnosticClassGenerator {
-    fun generate(rootPath: Path, diagnosticList: DiagnosticList, packageName: String) {
-        val path = getGenerationPath(rootPath.toFile(), packageName)
+    fun generate(path: File, diagnosticList: DiagnosticList, packageName: String) {
         KtDiagnosticClassRenderer.render(path.resolve("KtFirDiagnostics.kt"), diagnosticList, packageName, emptySet())
         KtDiagnosticClassImplementationRenderer.render(path.resolve("KtFirDiagnosticsImpl.kt"), diagnosticList, packageName, emptySet())
-        FirDiagnosticToKtDiagnosticConverterRenderer.render(path.resolve("KtFirDataClassConverters.kt"), diagnosticList, packageName, emptySet())
+        FirDiagnosticToKtDiagnosticConverterRenderer.render(
+            path.resolve("KtFirDataClassConverters.kt"),
+            diagnosticList,
+            packageName,
+            emptySet()
+        )
         ArgumentsConverterGenerator.render(path.resolve("KtFirArgumentsConverter.kt"), packageName)
     }
 }
