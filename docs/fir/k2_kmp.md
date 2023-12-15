@@ -10,8 +10,9 @@ This document describes the implementation of the KMP support in the K2 Compiler
 - [Metadata Compilation](#metadata-compilation)
 - [Platform Compilation](#platform-compilation)
   - [FIR2IR](#fir2ir)
-  - [IRActualizer](#iractualizer)
   - [Fake overrides](#fake-overrides)
+  - [Lazy classes](#lazy-classes)
+  - [IRActualizer](#iractualizer)
 - [Frontend support for expect/actual](#frontend-support-for-expectactual)
   - [Type refinement](#type-refinement)
   - [Default propagation](#default-propagation)
@@ -256,46 +257,12 @@ The same applies to the declarations from [binary dependencies](#platform-compil
 
 Therefore, FIR2IR uses shared storage for get-or-create operations for declarations.
 
-### IRActualizer
-
-The IR actualizer is a component performing [actualization](#actualization) over IR 
-
-See: [`org.jetbrains.kotlin.backend.common.actualizer.IrActualizer`](../../compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/actualizer/IrActualizer.kt)
-
-In the current model, IR actualizer is used during the [platform compilation](#platform-compilation), to produce complete IR that is correct
-from the backend standpoint.
-
-**Inputs:**
-- IR for each of the modules.
-- IR might contain expect declarations and references to it. 
-
-**Outputs:**
-- Single IR module.
-- No expect declarations in the IR. 
-- IR is in the usual state, as for non-multiplatform projects
-
-**Constraints:**
-- No access to FIR or frontend state allowed
-- Must operate over IR
-- Diagnostic reporting is complicated and won't work for the IDE without special support
-
-The following actions are preformed:
-- Expect -> actual binding is constructed
-  - We have all expects and that's why we can construct it as opposed to the [actual -> expect binding](#actual-expect-binding)
-  - We can report diagnostics at that moment
-- Top-level expect declarations are detached from IrModuleFragment
-  - Member expect declarations can only be contained within top-level expects, and is detached together with its container
-  - Modulo [`@OptionalExpectation`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-optional-expectation/) 
-- IR for default values is copied from expects to actuals. See [default propagation](#default-propagation) for the frontend part of work.
-- All module fragments are merged into one
-- [Fake-override actualization is performed](#fake-overrides)
-
 ### Fake overrides
 
 FIR doesn't use fake-overrides in the frontend, and that's why we construct them during FIR2IR in order to match backend expectations
-By that, we require special handling of fake-overrides during the [platform compilation](#platform-compilation).
 
-during the analysis and couldn't construct fake-overrides properly. 
+Also, the following example shows that it is impossible to build valid fake overrides during common
+module compilation. 
 
 Ex: 
 ```kotlin
@@ -328,7 +295,89 @@ class Impl : K {
 
 ```
 
-In the given example during the actualization, we need to combine (1) and (2) into one fake-override.
+***Note: Approach described below is a target. It's not yet enabled by default. See KT-61514 for details.***
+
+In the given example during the actualization, common compilation would produce (1) and (2), which need to be combined
+into one fake override.
+
+There is a new scheme, which is enabled by -Xuse-ir-fake-override-builder flag, and should become default at some point.
+
+In it, [Fir2Ir](#fir2ir) creates a special symbol for fake overrides calls, and no declarations for fake overrides 
+(except one in [Lazy classes](#lazy-classes)). A special symbol, represented by [org.jetbrains.kotlin.ir.symbols.impl.IrFakeOverrideSymbolBase](../../compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/symbols/impl/IrFakeOverrideSymbol.kt) and its inheritors,
+is effectively a pair of real declaration symbol and dispatch receiver class. This symbol can't be bound,
+so backend can't work with it. To fix it, there is a phase, which replaces them with normal ones
+after [actualization](#actualization). The symbol is mapped to single one overriding corresponding
+real symbol within corresponding dispatch receiver class. It can be both a fake override and real declared symbol. 
+
+In theory, doing the same with other synthetic declarations (delegated members, data class generated members, etc)
+can lead to more consistent behaviour, but we don't do it know, as we are not aware of any problems 
+
+### Lazy classes
+
+Lazy classes represent classes used from compiled sources, but not present in them. This can be classes
+from dependencies, java sources, or sources already compiled on previous round of incremental compilation.
+
+Lazy classes are a special case for fake override building. They are now handled with frontend builder.
+It can be done correctly, as they can only exist in platform session.
+
+There is a technical issue with them. It's possible to have a lazy class with normal class super-type,
+so it can refer to a fake override symbol in overridden symbols of some methods. 
+But we can't fix them all in the same place, as normal ones, as it would trigger lazy computations, which should be avoided. 
+
+To fix this, the rebuild is delayed while possible, using [org.jetbrains.kotlin.fir.backend.Fir2IrSymbolsMappingForLazyClasses](../../compiler/fir/fir2ir/src/org/jetbrains/kotlin/fir/backend/Fir2IrSymbolsMappingForLazyClasses.kt),
+which stores delayed operations to happen, when some read lazy property. 
+
+### IRActualizer
+
+The IR actualizer is a component performing [actualization](#actualization) over IR
+
+See: [`org.jetbrains.kotlin.backend.common.actualizer.IrActualizer`](../../compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/actualizer/IrActualizer.kt)
+
+In the current model, IR actualizer is used during the [platform compilation](#platform-compilation), to produce complete IR that is correct
+from the backend standpoint.
+
+**Inputs:**
+- IR for each of the modules.
+- IR might contain expect declarations and references to it.
+- IR can contain unbound fake override symbols 
+
+**Outputs:**
+- Single IR module.
+- No expect declarations in the IR.
+- No unbound symbols in the IR
+- IR is in the usual state, as for non-multiplatform projects
+
+**Constraints:**
+- No access to FIR or frontend state allowed
+- Must operate over IR
+- Diagnostic reporting is complicated and won't work for the IDE without special support
+
+The following actions are preformed:
+- Expect -> actual binding for classifiers is constructed and applied
+- Fake overrides are constructed
+- Expect -> actual binding for classifiers is callables and applied
+    - We have all expects and that's why we can construct it as opposed to the [actual -> expect binding](#actual-expect-binding)
+    - We can report diagnostics at that moment
+- IR for default values is copied from expects to actuals. See [default propagation](#default-propagation) for the frontend part of work.
+- All module fragments are merged into one
+- Fake override symbols are replaced with normal ones
+- Constants are evaluated
+- Top-level expect declarations are detached from IrModuleFragment
+    - Member expect declarations can only be contained within top-level expects, and is detached together with its container
+    - Modulo [`@OptionalExpectation`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-optional-expectation/)
+- Errors can be emitted if some expect-actual matches are bad. 
+
+There are several restrictions, because of which this order of actions is required:
+
+- Fake overrides can't be built before classes are actualized
+  - Because we need to know what is real supertype. 
+- Callables can't be actulaized before fake overrides are built
+  - Some of them can match with fake override
+- Constants can't be evaluated before callables are actualized
+  - As some expect function can become possible to evaluate 
+- Checkers can't run before constants are evaluated
+  - They need to check of some value are equal
+
 
 ## Frontend support for expect/actual
 
