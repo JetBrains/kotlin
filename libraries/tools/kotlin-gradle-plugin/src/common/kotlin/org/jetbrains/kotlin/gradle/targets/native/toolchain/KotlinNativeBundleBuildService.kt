@@ -20,7 +20,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
@@ -154,7 +154,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
         val requiredDependencies = mutableSetOf<String>()
         val distribution = Distribution(bundleDir.absolutePath, konanDataDir = konanDataDir)
         konanTargets.forEach { konanTarget ->
-            if (konanTarget.enabledOnCurrentHost) {
+            if (konanTarget.enabledOnCurrentHostForBinariesCompilation()) {
                 val konanPropertiesLoader = loadConfigurables(
                     konanTarget,
                     distribution.properties,

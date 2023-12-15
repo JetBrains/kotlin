@@ -26,4 +26,25 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @TestMetadata("klibCrossCompilationWithGradlePropertyEnabled")
+    @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
+    fun compileIosTargetOnNonDarwinHostWithGradlePropertyEnabled(gradleVersion: GradleVersion) {
+        nativeProject("klibCrossCompilationWithGradlePropertyEnabled", gradleVersion) {
+            build(":compileKotlinIosArm64") {
+                KotlinTestUtils.assertEqualsToFile(
+                    projectPath.resolve("diagnostics-compileKotlinIosArm64.txt"), extractProjectsAndTheirDiagnostics()
+                )
+                assertTasksExecuted(":compileKotlinIosArm64")
+            }
+
+            build(":linkIosArm64") {
+                KotlinTestUtils.assertEqualsToFile(
+                    projectPath.resolve("diagnostics-linkIosArm64.txt"), extractProjectsAndTheirDiagnostics()
+                )
+                assertTasksSkipped(":linkIosArm64")
+            }
+        }
+    }
 }

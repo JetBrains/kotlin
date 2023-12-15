@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.registerSwiftExportTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -100,7 +100,7 @@ private object XcodeEnvironment {
 }
 
 private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): TaskProvider<out Task>? {
-    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHost) return null
+    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHostForBinariesCompilation()) return null
 
     val envTargets = XcodeEnvironment.targets
     val needFatFramework = envTargets.size > 1

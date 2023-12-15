@@ -77,7 +77,7 @@ constructor(
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
             @Suppress("DEPRECATION")
-            if (konanTarget.enabledOnCurrentHost) compilation.compileDependencyFiles
+            if (konanTarget.enabledOnCurrentHostForBinariesCompilation()) compilation.compileDependencyFiles
             else objectFactory.fileCollection()
         }
     )

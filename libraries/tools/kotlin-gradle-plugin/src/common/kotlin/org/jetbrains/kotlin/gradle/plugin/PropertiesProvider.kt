@@ -587,6 +587,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableUnsafeOptimizationsForMultiplatform: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION) ?: false
 
+    val enableKlibsCrossCompilation: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: false
+
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
      * @see KOTLIN_JS_KARMA_BROWSERS
@@ -691,6 +694,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_APPLE_XCODE_COMPATIBILITY_NOWARN = property("kotlin.apple.xcodeCompatibility.nowarn")
         val KOTLIN_APPLE_COCOAPODS_EXECUTABLE = property("kotlin.apple.cocoapods.bin")
         val KOTLIN_SWIFT_EXPORT_ENABLED = property("kotlin.swift-export.enabled")
+        val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used

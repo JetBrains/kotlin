@@ -112,5 +112,18 @@ open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, project: Pro
 internal val KonanTarget.isCurrentHost: Boolean
     get() = this == HostManager.host
 
-internal val KonanTarget.enabledOnCurrentHost
-    get() = HostManager().isEnabled(this)
+/**
+ * Returns whether klib compilation is allowed for [this]-target on the current host.
+ * [enabledOnCurrentHostForBinariesCompilation] returns 'true' only if [enabledOnCurrentHostForKlibCompilation]
+ * returns 'true'
+ *
+ * At the moment, both of these functions return exactly same values. In future, [enabledOnCurrentHostForKlibCompilation]
+ * might start returning 'true' in some cases where [enabledOnCurrentHostForBinariesCompilation] returns 'false'
+ * (e.g.: compile a klib for iOS target on Linux when the code depends only on Kotlin Stdlib)
+ *
+ * Ideally, these APIs should be in [HostManager] instead of KGP-side wrappers. Refer to KT-64512 for that
+ */
+internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(provider: PropertiesProvider) =
+    HostManager().isEnabled(this) || provider.enableKlibsCrossCompilation
+
+internal fun KonanTarget.enabledOnCurrentHostForBinariesCompilation() = HostManager().isEnabled(this)
