@@ -10,7 +10,7 @@ abstract class BirChildElementList<E : BirElement?>(
     isNullable: Boolean,
 ) : AbstractList<E>(), MutableList<E>, BirElementOrChildList {
     internal abstract val parent: BirElementBase
-    protected var elementArray: Array<BirElementBase?> = EMPTY_ELEMENT_ARRAY
+    protected var elementArray: Any? = null// Array<BirElementBase?> = EMPTY_ELEMENT_ARRAY
     private var compressedData: Int = (if (isNullable) 1 shl SIZE_BITS else 0) or (id shl (SIZE_BITS + FLAG_BITS))
 
     protected var _size: Int
@@ -29,7 +29,10 @@ abstract class BirChildElementList<E : BirElement?>(
     override fun get(index: Int): E {
         checkElementIndex(index, _size)
         @Suppress("UNCHECKED_CAST")
-        return elementArray[index] as E
+        return when (val elementArray = elementArray) {
+            is Array<*> -> (elementArray as Array<BirElementBase?>)[index] as E
+            else -> elementArray as E
+        }
     }
 
     override fun contains(element: E): Boolean {
@@ -63,16 +66,13 @@ abstract class BirChildElementList<E : BirElement?>(
     }
 
 
-    fun ensureCapacity(capacity: Int) {
-        if (elementArray.size < capacity) {
-            val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(capacity))
-            elementArray.copyInto(newArray, endIndex = _size)
-            elementArray = newArray
-        }
-    }
-
     protected fun getNewCapacity(minimumCapacity: Int) =
-        maxOf(minimumCapacity, elementArray.size * 2, 2)
+        maxOf(minimumCapacity, getCurrentCapacity() * 2, 2)
+
+    protected fun getCurrentCapacity(): Int = when (val elementArray = elementArray) {
+        is Array<*> -> elementArray.size
+        else -> 1
+    }
 
     protected fun checkNewElement(new: BirElement?) {
         if (new == null && !isNullable) {
@@ -92,10 +92,18 @@ abstract class BirChildElementList<E : BirElement?>(
         val size = size
         if (size == 0) return
 
-        val elementArray = elementArray
-        for (i in 0..<size) {
-            val element = elementArray[i]
-            element?.accept(data, visitor)
+        when (val elementArray = elementArray) {
+            is Array<*> -> {
+                @Suppress("UNCHECKED_CAST")
+                elementArray as Array<BirElementBase?>
+                for (i in 0..<size) {
+                    val element = elementArray[i]
+                    element?.accept(data, visitor)
+                }
+            }
+            else -> {
+                (elementArray as BirElementBase?)?.accept(data, visitor)
+            }
         }
     }
 
