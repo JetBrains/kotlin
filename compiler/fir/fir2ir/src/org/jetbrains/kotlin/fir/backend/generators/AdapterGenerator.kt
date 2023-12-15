@@ -443,8 +443,7 @@ internal class AdapterGenerator(
         argumentConeType: ConeKotlinType,
         samType: ConeKotlinType,
     ): IrExpression {
-        // The rule for SAM conversions is:
-        // the argument must be a non-reflection function type and be a subtype of the required function type.
+        // The rule for SAM conversions is: the argument must be a subtype of the required function type.
         // We handle intersection types, captured types, etc. by approximating both expected and actual types.
         val approximatedConeKotlinFunctionType = getFunctionTypeForPossibleSamType(samType)?.approximateForIrOrSelf() ?: return argument
 
@@ -453,10 +452,7 @@ internal class AdapterGenerator(
         // tests from FirBlackBoxCodegenTestGenerated relevant to INDY start failing once this line is removed.
         val approximateArgumentConeType = argumentConeType.approximateForIrOrSelf()
 
-        if (approximateArgumentConeType.isSubtypeOf(approximatedConeKotlinFunctionType, session)
-        // TODO uncomment when KT-63510 is fixed, probably fixes KT-62865
-        // && approximateArgumentConeType.lowerBoundIfFlexible().functionTypeKind(session)?.isReflectType == false
-        ) {
+        if (approximateArgumentConeType.isSubtypeOf(approximatedConeKotlinFunctionType, session)) {
             return argument
         }
 
