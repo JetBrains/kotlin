@@ -109,7 +109,7 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
     taskNameSuffix: String = ""
 ): TaskProvider<KotlinNativeLinkArtifactTask> {
     val kind = NativeOutputKind.FRAMEWORK
-    val destinationDir = project.buildDir.resolve("$outDirName/${target.visibleName}/${buildType.visibleName}")
+    val destinationDir = project.layout.buildDirectory.dir("$outDirName/${target.visibleName}/${buildType.visibleName}")
     val xcodeVersionTask = XcodeVersionTask.locateOrRegister(project)
     val resultTask = project.registerTask<KotlinNativeLinkArtifactTask>(
         lowerCamelCaseName("assemble", name, buildType.visibleName, kind.taskNameClassifier, target.presetName, taskNameSuffix),
