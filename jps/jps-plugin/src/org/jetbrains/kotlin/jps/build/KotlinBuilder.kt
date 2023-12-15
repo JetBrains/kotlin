@@ -62,6 +62,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         const val SKIP_CACHE_VERSION_CHECK_PROPERTY = "kotlin.jps.skip.cache.version.check"
         const val JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home"
 
+        val useDependencyGraph = System.getProperty("jps.use.dependency.graph", "false")!!.toBoolean()
+        val isKotlinBuilderInDumbMode = System.getProperty("kotlin.jps.dumb.mode", "false")!!.toBoolean()
+
         private val classesToLoadByParentFromRegistry =
             System.getProperty("kotlin.jps.classesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
         private val classPrefixesToLoadByParentFromRegistry =
@@ -507,7 +510,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             environment
         )
 
-        if (!representativeTarget.isIncrementalCompilationEnabled) {
+        if (isKotlinBuilderInDumbMode || !representativeTarget.isIncrementalCompilationEnabled) {
             return OK
         }
 
