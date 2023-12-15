@@ -528,7 +528,6 @@ open class KonanDynamicTest : KonanStandaloneTest() {
                 debug = isDebug,
                 kind = LinkerOutputKind.EXECUTABLE,
                 outputDsymBundle = "",
-                needsProfileLibrary = false,
                 mimallocEnabled = false
         )
         commands.map { cmd ->

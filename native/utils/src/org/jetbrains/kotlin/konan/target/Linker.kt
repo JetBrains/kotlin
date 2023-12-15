@@ -75,7 +75,7 @@ abstract class LinkerFlags(val configurables: Configurables) {
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean = false, mimallocEnabled: Boolean,
+                                   mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind? = null): List<Command>
 
     /**
@@ -118,7 +118,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
+                                   mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         require(sanitizer == null) {
             "Sanitizers are unsupported"
@@ -234,7 +234,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean, kind: LinkerOutputKind,
                                    outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
+                                   mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY) {
             require(sanitizer == null) {
@@ -374,7 +374,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
+                                   mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY) {
             require(sanitizer == null) {
@@ -465,7 +465,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
+                                   mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         require(sanitizer == null) {
             "Sanitizers are unsupported"
@@ -517,7 +517,7 @@ class WasmLinker(targetProperties: WasmConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
+                                   mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind")
         require(sanitizer == null) {
@@ -573,7 +573,7 @@ open class ZephyrLinker(targetProperties: ZephyrConfigurables)
                                    libraries: List<String>, linkerArgs: List<String>,
                                    optimize: Boolean, debug: Boolean,
                                    kind: LinkerOutputKind, outputDsymBundle: String,
-                                   needsProfileLibrary: Boolean, mimallocEnabled: Boolean,
+                                   mimallocEnabled: Boolean,
                                    sanitizer: SanitizerKind?): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind: $kind")
         require(sanitizer == null) {

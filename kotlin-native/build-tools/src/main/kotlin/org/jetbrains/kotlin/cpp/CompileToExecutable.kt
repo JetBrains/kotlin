@@ -225,7 +225,6 @@ abstract class CompileToExecutable : DefaultTask() {
                 debug = true,
                 kind = LinkerOutputKind.EXECUTABLE,
                 outputDsymBundle = outputFile.asFile.get().absolutePath + ".dSYM",
-                needsProfileLibrary = false,
                 mimallocEnabled = mimallocEnabled.get(),
                 sanitizer = sanitizer.orNull
         ).map { it.argsWithExecutable }
