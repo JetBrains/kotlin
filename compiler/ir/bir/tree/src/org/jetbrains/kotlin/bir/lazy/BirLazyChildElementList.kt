@@ -37,10 +37,11 @@ class BirLazyChildElementList<E : BirElement?>(
 
         // todo: more fine-grained locking
         synchronized(this) {
-            var elementArray = elementArray
-            var element = if (elementArray.isNotEmpty()) elementArray[index] else null
+            @Suppress("UNCHECKED_CAST")
+            var elementArray = elementArray as Array<BirElementBase?>?
+            var element = if (!elementArray.isNullOrEmpty()) elementArray[index] else null
             if (element == null) {
-                if (elementArray.isEmpty()) {
+                if (elementArray.isNullOrEmpty()) {
                     elementArray = arrayOfNulls<BirElementBase>(_size)
                     this.elementArray = elementArray
                 }
@@ -120,14 +121,14 @@ class BirLazyChildElementList<E : BirElement?>(
 
     override fun acceptChildrenLite(visitor: BirElementVisitorScopeLite.(BirElementBase) -> Unit) {
         // todo: thread-safety
-        
         val size = _size
         if (size == 0) return
 
         val scope = BirElementVisitorScopeLite(visitor)
-        val elementArray = elementArray
+        @Suppress("UNCHECKED_CAST")
+        val elementArray = elementArray as Array<BirElementBase?>?
         for (i in 0..<size) {
-            val element = elementArray.getOrNull(i)
+            val element = elementArray?.getOrNull(i)
             if (element != null) {
                 visitor.invoke(scope, element)
             }
