@@ -6,7 +6,7 @@ public open [ResolvedTo(BODY_RESOLVE)] fun isSchemeFile([ResolvedTo(BODY_RESOLVE
     ^isSchemeFile Boolean(true)
 }
 
-public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /BaseInterface.anotherFunction), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /BaseInterface.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0] fun anotherFunction([ResolvedTo(STATUS)] name: R|kotlin/CharSequence| = LAZY_EXPRESSION): <implicit>
+public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /BaseInterface.anotherFunction), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /BaseInterface.anotherFunction, containingClass=<anonymous>, delegateField=FirFieldSymbol <local>/<anonymous>.$$delegate_0] fun anotherFunction([ResolvedTo(STATUS)] name: R|kotlin/CharSequence| = STUB): <implicit>
 
 public open [ResolvedTo(BODY_RESOLVE)] fun anotherFunction([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence| = R|/genericCall|<R|kotlin/CharSequence|>()): R|kotlin/Boolean| {
     ^anotherFunction Boolean(true)

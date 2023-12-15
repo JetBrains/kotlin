@@ -293,6 +293,10 @@ private class LLFirBodyTargetResolver(
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
+        // There is no sense to resolve such declarations as they do not have bodies
+        // Also, they have STUB expression instead of default values, so we shouldn't change them
+        if (target is FirCallableDeclaration && target.isCopyCreatedInScope) return
+
         when (target) {
             is FirFile, is FirRegularClass, is FirCodeFragment -> error("Should have been resolved in ${::doResolveWithoutLock.name}")
             is FirConstructor -> resolve(target, BodyStateKeepers.CONSTRUCTOR)

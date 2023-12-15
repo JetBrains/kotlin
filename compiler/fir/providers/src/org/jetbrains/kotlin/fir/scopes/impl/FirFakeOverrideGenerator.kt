@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -332,6 +333,11 @@ object FirFakeOverrideGenerator {
         this.returnTypeRef = returnTypeRef
         symbol = FirValueParameterSymbol(original.name)
         this.containingFunctionSymbol = containingFunctionSymbol
+        defaultValue = defaultValue?.let {
+            buildExpressionStub {
+                coneTypeOrNull = returnTypeRef.coneTypeOrNull
+            }
+        }
     }.apply {
         addOverrideAttributeIfNeeded(original)
     }
