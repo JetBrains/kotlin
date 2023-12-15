@@ -120,7 +120,7 @@ class KotlinNativeXCFrameworkImpl(
             }
             holder.task.configure {
                 it.fromFrameworkDescriptors(frameworkDescriptors)
-                it.outputDir = project.buildDir.resolve(outDir)
+                it.outputDir = project.layout.buildDirectory.dir(outDir).get().asFile
             }
         }
     }
