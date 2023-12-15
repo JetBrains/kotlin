@@ -218,7 +218,7 @@ abstract class Ir2BirConverterBase() {
         attributeOwnerId = if (owner === old) this else remapElement(owner)
     }
 
-    protected fun <Ir : IrElement, Bir : BirElement> BirChildElementList<Bir>.copyElements(from: List<Ir>) {
+    protected fun <Ir : IrElement, Bir : BirElement> BirImplChildElementList<Bir>.copyElements(from: List<Ir>) {
         ensureCapacity(from.size)
         for (ir in from) {
             val bir = copyElement<Bir>(ir)
