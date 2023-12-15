@@ -80,6 +80,10 @@ class FirBuilderInferenceSession2(
         val candidate = call.candidate() ?: return
         if (!candidate.isNotTrivial()) return
 
+        // Integrating back would happen at FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot
+        // after all other delegation-related calls are being analyzed
+        if (resolutionMode == ResolutionMode.ContextDependent.Delegate) return
+
         currentCommonSystem.replaceContentWith(candidate.system.currentStorage())
 
         if (!resolutionMode.isReceiverOrTopLevel) return
