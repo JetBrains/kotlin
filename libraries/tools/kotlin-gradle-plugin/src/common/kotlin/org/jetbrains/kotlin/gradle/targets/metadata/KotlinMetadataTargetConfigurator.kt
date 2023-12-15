@@ -225,7 +225,10 @@ class KotlinMetadataTargetConfigurator :
             configureMetadataDependenciesForCompilation(this@apply)
 
             if (isHostSpecific) {
-                if (platformCompilations.filterIsInstance<KotlinNativeCompilation>().none { it.konanTarget.enabledOnCurrentHost }) {
+                // This logic can be simplified, see KT-64523
+                val canCompileOnCurrentHost = platformCompilations.filterIsInstance<KotlinNativeCompilation>()
+                    .all { it.konanTarget.enabledOnCurrentHostForKlibCompilation }
+                if (!canCompileOnCurrentHost) {
                     // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
                     compileKotlinTaskProvider.configure { it.enabled = false }
                     // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
@@ -260,9 +263,6 @@ class KotlinMetadataTargetConfigurator :
     }
 
     private val ResolvedArtifactResult.isMpp: Boolean get() = variant.attributes.containsMultiplatformAttributes
-
-
-
 }
 
 

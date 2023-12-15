@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
@@ -23,8 +24,12 @@ import javax.inject.Inject
 
 abstract class AbstractKotlinNativeCompilation internal constructor(
     compilation: KotlinCompilationImpl,
-    val konanTarget: KonanTarget
+    konanTarget: KonanTarget,
 ) : AbstractKotlinCompilation<KotlinCommonOptions>(compilation) {
+
+    // TODO(remove after review): a bit dirty implementation, should properly deprecate the property
+    //   as per KT-64521
+    open val konanTarget: KonanTarget = konanTarget
 
     @Suppress("DEPRECATION")
     @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
@@ -82,8 +87,15 @@ open class KotlinNativeCompilation @Inject internal constructor(
 open class KotlinSharedNativeCompilation @Inject internal constructor(
     val konanTargets: List<KonanTarget>,
     compilation: KotlinCompilationImpl
-) : AbstractKotlinNativeCompilation(compilation, konanTargets.find { it.enabledOnCurrentHost } ?: konanTargets.first()),
-    KotlinMetadataCompilation<KotlinCommonOptions> {
+) : AbstractKotlinNativeCompilation(compilation, konanTargets.first()), KotlinMetadataCompilation<KotlinCommonOptions> {
+
+    // TODO(won't be pushed):
+    //   technical problem here, can't refer to `this.project` in super-constructor call, but can't remove `konanTarget` from it
+    //   because of binary compatibility
+    //   This is a dirty temporary implementation, it won't be pushed to master. Proper handling should be implemented first in KT-64521
+    override val konanTarget: KonanTarget =
+        konanTargets.find { it.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider) } ?: konanTargets.first()
+
     override val target: KotlinMetadataTarget = compilation.target as KotlinMetadataTarget
 }
 

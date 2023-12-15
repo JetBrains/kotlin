@@ -97,7 +97,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         get() = disambiguateName("binaries")
 
     override val publishable: Boolean
-        get() = konanTarget.enabledOnCurrentHost
+        get() = konanTarget.enabledOnCurrentHostForKlibCompilation
 
     @ExperimentalKotlinGradlePluginApi
     internal override val compilerOptions: KotlinNativeCompilerOptions = project.objects

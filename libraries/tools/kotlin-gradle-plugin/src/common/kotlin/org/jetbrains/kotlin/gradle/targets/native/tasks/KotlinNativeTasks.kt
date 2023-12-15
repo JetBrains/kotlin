@@ -168,7 +168,7 @@ abstract class AbstractKotlinNativeCompile<
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
-            if (konanTarget.enabledOnCurrentHost)
+            if (konanTarget.enabledOnCurrentHostForKlibCompilation)
                 objectFactory.fileCollection().from({ compilation.compileDependencyFiles })
             else objectFactory.fileCollection()
         }

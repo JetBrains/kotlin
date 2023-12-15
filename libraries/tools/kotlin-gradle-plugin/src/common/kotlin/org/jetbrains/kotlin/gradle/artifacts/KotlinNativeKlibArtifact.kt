@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeA
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.File
@@ -52,10 +51,6 @@ internal fun createKlibArtifact(
     classifier: String?,
     producingTask: TaskProvider<*>,
 ) {
-    if (!compilation.konanTarget.enabledOnCurrentHost) {
-        return
-    }
-
     val apiElementsName = compilation.target.apiElementsConfigurationName
     with(compilation.project.configurations.getByName(apiElementsName)) {
         val klibArtifact = compilation.project.artifacts.add(name, artifactFile) { artifact ->
