@@ -63,7 +63,6 @@ abstract class BirChildElementList<E : BirElement?>(
     }
 
 
-
     fun ensureCapacity(capacity: Int) {
         if (elementArray.size < capacity) {
             val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(capacity))
@@ -72,7 +71,9 @@ abstract class BirChildElementList<E : BirElement?>(
         }
     }
 
-    protected fun getNewCapacity(minimumCapacity: Int) = maxOf(minimumCapacity, elementArray.size * 2, 4)
+    protected fun getNewCapacity(minimumCapacity: Int) =
+        maxOf(minimumCapacity, elementArray.size * 2, 2)
+
     protected fun checkNewElement(new: BirElement?) {
         if (new == null && !isNullable) {
             throw IllegalArgumentException("Trying to add null element to a not-nullable list")
