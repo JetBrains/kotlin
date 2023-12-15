@@ -26,10 +26,10 @@ open class FirPropertySymbol(callableId: CallableId, ) : FirVariableSymbol<FirPr
     val isLocal: Boolean
         get() = fir.isLocal
 
-    val getterSymbol: FirPropertyAccessorSymbol?
+    open val getterSymbol: FirPropertyAccessorSymbol?
         get() = fir.getter?.symbol
 
-    val setterSymbol: FirPropertyAccessorSymbol?
+    open val setterSymbol: FirPropertyAccessorSymbol?
         get() = fir.setter?.symbol
 
     val backingFieldSymbol: FirBackingFieldSymbol?
