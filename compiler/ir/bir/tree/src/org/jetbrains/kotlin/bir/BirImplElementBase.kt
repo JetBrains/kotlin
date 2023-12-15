@@ -192,7 +192,8 @@ abstract class BirImplElementBase : BirElementBase() {
                     return
                 }
 
-                val elements = arrayOfNulls<BirImplElementBase>(RESIZE_GRADUALITY)
+                val newSize = 2 // 2 elements is a very common case.
+                val elements = arrayOfNulls<BirImplElementBase>(newSize)
                 elements[0] = elementsOrSingle
                 elements[1] = dependentElement
                 dependentIndexedElements = elements
@@ -213,7 +214,8 @@ abstract class BirImplElementBase : BirElementBase() {
                 }
 
                 if (newIndex == elementsOrSingle.size) {
-                    elementsOrSingle = elementsOrSingle.copyOf(elementsOrSingle.size + RESIZE_GRADUALITY)
+                    val newSize = elementsOrSingle.size.coerceAtLeast(RESIZE_GRADUALITY) + RESIZE_GRADUALITY
+                    elementsOrSingle = elementsOrSingle.copyOf(newSize)
                     dependentIndexedElements = elementsOrSingle
                 }
                 elementsOrSingle[newIndex] = dependentElement
