@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
 
 internal object DisabledNativeTargetsChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
@@ -18,7 +18,7 @@ internal object DisabledNativeTargetsChecker : KotlinGradleProjectChecker {
 
         val disabledTargets = multiplatformExtension.awaitTargets()
             .filterIsInstance<KotlinNativeTarget>()
-            .filter { !it.konanTarget.enabledOnCurrentHost }
+            .filter { !it.konanTarget.enabledOnCurrentHostForKlibCompilation(kotlinPropertiesProvider) }
             .map { it.name }
 
         if (disabledTargets.isNotEmpty()) {
