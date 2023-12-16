@@ -11687,6 +11687,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 }
 
                 @Test
+                @TestMetadata("kt64139.kt")
+                public void testKt64139() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt64139.kt");
+                }
+
+                @Test
                 @TestMetadata("lvtWithInlineOnly.kt")
                 public void testLvtWithInlineOnly() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/varSpilling/lvtWithInlineOnly.kt");

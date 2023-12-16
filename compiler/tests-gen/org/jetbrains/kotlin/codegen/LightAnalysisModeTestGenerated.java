@@ -11742,6 +11742,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt49834.kt");
             }
 
+            @TestMetadata("kt64139.kt")
+            public void testKt64139() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt64139.kt");
+            }
+
             @TestMetadata("lvtWithInlineOnly.kt")
             public void testLvtWithInlineOnly() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/lvtWithInlineOnly.kt");
