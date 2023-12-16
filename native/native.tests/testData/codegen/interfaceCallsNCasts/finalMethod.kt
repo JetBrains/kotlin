@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.interfaceCallsNCasts.finalMethod
-
 import kotlin.test.*
 
 interface I1<T> {
@@ -21,8 +19,9 @@ class C : I2 {
     override fun foo(x: Int) = x
 }
 
-@Test
-fun runTest() {
+fun box(): String {
     val c: I2 = C()
     assertEquals(42, c.foo())
+
+    return "OK"
 }

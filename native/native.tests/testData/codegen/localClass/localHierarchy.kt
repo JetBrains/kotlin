@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.localClass.localHierarchy
-
 import kotlin.test.*
 
 fun foo(s: String): String {
@@ -19,6 +17,6 @@ fun foo(s: String): String {
     return Derived().g()
 }
 
-@Test fun runTest() {
-    println(foo("OK"))
+fun box(): String {
+    return foo("OK")
 }

@@ -3,11 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`try`.try2
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     val x = try {
         throw Error()
         5
@@ -15,5 +13,6 @@ import kotlin.test.*
         6
     }
 
-    println(x)
+    assertEquals(6, x)
+    return "OK"
 }

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.localClass.innerWithCapture
-
 import kotlin.test.*
 
 fun box(s: String): String {
@@ -17,6 +15,6 @@ fun box(s: String): String {
     return Local().Inner().result()
 }
 
-@Test fun runTest() {
-    println(box("OK"))
+fun box(): String {
+    return box("OK")
 }

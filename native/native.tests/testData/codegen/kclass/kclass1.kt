@@ -7,12 +7,12 @@ package codegen.kclass.kclass1
 
 import kotlin.test.*
 
-// FILE: main.kt
-@Test fun runTest() {
-    App(testQualified = true)
-}
+val sb = StringBuilder()
 
-// FILE: app.kt
+fun box(): String {
+    App(testQualified = true)
+    return sb.toString()
+}
 
 // Taken from:
 // https://github.com/SalomonBrys/kmffkn/blob/master/shared/main/kotlin/com/github/salomonbrys/kmffkn/app.kt
@@ -55,6 +55,6 @@ class App(testQualified: Boolean) {
         assert(TestClass()::class == TestClass()::class)
         assert(TestClass()::class == TestClass::class)
 
-        println("OK :D")
+        sb.append("OK")
     }
 }

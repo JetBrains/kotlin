@@ -3,21 +3,28 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lateinit.isInitialized
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 class A {
     lateinit var s: String
 
     fun foo() {
-        println(::s.isInitialized)
+        sb.appendLine(::s.isInitialized)
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     val a = A()
     a.foo()
     a.s = "zzz"
     a.foo()
+
+    assertEquals("""
+        false
+        true
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

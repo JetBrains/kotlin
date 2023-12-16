@@ -3,11 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.localClass.localFunctionCallFromLocalClass
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     var x = 1
     fun local1() {
         x++
@@ -19,5 +17,5 @@ import kotlin.test.*
         }
     }
     A().bar()
-    println("OK")
+    return "OK"
 }

@@ -2,15 +2,20 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+// With EVERYWHERE caches, anonymous classes are be created not in file's scope, but in function's scope,
+// and fail happens in last `checkClass()` invocation within `checkAnonymousObjects()`
+// kotlin.AssertionError: Expected <class codegen.kclass.kclass0.MainKt$1>, actual <class codegen.kclass.kclass0.checkAnonymousObjects$$inlined$getHasFoo$1>.
+// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
 
 package codegen.kclass.kclass0
-
 import kotlin.test.*
 import kotlin.coroutines.*
 import kotlin.reflect.KClass
 
-@Test fun runTest() {
+fun box(): String {
     main(emptyArray<String>())
+    return "OK"
 }
 
 fun main(args: Array<String>) {
@@ -384,7 +389,7 @@ private fun checkAnonymousObjects(args: Array<String>) {
             hasFoo::class,
             expectedQualifiedName = null,
             expectedSimpleName = null,
-            expectedToStringName = "class codegen.kclass.kclass0.Kclass0Kt$1",
+            expectedToStringName = "class codegen.kclass.kclass0.MainKt\$1",
             expectedInstance = hasFoo,
             expectedNotInstance = Any()
     )

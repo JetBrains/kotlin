@@ -3,21 +3,21 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lateinit.localCapturedNotInitialized
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     lateinit var s: String
 
     fun foo() = s
 
     try {
-        println(foo())
+        sb.appendLine(foo())
     }
     catch (e: RuntimeException) {
-        println("OK")
-        return
+        sb.append("OK")
+        return sb.toString()
     }
-    println("Fail")
+    return "Fail"
 }

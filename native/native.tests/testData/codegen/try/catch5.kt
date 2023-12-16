@@ -3,32 +3,40 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`try`.catch5
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     try {
         try {
-            println("Before")
+            sb.appendLine("Before")
             foo()
-            println("After")
+            sb.appendLine("After")
         } catch (e: Exception) {
-            println("Caught Exception")
+            sb.appendLine("Caught Exception")
         }
 
-        println("After nested try")
+        sb.appendLine("After nested try")
 
     } catch (e: Error) {
-        println("Caught Error")
+        sb.appendLine("Caught Error")
     } catch (e: Throwable) {
-        println("Caught Throwable")
+        sb.appendLine("Caught Throwable")
     }
 
-    println("Done")
+    sb.appendLine("Done")
+
+    assertEquals("""
+        Before
+        Caught Error
+        Done
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }
 
 fun foo() {
     throw Error("Error happens")
-    println("After in foo()")
+    sb.appendLine("After in foo()")
 }

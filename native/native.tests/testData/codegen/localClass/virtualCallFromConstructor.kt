@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.localClass.virtualCallFromConstructor
-
 import kotlin.test.*
 
 abstract class WaitFor {
@@ -27,8 +25,4 @@ fun box(): String {
     }
 
     return result;
-}
-
-@Test fun runTest() {
-    println(box())
 }

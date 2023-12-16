@@ -3,12 +3,20 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`try`.finally8
-
 import kotlin.test.*
 
-@Test fun runTest() {
-    println(foo())
+val sb = StringBuilder()
+
+fun box(): String {
+    sb.appendLine(foo())
+
+    assertEquals("""
+        Finally 1
+        Finally 2
+        42
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }
 
 fun foo(): Int {
@@ -16,12 +24,12 @@ fun foo(): Int {
         try {
             return 42
         } finally {
-            println("Finally 1")
+            sb.appendLine("Finally 1")
         }
     } finally {
-        println("Finally 2")
+        sb.appendLine("Finally 2")
     }
 
-    println("After")
+    sb.appendLine("After")
     return 2
 }

@@ -3,32 +3,42 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`try`.finally4
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
 
     try {
         try {
-            println("Try")
+            sb.appendLine("Try")
             throw Error("Error happens")
-            println("After throw")
+            sb.appendLine("After throw")
         } catch (e: Error) {
-            println("Catch")
+            sb.appendLine("Catch")
             throw Exception()
-            println("After throw")
+            sb.appendLine("After throw")
         } finally {
-            println("Finally")
+            sb.appendLine("Finally")
         }
 
-        println("After nested try")
+        sb.appendLine("After nested try")
 
     } catch (e: Error) {
-        println("Caught Error")
+        sb.appendLine("Caught Error")
     } catch (e: Exception) {
-        println("Caught Exception")
+        sb.appendLine("Caught Exception")
     }
 
-    println("Done")
+    sb.appendLine("Done")
+
+    assertEquals("""
+        Try
+        Catch
+        Finally
+        Caught Exception
+        Done
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

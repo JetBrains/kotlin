@@ -1,8 +1,6 @@
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.native.internal.InternalForKotlinNative::class)
 
-package codegen.intrinsics.interop_sourceCodeStruct
-
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.*
 import kotlin.test.*
@@ -29,15 +27,17 @@ class S(rawPtr: NativePtr) : CStructVar(rawPtr) {
         }
 }
 
-@Test
-fun test() = memScoped {
-    val s = alloc<S>()
+fun box(): String {
+    memScoped {
+        val s = alloc<S>()
 
-    s.x = 123
-    assertEquals(123, s.x)
-    assertEquals(123, s.ptr.reinterpret<IntVar>()[0])
+        s.x = 123
+        assertEquals(123, s.x)
+        assertEquals(123, s.ptr.reinterpret<IntVar>()[0])
 
-    s.y = 321
-    assertEquals(321, s.y)
-    assertEquals(321, s.ptr.reinterpret<IntVar>()[1])
+        s.y = 321
+        assertEquals(321, s.y)
+        assertEquals(321, s.ptr.reinterpret<IntVar>()[1])
+    }
+    return "OK"
 }

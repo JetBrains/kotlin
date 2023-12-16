@@ -6,7 +6,6 @@
 /**
  * Created by minamoto on 12/26/16.
  */
-//package defaults
 
 open class A(val a:Int) {
     override fun equals(other: Any?): Boolean {

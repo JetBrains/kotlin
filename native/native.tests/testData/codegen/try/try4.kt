@@ -3,17 +3,24 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`try`.try4
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     val x = try {
-        println("Try")
+        sb.appendLine("Try")
         5
     } catch (e: Throwable) {
         throw e
     }
 
-    println(x)
+    sb.appendLine(x)
+
+    assertEquals("""
+        Try
+        5
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`object`.init0
-
 import kotlin.test.*
 
 class A(a:Int) {
@@ -12,4 +10,11 @@ class A(a:Int) {
   init {
     if (a == 0) i = 1
   }
+}
+
+fun box(): String {
+   assertEquals(1, A(0).i)
+   assertEquals(0, A(1).i)
+
+   return "OK"
 }

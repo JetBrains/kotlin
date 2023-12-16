@@ -5,6 +5,8 @@ import kotlin.coroutines.*
 
 // https://youtrack.jetbrains.com/issue/KT-49360
 
+class Block(val block: () -> Int)
+
 // The Flow code below is taken from kotlinx.coroutines (some unrelated details removed).
 
 interface FlowCollector<in T> {

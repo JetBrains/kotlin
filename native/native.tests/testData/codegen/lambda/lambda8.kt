@@ -3,11 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lambda.lambda8
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     val lambda1 = bar("first")
     val lambda2 = bar("second")
 
@@ -15,14 +15,27 @@ import kotlin.test.*
     lambda2()
     lambda1()
     lambda2()
+
+    assertEquals("""
+        first
+        0
+        second
+        0
+        first
+        1
+        second
+        1
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }
 
 fun bar(str: String): () -> Unit {
     var x = Integer(0)
 
     return {
-        println(str)
-        println(x.toString())
+        sb.appendLine(str)
+        sb.appendLine(x.toString())
         x = x + 1
     }
 }

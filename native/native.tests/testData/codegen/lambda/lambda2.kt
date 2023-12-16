@@ -3,17 +3,18 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lambda.lambda2
-
 import kotlin.test.*
 
-@Test fun runTest() {
-    main(arrayOf("arg0"))
+val sb = StringBuilder()
+
+fun box(): String {
+    main(arrayOf("OK"))
+    return sb.toString()
 }
 
 fun main(args : Array<String>) {
     run {
-        println(args[0])
+        sb.append(args[0])
     }
 }
 

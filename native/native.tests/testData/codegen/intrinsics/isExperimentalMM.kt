@@ -7,12 +7,12 @@
 import kotlin.test.*
 import kotlin.native.Platform
 
-@Test
 @OptIn(kotlin.ExperimentalStdlibApi::class)
-fun testIsExperimentalMM() {
+fun box(): String {
     if (isExperimentalMM()) {
         assertEquals(Platform.memoryModel, MemoryModel.EXPERIMENTAL)
     } else {
         assertNotEquals(Platform.memoryModel, MemoryModel.EXPERIMENTAL)
     }
+    return "OK"
 }

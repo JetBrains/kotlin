@@ -3,15 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lambda.lambda7
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     val x = foo {
         it + 1
     }
-    println(x)
+    assertEquals(43, x)
+    return "OK"
 }
 
 fun foo(f: (Int) -> Int) = f(42)

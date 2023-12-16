@@ -3,18 +3,25 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lambda.lambda11
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     val first = "first"
     val second = "second"
 
     run {
-        println(first)
-        println(second)
+        sb.appendLine(first)
+        sb.appendLine(second)
     }
+
+    assertEquals("""
+        first
+        second
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }
 
 fun run(f: () -> Unit) {

@@ -3,11 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.objectExpression.expr1
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     val a = "a"
 
     val x = object {
@@ -18,5 +16,6 @@ import kotlin.test.*
         fun foo(s: String) = s + s
     }
 
-    println(x.toString())
+    assertEquals("aabb", x.toString())
+    return "OK"
 }

@@ -2,6 +2,9 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+import kotlin.test.*
+
+val sb = StringBuilder()
 
 class ArraysConstructor {
     private val memberArray: IntArray
@@ -14,9 +17,9 @@ class ArraysConstructor {
         memberArray[1] = int2
     }
     fun log() {
-        println("Array (constructor init):")
-        println("Size: ${memberArray.size}")
-        println("Contents: ${memberArray.contentToString()}")
+        sb.appendLine("Array (constructor init):")
+        sb.appendLine("Size: ${memberArray.size}")
+        sb.appendLine("Contents: ${memberArray.contentToString()}")
     }
 }
 
@@ -30,9 +33,9 @@ class ArraysDefault {
         memberArray[1] = int2
     }
     fun log() {
-        println("Array (default value init):")
-        println("Size: ${memberArray.size}")
-        println("Contents: ${memberArray.contentToString()}")
+        sb.appendLine("Array (default value init):")
+        sb.appendLine("Size: ${memberArray.size}")
+        sb.appendLine("Contents: ${memberArray.contentToString()}")
     }
 }
 
@@ -49,13 +52,13 @@ class ArraysInitBlock {
         memberArray[1] = int2
     }
     fun log() {
-        println("Array (init block):")
-        println("Size: ${memberArray.size}")
-        println("Contents: ${memberArray.contentToString()}")
+        sb.appendLine("Array (init block):")
+        sb.appendLine("Size: ${memberArray.size}")
+        sb.appendLine("Contents: ${memberArray.contentToString()}")
     }
 }
 
-fun main() {
+fun box(): String {
     val array1 = (::ArraysConstructor)(1, 2)
     array1.log()
     array1.set( 3, 4)
@@ -70,4 +73,27 @@ fun main() {
     array3.log()
     array3.set( 3, 4)
     array3.log()
+
+    assertEquals("""
+        Array (constructor init):
+        Size: 2
+        Contents: [1, 2]
+        Array (constructor init):
+        Size: 2
+        Contents: [3, 4]
+        Array (default value init):
+        Size: 2
+        Contents: [1, 2]
+        Array (default value init):
+        Size: 2
+        Contents: [3, 4]
+        Array (init block):
+        Size: 2
+        Contents: [1, 2]
+        Array (init block):
+        Size: 2
+        Contents: [3, 4]
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

@@ -3,19 +3,26 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lambda.lambda10
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     var str = "original"
 
     val lambda = {
-        println(str)
+        sb.appendLine(str)
     }
 
     lambda()
 
     str = "changed"
     lambda()
+
+    assertEquals("""
+        original
+        changed
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

@@ -3,11 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lambda.lambda9
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     val lambdas = ArrayList<() -> Unit>()
 
     for (i in 0..1) {
@@ -15,8 +15,8 @@ import kotlin.test.*
         val istr = i.toString()
 
         lambdas.add {
-            println(istr)
-            println(x.toString())
+            sb.appendLine(istr)
+            sb.appendLine(x.toString())
             x = x + 1
         }
     }
@@ -28,6 +28,19 @@ import kotlin.test.*
     lambda2()
     lambda1()
     lambda2()
+
+    assertEquals("""
+        0
+        0
+        1
+        0
+        0
+        1
+        1
+        1
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }
 
 class Integer(val value: Int) {

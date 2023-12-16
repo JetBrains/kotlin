@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lateinit.notInitialized
-
 import kotlin.test.*
 
 class A {
@@ -13,14 +11,16 @@ class A {
     fun foo() = s
 }
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     val a = A()
     try {
-        println(a.foo())
+        sb.appendLine(a.foo())
     }
     catch (e: RuntimeException) {
-        println("OK")
-        return
+        sb.append("OK")
+        return sb.toString()
     }
-    println("Fail")
+    return "Fail"
 }

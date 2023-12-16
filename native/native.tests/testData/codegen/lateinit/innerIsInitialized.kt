@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lateinit.innerIsInitialized
-
 import kotlin.test.*
 
 open class Foo {
@@ -23,6 +21,6 @@ open class Foo {
     }
 }
 
-@Test fun runTest() {
-    println(Foo().test())
+fun box(): String {
+    return Foo().test()
 }

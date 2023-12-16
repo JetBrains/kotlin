@@ -3,27 +3,39 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`object`.initialization1
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 class TestClass {
     constructor() {
-        println("constructor1")
+        sb.appendLine("constructor1")
     }
 
     constructor(x: Int) : this() {
-        println("constructor2")
+        sb.appendLine("constructor2")
     }
 
     init {
-        println("init")
+        sb.appendLine("init")
     }
 
-    val f = println("field")
+    val f = sb.appendLine("field")
 }
 
-@Test fun runTest() {
+fun box(): String {
     TestClass()
     TestClass(1)
+
+    assertEquals("""
+        init
+        field
+        constructor1
+        init
+        field
+        constructor1
+        constructor2
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

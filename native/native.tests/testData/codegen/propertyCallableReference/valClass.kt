@@ -3,16 +3,16 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.propertyCallableReference.valClass
-
 import kotlin.test.*
 
 class A(val x: Int)
 
-@Test fun runTest() {
+fun box(): String {
     val p1 = A::x
-    println(p1.get(A(42)))
+    assertEquals(42, p1.get(A(42)))
     val a = A(117)
     val p2 = a::x
-    println(p2.get())
+    assertEquals(117, p2.get())
+
+    return "OK"
 }

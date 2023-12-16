@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.kclass.kClassEnumArgument
-
 import kotlin.test.*
 import kotlin.reflect.KClass
 
@@ -13,6 +11,8 @@ enum class E(val arg: KClass<*>?) {
     B(String::class);
 }
 
-@Test fun runTest() {
-    println(E.B.arg?.simpleName)
+fun box(): String {
+    assertEquals("String", E.B.arg?.simpleName)
+
+    return "OK"
 }
