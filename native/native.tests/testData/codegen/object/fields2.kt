@@ -3,33 +3,33 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`object`.fields2
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 var global: Int = 0
     get() {
-        println("Get global = $field")
+        sb.appendLine("Get global = $field")
         return field
     }
     set(value) {
-        println("Set global = $value")
+        sb.appendLine("Set global = $value")
         field = value
     }
 
 class TestClass {
     var member: Int = 0
         get() {
-            println("Get member = $field")
+            sb.appendLine("Get member = $field")
             return field
         }
         set(value) {
-            println("Set member = $value")
+            sb.appendLine("Set member = $value")
             field = value
         }
 }
 
-@Test fun runTest1() {
+fun box(): String {
     global = 1
 
     val test = TestClass()
@@ -37,19 +37,15 @@ class TestClass {
 
     global = test.member
     test.member = global
-}
 
-@ThreadLocal
-val xInt = 42
+    assertEquals("""
+        Set global = 1
+        Set member = 42
+        Get member = 42
+        Set global = 42
+        Get global = 42
+        Set member = 42
 
-@ThreadLocal
-val xString = "42"
-
-@ThreadLocal
-val xAny = Any()
-
-@Test fun runTest2() {
-    assertEquals(42, xInt)
-    assertEquals("42", xString)
-    assertTrue(xAny is Any)
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

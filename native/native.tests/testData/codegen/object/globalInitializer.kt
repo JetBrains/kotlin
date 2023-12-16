@@ -9,4 +9,9 @@ public val z: Any = Z
 
 private object Z
 
-fun main(args: Array<String>) { }
+fun box(): String {
+    if (z is Z)
+        return "OK"
+    else
+        return "FAIL"
+}

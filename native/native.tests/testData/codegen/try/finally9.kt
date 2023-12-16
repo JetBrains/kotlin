@@ -3,16 +3,16 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`try`.finally9
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     do {
         try {
             break
         } finally {
-            println("Finally 1")
+            sb.appendLine("Finally 1")
         }
     } while (false)
 
@@ -22,9 +22,17 @@ import kotlin.test.*
             stop = true
             continue
         } finally {
-            println("Finally 2")
+            sb.appendLine("Finally 2")
         }
     }
 
-    println("After")
+    sb.appendLine("After")
+
+    assertEquals("""
+        Finally 1
+        Finally 2
+        After
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

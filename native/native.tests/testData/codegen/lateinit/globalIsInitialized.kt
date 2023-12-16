@@ -3,18 +3,25 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lateinit.globalIsInitialized
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 lateinit var s: String
 
 fun foo() {
-    println(::s.isInitialized)
+    sb.appendLine(::s.isInitialized)
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo()
     s = "zzz"
     foo()
+
+    assertEquals("""
+        false
+        true
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

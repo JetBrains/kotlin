@@ -3,14 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lambda.lambda13
-
 import kotlin.test.*
 
-@Test fun runTest() {
-    apply("foo") {
-        println(this)
+val sb = StringBuilder()
+
+fun box(): String {
+    apply("OK") {
+        sb.append(this)
     }
+    return sb.toString()
 }
 
 fun apply(str: String, block: String.() -> Unit) {

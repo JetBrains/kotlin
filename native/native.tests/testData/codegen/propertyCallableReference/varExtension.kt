@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.propertyCallableReference.varExtension
-
 import kotlin.test.*
 
 class A(y: Int) {
@@ -17,14 +15,16 @@ var A.z: Int
         this.x = value
     }
 
-@Test fun runTest() {
+fun box(): String {
     val p1 = A::z
     val a = A(42)
     p1.set(a, 117)
-    println(a.x)
-    println(p1.get(a))
+    assertEquals(117, a.x)
+    assertEquals(117, p1.get(a))
     val p2 = a::z
     p2.set(42)
-    println(a.x)
-    println(p2.get())
+    assertEquals(42, a.x)
+    assertEquals(42, p2.get())
+
+    return "OK"
 }

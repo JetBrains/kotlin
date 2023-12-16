@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.stringTrim.stringTrim
-
 import kotlin.test.*
 
 // TODO: check IR
@@ -22,9 +20,10 @@ fun constantMargin(): String {
     """.trimMargin()
 }
 
-@Test
-fun runTest() {
+fun box(): String {
     assertTrue(constantIndent() === constantIndent())
     assertTrue(constantMargin() === constantMargin())
+
+    return "OK"
 }
 

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.localClass.objectExpressionInProperty
-
 import kotlin.test.*
 
 abstract class Father {
@@ -23,8 +21,4 @@ class Child : Father() {
 
 fun box(): String {
     return Child().ChildInClass.work()
-}
-
-@Test fun runTest() {
-    println(box())
 }

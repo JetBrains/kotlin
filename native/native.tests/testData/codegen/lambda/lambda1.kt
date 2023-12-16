@@ -3,14 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lambda.lambda1
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     run {
-        println("lambda")
+        sb.append("OK")
     }
+    return sb.toString()
 }
 
 fun run(f: () -> Unit) {

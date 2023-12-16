@@ -2556,6 +2556,18 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("anonymousObjectInInlineFunction.kt")
+        public void testAnonymousObjectInInlineFunction() throws Exception {
+            runTest("native/native.tests/testData/codegen/kclass/anonymousObjectInInlineFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("anonymousObjectInInlineFunctionWithCache.kt")
+        public void testAnonymousObjectInInlineFunctionWithCache() throws Exception {
+            runTest("native/native.tests/testData/codegen/kclass/anonymousObjectInInlineFunctionWithCache.kt");
+        }
+
+        @Test
         @TestMetadata("kClassEnumArgument.kt")
         public void testKClassEnumArgument() throws Exception {
             runTest("native/native.tests/testData/codegen/kclass/kClassEnumArgument.kt");

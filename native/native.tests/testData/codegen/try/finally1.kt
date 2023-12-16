@@ -3,17 +3,25 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`try`.finally1
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
 
     try {
-        println("Try")
+        sb.appendLine("Try")
     } finally {
-        println("Finally")
+        sb.appendLine("Finally")
     }
 
-    println("Done")
+    sb.appendLine("Done")
+
+    assertEquals("""
+        Try
+        Finally
+        Done
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

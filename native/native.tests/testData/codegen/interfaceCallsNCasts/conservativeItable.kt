@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.interfaceCallsNCasts.conservativeItable
-
 import kotlin.test.*
 
 interface I0 {
@@ -559,9 +557,9 @@ fun foo(i42: I42, x: Int) = i42.foo42(x)
 
 fun bar(i_m1: I_M1, x: Int) = i_m1.bar(x)
 
-@Test fun runTest() {
+fun box(): String {
     val y = Bar2()
-    println(bar(y, 1))
+    assertEquals(539, bar(y, 1))
     val x0 = Bar()
     var t = 0
     if (check_is_I0(x0)) t = t + 1
@@ -664,7 +662,7 @@ fun bar(i_m1: I_M1, x: Int) = i_m1.bar(x)
     if (check_is_I97(x0)) t = t + 98
     if (check_is_I98(x0)) t = t + 99
     if (check_is_I99(x0)) t = t + 100
-    println(t)
+    assertEquals(5050, t)
     val x1 = I42_Impl1()
     val x2 = I42_Impl2()
     val x3 = I42_Impl3()
@@ -682,5 +680,7 @@ fun bar(i_m1: I_M1, x: Int) = i_m1.bar(x)
     t = foo(x6, t)
     t = foo(x7, t)
     t = foo(x8, t)
-    println(t)
+    assertEquals(26551140, t)
+
+    return "OK"
 }

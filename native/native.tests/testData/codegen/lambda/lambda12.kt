@@ -3,15 +3,22 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lambda.lambda12
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     val lambda = { s1: String, s2: String ->
-        println(s1)
-        println(s2)
+        sb.appendLine(s1)
+        sb.appendLine(s2)
     }
 
     lambda("one", "two")
+
+    assertEquals("""
+        one
+        two
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

@@ -3,15 +3,13 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lateinit.localCapturedInitialized
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     lateinit var s: String
 
     fun foo() = s
 
-    s = "zzz"
-    println(foo())
+    s = "OK"
+    return foo()
 }

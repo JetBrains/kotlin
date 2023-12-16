@@ -3,18 +3,26 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`try`.catch3
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     try {
-        println("Before")
+        sb.appendLine("Before")
         throw Error("Error happens")
-        println("After")
+        sb.appendLine("After")
     } catch (e: Throwable) {
-        println("Caught Throwable")
+        sb.appendLine("Caught Throwable")
     }
 
-    println("Done")
+    sb.appendLine("Done")
+
+    assertEquals("""
+        Before
+        Caught Throwable
+        Done
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

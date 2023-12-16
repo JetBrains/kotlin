@@ -3,12 +3,10 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lateinit.localInitialized
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     lateinit var s: String
-    s = "zzz"
-    println(s)
+    s = "OK"
+    return s
 }

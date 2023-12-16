@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.interfaceCallsNCasts.diamond
-
 import kotlin.test.*
 
 interface A<T, U> {
@@ -19,8 +17,7 @@ class Z : B<Int>, C<String> {
     override fun foo(t: String, u: Int) = "Z"
 }
 
-@Test
-fun runTest() {
+fun box(): String {
     val z = Z()
     val c: C<String> = z
     val b: B<Int> = z
@@ -30,4 +27,6 @@ fun runTest() {
     assertEquals("Z", c.foo("", 0))
     assertEquals("Z", b.foo("", 0))
     assertEquals("Z", a.foo("", 0))
+
+    return "OK"
 }

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.localClass.noPrimaryConstructor
-
 import kotlin.test.*
 
 fun box(s: String): String {
@@ -25,6 +23,7 @@ fun box(s: String): String {
     return Local(42).result() + Local("zzz").result()
 }
 
-@Test fun runTest() {
-    println(box("OK"))
+fun box(): String {
+    assertEquals("OKOK", box("OK"))
+    return "OK"
 }

@@ -3,19 +3,22 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.propertyCallableReference.dynamicReceiver
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 class TestClass {
     var x: Int = 42
 }
 
 fun foo(): TestClass {
-    println(42)
+    sb.append(42)
     return TestClass()
 }
 
-@Test fun runTest() {
+fun box(): String {
     foo()::x
+
+    assertEquals("42", sb.toString())
+    return "OK"
 }

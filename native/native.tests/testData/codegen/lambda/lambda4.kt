@@ -3,21 +3,31 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lambda.lambda4
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     val lambda = bar()
     lambda()
     lambda()
+
+    assertEquals("""
+        1
+        2
+        3
+        3
+        4
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }
 
 fun bar(): () -> Unit {
     var x = Integer(0)
 
     val lambda = {
-        println(x.toString())
+        sb.appendLine(x.toString())
         x = x + 1
     }
 
@@ -26,7 +36,7 @@ fun bar(): () -> Unit {
     lambda()
     lambda()
 
-    println(x.toString())
+    sb.appendLine(x.toString())
 
     return lambda
 }

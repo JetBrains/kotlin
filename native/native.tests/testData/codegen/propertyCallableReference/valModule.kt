@@ -3,13 +3,13 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.propertyCallableReference.valModule
-
 import kotlin.test.*
 
 val x = 42
 
-@Test fun runTest() {
+fun box(): String {
     val p = ::x
-    println(p.get())
+    assertEquals(42, p.get())
+
+    return "OK"
 }

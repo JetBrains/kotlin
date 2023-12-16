@@ -3,11 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.localClass.innerTakesCapturedFromOuter
-
 import kotlin.test.*
 
-fun box() {
+val sb = StringBuilder()
+
+fun box(): String {
     var previous: Any? = null
     for (i in 0 .. 2) {
         class Outer {
@@ -17,11 +17,14 @@ fun box() {
 
             override fun toString() = Inner().toString()
         }
-        if (previous != null) println(previous.toString())
+        if (previous != null) sb.appendLine(previous.toString())
         previous = Outer()
     }
-}
 
-@Test fun runTest() {
-    box()
+    assertEquals("""
+        0
+        1
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

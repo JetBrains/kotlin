@@ -3,17 +3,23 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`try`.catch8
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     try {
         throw Error("Error happens")
     } catch (e: Throwable) {
         val message = e.message
         if (message != null) {
-            println(message)
+            sb.appendLine(message)
         }
     }
+
+    assertEquals("""
+        Error happens
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }

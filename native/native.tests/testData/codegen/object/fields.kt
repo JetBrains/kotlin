@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`object`.fields
-
 import kotlin.test.*
 
 private var globalValue = 1
@@ -18,8 +16,10 @@ fun globalTest(i:Int):Int {
 }
 
 
-@Test fun runTest() {
-    if (global != 1)          throw Error()
-    if (globalTest(41) != 42) throw Error()
-    if (global != 42)         throw Error()
+fun box(): String {
+    assertEquals(1, global)
+    assertEquals(42, globalTest(41))
+    assertEquals(42, global)
+
+    return "OK"
 }

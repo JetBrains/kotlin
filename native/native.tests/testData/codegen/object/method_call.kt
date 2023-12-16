@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`object`.method_call
-
 import kotlin.test.*
 
 class A(val a:Int) {
@@ -13,6 +11,7 @@ class A(val a:Int) {
 
 fun fortyTwo() = A(41).foo(1)
 
-@Test fun runTest() {
-  if (fortyTwo() != 42) throw Error()
+fun box(): String {
+  assertEquals(42, fortyTwo())
+  return "OK"
 }

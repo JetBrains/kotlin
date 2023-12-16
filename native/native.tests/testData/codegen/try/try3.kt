@@ -3,16 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`try`.try3
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     val x = try {
         throw Error()
     } catch (e: Throwable) {
         6
     }
 
-    println(x)
+    assertEquals(6, x)
+    return "OK"
 }

@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`object`.fields1
-
 import kotlin.test.*
 
 class B(val a:Int, b:Int) {
@@ -16,7 +14,10 @@ fun primaryConstructorCall(a:Int, b:Int) = B(a, b).pos
 
 fun secondaryConstructorCall(a:Int) = B(a).pos
 
-@Test fun runTest() {
-    if (primaryConstructorCall(0xdeadbeef.toInt(), 41) != 42) throw Error()
-    if (secondaryConstructorCall(41)                   != 42) throw Error()
+fun box(): String {
+    assertEquals(42, primaryConstructorCall(0xdeadbeef.toInt(), 41))
+    assertEquals(42, secondaryConstructorCall(41))
+
+    return "OK"
+
 }

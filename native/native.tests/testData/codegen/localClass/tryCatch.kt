@@ -3,9 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.localClass.tryCatch
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 private fun foo() {
     val local =
@@ -13,13 +13,15 @@ private fun foo() {
                 fun bar() {
                     try {
                     } catch (t: Throwable) {
-                        println(t)
+                        sb.appendLine(t)
                     }
                 }
             }
     local.bar()
 }
 
-@Test fun runTest() {
+fun box(): String {
+    sb.append("OK")
     foo()
+    return sb.toString()
 }

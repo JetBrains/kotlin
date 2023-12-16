@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.lateinit.inBaseClass
-
 import kotlin.test.*
 
 class A(val a: Int)
@@ -17,8 +15,10 @@ class C: B() {
     fun foo() { a = A(42) }
 }
 
-@Test fun runTest() {
+fun box(): String {
     val c = C()
     c.foo()
-    println(c.a.a)
+    assertEquals(42, c.a.a)
+
+    return "OK"
 }

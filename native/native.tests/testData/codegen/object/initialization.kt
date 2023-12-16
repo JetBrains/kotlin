@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.`object`.initialization
-
 import kotlin.test.*
 
 open class A(val a:Int, val b:Int)
@@ -28,6 +26,7 @@ fun foo(i:Int, j:Int):Int {
    return c.c
 }
 
-@Test fun runTest() {
-   if (foo(2, 3) != 5) throw Error()
+fun box(): String {
+   assertEquals(5, foo(2, 3))
+   return "OK"
 }

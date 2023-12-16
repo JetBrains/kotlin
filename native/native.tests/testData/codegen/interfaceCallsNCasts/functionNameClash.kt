@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-package codegen.interfaceCallsNCasts.functionNameClash
-
 import kotlin.test.*
 
 interface I1<T> {
@@ -18,11 +16,12 @@ class C : I1<String>, I2<Int> {
     override fun foo(x: Int) = "I2.foo($x)"
 }
 
-@Test
-fun runTest() {
+fun box(): String {
     val c = C()
     val i1: I1<String> = c
     assertEquals("I1.foo(str)", i1.foo("str"))
     val i2: I2<Int> = c
     assertEquals("I2.foo(42)", i2.foo(42))
+
+    return "OK"
 }

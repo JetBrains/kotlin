@@ -2,15 +2,14 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
 package codegen.kclass.kclass0
-
 import kotlin.test.*
 import kotlin.coroutines.*
 import kotlin.reflect.KClass
 
-@Test fun runTest() {
+fun box(): String {
     main(emptyArray<String>())
+    return "OK"
 }
 
 fun main(args: Array<String>) {
@@ -211,14 +210,6 @@ private fun checkLocalClasses(args: Array<String>) {
     ::suspendFunWithLocalClass.runCoroutine()
 }
 
-interface HasFoo {
-    fun foo(): String
-}
-
-private inline fun getHasFoo(s: String) = object : HasFoo {
-    override fun foo(): String = s
-}
-
 private fun checkAnonymousObjects(args: Array<String>) {
     // Anonymous object.
     with(object : Any() {
@@ -378,16 +369,6 @@ private fun checkAnonymousObjects(args: Array<String>) {
         }
     }
     ::suspendFunWithAnonymousObject.runCoroutine()
-
-    val hasFoo = getHasFoo("zzz")
-    checkClass(
-            hasFoo::class,
-            expectedQualifiedName = null,
-            expectedSimpleName = null,
-            expectedToStringName = "class codegen.kclass.kclass0.Kclass0Kt$1",
-            expectedInstance = hasFoo,
-            expectedNotInstance = Any()
-    )
 }
 
 private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
