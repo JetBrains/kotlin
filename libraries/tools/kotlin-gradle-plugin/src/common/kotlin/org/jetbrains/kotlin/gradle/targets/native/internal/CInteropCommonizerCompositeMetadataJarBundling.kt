@@ -27,7 +27,7 @@ internal suspend fun Project.includeCommonizedCInteropMetadata(metadataKlib: Zip
     val outputDirectory = commonizerTask.commonizedOutputDirectory(commonizerDependencyToken) ?: return
 
     metadataKlib.from(outputDirectory) { spec ->
-        spec.into(cinteropMetadataDirectoryPath(compilation.defaultSourceSetName))
+        spec.into(cinteropMetadataDirectoryPath(compilation.defaultSourceSet.name))
     }
 }
 

@@ -119,7 +119,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         open class IDEClassesTask : DefaultTask()
         // Workaround: as per KT-26641, when there's a Kotlin compilation with a Java source set, we create another task
         // that has a name composed as '<IDE module name>Classes`, where the IDE module name is the default source set name:
-        val expectedClassesTaskName = "${kotlinCompilation.defaultSourceSetName}Classes"
+        val expectedClassesTaskName = "${kotlinCompilation.defaultSourceSet.name}Classes"
         project.tasks.run {
             val shouldCreateTask = expectedClassesTaskName !in names
             if (shouldCreateTask) {
