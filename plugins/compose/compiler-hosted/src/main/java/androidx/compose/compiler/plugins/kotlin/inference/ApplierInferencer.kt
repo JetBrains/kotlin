@@ -356,7 +356,10 @@ class ApplierInferencer<Type, Node>(
             if (pending.isNotEmpty()) {
                 val skipped = mutableListOf<() -> Boolean>()
                 while (pending.isNotEmpty()) {
-                    val pendingCall = pending.removeLast()
+
+                    // Do not use `.removeLast()` doing so will re-introduce b/316644294
+                    val pendingCall = pending.removeAt(pending.lastIndex)
+
                     if (!pendingCall()) skipped.add(pendingCall)
                 }
                 skipped.forEach { pending.add(it) }
