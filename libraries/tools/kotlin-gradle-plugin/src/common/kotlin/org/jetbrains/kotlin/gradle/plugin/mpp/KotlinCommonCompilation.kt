@@ -18,7 +18,7 @@ import javax.inject.Inject
 interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation<T>
 
 open class KotlinCommonCompilation @Inject internal constructor(compilation: KotlinCompilationImpl) :
-    AbstractKotlinCompilation<KotlinCommonOptions>(compilation),
+    @Suppress("DEPRECATION") AbstractKotlinCompilation<KotlinCommonOptions>(compilation),
     KotlinMetadataCompilation<KotlinCommonOptions> {
     @Suppress("DEPRECATION")
     @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))

@@ -82,9 +82,9 @@ object KotlinToolingDiagnostics {
             val cause = if (sourceSetNames.size == 1) {
                 "The Kotlin source set ${sourceSetNames.single()} was configured but not added to any Kotlin compilation.\n"
             } else {
-                val sourceSetNames = sourceSetNames.joinToString("\n") { " * $it" }
+                val sourceSetNamesString = sourceSetNames.joinToString("\n") { " * $it" }
                 "The following Kotlin source sets were configured but not added to any Kotlin compilation:\n" +
-                        sourceSetNames
+                        sourceSetNamesString
             }
 
             val details =

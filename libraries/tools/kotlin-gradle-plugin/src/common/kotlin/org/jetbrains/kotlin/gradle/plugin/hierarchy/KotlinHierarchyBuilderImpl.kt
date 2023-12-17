@@ -150,6 +150,7 @@ private class KotlinHierarchyBuilderImpl(
     // Don't check for instance of [KotlinJsTargetDsl] or [KotlinWasmTargetDsl] because they are implemented by single target [KotlinJsIrTarget]
     override fun withJs() = withTargets { it.platformType == KotlinPlatformType.js }
 
+    @Deprecated("Renamed to 'withWasmJs''", replaceWith = ReplaceWith("withWasmJs()"))
     override fun withWasm() = withWasmJs()
 
     override fun withWasmJs() = withTargets {
