@@ -180,7 +180,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     .getLambdaMetafactoryArguments(reference, samSuperType, false)
             if (lambdaMetafactoryArguments is LambdaMetafactoryArguments) {
                 return wrapSamConversionArgumentWithIndySamConversion(expression) { samType ->
-                    wrapWithIndySamConversion(samType, lambdaMetafactoryArguments)
+                    wrapWithIndySamConversion(samType, lambdaMetafactoryArguments, expression.startOffset, expression.endOffset)
                 }
             } else if (lambdaMetafactoryArguments is MetafactoryArgumentsResult.Failure.FunctionHazard) {
                 // Try wrapping function with a proxy local function and see if that helps.
@@ -399,11 +399,13 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
     private fun wrapWithIndySamConversion(
         samType: IrType,
-        lambdaMetafactoryArguments: LambdaMetafactoryArguments
+        lambdaMetafactoryArguments: LambdaMetafactoryArguments,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset:Int = UNDEFINED_OFFSET
     ): IrCall {
         val notNullSamType = samType.makeNotNull()
             .removeAnnotations { it.type.classFqName in specialNullabilityAnnotationsFqNames }
-        return context.createJvmIrBuilder(currentScope!!).run {
+        return context.createJvmIrBuilder(currentScope!!, startOffset, endOffset).run {
             // See [org.jetbrains.kotlin.backend.jvm.JvmSymbols::indyLambdaMetafactoryIntrinsic].
             irCall(jvmIndyLambdaMetafactoryIntrinsic, notNullSamType).apply {
                 putTypeArgument(0, notNullSamType)

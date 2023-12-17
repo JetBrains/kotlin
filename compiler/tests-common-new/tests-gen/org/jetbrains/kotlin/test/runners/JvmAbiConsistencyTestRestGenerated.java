@@ -11382,6 +11382,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
             }
 
             @Test
+            @TestMetadata("kt62965.kt")
+            public void testKt62965() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/lineNumbers/kt62965.kt");
+            }
+
+            @Test
             @TestMetadata("singleThen.kt")
             public void testSingleThen() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/lineNumbers/singleThen.kt");
