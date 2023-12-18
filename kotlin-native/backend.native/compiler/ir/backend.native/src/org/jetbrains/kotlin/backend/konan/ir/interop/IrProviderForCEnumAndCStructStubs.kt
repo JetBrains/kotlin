@@ -117,8 +117,4 @@ internal class IrProviderForCEnumAndCStructStubs(
             }
         }
     }
-
-    companion object {
-        const val cTypeDefinitionsFileName = "CTypeDefinitions"
-    }
 }

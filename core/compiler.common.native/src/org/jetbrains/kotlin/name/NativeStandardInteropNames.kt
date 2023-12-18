@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.name
 
+@Suppress("ConstPropertyName")
 object NativeStandardInteropNames {
     val cInteropPackage = FqName("kotlinx.cinterop")
 
@@ -32,4 +33,6 @@ object NativeStandardInteropNames {
 
         val syntheticPackages = setOf(cNamesPackage, objCNamesPackage)
     }
+
+    const val cTypeDefinitionsFileName = "CTypeDefinitions"
 }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.isInteropLibrary
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
 internal class KonanInteropModuleDeserializer(
     moduleDescriptor: ModuleDescriptor,
@@ -65,7 +66,7 @@ internal class KonanInteropModuleDeserializer(
 
     private fun getIrFile(packageFragment: PackageFragmentDescriptor): IrFile = fileMap.getOrPut(packageFragment) {
         IrFileImpl(
-            NaiveSourceBasedFileEntryImpl(IrProviderForCEnumAndCStructStubs.cTypeDefinitionsFileName),
+            NaiveSourceBasedFileEntryImpl(NativeStandardInteropNames.cTypeDefinitionsFileName),
             packageFragment,
             moduleFragment
         ).also {
