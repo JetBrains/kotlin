@@ -35,7 +35,7 @@ fun test() {
     val u : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_REFERENCE!>A<!>()
 
     val z = <!INVISIBLE_REFERENCE!>x<!>
-    <!INVISIBLE_REFERENCE, INVISIBLE_SETTER!>x<!> = 30
+    <!INVISIBLE_REFERENCE!>x<!> = 30
 
     val po = <!INVISIBLE_REFERENCE!>PO<!>
 

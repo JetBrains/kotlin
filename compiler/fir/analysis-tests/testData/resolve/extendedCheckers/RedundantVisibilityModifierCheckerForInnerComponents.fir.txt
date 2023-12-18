@@ -149,5 +149,5 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
     }
     public final fun test5(): R|kotlin/Unit| {
-        R|/B5.B5|().R|/B5.attribute| = String(c)
+        R|/B5.B5|().R|/B5.attribute<HIDDEN SETTER: /B5.attribute is invisible>#| = String(c)
     }

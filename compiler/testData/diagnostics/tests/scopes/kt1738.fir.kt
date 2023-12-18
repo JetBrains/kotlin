@@ -6,6 +6,6 @@ class A(private var i: Int, var j: Int) {
 }
 
 fun test(a: A) {
-    a.<!INVISIBLE_REFERENCE, INVISIBLE_SETTER!>i<!>++
+    a.<!INVISIBLE_REFERENCE!>i<!>++
     a.j++
 }

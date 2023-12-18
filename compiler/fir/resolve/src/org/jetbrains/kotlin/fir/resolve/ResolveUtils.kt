@@ -578,11 +578,12 @@ fun createConeDiagnosticForCandidateWithError(
     applicability: CandidateApplicability,
     candidate: Candidate,
 ): ConeDiagnostic {
+    val symbol = candidate.symbol
     return when (applicability) {
         CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate)
         CandidateApplicability.K2_VISIBILITY_ERROR -> {
             val session = candidate.callInfo.session
-            val declaration = candidate.symbol.fir
+            val declaration = symbol.fir
             if (declaration is FirMemberDeclaration &&
                 session.visibilityChecker.isVisible(declaration, candidate, skipCheckForContainingClassVisibility = true)
             ) {
@@ -604,13 +605,17 @@ fun createConeDiagnosticForCandidateWithError(
                         return ConeVisibilityError(it.symbol)
                     }
             }
-            ConeVisibilityError(candidate.symbol)
+            if (symbol is FirPropertySymbol && SetterVisibilityError in candidate.diagnostics) {
+                ConeSetterVisibilityError(symbol)
+            } else {
+                ConeVisibilityError(symbol)
+            }
         }
         CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate))
         CandidateApplicability.K2_NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate)
         else -> {
             if (TypeParameterAsExpression in candidate.diagnostics) {
-                ConeTypeParameterInQualifiedAccess(candidate.symbol as FirTypeParameterSymbol)
+                ConeTypeParameterInQualifiedAccess(symbol as FirTypeParameterSymbol)
             } else {
                 ConeInapplicableCandidateError(applicability, candidate)
             }
