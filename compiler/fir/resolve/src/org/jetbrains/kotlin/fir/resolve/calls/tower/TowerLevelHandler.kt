@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.CandidateFactory
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 internal class CandidateFactoriesAndCollectors(
     // Common calls
@@ -85,8 +86,8 @@ private class TowerScopeLevelProcessor(
         scope: FirScope,
         objectsByName: Boolean,
         isFromOriginalTypeInPresenceOfSmartCast: Boolean,
-    ) {
-        resultCollector.consumeCandidate(
+    ): CandidateApplicability {
+        return resultCollector.consumeCandidate(
             group, candidateFactory.createCandidate(
                 callInfo,
                 symbol,

@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
@@ -140,6 +141,18 @@ class FirCallCompletionResultsWriterTransformer(
             replaceCalleeReference(calleeReference.toResolvedReference())
             replaceDispatchReceiver(dispatchReceiver)
             replaceExtensionReceiver(extensionReceiver)
+
+            // If the explicit receiver is a smartcast expression, we can choose to use the unwrapped expression as dispatch receiver.
+            // To maintain the invariant
+            // explicitReceiver != null => explicitReceiver == dispatchReceiver || explicitReceiver == extensionReceiver
+            // we update the explicit receiver here.
+            // We only do this if the candidate is successful, otherwise, we can lose the explicit receiver node in red code like
+            // fun f(s: String, action: (String.() -> Unit)?) {
+            //    s.action?.let { it() }
+            //}
+            if (subCandidate.explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER && subCandidate.applicability.isSuccess) {
+                replaceExplicitReceiver(dispatchReceiver)
+            }
         }
 
         qualifiedAccessExpression.replaceContextReceiverArguments(subCandidate.contextReceiverArguments())

@@ -27,4 +27,21 @@ class Derived : Base() {
             x.y = x.y + 1
         }
     }
+
+    protected fun baz2(x: Base?) {
+        x.<!INVISIBLE_REFERENCE!>foo<!>()
+        x.<!INVISIBLE_REFERENCE!>bar<!>()
+
+        x.<!INVISIBLE_REFERENCE!>x<!> = x.<!INVISIBLE_REFERENCE!>x<!> + 1
+        x.<!INVISIBLE_SETTER!>y<!> = x<!UNSAFE_CALL!>.<!>y + 1
+
+        if (x is Derived) {
+            x.foo()
+            x.bar()
+            x.baz(x)
+
+            x.x = x.x + 1
+            x.y = x.y + 1
+        }
+    }
 }

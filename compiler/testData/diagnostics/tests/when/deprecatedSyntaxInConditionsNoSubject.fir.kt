@@ -41,10 +41,10 @@ fun testWithSubject_ok(x: Boolean, y: Boolean?, any: Any, z: Boolean) {
         x !in x -> {}
         x is String -> {}
         x !is String -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!><<!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!>><!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!><=<!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!>>=<!> x -> {}
+        x < x -> {}
+        x > x -> {}
+        x <= x -> {}
+        x >= x -> {}
         x == x -> {}
         x != x -> {}
         <!DEPRECATED_IDENTITY_EQUALS!>x === x<!> -> {}
