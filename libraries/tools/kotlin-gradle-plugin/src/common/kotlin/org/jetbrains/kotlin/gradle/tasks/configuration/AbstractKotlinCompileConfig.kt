@@ -85,10 +85,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
 
             task.incremental = false
             task.useModuleDetection.convention(false)
-            if (propertiesProvider.useK2 == true) {
-                @Suppress("DEPRECATION")
-                task.compilerOptions.useK2.value(true)
-            }
             task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinCompilerViaBuildToolsApi).finalizeValueOnRead()
             task.classLoadersCachingService.value(cachedClassLoadersService).disallowChanges()
 

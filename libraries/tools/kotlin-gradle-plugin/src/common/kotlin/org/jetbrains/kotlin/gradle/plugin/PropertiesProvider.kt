@@ -174,9 +174,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val useKotlinAbiSnapshot: Boolean
         get() = booleanProperty(KOTLIN_ABI_SNAPSHOT) ?: false
 
-    val useK2: Boolean?
-        get() = booleanProperty("kotlin.useK2")
-
     val keepMppDependenciesIntactInPoms: Boolean?
         get() = booleanProperty("kotlin.mpp.keepMppDependenciesIntactInPoms")
 

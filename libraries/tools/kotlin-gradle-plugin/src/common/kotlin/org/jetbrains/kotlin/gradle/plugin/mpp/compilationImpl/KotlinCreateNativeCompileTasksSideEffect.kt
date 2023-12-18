@@ -40,9 +40,6 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         task.enabled = compilation.konanTarget.enabledOnCurrentHost
 
         task.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).dir("klib"))
-        if (project.kotlinPropertiesProvider.useK2 == true) {
-            task.compilerOptions.useK2.set(true)
-        }
         task.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
 
         task.explicitApiMode.value(
