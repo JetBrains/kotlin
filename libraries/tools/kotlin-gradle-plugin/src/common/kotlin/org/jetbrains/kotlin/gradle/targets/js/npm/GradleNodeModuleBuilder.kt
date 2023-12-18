@@ -80,8 +80,6 @@ internal class GradleNodeModuleBuilder(
         // yarn requires semver
         packageJson.version = fixSemver(packageJson.version)
 
-        val actualFiles = files.filterNot { it.name.endsWith(".$META_JS") }
-
         return makeNodeModule(cacheDir, packageJson) { nodeModule ->
             fs.copy { copy ->
                 copy.from(fileTrees)
