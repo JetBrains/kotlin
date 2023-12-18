@@ -57,6 +57,9 @@ abstract class KotlinIrLinker(
 
     open val partialLinkageSupport: PartialLinkageSupportForLinker get() = PartialLinkageSupportForLinker.DISABLED
 
+    open val returnUnboundSymbolsIfSignatureNotFound: Boolean
+        get() = partialLinkageSupport.isEnabled
+
     protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport get() = UserVisibleIrModulesSupport.DEFAULT
 
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
@@ -77,7 +80,7 @@ abstract class KotlinIrLinker(
         val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
 
         return symbol ?: run {
-            if (partialLinkageSupport.isEnabled)
+            if (returnUnboundSymbolsIfSignatureNotFound)
                 referenceDeserializedSymbol(symbolTable, null, symbolKind, idSignature)
             else
                 SignatureIdNotFoundInModuleWithDependencies(

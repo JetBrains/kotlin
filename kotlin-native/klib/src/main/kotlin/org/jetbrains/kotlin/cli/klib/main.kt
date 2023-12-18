@@ -271,6 +271,10 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
                 friendModules = emptyMap(),
                 partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
         )
+
+        override val returnUnboundSymbolsIfSignatureNotFound: Boolean
+            get() = true
+
         override val translationPluginContext: TranslationPluginContext
             get() = TODO("Not needed for ir dumping")
 
