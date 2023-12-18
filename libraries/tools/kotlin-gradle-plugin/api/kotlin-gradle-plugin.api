@@ -768,6 +768,7 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKo
 	public final fun getRuntimeElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public fun getRuntimeElementsConfigurationName ()Ljava/lang/String;
 	public final fun getRuntimeElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public final fun getSourcesElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public fun getSourcesElementsConfigurationName ()Ljava/lang/String;
 	public final fun getSourcesElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;

@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetImpl
 import org.jetbrains.kotlin.gradle.utils.extrasStoredFuture
+import org.jetbrains.kotlin.gradle.utils.getByType
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
@@ -24,6 +26,14 @@ internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
     @InternalKotlinGradlePluginApi
     override val components: Set<KotlinTargetSoftwareComponent>
     fun onPublicationCreated(publication: MavenPublication)
+
+    @Deprecated(
+        "Accessing 'sourceSets' container on the Kotlin target level DSL is deprecated. " +
+                "Consider configuring 'sourceSets' on the Kotlin extension level.",
+        level = DeprecationLevel.WARNING
+    )
+    override val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
+        get() = project.extensions.getByType<KotlinProjectExtension>().sourceSets
 }
 
 internal val KotlinTarget.internal: InternalKotlinTarget
