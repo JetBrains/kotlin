@@ -46,6 +46,8 @@ abstract class FirInferenceSession {
 
     open fun <T> runLambdaCompletion(candidate: Candidate, block: () -> T): T = block()
 
+    open fun <T> runCallableReferenceResolution(candidate: Candidate, block: () -> T): T = block()
+
     open fun handleQualifiedAccess(qualifiedAccessExpression: FirExpression, data: ResolutionMode) {}
 
     abstract fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement
