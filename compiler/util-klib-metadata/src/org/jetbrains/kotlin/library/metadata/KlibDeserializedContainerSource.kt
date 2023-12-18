@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.descriptors.SourceFile
-import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.irProviderName
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Header
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
@@ -43,5 +41,3 @@ class KlibDeserializedContainerSource(
     // TODO: move [CallableMemberDescriptor.findSourceFile] here.
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }
-
-private fun KotlinLibrary.isInteropLibrary() = irProviderName == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
