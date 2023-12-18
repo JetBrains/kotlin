@@ -164,6 +164,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("intrinsicsNonReified.kt")
+    public void testIntrinsicsNonReified() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsNonReified.kt");
+    }
+
+    @Test
     @TestMetadata("intrinsicsNullable.kt")
     public void testIntrinsicsNullable() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsNullable.kt");

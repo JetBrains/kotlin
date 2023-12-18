@@ -1,0 +1,86 @@
+public final class Box$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
+    private final kotlinx.serialization.descriptors.SerialDescriptor descriptor
+
+    private final kotlinx.serialization.KSerializer typeSerial0
+
+    private void <init>()
+
+    public void <init>(kotlinx.serialization.KSerializer typeSerial0)
+
+    public final kotlinx.serialization.KSerializer[] childSerializers()
+
+    public final Box deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public final kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
+
+    private final kotlinx.serialization.KSerializer getTypeSerial0()
+
+    public final void serialize(kotlinx.serialization.encoding.Encoder encoder, Box value)
+
+    public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
+
+    public final kotlinx.serialization.KSerializer[] typeParametersSerializers()
+}
+
+public final class Box$Companion : java/lang/Object {
+    private void <init>()
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+
+    public final kotlinx.serialization.KSerializer serializer(kotlinx.serialization.KSerializer typeSerial0)
+}
+
+public final class Box : java/lang/Object {
+    private final static kotlinx.serialization.descriptors.SerialDescriptor $cachedDescriptor
+
+    public final static Box$Companion Companion
+
+    private final java.lang.Object t
+
+    static void <clinit>()
+
+    public void <init>(java.lang.Object t)
+
+    public void <init>(int seen0, java.lang.Object t, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
+
+    public final java.lang.Object getT()
+
+    public final static void write$Self$main(Box self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc, kotlinx.serialization.KSerializer typeSerial0)
+}
+
+public final class IntrinsicsNonReifiedKt : java/lang/Object {
+    public final static kotlinx.serialization.KSerializer inner() {
+          ICONST_0
+          ISTORE (0)
+        LABEL (L0)
+        LINENUMBER (12)
+          BIPUSH (6)
+          LDC (T)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, reifiedOperationMarker, (ILjava/lang/String;)V)
+          ACONST_NULL
+          LDC (kotlinx.serialization.serializer.simple)
+          INVOKESTATIC (kotlin/jvm/internal/MagicApiIntrinsics, voidMagicApiCall, (Ljava/lang/Object;)V)
+          INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlin/reflect/KType;)Lkotlinx/serialization/KSerializer;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final static kotlinx.serialization.KSerializer outer() {
+        LABEL (L0)
+        LINENUMBER (14)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L1)
+        LINENUMBER (16)
+          GETSTATIC (Box, Companion, LBox$Companion;)
+          NEW (java/lang/IllegalArgumentException)
+          DUP
+          LDC (Captured type parameter T of <root>.IntrinsicsNonReifiedKt.outer from generic non-reified function. Such functionality cannot be supported because T is erased, either specify serializer explicitly or make calling function inline with reified T.)
+          INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
+          CHECKCAST (java/lang/Throwable)
+          ATHROW
+        LABEL (L2)
+    }
+}

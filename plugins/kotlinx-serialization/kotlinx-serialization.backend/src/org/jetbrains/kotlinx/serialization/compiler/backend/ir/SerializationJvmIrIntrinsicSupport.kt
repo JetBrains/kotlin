@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.annotationArrayType
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.doubleAnnotationArrayType
@@ -250,16 +249,34 @@ class SerializationJvmIrIntrinsicSupport(
             return false
         }
 
-    private fun generateThrowOnStarProjection(parentType: IrSimpleType, adapter: InstructionAdapter) {
-        val iaeName = "java/lang/IllegalArgumentException"
-        with(adapter) {
-            anew(Type.getObjectType(iaeName))
-            dup()
-            aconst("Star projections in type arguments are not allowed, but had ${parentType.render()}")
-            invokespecial(iaeName, "<init>", "(Ljava/lang/String;)V", false)
-            checkcast(Type.getObjectType("java/lang/Throwable"))
-            athrow()
+    private val iaeName = "java/lang/IllegalArgumentException"
+
+    private fun InstructionAdapter.throwIae(message: String) {
+        anew(Type.getObjectType(iaeName))
+        dup()
+        aconst(message)
+        invokespecial(iaeName, "<init>", "(Ljava/lang/String;)V", false)
+        checkcast(Type.getObjectType("java/lang/Throwable"))
+        athrow()
+    }
+
+    private fun IrTypeArgument.argumentTypeOrGenerateException(ownerType: IrSimpleType, adapter: InstructionAdapter): IrType? {
+        val argType = this.typeOrNull
+        if (argType == null) {
+            adapter.throwIae("Star projections in type arguments are not allowed, but had ${ownerType.render()}")
+            return null
         }
+        val classifier = argType.classifierOrNull
+        if (classifier is IrTypeParameterSymbol && !classifier.owner.isReified) {
+            val fullName = argType.render() // T of <function fqName>
+            val name = classifier.owner.name.asString()
+            val message = "Captured type parameter $fullName from generic non-reified function. " +
+                    "Such functionality cannot be supported because $name is erased, either specify serializer explicitly or make " +
+                    "calling function inline with reified $name."
+            adapter.throwIae(message)
+            return null
+        }
+        return argType
     }
 
     fun generateSerializerForType(
@@ -278,10 +295,7 @@ class SerializationJvmIrIntrinsicSupport(
             val companionType = if (typeDescriptor.isSerializableObject) typeDescriptor else typeDescriptor.companionObject()!!
             support.instantiateObject(adapter, companionType.symbol)
             val args = (type as IrSimpleType).arguments.map {
-                it.typeOrNull ?: run {
-                    generateThrowOnStarProjection(type, adapter)
-                    return
-                }
+                it.argumentTypeOrGenerateException(type, adapter) ?: return
             }
             args.forEach { generateSerializerForType(it, adapter, intrinsicType) }
             val signature = kSerializerType.descriptor.repeat(args.size)
@@ -337,10 +351,7 @@ class SerializationJvmIrIntrinsicSupport(
         }
         // serializer is not singleton object and shall be instantiated
         val typeArgumentsAsTypes = (kType as IrSimpleType).arguments.map {
-            it.typeOrNull ?: run {
-                generateThrowOnStarProjection(kType, iv)
-                return false
-            }
+            it.argumentTypeOrGenerateException(kType, iv) ?: return false
         }
         val argSerializers = typeArgumentsAsTypes.map { argType ->
             // check if any type argument is not serializable
