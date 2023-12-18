@@ -87,19 +87,17 @@ open class JvmIrCodegenFactory(
         IdeCodegenSettings(shouldStubAndNotLinkUnboundSymbols = shouldStubAndNotLinkUnboundSymbols),
     )
 
-    init {
-        if (ideCodegenSettings.shouldDeduplicateBuiltInSymbols && !ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
-            throw IllegalStateException(
-                "`shouldDeduplicateBuiltInSymbols` depends on `shouldStubAndNotLinkUnboundSymbols` being enabled. Deduplication of" +
-                        " built-in symbols hasn't been tested without stubbing and there is currently no use case for it without stubbing."
-            )
-        }
-    }
-
     /**
+     * @param shouldStubAndNotLinkUnboundSymbols
+     * must be `true` only if current compilation is done in the context of the "Evaluate Expression"
+     * process in the debugger or "Android LiveEdit plugin".
+     * When enabled, this option disables the linkage process and generates stubs for all unbound symbols.
      * @param shouldStubOrphanedExpectSymbols See [stubOrphanedExpectSymbols].
      * @param shouldReferenceUndiscoveredExpectSymbols See [referenceUndiscoveredExpectSymbols].
      * @param shouldDeduplicateBuiltInSymbols See [SymbolTableWithBuiltInsDeduplication].
+     * @param doNotLoadDependencyModuleHeaders
+     * must be `true` only if current compilation is done in the context of the "Evaluate Expression" process in the debugger.
+     * When enabled, this option disables all compiler plugins.
      */
     data class IdeCodegenSettings(
         val shouldStubAndNotLinkUnboundSymbols: Boolean = false,
@@ -107,7 +105,16 @@ open class JvmIrCodegenFactory(
         val shouldReferenceUndiscoveredExpectSymbols: Boolean = false,
         val shouldDeduplicateBuiltInSymbols: Boolean = false,
         val doNotLoadDependencyModuleHeaders: Boolean = false,
-    )
+    ) {
+        init {
+            if (shouldDeduplicateBuiltInSymbols && !shouldStubAndNotLinkUnboundSymbols) {
+                throw IllegalStateException(
+                    "`shouldDeduplicateBuiltInSymbols` depends on `shouldStubAndNotLinkUnboundSymbols` being enabled. Deduplication of" +
+                            " built-in symbols hasn't been tested without stubbing and there is currently no use case for it without stubbing."
+                )
+            }
+        }
+    }
 
     data class JvmIrBackendInput(
         val irModuleFragment: IrModuleFragment,
