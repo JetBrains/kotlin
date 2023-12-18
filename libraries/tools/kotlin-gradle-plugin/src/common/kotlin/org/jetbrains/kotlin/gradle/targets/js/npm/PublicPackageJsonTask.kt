@@ -48,6 +48,7 @@ abstract class PublicPackageJsonTask :
     @get:Internal
     abstract val packageJsonHandlers: ListProperty<Action<PackageJson>>
 
+    @Suppress("unused")
     @get:Input
     internal val packageJsonInputHandlers: Provider<PackageJson> by lazy {
         packageJsonHandlers.map { packageJsonHandlersList ->
