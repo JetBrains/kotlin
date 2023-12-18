@@ -594,7 +594,7 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
             if (atom is ResolvedCallableReferenceAtom) {
                 val (applicability, success) =
                     context.bodyResolveComponents.callResolver.resolveCallableReference(
-                        candidate.csBuilder, atom, hasSyntheticOuterCall = candidate.callInfo.name == ACCEPT_SPECIFIC_TYPE.callableName
+                        candidate, atom, hasSyntheticOuterCall = candidate.callInfo.name == ACCEPT_SPECIFIC_TYPE.callableName
                     )
                 if (!success) {
                     // If the resolution was unsuccessful, we ensure that an error will be reported for the callable reference

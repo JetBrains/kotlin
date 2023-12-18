@@ -68,7 +68,7 @@ class PostponedArgumentsAnalyzer(
 
     private fun processCallableReference(atom: ResolvedCallableReferenceAtom, candidate: Candidate) {
         if (atom.mightNeedAdditionalResolution) {
-            callResolver.resolveCallableReference(candidate.csBuilder, atom, hasSyntheticOuterCall = false)
+            callResolver.resolveCallableReference(candidate, atom, hasSyntheticOuterCall = false)
         }
 
         val callableReferenceAccess = atom.reference

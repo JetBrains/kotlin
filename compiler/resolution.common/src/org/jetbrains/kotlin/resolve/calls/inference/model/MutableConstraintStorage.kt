@@ -221,6 +221,14 @@ class MutableVariableWithConstraints private constructor(
         }
     }
 
+    fun runConstraintsSimplification() {
+        val currentState = constraints.toList()
+        mutableConstraints.apply {
+            clear()
+            addAll(currentState)
+        }
+    }
+
     private fun isUsefulConstraint(constraint: Constraint, equalityConstraints: Map<Int, List<Constraint>>): Boolean {
         if (constraint.kind == ConstraintKind.EQUALITY) return true
         return equalityConstraints[constraint.typeHashCode]?.none { it.type == constraint.type } ?: true
