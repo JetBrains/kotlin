@@ -18,7 +18,7 @@ internal object DisabledNativeTargetsChecker : KotlinGradleProjectChecker {
 
         val disabledTargets = multiplatformExtension.awaitTargets()
             .filterIsInstance<KotlinNativeTarget>()
-            .filter { !it.konanTarget.enabledOnCurrentHostForKlibCompilation }
+            .filter { !it.konanTarget.enabledOnCurrentHostForKlibCompilation() }
             .map { it.name }
 
         if (disabledTargets.isNotEmpty()) {

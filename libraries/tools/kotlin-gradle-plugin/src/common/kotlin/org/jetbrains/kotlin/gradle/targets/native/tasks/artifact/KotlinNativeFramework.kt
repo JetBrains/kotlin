@@ -74,7 +74,7 @@ class KotlinNativeFrameworkImpl(
         val resultTask = project.registerTask<Task>(taskName) { task ->
             task.group = BasePlugin.BUILD_GROUP
             task.description = "Assemble ${kind.description} '$artifactName' for ${target.visibleName}."
-            task.enabled = target.enabledOnCurrentHostForBinariesCompilation
+            task.enabled = target.enabledOnCurrentHostForBinariesCompilation()
         }
 
         val librariesConfigurationName = project.registerLibsDependencies(target, artifactName, modules)
@@ -113,7 +113,7 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         listOf(target, kind.compilerOutputKind)
     ) { task ->
         task.description = "Assemble ${kind.description} '$name' for a target '${target.name}'."
-        task.enabled = target.enabledOnCurrentHostForBinariesCompilation
+        task.enabled = target.enabledOnCurrentHostForBinariesCompilation()
         task.baseName.set(name)
         task.destinationDir.set(destinationDir)
         task.optimized.set(buildType.optimized)

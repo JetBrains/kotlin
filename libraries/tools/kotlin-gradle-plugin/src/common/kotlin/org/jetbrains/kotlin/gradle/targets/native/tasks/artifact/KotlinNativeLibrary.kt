@@ -74,7 +74,7 @@ class KotlinNativeLibraryImpl(
         val resultTask = project.registerTask<Task>(taskName) { task ->
             task.group = BasePlugin.BUILD_GROUP
             task.description = "Assemble all types of registered '$artifactName' ${kind.description} for ${target.visibleName}."
-            task.enabled = target.enabledOnCurrentHostForBinariesCompilation
+            task.enabled = target.enabledOnCurrentHostForBinariesCompilation()
         }
         project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(resultTask)
 
@@ -87,7 +87,7 @@ class KotlinNativeLibraryImpl(
             ) { task ->
                 task.description = "Assemble ${kind.description} '$artifactName' for a target '${target.name}'."
                 task.destinationDir.set(project.layout.buildDirectory.dir("$outDir/${target.visibleName}/${buildType.visibleName}"))
-                task.enabled = target.enabledOnCurrentHostForBinariesCompilation
+                task.enabled = target.enabledOnCurrentHostForBinariesCompilation()
                 task.baseName.set(artifactName)
                 task.optimized.set(buildType.optimized)
                 task.debuggable.set(buildType.debuggable)

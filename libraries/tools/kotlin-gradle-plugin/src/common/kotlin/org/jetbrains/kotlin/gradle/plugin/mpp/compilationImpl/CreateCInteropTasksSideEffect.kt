@@ -44,7 +44,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             it.description = "Generates Kotlin/Native interop library '${interop.name}' " +
                     "for compilation '${compilation.compilationName}'" +
                     "of target '${it.konanTarget.name}'."
-            it.enabled = compilation.konanTarget.enabledOnCurrentHostForKlibCompilation
+            it.enabled = compilation.konanTarget.enabledOnCurrentHostForKlibCompilation()
             it.definitionFile.set(params.settings.definitionFile)
         }
 
@@ -64,7 +64,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
                 createCInteropApiElementsKlibArtifact(compilation.target, interop, interopTask)
 
                 // Add the interop library in publication.
-                if (compilation.konanTarget.enabledOnCurrentHostForKlibCompilation) {
+                if (compilation.konanTarget.enabledOnCurrentHostForKlibCompilation()) {
                     createKlibArtifact(
                         compilation,
                         artifactFile = interopTask.map { it.outputFile },
