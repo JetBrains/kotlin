@@ -1,7 +1,6 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
-import java.io.FileNotFoundException
 
 buildscript {
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
@@ -1114,15 +1113,6 @@ afterEvaluate {
                 YarnLockMismatchReport.WARNING
         }
     }
-}
-
-/**
- * Unused declarations annotated with annotations from this list will not be reported by the "Unused symbols" inspection.
- */
-val entryPointAnnotations by extra {
-    listOf(
-        "org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI",
-    )
 }
 
 afterEvaluate {
