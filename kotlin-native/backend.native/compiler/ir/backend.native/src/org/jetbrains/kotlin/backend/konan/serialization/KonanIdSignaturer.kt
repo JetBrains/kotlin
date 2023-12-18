@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 class KonanIdSignaturer(mangler: KotlinMangler.DescriptorMangler) : IdSignatureDescriptor(mangler) {
 

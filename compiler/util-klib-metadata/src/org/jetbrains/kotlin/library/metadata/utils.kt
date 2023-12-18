@@ -5,8 +5,18 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
 import org.jetbrains.kotlin.library.irProviderName
 
 fun BaseKotlinLibrary.isInteropLibrary() = irProviderName == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+
+fun ModuleDescriptor.isFromInteropLibrary() =
+    when (this) {
+        is ModuleDescriptorImpl ->
+            if (klibModuleOrigin !is DeserializedKlibModuleOrigin) false
+            else kotlinLibrary.isInteropLibrary()
+        else -> false // cinterop libraries are deserialized by Fir2Ir as ModuleDescriptorImpl, not FirModuleDescriptor
+    }

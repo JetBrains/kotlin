@@ -21,12 +21,10 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.konan.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.backend.konan.InlineFunctionOriginInfo
 import org.jetbrains.kotlin.backend.konan.PartialCacheInfo
-import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.isFromInteropLibraryByDescriptor
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
@@ -50,8 +48,10 @@ import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.library.metadata.isFromInteropLibrary
 import org.jetbrains.kotlin.library.metadata.isInteropLibrary
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 
 data class SerializedFileReference(val fqName: String, val path: String) {
     constructor(irFile: IrFile) : this(irFile.packageFqName.asString(), irFile.path)

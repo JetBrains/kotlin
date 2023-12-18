@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
@@ -18,8 +17,9 @@ import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
-import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
+import org.jetbrains.kotlin.library.metadata.isFromInteropLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
@@ -67,11 +67,3 @@ private fun DeclarationDescriptor.isFromFirDeserializedInteropLibrary(): Boolean
 
     return containerSource is KlibDeserializedContainerSource && containerSource.isFromNativeInteropLibrary
 }
-
-fun ModuleDescriptor.isFromInteropLibrary() =
-        when (this) {
-            is ModuleDescriptorImpl ->
-                if (klibModuleOrigin !is DeserializedKlibModuleOrigin) false
-                else kotlinLibrary.isInteropLibrary()
-            else -> false // cinterop libraries are deserialized by Fir2Ir as ModuleDescriptorImpl, not FirModuleDescriptor
-        }
