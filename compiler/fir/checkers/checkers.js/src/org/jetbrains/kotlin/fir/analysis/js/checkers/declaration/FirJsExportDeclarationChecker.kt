@@ -203,7 +203,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker() {
 
         val nonNullable = withNullability(ConeNullability.NOT_NULL, session.typeContext)
         val isPrimitiveExportableType = nonNullable.isAny || nonNullable.isNullableAny
-                || nonNullable is ConeDynamicType || isPrimitiveExportableConeKotlinType
+                || nonNullable is ConeDynamicType || nonNullable.isPrimitiveExportableConeKotlinType
         val symbol = toSymbol(session)
 
         return when {
@@ -222,7 +222,8 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker() {
                 || isString
                 || isPrimitiveNumberOrNullableType && !isLong
                 || isNothingOrNullableNothing
-                || isArrayType
+                || isPrimitiveArray
+                || isNonPrimitiveArray
 
     private fun validateDeclarationOnConsumableName(
         declaration: FirMemberDeclaration,

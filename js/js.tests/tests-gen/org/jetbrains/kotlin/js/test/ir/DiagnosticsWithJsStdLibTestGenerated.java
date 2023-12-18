@@ -487,6 +487,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("primitiveNullableTypes.kt")
+        public void testPrimitiveNullableTypes() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/primitiveNullableTypes.kt");
+        }
+
+        @Test
         @TestMetadata("secondaryConstructorWithoutJsName.kt")
         public void testSecondaryConstructorWithoutJsName() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/secondaryConstructorWithoutJsName.kt");
