@@ -109,8 +109,9 @@ internal class SymbolPsiReference(
 internal class SymbolPsiLiteral(
     override val kotlinOrigin: KtElement?,
     lightParent: PsiElement,
-    private val psiLiteral: PsiLiteral,
-) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiLiteral {
+    private val psiLiteral: PsiLiteralExpression,
+) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiLiteralExpression {
     override fun getValue(): Any? = psiLiteral.value
     override fun getText(): String = psiLiteral.text
+    override fun getType(): PsiType? = psiLiteral.type
 }

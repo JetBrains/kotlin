@@ -210,7 +210,7 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
     is KtConstantAnnotationValue -> {
         constantValue.createPsiExpression(parent)?.let {
             when (it) {
-                is PsiLiteral -> SymbolPsiLiteral(sourcePsi, parent, it)
+                is PsiLiteralExpression -> SymbolPsiLiteral(sourcePsi, parent, it)
                 else -> SymbolPsiExpression(sourcePsi, parent, it)
             }
         }
