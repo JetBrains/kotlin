@@ -766,8 +766,8 @@ publishing {
                 def bundleArchives = bundlesLocationFiles
                         .findAll { it.name.startsWith("kotlin-native") && !it.name.contains("prebuilt") && !it.name.endsWith("spdx.json") }
                 def bundleConfigs = createConfigurations(bundleArchives)
-                def archiveExtension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
                 bundleConfigs.forEach { target, file ->
+                    def archiveExtension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
                     mvn.artifact(file) {
                         classifier = platformName(target)
                         extension = archiveExtension
@@ -804,8 +804,8 @@ publishing {
                 def prebuiltBundleArchives = bundlesLocationFiles
                         .findAll { it.name.startsWith("kotlin-native-prebuilt") && !it.name.endsWith("spdx.json") }
                 def bundlePrebuiltConfigs = createConfigurations(prebuiltBundleArchives)
-                def archiveExtension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
                 bundlePrebuiltConfigs.forEach { target, file ->
+                    def archiveExtension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
                     mvn.artifact(file) {
                         classifier = platformName(target)
                         extension = archiveExtension
