@@ -442,6 +442,7 @@ abstract class JsAstSerializerBase {
         JsFunction.Modifier.STATIC -> JsAstProtoBuf.Function.Modifier.STATIC
         JsFunction.Modifier.SET -> JsAstProtoBuf.Function.Modifier.SET
         JsFunction.Modifier.GET -> JsAstProtoBuf.Function.Modifier.GET
+        JsFunction.Modifier.GENERATOR -> JsAstProtoBuf.Function.Modifier.GENERATOR
     }
 
     protected fun map(op: JsBinaryOperator) = when (op) {

@@ -181,6 +181,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsCoroutineContext
         get() = context.ir.symbols.coroutineContextGetter
 
+    val jsYieldFunctionSymbol = getInternalFunction("jsYield")
+
     val jsGetContinuation = getInternalFunction("getContinuation")
     val jsInvokeSuspendSuperType =
         getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperType")
@@ -188,6 +190,25 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperTypeWithReceiver")
     val jsInvokeSuspendSuperTypeWithReceiverAndParam =
         getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperTypeWithReceiverAndParam")
+
+    val createCoroutineUnintercepted =
+        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.createCoroutineUnintercepted")
+    val startCoroutineUninterceptedOrReturn =
+        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn")
+
+    val createCoroutineUninterceptedGeneratorVersion =
+        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.createCoroutineUninterceptedGeneratorVersion")
+    val startCoroutineUninterceptedOrReturnGeneratorVersion =
+        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion")
+
+    val startCoroutineUninterceptedOrReturnGeneratorVersion1 by context.lazy2 {
+        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.valueParameters.size == 1 }
+    }
+    val startCoroutineUninterceptedOrReturnGeneratorVersion2 by context.lazy2 {
+        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.valueParameters.size == 2 }
+    }
+
+    val suspendOrReturnFunctionSymbol = getInternalWithoutPackage("kotlin.coroutines.intrinsics.suspendOrReturn")
 
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
@@ -328,6 +349,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("DoNotIntrinsify"))
     val jsFunAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsFun"))
     val jsNameAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsName"))
+    val jsGeneratorAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsGenerator"))
 
     val jsExportAnnotationSymbol by lazy(LazyThreadSafetyMode.NONE) {
         context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsExport"))
@@ -391,6 +413,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     private fun getInternalWithoutPackage(name: String) =
         context.symbolTable.descriptorExtension.referenceSimpleFunction(context.getFunctions(FqName(name)).single())
+
+    private fun getManyInternalWithoutPackage(name: String) =
+        context.getFunctions(FqName(name)).mapTo(mutableSetOf()) { context.symbolTable.descriptorExtension.referenceSimpleFunction(it) }
 
     private fun getInternalWithoutPackageOrNull(name: String): IrSimpleFunctionSymbol? {
         val descriptor = context.getFunctions(FqName(name)).singleOrNull() ?: return null

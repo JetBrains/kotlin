@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
-import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
+import org.jetbrains.kotlin.js.backend.ast.metadata.isGeneratorFunction
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
@@ -119,7 +119,13 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
-        .apply { if (declaration.isEs6ConstructorReplacement) modifiers.add(JsFunction.Modifier.STATIC) }
+        .apply {
+            if (declaration.isEs6ConstructorReplacement) modifiers.add(JsFunction.Modifier.STATIC)
+            if (declaration.shouldBeCompiledAsGenerator()) {
+                name?.isGeneratorFunction = true
+                modifiers.add(JsFunction.Modifier.GENERATOR)
+            }
+        }
         .withSource(declaration, context, useNameOf = declaration)
 
     function.name = name
@@ -134,6 +140,9 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     return function
 }
+
+private fun IrFunction.shouldBeCompiledAsGenerator(): Boolean =
+    hasAnnotation(JsAnnotations.jsGeneratorFqn)
 
 private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean {
     if (receiver == null || receiver is JsThisRef) return false
@@ -235,6 +244,11 @@ fun translateCall(
     val ref = when (jsDispatchReceiver) {
         null -> JsNameRef(symbolName)
         else -> jsElementAccess(symbolName.ident, jsDispatchReceiver)
+    }
+
+    if (symbolName.isGeneratorFunction) {
+        (ref.commentsBeforeNode ?: mutableListOf<JsComment>().also { ref.commentsBeforeNode = it })
+            .add(JsMultiLineComment("#__NOINLINE__"))
     }
 
     return if (isExternalVararg) {

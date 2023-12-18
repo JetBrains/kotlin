@@ -536,6 +536,12 @@ public class JsIrInvalidationPerModuleTestGenerated extends AbstractJsIrInvalida
     }
 
     @Test
+    @TestMetadata("suspendGenerator")
+    public void testSuspendGenerator() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/suspendGenerator/");
+    }
+
+    @Test
     @TestMetadata("suspendInterfaceWithDefaultParams")
     public void testSuspendInterfaceWithDefaultParams() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/suspendInterfaceWithDefaultParams/");

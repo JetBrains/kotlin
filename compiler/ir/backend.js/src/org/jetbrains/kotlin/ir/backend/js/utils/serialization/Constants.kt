@@ -70,4 +70,5 @@ object ExpressionIds {
     const val NEW = 21
     const val CLASS = 22
     const val SUPER_REF = 23
+    const val YIELD = 24
 }

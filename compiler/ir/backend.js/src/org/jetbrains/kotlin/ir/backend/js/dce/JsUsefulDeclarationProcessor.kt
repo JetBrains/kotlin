@@ -27,7 +27,6 @@ internal class JsUsefulDeclarationProcessor(
 ) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects) {
     private val equalsMethod = getMethodOfAny("equals")
     private val hashCodeMethod = getMethodOfAny("hashCode")
-    private val isEsModules = context.configuration[JSConfigurationKeys.MODULE_KIND] == ModuleKind.ES
 
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
         override fun visitCall(expression: IrCall, data: IrDeclaration) {

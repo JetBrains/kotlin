@@ -143,7 +143,9 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
                 }
             }
 
-        return expression.value.maybeOptimizeIntoSwitch(context, lastStatementTransformer).withSource(expression, context)
+        return expression.value
+            .maybeOptimizeIntoSwitch(context, lastStatementTransformer)
+            .withSource(expression, context)
     }
 
     override fun visitThrow(expression: IrThrow, context: JsGenerationContext): JsStatement {

@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
-import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
-import org.jetbrains.kotlin.ir.backend.js.lower.isSyntheticConstructorForExport
-import org.jetbrains.kotlin.ir.backend.js.lower.isSyntheticPrimaryConstructor
+import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -136,3 +133,6 @@ fun JsIrBackendContext.findDefaultConstructorFor(irClass: IrClass): IrFunction? 
         mapping.secondaryConstructorToFactory[it] ?: it
     }
 }
+
+val IrClass.primaryConstructorReplacement: IrSimpleFunction?
+    get() = findDeclaration<IrSimpleFunction> { it.isEs6PrimaryConstructorReplacement }

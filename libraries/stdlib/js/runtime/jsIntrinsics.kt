@@ -227,3 +227,6 @@ internal fun jsContextfulRef(context: dynamic, fn: dynamic): dynamic
 
 @JsIntrinsic
 internal fun jsIsEs6(): Boolean
+
+@JsIntrinsic
+internal fun <T> jsYield(suspendFunction: () -> T): T

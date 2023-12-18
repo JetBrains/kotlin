@@ -54,6 +54,7 @@ where advanced options include:
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. This is available in the IR backend only.
   -Xtyped-arrays             Translate primitive arrays into JS typed arrays.
   -Xes-classes               Let generated JavaScript code use ES2015 classes.
+  -Xes-generators            Enable ES2015 generator functions usage inside the compiled code
   -Xwasm                     Use the experimental WebAssembly compiler backend.
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-enable-array-range-checks

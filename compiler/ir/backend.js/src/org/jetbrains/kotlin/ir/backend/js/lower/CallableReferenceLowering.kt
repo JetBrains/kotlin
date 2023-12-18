@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
@@ -16,6 +15,8 @@ import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
-class CallableReferenceLowering(private val context: CommonBackendContext) : BodyLoweringPass {
+class CallableReferenceLowering(private val context: JsCommonBackendContext) : BodyLoweringPass {
 
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, withLocalDeclarations = true)
@@ -115,9 +116,9 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
 
         private val isLambda: Boolean get() = reflectionTarget == null
 
-        private val isSuspendLambda = isLambda && function.isSuspend
+        private val shouldBeCoroutineImpl = isLambda && function.isSuspend && !context.compileSuspendAsJsGenerator
 
-        private val superClass = if (isSuspendLambda) context.ir.symbols.coroutineImpl.owner.defaultType else context.irBuiltIns.anyType
+        private val superClass = if (shouldBeCoroutineImpl) context.ir.symbols.coroutineImpl.owner.defaultType else context.irBuiltIns.anyType
         private var boundReceiverField: IrField? = null
 
         private val referenceType = reference.type as IrSimpleType
@@ -225,7 +226,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
 
                 var continuation: IrValueParameter? = null
 
-                if (isSuspendLambda) {
+                if (shouldBeCoroutineImpl) {
                     val superContinuation = superConstructor.valueParameters.single()
                     continuation = addValueParameter {
                         name = superContinuation.name

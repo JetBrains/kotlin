@@ -163,6 +163,7 @@ internal class ICHasher {
             JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION,
             JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS,
             JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT,
+            JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR,
             JSConfigurationKeys.OPTIMIZE_GENERATED_JS,
         )
         hashCalculator.updateConfigKeys(config, booleanKeys) { value: Boolean ->

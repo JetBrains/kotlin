@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceField
 import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceGetter
+import org.jetbrains.kotlin.ir.backend.js.utils.primaryConstructorReplacement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
@@ -102,7 +103,4 @@ class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendContext) :
                 )
 
     }
-
-    private val IrClass.primaryConstructorReplacement: IrSimpleFunction?
-        get() = findDeclaration<IrSimpleFunction> { it.isEs6PrimaryConstructorReplacement }
 }

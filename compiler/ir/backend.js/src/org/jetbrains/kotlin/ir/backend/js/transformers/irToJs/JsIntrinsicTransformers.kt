@@ -88,6 +88,10 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsIsEs6) { _, _ -> JsBooleanLiteral(backendContext.es6mode) }
 
+            add(intrinsics.jsYieldFunctionSymbol) { call, context ->
+                JsYield(translateCallArguments(call, context).single())
+            }
+
             add(intrinsics.jsObjectCreateSymbol) { call, context ->
                 val classToCreate = call.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
                 val className = classToCreate.getClassRef(context.staticContext)

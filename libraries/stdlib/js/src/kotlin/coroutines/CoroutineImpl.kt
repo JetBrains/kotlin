@@ -9,7 +9,9 @@ import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 @SinceKotlin("1.3")
 @JsName("CoroutineImpl")
-internal abstract class CoroutineImpl(private val resultContinuation: Continuation<Any?>?) : Continuation<Any?> {
+internal abstract class CoroutineImpl(
+    private val resultContinuation: Continuation<Any?>?
+) : InterceptedCoroutine(), Continuation<Any?> {
     protected var state = 0
     protected var exceptionState = 0
     protected var result: dynamic = null
@@ -19,13 +21,6 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
     private val _context: CoroutineContext? = resultContinuation?.context
 
     public override val context: CoroutineContext get() = _context!!
-
-    private var intercepted_: Continuation<Any?>? = null
-
-    public fun intercepted(): Continuation<Any?> =
-        intercepted_
-                ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
-                    .also { intercepted_ = it }
 
     override fun resumeWith(result: Result<Any?>) {
         var current = this
@@ -71,14 +66,6 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
                 }
             }
         }
-    }
-
-    private fun releaseIntercepted() {
-        val intercepted = intercepted_
-        if (intercepted != null && intercepted !== this) {
-            context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)
-        }
-        this.intercepted_ = CompletedContinuation // just in case
     }
 
     protected abstract fun doResume(): Any?

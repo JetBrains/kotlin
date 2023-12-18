@@ -7,9 +7,7 @@
 
 package kotlin.coroutines.intrinsics
 
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.ContinuationInterceptor
-import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.*
 import kotlin.coroutines.CoroutineImpl
 import kotlin.internal.InlineOnly
 
@@ -169,8 +167,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
  */
 @SinceKotlin("1.3")
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
-    (this as? CoroutineImpl)?.intercepted() ?: this
-
+    (this as? InterceptedCoroutine)?.intercepted() ?: this
 
 private inline fun <T> createCoroutineFromSuspendFunction(
     completion: Continuation<T>,
@@ -181,5 +178,109 @@ private inline fun <T> createCoroutineFromSuspendFunction(
             if (exception != null) throw exception
             return block()
         }
+    }
+}
+
+@InlineOnly
+internal inline fun <T> createCoroutineFromGeneratorFunction(
+    completion: Continuation<T>,
+    crossinline generatorFunction: (Continuation<T>) -> dynamic,
+): Continuation<Any?> {
+    val continuation = GeneratorCoroutineImpl(completion.unsafeCast<Continuation<Any?>>())
+    continuation.addNewIterator(dummyGenerator(COROUTINE_SUSPENDED) { generatorFunction(continuation) })
+    return continuation
+}
+
+@InlineOnly
+internal inline fun <T> startCoroutineFromGeneratorFunction(
+    completion: Continuation<T>,
+    crossinline generatorFunction: (Continuation<T>) -> dynamic,
+): Any? {
+    val continuation = GeneratorCoroutineImpl(completion.unsafeCast<Continuation<Any?>>())
+    continuation.isRunning = true
+    val result = generatorFunction(continuation)
+    continuation.isRunning = false
+    if (continuation.shouldResumeImmediately()) continuation.resume(result)
+    return result
+}
+
+internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnGeneratorVersion(
+    completion: Continuation<T>
+): Any? = startCoroutineFromGeneratorFunction(completion) {
+    val a = asDynamic()
+    if (jsTypeOf(a) === "function") a(it)
+    else invokeSuspendSuperType(it)
+}
+
+internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnGeneratorVersion(
+    receiver: R,
+    completion: Continuation<T>
+): Any? = startCoroutineFromGeneratorFunction(completion) {
+    val a = asDynamic()
+    if (jsTypeOf(a) === "function") a(receiver, it)
+    else invokeSuspendSuperTypeWithReceiver(receiver, it)
+}
+
+internal fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturnGeneratorVersion(
+    receiver: R,
+    param: P,
+    completion: Continuation<T>
+): Any? = startCoroutineFromGeneratorFunction(completion) {
+    val a = asDynamic()
+    if (jsTypeOf(a) === "function") a(receiver, param, it)
+    else invokeSuspendSuperTypeWithReceiverAndParam(receiver, param, it)
+}
+
+internal fun <T> (suspend () -> T).createCoroutineUninterceptedGeneratorVersion(
+    completion: Continuation<T>
+): Continuation<Any?> =
+    createCoroutineFromGeneratorFunction(completion) {
+        val a = asDynamic()
+        if (jsTypeOf(a) === "function") a(it)
+        else invokeSuspendSuperType(it)
+    }
+
+internal fun <R, T> (suspend R.() -> T).createCoroutineUninterceptedGeneratorVersion(
+    receiver: R,
+    completion: Continuation<T>
+): Continuation<Unit> =
+    createCoroutineFromGeneratorFunction(completion) {
+        val a = asDynamic()
+        if (jsTypeOf(a) === "function") a(receiver, it)
+        else invokeSuspendSuperTypeWithReceiver(receiver, it)
+    }
+
+
+internal fun <R, T, P> (suspend R.(P) -> T).createCoroutineUninterceptedGeneratorVersion(
+    receiver: R,
+    param: P,
+    completion: Continuation<T>
+): Continuation<Unit> =
+    createCoroutineFromGeneratorFunction(completion) {
+        val a = asDynamic()
+        if (jsTypeOf(a) === "function") a(receiver, param, it)
+        else invokeSuspendSuperTypeWithReceiverAndParam(receiver, param, it)
+    }
+
+
+internal fun suspendOrReturn(value: Any?, continuation: Continuation<Any?>): Any? {
+    if (!isGeneratorSuspendStep(value)) return value
+
+    val iterator = value.unsafeCast<JsIterator<Any?>>()
+
+    if (continuation.asDynamic().constructor !== GeneratorCoroutineImpl::class.js) {
+        return iterator.next().value
+    }
+
+    val generatorCoroutineImpl = continuation.unsafeCast<GeneratorCoroutineImpl>()
+
+    generatorCoroutineImpl.addNewIterator(iterator)
+    try {
+        val iteratorStep = iterator.next()
+        if (iteratorStep.done) generatorCoroutineImpl.dropLastIterator()
+        return iteratorStep.value
+    } catch (e: Throwable) {
+        generatorCoroutineImpl.dropLastIterator()
+        throw e
     }
 }

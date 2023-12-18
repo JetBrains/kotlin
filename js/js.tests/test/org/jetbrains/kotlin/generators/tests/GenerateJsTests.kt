@@ -93,6 +93,14 @@ fun main(args: Array<String>) {
                 model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
 
+            testClass<AbstractJsFirES6InvalidationPerFileTest> {
+                model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+            }
+
+            testClass<AbstractJsFirES6InvalidationPerModuleTest> {
+                model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+            }
+
             testClass<AbstractJsIrInvalidationPerFileWithPLTest> {
                 model("incremental/invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
