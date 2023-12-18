@@ -16,7 +16,7 @@ fun <K : Any?> foo(x: MutableList<K>): Foo<K> {
   return TODO()
 }
 
-fun main() {
+fun runMe() {
   val x: List<String> = buildList<String>(builderAction = local fun MutableList<String>.<anonymous>() {
     $this$buildList.add(element = "") /*~> Unit */
     val foo: Foo<String> = foo<String>(x = $this$buildList)

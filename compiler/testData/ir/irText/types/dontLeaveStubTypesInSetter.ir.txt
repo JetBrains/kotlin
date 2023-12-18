@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/dontLeaveStubTypesInSetter.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo <K> (x: kotlin.collections.MutableList<K of <root>.foo>): <root>.Foo<K of <root>.foo> declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
-  FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:runMe visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:x type:kotlin.collections.List<kotlin.String> [val]
         CALL 'public final fun buildList <E> (builderAction: @[ExtensionFunctionType] kotlin.Function1<kotlin.collections.MutableList<E of kotlin.collections.buildList>, kotlin.Unit>): kotlin.collections.List<E of kotlin.collections.buildList> declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
@@ -56,12 +56,12 @@ FILE fqName:<root> fileName:/dontLeaveStubTypesInSetter.kt
               BLOCK_BODY
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                   CALL 'public abstract fun add (element: E of kotlin.collections.MutableList): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
-                    $this: GET_VAR '$this$buildList: kotlin.collections.MutableList<kotlin.String> declared in <root>.main.<anonymous>' type=kotlin.collections.MutableList<kotlin.String> origin=null
+                    $this: GET_VAR '$this$buildList: kotlin.collections.MutableList<kotlin.String> declared in <root>.runMe.<anonymous>' type=kotlin.collections.MutableList<kotlin.String> origin=null
                     element: CONST String type=kotlin.String value=""
                 VAR name:foo type:<root>.Foo<kotlin.String> [val]
                   CALL 'public final fun foo <K> (x: kotlin.collections.MutableList<K of <root>.foo>): <root>.Foo<K of <root>.foo> declared in <root>' type=<root>.Foo<kotlin.String> origin=null
                     <K>: kotlin.String
-                    x: GET_VAR '$this$buildList: kotlin.collections.MutableList<kotlin.String> declared in <root>.main.<anonymous>' type=kotlin.collections.MutableList<kotlin.String> origin=null
+                    x: GET_VAR '$this$buildList: kotlin.collections.MutableList<kotlin.String> declared in <root>.runMe.<anonymous>' type=kotlin.collections.MutableList<kotlin.String> origin=null
                 CALL 'public final fun <set-x> (<set-?>: T of <root>.Foo): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=EQ
-                  $this: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.main.<anonymous>' type=<root>.Foo<kotlin.String> origin=null
+                  $this: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.runMe.<anonymous>' type=<root>.Foo<kotlin.String> origin=null
                   <set-?>: CONST String type=kotlin.String value=""

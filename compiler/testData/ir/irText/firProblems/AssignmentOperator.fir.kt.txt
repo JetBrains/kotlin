@@ -36,7 +36,7 @@ fun <T : Any?> id(t: T): T {
   return t
 }
 
-fun main() {
+fun runMe() {
   val a: A = A()
   id<A>(t = a).<set-prop>(<set-?> = 10)
   { // BLOCK

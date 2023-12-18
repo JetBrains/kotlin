@@ -90,15 +90,12 @@ object B {
 fun <T : Any?> id(t: T): T
 
 // CHECK JVM_IR:
-//   Mangled name: foo#main(){}
-//   Mangled name for the signature computed from Ir:         main(){}
-//   Mangled name for the signature computed from Descriptor: main(){}%AssignmentOperator.kt
-//   Public signature by IR: foo/main|-4284757841571462650[0]
-//   Public signature by IR debug description: main(){}
-//   Public signature by Frontend: foo/main|7392120756922895329[0]
-//   Public signature by Frontend debug description: main(){}%AssignmentOperator.kt
+//   Mangled name: foo#runMe(){}
+//   Public signature: foo/runMe|1754039929145531074[0]
+//   Public signature debug description: runMe(){}
 // CHECK JS_IR NATIVE:
-//   Mangled name: foo#main(){}
-//   Public signature: foo/main|-4284757841571462650[0]
-//   Public signature debug description: main(){}
-fun main(): Unit
+//   Mangled name: foo#runMe(){}
+//   Public signature: foo/runMe|1754039929145531074[0]
+//   Public signature debug description: runMe(){}
+fun runMe(): Unit
+

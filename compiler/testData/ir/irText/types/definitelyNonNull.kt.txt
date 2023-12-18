@@ -8,7 +8,7 @@ fun <T : Any?> elvisLike(x: T, y: (T & Any)): (T & Any) {
   }
 }
 
-fun main() {
+fun runMe() {
   elvisLike<String>(x = "", y = "").<get-length>() /*~> Unit */
   elvisLike<String?>(x = null, y = "").<get-length>() /*~> Unit */
   elvisLike<String>(x = "", y = "").<get-length>() /*~> Unit */

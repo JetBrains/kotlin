@@ -1,4 +1,4 @@
-fun main() {
+fun runMe() {
   local class Foo {
     constructor() /* primary */ {
       super/*Any*/()

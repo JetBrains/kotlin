@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/argumentMappedWithError.kt
   FUN name:foo visibility:public modality:FINAL <> (arg:kotlin.Number) returnType:kotlin.Unit
     VALUE_PARAMETER name:arg index:0 type:kotlin.Number
     BLOCK_BODY
-  FUN name:main visibility:public modality:FINAL <> (args:kotlin.Array<kotlin.String>) returnType:kotlin.Unit
+  FUN name:runMe visibility:public modality:FINAL <> (args:kotlin.Array<kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:args index:0 type:kotlin.Array<kotlin.String>
     BLOCK_BODY
       VAR name:x type:kotlin.Int [val]
@@ -16,4 +16,4 @@ FILE fqName:<root> fileName:/argumentMappedWithError.kt
       CALL 'public final fun foo (arg: kotlin.Number): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         arg: CALL 'public final fun convert <R> (): R of <root>.convert declared in <root>' type=kotlin.Number origin=null
           <R>: kotlin.Number
-          $receiver: GET_VAR 'val x: kotlin.Int declared in <root>.main' type=kotlin.Int origin=null
+          $receiver: GET_VAR 'val x: kotlin.Int declared in <root>.runMe' type=kotlin.Int origin=null

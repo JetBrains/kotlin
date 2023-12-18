@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/kt55458.kt
-  FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:runMe visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Pair<kotlin.Int, kotlin.Int> [val]
@@ -10,6 +10,6 @@ FILE fqName:<root> fileName:/kt55458.kt
             that: CONST Int type=kotlin.Int value=2
         VAR name:a type:kotlin.Int [val]
           CALL 'public final fun component1 (): A of kotlin.Pair declared in kotlin.Pair' type=kotlin.Int origin=COMPONENT_N(index=1)
-            $this: GET_VAR 'val tmp_0: kotlin.Pair<kotlin.Int, kotlin.Int> declared in <root>.main' type=kotlin.Pair<kotlin.Int, kotlin.Int> origin=null
+            $this: GET_VAR 'val tmp_0: kotlin.Pair<kotlin.Int, kotlin.Int> declared in <root>.runMe' type=kotlin.Pair<kotlin.Int, kotlin.Int> origin=null
       CALL 'public final fun println (message: kotlin.Int): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
-        message: GET_VAR 'val a: kotlin.Int declared in <root>.main' type=kotlin.Int origin=null
+        message: GET_VAR 'val a: kotlin.Int declared in <root>.runMe' type=kotlin.Int origin=null

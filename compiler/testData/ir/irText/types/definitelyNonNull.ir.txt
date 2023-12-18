@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/definitelyNonNull.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val tmp_0: T of <root>.elvisLike declared in <root>.elvisLike' type=T of <root>.elvisLike origin=null
-  FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:runMe visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY

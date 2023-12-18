@@ -5,7 +5,7 @@ fun <R : Number> Number.convert(): R {
 fun foo(arg: Number) {
 }
 
-fun main(args: Array<String>) {
+fun runMe(args: Array<String>) {
   val x: Int = 0
   foo(arg = x.convert<Number>())
 }
