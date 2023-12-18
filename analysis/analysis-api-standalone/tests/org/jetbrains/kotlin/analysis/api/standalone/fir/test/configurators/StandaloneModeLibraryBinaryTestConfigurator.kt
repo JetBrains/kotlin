@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.KtLibraryBinaryModuleFactory
@@ -36,8 +35,6 @@ object StandaloneModeLibraryBinaryTestConfigurator : StandaloneModeConfiguratorB
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         with(builder) {
-            useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
-            usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
             configureOptionalTestCompilerPlugin()
             useConfigurators(::AnalysisApiJvmEnvironmentConfigurator)
             useConfigurators(::ExternalAnnotationsEnvironmentConfigurator)
