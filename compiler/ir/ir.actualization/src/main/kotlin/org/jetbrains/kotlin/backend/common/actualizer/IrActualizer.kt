@@ -55,7 +55,10 @@ class IrActualizer(
                 val classId = symbol.owner.classIdOrFail
                 classActualizationInfo.actualTypeAliases[classId]?.let { return it.owner.expandedType.classOrFail }
                 classActualizationInfo.actualClasses[classId]?.let { return it }
-                shouldNotBeCalled("There is no actual class for ${classId}, but this should be already rejected by frontend upto this point")
+                // Can't happen normally, but possible on incorrect code.
+                // In that case, it would later fail with error in matching inside [actualizeCallablesAndMergeModules]
+                // Let's leave to expect class as is for that case, it is probably best effort to make errors reasonable.
+                return symbol
             }
 
             override fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol? {
