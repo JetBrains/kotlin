@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.konan.CacheDeserializationStrategy
@@ -29,17 +28,12 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStruc
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
@@ -261,30 +255,6 @@ internal object EagerInitializedPropertySerializer {
             val filePath = stringTable[stream.readInt()]
             result.add(SerializedEagerInitializedFile(SerializedFileReference(fileFqName, filePath)))
         }
-    }
-}
-
-object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
-    private fun IdSignature.isInteropSignature(): Boolean = with(this) {
-        IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
-    }
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private fun IrClassSymbol.isInterop(): Boolean {
-        if (this is IrPublicSymbolBase<*> && this.signature.isInteropSignature()) return true
-
-        // K2 doesn't properly put signatures into such symbols yet, workaround:
-        return this.isBound && this.owner is Fir2IrLazyClass && this.owner.isFromInteropLibraryByDescriptor()
-    }
-
-    // This is an alternative to .isObjCClass that doesn't need to walk up all the class heirarchy,
-    // rather it only looks at immediate super class symbols.
-    private fun IrClass.hasInteropSuperClass() = this.superTypes
-            .mapNotNull { it.classOrNull }
-            .any { it.isInterop() }
-
-    override fun needToConstructFakeOverrides(clazz: IrClass): Boolean {
-        return !clazz.hasInteropSuperClass() && clazz !is IrLazyClass
     }
 }
 
