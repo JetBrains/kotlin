@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
-import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -109,10 +108,3 @@ val IrDeclaration.konanLibrary: KotlinLibrary?
 
 fun IrDeclaration.isFromInteropLibrary() = konanLibrary?.isInteropLibrary() == true
 fun IrPackageFragment.isFromInteropLibrary() = konanLibrary?.isInteropLibrary() == true
-
-/**
- * This function should be equivalent to [IrDeclaration.isFromInteropLibrary], but in fact it is not for declarations
- * from Fir modules. This should be fixed in the future.
- */
-@ObsoleteDescriptorBasedAPI
-fun IrDeclaration.isFromInteropLibraryByDescriptor() = descriptor.isFromInteropLibrary()
