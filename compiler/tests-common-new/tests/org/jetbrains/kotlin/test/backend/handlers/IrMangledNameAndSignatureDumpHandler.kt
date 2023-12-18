@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
-import org.jetbrains.kotlin.test.backend.handlers.ComputedSignature.ComputedBy
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.MUTE_SIGNATURE_COMPARISON_K2
@@ -221,7 +220,7 @@ class IrMangledNameAndSignatureDumpHandler(
             }
 
             irMangler.addFullMangledNameTo(fullMangledNames, declaration)
-            irMangler.addSignatureMangledNameTo(signatureMangledNames, declaration)
+            irMangler.addSignatureMangledNameTo(signatureMangledNames, declaration, ComputedBy.IR)
 
             if (canDumpMangledNameAndSignaturesComputedByFrontend) {
                 addSignatureTo(signatures, symbol.signature, ComputedBy.FE, isPublic = true)
@@ -231,9 +230,9 @@ class IrMangledNameAndSignatureDumpHandler(
                 if (firDeclaration != null) {
                     // Dump only FIR-based signature mangled names if there is FIR available. In this mode no descriptors are used
                     // for computing signature mangled names.
-                    firMangler?.addSignatureMangledNameTo(signatureMangledNames, firDeclaration)
+                    firMangler?.addSignatureMangledNameTo(signatureMangledNames, firDeclaration, ComputedBy.FE)
                 } else
-                    descriptorMangler.addSignatureMangledNameTo(signatureMangledNames, symbol.descriptor)
+                    descriptorMangler.addSignatureMangledNameTo(signatureMangledNames, symbol.descriptor, ComputedBy.FE)
             }
 
             fun printActualMangledNamesAndSignatures() {
@@ -362,16 +361,16 @@ private data class ComputedSignature(
     val isPublic: Boolean,
     val value: String,
     val description: String?
-) {
-    enum class ComputedBy(private val humanReadableDescription: String) {
-        FE("Frontend"), IR("IR");
+)
 
-        override fun toString() = humanReadableDescription
-    }
+private enum class ComputedBy(private val humanReadableDescription: String) {
+    FE("Frontend"), IR("IR");
+
+    override fun toString() = humanReadableDescription
 }
 
 private data class ComputedMangledName(
-    val manglerName: String,
+    val computedBy: ComputedBy,
     val compatibleMode: Boolean,
     val value: String,
 )
@@ -449,9 +448,9 @@ private fun Printer.printMangledNames(computedMangledNames: List<ComputedMangled
         // If the mangled names differ only by the mangler used (but not the compatibility mode), print
         // only mangled names from each mangler.
         computedMangledNames
-            .distinctBy { it.manglerName }
-            .printAligned(this) { "//   $prefix computed from ${it.manglerName}: " }
-    } else if (distinctNames.same { it.manglerName }) {
+            .distinctBy { it.computedBy }
+            .printAligned(this) { "//   $prefix by ${it.computedBy}: " }
+    } else if (distinctNames.same { it.computedBy }) {
         // If the mangled names differ only by the compatibility mode used (but not the mangler), print
         // only mangled names for each compatibility mode.
         computedMangledNames
@@ -460,7 +459,7 @@ private fun Printer.printMangledNames(computedMangledNames: List<ComputedMangled
     } else {
         // Otherwise, print the whole matrix.
         computedMangledNames
-            .printAligned(this) { "//   $prefix computed from ${it.manglerName} (compatible mode: ${it.compatibleMode}): " }
+            .printAligned(this) { "//   $prefix by ${it.computedBy} (compatible mode: ${it.compatibleMode}): " }
     }
 }
 
@@ -475,7 +474,7 @@ private fun Printer.printlnCheckMarker(backends: List<TargetBackend>) {
 
 private fun <Declaration> addMangledNameTo(
     collector: MutableList<ComputedMangledName>,
-    manglerName: String,
+    computedBy: ComputedBy,
     declaration: Declaration,
     mangle: Declaration.(Boolean) -> String,
 ) {
@@ -497,7 +496,7 @@ private fun <Declaration> addMangledNameTo(
                 }
             }
         }
-        ComputedMangledName(manglerName, compatibleMode, mangledName)
+        ComputedMangledName(computedBy, compatibleMode, mangledName)
     }
 }
 
@@ -522,16 +521,17 @@ private fun addSignatureTo(
 
 private fun <Declaration, Mangler : KotlinMangler<Declaration>> Mangler.addSignatureMangledNameTo(
     collector: MutableList<ComputedMangledName>,
-    declaration: Declaration
+    declaration: Declaration,
+    computedBy: ComputedBy
 ) {
-    addMangledNameTo(collector, manglerName, declaration) { signatureString(it) }
+    addMangledNameTo(collector, computedBy, declaration) { signatureString(it) }
 }
 
 private fun KotlinMangler.IrMangler.addFullMangledNameTo(
     collector: MutableList<ComputedMangledName>,
     declaration: IrDeclaration,
 ) {
-    addMangledNameTo(collector, manglerName, declaration) { mangleString(it) }
+    addMangledNameTo(collector, ComputedBy.IR, declaration) { mangleString(it) }
 }
 
 /**
