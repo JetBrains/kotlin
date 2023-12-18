@@ -689,6 +689,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("companionInheritsOwnerClass.kt")
+        public void testCompanionInheritsOwnerClass() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/companionInheritsOwnerClass.kt");
+        }
+
+        @Test
         @TestMetadata("conflictingNamesFromSuperclass.kt")
         public void testConflictingNamesFromSuperclass() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/conflictingNamesFromSuperclass.kt");
