@@ -553,6 +553,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
             .map { KotlinCompilerArgumentsLogLevel.fromPropertyValue(it) }
             .orElse(KotlinCompilerArgumentsLogLevel.DEFAULT)
 
+    val enableKlibsCrossCompilation: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: false
+
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
      * @see KOTLIN_JS_KARMA_BROWSERS
@@ -646,6 +649,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_USER_HOME_DIR = property("kotlin.user.home")
         val KOTLIN_PROJECT_PERSISTENT_DIR = property("kotlin.project.persistent.dir")
         val KOTLIN_PROJECT_PERSISTENT_DIR_GRADLE_DISABLE_WRITE = property("kotlin.project.persistent.dir.gradle.disableWrite")
+        val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used

@@ -126,6 +126,7 @@ internal val KonanTarget.isCurrentHost: Boolean
  *
  * Ideally, these APIs should be in [HostManager] instead of KGP-side wrappers. Refer to KT-64512 for that
  */
-internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation() = HostManager().isEnabled(this)
+internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(provider: PropertiesProvider) =
+    HostManager().isEnabled(this) || provider.enableKlibsCrossCompilation
 
 internal fun KonanTarget.enabledOnCurrentHostForBinariesCompilation() = HostManager().isEnabled(this)

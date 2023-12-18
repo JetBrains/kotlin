@@ -13,6 +13,7 @@ import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.*
@@ -97,7 +98,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         get() = disambiguateName("binaries")
 
     override val publishable: Boolean
-        get() = konanTarget.enabledOnCurrentHostForKlibCompilation()
+        get() = konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
 
     @ExperimentalKotlinGradlePluginApi
     internal override val compilerOptions: KotlinNativeCompilerOptions = project.objects

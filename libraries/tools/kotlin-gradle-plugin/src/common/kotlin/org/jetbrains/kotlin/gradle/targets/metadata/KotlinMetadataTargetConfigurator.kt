@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -222,7 +223,7 @@ class KotlinMetadataTargetConfigurator :
             if (isHostSpecific) {
                 // This logic can be simplified, see KT-64523
                 val canCompileOnCurrentHost = platformCompilations.filterIsInstance<KotlinNativeCompilation>()
-                    .all { it.konanTarget.enabledOnCurrentHostForKlibCompilation() }
+                    .all { it.konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider) }
                 if (!canCompileOnCurrentHost) {
                     // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
                     compileKotlinTaskProvider.configure { it.enabled = false }
