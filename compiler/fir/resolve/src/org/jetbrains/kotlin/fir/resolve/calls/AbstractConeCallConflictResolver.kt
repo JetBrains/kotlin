@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 abstract class AbstractConeCallConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
     protected val inferenceComponents: InferenceComponents,
-    private val transformerComponents: BodyResolveComponents,
+    protected val transformerComponents: BodyResolveComponents,
     private val considerMissingArgumentsInSignatures: Boolean,
 ) : ConeCallConflictResolver() {
 

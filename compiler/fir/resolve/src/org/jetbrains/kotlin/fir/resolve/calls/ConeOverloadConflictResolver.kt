@@ -163,6 +163,11 @@ class ConeOverloadConflictResolver(
         discriminateSuspendConversions: Boolean,
         discriminateByUnwrappedSmartCastOrigin: Boolean,
     ): Set<Candidate> {
+        val withoutLowPrioritySAM = candidates.filterTo(mutableSetOf()) { !it.shouldHaveLowPriorityDueToSAM(transformerComponents) }
+        if (withoutLowPrioritySAM.size == 1) {
+            return withoutLowPrioritySAM
+        }
+
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
 
         if (discriminateGenerics) {

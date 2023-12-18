@@ -30323,6 +30323,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("samPriorityVsGenericCompatibilityEnabled.kt")
+            public void testSamPriorityVsGenericCompatibilityEnabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/samPriorityVsGenericCompatibilityEnabled.kt");
+            }
+
+            @Test
             @TestMetadata("sameCandidatesFromKotlinAndJavaInOneScope.kt")
             public void testSameCandidatesFromKotlinAndJavaInOneScope() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/sameCandidatesFromKotlinAndJavaInOneScope.kt");

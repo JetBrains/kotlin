@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.matchingParameterFunctionType
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.*
@@ -512,7 +513,7 @@ internal object CheckArguments : CheckerStage() {
             }
 
             // Logic description: only candidates from Kotlin, but using Java SAM types, are discriminated
-            candidate.usesSAM && !candidate.isJavaApplicableCandidate() -> {
+            candidate.shouldHaveLowPriorityDueToSAM(context.bodyResolveComponents) -> {
                 if (argumentMapping.values.any {
                         val coneType = it.returnTypeRef.coneType
                         context.bodyResolveComponents.samResolver.isSamType(coneType) &&
@@ -524,6 +525,16 @@ internal object CheckArguments : CheckerStage() {
                 }
             }
         }
+    }
+}
+
+internal fun Candidate.shouldHaveLowPriorityDueToSAM(bodyResolveComponents: BodyResolveComponents): Boolean {
+    if (!usesSAM || isJavaApplicableCandidate()) return false
+    return argumentMapping!!.values.any {
+        val coneType = it.returnTypeRef.coneType
+        bodyResolveComponents.samResolver.isSamType(coneType) &&
+                // Candidate is not from Java, so no flexible types are possible here
+                coneType.toRegularClassSymbol(bodyResolveComponents.session)?.isJavaOrEnhancement == true
     }
 }
 
