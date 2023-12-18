@@ -157,7 +157,7 @@ interface IFoo {
 
 }
 
-abstract enum class TestAbstractEnum2 : IFoo, Enum<TestAbstractEnum2> {
+abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
   private constructor() /* primary */ {
     super/*Enum*/<TestAbstractEnum2>()
     /* <init>() */
@@ -185,4 +185,3 @@ abstract enum class TestAbstractEnum2 : IFoo, Enum<TestAbstractEnum2> {
     get(): EnumEntries<TestAbstractEnum2> /* Synthetic body for ENUM_ENTRIES */
 
 }
-

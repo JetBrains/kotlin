@@ -529,8 +529,6 @@ class LightTreeRawFirDeclarationBuilder(
 
                         val superTypeRefs = mutableListOf<FirTypeRef>()
 
-                        delegationSpecifiers?.let { superTypeRefs += it.superTypesRef }
-
                         when {
                             modifiers.isEnum() && (classKind == ClassKind.ENUM_CLASS) && delegatedConstructorSource == null -> {
                                 delegatedSuperTypeRef = buildResolvedTypeRef {
@@ -547,6 +545,8 @@ class LightTreeRawFirDeclarationBuilder(
                                 delegatedSuperTypeRef = implicitAnyType
                             }
                         }
+
+                        delegationSpecifiers?.let { superTypeRefs += it.superTypesRef }
 
                         if (superTypeRefs.isEmpty() && !classIsKotlinAny) {
                             superTypeRefs += implicitAnyType

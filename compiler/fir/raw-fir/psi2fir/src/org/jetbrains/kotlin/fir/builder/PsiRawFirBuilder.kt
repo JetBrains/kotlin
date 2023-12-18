@@ -1021,10 +1021,10 @@ open class PsiRawFirBuilder(
                             isNullable = false,
                         )
                     }
-                    container.superTypeRefs += delegatedSuperTypeRef!!
+                    container.superTypeRefs.add(0, delegatedSuperTypeRef!!)
                 }
                 this is KtClass && classKind == ClassKind.ANNOTATION_CLASS -> {
-                    container.superTypeRefs += implicitAnnotationType
+                    container.superTypeRefs.add(0, implicitAnnotationType)
                     delegatedSuperTypeRef = implicitAnyType
                 }
             }
