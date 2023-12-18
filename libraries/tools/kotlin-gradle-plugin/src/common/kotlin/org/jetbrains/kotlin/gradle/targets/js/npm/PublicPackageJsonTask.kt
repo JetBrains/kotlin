@@ -17,6 +17,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
@@ -71,10 +72,11 @@ abstract class PublicPackageJsonTask :
         get() = compilationResolution.externalNpmDependencies
 
     private val defaultPackageJsonFile by lazy {
-        project.buildDir
-            .resolve("tmp")
-            .resolve(name)
-            .resolve(PACKAGE_JSON)
+        project.layout.buildDirectory
+            .dir("tmp")
+            .map { it.dir(name) }
+            .map { it.file(PACKAGE_JSON) }
+            .getFile()
     }
 
     @get:OutputFile
