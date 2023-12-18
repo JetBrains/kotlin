@@ -74,6 +74,16 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return null;
     }
 
+    /**
+     * Required for {@link KtCommonFile} implementation.
+     * It is not expected to be used, because {@link KtCommonFile} should not be used directly.
+     */
+    @SuppressWarnings("deprecation")
+    public final R visitKtCommonFile(@NotNull KtCommonFile file) {
+        visitFile(file);
+        return null;
+    }
+
     public R visitScript(@NotNull KtScript script, D data) {
         return visitDeclaration(script, data);
     }
