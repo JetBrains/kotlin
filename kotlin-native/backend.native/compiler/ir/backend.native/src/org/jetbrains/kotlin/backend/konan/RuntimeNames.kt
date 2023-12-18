@@ -10,7 +10,7 @@ object RuntimeNames {
     val exportForCppRuntime = NativeRuntimeNames.Annotations.exportForCppRuntimeClassId.asSingleFqName()
     val exportedBridge = NativeRuntimeNames.Annotations.exportedBridgeClassId.asSingleFqName()
     val exportForCompilerAnnotation = NativeRuntimeNames.Annotations.exportForCompilerClassId.asSingleFqName()
-    val exportTypeInfoAnnotation = FqName("kotlin.native.internal.ExportTypeInfo")
+    val exportTypeInfoAnnotation = NativeRuntimeNames.Annotations.exportTypeInfoClassId.asSingleFqName()
     val cCall = FqName("kotlinx.cinterop.internal.CCall")
     val cStructMemberAt = FqName("kotlinx.cinterop.internal.CStruct.MemberAt")
     val cStructArrayMemberAt = FqName("kotlinx.cinterop.internal.CStruct.ArrayMemberAt")
