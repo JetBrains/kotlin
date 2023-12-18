@@ -92,6 +92,14 @@ allprojects {
 
 void setupHostAndTarget() {
     ext.hostName = platformManager.hostName
+    // TODO(won't be pushed to master in the current form)
+    //   currently, targets.keySet returns experimental targets like Zephyr (and deprecated targets like wasm32)
+    //   Couple of issues should be fixed before it will be possible to make this code less weird/hacky:
+    //      - KT-64512 "Rework HostManager.enabled" - to provide a proper API to rely upon
+    //      - KT-64524 "Introduce a CLI argument to override native_targets field in klib manifest" - to properly pass to konanc the
+    //        value that should be written to the manifest (instead of manually overwriting it in kotlin-native/runtime/build.gradle.kts
+    //      - Potentially,
+    ext.allPossibleTargetsList = platformManager.targets.keySet().toList()
     ext.targetList = EnabledTargetsKt.enabledTargets(platformManager).collect { it.visibleName } as List
     ext.konanTargetList = EnabledTargetsKt.enabledTargets(platformManager) as List
 }
