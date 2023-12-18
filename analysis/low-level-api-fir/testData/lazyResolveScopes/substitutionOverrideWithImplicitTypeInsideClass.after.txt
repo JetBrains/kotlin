@@ -2,15 +2,15 @@ public open override [ResolvedTo(BODY_RESOLVE)] fun isSchemeFile([ResolvedTo(BOD
     ^isSchemeFile !=(R|<local>/name|, String(str))
 }
 
-public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.isSchemeFile] fun isSchemeFile([ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=<local>/name] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
+public open [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.isSchemeFile] fun isSchemeFile([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
 
 public open [ResolvedTo(BODY_RESOLVE)] fun isSchemeFile([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence|): R|kotlin/Boolean| {
     ^isSchemeFile Boolean(true)
 }
 
 @R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public final [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.propertyWithAnnotations] var propertyWithAnnotations: R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|
-    @PROPERTY_GETTER:R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass, SubstitutedOverrideOriginalKey=special/accessor] get(): R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|
-    @PROPERTY_SETTER:R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass, SubstitutedOverrideOriginalKey=special/accessor] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|): R|kotlin/Unit|
+    @PROPERTY_GETTER:R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|
+    @PROPERTY_SETTER:R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|): R|kotlin/Unit|
 
 @R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public final [ResolvedTo(BODY_RESOLVE)] var propertyWithAnnotations: R|SCHEME|
     @PROPERTY_GETTER:R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LazySchemeProcessor] get(): R|SCHEME|

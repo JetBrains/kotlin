@@ -333,16 +333,6 @@ object FirFakeOverrideGenerator {
         }
 
         resolvePhase = origin.resolvePhaseForCopy
-    }.apply {
-        addOverrideAttributeIfNeeded(original)
-    }
-
-    private fun <T : FirCallableDeclaration> T.addOverrideAttributeIfNeeded(original: T) {
-        when (origin) {
-            FirDeclarationOrigin.IntersectionOverride -> originalForIntersectionOverrideAttr = original
-            is FirDeclarationOrigin.SubstitutionOverride -> originalForSubstitutionOverrideAttr = original
-            else -> {}
-        }
     }
 
     fun createSubstitutionOverrideProperty(
@@ -519,7 +509,6 @@ object FirFakeOverrideGenerator {
             }
         }
     }.also { accessor ->
-        accessor.addOverrideAttributeIfNeeded(this)
         accessor.containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf {
             accessor is FirDefaultPropertyAccessor || shouldOverrideSetContainingClass(baseProperty)
         }

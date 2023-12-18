@@ -340,9 +340,20 @@ internal class KtSymbolByFirBuilder(
         }
 
         fun buildValueParameterSymbol(firSymbol: FirValueParameterSymbol): KtValueParameterSymbol {
-            firSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let {
-                return buildValueParameterSymbol(it.symbol)
+            val functionSymbol = firSymbol.containingFunctionSymbol
+            functionSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let { unwrappedFunction ->
+                val originalIndex = functionSymbol.valueParameterSymbols.indexOf(firSymbol)
+                if (originalIndex == -1) {
+                    errorWithAttachment("Containing function doesn't have the corresponding parameter") {
+                        withFirSymbolEntry("valueParameter", firSymbol)
+                        withFirSymbolEntry("function", functionSymbol)
+                    }
+                }
+
+                val unwrappedParameter = unwrappedFunction.symbol.valueParameterSymbols[originalIndex]
+                return buildValueParameterSymbol(unwrappedParameter)
             }
+
             return symbolsCache.cache(firSymbol) {
                 KtFirValueParameterSymbol(firSymbol, analysisSession)
             }

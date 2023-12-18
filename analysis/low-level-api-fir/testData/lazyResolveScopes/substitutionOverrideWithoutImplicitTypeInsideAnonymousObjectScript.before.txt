@@ -2,13 +2,13 @@ public open override [ResolvedTo(BODY_RESOLVE)] fun isSchemeFile([ResolvedTo(BOD
     ^isSchemeFile !=(R|<local>/name|, String(str))
 }
 
-public open [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.isSchemeFile] fun isSchemeFile([ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=<local>/name] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
+public open [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.isSchemeFile] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
 
 public open [ResolvedTo(STATUS)] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): R|kotlin/Boolean| { LAZY_BLOCK }
 
 @R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.propertyWithAnnotations] var propertyWithAnnotations: R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|
-    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>, SubstitutedOverrideOriginalKey=special/accessor] get(): R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>, SubstitutedOverrideOriginalKey=special/accessor] set([ResolvedTo(STATUS)] value: R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|): R|kotlin/Unit|
+    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>] get(): R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>] set([ResolvedTo(STATUS)] value: R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|): R|kotlin/Unit|
 
 @R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] var propertyWithAnnotations: R|SCHEME|
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=LazySchemeProcessor] get(): R|SCHEME|

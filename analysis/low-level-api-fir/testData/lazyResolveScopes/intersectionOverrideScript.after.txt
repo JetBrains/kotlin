@@ -1,7 +1,7 @@
 public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|kotlin/Unit| {
 }
 
-public abstract [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=<local>/x] x: R|kotlin/Int|): R|kotlin/Unit|
+public abstract [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|kotlin/Unit|
 
 public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|kotlin/Unit|
 
@@ -10,7 +10,7 @@ public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x:
 public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/String|): R|kotlin/Unit| {
 }
 
-public abstract [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=<local>/x] x: R|kotlin/String|): R|kotlin/Unit|
+public abstract [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/String|): R|kotlin/Unit|
 
 public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/String|): R|kotlin/Unit|
 

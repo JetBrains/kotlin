@@ -1,12 +1,12 @@
 public open override [ResolvedTo(STATUS)] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): <implicit> { LAZY_BLOCK }
 
-public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor={SCHEME -> @R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int | MUTABLE_SCHEME -> @R|second/Anno|(<strcat>(String(super2 ), constant#))  kotlin/Int}, baseSymbol=FirNamedFunctionSymbol second/LazySchemeProcessor.isSchemeFile), SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.isSchemeFile] fun isSchemeFile([ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=<local>/name] name: R|kotlin/CharSequence|): <implicit>
+public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor={SCHEME -> @R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int | MUTABLE_SCHEME -> @R|second/Anno|(<strcat>(String(super2 ), constant#))  kotlin/Int}, baseSymbol=FirNamedFunctionSymbol second/LazySchemeProcessor.isSchemeFile), SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.isSchemeFile] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): <implicit>
 
 public open [ResolvedTo(STATUS)] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): <implicit> { LAZY_BLOCK }
 
 @R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.propertyWithAnnotations] var propertyWithAnnotations: R|@R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int|
-    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass, SubstitutedOverrideOriginalKey=special/accessor] get(): R|@R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int|
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass, SubstitutedOverrideOriginalKey=special/accessor] set([ResolvedTo(STATUS)] value: R|@R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int|): R|kotlin/Unit|
+    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] value: R|@R|second/Anno|(<strcat>(String(super1 ), constant#))  kotlin/Int|): R|kotlin/Unit|
 
 @R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] var propertyWithAnnotations: R|SCHEME|
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=LazySchemeProcessor] get(): R|SCHEME|

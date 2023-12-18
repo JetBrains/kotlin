@@ -1,7 +1,7 @@
 STATUS:
 TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
-    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] set([ResolvedTo(STATUS)] value: R|kotlin/String?|): R|kotlin/Unit|
+    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] set([ResolvedTo(STATUS)] value: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] explicitSubstitutionOverridePropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
@@ -44,8 +44,8 @@ FILE: [ResolvedTo(IMPORTS)] explicitSubstitutionOverridePropertyScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
-    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|kotlin/String?|): R|kotlin/Unit|
+    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] explicitSubstitutionOverridePropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
@@ -88,8 +88,8 @@ FILE: [ResolvedTo(IMPORTS)] explicitSubstitutionOverridePropertyScript.kts
 
 CONTRACTS:
 TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
-    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] set([ResolvedTo(CONTRACTS)] value: R|kotlin/String?|): R|kotlin/Unit|
+    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] set([ResolvedTo(CONTRACTS)] value: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] explicitSubstitutionOverridePropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -132,8 +132,8 @@ FILE: [ResolvedTo(IMPORTS)] explicitSubstitutionOverridePropertyScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
-    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/String?|): R|kotlin/Unit|
+    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] explicitSubstitutionOverridePropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -176,8 +176,8 @@ FILE: [ResolvedTo(IMPORTS)] explicitSubstitutionOverridePropertyScript.kts
 
 ANNOTATION_ARGUMENTS:
 TARGET: @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
-    @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/String?|): R|kotlin/Unit|
+    @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
+    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] explicitSubstitutionOverridePropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -220,8 +220,8 @@ FILE: [ResolvedTo(IMPORTS)] explicitSubstitutionOverridePropertyScript.kts
 
 BODY_RESOLVE:
 TARGET: @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) public final [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
-    @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass, SubstitutedOverrideOriginalKey=special/accessor] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String?|): R|kotlin/Unit|
+    @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
+    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] explicitSubstitutionOverridePropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
