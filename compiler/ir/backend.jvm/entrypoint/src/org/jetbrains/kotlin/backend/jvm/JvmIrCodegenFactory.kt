@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.getIoFile
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
-import org.jetbrains.kotlin.bir.lowerWithBir
+import org.jetbrains.kotlin.bir.BirCompilation
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.addCompiledPartsAndSort
 import org.jetbrains.kotlin.codegen.loadCompiledModule
@@ -356,7 +356,7 @@ open class JvmIrCodegenFactory(
         context.state.factory.registerSourceFiles(irModuleFragment.files.map(IrFile::getIoFile))
 
         //jvmLoweringPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
-        val newIrModuleFragment = lowerWithBir(jvmLoweringPhases, context, irModuleFragment)
+        val newIrModuleFragment = BirCompilation().lowerWithBir(jvmLoweringPhases, context, irModuleFragment)
 
         return JvmIrCodegenInput(state, context, newIrModuleFragment, notifyCodegenStart)
     }

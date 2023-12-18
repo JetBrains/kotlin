@@ -15,6 +15,8 @@ import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.div
 import kotlin.io.path.writeText
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 private val irDumpOptions = DumpIrTreeOptions(printFlagsInDeclarationReferences = false, printFilePath = false)
 
@@ -47,7 +49,7 @@ fun dumpOriginalIrPhase(context: JvmBackendContext, input: IrModuleFragment, pha
 
 fun dumpBirPhase(
     context: JvmBackendContext,
-    input: BirCompilationBundle,
+    input: BirCompilation.BirCompilationBundle,
     phase: BirLoweringPhase?,
     phaseName: String?,
 ) {
@@ -76,5 +78,28 @@ fun dumpBirPhase(
         val path = Path(dumpDir) / "bir" / "${irPhaseName}.txt"
         path.createParentDirectories()
         path.writeText(text)
+    }
+}
+
+fun printCompilationTimings(
+    input: BirCompilation.BirCompilationBundle,
+    irPhasesTime: Map<String, Duration>,
+    birPhasesTime: Map<String, Duration>,
+) {
+    birPhasesTime.forEach { birPhaseName, birTime ->
+        val i = input.backendContext!!.loweringPhases.indexOfFirst { it.javaClass.simpleName == birPhaseName }
+        val irPhases = i.takeUnless { it == -1 }?.let { allBirPhases[it].second }
+        val irPhaseName = irPhases?.lastOrNull()
+        val irPhaseTime = irPhasesTime[irPhaseName]
+
+        fun Duration.format() = toString(DurationUnit.MILLISECONDS, 2).removeSuffix("ms")
+
+        print(irPhaseName ?: birPhaseName)
+        print(" | ")
+        if (irPhaseTime != null)
+            print(irPhaseTime.format())
+        print(" | ")
+        print(birTime.format())
+        println()
     }
 }
