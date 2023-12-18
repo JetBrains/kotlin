@@ -73,14 +73,7 @@ class Fir2IrJvmResultsConverter(
         // Create and initialize the module and its dependencies
         val project = compilerConfigurationProvider.getProject(module)
         // TODO: handle fir from light tree
-        val ktFiles = inputArtifact.mainFirFiles.mapNotNull { it.value.psi as KtFile? }
         val sourceFiles = inputArtifact.mainFirFiles.mapNotNull { it.value.sourceFile }
-        val container = TopDownAnalyzerFacadeForJVM.createContainer(
-            project, ktFiles, NoScopeRecordCliBindingTrace(), configuration,
-            compilerConfigurationProvider.getPackagePartProviderFactory(module),
-            ::FileBasedDeclarationProviderFactory, CompilerEnvironment,
-            TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles), emptyList()
-        )
 
         val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
 
@@ -128,7 +121,7 @@ class Fir2IrJvmResultsConverter(
         val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
         val generationState = GenerationState.Builder(
             project, ClassBuilderFactories.TEST,
-            container.get(), NoScopeRecordCliBindingTrace().bindingContext, configuration
+            fir2irResult.irModuleFragment.descriptor, NoScopeRecordCliBindingTrace().bindingContext, configuration
         ).isIrBackend(
             true
         ).jvmBackendClassResolver(
