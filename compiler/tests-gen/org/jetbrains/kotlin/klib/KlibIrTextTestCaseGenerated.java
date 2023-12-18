@@ -423,6 +423,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/declarations/localVarInDoWhile.kt");
         }
 
+        @TestMetadata("mainFunctionMangling.kt")
+        public void testMainFunctionMangling() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/mainFunctionMangling.kt");
+        }
+
         @TestMetadata("packageLevelProperties.kt")
         public void testPackageLevelProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/packageLevelProperties.kt");

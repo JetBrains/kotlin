@@ -481,6 +481,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
         }
 
         @Test
+        @TestMetadata("mainFunctionMangling.kt")
+        public void testMainFunctionMangling() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/mainFunctionMangling.kt");
+        }
+
+        @Test
         @TestMetadata("packageLevelProperties.kt")
         public void testPackageLevelProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/packageLevelProperties.kt");

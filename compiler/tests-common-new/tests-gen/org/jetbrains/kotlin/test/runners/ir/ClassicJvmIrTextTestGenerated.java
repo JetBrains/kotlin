@@ -541,6 +541,18 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
         }
 
         @Test
+        @TestMetadata("mainFunctionMangling.kt")
+        public void testMainFunctionMangling() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/mainFunctionMangling.kt");
+        }
+
+        @Test
+        @TestMetadata("mainFunctionManglingInJvm.kt")
+        public void testMainFunctionManglingInJvm() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/mainFunctionManglingInJvm.kt");
+        }
+
+        @Test
         @TestMetadata("packageLevelProperties.kt")
         public void testPackageLevelProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/packageLevelProperties.kt");
