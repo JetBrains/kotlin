@@ -126,8 +126,13 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                     if (LLVMGetNumArgOperands(call) < 2) continue
                     callSiteDescription = "$functionName (over objc_msgSendSuper2)"
                     calledName = null
-                    val superStruct = LLVMGetArgOperand(call, 0)
+                    // This is https://developer.apple.com/documentation/objectivec/objc_super?language=objc
+                    // We don't want to look this type up, so let's just use our own struct.
+                    // TODO: Do we need this with fresh LLVM?
                     val superStructType = llvm.structType(llvm.int8PtrType, llvm.int8PtrType)
+                    val superStruct = LLVMGetArgOperand(call, 0).run {
+                        LLVMBuildBitCast(builder, this, pointerType(superStructType), "")!!
+                    }
                     val superClassPtrPtr = LLVMBuildStructGEP2(builder, superStructType, superStruct, 1, "")
                     val superClassPtr = LLVMBuildLoad2(builder, llvm.int8PtrType, superClassPtrPtr, "")!!
                     val classPtr = getSuperClass.buildCall(builder, listOf(superClassPtr))
