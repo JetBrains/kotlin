@@ -21,6 +21,7 @@ object PluginErrors {
     val LAMBDA_MAY_LEAK by warning1<PsiElement, FirBasedSymbol<*>>()
     val CONDITIONAL_EFFECT_ERROR by warning2<PsiElement, String, String>()
     val POSSIBLE_INDEX_OUT_OF_BOUND by warning2<PsiElement, String, String>()
+    val INVALID_SUBLIST_RANGE by warning2<PsiElement, String, String>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FormalVerificationPluginErrorMessages)

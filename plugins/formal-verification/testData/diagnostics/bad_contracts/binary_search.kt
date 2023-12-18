@@ -35,7 +35,7 @@ fun <!VIPER_TEXT!>mid_decreased_by_one_in_rec_call<!>(arr: List<Int>, target: In
         arr[mid] == target -> true
         arr[mid] < target -> mid_decreased_by_one_in_rec_call(arr.subList(mid + 1, size), target)
         // if arr.size == 1, arr.subList(0, -1) is called
-        else -> mid_decreased_by_one_in_rec_call(<!VIPER_VERIFICATION_ERROR!>arr.subList(0, mid - 1)<!>, target)
+        else -> mid_decreased_by_one_in_rec_call(<!INVALID_SUBLIST_RANGE!>arr.subList(0, mid - 1)<!>, target)
     }
 }
 

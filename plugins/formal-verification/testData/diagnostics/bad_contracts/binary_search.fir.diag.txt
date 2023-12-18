@@ -276,7 +276,7 @@ method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin
   ensures ret.special$size == local$toIndex - local$fromIndex
 
 
-/binary_search.kt:(1345,1368): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List might not hold. Assertion 0 <= local0$mid - 1 might not hold.
+/binary_search.kt:(1345,1368): warning: Invalid sub-list range for list 'arr', the range may be greater than the list's size.
 
 /binary_search.kt:(1405,1425): info: Generated Viper text for unsafe_binary_search:
 field special$size: Int

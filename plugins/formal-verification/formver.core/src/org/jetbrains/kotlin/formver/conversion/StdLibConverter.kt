@@ -41,9 +41,9 @@ fun NamedFunctionSignature.stdLibPreConditions(): List<ExpEmbedding> =
                 val fromIndexArg = formalArgs[1]
                 val toIndexArg = formalArgs[2]
                 return listOf(
-                    LeCmp(fromIndexArg, toIndexArg),
-                    GeCmp(fromIndexArg, IntLit(0)),
-                    LeCmp(toIndexArg, FieldAccess(receiver, ListSizeFieldEmbedding))
+                    LeCmp(fromIndexArg, toIndexArg, SourceRole.SubListCreation.CheckInSize),
+                    GeCmp(fromIndexArg, IntLit(0), SourceRole.SubListCreation.CheckNegativeIndices),
+                    LeCmp(toIndexArg, FieldAccess(receiver, ListSizeFieldEmbedding), SourceRole.SubListCreation.CheckInSize)
                 )
             }
         }

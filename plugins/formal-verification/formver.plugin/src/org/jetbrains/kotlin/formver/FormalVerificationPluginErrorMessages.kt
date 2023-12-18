@@ -67,5 +67,11 @@ object FormalVerificationPluginErrorMessages : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING,
             CommonRenderers.STRING
         )
+        put(
+            PluginErrors.INVALID_SUBLIST_RANGE,
+            "Invalid sub-list range for {0}, the range may be {1}.",
+            CommonRenderers.STRING,
+            CommonRenderers.STRING
+        )
     }
 }

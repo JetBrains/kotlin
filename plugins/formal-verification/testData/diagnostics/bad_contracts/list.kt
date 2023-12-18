@@ -23,3 +23,13 @@ fun <!VIPER_TEXT!>add_get<!>(l: MutableList<Int>) {
     l.add(1)
     val n = <!POSSIBLE_INDEX_OUT_OF_BOUND!>l[1]<!>
 }
+
+@AlwaysVerify
+fun <!VIPER_TEXT!>empty_list_sub<!>() {
+    val l = <!INVALID_SUBLIST_RANGE!>emptyList<Int>().subList(0, 1)<!>
+}
+
+@AlwaysVerify
+fun <!VIPER_TEXT!>empty_list_sub_negative<!>() {
+    val l = <!INVALID_SUBLIST_RANGE!>emptyList<Int>().subList(-1, 1)<!>
+}

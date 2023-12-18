@@ -98,14 +98,33 @@ class IndexOutOfBoundError(private val error: VerificationError, private val sou
          */
         val targetListInfo = error.locationNode.asCallable().arg(0).info
         val targetList = targetListInfo.unwrapOr<SourceRole.FirSymbolHolder> { null }
-        val listMsg = when (targetList) {
-            null -> "the following list sub-expression"
-            else -> {
-                val listName = FirDiagnosticRenderers.DECLARATION_NAME.render(targetList.firSymbol)
-                "list '${listName}'"
-            }
+        reporter.reportOn(
+            source,
+            PluginErrors.POSSIBLE_INDEX_OUT_OF_BOUND,
+            targetList.formatListMessage(),
+            sourceRole.accessType.asUserFriendlyMessage,
+            context
+        )
+    }
+}
+
+class InvalidSubListRangeError(private val error: VerificationError, private val sourceRole: SourceRole.SubListCreation) : FormattedError {
+    private val SourceRole.SubListCreation.asUserFriendlyMessage: String
+        get() = when (this) {
+            is SourceRole.SubListCreation.CheckNegativeIndices -> "including negative indices"
+            is SourceRole.SubListCreation.CheckInSize -> "greater than the list's size"
         }
-        reporter.reportOn(source, PluginErrors.POSSIBLE_INDEX_OUT_OF_BOUND, listMsg, sourceRole.accessType.asUserFriendlyMessage, context)
+
+    override fun report(reporter: DiagnosticReporter, source: KtSourceElement?, context: CheckerContext) {
+        val targetListInfo = error.locationNode.asCallable().arg(0).info
+        val targetList = targetListInfo.unwrapOr<SourceRole.FirSymbolHolder> { null }
+        reporter.reportOn(
+            source,
+            PluginErrors.INVALID_SUBLIST_RANGE,
+            targetList.formatListMessage(),
+            sourceRole.asUserFriendlyMessage,
+            context
+        )
     }
 }
 
@@ -116,6 +135,7 @@ fun VerificationError.formatUserFriendly(): FormattedError? =
         is SourceRole.ConditionalEffect -> ConditionalEffectError(sourceRole)
         is SourceRole.ParamFunctionLeakageCheck -> LeakingLambdaError(this)
         is SourceRole.ListElementAccessCheck -> IndexOutOfBoundError(this, sourceRole)
+        is SourceRole.SubListCreation -> InvalidSubListRangeError(this, sourceRole)
         else -> null
     }
 
@@ -134,5 +154,13 @@ private fun VerificationError.lookupSourceRole(): SourceRole? {
     return when (val locationNodeRole = locationNode.getInfoOrNull<SourceRole>()) {
         null -> unverifiableProposition.getInfoOrNull<SourceRole>()
         else -> locationNodeRole
+    }
+}
+
+private fun SourceRole.FirSymbolHolder?.formatListMessage(): String = when (this) {
+    null -> "the following list sub-expression"
+    else -> {
+        val listName = FirDiagnosticRenderers.DECLARATION_NAME.render(firSymbol)
+        "list '${listName}'"
     }
 }

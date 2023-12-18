@@ -144,3 +144,85 @@ method pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kot
 
 
 /list.kt:(406,410): warning: Invalid index for list 'l', the index may be greater than the list's size.
+
+/list.kt:(432,446): info: Generated Viper text for empty_list_sub:
+field special$size: Int
+
+method global$fun_empty_list_sub$fun_take$$return$T_Unit()
+  returns (ret$0: dom$Unit)
+{
+  var local0$l: Ref
+  var anonymous$0: Ref
+  anonymous$0 := pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$kotlin$collections$global$class_List()
+  local0$l := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(anonymous$0,
+    0, 1)
+  label label$ret$0
+}
+
+method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(this: Ref,
+  local$fromIndex: Int, local$toIndex: Int)
+  returns (ret: Ref)
+  requires acc(this.special$size, write)
+  requires this.special$size >= 0
+  requires local$fromIndex <= local$toIndex
+  requires local$fromIndex >= 0
+  requires local$toIndex <= this.special$size
+  ensures acc(this.special$size, write)
+  ensures this.special$size >= 0
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  ensures acc(ret.special$size, write)
+  ensures ret.special$size >= 0
+  ensures this.special$size == old(this.special$size)
+  ensures ret.special$size == local$toIndex - local$fromIndex
+
+
+method pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$kotlin$collections$global$class_List()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  ensures acc(ret.special$size, write)
+  ensures ret.special$size >= 0
+  ensures ret.special$size == 0
+
+
+/list.kt:(463,493): warning: Invalid sub-list range for the following list sub-expression, the range may be greater than the list's size.
+
+/list.kt:(515,538): info: Generated Viper text for empty_list_sub_negative:
+field special$size: Int
+
+method global$fun_empty_list_sub_negative$fun_take$$return$T_Unit()
+  returns (ret$0: dom$Unit)
+{
+  var local0$l: Ref
+  var anonymous$0: Ref
+  anonymous$0 := pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$kotlin$collections$global$class_List()
+  local0$l := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(anonymous$0,
+    -1, 1)
+  label label$ret$0
+}
+
+method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(this: Ref,
+  local$fromIndex: Int, local$toIndex: Int)
+  returns (ret: Ref)
+  requires acc(this.special$size, write)
+  requires this.special$size >= 0
+  requires local$fromIndex <= local$toIndex
+  requires local$fromIndex >= 0
+  requires local$toIndex <= this.special$size
+  ensures acc(this.special$size, write)
+  ensures this.special$size >= 0
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  ensures acc(ret.special$size, write)
+  ensures ret.special$size >= 0
+  ensures this.special$size == old(this.special$size)
+  ensures ret.special$size == local$toIndex - local$fromIndex
+
+
+method pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$kotlin$collections$global$class_List()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  ensures acc(ret.special$size, write)
+  ensures ret.special$size >= 0
+  ensures ret.special$size == 0
+
+
+/list.kt:(555,586): warning: Invalid sub-list range for the following list sub-expression, the range may be including negative indices.

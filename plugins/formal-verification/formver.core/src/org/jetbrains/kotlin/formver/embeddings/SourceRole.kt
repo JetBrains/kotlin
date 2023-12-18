@@ -24,6 +24,11 @@ sealed interface SourceRole {
     data class ConditionalEffect(val effect: ReturnsEffect, val condition: Condition) : SourceRole
     data class FirSymbolHolder(val firSymbol: FirBasedSymbol<*>) : SourceRole, Condition
 
+    sealed interface SubListCreation : SourceRole {
+        data object CheckInSize : SubListCreation
+        data object CheckNegativeIndices : SubListCreation
+    }
+
     sealed interface ReturnsEffect : SourceRole {
         data object Wildcard : ReturnsEffect
         data class Bool(val bool: Boolean) : ReturnsEffect {
