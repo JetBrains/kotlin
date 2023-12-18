@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.jetbrains.kotlin.config.LanguageVersion
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.forceKapt4
+import org.jetbrains.kotlin.gradle.testbase.JdkVersions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("android with kapt4 external dependencies tests")
@@ -17,4 +19,11 @@ class Kapt4AndroidExternalIT : Kapt3AndroidExternalIT() {
     override fun TestProject.customizeProject() {
         forceKapt4()
     }
+
+    @Disabled("KT-62345")
+    override fun testMppAndroidKapt(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {}
 }

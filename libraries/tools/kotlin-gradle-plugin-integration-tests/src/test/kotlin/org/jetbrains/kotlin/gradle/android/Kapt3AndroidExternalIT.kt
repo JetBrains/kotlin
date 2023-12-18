@@ -135,7 +135,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
 
     @DisplayName("kapt works with databinding")
     @GradleAndroidTest
-    fun testDatabinding(
+    open fun testDatabinding(
         gradleVersion: GradleVersion,
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
@@ -213,7 +213,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
 
     @DisplayName("KT-61622: common sources are attached in MPP + Android project")
     @GradleAndroidTest
-    fun testMppAndroidKapt(
+    open fun testMppAndroidKapt(
         gradleVersion: GradleVersion,
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
