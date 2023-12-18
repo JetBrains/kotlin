@@ -188,7 +188,7 @@ binding group can be reported as being in error.
 
 ## `ComposableInferredTarget`
 
-Due to a limitation in how annotations are currentl handled in the Kotlin compiler, a plugin
+Due to a limitation in how annotations are currently handled in the Kotlin compiler, a plugin
 cannot add annotation to types, specifically the lambda types in a composable function. To work
 around this the plugin will infer a `ComposableInferredTarget` on the composable function which
 contains the scheme, as described above, instead of adding annotations to the composable lambda
