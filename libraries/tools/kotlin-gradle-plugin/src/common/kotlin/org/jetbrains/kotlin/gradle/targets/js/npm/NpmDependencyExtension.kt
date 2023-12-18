@@ -210,18 +210,21 @@ private class DefaultNpmDependencyExtension(
 
     @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
     override fun invoke(name: String, version: String, generateExternals: Boolean): NpmDependency  {
+        @Suppress("DEPRECATION")
         warnNpmGenerateExternals(project.logger)
         return invoke(name, version)
     }
 
     @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
     override fun invoke(name: String, directory: File, generateExternals: Boolean): NpmDependency  {
+        @Suppress("DEPRECATION")
         warnNpmGenerateExternals(project.logger)
         return invoke(name, directory)
     }
 
     @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
     override fun invoke(directory: File, generateExternals: Boolean): NpmDependency  {
+        @Suppress("DEPRECATION")
         warnNpmGenerateExternals(project.logger)
         return invoke(directory)
     }
@@ -268,18 +271,21 @@ private fun defaultNpmDependencyDelegate(
     ) {
         @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
         override fun invoke(directory: File, generateExternals: Boolean): NpmDependency  {
+            @Suppress("DEPRECATION")
             warnNpmGenerateExternals(project.logger)
             return invoke(directory)
         }
 
         @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
         override fun invoke(name: String, version: String, generateExternals: Boolean): NpmDependency  {
+            @Suppress("DEPRECATION")
             warnNpmGenerateExternals(project.logger)
             return invoke(name, version)
         }
 
         @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
         override fun invoke(name: String, directory: File, generateExternals: Boolean): NpmDependency  {
+            @Suppress("DEPRECATION")
             warnNpmGenerateExternals(project.logger)
             return invoke(name, directory)
         }
@@ -339,18 +345,21 @@ private class DefaultPeerNpmDependencyExtension(
     ) {
         @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
         override fun invoke(directory: File, generateExternals: Boolean): NpmDependency  {
+            @Suppress("DEPRECATION")
             warnNpmGenerateExternals(project.logger)
             return invoke(directory)
         }
 
         @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
         override fun invoke(name: String, version: String, generateExternals: Boolean): NpmDependency  {
+            @Suppress("DEPRECATION")
             warnNpmGenerateExternals(project.logger)
             return invoke(name, version)
         }
 
         @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
         override fun invoke(name: String, directory: File, generateExternals: Boolean): NpmDependency  {
+            @Suppress("DEPRECATION")
             warnNpmGenerateExternals(project.logger)
             return invoke(name, directory)
         }
