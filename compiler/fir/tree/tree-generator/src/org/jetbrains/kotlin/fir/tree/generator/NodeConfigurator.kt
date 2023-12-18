@@ -345,7 +345,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             }
             +field(varianceType)
             +booleanField("isReified")
-            +fieldList("bounds", typeRef, withReplace = true)
+            // TODO: `useMutableOrEmpty = true` is a workaround for KT-60324 until KT-60445 has been fixed.
+            +fieldList("bounds", typeRef, withReplace = true, useMutableOrEmpty = true)
             +annotations
         }
 

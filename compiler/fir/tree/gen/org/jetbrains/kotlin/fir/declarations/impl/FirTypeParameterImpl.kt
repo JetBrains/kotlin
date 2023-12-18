@@ -37,7 +37,7 @@ internal class FirTypeParameterImpl(
     override val containingDeclarationSymbol: FirBasedSymbol<*>,
     override val variance: Variance,
     override val isReified: Boolean,
-    override val bounds: MutableList<FirTypeRef>,
+    override var bounds: MutableOrEmptyList<FirTypeRef>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirTypeParameter() {
 
@@ -63,8 +63,7 @@ internal class FirTypeParameterImpl(
     }
 
     override fun replaceBounds(newBounds: List<FirTypeRef>) {
-        bounds.clear()
-        bounds.addAll(newBounds)
+        bounds = newBounds.toMutableOrEmpty()
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

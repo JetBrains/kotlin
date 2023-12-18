@@ -52,7 +52,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
             containingDeclarationSymbol,
             variance,
             isReified,
-            bounds,
+            bounds.toMutableOrEmpty(),
             annotations.toMutableOrEmpty(),
         )
     }
