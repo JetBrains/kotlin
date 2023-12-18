@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.getHostSpecificSourceSets
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
@@ -58,7 +57,7 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
             }
 
             metadataCompilations.forEach { compilation ->
-                metadataJar.from(project.filesWithUnpackedArchives(compilation.output.allOutputs, setOf("klib"))) { spec ->
+                metadataJar.from(compilation.output.allOutputs) { spec ->
                     spec.into(compilation.name)
                 }
                 metadataJar.dependsOn(compilation.output.classesDirs)

@@ -35,8 +35,8 @@ class KotlinNativeCompileRefinesPathsTest {
 
             assertEquals(
                 project.files(
-                    "build/classes/kotlin/metadata/nativeMain/klib/test_nativeMain.klib",
-                    "build/classes/kotlin/metadata/commonMain/klib/test_commonMain.klib"
+                    "build/classes/kotlin/metadata/nativeMain/klib/test_nativeMain",
+                    "build/classes/kotlin/metadata/commonMain/klib/test_commonMain"
                 ).toSet().relativeTo(project),
                 compileTask.refinesModule.files.relativeTo(project)
             )

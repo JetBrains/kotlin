@@ -22,28 +22,28 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
         nativeProject("commonizeHierarchically", gradleVersion) {
             if (HostManager.hostIsMac) {
                 build(":p1:compileIosMainKotlinMetadata") {
-                    assertFileInProjectExists("p1/build/classes/kotlin/metadata/iosMain/klib/p1_iosMain.klib")
+                    assertDirectoryInProjectExists("p1/build/classes/kotlin/metadata/iosMain/klib/p1_iosMain")
                     assertNoDuplicateLibraryWarning()
                 }
 
                 build(":p1:compileAppleMainKotlinMetadata") {
-                    assertFileInProjectExists("p1/build/classes/kotlin/metadata/appleMain/klib/p1_appleMain.klib")
+                    assertDirectoryInProjectExists("p1/build/classes/kotlin/metadata/appleMain/klib/p1_appleMain")
                     assertNoDuplicateLibraryWarning()
                 }
             }
 
             build(":p1:compileLinuxMainKotlinMetadata") {
-                assertFileInProjectExists("p1/build/classes/kotlin/metadata/linuxMain/klib/p1_linuxMain.klib")
+                assertDirectoryInProjectExists("p1/build/classes/kotlin/metadata/linuxMain/klib/p1_linuxMain")
                 assertNoDuplicateLibraryWarning()
             }
 
             build(":p1:compileAppleAndLinuxMainKotlinMetadata") {
-                assertFileInProjectExists("p1/build/classes/kotlin/metadata/appleAndLinuxMain/klib/p1_appleAndLinuxMain.klib")
+                assertDirectoryInProjectExists("p1/build/classes/kotlin/metadata/appleAndLinuxMain/klib/p1_appleAndLinuxMain")
                 assertNoDuplicateLibraryWarning()
             }
 
             build(":p1:compileNativeMainKotlinMetadata") {
-                assertFileInProjectExists("p1/build/classes/kotlin/metadata/nativeMain/klib/p1_nativeMain.klib")
+                assertDirectoryInProjectExists("p1/build/classes/kotlin/metadata/nativeMain/klib/p1_nativeMain")
                 assertNoDuplicateLibraryWarning()
             }
 

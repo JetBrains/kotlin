@@ -150,6 +150,9 @@ abstract class AbstractKotlinNativeCompile<
     abstract val baseName: String
 
     @get:Input
+    internal abstract val produceUnpackedKlib: Property<Boolean>
+
+    @get:Input
     @get:Optional
     internal abstract val explicitApiMode: Property<ExplicitApiMode>
 
@@ -229,7 +232,7 @@ abstract class AbstractKotlinNativeCompile<
     open val outputFile: Provider<File>
         get() = destinationDirectory.flatMap {
             val prefix = outputKind.prefix(konanTarget)
-            val suffix = outputKind.suffix(konanTarget)
+            val suffix = if (produceUnpackedKlib.get()) "" else outputKind.suffix(konanTarget)
             val filename = "$prefix${baseName}$suffix".let {
                 when {
                     outputKind == FRAMEWORK ->
@@ -333,10 +336,6 @@ internal constructor(
     )
     @get:Internal
     val moduleName: String get() = compilerOptions.moduleName.get()
-
-    @get:OutputFile
-    override val outputFile: Provider<File>
-        get() = super.outputFile
 
     @get:Input
     val shortModuleName: String by providerFactory.provider { baseName }
@@ -453,6 +452,7 @@ internal constructor(
             args.metadataKlib = sharedCompilationData != null
             args.nodefaultlibs = sharedCompilationData != null
             args.manifestFile = sharedCompilationData?.manifestFile?.absolutePath
+            args.nopack = produceUnpackedKlib.get()
 
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
 

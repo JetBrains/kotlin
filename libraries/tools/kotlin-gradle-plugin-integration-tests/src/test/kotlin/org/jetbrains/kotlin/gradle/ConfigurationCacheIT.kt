@@ -79,6 +79,19 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @MppGradlePluginTests
+    @DisplayName("KT-63363: all metadata jar works well with configuration cache")
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        additionalVersions = [TestVersions.Gradle.G_7_6],
+    )
+    @GradleTest
+    fun testAllMetadataJarWithConfigurationCache(gradleVersion: GradleVersion) {
+        project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
+            testConfigurationCacheOf(":allMetadataJar")
+        }
+    }
+
     @NativeGradlePluginTests
     @DisplayName("works with commonizer")
     @GradleTestVersions(

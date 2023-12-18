@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
-import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
@@ -46,8 +45,7 @@ internal val KotlinMetadataArtifact = KotlinTargetArtifact { target, apiElements
         /* Filter 'host specific' source sets (aka source sets that require a certain host to compile metadata) */
         if (compilation.defaultSourceSet in hostSpecificSourceSets) return@all
 
-        val metadataContent = target.project.filesWithUnpackedArchives(compilation.output.allOutputs, setOf("klib"))
-        metadataJarTask.configure { it.from(metadataContent) { spec -> spec.into(compilation.defaultSourceSet.name) } }
+        metadataJarTask.configure { it.from(compilation.output.allOutputs) { spec -> spec.into(compilation.defaultSourceSet.name) } }
         if (compilation is KotlinSharedNativeCompilation) {
             target.project.includeCommonizedCInteropMetadata(metadataJarTask, compilation)
         }
