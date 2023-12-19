@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.CallKind
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -248,4 +250,51 @@ class FirPCLAInferenceSession(
     // TODO: Get rid of them
 
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
+}
+
+class FirStubTypeTransformer(private val substitutor: ConeSubstitutor) : FirDefaultTransformer<Nothing?>() {
+
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        // All resolvable nodes should be implemented separately to cover substitution of receivers in the candidate
+        if (element is FirResolvable) {
+            element.candidate()?.let { processCandidate(it) }
+        }
+
+        // Since FirExpressions don't have typeRefs, they need to be updated separately.
+        // FirAnonymousFunctionExpression doesn't support replacing the type
+        // since it delegates the getter to the underlying FirAnonymousFunction.
+        if (element is FirExpression && element !is FirAnonymousFunctionExpression) {
+            // TODO Check why some expressions have unresolved type in builder inference session KT-61835
+            @OptIn(UnresolvedExpressionTypeAccess::class)
+            element.coneTypeOrNull
+                ?.let(substitutor::substituteOrNull)
+                ?.let { element.replaceConeTypeOrNull(it) }
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return element.transformChildren(this, data = null) as E
+    }
+
+    override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): FirStatement {
+        if (typeOperatorCall.argument.resolvedType is ConeStubType) {
+            typeOperatorCall.replaceArgFromStubType(true)
+        }
+        return super.transformTypeOperatorCall(typeOperatorCall, data)
+    }
+
+    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): FirTypeRef =
+        substitutor.substituteOrNull(resolvedTypeRef.type)?.let {
+            resolvedTypeRef.withReplacedConeType(it)
+        } ?: resolvedTypeRef
+
+    /*
+     * We should manually update all receivers in the all not completed candidates, because not all calls with candidates
+     *   contained in partiallyResolvedCalls and candidate stores not receiver values, which are updated, (TODO: remove this comment after removal of updating values)
+     *   and receivers of candidates are not direct FIR children of calls, so they won't be visited during regular transformChildren
+     */
+    private fun processCandidate(candidate: Candidate) {
+        candidate.dispatchReceiver = candidate.dispatchReceiver?.transform(this, data = null)
+        candidate.chosenExtensionReceiver = candidate.chosenExtensionReceiver?.transform(this, data = null)
+        candidate.contextReceiverArguments = candidate.contextReceiverArguments?.map { it.transform(this, data = null) }
+    }
 }
