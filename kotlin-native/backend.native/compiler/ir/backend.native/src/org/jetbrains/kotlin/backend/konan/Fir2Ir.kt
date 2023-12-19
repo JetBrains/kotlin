@@ -118,16 +118,6 @@ internal fun PhaseContext.fir2Ir(
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
             actualizerTypeContextProvider = ::IrTypeSystemContextImpl,
-            fir2IrResultPostCompute = { _, irOutput ->
-                // it's important to compare manglers before actualization, since IR will be actualized, while FIR won't
-                irOutput.irModuleFragment.acceptVoid(
-                        ManglerChecker(
-                                KonanManglerIr,
-                                Ir2FirManglerAdapter(FirNativeKotlinMangler),
-                                needsChecking = { false }, // FIXME(KT-60648): Re-enable
-                        )
-                )
-            }
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }
