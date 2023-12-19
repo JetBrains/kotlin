@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.gradle.plugin.tasks
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanInteropSpec.IncludeDirectoriesSpec
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -27,9 +30,21 @@ import kotlin.run
  * A task executing cinterop tool with the given args and compiling the stubs produced by this tool.
  */
 
-open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: WorkerExecutor) : KonanBuildingTask(), KonanInteropSpec {
+open class KonanInteropTask @Inject constructor(
+        @Internal val workerExecutor: WorkerExecutor,
+        objectFactory: ObjectFactory,
+        execOperations: ExecOperations,
+) : KonanBuildingTask(), KonanInteropSpec {
 
-    private val interopRunner = KonanCliInteropRunner(project, project.konanExtension.jvmArgs)
+    private val interopRunner = KonanCliInteropRunner(
+            project = project,
+            additionalJvmArgs = project.konanExtension.jvmArgs,
+            executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(
+                    objectFactory = objectFactory,
+                    execOperations = execOperations,
+                    logger = logger
+            )
+    )
 
     @get:Internal
     override val toolRunner: KonanToolRunner = interopRunner

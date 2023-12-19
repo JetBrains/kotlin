@@ -29,13 +29,13 @@ internal fun KonanToolRunner.run(vararg args: String) = run(args.toList())
 
 private const val runFromDaemonPropertyName = "kotlin.native.tool.runFromDaemon"
 
-@Suppress("DEPRECATION") // calling KotlinToolRunner(project) constructor is deprecated
 internal abstract class KonanCliRunner(
         protected val toolName: String,
         project: Project,
+        executionContext: GradleExecutionContext,
         val additionalJvmArgs: List<String> = emptyList(),
-        val konanHome: String = project.konanHome
-) : KotlinToolRunner(project), KonanToolRunner {
+        val konanHome: String = project.konanHome,
+) : KotlinToolRunner(executionContext), KonanToolRunner {
     final override val displayName get() = toolName
 
     final override val mainClass get() = "org.jetbrains.kotlin.cli.utilities.MainKt"
@@ -90,10 +90,11 @@ internal abstract class KonanCliRunner(
 /** Kotlin/Native compiler runner */
 internal class KonanCliCompilerRunner(
         project: Project,
+        executionContext: GradleExecutionContext,
         additionalJvmArgs: List<String> = emptyList(),
         val useArgFile: Boolean = true,
-        konanHome: String = project.konanHome
-) : KonanCliRunner("konanc", project, additionalJvmArgs, konanHome) {
+        konanHome: String = project.konanHome,
+) : KonanCliRunner("konanc", project, executionContext, additionalJvmArgs, konanHome) {
     override fun transformArgs(args: List<String>): List<String> {
         if (!useArgFile) return super.transformArgs(args)
 
@@ -127,9 +128,10 @@ internal class CliToolConfig(konanHome: String, target: String) : AbstractToolCo
 /** Kotlin/Native C-interop tool runner */
 internal class KonanCliInteropRunner(
         private val project: Project,
+        executionContext: GradleExecutionContext,
         additionalJvmArgs: List<String> = emptyList(),
-        konanHome: String = project.konanHome
-) : KonanCliRunner("cinterop", project, additionalJvmArgs, konanHome) {
+        konanHome: String = project.konanHome,
+) : KonanCliRunner("cinterop", project, executionContext, additionalJvmArgs, konanHome) {
     private val projectDir = project.projectDir.toString()
 
     override val mustRunViaExec: Boolean
@@ -176,6 +178,7 @@ internal class KonanCliInteropRunner(
 
 internal class KonanKlibRunner(
         project: Project,
+        executionContext: GradleExecutionContext,
         additionalJvmArgs: List<String> = emptyList(),
         konanHome: String = project.konanHome
-) : KonanCliRunner("klib", project, additionalJvmArgs, konanHome)
+) : KonanCliRunner("klib", project, executionContext, additionalJvmArgs, konanHome)
