@@ -78,7 +78,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                         val resolutionModeForBranches =
                             (data as? ResolutionMode.WithExpectedType)
                                 // Currently we don't use information from cast, but probably we could have
-                                ?.takeUnless { it.fromCast || it.expectedTypeRef.coneType.isUnit }
+                                ?.takeUnless { it.fromCast }
                                 ?.copy(forceFullCompletion = false)
                                 ?: ResolutionMode.ContextDependent
                         whenExpression = whenExpression.transformBranches(
