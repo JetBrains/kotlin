@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 
 class IndexedGetLoopHeader(
     headerInfo: IndexedGetHeaderInfo,
@@ -36,7 +38,11 @@ class IndexedGetLoopHeader(
         with(builder) {
             // loopVariable = objectVariable[inductionVariable]
             val indexedGetFun = with(headerInfo.expressionHandler) { headerInfo.objectVariable.type.getFunction }
-            val get = irCall(indexedGetFun.symbol, indexedGetFun.returnType).apply {
+            // Making sure that expression type has type of the variable when it exists.
+            // Return type of get function can be a type parameter (for example Array<T>::get) which is not a subtype of loopVariable type.
+            val returnType = loopVariable?.type.takeIf { indexedGetFun.returnType.classifierOrNull is IrTypeParameterSymbol }
+                ?: indexedGetFun.returnType
+            val get = irCall(indexedGetFun.symbol, returnType).apply {
                 dispatchReceiver = irGet(headerInfo.objectVariable)
                 putValueArgument(0, irGet(inductionVariable))
             }
