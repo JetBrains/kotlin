@@ -69,3 +69,14 @@ object Test5 {
         }
     }
 }
+
+object Test6 {
+    fun foo(x: Any) = 1
+    fun foo(f: () -> Unit) = 2.0
+    fun foo(r: Runnable) = "3"
+
+    fun test() {
+        val result = foo { }
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>result<!>
+    }
+}

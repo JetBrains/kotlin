@@ -27,3 +27,14 @@ object Test2 {
         }
     }
 }
+
+object Test3 {
+    fun foo(f: () -> Int) = 1
+
+    fun foo(f: () -> Unit) = "2"
+
+    fun test(f: () -> Int) {
+        val result = foo(f)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+    }
+}
