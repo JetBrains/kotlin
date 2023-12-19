@@ -408,10 +408,6 @@ fun FirCallableSymbol<*>.getImplementationStatus(
             ) {
                 return ImplementationStatus.INHERITED_OR_SYNTHESIZED
             }
-            // TODO, KT-59818: suspend function overridden by a Java class in the middle is not properly regarded as an override
-            if (isSuspend) {
-                return ImplementationStatus.INHERITED_OR_SYNTHESIZED
-            }
         }
         is FirFieldSymbol -> if (symbol.isJavaOrEnhancement) return ImplementationStatus.CANNOT_BE_IMPLEMENTED
     }
