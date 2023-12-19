@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirStatusResolveProcessor(
     session: FirSession,
@@ -155,7 +155,7 @@ open class FirDesignatedStatusResolveTransformer(
     }
 }
 
-class StatusComputationSession {
+open class StatusComputationSession {
     private val statusMap = mutableMapOf<FirClass, StatusComputationStatus>()
         .withDefault { StatusComputationStatus.NotComputed }
 

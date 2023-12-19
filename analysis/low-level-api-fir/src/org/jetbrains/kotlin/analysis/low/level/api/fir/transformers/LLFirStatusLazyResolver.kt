@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDecl
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
@@ -82,12 +83,31 @@ private fun LLFirResolveTarget.resolveMode(): StatusResolveMode = when (this) {
     else -> StatusResolveMode.AllCallables
 }
 
+private class LLStatusComputationSession : StatusComputationSession() {
+    private var shouldCheckForActualization: Boolean = false
+
+    inline fun withClass(regularClass: FirClass, transformer: (FirClass) -> Unit) {
+        val oldValue = shouldCheckForActualization
+        if (regularClass.isActual) {
+            shouldCheckForActualization = true
+        }
+
+        try {
+            transformer(regularClass)
+        } finally {
+            shouldCheckForActualization = oldValue
+        }
+    }
+
+    val canHaveActualization: Boolean get() = shouldCheckForActualization
+}
+
 private class LLFirStatusTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
     session: FirSession,
     scopeSession: ScopeSession,
-    private val statusComputationSession: StatusComputationSession = StatusComputationSession(),
+    private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(),
     private val resolveMode: StatusResolveMode,
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.STATUS, isJumpingPhase = false) {
     private val transformer = Transformer(session, scopeSession)
@@ -176,7 +196,7 @@ private class LLFirStatusTargetResolver(
         transformer.statusComputationSession.startComputing(firClass)
 
         if (resolveMode.resolveSupertypes) {
-            transformer.forceResolveStatusesOfSupertypes(firClass)
+            statusComputationSession.withClass(firClass, transformer::forceResolveStatusesOfSupertypes)
         }
 
         performCustomResolveUnderLock(firClass) {
@@ -207,6 +227,7 @@ private class LLFirStatusTargetResolver(
         session: FirSession,
         scopeSession: ScopeSession,
     ) : FirStatusResolveTransformer(session, scopeSession, statusComputationSession) {
+        val computationSession: LLStatusComputationSession get() = this@LLFirStatusTargetResolver.statusComputationSession
 
         override fun FirDeclaration.needResolveMembers(): Boolean = false
         override fun FirDeclaration.needResolveNestedClassifiers(): Boolean = false
@@ -216,7 +237,9 @@ private class LLFirStatusTargetResolver(
         }
 
         override fun resolveClassForSuperType(regularClass: FirRegularClass): Boolean {
-            if (regularClass.resolvePhase >= resolverPhase) {
+            // We cannot skip supertype resolution when there is a possibility
+            // that some supertypes might need to be actualized in the current context
+            if (!computationSession.canHaveActualization && regularClass.resolvePhase >= resolverPhase) {
                 // We can avoid resolve in the case of all declarations in super class are already resolved
                 val declarations = regularClass.declarations
                 if (declarations.isNotEmpty() && declarations.all { it.resolvePhase >= resolverPhase }) {
@@ -230,7 +253,7 @@ private class LLFirStatusTargetResolver(
                 lockProvider,
                 session,
                 scopeSession,
-                statusComputationSession,
+                computationSession,
                 resolveMode = resolveMode,
             )
 

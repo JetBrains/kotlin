@@ -4,7 +4,6 @@
 // ISSUE: KT-60854
 // WITH_STDLIB
 // FULL_JDK
-// MUTE_LL_FIR: KT-62832
 
 // MODULE: common
 // FILE: common.kt
