@@ -36,7 +36,7 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
     }
 
     protected open fun setUpSourceSetDefaults(sourceSet: T) {
-        sourceSet.kotlin.srcDir(defaultSourceFolder(project, sourceSet.name, "kotlin"))
+        sourceSet.kotlin.srcDir(defaultSourceFolder(project, sourceSet.name, SOURCE_SET_TYPE_KOTLIN))
         defineSourceSetConfigurations(project, sourceSet)
     }
 
@@ -68,6 +68,9 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
         fun defaultSourceFolder(project: Project, sourceSetName: String, type: String): File {
             return project.file("src/$sourceSetName/$type")
         }
+
+        internal const val SOURCE_SET_TYPE_RESOURCES = "resources"
+        internal const val SOURCE_SET_TYPE_KOTLIN = "kotlin"
     }
 }
 
@@ -81,7 +84,7 @@ internal class DefaultKotlinSourceSetFactory(
 
     override fun setUpSourceSetDefaults(sourceSet: DefaultKotlinSourceSet) {
         super.setUpSourceSetDefaults(sourceSet)
-        sourceSet.resources.srcDir(defaultSourceFolder(project, sourceSet.name, "resources"))
+        sourceSet.resources.srcDir(defaultSourceFolder(project, sourceSet.name, SOURCE_SET_TYPE_RESOURCES))
 
         val dependencyConfigurationWithMetadata = with(sourceSet) {
             @Suppress("DEPRECATION")
