@@ -144,6 +144,10 @@ object AbstractExpectActualMatcher {
             return ExpectActualMatchingCompatibility.CallableKind
         }
 
+        if (actualDeclaration.isJavaField) {
+            return ExpectActualMatchingCompatibility.ActualJavaField
+        }
+
         val expectedReceiverType = expectDeclaration.extensionReceiverType
         val actualReceiverType = actualDeclaration.extensionReceiverType
         if ((expectedReceiverType != null) != (actualReceiverType != null)) {

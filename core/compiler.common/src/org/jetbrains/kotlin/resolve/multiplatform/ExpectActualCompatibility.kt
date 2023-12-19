@@ -34,6 +34,7 @@ sealed class ExpectActualMatchingCompatibility : ExpectActualCompatibility<Nothi
         ExpectActualCompatibility.MismatchOrIncompatible<Nothing>
 
     object CallableKind : Mismatch("callable kinds are different (function vs property)")
+    object ActualJavaField : Mismatch("actualization to Java field is prohibited")
     object ParameterShape : Mismatch("parameter shapes are different (extension vs non-extension)")
     object ParameterCount : Mismatch("number of value parameters is different")
     object FunctionTypeParameterCount : Mismatch(TYPE_PARAMETER_COUNT)

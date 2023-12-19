@@ -10,7 +10,7 @@ expect class Foo : I {
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> = JavaFoo
+actual typealias Foo = JavaFoo
 
 // FILE: JavaFoo.java
 public class JavaFoo implements I {

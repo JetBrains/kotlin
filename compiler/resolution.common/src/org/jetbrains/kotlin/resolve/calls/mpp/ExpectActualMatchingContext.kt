@@ -163,6 +163,8 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
 
     val CallableSymbolMarker.hasStableParameterNames: Boolean
 
+    val CallableSymbolMarker.isJavaField: Boolean
+
     fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,

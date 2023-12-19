@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isJava
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
@@ -434,6 +435,9 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     override val CallableSymbolMarker.hasStableParameterNames: Boolean
         get() = asSymbol().rawStatus.hasStableParameterNames
+
+    override val CallableSymbolMarker.isJavaField: Boolean
+        get() = this is FirFieldSymbol && fir.isJava
 
     override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
         get() = asSymbol().resolvedAnnotationsWithArguments.map(::AnnotationCallInfoImpl)
