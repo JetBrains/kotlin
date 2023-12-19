@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.test.framework
 
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
+    val MODULE_KIND by enumDirective<TestModuleKind>("Overrides the kind of `KtModule` that is built from the associated test module")
     val DISABLE_DEPENDED_MODE by directive("Analysis in dependent mode should not be run in this test")
     val IGNORE_FE10 by directive("FE10 Analysis API implementation test should mot be run")
     val IGNORE_FIR by directive("FIR Analysis API implementation test should mot be run")

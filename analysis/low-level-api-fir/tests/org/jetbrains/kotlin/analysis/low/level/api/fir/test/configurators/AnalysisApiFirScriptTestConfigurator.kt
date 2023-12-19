@@ -18,7 +18,7 @@ class AnalysisApiFirScriptTestConfigurator(analyseInDependentSession: Boolean) :
         super.configureTest(builder, disposable)
 
         builder.apply {
-            useAdditionalService<KtModuleFactory> { KtScriptModuleFactory() }
+            useAdditionalService<KtModuleFactory> { KtScriptModuleFactory }
         }
     }
 

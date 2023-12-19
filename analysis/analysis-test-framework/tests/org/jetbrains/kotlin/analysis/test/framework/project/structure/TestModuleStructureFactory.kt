@@ -43,8 +43,9 @@ object TestModuleStructureFactory {
         testServices: TestServices,
         project: Project
     ): KtModuleProjectStructure {
-        val moduleEntries = moduleStructure.modules
-            .map { testModule -> testServices.ktModuleFactory.createModule(testModule, testServices, project) }
+        val moduleEntries = moduleStructure.modules.map { testModule ->
+            testServices.getKtModuleFactoryForTestModule(testModule).createModule(testModule, testServices, project)
+        }
 
         val moduleEntriesByName = moduleEntries.associateByName()
 

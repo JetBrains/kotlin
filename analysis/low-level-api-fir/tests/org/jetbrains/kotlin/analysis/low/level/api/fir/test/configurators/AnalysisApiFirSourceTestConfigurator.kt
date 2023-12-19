@@ -17,7 +17,7 @@ open class AnalysisApiFirSourceTestConfigurator(
         super.configureTest(builder, disposable)
 
         builder.apply {
-            useAdditionalService<KtModuleFactory> { KtSourceModuleFactory() }
+            useAdditionalService<KtModuleFactory> { KtSourceModuleFactory }
         }
     }
 }

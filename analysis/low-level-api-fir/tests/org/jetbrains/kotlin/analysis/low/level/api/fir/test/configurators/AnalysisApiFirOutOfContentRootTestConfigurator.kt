@@ -34,7 +34,7 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLike
 
         builder.apply {
             useDirectives(Directives)
-            useAdditionalService<KtModuleFactory> { KtOutOfContentRootModuleFactory() }
+            useAdditionalService<KtModuleFactory> { KtOutOfContentRootModuleFactory }
         }
     }
 
@@ -56,7 +56,7 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLike
 
 private class SkipWhenOutOfContentRootException : SkipTestException()
 
-private class KtOutOfContentRootModuleFactory : KtModuleFactory {
+private object KtOutOfContentRootModuleFactory : KtModuleFactory {
     override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
         val platform = testModule.targetPlatform

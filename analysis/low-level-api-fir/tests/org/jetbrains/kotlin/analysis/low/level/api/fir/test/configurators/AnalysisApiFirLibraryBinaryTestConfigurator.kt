@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryModuleImpl
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
@@ -23,7 +20,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -33,7 +29,7 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
-            useAdditionalService<KtModuleFactory> { KtLibraryBinaryModuleFactory() }
+            useAdditionalService<KtModuleFactory> { KtLibraryBinaryModuleFactory }
             useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
             useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
         }
@@ -54,23 +50,4 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
             AnalysisApiFirTestServiceRegistrar,
             AnalysisApiLibraryBaseTestServiceRegistrar,
         )
-}
-
-class KtLibraryBinaryModuleFactory : KtModuleFactory {
-    override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
-        val library = testServices.compiledLibraryProvider.compileToLibrary(testModule).artifact
-        val decompiledFiles = testServices.testModuleDecompiler.getAllPsiFilesFromLibrary(library, project)
-
-        return KtModuleWithFiles(
-            KtLibraryModuleImpl(
-                testModule.name,
-                testModule.targetPlatform,
-                GlobalSearchScope.filesScope(project, decompiledFiles.mapTo(mutableSetOf()) { it.virtualFile }),
-                project,
-                binaryRoots = listOf(library),
-                librarySources = null,
-            ),
-            decompiledFiles
-        )
-    }
 }

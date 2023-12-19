@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-class KtScriptModuleFactory : KtModuleFactory {
+/**
+ * @see org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind.ScriptSource
+ */
+object KtScriptModuleFactory : KtModuleFactory {
     override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
         val ktFile = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project).single() as KtFile
         val module = KtScriptModuleImpl(

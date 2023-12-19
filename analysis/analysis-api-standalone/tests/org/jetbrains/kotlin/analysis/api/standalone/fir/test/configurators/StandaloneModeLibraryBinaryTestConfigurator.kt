@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtMod
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.KtLibraryBinaryModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
@@ -66,14 +66,11 @@ object StandaloneModeLibraryBinaryTestConfigurator : StandaloneModeConfiguratorB
 }
 
 private class KtCombinedModuleFactory : KtModuleFactory {
-    private val sourceModuleFactory = KtSourceModuleFactory()
-    private val libraryBinaryModuleFactory = KtLibraryBinaryModuleFactory()
-
     override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
         return if (testModule.name == "app") {
-            sourceModuleFactory.createModule(testModule, testServices, project)
+            KtSourceModuleFactory.createModule(testModule, testServices, project)
         } else {
-            libraryBinaryModuleFactory.createModule(testModule, testServices, project)
+            KtLibraryBinaryModuleFactory.createModule(testModule, testServices, project)
         }
     }
 }

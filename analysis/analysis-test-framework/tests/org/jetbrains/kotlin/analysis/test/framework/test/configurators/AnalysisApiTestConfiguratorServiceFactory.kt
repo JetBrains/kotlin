@@ -48,10 +48,3 @@ enum class FrontendKind(val suffix: String) {
     Fir("Fir"),
     Fe10("Fe10"),
 }
-
-enum class TestModuleKind(val suffix: String) {
-    Source("Source"),
-    LibraryBinary("LibraryBinary"),
-    LibrarySource("LibrarySource"),
-    ScriptSource("ScriptSource"),
-}

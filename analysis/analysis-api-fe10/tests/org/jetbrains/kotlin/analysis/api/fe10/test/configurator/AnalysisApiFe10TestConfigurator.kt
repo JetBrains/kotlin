@@ -38,7 +38,7 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
-            useAdditionalService<KtModuleFactory> { KtSourceModuleFactory() }
+            useAdditionalService<KtModuleFactory> { KtSourceModuleFactory }
         }
     }
 
