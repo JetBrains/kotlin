@@ -9,9 +9,9 @@ fun <R> a(first: R, second: (List<R>) -> Unit) {}
 fun test1() {
     a(
         buildList { add("") },
-        second = <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{
+        second = {
             it.myGenericExt()
-        }<!>
+        }
     )
 }
 
@@ -21,11 +21,11 @@ fun <R> b(first: () -> List<R>, second: (List<R>) -> Unit) {}
 fun test2() {
     b(
         first = {
-            buildList { add("") }
+            buildList { add(<!ARGUMENT_TYPE_MISMATCH!>""<!>) }
         },
-        second = <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{
+        second = {
             it.myExt() // Note: must be extension to add constraints
-        }<!>
+        }
     )
 }
 
@@ -45,13 +45,13 @@ fun test3() {
     )
 
     select (
-        myBuildList <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ add("") }<!>,
-        myBuildList <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ add(1) }<!>,
+        myBuildList { add("") },
+        myBuildList { add(1) },
     )
 
     select (
-        run { myBuildList <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ add("") }<!> },
-        myBuildList <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ add(1) }<!>,
+        run { myBuildList { add("") } },
+        myBuildList { add(1) },
     )
 }
 
@@ -64,7 +64,7 @@ fun <D> buildPartList(left: MutableList<D>.() -> Unit, right: MutableList<D>.() 
 
 fun test4() {
     buildPartList(
-        left = <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ add(1) }<!>,
-        right = <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ add("") }<!>
+        left = { add(1) },
+        right = { add("") }
     )
 }
