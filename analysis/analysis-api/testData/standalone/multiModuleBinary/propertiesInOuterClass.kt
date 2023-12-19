@@ -16,6 +16,7 @@ class Outer {
 }
 
 // MODULE: app(lib)
+// MODULE_KIND: Source
 // FILE: main.kt
 
 package some

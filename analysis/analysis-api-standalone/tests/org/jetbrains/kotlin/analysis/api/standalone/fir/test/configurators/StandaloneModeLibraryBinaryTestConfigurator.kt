@@ -10,12 +10,10 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.DispatchingTestModuleCompiler
@@ -25,14 +23,12 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.ExternalAnnotationsEnvironmentConfigurator
 
 object StandaloneModeLibraryBinaryTestConfigurator : StandaloneModeConfiguratorBase() {
-
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         with(builder) {
             configureOptionalTestCompilerPlugin()
@@ -40,7 +36,7 @@ object StandaloneModeLibraryBinaryTestConfigurator : StandaloneModeConfiguratorB
             useConfigurators(::ExternalAnnotationsEnvironmentConfigurator)
             useSourcePreprocessor(::ExternalAnnotationsSourcePreprocessor)
 
-            useAdditionalService<KtModuleFactory> { KtCombinedModuleFactory() }
+            useAdditionalService<KtModuleFactory> { KtLibraryBinaryModuleFactory }
             useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
             useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
 
@@ -62,15 +58,5 @@ object StandaloneModeLibraryBinaryTestConfigurator : StandaloneModeConfiguratorB
         project: Project,
     ): KtModuleProjectStructure {
         return TestModuleStructureFactory.createProjectStructureByTestStructure(moduleStructure, testServices, project)
-    }
-}
-
-private class KtCombinedModuleFactory : KtModuleFactory {
-    override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
-        return if (testModule.name == "app") {
-            KtSourceModuleFactory.createModule(testModule, testServices, project)
-        } else {
-            KtLibraryBinaryModuleFactory.createModule(testModule, testServices, project)
-        }
     }
 }
