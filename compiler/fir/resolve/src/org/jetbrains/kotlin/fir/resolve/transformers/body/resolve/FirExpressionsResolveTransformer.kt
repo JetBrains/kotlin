@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.resolve.inference.FirPCLAInferenceSession
-import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
@@ -46,7 +44,6 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -1041,12 +1038,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             ),
         )
 
-        (context.inferenceSession as? FirPCLAInferenceSession)?.currentCommonSystem
-            ?.addSubtypeConstraintIfCompatible(
-                variableAssignment.lValue.resolvedType,
-                variableAssignment.rValue.resolvedType,
-                ConeExpectedTypeConstraintPosition(variableAssignment),
-            )
+        // for cases like
+        // buildSomething { tVar = "" // Should infer TV from String assignment }
+        context.inferenceSession.addSubtypeConstraintIfCompatible(
+            variableAssignment.lValue.resolvedType, variableAssignment.rValue.resolvedType,
+            variableAssignment,
+        )
 
         dataFlowAnalyzer.exitVariableAssignment(result)
 
