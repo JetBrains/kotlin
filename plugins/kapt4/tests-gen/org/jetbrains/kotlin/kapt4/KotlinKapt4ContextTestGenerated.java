@@ -572,6 +572,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     }
 
     @Test
+    @TestMetadata("multipleTypeConstraints.kt")
+    public void testMultipleTypeConstraints() throws Exception {
+        runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/multipleTypeConstraints.kt");
+    }
+
+    @Test
     @TestMetadata("nestedClasses.kt")
     public void testNestedClasses() throws Exception {
         runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/nestedClasses.kt");

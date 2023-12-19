@@ -437,7 +437,7 @@ private class StubGenerator(
                     printWithNoIndent(param.name, " extends ")
                     if (param.extendsListTypes.isNotEmpty()) {
                         param.extendsListTypes.forEachIndexed { i, t ->
-                            if (i > 0) printWithNoIndent(", ")
+                            if (i > 0) printWithNoIndent(" & ")
                             printType(t)
                         }
                     } else {

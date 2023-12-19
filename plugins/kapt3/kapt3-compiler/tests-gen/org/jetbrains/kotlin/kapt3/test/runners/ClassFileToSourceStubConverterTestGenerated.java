@@ -572,6 +572,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     }
 
     @Test
+    @TestMetadata("multipleTypeConstraints.kt")
+    public void testMultipleTypeConstraints() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/multipleTypeConstraints.kt");
+    }
+
+    @Test
     @TestMetadata("nestedClasses.kt")
     public void testNestedClasses() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/nestedClasses.kt");
