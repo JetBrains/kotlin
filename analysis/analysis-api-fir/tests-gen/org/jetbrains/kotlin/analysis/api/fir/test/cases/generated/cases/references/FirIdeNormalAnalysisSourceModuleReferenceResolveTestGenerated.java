@@ -329,42 +329,6 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     }
 
     @Test
-    @TestMetadata("JavaAnnotationParameter.kt")
-    public void testJavaAnnotationParameter() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/JavaAnnotationParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("JavaConstructorNotNullParameter.kt")
-    public void testJavaConstructorNotNullParameter() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/JavaConstructorNotNullParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("JavaEnumEntry.kt")
-    public void testJavaEnumEntry() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/JavaEnumEntry.kt");
-    }
-
-    @Test
-    @TestMetadata("JavaEnumValueOf.kt")
-    public void testJavaEnumValueOf() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/JavaEnumValueOf.kt");
-    }
-
-    @Test
-    @TestMetadata("JavaReference.kt")
-    public void testJavaReference() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/JavaReference.kt");
-    }
-
-    @Test
-    @TestMetadata("JavaStaticMethod.kt")
-    public void testJavaStaticMethod() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/JavaStaticMethod.kt");
-    }
-
-    @Test
     @TestMetadata("KotlinPropertyAssignment.kt")
     public void testKotlinPropertyAssignment() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/KotlinPropertyAssignment.kt");
@@ -485,12 +449,6 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     }
 
     @Test
-    @TestMetadata("ReferenceToSam.kt")
-    public void testReferenceToSam() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/ReferenceToSam.kt");
-    }
-
-    @Test
     @TestMetadata("ResolveClass.kt")
     public void testResolveClass() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ResolveClass.kt");
@@ -584,12 +542,6 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     @TestMetadata("superWithLabel_caretAtSuper.kt")
     public void testSuperWithLabel_caretAtSuper() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/superWithLabel_caretAtSuper.kt");
-    }
-
-    @Test
-    @TestMetadata("SyntheticProperty.kt")
-    public void testSyntheticProperty() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/SyntheticProperty.kt");
     }
 
     @Test
@@ -1297,6 +1249,64 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
             public void testNonemptyLambdaRParIncorrectVararg() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/invoke/withErrors/nonemptyLambdaRParIncorrectVararg.kt");
             }
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/java")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Java {
+        @Test
+        public void testAllFilesPresentInJava() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/java"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("JavaAnnotationParameter.kt")
+        public void testJavaAnnotationParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/java/JavaAnnotationParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("JavaConstructorNotNullParameter.kt")
+        public void testJavaConstructorNotNullParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/java/JavaConstructorNotNullParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("JavaEnumEntry.kt")
+        public void testJavaEnumEntry() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/java/JavaEnumEntry.kt");
+        }
+
+        @Test
+        @TestMetadata("JavaEnumValueOf.kt")
+        public void testJavaEnumValueOf() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/java/JavaEnumValueOf.kt");
+        }
+
+        @Test
+        @TestMetadata("JavaReference.kt")
+        public void testJavaReference() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/java/JavaReference.kt");
+        }
+
+        @Test
+        @TestMetadata("JavaStaticMethod.kt")
+        public void testJavaStaticMethod() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/java/JavaStaticMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("ReferenceToSam.kt")
+        public void testReferenceToSam() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/java/ReferenceToSam.kt");
+        }
+
+        @Test
+        @TestMetadata("SyntheticProperty.kt")
+        public void testSyntheticProperty() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/java/SyntheticProperty.kt");
         }
     }
 

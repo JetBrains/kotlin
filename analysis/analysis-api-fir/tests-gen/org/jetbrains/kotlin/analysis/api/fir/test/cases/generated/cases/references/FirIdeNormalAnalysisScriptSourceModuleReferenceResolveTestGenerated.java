@@ -239,6 +239,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceResolveTestGenerated
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/java")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Java {
+        @Test
+        public void testAllFilesPresentInJava() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/java"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc")
     @TestDataPath("$PROJECT_ROOT")
     public class KDoc {
