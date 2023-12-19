@@ -776,10 +776,6 @@ publishing {
                         classifier = platformName(target)
                         extension = "spdx.json"
                     }
-                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-${platformName(target)}-${kotlinVersion}.${archiveExtension}.sha256") {
-                        classifier = platformName(target)
-                        extension = "sha256"
-                    }
                 }
             } else {
                 mvn.artifact(bundleRegular) {
@@ -813,10 +809,6 @@ publishing {
                     mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-prebuilt-${platformName(target)}-${kotlinVersion}.spdx.json") {
                         classifier = platformName(target)
                         extension = "spdx.json"
-                    }
-                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-${platformName(target)}-${kotlinVersion}.${archiveExtension}.sha256") {
-                        classifier = platformName(target)
-                        extension = "sha256"
                     }
                 }
             } else {
