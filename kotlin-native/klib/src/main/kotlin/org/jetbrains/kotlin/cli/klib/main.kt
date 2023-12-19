@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.cli.klib
 
 // TODO: Extract `library` package as a shared jar?
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.BasicIrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -266,14 +269,23 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     class KlibToolLinker(
         module: ModuleDescriptor, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable
     ) : KotlinIrLinker(module, KlibToolLogger, irBuiltIns, symbolTable, emptyList()) {
+
+        override val partialLinkageSupport = createPartialLinkageSupportForLinker(
+            partialLinkageConfig = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.INFO),
+            allowErrorTypes = true,
+            builtIns = irBuiltIns,
+            messageLogger = messageLogger
+        )
+
         override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
             linker = this,
             symbolTable = symbolTable,
             mangler = KonanManglerIr,
             typeSystem = IrTypeSystemContextImpl(builtIns),
             friendModules = emptyMap(),
-            partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
+            partialLinkageSupport = partialLinkageSupport
         )
+
         override val translationPluginContext: TranslationPluginContext
             get() = TODO("Not needed for ir dumping")
 
