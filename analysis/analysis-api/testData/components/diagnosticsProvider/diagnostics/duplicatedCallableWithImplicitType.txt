@@ -1,4 +1,1 @@
 Diagnostics from elements:
-  for PSI element of type KtCallExpression at (26,5-36)
-    ARGUMENT_TYPE_MISMATCH      text ranges: [(127,158)]
-      PSI: KtCallExpression at (26,5-36)
