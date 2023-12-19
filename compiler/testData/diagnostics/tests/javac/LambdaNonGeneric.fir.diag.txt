@@ -1,0 +1,23 @@
+/m3.kt:(72,73): error: Cannot access class 'Some'. Check your module classpath for missing or conflicting dependencies.
+
+/m3.kt:(92,96): error: Cannot access class 'Some'. Check your module classpath for missing or conflicting dependencies.
+
+/m3.kt:(117,121): error: Cannot access class 'Some'. Check your module classpath for missing or conflicting dependencies.
+
+/m3.kt:(128,132): error: Cannot access class 'Some'. Check your module classpath for missing or conflicting dependencies.
+
+/m3.kt:(162,166): error: Unresolved reference 'Some'.
+
+/m3.kt:(184,187): error: Cannot access class 'Some'. Check your module classpath for missing or conflicting dependencies.
+
+/m3.kt:(198,199): error: Cannot access class 'Some'. Check your module classpath for missing or conflicting dependencies.
+
+/m3.kt:(215,217): error: Cannot access class 'Some'. Check your module classpath for missing or conflicting dependencies.
+
+/m3.kt:(231,248): error: Cannot access class 'Some'. Check your module classpath for missing or conflicting dependencies.
+
+/m3.kt:(233,235): error: Cannot access class 'Some'. Check your module classpath for missing or conflicting dependencies.
+
+/m3.kt:(259,263): error: Cannot access class 'Some'. Check your module classpath for missing or conflicting dependencies.
+
+/m3.kt:(267,271): error: Cannot access class 'Some'. Check your module classpath for missing or conflicting dependencies.

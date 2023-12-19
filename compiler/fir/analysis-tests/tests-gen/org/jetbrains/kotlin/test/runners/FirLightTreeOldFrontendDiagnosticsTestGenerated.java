@@ -22880,6 +22880,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 runTest("compiler/testData/diagnostics/tests/javac/Lambda.kt");
             }
 
+            @Test
+            @TestMetadata("LambdaNonGeneric.kt")
+            public void testLambdaNonGeneric() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/javac/LambdaNonGeneric.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/javac/fieldsResolution")
             @TestDataPath("$PROJECT_ROOT")
