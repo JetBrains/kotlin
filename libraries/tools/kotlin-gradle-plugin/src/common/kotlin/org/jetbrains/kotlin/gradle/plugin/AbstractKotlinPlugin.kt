@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
 import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityConventionRegistrar
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -188,19 +190,24 @@ internal abstract class AbstractKotlinPlugin(
                     val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.name)
                     kotlinSourceSet.kotlin.source(javaSourceSet.java)
 
-                    // Registering resources from KotlinSourceSet as Java SourceSet resources.
+                    // Registering resources from JavaSourceSet as KotlinSourceSet resources.
                     // In the case of KotlinPlugin Java Sources set will create ProcessResources task to process all resources into output
                     // 'kotlinSourceSet.resources' should contain Java SourceSet default resource directories,
-                    // and to avoid duplication error, we are replacing the already configured default one.
+                    // and to avoid duplication error, we are replacing the already created default one.
+                    with(kotlinSourceSet as DefaultKotlinSourceSet) {
+                        val defaultResources = actualResources
+                        actualResources = javaSourceSet.resources
+                        // Filtering out default resource directory to avoid duplicates error
+                        val defaultResourcesDir = KotlinSourceSetFactory.defaultSourceFolder(
+                            project,
+                            javaSourceSet.name,
+                            javaSourceSet.resources.name
+                        )
+                        resources.srcDir(defaultResources.sourceDirectories.filter {
+                            !it.startsWith(defaultResourcesDir)
+                        })
+                    }
 
-                    // If KGP was applied with delay, it is possible that 'javaSourceSet.resources' may already have some additional
-                    // configuration. So we are syncing it into 'kotlinSourceSet.resources'.
-                    kotlinSourceSet.resources.srcDirs(javaSourceSet.resources.sourceDirectories.files)
-                    javaSourceSet.resources.setSrcDirs(
-                        listOf {
-                            kotlinSourceSet.resources.sourceDirectories
-                        }
-                    )
                     @Suppress("DEPRECATION")
                     kotlinCompilation.addSourceSet(kotlinSourceSet)
                     project.compatibilityConventionRegistrar.addConvention(javaSourceSet, kotlinSourceSetDslName, kotlinSourceSet)

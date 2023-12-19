@@ -60,7 +60,7 @@ class ResourcesIT : KGPBaseTest() {
             build("assemble")
         }
     }
-    
+
     @GradleTest
     @DisplayName("KT-60459: should not overwrite custom resource directories")
     @JvmGradlePluginTests
@@ -104,6 +104,54 @@ class ResourcesIT : KGPBaseTest() {
                 projectPath.resolve("build/libs/simpleProject.jar").assertZipArchiveContainsFilesOnce(
                     listOf(mainResFile.name, additionalResFile.name)
                 )
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("KT-62490: should not drop reference to task producing resources")
+    @JvmGradlePluginTests
+    fun keepReferenceToResourcesProducingTask(gradleVersion: GradleVersion) {
+        project("kt-62490", gradleVersion) {
+            build("processResources") {
+                assertTasksExecuted(":customResGenerator")
+                assertFileInProjectExists("build/custom-res/myres.txt")
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("KT-62490: should keep previously configured Kotlin resources")
+    @JvmGradlePluginTests
+    fun keepConfiguredKotlinResources(gradleVersion: GradleVersion) {
+        project(
+            "kt-62490",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsOn(
+                reason = "KT-64462: Gradle complains about already created configurations",
+                predicate = { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_1) }
+            )
+        ) {
+            buildGradleKts.appendText(
+                //language=kotlin
+                """
+                |
+                |val customResGenerator1 = tasks.register<CustomResGenerator>("customResGenerator1") {
+                |    outputFile.value(project.layout.buildDirectory.dir("custom-res-1"))
+                |}
+                |project.extensions.getByType<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension>()
+                |    .sourceSets.create("x").resources.srcDir(customResGenerator1)
+                |sourceSets.create("x")
+                """.trimMargin()
+            )
+
+            val xResFile = projectPath.resolve("src/x/resources").resolve("test.txt").toFile()
+            xResFile.parentFile.mkdirs()
+            xResFile.writeText("some resource")
+
+            build("processXResources", enableGradleDebug = true) {
+                assertTasksExecuted(":customResGenerator1")
+                assertFileInProjectExists("build/custom-res-1/myres.txt")
             }
         }
     }
