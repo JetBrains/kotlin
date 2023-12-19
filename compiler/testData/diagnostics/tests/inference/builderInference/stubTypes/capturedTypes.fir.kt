@@ -1,6 +1,7 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -DEPRECATION -UNCHECKED_CAST -OPT_IN_IS_NOT_ENABLED
 // WITH_STDLIB
+// ISSUE: KT-61250 (for K2/PCLA difference)
 
 // FILE: main.kt
 import kotlin.experimental.ExperimentalTypeInference
@@ -33,7 +34,7 @@ fun main() {
         captureIn(getInv())
 
         // K is fixed into CapturedType(out NotFixed: TypeVariable(R))
-        capture(getOut())
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>capture<!>(<!ARGUMENT_TYPE_MISMATCH!>getOut()<!>)
         ""
     }
     build {

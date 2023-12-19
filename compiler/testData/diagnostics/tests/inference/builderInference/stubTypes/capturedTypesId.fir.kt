@@ -19,13 +19,13 @@ fun <K> capture(x: Inv<K>): K = null as K
 fun <I> id(x: I): I = null as I
 
 fun main() {
-    <!NEW_INFERENCE_ERROR!>build {
+    build {
         emit("")
         // K is fixed into CapturedType(out NotFixed: TypeVariable(R)
-        capture(id(getOut())) // unexpected TYPE_MISMATCH (KT-63996)
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>capture<!>(<!ARGUMENT_TYPE_MISMATCH!>id(getOut())<!>) // unexpected TYPE_MISMATCH (KT-63996)
         // capture(getOut()) // OK!!!
         Unit
-    }<!>
+    }
     build<String> {
         emit("")
         // K is fixed into CapturedType(out NotFixed: TypeVariable(R)

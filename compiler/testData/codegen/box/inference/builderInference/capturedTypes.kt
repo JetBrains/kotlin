@@ -1,6 +1,7 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: KT-61909
+// ISSUE: KT-61250
+// IGNORE_BACKEND_K2: ANY
 
 // FILE: main.kt
 import kotlin.experimental.ExperimentalTypeInference

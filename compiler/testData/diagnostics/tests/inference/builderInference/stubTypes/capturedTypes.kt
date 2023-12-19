@@ -1,6 +1,7 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -DEPRECATION -UNCHECKED_CAST -OPT_IN_IS_NOT_ENABLED
 // WITH_STDLIB
+// ISSUE: KT-61250 (for K2/PCLA difference)
 
 // FILE: main.kt
 import kotlin.experimental.ExperimentalTypeInference
