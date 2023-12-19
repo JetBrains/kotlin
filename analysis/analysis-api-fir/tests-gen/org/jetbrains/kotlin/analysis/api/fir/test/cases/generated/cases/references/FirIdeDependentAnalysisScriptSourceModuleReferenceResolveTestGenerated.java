@@ -246,6 +246,16 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
         public void testAllFilesPresentInJava() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/java"), Pattern.compile("^(.+)\\.kts$"), null, true);
         }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName")
+        @TestDataPath("$PROJECT_ROOT")
+        public class EnumWithCustomGetName {
+            @Test
+            public void testAllFilesPresentInEnumWithCustomGetName() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName"), Pattern.compile("^(.+)\\.kts$"), null, true);
+            }
+        }
     }
 
     @Nested

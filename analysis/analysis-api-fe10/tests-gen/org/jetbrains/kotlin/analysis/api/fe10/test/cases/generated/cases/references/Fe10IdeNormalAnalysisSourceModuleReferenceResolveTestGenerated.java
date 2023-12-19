@@ -1308,6 +1308,40 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
         public void testSyntheticProperty() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/java/SyntheticProperty.kt");
         }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName")
+        @TestDataPath("$PROJECT_ROOT")
+        public class EnumWithCustomGetName {
+            @Test
+            public void testAllFilesPresentInEnumWithCustomGetName() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("FunctionCallOnConstant.kt")
+            public void testFunctionCallOnConstant() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName/FunctionCallOnConstant.kt");
+            }
+
+            @Test
+            @TestMetadata("FunctionCallOnVariable.kt")
+            public void testFunctionCallOnVariable() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName/FunctionCallOnVariable.kt");
+            }
+
+            @Test
+            @TestMetadata("PropertyAccessOnConstant.kt")
+            public void testPropertyAccessOnConstant() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName/PropertyAccessOnConstant.kt");
+            }
+
+            @Test
+            @TestMetadata("PropertyAccessOnVariable.kt")
+            public void testPropertyAccessOnVariable() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/java/enumWithCustomGetName/PropertyAccessOnVariable.kt");
+            }
+        }
     }
 
     @Nested
