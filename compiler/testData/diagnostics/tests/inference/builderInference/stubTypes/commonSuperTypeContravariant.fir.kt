@@ -1,6 +1,7 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
 // WITH_STDLIB
+// ISSUE: KT-64802 (K2/PCLA difference)
 
 // FILE: Test.java
 
@@ -34,16 +35,16 @@ fun <E> select4(x: E?, y: In<E>): E = x!!
 fun test() {
     val ret = build {
         emit("1")
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(get(), getIn())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(get(), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(Test.foo(get()), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(Test.foo(get()), getIn())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(get(), getIn())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(get(), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(Test.foo(get()), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(Test.foo(get()), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable?")!>select1(get(), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable?")!>select1(get(), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable?")!>select1(Test.foo(get()), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*>? & java.io.Serializable?")!>select1(Test.foo(get()), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable..kotlin.Comparable<*>? & java.io.Serializable?")!>select4(get(), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable..kotlin.Comparable<*>? & java.io.Serializable?")!>select4(get(), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable..kotlin.Comparable<*>? & java.io.Serializable?")!>select4(Test.foo(get()), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable..kotlin.Comparable<*>? & java.io.Serializable?")!>select4(Test.foo(get()), getIn())<!>
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(id(Test.foo(get())), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable..kotlin.Comparable<*>? & java.io.Serializable?")!>select4(id(Test.foo(get())), getIn())<!>
 
         build2 {
             emit(1)
@@ -71,14 +72,14 @@ fun test() {
     }
     val ret2 = build {
         emit(if (true) "" else null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(get(), getIn())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(get(), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(Test.foo(get()), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(Test.foo(get()), getIn())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select3(get(), getIn())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select3(get(), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select3(Test.foo(get()), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select3(Test.foo(get()), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select2(get(), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select2(get(), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select2(Test.foo(get()), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select2(Test.foo(get()), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select3(get(), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select3(get(), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select3(Test.foo(get()), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String..kotlin.String?!")!>select3(Test.foo(get()), getIn())<!>
         ""
     }
 }

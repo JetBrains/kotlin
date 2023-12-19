@@ -1,4 +1,7 @@
 // WITH_STDLIB
+// IGNORE_BACKEND_K2: ANY
+// ISSUE: KT-64823 (K2/PCLA difference)
+// Also, see testData/diagnostics/testsWithStdLib/coroutines/inference/kt36220.kt
 
 import kotlin.experimental.ExperimentalTypeInference
 

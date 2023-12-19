@@ -1,4 +1,4 @@
-FILE: kt36220.kt
+FILE: kt36220.fir.kt
     public final class TypeDefinition<KotlinType : R|kotlin/Any|> : R|kotlin/Any| {
         public constructor<KotlinType : R|kotlin/Any|>(): R|TypeDefinition<KotlinType>| {
             super<R|kotlin/Any|>()
@@ -22,8 +22,8 @@ FILE: kt36220.kt
                 ^ R|<local>/it|.R|kotlin/text/toInt|()
             }
             )
-            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.serialize: R|kotlin/Unit|>|(<L> = serialize@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Any?| <inline=NoInline>  {
-                ^ (R|<local>/it| as R|kotlin/Any|).R|kotlin/Any.toString|()
+            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.serialize: R|kotlin/Unit|>|(<L> = serialize@fun <anonymous>(it: R|@R|kotlin/ParameterName|(name = String(value))  kotlin/Int|): R|kotlin/Any?| <inline=NoInline>  {
+                ^ R|<local>/it|.R|kotlin/toString<Inapplicable(RESOLVED_WITH_ERROR): kotlin/toString>#|()
             }
             )
         }

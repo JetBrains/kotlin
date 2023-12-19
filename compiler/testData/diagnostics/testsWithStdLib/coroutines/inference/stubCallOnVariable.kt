@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
 // FIR_DUMP
+// ISSUE: KT-64823 (K2/PCLA difference)
 
 class TypeDefinition<KotlinType : Any> {
     fun parse(parser: (serializedValue: String) -> KotlinType?): Unit = TODO()
