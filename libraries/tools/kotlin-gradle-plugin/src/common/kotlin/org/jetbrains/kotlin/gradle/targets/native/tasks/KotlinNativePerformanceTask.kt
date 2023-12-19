@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.performance.PerformanceExtension
 import org.jetbrains.kotlin.gradle.plugin.performance.TaskTimerListener
 import org.jetbrains.kotlin.gradle.plugin.performance.TrackableMetric
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
 /**
@@ -28,7 +29,7 @@ open class NativePerformanceReport : DefaultTask() {
     lateinit var timeListener: TaskTimerListener
 
     @Internal
-    val reportDirectory = File(project.buildDir, "perfReports")
+    val reportDirectory = project.layout.buildDirectory.dir("perfReports").getFile()
 
     @OutputFile
     val outputFile = File(reportDirectory, "${name}.txt")
