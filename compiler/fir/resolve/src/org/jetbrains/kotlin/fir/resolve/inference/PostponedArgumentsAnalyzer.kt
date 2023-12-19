@@ -195,12 +195,18 @@ class PostponedArgumentsAnalyzer(
             //      foo() // T = Unit, even though there is no implicit return
             //    }
             //  Things get even weirder if T has an upper bound incompatible with Unit.
-            // Not calling `addSubsystemFromExpression` for builder-inference is crucial
             val haveSubsystem = c.addSubsystemFromExpression(it)
-            if (isLastExpression &&
-                (lambdaExpectedTypeIsUnit || lambda.atom.shouldReturnUnit(returnArguments))
-            ) {
+            val isUnitLambda = lambdaExpectedTypeIsUnit || lambda.atom.shouldReturnUnit(returnArguments)
+            if (isLastExpression && isUnitLambda) {
+                // That "if" is necessary because otherwise we would force a lambda return type
+                // to be inferred from completed last expression.
+                // See `test1` at testData/diagnostics/tests/inference/coercionToUnit/afterBareReturn.kt
                 if (haveSubsystem) {
+                    // We don't force it because of the cases like
+                    // buildMap {
+                    //    put("a", 1) // While `put` returns V, we should not enforce the latter to be a subtype of Unit
+                    // }
+                    // See KT-63602 for details.
                     builder.addSubtypeConstraintIfCompatible(
                         it.resolvedType, returnTypeRef.type,
                         ConeLambdaArgumentConstraintPosition(lambda.atom)
