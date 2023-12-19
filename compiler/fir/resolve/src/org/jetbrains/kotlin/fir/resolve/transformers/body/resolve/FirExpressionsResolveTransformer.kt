@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.FirOperation.AS
-import org.jetbrains.kotlin.fir.expressions.FirOperation.IS
-import org.jetbrains.kotlin.fir.expressions.FirOperation.NOT_IS
-import org.jetbrains.kotlin.fir.expressions.FirOperation.SAFE_AS
+import org.jetbrains.kotlin.fir.expressions.FirOperation.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
@@ -157,7 +154,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     callSite = when (data) {
                         is ResolutionMode.AssignmentLValue -> data.variableAssignment
                         else -> qualifiedAccessExpression
-                    }
+                    },
+                    data,
                 )
                 // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
                 // so candidate existence must be checked before calling completion
@@ -224,9 +222,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         isUsedAsReceiver: Boolean,
         isUsedAsGetClassReceiver: Boolean,
         callSite: FirElement,
+        data: ResolutionMode,
     ): FirStatement {
         return callResolver.resolveVariableAccessAndSelectCandidate(
-            qualifiedAccessExpression, isUsedAsReceiver, isUsedAsGetClassReceiver, callSite
+            qualifiedAccessExpression, isUsedAsReceiver, isUsedAsGetClassReceiver, callSite, data
         )
     }
 
@@ -438,7 +437,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
 
             val resultExpression = context.inferenceSession.onCandidatesResolution(withTransformedArguments) {
-                callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+                callResolver.resolveCallAndSelectCandidate(withTransformedArguments, data)
             }
 
             val (completeInference, callCompleted) = callCompleter.completeCall(resultExpression, data)
@@ -1083,7 +1082,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             callableReferenceAccess
         } else {
             components.syntheticCallGenerator.resolveCallableReferenceWithSyntheticOuterCall(
-                callableReferenceAccess, data.expectedType, resolutionContext,
+                callableReferenceAccess, data.expectedType, resolutionContext, data
             )
         }.also {
             dataFlowAnalyzer.exitCallableReference(it)
@@ -1665,13 +1664,22 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     // Default value of array parameter (Array<T> or primitive array such as IntArray, FloatArray, ...)
                     // or argument for array parameter in annotation call.
                     arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
-                    val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(arrayLiteral, data.expectedTypeRef, resolutionContext)
+                    val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(
+                        arrayLiteral,
+                        data.expectedTypeRef,
+                        resolutionContext,
+                        data,
+                    )
                     callCompleter.completeCall(call, data)
                     arrayOfCallTransformer.transformFunctionCall(call, session)
                 }
                 else -> {
                     // Other unsupported usage.
-                    val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(arrayLiteral, resolutionContext)
+                    val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
+                        arrayLiteral,
+                        resolutionContext,
+                        data,
+                    )
                     arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
                     callCompleter.completeCall(syntheticIdCall, data)
                     arrayLiteral

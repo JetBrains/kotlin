@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
@@ -1068,7 +1069,8 @@ internal class KtFirCallResolver(
             analysisSession.firResolveSession,
             originalFunctionCall,
             calleeName,
-            psi
+            psi,
+            ResolutionMode.ContextIndependent,
         )
         return candidates.mapNotNull {
             convertToKtCallCandidateInfo(
