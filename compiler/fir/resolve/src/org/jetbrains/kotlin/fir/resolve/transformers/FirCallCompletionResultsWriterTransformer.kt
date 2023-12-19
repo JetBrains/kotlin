@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirPropertyAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -35,7 +34,10 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -45,7 +47,6 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
@@ -180,31 +181,17 @@ class FirCallCompletionResultsWriterTransformer(
             qualifiedAccessExpression.replaceTypeArguments(typeArguments)
         }
 
-        for (postponedCall in subCandidate.postponedCalls) {
+        for (postponedCall in subCandidate.postponedPCLACalls) {
             postponedCall.transformSingle(this, null)
         }
 
-        for (postponedAccess in subCandidate.postponedAccesses) {
-            postponedAccess.replaceConeTypeOrNull(finallySubstituteOrSelf(postponedAccess.resolvedType))
-
-            if (postponedAccess is FirSmartCastExpression) {
-                postponedAccess.replaceSmartcastType(
-                    postponedAccess.smartcastType.withReplacedConeType(finallySubstituteOrNull(postponedAccess.smartcastType.coneType))
-                )
-            }
-        }
-
-        for (declarationToUpdate in subCandidate.updateDeclarations) {
-            declarationToUpdate()
-        }
-
-        for (callback in subCandidate.callbacks) {
+        for (callback in subCandidate.onCompletionResultsWritingCallbacks) {
             callback(finalSubstitutor)
         }
 
         // TODO: Be aware of exponent
         val firStubTypeTransformer = FirStubTypeTransformer(finalSubstitutor)
-        for (lambda in subCandidate.pclaLambdas) {
+        for (lambda in subCandidate.lambdasAnalyzedWithPCLA) {
             lambda.transformSingle(firStubTypeTransformer, null)
         }
 

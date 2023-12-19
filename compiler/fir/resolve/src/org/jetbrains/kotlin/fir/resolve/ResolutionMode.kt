@@ -32,10 +32,7 @@ sealed class ResolutionMode(
         data object AugmentedAssignmentCallOption : ContextDependent(isReceiverOrTopLevel = false, skipCompletion = true)
     }
 
-    abstract class ContextIndependent : ResolutionMode(forceFullCompletion = true) {
-        data class ForDeclaration(val declaration: () -> Unit) : ContextIndependent()
-        companion object Default : ContextIndependent()
-    }
+    data object ContextIndependent : ResolutionMode(forceFullCompletion = true)
 
     sealed class ReceiverResolution(val forCallableReference: Boolean) : ResolutionMode(forceFullCompletion = true) {
         data object ForCallableReference : ReceiverResolution(forCallableReference = true)
@@ -124,13 +121,11 @@ fun ResolutionMode.expectedType(components: BodyResolveComponents): FirTypeRef? 
 fun withExpectedType(
     expectedTypeRef: FirTypeRef,
     expectedTypeMismatchIsReportedInChecker: Boolean = false,
-    updateDeclarationCallback: (() -> Unit)? = null,
 ): ResolutionMode = when {
     expectedTypeRef is FirResolvedTypeRef -> ResolutionMode.WithExpectedType(
         expectedTypeRef,
         expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker
     )
-    updateDeclarationCallback != null -> ResolutionMode.ContextIndependent.ForDeclaration(updateDeclarationCallback)
     else -> ResolutionMode.ContextIndependent
 }
 

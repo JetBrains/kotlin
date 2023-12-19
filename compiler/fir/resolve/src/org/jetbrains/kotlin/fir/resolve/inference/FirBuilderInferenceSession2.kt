@@ -46,13 +46,10 @@ class FirBuilderInferenceSession2(
 
         if (qualifiedAccessExpression.resolvedType.containsNotFixedTypeVariables() && (qualifiedAccessExpression as? FirResolvable)?.candidate() == null) {
             qualifiedAccessesToProcess.add(qualifiedAccessExpression)
-            outerCandidate.postponedAccesses += qualifiedAccessExpression
 
             if (qualifiedAccessExpression is FirSmartCastExpression) {
                 handleQualifiedAccess(qualifiedAccessExpression.originalExpression, data)
             }
-
-            (data as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
 
             qualifiedAccessExpression.updateReturnTypeWithCurrentSubstitutor(data)
         }
@@ -106,9 +103,7 @@ class FirBuilderInferenceSession2(
 
         if (!resolutionMode.isReceiverOrTopLevel) return
 
-        outerCandidate.postponedCalls += call
-
-        (resolutionMode as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
+        outerCandidate.postponedPCLACalls += call
     }
 
     fun applyResultsToMainCandidate() {
@@ -118,11 +113,11 @@ class FirBuilderInferenceSession2(
     fun integrateChildSession(
         childCalls: Collection<FirStatement>,
         childStorage: ConstraintStorage,
-        afterCompletion: (ConeSubstitutor) -> Unit,
+        onCompletionResultsWriting: (ConeSubstitutor) -> Unit,
     ) {
-        outerCandidate.postponedCalls += childCalls
+        outerCandidate.postponedPCLACalls += childCalls
         currentCommonSystem.addOtherSystem(childStorage)
-        outerCandidate.callbacks += afterCompletion
+        outerCandidate.onCompletionResultsWritingCallbacks += onCompletionResultsWriting
     }
 
     private fun FirExpression.updateReturnTypeWithCurrentSubstitutor(

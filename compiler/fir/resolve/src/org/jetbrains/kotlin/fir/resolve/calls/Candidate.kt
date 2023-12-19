@@ -115,11 +115,9 @@ class Candidate(
     var functionTypesOfSamConversions: HashMap<FirExpression, ConeKotlinType>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
-    val postponedCalls = mutableListOf<FirStatement>()
-    val postponedAccesses = mutableListOf<FirExpression>()
-    val pclaLambdas = mutableListOf<FirAnonymousFunction>()
-    val updateDeclarations = mutableListOf<() -> Unit>()
-    val callbacks = mutableListOf<(ConeSubstitutor) -> Unit>()
+    val postponedPCLACalls = mutableListOf<FirStatement>()
+    val lambdasAnalyzedWithPCLA = mutableListOf<FirAnonymousFunction>()
+    val onCompletionResultsWritingCallbacks = mutableListOf<(ConeSubstitutor) -> Unit>()
 
     var currentApplicability = CandidateApplicability.RESOLVED
         private set

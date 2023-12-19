@@ -581,7 +581,7 @@ private fun FirResolvable.processCandidateIfApplicable(
         }
     }
 
-    for (call in candidate.postponedCalls) {
+    for (call in candidate.postponedPCLACalls) {
         if (!visited.add(call)) continue
         call.processAllContainingCallCandidates(processBlocks, processor)
     }

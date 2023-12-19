@@ -109,7 +109,7 @@ class FirDelegatedPropertyInferenceSession(
     override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? =
         resolutionContext.bodyResolveContext.outerConstraintStorage.takeIf { it !== ConstraintStorage.Empty }
 
-    fun completeSessionOrPostponeIfNonRoot(afterCompletion: (ConeSubstitutor) -> Unit) {
+    fun completeSessionOrPostponeIfNonRoot(onCompletionResultsWriting: (ConeSubstitutor) -> Unit) {
         check(!wasCompletionRun)
         wasCompletionRun = true
 
@@ -131,7 +131,7 @@ class FirDelegatedPropertyInferenceSession(
                     partiallyResolvedCalls.mapTo(this) { it.first as FirStatement }
                 },
                 parentConstraintSystem.currentStorage(),
-                afterCompletion,
+                onCompletionResultsWriting,
             )
             return
         }
@@ -150,7 +150,7 @@ class FirDelegatedPropertyInferenceSession(
             it.transformSingle(callCompletionResultsWriter, null)
         }
 
-        afterCompletion(finalSubstitutor)
+        onCompletionResultsWriting(finalSubstitutor)
     }
 
     private fun completeCandidatesForRootSession(): List<FirResolvable> {

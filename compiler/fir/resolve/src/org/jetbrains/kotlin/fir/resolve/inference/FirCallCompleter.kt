@@ -378,7 +378,7 @@ class FirCallCompleter(
             transformer.context.withAnonymousFunctionTowerDataContext(lambdaArgument.symbol) {
                 val builderInferenceSession =
                     runIf(notFixedTypeVariablesInInputTypes.isNotEmpty()) {
-                        candidate.pclaLambdas += lambdaArgument
+                        candidate.lambdasAnalyzedWithPCLA += lambdaArgument
 
                         FirBuilderInferenceSession2(candidate, session.inferenceComponents)
                     }
