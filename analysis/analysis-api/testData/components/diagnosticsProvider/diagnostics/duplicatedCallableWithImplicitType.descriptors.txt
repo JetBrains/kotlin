@@ -1,0 +1,13 @@
+Diagnostics from elements:
+  for PSI element of type KtCallExpression at (24,20) - (27,2)
+    TYPE_MISMATCH      text ranges: [(98,160)]
+      PSI: KtCallExpression at (24,20) - (27,2)
+  for PSI element of type KtLambdaExpression at (24,24) - (27,2)
+    TYPE_MISMATCH      text ranges: [(102,160)]
+      PSI: KtLambdaExpression at (24,24) - (27,2)
+  for PSI element of type KtNameReferenceExpression at (25,5-17)
+    UNRESOLVED_REFERENCE      text ranges: [(108,120)]
+      PSI: KtNameReferenceExpression at (25,5-17)
+  for PSI element of type KtNameReferenceExpression at (26,5-34)
+    UNRESOLVED_REFERENCE      text ranges: [(127,156)]
+      PSI: KtNameReferenceExpression at (26,5-34)

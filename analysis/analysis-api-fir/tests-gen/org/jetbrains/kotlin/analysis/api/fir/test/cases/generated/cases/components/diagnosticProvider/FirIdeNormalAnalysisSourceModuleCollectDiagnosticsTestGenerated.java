@@ -59,6 +59,12 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
     }
 
     @Test
+    @TestMetadata("duplicatedCallableWithImplicitType.kt")
+    public void testDuplicatedCallableWithImplicitType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/duplicatedCallableWithImplicitType.kt");
+    }
+
+    @Test
     @TestMetadata("incompleteDelegation.kt")
     public void testIncompleteDelegation() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/incompleteDelegation.kt");
