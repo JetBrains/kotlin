@@ -394,9 +394,11 @@ include ":compiler:build-tools:kotlin-build-tools-api",
 
 // Experimental modules, should be placed into plugins/compose-compiler-plugin folder
 include ":plugins:compose-compiler-plugin:compiler",
+        ":plugins:compose-compiler-plugin:compiler:integration-tests",
         ":plugins:compose-compiler-plugin:compiler-hosted",
-        ":plugins:compose-compiler-plugin:compiler-daemon",
-        ":plugins:compose-compiler-plugin:compiler-daemon:integration-tests"
+        ":plugins:compose-compiler-plugin:testutils-gradle-plugin",
+        ":plugins:compose-compiler-plugin:compiler-daemon", // Should be removed after a while
+        ":plugins:compose-compiler-plugin:compiler-daemon:integration-tests" // Should be removed after a while
 
 // Swift Export modules
 include ":native:swift:sir",
