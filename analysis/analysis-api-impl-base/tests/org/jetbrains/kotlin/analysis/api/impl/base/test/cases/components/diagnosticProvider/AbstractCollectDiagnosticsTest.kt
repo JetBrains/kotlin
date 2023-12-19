@@ -9,7 +9,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KtDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnRangeInPsiFile
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
 import org.jetbrains.kotlin.psi.KtElement
@@ -17,12 +18,19 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import kotlin.test.assertEquals
 
-abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiSingleFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
+abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val lastModule = moduleStructure.modules.last()
+        val firstKtFileFile = testServices.ktModuleProvider.getModuleFiles(lastModule).firstNotNullOf { it as? KtFile }
+        doTestByFileStructure(firstKtFileFile, lastModule, testServices)
+    }
+
+    open fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         fun TextRange.asLineColumnRange(): String {
             return getLineAndColumnRangeInPsiFile(ktFile, this).toString()
         }

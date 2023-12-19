@@ -1,0 +1,7 @@
+Diagnostics from elements:
+  for PSI element of type KtConstructorCalleeExpression at (34,2-12)
+    NO_VALUE_FOR_PARAMETER      text ranges: [(115,125)]
+      PSI: KtConstructorCalleeExpression at (34,2-12)
+  for PSI element of type KtNameReferenceExpression at (32,8-10)
+    UNRESOLVED_REFERENCE      text ranges: [(94,96)]
+      PSI: KtNameReferenceExpression at (32,8-10)

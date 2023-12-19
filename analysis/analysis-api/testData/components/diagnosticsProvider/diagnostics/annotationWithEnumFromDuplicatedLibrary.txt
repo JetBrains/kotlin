@@ -1,0 +1,4 @@
+Diagnostics from elements:
+  for PSI element of type KtAnnotationEntry at (34,1-12)
+    WRONG_ANNOTATION_TARGET      text ranges: [(114,125)]
+      PSI: KtAnnotationEntry at (34,1-12)

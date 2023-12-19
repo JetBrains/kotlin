@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
     }
 
     @Test
+    @TestMetadata("annotationWithEnumFromDuplicatedLibrary.kt")
+    public void testAnnotationWithEnumFromDuplicatedLibrary() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/annotationWithEnumFromDuplicatedLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("declarationErrors.kt")
     public void testDeclarationErrors() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/declarationErrors.kt");
