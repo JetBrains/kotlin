@@ -9,7 +9,6 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.extensions.*
@@ -190,7 +189,8 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             qualifiedAccessExpression: FirQualifiedAccessExpression,
             isUsedAsReceiver: Boolean,
             isUsedAsGetClassReceiver: Boolean,
-            callSite: FirElement
+            callSite: FirElement,
+            data: ResolutionMode,
         ): FirStatement {
             qualifiedAccessExpression.resolveFromImportScope()
             return qualifiedAccessExpression
