@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithScript
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
@@ -36,6 +37,9 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.yieldIfNotNull
@@ -107,7 +111,7 @@ object ContextCollector {
     }
 
     fun computeDesignation(file: FirFile, targetElement: PsiElement): FirDesignation? {
-        val contextKtDeclaration = targetElement.getNonLocalContainingOrThisDeclaration()
+        val contextKtDeclaration = targetElement.getNonLocalContainingOrThisDeclaration(::isValidTarget)
         if (contextKtDeclaration != null) {
             val designationPath = FirElementFinder.collectDesignationPath(file, contextKtDeclaration)
             if (designationPath != null) {
@@ -122,6 +126,20 @@ object ContextCollector {
         }
 
         return null
+    }
+
+    private fun isValidTarget(declaration: KtDeclaration): Boolean {
+        if (declaration.isAutonomousDeclaration) {
+            return true
+        }
+
+        if (declaration is KtParameter && declaration.isPropertyParameter()) {
+            // Prefer context for primary constructor properties.
+            // Context of the constructor itself can be computed by passing the 'KtPrimaryConstructor' element.
+            return true
+        }
+
+        return false
     }
 
     /**

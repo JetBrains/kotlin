@@ -35,14 +35,14 @@ Tower Data Context:
                 FirValueParameterSymbol p: R|MyParam|
 
 FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromInner_typeRefInMember.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Outer<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam> : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam>(): R|test/Outer<MyParam>| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(STATUS)] class Outer<[ResolvedTo(STATUS)] MyParam> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor<[ResolvedTo(STATUS)] MyParam>(): R|test/Outer<MyParam>| {
+            LAZY_super<R|kotlin/Any|>
         }
 
-        public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class Inner<[ResolvedTo(ANNOTATION_ARGUMENTS)] Outer(MyParam)> : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] test/Outer<MyParam>.constructor(): R|test/Outer.Inner<MyParam>| {
-                super<R|kotlin/Any|>()
+        public final inner [ResolvedTo(STATUS)] class Inner<[ResolvedTo(STATUS)] Outer(MyParam)> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] test/Outer<MyParam>.constructor(): R|test/Outer.Inner<MyParam>| {
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(BODY_RESOLVE)] fun member([ResolvedTo(BODY_RESOLVE)] p: R|MyParam|): R|kotlin/Unit| {

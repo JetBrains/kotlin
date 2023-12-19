@@ -25,14 +25,14 @@ Tower Data Context:
                 FirValueParameterSymbol p: <ERROR TYPE REF: Symbol not found for MyParam>
 
 FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromNested_typeRefInMember.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Outer<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam> : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam>(): R|test/Outer<MyParam>| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(STATUS)] class Outer<[ResolvedTo(STATUS)] MyParam> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor<[ResolvedTo(STATUS)] MyParam>(): R|test/Outer<MyParam>| {
+            LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Nested : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Outer.Nested| {
-                super<R|kotlin/Any|>()
+        public final [ResolvedTo(STATUS)] class Nested : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] constructor(): R|test/Outer.Nested| {
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(BODY_RESOLVE)] fun member([ResolvedTo(BODY_RESOLVE)] p: <ERROR TYPE REF: Symbol not found for MyParam>): R|kotlin/Unit| {
