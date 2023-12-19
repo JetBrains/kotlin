@@ -1,5 +1,5 @@
 class Foo(
-    val a: String = "foo"
-    val b: Int = <expr>a.length</expr>,
-    val c: Long = (a.length - 1).toLong()
+    a: String = "foo",
+    b: Int = <expr>a.length</expr>,
+    c: Long = (a.length - 1).toLong()
 )

@@ -29,12 +29,12 @@ Tower Data Context:
                 FirTypeParameterSymbol T : R|MyParam|
 
 FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromInner_typeBound.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Outer<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam> : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam>(): R|test/Outer<MyParam>| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(STATUS)] class Outer<[ResolvedTo(STATUS)] MyParam> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor<[ResolvedTo(STATUS)] MyParam>(): R|test/Outer<MyParam>| {
+            LAZY_super<R|kotlin/Any|>
         }
 
-        public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class Inner<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|MyParam|, [ResolvedTo(ANNOTATION_ARGUMENTS)] Outer(MyParam)> : R|kotlin/Any| {
+        public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class Inner<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|MyParam|, [ResolvedTo(STATUS)] Outer(MyParam)> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] test/Outer<MyParam>.constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|MyParam|>(): R|test/Outer.Inner<T, MyParam>| {
                 super<R|kotlin/Any|>()
             }
