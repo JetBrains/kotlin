@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.utils.SmartList
 import java.lang.reflect.Method
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
@@ -114,53 +115,37 @@ fun <A : CommonToolArguments> parseCommandLineArgumentsFromEnvironment(arguments
     parseCommandLineArguments(settingsFromEnvironment, arguments, overrideArguments = true)
 }
 
+private data class ArgumentField(val getter: Method, val setter: Method, val argument: Argument)
+
+private val argumentsCache = ConcurrentHashMap<Class<*>, Map<String, ArgumentField>>()
+
+private fun getArguments(klass: Class<*>): Map<String, ArgumentField> = argumentsCache.getOrPut(klass) {
+    if (klass == Any::class.java) emptyMap()
+    else buildMap {
+        putAll(getArguments(klass.superclass))
+        for (field in klass.declaredFields) {
+            field.getAnnotation(Argument::class.java)?.let { argument ->
+                val getter = klass.getMethod(JvmAbi.getterName(field.name))
+                val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
+                val argumentField = ArgumentField(getter, setter, argument)
+                for (key in listOf(argument.value, argument.shortName, argument.deprecatedName)) {
+                    if (key.isNotEmpty()) put(key, argumentField)
+                }
+            }
+        }
+    }
+}
+
 private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     args: List<String>,
     result: A,
     errors: Lazy<ArgumentParseErrors>,
     overrideArguments: Boolean
 ) {
-    data class ArgumentField(val getter: Method, val setter: Method, val argument: Argument)
-
-    val superClasses = mutableListOf<Class<*>>(result::class.java)
-    while (superClasses.last() != Any::class.java) {
-        superClasses.add(superClasses.last().superclass)
-    }
-
-    val resultClass = result::class.java
-    val properties = superClasses.flatMap {
-        it.declaredFields.mapNotNull { field ->
-            field.getAnnotation(Argument::class.java)?.let { argument ->
-                val getter = resultClass.getMethod(JvmAbi.getterName(field.name))
-                val setter = resultClass.getMethod(JvmAbi.setterName(field.name), field.type)
-                ArgumentField(getter, setter, argument)
-            }
-        }
-    }
+    val properties = getArguments(result::class.java)
 
     val visitedArgs = mutableSetOf<String>()
     var freeArgsStarted = false
-
-    fun ArgumentField.matches(arg: String): Boolean {
-        if (argument.shortName.takeUnless(String::isEmpty) == arg) {
-            return true
-        }
-
-        val deprecatedName = argument.deprecatedName
-        if (deprecatedName.isNotEmpty() && (deprecatedName == arg || arg.startsWith("$deprecatedName="))) {
-            errors.value.deprecatedArguments[deprecatedName] = argument.value
-            return true
-        }
-
-        if (argument.value == arg) {
-            if (argument.isAdvanced && getter.returnType.kotlin != Boolean::class) {
-                errors.value.extraArgumentsPassedInObsoleteForm.add(arg)
-            }
-            return true
-        }
-
-        return arg.startsWith(argument.value + "=")
-    }
 
     val freeArgs = ArrayList<String>()
     val internalArguments = ArrayList<InternalArgument>()
@@ -199,7 +184,8 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             continue
         }
 
-        val argumentField = properties.firstOrNull { it.matches(arg) }
+        val key = arg.substringBefore('=')
+        val argumentField = properties[key]
         if (argumentField == null) {
             when {
                 arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.value.unknownExtraFlags.add(arg)
@@ -210,6 +196,24 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         }
 
         val (getter, setter, argument) = argumentField
+
+        // Tests for -shortName=value, which isn't currently allowed.
+        if (key != arg && key == argument.shortName) {
+            errors.value.unknownArgs.add(arg)
+            continue
+        }
+
+        val deprecatedName = argument.deprecatedName
+        if (deprecatedName == key) {
+            errors.value.deprecatedArguments[deprecatedName] = argument.value
+        }
+
+        if (argument.value == arg) {
+            if (argument.isAdvanced && getter.returnType.kotlin != Boolean::class) {
+                errors.value.extraArgumentsPassedInObsoleteForm.add(arg)
+            }
+        }
+
         val value: Any = when {
             getter.returnType.kotlin == Boolean::class -> {
                 if (arg.startsWith(argument.value + "=")) {
