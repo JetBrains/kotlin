@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
 import org.gradle.api.Named
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
+import java.io.File
 
 interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDependencies {
     val kotlin: SourceDirectorySet

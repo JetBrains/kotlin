@@ -5,21 +5,29 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
+import groovy.lang.Closure
+//import org.apache.commons.codec.digest.DigestUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeEnvironment.resourcesDir
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -74,6 +82,13 @@ private object XcodeEnvironment {
             return File(xcodeTargetBuildDir, xcodeFrameworksFolderPath).absoluteFile
         }
 
+    val resourcesDir: File?
+        get() {
+            val productsDir = System.getenv("BUILT_PRODUCTS_DIR") ?: return null
+            val resourcesPath = System.getenv("UNLOCALIZED_RESOURCES_FOLDER_PATH") ?: return null
+            return File(productsDir, resourcesPath).absoluteFile
+        }
+
     val sign: String? get() = System.getenv("EXPANDED_CODE_SIGN_IDENTITY")
 
     override fun toString() = """
@@ -84,6 +99,38 @@ private object XcodeEnvironment {
           embeddedFrameworksDir=$embeddedFrameworksDir
           sign=$sign
     """.trimIndent()
+}
+
+private fun Project.registerCopyAllResources(framework: Framework): TaskProvider<out Task>? {
+    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHost) return null
+
+    val copyResourcesTaskName = lowerCamelCaseName(
+        "copyResourcesForOutputFramework",
+        framework.name,
+    )
+
+    return locateOrRegisterTask<Copy>(copyResourcesTaskName) { copy ->
+        project.launch {
+            project.kotlinPluginLifecycle.await(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations)
+            val mainCompilation = framework.target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+
+            // 1. Copy resources from dependencies
+            copy.inputs.files(mainCompilation.configurations.compileDependencyConfiguration)
+            copy.from(
+                project.provider {
+                    mainCompilation.configurations.compileDependencyConfiguration.filter {
+                        it.endsWith("kotlin_resources.zip")
+                    }.map { zipTree(it) }
+                }
+            )
+
+            // 2. Copy resources from module's resources
+            mainCompilation.copyResourcesByHashing(copy)
+
+            copy.into(resourcesDir!!.resolve("multiplatform-resources"))
+            copy.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
+    }
 }
 
 private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): TaskProvider<out Task>? {
@@ -191,9 +238,12 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     val assembleTask = registerAssembleAppleFrameworkTask(framework) ?: return
     if (framework.buildType != envBuildType || !envTargets.contains(framework.konanTarget)) return
 
+    val copyTask = registerCopyAllResources(framework)
+
     embedAndSignTask.configure { task ->
         val frameworkFile = framework.outputFile
         task.dependsOn(assembleTask)
+        task.dependsOn(copyTask)
         task.sourceFramework.set(File(appleFrameworkDir(envFrameworkSearchDir), frameworkFile.name))
         task.destinationDirectory.set(envEmbeddedFrameworksDir)
         if (envSign != null) {

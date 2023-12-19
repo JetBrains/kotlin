@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
+import java.io.File
 
 abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
     private val dependsOnImpl = MutableObservableSetImpl<KotlinSourceSet>()
