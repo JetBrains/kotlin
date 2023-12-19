@@ -45,7 +45,7 @@ open class NativePerformanceReport : DefaultTask() {
 
     // Get compile task and associated with it other compile tasks.
     private fun getAllExecutedTasks(compilation: KotlinCompilation<*>): List<Task> {
-        val tasks = mutableListOf(compilation.compileKotlinTask as Task)
+        val tasks = mutableListOf(compilation.compileTaskProvider.get() as Task)
         compilation.associatedCompilations.toList().forEach {
             tasks += getAllExecutedTasks(it)
         }
@@ -73,15 +73,15 @@ open class NativePerformanceReport : DefaultTask() {
     }
 
     private fun getPerformanceCompilerOptions() =
-        (compilerFlagsFromBinary() + binary.linkTask.compilation.kotlinOptions.freeCompilerArgs)
+        (compilerFlagsFromBinary() + binary.linkTask.toolOptions.freeCompilerArgs.get())
             .filter { it in listOf("-g", "-opt", "-Xg0") }.map { "\"$it\"" }
 
     @TaskAction
     fun generate() {
         val compileTasks = if (settings.includeAssociatedTasks)
-            getAllExecutedTasks(binary.linkTask.compilation)
+            getAllExecutedTasks(binary.compilation)
         else
-            listOf(binary.linkTask.compilation.compileKotlinTask)
+            listOf(binary.compilation.compileTaskProvider.get())
         val allExecutedTasks = listOf(binary.linkTask) + compileTasks
         val upToDateTasks = allExecutedTasks.filter { it.state.upToDate }.map { it.name }
         if (upToDateTasks.isNotEmpty()) {
