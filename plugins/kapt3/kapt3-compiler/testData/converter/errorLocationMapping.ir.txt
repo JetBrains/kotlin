@@ -229,7 +229,7 @@ public final class ErrorInDeclarations {
 
     @kotlin.jvm.JvmOverloads()
     public final void f5(@org.jetbrains.annotations.NotNull()
-    error.NonExistentClass a) {
+    ABC a) {
     }
 
     @kotlin.jvm.JvmOverloads()

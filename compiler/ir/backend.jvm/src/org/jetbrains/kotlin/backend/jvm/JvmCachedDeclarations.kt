@@ -135,6 +135,7 @@ class JvmCachedDeclarations(
 
     private fun IrClass.makeProxy(target: IrSimpleFunction, isStatic: Boolean) =
         context.irFactory.buildFun {
+            setSourceRange(target)
             returnType = target.returnType
             origin = JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
             // The proxy needs to have the same name as what it is targeting. If that is a property accessor,

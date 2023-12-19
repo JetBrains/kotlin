@@ -1,4 +1,3 @@
-// FIR_BLOCKED: support of @JvmOverloads in LC
 class State @JvmOverloads constructor(
         val someInt: Int,
         val someLong: Long,
