@@ -1849,6 +1849,12 @@ public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
+        @Test
+        @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")
+        public void testReceiverUsesOuterTVButReturnTypeIsProper() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/receiverUsesOuterTVButReturnTypeIsProper.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/builderInference/issues")
         @TestDataPath("$PROJECT_ROOT")
@@ -2060,12 +2066,6 @@ public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTes
             @TestMetadata("kt57707.kt")
             public void testKt57707() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/issues/kt57707.kt");
-            }
-
-            @Test
-            @TestMetadata("kt57709.kt")
-            public void testKt57709() throws Exception {
-                runTest("compiler/testData/codegen/box/builderInference/issues/kt57709.kt");
             }
 
             @Test

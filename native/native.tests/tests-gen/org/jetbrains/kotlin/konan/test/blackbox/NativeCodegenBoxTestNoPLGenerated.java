@@ -1921,6 +1921,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
 
+            @Test
+            @TestMetadata("receiverUsesOuterTVButReturnTypeIsProper.kt")
+            public void testReceiverUsesOuterTVButReturnTypeIsProper() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/receiverUsesOuterTVButReturnTypeIsProper.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/builderInference/issues")
             @TestDataPath("$PROJECT_ROOT")
@@ -2135,12 +2141,6 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                 @TestMetadata("kt57707.kt")
                 public void testKt57707() throws Exception {
                     runTest("compiler/testData/codegen/box/builderInference/issues/kt57707.kt");
-                }
-
-                @Test
-                @TestMetadata("kt57709.kt")
-                public void testKt57709() throws Exception {
-                    runTest("compiler/testData/codegen/box/builderInference/issues/kt57709.kt");
                 }
 
                 @Test
