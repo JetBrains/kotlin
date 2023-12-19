@@ -1,0 +1,51 @@
+// CHECK:
+//   Mangled name: Inv1
+//   Public signature: /Inv1|null[0]
+class Inv1<X : Any?> {
+  // CHECK:
+  //   Mangled name: Inv1#<init>(){}
+  //   Public signature: /Inv1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Inv2
+//   Public signature: /Inv2|null[0]
+class Inv2<Y : Any?> {
+  // CHECK:
+  //   Mangled name: Inv2#<init>(){}
+  //   Public signature: /Inv2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #getSelectOptions(Inv1<out|0:0>){0§<kotlin.Any?>}Inv1<out|Inv2<0:0>>
+//   Public signature: [ File '/noErrorTypeAfterCaptureApproximation.kt' <- /getSelectOptions|-2121566878546647451[0] ]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #getSelectOptions(Inv1<out|0:0>){0§<kotlin.Any?>}
+//   Public signature: [ File '/noErrorTypeAfterCaptureApproximation.kt' <- /getSelectOptions|-4741332616265873823[0] ]
+private fun <G : Any?> getSelectOptions(options: Inv1<out G>): Inv1<out Inv2<G>>
+
+// CHECK JVM_IR:
+//   Mangled name: #myRun(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /myRun|-4555774550754215835[0]
+//   Public signature debug description: myRun(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+// CHECK JS_IR NATIVE:
+//   Mangled name: #myRun(kotlin.Function0<0:0>){0§<kotlin.Any?>}
+//   Public signature: /myRun|1886570319999512118[0]
+//   Public signature debug description: myRun(kotlin.Function0<0:0>){0§<kotlin.Any?>}
+fun <T : Any?> myRun(callback: Function0<T>): T
+
+// CHECK JVM_IR:
+//   Mangled name: #useSelectOptions(Inv1<out|0:0>){0§<kotlin.Any?>}Inv1<out|Inv2<0:0>>
+//   Public signature: /useSelectOptions|-100409295329799165[0]
+//   Public signature debug description: useSelectOptions(Inv1<out|0:0>){0§<kotlin.Any?>}Inv1<out|Inv2<0:0>>
+// CHECK JS_IR NATIVE:
+//   Mangled name: #useSelectOptions(Inv1<out|0:0>){0§<kotlin.Any?>}
+//   Public signature: /useSelectOptions|3229886791495085251[0]
+//   Public signature debug description: useSelectOptions(Inv1<out|0:0>){0§<kotlin.Any?>}
+internal fun <F : Any?> useSelectOptions(options: Inv1<out F>): Inv1<out Inv2<F>>

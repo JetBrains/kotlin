@@ -1,0 +1,47 @@
+// CHECK:
+//   Mangled name: Controller
+//   Public signature: /Controller|null[0]
+interface Controller<F : Any?> {
+  // CHECK:
+  //   Mangled name: Controller#yield(1:0){}
+  //   Public signature: /Controller.yield|3567278141085588417[0]
+  //   Public signature debug description: yield(1:0){}
+  abstract fun yield(t: F): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Intf
+//   Public signature: /Intf|null[0]
+interface Intf {
+  // CHECK:
+  //   Mangled name: Intf#foo(){}
+  //   Public signature: /Intf.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  abstract fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #box(kotlin.Boolean){}
+//   Public signature: /box|3724984511501944637[0]
+//   Public signature debug description: box(kotlin.Boolean){}
+fun box(b: Boolean): Unit
+
+// CHECK:
+//   Mangled name: #expectIntf(Intf){}
+//   Public signature: /expectIntf|-7688726594904654744[0]
+//   Public signature debug description: expectIntf(Intf){}
+fun expectIntf(intf: Intf): Unit
+
+// CHECK:
+//   Mangled name: #generate(kotlin.coroutines.SuspendFunction1<Controller<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
+//   Public signature: /generate|-3399873670227373031[0]
+//   Public signature debug description: generate(kotlin.coroutines.SuspendFunction1<Controller<0:0>,kotlin.Unit>){0§<kotlin.Any?>}
+fun <S : Any?> generate(g: @ExtensionFunctionType SuspendFunction1<Controller<S>, Unit>): Unit
+
+// CHECK:
+//   Mangled name: #someUnit(){}
+//   Public signature: /someUnit|-6636253765775113966[0]
+//   Public signature debug description: someUnit(){}
+fun someUnit(): Unit
