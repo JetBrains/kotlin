@@ -88,14 +88,16 @@ class ConeOverloadConflictResolver(
         )
         return chooseMaximallySpecificCandidates(
             candidatesWithoutOverrides,
-            // (in compatibility mode the next two are already filtered on tower resolver level)
-            discriminateLowPrioritySAMs = noCompatibilityMode,
-            discriminateAdaptationsInPostponedAtoms = noCompatibilityMode,
-            discriminateGenerics,
-            discriminateAbstracts,
-            discriminateSAMs = true,
-            discriminateSuspendConversions = true,
-            discriminateByUnwrappedSmartCastOrigin = true,
+            DiscriminationFlags(
+                // (in compatibility mode the next two are already filtered on tower resolver level)
+                lowPrioritySAMs = noCompatibilityMode,
+                adaptationsInPostponedAtoms = noCompatibilityMode,
+                generics = discriminateGenerics,
+                abstracts = discriminateAbstracts,
+                SAMs = true,
+                suspendConversions = true,
+                byUnwrappedSmartCastOrigin = true,
+            )
         )
     }
 
@@ -162,119 +164,67 @@ class ConeOverloadConflictResolver(
         return candidates.filterTo(mutableSetOf()) { it.callInfo.candidateForCommonInvokeReceiver == bestInvokeReceiver }
     }
 
+    private data class DiscriminationFlags(
+        val lowPrioritySAMs: Boolean,
+        val adaptationsInPostponedAtoms: Boolean,
+        val generics: Boolean,
+        val abstracts: Boolean,
+        val SAMs: Boolean,
+        val suspendConversions: Boolean,
+        val byUnwrappedSmartCastOrigin: Boolean,
+    )
+
     private fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateLowPrioritySAMs: Boolean,
-        discriminateAdaptationsInPostponedAtoms: Boolean,
-        discriminateGenerics: Boolean,
-        discriminateAbstracts: Boolean,
-        // Only set to 'false' by recursive calls when the relevant discrimination kind has been already applied
-        discriminateSAMs: Boolean,
-        discriminateSuspendConversions: Boolean,
-        discriminateByUnwrappedSmartCastOrigin: Boolean,
+        discriminationFlags: DiscriminationFlags
     ): Set<Candidate> {
-        if (discriminateLowPrioritySAMs) {
-            val filtered = candidates.filterTo(mutableSetOf()) { !it.shouldHaveLowPriorityDueToSAM(transformerComponents) }
-            when (filtered.size) {
-                1 -> return filtered
-                0, candidates.size -> {
-                }
-                else -> return chooseMaximallySpecificCandidates(
-                    filtered,
-                    discriminateLowPrioritySAMs = false,
-                    discriminateAdaptationsInPostponedAtoms,
-                    discriminateGenerics,
-                    discriminateAbstracts,
-                    discriminateSAMs,
-                    discriminateSuspendConversions,
-                    discriminateByUnwrappedSmartCastOrigin,
-                )
-            }
+        if (discriminationFlags.lowPrioritySAMs) {
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { !it.shouldHaveLowPriorityDueToSAM(transformerComponents) },
+                { discriminationFlags.copy(lowPrioritySAMs = false) },
+            )?.let { return it }
         }
 
-        if (discriminateAdaptationsInPostponedAtoms) {
-            val filtered = candidates.filterTo(mutableSetOf()) { !it.hasPostponedAtomWithAdaptation() }
-            when (filtered.size) {
-                1 -> return filtered
-                0, candidates.size -> {
-                }
-                else -> return chooseMaximallySpecificCandidates(
-                    filtered,
-                    discriminateLowPrioritySAMs,
-                    discriminateAdaptationsInPostponedAtoms = false,
-                    discriminateGenerics,
-                    discriminateAbstracts,
-                    discriminateSAMs,
-                    discriminateSuspendConversions,
-                    discriminateByUnwrappedSmartCastOrigin,
-                )
-            }
+        if (discriminationFlags.adaptationsInPostponedAtoms) {
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { !it.hasPostponedAtomWithAdaptation() },
+                { discriminationFlags.copy(adaptationsInPostponedAtoms = false) },
+            )?.let { return it }
         }
 
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
 
-        if (discriminateGenerics) {
+        if (discriminationFlags.generics) {
             findMaximallySpecificCall(candidates, true)?.let { return setOf(it) }
         }
 
-        if (discriminateSAMs) {
-            val filtered = candidates.filterTo(mutableSetOf()) { !it.usesSAM }
-            when (filtered.size) {
-                1 -> return filtered
-                0, candidates.size -> {
-                }
-                else -> return chooseMaximallySpecificCandidates(
-                    filtered,
-                    discriminateLowPrioritySAMs,
-                    discriminateAdaptationsInPostponedAtoms,
-                    discriminateGenerics,
-                    discriminateAbstracts,
-                    discriminateSAMs = false,
-                    discriminateSuspendConversions,
-                    discriminateByUnwrappedSmartCastOrigin,
-                )
-            }
+        if (discriminationFlags.SAMs) {
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { !it.usesSAM },
+                { discriminationFlags.copy(SAMs = false) },
+            )?.let { return it }
         }
 
-        if (discriminateSuspendConversions) {
-            val filtered = candidates.filterTo(mutableSetOf()) { !it.usesFunctionConversion }
-            when (filtered.size) {
-                1 -> return filtered
-                0, candidates.size -> {
-                }
-                else -> return chooseMaximallySpecificCandidates(
-                    filtered,
-                    discriminateLowPrioritySAMs,
-                    discriminateAdaptationsInPostponedAtoms,
-                    discriminateGenerics,
-                    discriminateAbstracts,
-                    discriminateSAMs,
-                    discriminateSuspendConversions = false,
-                    discriminateByUnwrappedSmartCastOrigin,
-                )
-            }
+        if (discriminationFlags.suspendConversions) {
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { !it.usesFunctionConversion },
+                { discriminationFlags.copy(suspendConversions = false) },
+            )?.let { return it }
         }
 
-        if (discriminateAbstracts) {
-            val filtered = candidates.filterTo(mutableSetOf()) { (it.symbol.fir as? FirMemberDeclaration)?.modality != Modality.ABSTRACT }
-            when (filtered.size) {
-                1 -> return filtered
-                0, candidates.size -> {
-                }
-                else -> return chooseMaximallySpecificCandidates(
-                    filtered,
-                    discriminateLowPrioritySAMs,
-                    discriminateAdaptationsInPostponedAtoms,
-                    discriminateGenerics,
-                    discriminateAbstracts = false,
-                    discriminateSAMs,
-                    discriminateSuspendConversions,
-                    discriminateByUnwrappedSmartCastOrigin,
-                )
-            }
+        if (discriminationFlags.abstracts) {
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { (it.symbol.fir as? FirMemberDeclaration)?.modality != Modality.ABSTRACT },
+                { discriminationFlags.copy(abstracts = false) },
+            )?.let { return it }
         }
 
-        if (discriminateByUnwrappedSmartCastOrigin) {
+        if (discriminationFlags.byUnwrappedSmartCastOrigin) {
             // In case of MemberScopeTowerLevel with smart cast dispatch receiver, we may create candidates both from smart cast type and
             // from the member scope of original expression's type (without smart cast).
             // It might be necessary because the ones from smart cast might be invisible (e.g., because they are protected in other class).
@@ -302,22 +252,11 @@ class ConeOverloadConflictResolver(
             // See more details at KT-51460, KT-55722, KT-56310 and relevant tests
             //    testData/diagnostics/tests/visibility/moreSpecificProtectedSimple.kt
             //    testData/diagnostics/tests/smartCasts/kt51460.kt
-            val filtered = candidates.filterTo(mutableSetOf()) { !it.isFromOriginalTypeInPresenceOfSmartCast }
-            when (filtered.size) {
-                1 -> return filtered
-                0, candidates.size -> {
-                }
-                else -> return chooseMaximallySpecificCandidates(
-                    filtered,
-                    discriminateLowPrioritySAMs,
-                    discriminateAdaptationsInPostponedAtoms,
-                    discriminateGenerics,
-                    discriminateAbstracts,
-                    discriminateSAMs,
-                    discriminateSuspendConversions,
-                    discriminateByUnwrappedSmartCastOrigin = false,
-                )
-            }
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { !it.isFromOriginalTypeInPresenceOfSmartCast },
+                { discriminationFlags.copy(byUnwrappedSmartCastOrigin = false) },
+            )?.let { return it }
         }
 
         val filtered = candidates.filterTo(mutableSetOf()) { it.usesSAM }
@@ -326,6 +265,19 @@ class ConeOverloadConflictResolver(
         }
 
         return candidates
+    }
+
+    private inline fun filterCandidatesByDiscriminationFlag(
+        candidates: Set<Candidate>,
+        filter: (Candidate) -> Boolean,
+        newFlags: () -> DiscriminationFlags,
+    ): Set<Candidate>? {
+        val filtered = candidates.filterTo(mutableSetOf()) { filter(it) }
+        return when (filtered.size) {
+            1 -> filtered
+            0, candidates.size -> null
+            else -> chooseMaximallySpecificCandidates(filtered, newFlags())
+        }
     }
 
     private fun Candidate.hasPostponedAtomWithAdaptation(): Boolean {
