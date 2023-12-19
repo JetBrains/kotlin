@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession2
+import org.jetbrains.kotlin.fir.resolve.inference.FirPCLAInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
@@ -387,7 +387,7 @@ class BodyResolveContext(
             // to use information from local class inside it.
             // However, we should not copy other kinds of inference sessions,
             // otherwise we can "inherit" type variables from there provoking inference problems
-            if (this@BodyResolveContext.inferenceSession is FirBuilderInferenceSession2) {
+            if (this@BodyResolveContext.inferenceSession is FirPCLAInferenceSession) {
                 inferenceSession = this@BodyResolveContext.inferenceSession
             }
 
@@ -764,7 +764,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun storeContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
         specialTowerDataContexts.storeAnonymousFunctionContext(
-            anonymousFunction.symbol, towerDataContext, inferenceSession.takeIf { it is FirBuilderInferenceSession2 }
+            anonymousFunction.symbol, towerDataContext, inferenceSession.takeIf { it is FirPCLAInferenceSession }
         )
     }
 

@@ -93,7 +93,7 @@ class FirCallCompleter(
             // Ideally, we should get rid of `shouldRunCompletion` once Builder inference is rewritten (see KT-61041 for tracking)
 
             when {
-                inferenceSession is FirBuilderInferenceSession2 -> when {
+                inferenceSession is FirPCLAInferenceSession -> when {
                     inferenceSession.shouldAvoidFullCompletion(call) && it == ConstraintSystemCompletionMode.FULL -> ConstraintSystemCompletionMode.PARTIAL_PCLA
                     else -> it
                 }
@@ -138,7 +138,7 @@ class FirCallCompleter(
             ConstraintSystemCompletionMode.PARTIAL, ConstraintSystemCompletionMode.PARTIAL_PCLA -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
 
-                if (inferenceSession is FirDelegatedPropertyInferenceSession || inferenceSession is FirBuilderInferenceSession2) {
+                if (inferenceSession is FirDelegatedPropertyInferenceSession || inferenceSession is FirPCLAInferenceSession) {
                     inferenceSession.processPartiallyResolvedCall(call, resolutionMode, completionMode)
                 }
 
@@ -162,8 +162,8 @@ class FirCallCompleter(
         val isCandidateSimpleVariable = (candidate.symbol as? FirVariableSymbol)?.typeParameterSymbols?.isEmpty() == true
 
         val system = when {
-            inferenceSession is FirBuilderInferenceSession2 && isCandidateSimpleVariable ->
-                (inferenceSession as FirBuilderInferenceSession2).currentCommonSystem
+            inferenceSession is FirPCLAInferenceSession && isCandidateSimpleVariable ->
+                (inferenceSession as FirPCLAInferenceSession).currentCommonSystem
             else -> candidate.system
         }
         when {
@@ -376,15 +376,15 @@ class FirCallCompleter(
             )
 
             transformer.context.withAnonymousFunctionTowerDataContext(lambdaArgument.symbol) {
-                val builderInferenceSession =
+                val pclaInferenceSession =
                     runIf(notFixedTypeVariablesInInputTypes.isNotEmpty()) {
                         candidate.lambdasAnalyzedWithPCLA += lambdaArgument
 
-                        FirBuilderInferenceSession2(candidate, session.inferenceComponents)
+                        FirPCLAInferenceSession(candidate, session.inferenceComponents)
                     }
 
-                if (builderInferenceSession != null) {
-                    transformer.context.withInferenceSession(builderInferenceSession) {
+                if (pclaInferenceSession != null) {
+                    transformer.context.withInferenceSession(pclaInferenceSession) {
                         transformer.context.withOuterConstraintStorage(candidate.system.currentStorage()) {
                             lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
                         }

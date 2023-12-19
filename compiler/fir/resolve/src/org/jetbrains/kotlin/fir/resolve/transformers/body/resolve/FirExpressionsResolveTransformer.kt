@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession2
+import org.jetbrains.kotlin.fir.resolve.inference.FirPCLAInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
@@ -1041,7 +1041,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             ),
         )
 
-        (context.inferenceSession as? FirBuilderInferenceSession2)?.currentCommonSystem
+        (context.inferenceSession as? FirPCLAInferenceSession)?.currentCommonSystem
             ?.addSubtypeConstraintIfCompatible(
                 variableAssignment.lValue.resolvedType,
                 variableAssignment.rValue.resolvedType,

@@ -108,7 +108,7 @@ class PostponedArgumentsAnalyzer(
         }
 
         val additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>? =
-            (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.let { builderInferenceSession ->
+            (resolutionContext.bodyResolveContext.inferenceSession as? FirPCLAInferenceSession)?.let { builderInferenceSession ->
                 // TODO: context receivers
                 buildMap {
                     lambda.receiver

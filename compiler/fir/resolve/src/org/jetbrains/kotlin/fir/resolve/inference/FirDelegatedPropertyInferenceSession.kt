@@ -46,7 +46,7 @@ class FirDelegatedPropertyInferenceSession(
     private val delegateCandidate = (delegateExpression as? FirResolvable)?.candidate()
     private val parentConstraintSystem =
         delegateCandidate?.system
-            ?: (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.currentCommonSystem
+            ?: (resolutionContext.bodyResolveContext.inferenceSession as? FirPCLAInferenceSession)?.currentCommonSystem
             ?: components.session.inferenceComponents.createConstraintSystem()
 
     private val currentConstraintSystem =
@@ -115,7 +115,7 @@ class FirDelegatedPropertyInferenceSession(
 
         parentConstraintSystem.addOtherSystem(currentConstraintStorage)
 
-        (nonTrivialParentSession as? FirBuilderInferenceSession2)?.apply {
+        (nonTrivialParentSession as? FirPCLAInferenceSession)?.apply {
             if (delegateCandidate != null) {
                 callCompleter.runCompletionForCall(
                     delegateCandidate,

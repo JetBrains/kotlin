@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.defaultType
 
 
-class FirBuilderInferenceSession2(
+class FirPCLAInferenceSession(
     private val outerCandidate: Candidate,
     private val inferenceComponents: InferenceComponents,
 ) : FirInferenceSession() {
