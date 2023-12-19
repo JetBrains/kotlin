@@ -1,4 +1,4 @@
-FILE: stubCallOnVariable.kt
+FILE: stubCallOnVariable.fir.kt
     public final class TypeDefinition<KotlinType : R|kotlin/Any|> : R|kotlin/Any| {
         public constructor<KotlinType : R|kotlin/Any|>(): R|TypeDefinition<KotlinType>| {
             super<R|kotlin/Any|>()
@@ -22,9 +22,9 @@ FILE: stubCallOnVariable.kt
                 ^ R|<local>/it|.R|kotlin/text/toInt|()
             }
             )
-            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.serialize: R|kotlin/Unit|>|(<L> = serialize@fun <anonymous>(it: <ERROR TYPE REF: Cannot infer type for parameter it>): R|kotlin/Any?| <inline=NoInline>  {
-                lval i: <ERROR TYPE REF: Cannot infer type for parameter it> = R|<local>/it|
-                ^ R|<local>/i|.R|kotlin/toString|()
+            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.serialize: R|kotlin/Unit|>|(<L> = serialize@fun <anonymous>(it: R|@R|kotlin/ParameterName|(name = String(value))  kotlin/Int|): R|kotlin/Any?| <inline=NoInline>  {
+                lval i: R|@R|kotlin/ParameterName|(name = String(value))  kotlin/Int| = R|<local>/it|
+                ^ R|<local>/i|.R|kotlin/toString<Inapplicable(RESOLVED_WITH_ERROR): kotlin/toString>#|()
             }
             )
         }

@@ -18,6 +18,6 @@ fun foo() {
 fun bar() {
     defineType {
         parse { it.toInt() }
-        serialize { this.toString() }
+        serialize { <!CANNOT_INFER_PARAMETER_TYPE!>this<!>.toString() }
     }
 }

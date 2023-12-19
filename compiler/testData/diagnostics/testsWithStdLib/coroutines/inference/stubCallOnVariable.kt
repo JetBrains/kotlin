@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FIR_DUMP
 
 class TypeDefinition<KotlinType : Any> {
