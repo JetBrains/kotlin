@@ -14,5 +14,5 @@ fun take(f: () -> Unit) {}
 fun test() {
     B::foo checkType { _<KFunction1<B, Unit>>() }
 
-    <!NONE_APPLICABLE!>take<!>(B::foo)
+    take(B::<!INAPPLICABLE_CANDIDATE!>foo<!>)
 }

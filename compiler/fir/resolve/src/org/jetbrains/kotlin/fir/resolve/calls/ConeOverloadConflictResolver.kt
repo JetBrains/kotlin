@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
@@ -13,9 +14,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.overrides
@@ -79,10 +82,15 @@ class ConeOverloadConflictResolver(
                 candidates
 
         // The same logic as at
-        val noOverrides = filterOverrides(fixedCandidates)
-
+        val candidatesWithoutOverrides = filterOverrides(fixedCandidates)
+        val noCompatibilityMode = inferenceComponents.session.languageVersionSettings.supportsFeature(
+            LanguageFeature.DisableCompatibilityModeForNewInference
+        )
         return chooseMaximallySpecificCandidates(
-            noOverrides,
+            candidatesWithoutOverrides,
+            // (in compatibility mode the next two are already filtered on tower resolver level)
+            discriminateLowPrioritySAMs = noCompatibilityMode,
+            discriminateAdaptationsInPostponedAtoms = noCompatibilityMode,
             discriminateGenerics,
             discriminateAbstracts,
             discriminateSAMs = true,
@@ -156,6 +164,8 @@ class ConeOverloadConflictResolver(
 
     private fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
+        discriminateLowPrioritySAMs: Boolean,
+        discriminateAdaptationsInPostponedAtoms: Boolean,
         discriminateGenerics: Boolean,
         discriminateAbstracts: Boolean,
         // Only set to 'false' by recursive calls when the relevant discrimination kind has been already applied
@@ -163,9 +173,42 @@ class ConeOverloadConflictResolver(
         discriminateSuspendConversions: Boolean,
         discriminateByUnwrappedSmartCastOrigin: Boolean,
     ): Set<Candidate> {
-        val withoutLowPrioritySAM = candidates.filterTo(mutableSetOf()) { !it.shouldHaveLowPriorityDueToSAM(transformerComponents) }
-        if (withoutLowPrioritySAM.size == 1) {
-            return withoutLowPrioritySAM
+        if (discriminateLowPrioritySAMs) {
+            val filtered = candidates.filterTo(mutableSetOf()) { !it.shouldHaveLowPriorityDueToSAM(transformerComponents) }
+            when (filtered.size) {
+                1 -> return filtered
+                0, candidates.size -> {
+                }
+                else -> return chooseMaximallySpecificCandidates(
+                    filtered,
+                    discriminateLowPrioritySAMs = false,
+                    discriminateAdaptationsInPostponedAtoms,
+                    discriminateGenerics,
+                    discriminateAbstracts,
+                    discriminateSAMs,
+                    discriminateSuspendConversions,
+                    discriminateByUnwrappedSmartCastOrigin,
+                )
+            }
+        }
+
+        if (discriminateAdaptationsInPostponedAtoms) {
+            val filtered = candidates.filterTo(mutableSetOf()) { !it.hasPostponedAtomWithAdaptation() }
+            when (filtered.size) {
+                1 -> return filtered
+                0, candidates.size -> {
+                }
+                else -> return chooseMaximallySpecificCandidates(
+                    filtered,
+                    discriminateLowPrioritySAMs,
+                    discriminateAdaptationsInPostponedAtoms = false,
+                    discriminateGenerics,
+                    discriminateAbstracts,
+                    discriminateSAMs,
+                    discriminateSuspendConversions,
+                    discriminateByUnwrappedSmartCastOrigin,
+                )
+            }
         }
 
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
@@ -181,7 +224,10 @@ class ConeOverloadConflictResolver(
                 0, candidates.size -> {
                 }
                 else -> return chooseMaximallySpecificCandidates(
-                    filtered, discriminateGenerics,
+                    filtered,
+                    discriminateLowPrioritySAMs,
+                    discriminateAdaptationsInPostponedAtoms,
+                    discriminateGenerics,
                     discriminateAbstracts,
                     discriminateSAMs = false,
                     discriminateSuspendConversions,
@@ -198,6 +244,8 @@ class ConeOverloadConflictResolver(
                 }
                 else -> return chooseMaximallySpecificCandidates(
                     filtered,
+                    discriminateLowPrioritySAMs,
+                    discriminateAdaptationsInPostponedAtoms,
                     discriminateGenerics,
                     discriminateAbstracts,
                     discriminateSAMs,
@@ -215,6 +263,8 @@ class ConeOverloadConflictResolver(
                 }
                 else -> return chooseMaximallySpecificCandidates(
                     filtered,
+                    discriminateLowPrioritySAMs,
+                    discriminateAdaptationsInPostponedAtoms,
                     discriminateGenerics,
                     discriminateAbstracts = false,
                     discriminateSAMs,
@@ -259,6 +309,8 @@ class ConeOverloadConflictResolver(
                 }
                 else -> return chooseMaximallySpecificCandidates(
                     filtered,
+                    discriminateLowPrioritySAMs,
+                    discriminateAdaptationsInPostponedAtoms,
                     discriminateGenerics,
                     discriminateAbstracts,
                     discriminateSAMs,
@@ -274,6 +326,13 @@ class ConeOverloadConflictResolver(
         }
 
         return candidates
+    }
+
+    private fun Candidate.hasPostponedAtomWithAdaptation(): Boolean {
+        return postponedAtoms.any {
+            it is ResolvedCallableReferenceAtom &&
+                    (it.resultingReference as? FirNamedReferenceWithCandidate)?.candidate?.callableReferenceAdaptation != null
+        }
     }
 
     private fun findMaximallySpecificCall(

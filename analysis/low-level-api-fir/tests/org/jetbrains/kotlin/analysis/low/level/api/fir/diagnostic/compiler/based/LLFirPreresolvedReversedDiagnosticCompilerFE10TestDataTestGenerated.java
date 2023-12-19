@@ -21927,6 +21927,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("runnableOrCallable.kt")
+            public void testRunnableOrCallable() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/runnableOrCallable.kt");
+            }
+
+            @Test
             @TestMetadata("safeCallDefinitelyNotNull.kt")
             public void testSafeCallDefinitelyNotNull() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/safeCallDefinitelyNotNull.kt");
