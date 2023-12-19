@@ -298,10 +298,9 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmJsInterop")
             }
 
-            // see todo on AbstractFirJsSteppingTest
-//            testClass<AbstractFirJsSteppingTest> {
-//                model("debug/stepping")
-//            }
+            testClass<AbstractFirJsSteppingTest> {
+                model("debug/stepping")
+            }
 
             testClass<AbstractFirLoadK2CompiledJsKotlinTest> {
                 model("loadJava/compiledKotlin", extension = "kt")

@@ -1,9 +1,11 @@
 package org.jetbrains.kotlin.js.test.fir
 
+import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
+import org.jetbrains.kotlin.js.test.handlers.JsDebugRunner
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.codegen.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.utils.bind
 import java.lang.Boolean.getBoolean
 
 
@@ -142,16 +145,23 @@ open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
 //    }
 //}
 
-// TODO: implement separate expectations for FIR/JS to reuse testdata, disabled for now
-//open class AbstractFirJsSteppingTest : AbstractFirJsTest(
-//    pathToTestDir = "compiler/testData/debug/stepping/",
-//    testGroupOutputDirPrefix = "debug/stepping/"
-//) {
-//    override fun TestConfigurationBuilder.configuration() {
-//        commonConfigurationForJsBlackBoxCodegenTest()
-//        configurationForIrJsSteppingTest()
-//    }
-//}
+open class AbstractFirJsSteppingTest : AbstractFirJsTest(
+    pathToTestDir = "compiler/testData/debug/stepping/",
+    testGroupOutputDirPrefix = "debug/stepping/"
+) {
+    override fun TestConfigurationBuilder.configuration() {
+        commonConfigurationForJsBlackBoxCodegenTest()
+        defaultDirectives {
+            +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
+        }
+        useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)
+        jsArtifactsHandlersStep {
+            useHandlers(
+                ::JsDebugRunner.bind(false)
+            )
+        }
+    }
+}
 
 open class AbstractFirJsCodegenWasmJsInteropTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop",
