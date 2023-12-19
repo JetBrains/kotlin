@@ -102,6 +102,7 @@ sealed class FirFunctionWithoutNameSymbol<F : FirFunction>(stubName: Name) : Fir
 
 class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunction>(Name.identifier("anonymous")) {
     val label: FirLabel? get() = fir.label
+    val isLambda: Boolean get() = fir.isLambda
 }
 
 open class FirPropertyAccessorSymbol : FirFunctionWithoutNameSymbol<FirPropertyAccessor>(Name.identifier("accessor")) {

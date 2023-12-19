@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSingleCandidate
@@ -39,7 +41,7 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(),
         (symbol as? FirFunctionSymbol<*>)?.valueParameterSymbols?.forEach {
             considerType(it.resolvedReturnTypeRef.coneType, missingTypes, context)
         }
-        reportMissingTypes(expression.source, missingTypes, context, reporter)
+        reportMissingTypes(expression.source, missingTypes, context, reporter, isTypeOfLambdaParameter = false)
     }
 }
 
@@ -76,7 +78,7 @@ internal interface FirMissingDependencyClassProxy {
         }
 
         if (hasMissingClass && !hasError) {
-            val reportedType = type.withNullability(ConeNullability.NOT_NULL, context.session.typeContext).withArguments(emptyArray())
+            val reportedType = type.withNullability(ConeNullability.NOT_NULL, context.session.typeContext)
             missingTypes.add(reportedType)
         }
     }
@@ -86,9 +88,20 @@ internal interface FirMissingDependencyClassProxy {
         missingTypes: MutableSet<ConeKotlinType>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
+        isTypeOfLambdaParameter: Boolean,
     ) {
+        val reported = mutableSetOf<ConeKotlinType>()
         for (missingType in missingTypes) {
-            reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS, missingType, context)
+            val withoutArguments = missingType.withArguments(emptyArray())
+            if (withoutArguments in reported) continue
+            if (isTypeOfLambdaParameter && missingType.typeArguments.isEmpty() &&
+                !context.session.languageVersionSettings.supportsFeature(LanguageFeature.ForbidLambdaParameterWithMissingDependencyType)
+            ) {
+                reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER, withoutArguments, context)
+            } else {
+                reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS, withoutArguments, context)
+                reported += withoutArguments
+            }
         }
     }
 }

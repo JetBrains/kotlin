@@ -186,6 +186,7 @@ object FirErrors {
     val DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE: KtDiagnosticFactory0 by error0<KtTypeReference>()
     val MISSING_DEPENDENCY_CLASS: KtDiagnosticFactory1<ConeKotlinType> by error1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val MISSING_DEPENDENCY_SUPERCLASS: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by error2<PsiElement, ConeKotlinType, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER: KtDiagnosticFactory1<ConeKotlinType> by warning1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     // Call resolution
     val CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS: KtDiagnosticFactory0 by error0<KtExpression>()

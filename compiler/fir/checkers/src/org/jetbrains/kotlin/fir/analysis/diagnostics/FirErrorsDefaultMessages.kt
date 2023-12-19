@@ -381,6 +381,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.METHOD_OF_ANY_IMP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_CONSTRUCTOR_KEYWORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_SUPERCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_STDLIB_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
@@ -786,6 +787,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             MISSING_DEPENDENCY_SUPERCLASS,
             "Cannot access ''{0}'' which is a supertype of ''{1}''. Check your module classpath for missing or conflicting dependencies.",
             RENDER_TYPE,
+            RENDER_TYPE,
+        )
+        map.put(
+            MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER,
+            "Class ''{0}'' of the lambda parameter is inaccessible. While it may work, this case is dangerous and may be forbidden soon. Consider adding a necessary dependency to your module classpath.",
             RENDER_TYPE,
         )
 

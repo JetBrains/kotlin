@@ -1,5 +1,6 @@
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
+// LANGUAGE: -ForbidLambdaParameterWithMissingDependencyType
 // ISSUE: KT-64266
 
 // MODULE: m1
@@ -17,14 +18,14 @@ fun bar(f: (Some) -> Unit) {}
 // FILE: m3.kt
 
 fun test() {
-    foo { <!MISSING_DEPENDENCY_CLASS!>_<!>, _ -> }
-    foo { <!MISSING_DEPENDENCY_CLASS!>some<!>, str -> }
-    foo { <!MISSING_DEPENDENCY_CLASS!>some<!>, _ -> <!MISSING_DEPENDENCY_CLASS!>some<!>.toString() }
+    foo { <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>_<!>, _ -> }
+    foo { <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>some<!>, str -> }
+    foo { <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>some<!>, _ -> <!MISSING_DEPENDENCY_CLASS!>some<!>.toString() }
     foo { some: <!UNRESOLVED_REFERENCE!>Some<!>, _ -> }
 
-    bar <!MISSING_DEPENDENCY_CLASS!>{ }<!>
-    bar { <!MISSING_DEPENDENCY_CLASS!>_<!> -> }
-    bar { <!MISSING_DEPENDENCY_CLASS!>it<!> -> }
-    bar <!MISSING_DEPENDENCY_CLASS!>{ <!MISSING_DEPENDENCY_CLASS!>it<!>.toString() }<!>
-    bar { <!MISSING_DEPENDENCY_CLASS!>some<!> -> <!MISSING_DEPENDENCY_CLASS!>some<!>.toString() }
+    bar <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>{ }<!>
+    bar { <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>_<!> -> }
+    bar { <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>it<!> -> }
+    bar <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>{ <!MISSING_DEPENDENCY_CLASS!>it<!>.toString() }<!>
+    bar { <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>some<!> -> <!MISSING_DEPENDENCY_CLASS!>some<!>.toString() }
 }

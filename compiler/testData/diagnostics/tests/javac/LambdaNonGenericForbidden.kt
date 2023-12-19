@@ -1,6 +1,5 @@
-// RENDER_DIAGNOSTICS_FULL_TEXT
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
-// LANGUAGE: -ForbidLambdaParameterWithMissingDependencyType
+// LANGUAGE: +ForbidLambdaParameterWithMissingDependencyType
 // ISSUE: KT-64266
 
 // MODULE: m1
