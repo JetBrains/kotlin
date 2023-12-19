@@ -87,7 +87,11 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                             resolutionModeForBranches,
                         )
 
-                        whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression, resolutionContext)
+                        whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(
+                            whenExpression,
+                            resolutionContext,
+                            data,
+                        )
                         completionNeeded = true
                     }
                 }
@@ -166,7 +170,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         dataFlowAnalyzer.exitTryMainBlock()
         tryExpression.transformCatches(this, ResolutionMode.ContextDependent)
 
-        val incomplete = syntheticCallGenerator.generateCalleeForTryExpression(tryExpression, resolutionContext)
+        val incomplete = syntheticCallGenerator.generateCalleeForTryExpression(tryExpression, resolutionContext, data)
         var (result, callCompleted) = callCompleter.completeCall(incomplete, data)
         if (result.finallyBlock != null) {
             dataFlowAnalyzer.enterFinallyBlock()
@@ -260,7 +264,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         elvisExpression.transformRhs(transformer, resolutionModeForRhs)
 
         val (result, callCompleted) = callCompleter.completeCall(
-            syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext), data
+            syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext, data), data
         )
 
         var isLhsNotNull = false
