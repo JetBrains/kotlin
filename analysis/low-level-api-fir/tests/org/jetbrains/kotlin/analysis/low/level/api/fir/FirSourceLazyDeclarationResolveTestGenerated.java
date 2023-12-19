@@ -881,6 +881,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestDataPath("$PROJECT_ROOT")
     public class Functions {
         @Test
+        @TestMetadata("actualOverride.kt")
+        public void testActualOverride() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/actualOverride.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInFunctions() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/functions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
@@ -973,6 +979,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         @TestMetadata("superTypeCallNestedNameClashImplicitConstructor.kt")
         public void testSuperTypeCallNestedNameClashImplicitConstructor() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashImplicitConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("transitiveSubstitutionFakeOverride.kt")
+        public void testTransitiveSubstitutionFakeOverride() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/transitiveSubstitutionFakeOverride.kt");
         }
 
         @Test
