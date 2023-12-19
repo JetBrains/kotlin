@@ -69,11 +69,12 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
             symbol.lazyResolveToPhase(resolverPhase.previous)
             val designation = regularClass.collectDesignationWithFile().asResolveTarget()
+            val targetSession = designation.target.llFirSession
             val resolver = LLFirCompilerRequiredAnnotationsTargetResolver(
                 designation,
                 lockProvider,
-                designation.target.llFirSession,
-                scopeSession,
+                targetSession,
+                targetSession.getScopeSession(),
                 this,
             )
 
