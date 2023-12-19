@@ -270,10 +270,10 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
+    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
-        public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
+        public open expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
@@ -315,10 +315,10 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
+    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
-        public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
+        public open expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
@@ -360,10 +360,10 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
+    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
-        public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
+        public open expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
@@ -406,10 +406,10 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
+    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
-        public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
+        public open expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
@@ -452,10 +452,10 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
+    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
-        public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
+        public open expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
@@ -498,10 +498,10 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
+    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
-        public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
+        public open expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {

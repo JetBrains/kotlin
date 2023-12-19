@@ -328,26 +328,38 @@ abstract class AbstractFirStatusResolveTransformer(
 
     fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
         for (superTypeRef in regularClass.superTypeRefs) {
-            forceResolveStatusOfCorrespondingClass(superTypeRef)
+            for (classifierSymbol in superTypeToSymbols(superTypeRef)) {
+                forceResolveStatusOfCorrespondingClass(classifierSymbol)
+            }
         }
     }
 
-    private fun forceResolveStatusOfCorrespondingClass(typeRef: FirTypeRef) {
-        val superClassSymbol = typeRef.coneType.toSymbol(session)
+    /**
+     * @return symbols which should be resolved to [FirResolvePhase.STATUS] phase
+     */
+    protected open fun superTypeToSymbols(typeRef: FirTypeRef): List<FirClassifierSymbol<*>> {
+        return listOfNotNull(typeRef.coneType.toSymbol(session))
+    }
+
+    private fun forceResolveStatusOfCorrespondingClass(superClassSymbol: FirClassifierSymbol<*>) {
         if (isTransformerForLocalDeclarations) {
             if (superClassSymbol is FirClassSymbol) {
                 superClassSymbol.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
             } else {
-                superClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS)
+                superClassSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
             }
         } else {
-            superClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS.previous)
+            superClassSymbol.lazyResolveToPhase(FirResolvePhase.STATUS.previous)
         }
 
         when (superClassSymbol) {
             is FirRegularClassSymbol -> forceResolveStatusesOfClass(superClassSymbol.fir)
-            is FirTypeAliasSymbol -> forceResolveStatusOfCorrespondingClass(superClassSymbol.fir.expandedTypeRef)
-            is FirTypeParameterSymbol, is FirAnonymousObjectSymbol, null -> {}
+            is FirTypeAliasSymbol -> {
+                for (classifierSymbol in superTypeToSymbols(superClassSymbol.fir.expandedTypeRef)) {
+                    forceResolveStatusOfCorrespondingClass(classifierSymbol)
+                }
+            }
+            is FirTypeParameterSymbol, is FirAnonymousObjectSymbol -> {}
         }
     }
 

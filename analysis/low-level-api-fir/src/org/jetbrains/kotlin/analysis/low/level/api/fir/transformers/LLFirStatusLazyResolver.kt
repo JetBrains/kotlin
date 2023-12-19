@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleRe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -21,7 +22,11 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 
@@ -83,7 +88,7 @@ private fun LLFirResolveTarget.resolveMode(): StatusResolveMode = when (this) {
     else -> StatusResolveMode.AllCallables
 }
 
-private class LLStatusComputationSession : StatusComputationSession() {
+private class LLStatusComputationSession(val useSiteSession: FirSession) : StatusComputationSession() {
     private var shouldCheckForActualization: Boolean = false
 
     inline fun withClass(regularClass: FirClass, transformer: (FirClass) -> Unit) {
@@ -107,7 +112,7 @@ private class LLFirStatusTargetResolver(
     lockProvider: LLFirLockProvider,
     session: FirSession,
     scopeSession: ScopeSession,
-    private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(),
+    private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(session),
     private val resolveMode: StatusResolveMode,
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.STATUS, isJumpingPhase = false) {
     private val transformer = Transformer(session, scopeSession)
@@ -236,6 +241,15 @@ private class LLFirStatusTargetResolver(
             return klass
         }
 
+        override fun superTypeToSymbols(typeRef: FirTypeRef): List<FirClassifierSymbol<*>> {
+            val type = typeRef.coneType
+            val originalClassifierSymbol = type.toSymbol(session)
+            val useSiteSymbol = type.toSymbol(computationSession.useSiteSession)
+
+            // Resolve an 'expect' declaration before an 'actual' as it is like 'super' and 'sub' classes
+            return listOfNotNull(originalClassifierSymbol, useSiteSymbol?.takeIf { it != originalClassifierSymbol })
+        }
+
         override fun resolveClassForSuperType(regularClass: FirRegularClass): Boolean {
             // We cannot skip supertype resolution when there is a possibility
             // that some supertypes might need to be actualized in the current context
@@ -248,11 +262,12 @@ private class LLFirStatusTargetResolver(
             }
 
             val target = regularClass.tryCollectDesignationWithFile()?.asResolveTarget() ?: return false
+            val targetSession = target.target.llFirSession
             val resolver = LLFirStatusTargetResolver(
                 target,
                 lockProvider,
-                session,
-                scopeSession,
+                targetSession,
+                targetSession.getScopeSession(),
                 computationSession,
                 resolveMode = resolveMode,
             )
