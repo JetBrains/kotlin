@@ -14358,6 +14358,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("LambdaReturnTypeIsUnitIfImplicitReturnExists.kt")
+                public void testLambdaReturnTypeIsUnitIfImplicitReturnExists() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/functionLiterals/return/LambdaReturnTypeIsUnitIfImplicitReturnExists.kt");
+                }
+
+                @Test
                 @TestMetadata("LambdaWithParameter.kt")
                 public void testLambdaWithParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/functionLiterals/return/LambdaWithParameter.kt");

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirPropertyAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
@@ -707,6 +705,8 @@ class FirCallCompletionResultsWriterTransformer(
 
         val initialReturnType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         val expectedReturnType = initialReturnType?.let { finallySubstituteOrSelf(it) }
+            ?: runIf(returnExpressions.any { it.source?.kind is KtFakeSourceElementKind.ImplicitUnit.Return })
+            { session.builtinTypes.unitType.coneType }
             ?: expectedType?.returnType(session) as? ConeClassLikeType
             ?: (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction)
 
