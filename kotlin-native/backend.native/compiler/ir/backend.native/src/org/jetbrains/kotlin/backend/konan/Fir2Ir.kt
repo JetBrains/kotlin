@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
@@ -31,19 +30,16 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.signaturer.Ir2FirManglerAdapter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrMemberWithContainerSource
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.DelicateSymbolTableApi
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
@@ -100,7 +96,7 @@ internal fun PhaseContext.fir2Ir(
     val fir2IrConfiguration = Fir2IrConfiguration(
             languageVersionSettings = configuration.languageVersionSettings,
             diagnosticReporter = diagnosticsReporter,
-            linkViaSignatures = true,
+            linkViaSignatures = false,
             evaluatedConstTracker = configuration
                     .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
             inlineConstTracker = null,
@@ -125,16 +121,20 @@ internal fun PhaseContext.fir2Ir(
         "`${irModuleFragment.name}` must be Name.special, since it's required by KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns()"
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class, DelicateSymbolTableApi::class)
+    @OptIn(DelicateDeclarationStorageApi::class)
     val usedPackages = buildSet {
-        components.symbolTable.descriptorExtension.forEachDeclarationSymbol {
-            val p = it.owner as? IrDeclaration ?: return@forEachDeclarationSymbol
-            val fragment = (p.getPackageFragment() as? IrExternalPackageFragment) ?: return@forEachDeclarationSymbol
+        fun addExternalPackage(it: IrSymbol) {
+            // FIXME(KT-64742): Fir2IrDeclarationStorage caches may contain unbound IR symbols, so we filter them out.
+            val p = it.takeIf { it.isBound }?.owner as? IrDeclaration ?: return
+            val fragment = (p.getPackageFragment() as? IrExternalPackageFragment) ?: return
             add(fragment.packageFqName)
         }
-        // This packages exists in all platform libraries, but can contain only synthetic declarations.
+        components.declarationStorage.forEachCachedDeclarationSymbol(::addExternalPackage)
+        components.classifierStorage.forEachCachedDeclarationSymbol(::addExternalPackage)
+
+        // These packages exist in all platform libraries, but can contain only synthetic declarations.
         // These declarations are not really located in klib, so we don't need to depend on klib to use them.
-        removeAll(NativeForwardDeclarationKind.entries.map { it.packageFqName })
+        removeAll(NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet())
     }.toList()
 
 
