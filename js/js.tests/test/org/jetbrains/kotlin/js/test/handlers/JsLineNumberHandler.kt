@@ -9,39 +9,36 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
-import org.jetbrains.kotlin.js.facade.TranslationResult
 import org.jetbrains.kotlin.js.test.utils.LineCollector
 import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 /**
  * Verifies the `// LINE` comments in lineNumber tests.
  *
- * The test file is expected to contain the `// LINE(backend)` directive, followed by the line numbers that the corresponding JS statements
- * are generated from.
+ * The test file is expected to contain the `// LINE($linePattern)` directive,
+ * followed by the line numbers that the corresponding JS statements are generated from.
  *
  * This handler traverses the JS AST and collects the actual line numbers using [LineCollector], and generates a JavaScript file
  * with those line numbers printed as comments for ease of debugging these tests.
  */
-class JsLineNumberHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
-
+private class JsLineNumberHandler(private val frontend: FrontendKind<*>, testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     private val translationModeForIr = TranslationMode.PER_MODULE_DEV
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
         when (val artifact = info.unwrap()) {
-            is BinaryArtifacts.Js.OldJsArtifact ->
-                verifyModule(module, TranslationMode.FULL_DEV, artifact.translationResult.cast<TranslationResult.Success>().program, "JS")
             is BinaryArtifacts.Js.JsIrArtifact -> {
                 val testModules = testServices.moduleStructure.modules
                 val moduleId2TestModule = testModules.associateBy { it.name.safeModuleName }
@@ -58,7 +55,7 @@ class JsLineNumberHandler(testServices: TestServices) : JsBinaryArtifactHandler(
                         }
                     }
 
-                    verifyModule(module, translationModeForIr, compilationOutputs.jsProgram!!, "JS_IR")
+                    verifyModule(module, translationModeForIr, compilationOutputs.jsProgram!!)
                     verifiedModuleCount += 1
                 }
 
@@ -77,8 +74,7 @@ class JsLineNumberHandler(testServices: TestServices) : JsBinaryArtifactHandler(
     private fun verifyModule(
         module: TestModule,
         translationMode: TranslationMode,
-        jsProgram: JsProgram,
-        backendPattern: String
+        jsProgram: JsProgram
     ) {
         val baseOutputPath = JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, translationMode)
 
@@ -96,12 +92,12 @@ class JsLineNumberHandler(testServices: TestServices) : JsBinaryArtifactHandler(
             writeText(generatedCode)
         }
 
-        val linesPattern = Regex("^ *// *LINES\\($backendPattern\\): *(.*)$", RegexOption.MULTILINE)
+        val linesPattern = Regex("^ *// *LINES\\((?:$frontend )? *JS_IR\\): *(.*)$", RegexOption.MULTILINE)
 
         val linesMatcher = module.files
             .firstNotNullOfOrNull { linesPattern.find(it.originalContent) }
             ?: testServices.assertions.fail {
-                "'// LINES($backendPattern): ' comment was not found in source file. Generated code is:\n$generatedCode"
+                "'// LINES(${linesPattern.pattern}): ' comment was not found in source file. Generated code is:\n$generatedCode"
             }
 
         fun List<Int?>.render() = joinToString(" ") { it?.toString() ?: "*" }
@@ -116,4 +112,12 @@ class JsLineNumberHandler(testServices: TestServices) : JsBinaryArtifactHandler(
 
         testServices.assertions.assertEquals(expectedLines, actualLines) { generatedCode }
     }
+}
+
+fun createIrJsLineNumberHandler(testServices: TestServices): JsBinaryArtifactHandler {
+    return JsLineNumberHandler(FrontendKinds.ClassicFrontend, testServices)
+}
+
+fun createFirJsLineNumberHandler(testServices: TestServices): JsBinaryArtifactHandler {
+    return JsLineNumberHandler(FrontendKinds.FIR, testServices)
 }

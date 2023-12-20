@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.JsDebugRunner
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
+import org.jetbrains.kotlin.js.test.handlers.createFirJsLineNumberHandler
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -134,16 +135,25 @@ open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
 //    }
 //}
 
-// TODO: implement separate expectations for FIR/JS to reuse testdata, disabled for now
-//open class AbstractJsFirLineNumberTest : AbstractFirJsTest(
-//    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/lineNumbers/",
-//    testGroupOutputDirPrefix = "firLineNumbers/"
-//) {
-//    override fun configure(builder: TestConfigurationBuilder) {
-//        super.configure(builder)
-//        configureJsIrLineNumberTest(builder)
-//    }
-//}
+open class AbstractFirJsLineNumberTest : AbstractFirJsTest(
+    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/lineNumbers/",
+    testGroupOutputDirPrefix = "firLineNumbers/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME
+                +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
+                -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
+                JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE.with(listOf("JS", "JS_IR", "JS_IR_ES6"))
+            }
+            configureJsArtifactsHandlersStep {
+                useHandlers(::createFirJsLineNumberHandler)
+            }
+        }
+    }
+}
 
 open class AbstractFirJsSteppingTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/debug/stepping/",

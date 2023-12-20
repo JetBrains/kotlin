@@ -14,5 +14,5 @@ private inline fun foo(): Int {
     return 23
 }
 
-// LINES(JS):    1   10 3 3 3 4 3 6   13 13 3 14 2 12 15 13 13 14 14
-// LINES(JS_IR): 1 1  * 3     4   6 * 13 13   14 2 12 12 13 13 14 14
+// LINES(ClassicFrontend JS_IR): 1 1 * 3 4 6 * 13 13 14 2 12 12 13 13 14 14
+// LINES(FIR JS_IR):             1 1 * 4 4 6 * 13 13 14 2 12 12 13 13 14 14

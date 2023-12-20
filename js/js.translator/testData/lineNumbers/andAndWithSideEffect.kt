@@ -6,5 +6,4 @@ fun box(x: Int, y: Int) {
 
 fun foo(x: Int) = x
 
-// LINES(JS):      1   5 3 3 4 3 3 3 3 * 3 3 4 4 4 4 * 4 4 4 4 2 3 7 7 7
-// LINES(JS_IR): 1 1 *         3   3 3 * 3 3 * 4 4 4 * 4   4   2   7 7 7 7
+// LINES(JS_IR): 1 1 * 3 3 3 * 3 3 * 4 4 4 * 4 4 2 7 7 7 7

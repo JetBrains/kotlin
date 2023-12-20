@@ -165,10 +165,9 @@ fun main(args: Array<String>) {
 //                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
 //            }
 
-            // see todo on defining class
-//            testClass<AbstractJsFirLineNumberTest> {
-//                model("lineNumbers/")
-//            }
+            testClass<AbstractFirJsLineNumberTest> {
+                model("lineNumbers/")
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {

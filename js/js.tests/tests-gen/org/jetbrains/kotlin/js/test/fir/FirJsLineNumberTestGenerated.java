@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.ir;
+package org.jetbrains.kotlin.js.test.fir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/lineNumbers")
 @TestDataPath("$PROJECT_ROOT")
-public class JsIrLineNumberTestGenerated extends AbstractJsIrLineNumberTest {
+public class FirJsLineNumberTestGenerated extends AbstractFirJsLineNumberTest {
     @Test
     public void testAllFilesPresentInLineNumbers() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/lineNumbers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
