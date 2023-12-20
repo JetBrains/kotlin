@@ -29,6 +29,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     internal var _parent: BirElementParent? = null
     private var flags: Byte = 0
     internal var indexSlot: UByte = 0u
+    internal var lastReturnedInQueryOfIndexSlot: UByte = 0u
     private var backReferences: Any? = null // null | BirElementBase | Array<BirElementBase?>
     internal var dynamicProperties: Array<Any?>? = null
 
