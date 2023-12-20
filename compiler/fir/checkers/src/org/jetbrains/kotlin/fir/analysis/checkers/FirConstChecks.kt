@@ -44,36 +44,7 @@ internal fun checkConstantArguments(
     session: FirSession,
 ): ConstantArgumentKind {
     if (expression == null) return ConstantArgumentKind.VALID_CONST
-
-    val firConstCheckVisitor = FirConstCheckVisitor(session)
-
-    val expressionSymbol = expression.toReference()?.toResolvedCallableSymbol(discardErrorReference = true)
-    val classKindOfParent = with(firConstCheckVisitor) {
-        (expressionSymbol?.getReferencedClassSymbol() as? FirRegularClassSymbol)?.classKind
-    }
-
-    fun FirExpression.getExpandedType() = resolvedType.fullyExpandedType(session)
-
-    when {
-        expressionSymbol is FirConstructorSymbol && classKindOfParent == ClassKind.ANNOTATION_CLASS -> {
-            return ConstantArgumentKind.VALID_CONST
-        }
-        expressionSymbol == null -> {
-            return ConstantArgumentKind.VALID_CONST
-        }
-        expressionSymbol is FirConstructorSymbol -> {
-            if (expression is FirCallableReferenceAccess) return ConstantArgumentKind.VALID_CONST
-            if (expression.getExpandedType().isUnsignedType) {
-                (expression as FirFunctionCall).arguments.forEach { argumentExpression ->
-                    checkConstantArguments(argumentExpression, session).ifNotValidConst { return it }
-                }
-            } else {
-                return ConstantArgumentKind.NOT_CONST
-            }
-        }
-        else -> return expression.accept(firConstCheckVisitor, null)
-    }
-    return ConstantArgumentKind.VALID_CONST
+    return expression.accept(FirConstCheckVisitor(session), null)
 }
 
 internal enum class ConstantArgumentKind {
@@ -276,8 +247,14 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
         }
 
         if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
-        val symbol = calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return ConstantArgumentKind.NOT_CONST
+        return when (val symbol = calleeReference.resolvedSymbol) {
+            is FirNamedFunctionSymbol -> visitNamedFunction(functionCall, symbol)
+            is FirConstructorSymbol -> visitConstructorCall(functionCall, symbol)
+            else -> ConstantArgumentKind.NOT_CONST
+        }
+    }
 
+    private fun visitNamedFunction(functionCall: FirFunctionCall, symbol: FirNamedFunctionSymbol): ConstantArgumentKind {
         if (!symbol.canBeEvaluated() && !functionCall.isCompileTimeBuiltinCall()) {
             return ConstantArgumentKind.NOT_CONST
         }
@@ -290,10 +267,24 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
                 return ConstantArgumentKind.NOT_CONST
             }
 
-            exp.accept(this, data).ifNotValidConst { return it }
+            exp.accept(this, null).ifNotValidConst { return it }
         }
 
         return ConstantArgumentKind.VALID_CONST
+    }
+
+    private fun visitConstructorCall(constructorCall: FirFunctionCall, symbol: FirConstructorSymbol): ConstantArgumentKind {
+        val classKindOfParent = (symbol.getReferencedClassSymbol() as? FirRegularClassSymbol)?.classKind
+        return when {
+            classKindOfParent == ClassKind.ANNOTATION_CLASS -> ConstantArgumentKind.VALID_CONST
+            constructorCall.getExpandedType().isUnsignedType -> {
+                constructorCall.arguments.forEach { argumentExpression ->
+                    argumentExpression.accept(this, null).ifNotValidConst { return it }
+                }
+                ConstantArgumentKind.VALID_CONST
+            }
+            else -> ConstantArgumentKind.NOT_CONST
+        }
     }
 
     override fun visitQualifiedAccessExpression(
@@ -305,6 +296,14 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
         }
 
         return ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Nothing?): ConstantArgumentKind {
+        return ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Nothing?): ConstantArgumentKind {
+        return visitQualifiedAccessExpression(callableReferenceAccess, data)
     }
 
     // --- Utils ---
@@ -352,7 +351,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
         return this?.callableId?.packageName?.asString() == "kotlin"
     }
 
-    fun FirCallableSymbol<*>?.getReferencedClassSymbol(): FirBasedSymbol<*>? =
+    private fun FirCallableSymbol<*>?.getReferencedClassSymbol(): FirBasedSymbol<*>? =
         this?.resolvedReturnTypeRef
             ?.coneTypeSafe<ConeLookupTagBasedType>()
             ?.lookupTag
