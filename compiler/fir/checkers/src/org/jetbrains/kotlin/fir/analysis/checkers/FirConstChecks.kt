@@ -49,96 +49,17 @@ internal fun checkConstantArguments(
     val classKindOfParent = with(firConstCheckVisitor) {
         (expressionSymbol?.getReferencedClassSymbol() as? FirRegularClassSymbol)?.classKind
     }
-    val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
-
-    fun FirBasedSymbol<*>.canBeEvaluated(): Boolean {
-        return intrinsicConstEvaluation && this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
-    }
 
     fun FirExpression.getExpandedType() = resolvedType.fullyExpandedType(session)
 
     when {
-        expression is FirNamedArgumentExpression -> {
-            return checkConstantArguments(expression.expression, session)
-        }
-        expression is FirTypeOperatorCall -> if (expression.operation == FirOperation.AS) return ConstantArgumentKind.NOT_CONST
-        expression is FirWhenExpression -> {
-            if (!expression.isProperlyExhaustive || !intrinsicConstEvaluation) {
-                return ConstantArgumentKind.NOT_CONST
-            }
-
-            expression.subject?.let { subject -> checkConstantArguments(subject, session).ifNotValidConst { return it } }
-            for (branch in expression.branches) {
-                checkConstantArguments(branch.condition, session).ifNotValidConst { return it }
-                branch.result.statements.forEach { stmt ->
-                    if (stmt !is FirExpression) return ConstantArgumentKind.NOT_CONST
-                    checkConstantArguments(stmt, session).ifNotValidConst { return it }
-                }
-            }
-            return ConstantArgumentKind.VALID_CONST
-        }
-        expression is FirConstExpression<*>
-                || expressionSymbol is FirEnumEntrySymbol
+        expressionSymbol is FirEnumEntrySymbol
                 || expressionSymbol?.isConst == true
                 || expressionSymbol is FirConstructorSymbol && classKindOfParent == ClassKind.ANNOTATION_CLASS -> {
             return ConstantArgumentKind.VALID_CONST
         }
         classKindOfParent == ClassKind.ENUM_CLASS -> {
             return ConstantArgumentKind.ENUM_NOT_CONST
-        }
-        expression is FirComparisonExpression -> {
-            return checkConstantArguments(expression.compareToCall, session)
-        }
-        expression is FirStringConcatenationCall -> {
-            for (exp in expression.arguments) {
-                if (exp is FirResolvedQualifier || exp is FirGetClassCall) {
-                    return ConstantArgumentKind.NOT_CONST
-                }
-                checkConstantArguments(exp, session).ifNotValidConst { return it }
-            }
-        }
-        expression is FirEqualityOperatorCall -> {
-            if (expression.operation == FirOperation.IDENTITY || expression.operation == FirOperation.NOT_IDENTITY) {
-                return ConstantArgumentKind.NOT_CONST
-            }
-
-            for (exp in expression.arguments) {
-                if (exp is FirConstExpression<*> && exp.value == null) {
-                    return ConstantArgumentKind.NOT_CONST
-                }
-
-                if (exp is FirResolvedQualifier || exp is FirGetClassCall || exp.getExpandedType().isUnsignedType) {
-                    return ConstantArgumentKind.NOT_CONST
-                }
-                checkConstantArguments(exp, session).ifNotValidConst { return it }
-            }
-        }
-        expression is FirBinaryLogicExpression -> {
-            checkConstantArguments(expression.leftOperand, session).ifNotValidConst { return it }
-            checkConstantArguments(expression.rightOperand, session).ifNotValidConst { return it }
-        }
-        expression is FirGetClassCall -> {
-            var coneType = expression.argument.getExpandedType()
-
-            if (coneType is ConeErrorType)
-                return ConstantArgumentKind.NOT_CONST
-
-            while (coneType.classId == StandardClassIds.Array)
-                coneType = (coneType.lowerBoundIfFlexible().typeArguments.first() as? ConeKotlinTypeProjection)?.type ?: break
-
-            return when {
-                coneType is ConeTypeParameterType -> ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
-                expression.argument !is FirResolvedQualifier -> ConstantArgumentKind.NOT_KCLASS_LITERAL
-                else -> ConstantArgumentKind.VALID_CONST
-            }
-        }
-        expression is FirArrayLiteral -> {
-            for (exp in expression.arguments) {
-                checkConstantArguments(exp, session).ifNotValidConst { return it }
-            }
-        }
-        expression is FirThisReceiverExpression -> {
-            return ConstantArgumentKind.NOT_CONST
         }
         expressionSymbol == null -> {
             return ConstantArgumentKind.VALID_CONST
@@ -158,66 +79,7 @@ internal fun checkConstantArguments(
                 return ConstantArgumentKind.NOT_CONST
             }
         }
-        expression is FirFunctionCall -> {
-            val calleeReference = expression.calleeReference
-            if (calleeReference is FirErrorNamedReference) {
-                return ConstantArgumentKind.VALID_CONST
-            }
-            if (expression.getExpandedType().classId == StandardClassIds.KClass) {
-                return ConstantArgumentKind.NOT_KCLASS_LITERAL
-            }
-
-            if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
-            val symbol = calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return ConstantArgumentKind.NOT_CONST
-
-            if (!symbol.canBeEvaluated() && !with(firConstCheckVisitor) { expression.isCompileTimeBuiltinCall() }) {
-                return ConstantArgumentKind.NOT_CONST
-            }
-
-            for (exp in expression.arguments.plus(expression.dispatchReceiver).plus(expression.extensionReceiver)) {
-                if (exp == null) continue
-                val expClassId = exp.getExpandedType().lowerBoundIfFlexible().fullyExpandedClassId(session)
-                // TODO, KT-59823: add annotation for allowed constant types
-                if (expClassId !in StandardClassIds.constantAllowedTypes) {
-                    return ConstantArgumentKind.NOT_CONST
-                }
-
-                checkConstantArguments(exp, session).ifNotValidConst { return it }
-            }
-
-            return ConstantArgumentKind.VALID_CONST
-        }
-        expression is FirQualifiedAccessExpression -> {
-            val expressionType = expression.getExpandedType()
-            if (expressionType.isReflectFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(
-                    session
-                )
-            ) {
-                return checkConstantArguments(expression.dispatchReceiver, session)
-            }
-
-            val propertySymbol = expressionSymbol as? FirPropertySymbol ?: return ConstantArgumentKind.NOT_CONST
-
-            when {
-                propertySymbol.unwrapFakeOverrides().canBeEvaluated() || with(firConstCheckVisitor) { propertySymbol.isCompileTimeBuiltinProperty() } -> {
-                    val receiver = listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != null }!!
-                    return checkConstantArguments(receiver, session)
-                }
-                propertySymbol.isLocal -> return ConstantArgumentKind.NOT_CONST
-                expressionType.classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
-            }
-            // Ok, because we only look at the structure, not resolution-dependent properties.
-            @OptIn(SymbolInternals::class)
-            return when (propertySymbol.fir.initializer) {
-                is FirConstExpression<*> -> when {
-                    propertySymbol.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
-                    else -> ConstantArgumentKind.NOT_CONST
-                }
-                is FirGetClassCall -> ConstantArgumentKind.NOT_KCLASS_LITERAL
-                else -> ConstantArgumentKind.NOT_CONST
-            }
-        }
-        else -> return ConstantArgumentKind.NOT_CONST
+        else -> return expression.accept(firConstCheckVisitor, null)
     }
     return ConstantArgumentKind.VALID_CONST
 }
@@ -238,6 +100,8 @@ internal enum class ConstantArgumentKind {
 }
 
 private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor<ConstantArgumentKind, Nothing?>() {
+    private val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
+
     private val compileTimeFunctions = setOf(
         *OperatorNameConventions.BINARY_OPERATION_NAMES.toTypedArray(), *OperatorNameConventions.UNARY_OPERATION_NAMES.toTypedArray(),
         OperatorNameConventions.SHL, OperatorNameConventions.SHR, OperatorNameConventions.USHR,
@@ -255,9 +119,172 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
         return ConstantArgumentKind.NOT_CONST
     }
 
+    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: Nothing?): ConstantArgumentKind {
+        return namedArgumentExpression.expression.accept(this, data)
+    }
+
+    override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): ConstantArgumentKind {
+        return if (typeOperatorCall.operation == FirOperation.AS) ConstantArgumentKind.NOT_CONST else ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): ConstantArgumentKind {
+        if (!whenExpression.isProperlyExhaustive || !intrinsicConstEvaluation) {
+            return ConstantArgumentKind.NOT_CONST
+        }
+
+        whenExpression.subject?.accept(this, data)?.ifNotValidConst { return it }
+        for (branch in whenExpression.branches) {
+            branch.condition.accept(this, data).ifNotValidConst { return it }
+            branch.result.statements.forEach { stmt ->
+                if (stmt !is FirExpression) return ConstantArgumentKind.NOT_CONST
+                stmt.accept(this, data).ifNotValidConst { return it }
+            }
+        }
+        return ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Nothing?): ConstantArgumentKind {
+        return ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: Nothing?): ConstantArgumentKind {
+        return comparisonExpression.compareToCall.accept(this, data)
+    }
+
+    override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Nothing?): ConstantArgumentKind {
+        for (exp in stringConcatenationCall.arguments) {
+            if (exp is FirResolvedQualifier || exp is FirGetClassCall) {
+                return ConstantArgumentKind.NOT_CONST
+            }
+            exp.accept(this, data).ifNotValidConst { return it }
+        }
+        return ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?): ConstantArgumentKind {
+        if (equalityOperatorCall.operation == FirOperation.IDENTITY || equalityOperatorCall.operation == FirOperation.NOT_IDENTITY) {
+            return ConstantArgumentKind.NOT_CONST
+        }
+
+        for (exp in equalityOperatorCall.arguments) {
+            if (exp is FirConstExpression<*> && exp.value == null) {
+                return ConstantArgumentKind.NOT_CONST
+            }
+
+            if (exp is FirResolvedQualifier || exp is FirGetClassCall || exp.getExpandedType().isUnsignedType) {
+                return ConstantArgumentKind.NOT_CONST
+            }
+
+            exp.accept(this, data).ifNotValidConst { return it }
+        }
+
+        return ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?): ConstantArgumentKind {
+        binaryLogicExpression.leftOperand.accept(this, data).ifNotValidConst { return it }
+        binaryLogicExpression.rightOperand.accept(this, data).ifNotValidConst { return it }
+        return ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?): ConstantArgumentKind {
+        var coneType = getClassCall.argument.getExpandedType()
+
+        if (coneType is ConeErrorType)
+            return ConstantArgumentKind.NOT_CONST
+
+        while (coneType.classId == StandardClassIds.Array)
+            coneType = (coneType.lowerBoundIfFlexible().typeArguments.first() as? ConeKotlinTypeProjection)?.type ?: break
+
+        return when {
+            coneType is ConeTypeParameterType -> ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
+            getClassCall.argument !is FirResolvedQualifier -> ConstantArgumentKind.NOT_KCLASS_LITERAL
+            else -> ConstantArgumentKind.VALID_CONST
+        }
+    }
+
+    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: Nothing?): ConstantArgumentKind {
+        for (exp in arrayLiteral.arguments) {
+            exp.accept(this, data).ifNotValidConst { return it }
+        }
+        return ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?): ConstantArgumentKind {
+        return ConstantArgumentKind.NOT_CONST
+    }
+
+    override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): ConstantArgumentKind {
+        val calleeReference = functionCall.calleeReference
+        if (calleeReference is FirErrorNamedReference) {
+            return ConstantArgumentKind.VALID_CONST
+        }
+        if (functionCall.getExpandedType().classId == StandardClassIds.KClass) {
+            return ConstantArgumentKind.NOT_KCLASS_LITERAL
+        }
+
+        if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
+        val symbol = calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return ConstantArgumentKind.NOT_CONST
+
+        if (!symbol.canBeEvaluated() && !functionCall.isCompileTimeBuiltinCall()) {
+            return ConstantArgumentKind.NOT_CONST
+        }
+
+        for (exp in functionCall.arguments.plus(functionCall.dispatchReceiver).plus(functionCall.extensionReceiver)) {
+            if (exp == null) continue
+            val expClassId = exp.getExpandedType().lowerBoundIfFlexible().fullyExpandedClassId(session)
+            // TODO, KT-59823: add annotation for allowed constant types
+            if (expClassId !in StandardClassIds.constantAllowedTypes) {
+                return ConstantArgumentKind.NOT_CONST
+            }
+
+            exp.accept(this, data).ifNotValidConst { return it }
+        }
+
+        return ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun visitQualifiedAccessExpression(
+        qualifiedAccessExpression: FirQualifiedAccessExpression,
+        data: Nothing?
+    ): ConstantArgumentKind {
+        val expressionType = qualifiedAccessExpression.getExpandedType()
+        if (expressionType.isReflectFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(session)) {
+            return qualifiedAccessExpression.dispatchReceiver?.accept(this, data) ?: ConstantArgumentKind.VALID_CONST
+        }
+
+        val expressionSymbol = qualifiedAccessExpression.toReference()?.toResolvedCallableSymbol(discardErrorReference = true)
+        val propertySymbol = expressionSymbol as? FirPropertySymbol ?: return ConstantArgumentKind.NOT_CONST
+
+        when {
+            propertySymbol.unwrapFakeOverrides().canBeEvaluated() || propertySymbol.isCompileTimeBuiltinProperty() -> {
+                val receiver = listOf(qualifiedAccessExpression.dispatchReceiver, qualifiedAccessExpression.extensionReceiver)
+                    .single { it != null }
+                return receiver?.accept(this, data) ?: ConstantArgumentKind.VALID_CONST
+            }
+            propertySymbol.isLocal -> return ConstantArgumentKind.NOT_CONST
+            expressionType.classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
+        }
+            // Ok, because we only look at the structure, not resolution-dependent properties.
+            @OptIn(SymbolInternals::class)
+            return when (propertySymbol.fir.initializer) {
+            is FirConstExpression<*> -> when {
+                    propertySymbol.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
+                else -> ConstantArgumentKind.NOT_CONST
+            }
+            is FirGetClassCall -> ConstantArgumentKind.NOT_KCLASS_LITERAL
+            else -> ConstantArgumentKind.NOT_CONST
+        }
+    }
+
+    // --- Utils ---
+    private fun FirBasedSymbol<*>.canBeEvaluated(): Boolean {
+        return intrinsicConstEvaluation && this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
+    }
+
     private fun FirExpression.getExpandedType() = resolvedType.fullyExpandedType(session)
 
-    fun FirFunctionCall.isCompileTimeBuiltinCall(): Boolean {
+    private fun FirFunctionCall.isCompileTimeBuiltinCall(): Boolean {
         val calleeReference = this.calleeReference
         if (calleeReference !is FirResolvedNamedReference) return false
 
@@ -281,7 +308,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
         return false
     }
 
-    fun FirPropertySymbol.isCompileTimeBuiltinProperty(): Boolean {
+    private fun FirPropertySymbol.isCompileTimeBuiltinProperty(): Boolean {
         val receiverType = dispatchReceiverType ?: receiverParameter?.typeRef?.coneTypeSafe<ConeKotlinType>() ?: return false
         val receiverClassId = receiverType.fullyExpandedClassId(session) ?: return false
         return when (name.asString()) {
