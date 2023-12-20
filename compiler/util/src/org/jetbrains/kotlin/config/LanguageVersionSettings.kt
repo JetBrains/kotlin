@@ -308,6 +308,7 @@ enum class LanguageFeature(
     MangleCallsToJavaMethodsWithValueClasses(KOTLIN_2_0, kind = OTHER), // KT-55945
     ForbidInferringTypeVariablesIntoEmptyIntersection(KOTLIN_2_0, kind = BUG_FIX), // KT-51221
     ProhibitDefaultArgumentsInExpectActualizedByFakeOverride(KOTLIN_2_0, kind = BUG_FIX), // KT-62036
+    JsAllowInvalidCharsIdentifiersEscaping(sinceVersion = KOTLIN_2_1, kind = OTHER), // KT-31799
 
     // 2.1
 
@@ -362,7 +363,6 @@ enum class LanguageFeature(
     ProhibitAllMultipleDefaultsInheritedFromSupertypes(sinceVersion = null, kind = BUG_FIX),
     ExplicitBackingFields(sinceVersion = null, kind = UNSTABLE_FEATURE),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null),
-    JsAllowInvalidCharsIdentifiersEscaping(sinceVersion = null, kind = UNSTABLE_FEATURE),
     JsAllowValueClassesInExternals(sinceVersion = null, kind = OTHER),
     ContextReceivers(sinceVersion = null),
     ValueClasses(sinceVersion = null, kind = UNSTABLE_FEATURE),
