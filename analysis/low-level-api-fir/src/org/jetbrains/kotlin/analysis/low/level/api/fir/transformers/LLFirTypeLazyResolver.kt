@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationTypeIsResolved
@@ -18,8 +19,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDecl
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
@@ -29,17 +28,17 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES) {
     override fun resolve(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        session: FirSession,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
-        val resolver = LLFirTypeTargetResolver(target, lockProvider, session, scopeSession)
+        val resolver = LLFirTypeTargetResolver(target, lockProvider, scopeSession)
         resolver.resolveDesignation()
     }
 
@@ -73,10 +72,9 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
 private class LLFirTypeTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    session: FirSession,
     scopeSession: ScopeSession,
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.TYPES) {
-    private val transformer = object : FirTypeResolveTransformer(session, scopeSession) {
+    private val transformer = object : FirTypeResolveTransformer(target.session, scopeSession) {
         override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
             FirLazyBodiesCalculator.calculateAnnotations(typeRef, session)
             return super.transformTypeRef(typeRef, data)

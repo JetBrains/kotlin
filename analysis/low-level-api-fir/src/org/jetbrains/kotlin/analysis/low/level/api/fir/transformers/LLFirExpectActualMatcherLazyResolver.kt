@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockPro
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkExpectForActualIsResolved
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
@@ -24,11 +23,10 @@ internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirReso
     override fun resolve(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        session: FirSession,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
-        val resolver = LLFirExpectActualMatchingTargetResolver(target, lockProvider, session, scopeSession)
+        val resolver = LLFirExpectActualMatchingTargetResolver(target, lockProvider, scopeSession)
         resolver.resolveDesignation()
     }
 
@@ -45,10 +43,9 @@ internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirReso
 private class LLFirExpectActualMatchingTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    session: FirSession,
     scopeSession: ScopeSession,
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
-    private val enabled = session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+    private val enabled = resolveTargetSession.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
@@ -60,7 +57,7 @@ private class LLFirExpectActualMatchingTargetResolver(
         action()
     }
 
-    private val transformer = object : FirExpectActualMatcherTransformer(session, scopeSession) {
+    private val transformer = object : FirExpectActualMatcherTransformer(resolveTargetSession, scopeSession) {
         override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
             transformMemberDeclaration(regularClass)
             return regularClass

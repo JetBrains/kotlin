@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkContractDescrip
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isCallableWithSpecialBody
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
@@ -30,11 +29,10 @@ internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.C
     override fun resolve(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        session: FirSession,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
-        val resolver = LLFirContractsTargetResolver(target, lockProvider, session, scopeSession, towerDataContextCollector)
+        val resolver = LLFirContractsTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
         resolver.resolveDesignation()
     }
 
@@ -47,7 +45,6 @@ internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.C
 private class LLFirContractsTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    session: FirSession,
     scopeSession: ScopeSession,
     firResolveContextCollector: FirResolveContextCollector?,
 ) : LLFirAbstractBodyTargetResolver(
@@ -57,7 +54,7 @@ private class LLFirContractsTargetResolver(
     FirResolvePhase.CONTRACTS,
 ) {
     override val transformer = FirContractResolveTransformer(
-        session,
+        resolveTargetSession,
         scopeSession,
         firResolveContextCollector = firResolveContextCollector,
     )

@@ -38,7 +38,6 @@ internal class LLFirReturnTypeCalculatorWithJump(
         val resolver = LLFirImplicitBodyTargetResolver(
             designation,
             lockProvider = lockProvider,
-            session = targetSession,
             scopeSession = targetSession.getScopeSession(),
             firResolveContextCollector = towerDataContextCollector,
             llImplicitBodyResolveComputationSessionParameter = implicitBodyResolveComputationSession as LLImplicitBodyResolveComputationSession,

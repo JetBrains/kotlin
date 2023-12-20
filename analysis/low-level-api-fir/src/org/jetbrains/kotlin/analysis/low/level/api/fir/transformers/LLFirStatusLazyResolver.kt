@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
@@ -34,14 +35,12 @@ internal object LLFirStatusLazyResolver : LLFirLazyResolver(FirResolvePhase.STAT
     override fun resolve(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        session: FirSession,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
         val resolver = LLFirStatusTargetResolver(
             target = target,
             lockProvider = lockProvider,
-            session = session,
             scopeSession = scopeSession,
             resolveMode = target.resolveMode(),
         )
@@ -110,12 +109,11 @@ private class LLStatusComputationSession(val useSiteSession: FirSession) : Statu
 private class LLFirStatusTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    session: FirSession,
     scopeSession: ScopeSession,
-    private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(session),
+    private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(target.session),
     private val resolveMode: StatusResolveMode,
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.STATUS, isJumpingPhase = false) {
-    private val transformer = Transformer(session, scopeSession)
+    private val transformer = Transformer(resolveTargetSession, scopeSession)
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
@@ -266,7 +264,6 @@ private class LLFirStatusTargetResolver(
             val resolver = LLFirStatusTargetResolver(
                 target,
                 lockProvider,
-                targetSession,
                 targetSession.getScopeSession(),
                 computationSession,
                 resolveMode = resolveMode,

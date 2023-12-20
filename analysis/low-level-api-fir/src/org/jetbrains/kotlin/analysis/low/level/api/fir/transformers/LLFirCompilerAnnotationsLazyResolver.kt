@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
@@ -39,11 +38,10 @@ internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirReso
     override fun resolve(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        session: FirSession,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
-        val resolver = LLFirCompilerRequiredAnnotationsTargetResolver(target, lockProvider, session, scopeSession)
+        val resolver = LLFirCompilerRequiredAnnotationsTargetResolver(target, lockProvider, scopeSession)
         resolver.resolveDesignation()
     }
 
@@ -58,7 +56,6 @@ internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirReso
 private class LLFirCompilerRequiredAnnotationsTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    session: FirSession,
     scopeSession: ScopeSession,
     computationSession: LLFirCompilerRequiredAnnotationsComputationSession? = null,
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS, isJumpingPhase = false) {
@@ -73,7 +70,6 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
             val resolver = LLFirCompilerRequiredAnnotationsTargetResolver(
                 designation,
                 lockProvider,
-                targetSession,
                 targetSession.getScopeSession(),
                 this,
             )
@@ -85,7 +81,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     }
 
     private val transformer = FirCompilerRequiredAnnotationsResolveTransformer(
-        session,
+        resolveTargetSession,
         scopeSession,
         computationSession ?: LLFirCompilerRequiredAnnotationsComputationSession(),
     )

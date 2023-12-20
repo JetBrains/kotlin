@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -32,3 +33,5 @@ internal fun LLFirResolveTarget.resolve(phase: FirResolvePhase) {
     val lazyDeclarationResolver = session.moduleComponents.firModuleLazyDeclarationResolver
     lazyDeclarationResolver.lazyResolveTarget(this, phase, towerDataContextCollector = null)
 }
+
+internal val LLFirResolveTarget.session: LLFirSession get() = target.llFirSession

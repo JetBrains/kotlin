@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDecl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
@@ -35,11 +34,10 @@ internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePha
     override fun resolve(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        session: FirSession,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
-        val resolver = LLFirImplicitBodyTargetResolver(target, lockProvider, session, scopeSession, towerDataContextCollector)
+        val resolver = LLFirImplicitBodyTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
         resolver.resolveDesignation()
     }
 
@@ -112,7 +110,6 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
 internal class LLFirImplicitBodyTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    session: FirSession,
     scopeSession: ScopeSession,
     firResolveContextCollector: FirResolveContextCollector?,
     llImplicitBodyResolveComputationSessionParameter: LLImplicitBodyResolveComputationSession? = null,
@@ -125,7 +122,7 @@ internal class LLFirImplicitBodyTargetResolver(
     isJumpingPhase = true,
 ) {
     override val transformer = object : FirImplicitAwareBodyResolveTransformer(
-        session,
+        resolveTargetSession,
         implicitBodyResolveComputationSession = llImplicitBodyResolveComputationSession,
         phase = resolverPhase,
         implicitTypeOnly = true,

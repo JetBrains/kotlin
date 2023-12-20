@@ -11,18 +11,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUp
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 
-internal abstract class LLFirLazyResolver(
-    val resolverPhase: FirResolvePhase,
-) {
+internal abstract class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
     abstract fun resolve(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        session: FirSession,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     )

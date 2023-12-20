@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
@@ -32,11 +33,10 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
     override fun resolve(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        session: FirSession,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
-        val resolver = LLFirSuperTypeTargetResolver(target, lockProvider, session, scopeSession)
+        val resolver = LLFirSuperTypeTargetResolver(target, lockProvider, scopeSession)
         resolver.resolveDesignation()
     }
 
@@ -58,13 +58,12 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
 private class LLFirSuperTypeTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    private val session: FirSession,
     private val scopeSession: ScopeSession,
-    private val supertypeComputationSession: LLFirSupertypeComputationSession = LLFirSupertypeComputationSession(session),
+    private val supertypeComputationSession: LLFirSupertypeComputationSession = LLFirSupertypeComputationSession(target.session),
     private val visitedElements: MutableSet<FirElementWithResolveState> = hashSetOf(),
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.SUPER_TYPES, isJumpingPhase = false) {
     private val supertypeResolver = object : FirSupertypeResolverVisitor(
-        session = session,
+        session = resolveTargetSession,
         supertypeComputationSession = supertypeComputationSession,
         scopeSession = scopeSession,
     ) {
@@ -110,7 +109,7 @@ private class LLFirSuperTypeTargetResolver(
                 resolver = { supertypeResolver.resolveSpecificClassLikeSupertypes(target, it) },
                 superTypeUpdater = {
                     target.replaceSuperTypeRefs(it)
-                    session.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, scopeSession)
+                    resolveTargetSession.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, scopeSession)
                 },
             )
             is FirTypeAlias -> performResolve(
@@ -176,7 +175,7 @@ private class LLFirSuperTypeTargetResolver(
     }
 
     private fun FirClassLikeDeclaration.asResolveTarget(): LLFirSingleResolveTarget? {
-        return takeIf { it.canHaveLoopInSupertypesHierarchy(session) }
+        return takeIf { it.canHaveLoopInSupertypesHierarchy(resolveTargetSession) }
             ?.tryCollectDesignationWithFile()
             ?.asResolveTarget()
     }
@@ -185,7 +184,6 @@ private class LLFirSuperTypeTargetResolver(
         LLFirSuperTypeTargetResolver(
             target = target,
             lockProvider = lockProvider,
-            session = session,
             scopeSession = scopeSession,
             supertypeComputationSession = supertypeComputationSession,
             visitedElements = visitedElements,
@@ -199,14 +197,14 @@ private class LLFirSuperTypeTargetResolver(
      * So we crawl the resolved supertypes of visited designations to find more designations to collect.
      */
     private fun crawlSupertype(type: ConeKotlinType) {
-        val classLikeDeclaration = type.toSymbol(session)?.fir
+        val classLikeDeclaration = type.toSymbol(resolveTargetSession)?.fir
         if (classLikeDeclaration !is FirClassLikeDeclaration) return
         if (classLikeDeclaration in visitedElements) return
         if (classLikeDeclaration is FirJavaClass) {
-            if (!classLikeDeclaration.canHaveLoopInSupertypesHierarchy(session)) return
+            if (!classLikeDeclaration.canHaveLoopInSupertypesHierarchy(resolveTargetSession)) return
 
             visitedElements += classLikeDeclaration
-            val parentClass = classLikeDeclaration.outerClass(session)
+            val parentClass = classLikeDeclaration.outerClass(resolveTargetSession)
             if (parentClass != null) {
                 crawlSupertype(parentClass.defaultType())
             }

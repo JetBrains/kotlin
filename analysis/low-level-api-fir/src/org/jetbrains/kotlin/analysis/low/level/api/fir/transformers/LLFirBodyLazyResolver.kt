@@ -59,11 +59,10 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
     override fun resolve(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        session: FirSession,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
-        val resolver = LLFirBodyTargetResolver(target, lockProvider, session, scopeSession, towerDataContextCollector)
+        val resolver = LLFirBodyTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
         resolver.resolveDesignation()
     }
 
@@ -84,7 +83,6 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
 private class LLFirBodyTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    session: FirSession,
     scopeSession: ScopeSession,
     firResolveContextCollector: FirResolveContextCollector?,
 ) : LLFirAbstractBodyTargetResolver(
@@ -94,7 +92,7 @@ private class LLFirBodyTargetResolver(
     FirResolvePhase.BODY_RESOLVE,
 ) {
     override val transformer = object : FirBodyResolveTransformer(
-        session,
+        resolveTargetSession,
         phase = resolverPhase,
         implicitTypeOnly = false,
         scopeSession = scopeSession,

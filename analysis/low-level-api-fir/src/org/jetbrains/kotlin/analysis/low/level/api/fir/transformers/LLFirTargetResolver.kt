@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -37,6 +38,8 @@ internal abstract class LLFirTargetResolver(
     protected val resolverPhase: FirResolvePhase,
     private val isJumpingPhase: Boolean = false,
 ) : LLFirResolveTargetVisitor {
+    val resolveTargetSession: LLFirSession get() = resolveTarget.session
+
     private val _nestedClassesStack = mutableListOf<FirRegularClass>()
 
     val nestedClassesStack: List<FirRegularClass> get() = _nestedClassesStack

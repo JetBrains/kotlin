@@ -35,11 +35,10 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
     override fun resolve(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
-        session: FirSession,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
-        val resolver = LLFirAnnotationArgumentsTargetResolver(target, lockProvider, session, scopeSession, towerDataContextCollector)
+        val resolver = LLFirAnnotationArgumentsTargetResolver(target, lockProvider, scopeSession, towerDataContextCollector)
         resolver.resolveDesignation()
     }
 
@@ -83,7 +82,6 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
 private class LLFirAnnotationArgumentsTargetResolver(
     resolveTarget: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
-    session: FirSession,
     scopeSession: ScopeSession,
     firResolveContextCollector: FirResolveContextCollector?,
 ) : LLFirAbstractBodyTargetResolver(
@@ -105,7 +103,7 @@ private class LLFirAnnotationArgumentsTargetResolver(
      * @see org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher.transformForeignAnnotationCall
      */
     override val transformer = FirAnnotationArgumentsTransformer(
-        session,
+        resolveTargetSession,
         scopeSession,
         resolverPhase,
         returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
