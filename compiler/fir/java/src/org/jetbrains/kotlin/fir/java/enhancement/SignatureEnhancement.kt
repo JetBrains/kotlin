@@ -162,18 +162,20 @@ class FirSignatureEnhancement(
             is FirSyntheticProperty -> {
                 val accessorSymbol = firElement.symbol
                 val getterDelegate = firElement.getter.delegate
-                val enhancedGetterSymbol = if (getterDelegate is FirJavaMethod) {
+                val enhancedGetterSymbol = if (getterDelegate.isJava) {
                     enhancementsCache.enhancedFunctions.getValue(getterDelegate.symbol, this to getterDelegate.name)
                 } else {
                     getterDelegate.symbol
                 }
                 val setterDelegate = firElement.setter?.delegate
-                val enhancedSetterSymbol = if (setterDelegate is FirJavaMethod) {
+                val enhancedSetterSymbol = if (setterDelegate?.isJava == true) {
                     enhancementsCache.enhancedFunctions.getValue(setterDelegate.symbol, this to setterDelegate.name)
                 } else {
                     setterDelegate?.symbol
                 }
-                if (getterDelegate !is FirJavaMethod && setterDelegate !is FirJavaMethod) return original
+                if (!getterDelegate.isJava && setterDelegate?.isJava != true) {
+                    return original
+                }
                 return buildSyntheticProperty {
                     moduleData = this@FirSignatureEnhancement.moduleData
                     this.name = name
@@ -200,7 +202,7 @@ class FirSignatureEnhancement(
     ): FirFunctionSymbol<*> {
         val firMethod = original.fir
 
-        if (firMethod !is FirJavaMethod && firMethod !is FirJavaConstructor) {
+        if (!firMethod.isJava) {
             return original
         }
 
@@ -236,10 +238,10 @@ class FirSignatureEnhancement(
         val overriddenMembers = (firMethod as? FirSimpleFunction)?.overridden().orEmpty()
         val hasReceiver = overriddenMembers.any { it.receiverParameter != null }
 
-        val newReceiverTypeRef = if (firMethod is FirJavaMethod && hasReceiver) {
+        val newReceiverTypeRef = if (firMethod is FirSimpleFunction && hasReceiver) {
             enhanceReceiverType(firMethod, overriddenMembers, defaultQualifiers)
         } else null
-        val newReturnTypeRef = if (firMethod is FirJavaMethod) {
+        val newReturnTypeRef = if (firMethod is FirSimpleFunction) {
             enhanceReturnType(firMethod, overriddenMembers, defaultQualifiers, predefinedEnhancementInfo)
         } else {
             firMethod.returnTypeRef
@@ -263,7 +265,7 @@ class FirSignatureEnhancement(
         var typeParameterSubstitutor: ConeSubstitutorByMap? = null
 
         val function = when (firMethod) {
-            is FirJavaConstructor -> {
+            is FirConstructor -> {
                 val symbol = FirConstructorSymbol(methodId).also { functionSymbol = it }
                 if (firMethod.isPrimary) {
                     FirPrimaryConstructorBuilder().apply {
@@ -303,7 +305,7 @@ class FirSignatureEnhancement(
                     this.typeParameters += (enhancedTypeParameters ?: firMethod.typeParameters)
                 }
             }
-            is FirJavaMethod -> {
+            is FirSimpleFunction -> {
                 isJavaRecordComponent = firMethod.isJavaRecordComponent == true
                 FirSimpleFunctionBuilder().apply {
                     source = firMethod.source
@@ -568,7 +570,7 @@ class FirSignatureEnhancement(
     // ================================================================================================
 
     private fun enhanceReceiverType(
-        ownerFunction: FirJavaMethod,
+        ownerFunction: FirSimpleFunction,
         overriddenMembers: List<FirCallableDeclaration>,
         defaultQualifiers: JavaTypeQualifiersByElementType?
     ): FirResolvedTypeRef {
@@ -632,14 +634,16 @@ class FirSignatureEnhancement(
 
         object Receiver : TypeInSignature() {
             override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef {
-                if (member is FirJavaMethod) return member.valueParameters[0].returnTypeRef
+                if (member is FirSimpleFunction && member.isJava) {
+                    return member.valueParameters[0].returnTypeRef
+                }
                 return member.receiverParameter?.typeRef!!
             }
         }
 
         class ValueParameter(val hasReceiver: Boolean, val index: Int) : TypeInSignature() {
             override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef {
-                if (hasReceiver && member is FirJavaMethod) {
+                if (hasReceiver && member is FirSimpleFunction && member.isJava) {
                     return member.valueParameters[index + 1].returnTypeRef
                 }
                 return (member as FirFunction).valueParameters[index].returnTypeRef
