@@ -3025,9 +3025,21 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             }
 
             @Test
+            @TestMetadata("unitCoercionOverloads.kt")
+            public void testUnitCoercionOverloads() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/unitCoercionOverloads.kt");
+            }
+
+            @Test
             @TestMetadata("varargFromBaseClass.kt")
             public void testVarargFromBaseClass() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargFromBaseClass.kt");
+            }
+
+            @Test
+            @TestMetadata("varargOverloads.kt")
+            public void testVarargOverloads() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargOverloads.kt");
             }
 
             @Test

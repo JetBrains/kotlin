@@ -3812,9 +3812,19 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/unboundReferences.kt");
             }
 
+            @TestMetadata("unitCoercionOverloads.kt")
+            public void testUnitCoercionOverloads() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/unitCoercionOverloads.kt");
+            }
+
             @TestMetadata("varargFromBaseClass.kt")
             public void testVarargFromBaseClass() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargFromBaseClass.kt");
+            }
+
+            @TestMetadata("varargOverloads.kt")
+            public void testVarargOverloads() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargOverloads.kt");
             }
 
             @TestMetadata("varargViewedAsArray.kt")
