@@ -43,11 +43,11 @@ internal fun checkConstantArguments(
 ): ConstantArgumentKind {
     if (expression == null) return ConstantArgumentKind.VALID_CONST
 
-    val firConstCheckVisitor = FirConstCheckVisitor()
+    val firConstCheckVisitor = FirConstCheckVisitor(session)
 
     val expressionSymbol = expression.toReference()?.toResolvedCallableSymbol(discardErrorReference = true)
     val classKindOfParent = with(firConstCheckVisitor) {
-        (expressionSymbol?.getReferencedClassSymbol(session) as? FirRegularClassSymbol)?.classKind
+        (expressionSymbol?.getReferencedClassSymbol() as? FirRegularClassSymbol)?.classKind
     }
     val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
 
@@ -170,7 +170,7 @@ internal fun checkConstantArguments(
             if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
             val symbol = calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return ConstantArgumentKind.NOT_CONST
 
-            if (!symbol.canBeEvaluated() && !with(firConstCheckVisitor) { expression.isCompileTimeBuiltinCall(session) }) {
+            if (!symbol.canBeEvaluated() && !with(firConstCheckVisitor) { expression.isCompileTimeBuiltinCall() }) {
                 return ConstantArgumentKind.NOT_CONST
             }
 
@@ -199,7 +199,7 @@ internal fun checkConstantArguments(
             val propertySymbol = expressionSymbol as? FirPropertySymbol ?: return ConstantArgumentKind.NOT_CONST
 
             when {
-                propertySymbol.unwrapFakeOverrides().canBeEvaluated() || with(firConstCheckVisitor) { propertySymbol.isCompileTimeBuiltinProperty(session) } -> {
+                propertySymbol.unwrapFakeOverrides().canBeEvaluated() || with(firConstCheckVisitor) { propertySymbol.isCompileTimeBuiltinProperty() } -> {
                     val receiver = listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != null }!!
                     return checkConstantArguments(receiver, session)
                 }
@@ -237,7 +237,7 @@ internal enum class ConstantArgumentKind {
     }
 }
 
-private class FirConstCheckVisitor() : FirVisitor<ConstantArgumentKind, Nothing?>() {
+private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor<ConstantArgumentKind, Nothing?>() {
     private val compileTimeFunctions = setOf(
         *OperatorNameConventions.BINARY_OPERATION_NAMES.toTypedArray(), *OperatorNameConventions.UNARY_OPERATION_NAMES.toTypedArray(),
         OperatorNameConventions.SHL, OperatorNameConventions.SHR, OperatorNameConventions.USHR,
@@ -255,7 +255,9 @@ private class FirConstCheckVisitor() : FirVisitor<ConstantArgumentKind, Nothing?
         return ConstantArgumentKind.NOT_CONST
     }
 
-    fun FirFunctionCall.isCompileTimeBuiltinCall(session: FirSession): Boolean {
+    private fun FirExpression.getExpandedType() = resolvedType.fullyExpandedType(session)
+
+    fun FirFunctionCall.isCompileTimeBuiltinCall(): Boolean {
         val calleeReference = this.calleeReference
         if (calleeReference !is FirResolvedNamedReference) return false
 
@@ -263,7 +265,7 @@ private class FirConstCheckVisitor() : FirVisitor<ConstantArgumentKind, Nothing?
         val symbol = calleeReference.resolvedSymbol as? FirCallableSymbol
         if (!symbol.fromKotlin()) return false
 
-        val receiverClassId = this.dispatchReceiver?.resolvedType?.fullyExpandedClassId(session)
+        val receiverClassId = this.dispatchReceiver?.getExpandedType()?.classId
 
         if (receiverClassId in StandardClassIds.unsignedTypes) return false
 
@@ -279,7 +281,7 @@ private class FirConstCheckVisitor() : FirVisitor<ConstantArgumentKind, Nothing?
         return false
     }
 
-    fun FirPropertySymbol.isCompileTimeBuiltinProperty(session: FirSession): Boolean {
+    fun FirPropertySymbol.isCompileTimeBuiltinProperty(): Boolean {
         val receiverType = dispatchReceiverType ?: receiverParameter?.typeRef?.coneTypeSafe<ConeKotlinType>() ?: return false
         val receiverClassId = receiverType.fullyExpandedClassId(session) ?: return false
         return when (name.asString()) {
@@ -293,7 +295,7 @@ private class FirConstCheckVisitor() : FirVisitor<ConstantArgumentKind, Nothing?
         return this?.callableId?.packageName?.asString() == "kotlin"
     }
 
-    fun FirCallableSymbol<*>?.getReferencedClassSymbol(session: FirSession): FirBasedSymbol<*>? =
+    fun FirCallableSymbol<*>?.getReferencedClassSymbol(): FirBasedSymbol<*>? =
         this?.resolvedReturnTypeRef
             ?.coneTypeSafe<ConeLookupTagBasedType>()
             ?.lookupTag
