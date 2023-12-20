@@ -3,13 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
-package datagen.literals.strdedup1
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     val str1 = "Hello"
     val str2 = "Hello"
-    println(str1 == str2)
-    println(str1 === str2)
+    assertTrue(str1 == str2)
+    assertTrue(str1 === str2)
+    return "OK"
 }

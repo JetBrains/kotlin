@@ -3,15 +3,18 @@
  * that can be found in the LICENSE file.
  */
 
-package datagen.rtti.abstract_super
-
 import kotlin.test.*
 
-abstract class Super
+abstract class Super {
+    abstract fun bar()
+}
 
-class Foo : Super()
+class Foo : Super() {
+    final override fun bar() {}
+}
 
-@Test fun runTest() {
+fun box(): String {
     // This test now checks that the source can be successfully compiled and linked;
     // TODO: check the contents of TypeInfo?
+    return "OK"
 }

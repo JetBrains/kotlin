@@ -3,14 +3,13 @@
  * that can be found in the LICENSE file.
  */
 
-package datagen.literals.listof1
-
 import kotlin.test.*
 
-@Test fun runTest() {
+fun box(): String {
     val list = foo()
-    println(list === foo())
-    println(list.toString())
+    assertTrue(list === foo())
+    assertEquals("[a, b, c]", list.toString())
+    return "OK"
 }
 
 fun foo(): List<String> {

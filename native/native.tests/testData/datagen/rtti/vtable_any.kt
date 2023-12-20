@@ -2,19 +2,18 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
-
-package datagen.rtti.vtable_any
+//@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
 import kotlin.test.*
 
-@Test
-fun runTest() {
+fun box(): String {
     // Try to trick devirtualizer
-    println(anyMethods(arrayListOf("1")))
-    println(anyMethods(mapOf("2" to 1).keys))
-    println(anyMethods(mapOf("1" to 3).values))
-    println(anyMethods(setOf("4")))
+    assertEquals("[1]", anyMethods(arrayListOf("1")))
+    assertEquals("[2]", anyMethods(mapOf("2" to 1).keys))
+    assertEquals("[3]", anyMethods(mapOf("1" to 3).values))
+    assertEquals("[4]", anyMethods(setOf("4")))
+
+    return "OK"
 }
 
 fun anyMethods(iterable: Iterable<*>): String {

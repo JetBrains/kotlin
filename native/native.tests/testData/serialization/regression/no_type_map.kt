@@ -4,10 +4,10 @@
  */
 
 import kotlinx.cinterop.*
-fun main(args: Array<String>) {
+fun box(): String {
     memScoped {
         val bufferLength = 100L
         val buffer = allocArray<ByteVar>(bufferLength)
     }
-    println("OK")
+    return "OK"
 }
