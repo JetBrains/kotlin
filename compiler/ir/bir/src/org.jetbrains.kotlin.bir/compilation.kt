@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.util.Bir2IrConverter
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
+import org.jetbrains.kotlin.bir.util.collectAllElementsInTree
 import org.jetbrains.kotlin.bir.util.countAllElementsInTree
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
