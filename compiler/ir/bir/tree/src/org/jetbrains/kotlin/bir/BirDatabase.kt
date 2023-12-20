@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.bir
 
-import org.jetbrains.kotlin.bir.util.countAllElementsInTree
 import java.lang.AutoCloseable
 
 class BirDatabase : BirElementParent() {
@@ -155,19 +154,12 @@ class BirDatabase : BirElementParent() {
         movedElementBufferSize = 0
     }
 
-    private fun getActualRootElements(): List<BirElementBase> {
+    private fun collectCurrentRootElements(): List<BirElementBase> {
         possiblyRootElements.retainAll { it._parent === this }
         return possiblyRootElements
     }
 
-    fun countAllElements(): Int {
-        var count = 0
-        val roots = getActualRootElements()
-        for (root in roots) {
-            count += root.countAllElementsInTree()
-        }
-        return count
-    }
+    fun getRootElements(): List<BirElement> = ArrayList<BirElement>(collectCurrentRootElements())
 
     private fun handleElementFromOtherDatabase(): Nothing {
         // Once an element is attached to some database, trying to
@@ -314,7 +306,7 @@ class BirDatabase : BirElementParent() {
     fun reindexAllElements() {
         realizeTreeMovements()
 
-        val roots = getActualRootElements()
+        val roots = collectCurrentRootElements()
         for (root in roots) {
             root.acceptLite { element ->
                 indexElement(element)
@@ -337,20 +329,26 @@ class BirDatabase : BirElementParent() {
      * This function cannot be called twice with the same key.
      */
     fun <E : BirElement> getElementsWithIndex(key: BirElementsIndexKey<E>): Sequence<E> {
+        val cacheSlotIndex = indexerIndexes.getValue(key)
+        require(cacheSlotIndex > currentIndexSlot)
+
         flushElementsWithInvalidatedIndexBuffer()
 
         currentElementsIndexSlotIterator?.let { iterator ->
             cancelElementsIndexSlotIterator(iterator)
         }
 
-        while (elementIndexSlots[++currentIndexSlot] == null) {
-            // nothing
+        for (i in currentIndexSlot until cacheSlotIndex) {
+            val slot = elementIndexSlots[i]
+            if (slot != null) {
+                // Execute empty iteration of all previous slots to ensure
+                //  the indices are updated for all elements contained in them.
+                ElementsIndexSlotIterator<BirElementBase>(slot).close()
+            }
         }
+        currentIndexSlot = cacheSlotIndex
 
-        val cacheSlotIndex = indexerIndexes.getValue(key)
-        require(cacheSlotIndex == currentIndexSlot)
         val slot = elementIndexSlots[cacheSlotIndex]!!
-
         val iter = ElementsIndexSlotIterator<E>(slot)
         currentElementsIndexSlotIterator = iter
         return iter
@@ -443,8 +441,8 @@ class BirDatabase : BirElementParent() {
                 while (idx < slot.size) {
                     element = array[idx]!!
                     if (
-                        // We have to check whether this element sill matches the given index,
-                        //  because elements are not removed eagerly.
+                    // We have to check whether this element sill matches the given index,
+                    //  because elements are not removed eagerly.
                         element.indexSlot == slotIndex
                         // We have to check if this element has not been returned before,
                         //  as the the sequence is guaranteed to yield each one only once.
