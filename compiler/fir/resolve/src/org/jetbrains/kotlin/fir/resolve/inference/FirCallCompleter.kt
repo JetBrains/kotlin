@@ -78,6 +78,8 @@ class FirCallCompleter(
             resolutionMode,
         )
 
+        if (resolutionMode.skipEvenPartialCompletion) return CompletionResult(call, false)
+
         val completionMode = candidate.computeCompletionMode(
             session.inferenceComponents, resolutionMode, initialType
         ).let {
