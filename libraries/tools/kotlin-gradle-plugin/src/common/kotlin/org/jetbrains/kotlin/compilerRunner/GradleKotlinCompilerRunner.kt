@@ -339,6 +339,7 @@ internal open class GradleCompilerRunner(
                 if (task is AbstractKotlinCompile<*>) {
                     val module = IncrementalModuleEntry(
                         project.path,
+                        @Suppress("DEPRECATION") // remove with KT-64504
                         task.ownModuleName.get(),
                         project.layout.buildDirectory.get().asFile,
                         task.buildHistoryFile.get().asFile,
@@ -374,6 +375,7 @@ internal open class GradleCompilerRunner(
                         val kotlinTask = mainCompilation.compileTaskProvider.get() as? AbstractKotlinCompile<*> ?: continue
                         val module = IncrementalModuleEntry(
                             project.path,
+                            @Suppress("DEPRECATION") // remove with KT-64504
                             kotlinTask.ownModuleName.get(),
                             project.layout.buildDirectory.get().asFile,
                             kotlinTask.buildHistoryFile.get().asFile,
