@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
 import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -41,7 +42,8 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
 
             configureAdditionalFreeCompilerArguments(task, compilation)
 
-            val compilationTarget = compilation.tcs.compilation.target
+            val binaryCompilation = compilation.tcs.compilation
+            val compilationTarget = binaryCompilation.target
             if (compilationTarget is KotlinJsTarget ||
                 (compilationTarget is KotlinWithJavaTarget<*, *> && compilationTarget.platformType == KotlinPlatformType.js)
             ) {
@@ -55,10 +57,14 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
             @Suppress("DEPRECATION")
             task.outputFileProperty.value(
                 task.destinationDirectory.flatMap { dir ->
-                    if (task.compilerOptions.outputFile.orNull != null) {
-                        task.compilerOptions.outputFile.map { File(it) }
-                    } else {
-                        task.compilerOptions.moduleName.map { name ->
+                    when {
+                        task.compilerOptions.outputFile.orNull != null -> task.compilerOptions.outputFile.map { File(it) }
+                        binaryCompilation is KotlinJsCompilation -> task.compilerOptions.moduleName.flatMap { name ->
+                            binaryCompilation.fileExtension.map {
+                                dir.file("$name.$it").asFile
+                            }
+                        }
+                        else -> task.compilerOptions.moduleName.map { name ->
                             dir.file(name + compilation.platformType.fileExtension).asFile
                         }
                     }

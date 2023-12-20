@@ -1815,4 +1815,50 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Check that nodeTest run tests with commonjs module kind")
+    @GradleTest
+    fun testFailedJsTestWithCommonJs(gradleVersion: GradleVersion) {
+        project("kotlin-js-project-failed-test", gradleVersion) {
+            buildGradle.appendText(
+                """
+                |
+                |tasks.withType(KotlinJsCompile).configureEach {
+                |    kotlinOptions { moduleKind = "commonjs" }
+                |}
+               """.trimMargin()
+            )
+            buildAndFail("nodeTest") {
+                assertTasksFailed(":nodeTest")
+
+                assertTestResults(
+                    projectPath.resolve("TEST-all.xml"),
+                    "nodeTest"
+                )
+            }
+        }
+    }
+
+    @DisplayName("Check that nodeTest run tests with ESM module kind")
+    @GradleTest
+    fun testFailedJsTestWithESM(gradleVersion: GradleVersion) {
+        project("kotlin-js-project-failed-test", gradleVersion) {
+            buildGradle.appendText(
+                """
+                |
+                |tasks.withType(KotlinJsCompile).configureEach {
+                |    kotlinOptions { moduleKind = "es" }
+                |}
+               """.trimMargin()
+            )
+            buildAndFail("nodeTest") {
+                assertTasksFailed(":nodeTest")
+
+                assertTestResults(
+                    projectPath.resolve("TEST-all.xml"),
+                    "nodeTest"
+                )
+            }
+        }
+    }
 }
