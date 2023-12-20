@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -28,7 +26,6 @@ class BirFieldImpl(
     name: Name,
     isExternal: Boolean,
     visibility: DescriptorVisibility,
-    descriptor: PropertyDescriptor?,
     type: BirType,
     isFinal: Boolean,
     isStatic: Boolean,
@@ -123,9 +120,6 @@ class BirFieldImpl(
                 invalidate(6)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor? = descriptor
 
     private var _type: BirType = type
     override var type: BirType

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl.descriptor
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -225,7 +226,6 @@ fun BirFunction.copyReceiverParametersFrom(from: BirFunction, substitutionMap: M
             isNoinline = isNoinline,
             isHidden = isHidden,
             isAssignable = isAssignable,
-            descriptor = descriptor,
             defaultValue = null,
             signature = signature,
             index = index,
@@ -251,7 +251,6 @@ fun BirValueParameter.copyTo(
     val defaultValueCopy = defaultValue?.deepCopy()
     return BirValueParameterImpl(
         sourceSpan = sourceSpan,
-        descriptor = descriptor,
         origin = origin,
         name = name,
         type = type,
@@ -333,7 +332,6 @@ fun BirTypeParameter.copyWithoutSuperTypes(
     name = name,
     variance = variance,
     isReified = isReified,
-    descriptor = descriptor,
     superTypes = emptyList(),
     index = index,
     signature = signature,

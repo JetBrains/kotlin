@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAnonymousInitializer
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 
@@ -21,7 +19,6 @@ class BirAnonymousInitializerImpl(
     sourceSpan: SourceSpan,
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
-    descriptor: ClassDescriptor?,
     isStatic: Boolean,
     body: BirBlockBody?,
 ) : BirAnonymousInitializer() {
@@ -74,9 +71,6 @@ class BirAnonymousInitializerImpl(
                 invalidate(3)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor? = descriptor
 
     private var _isStatic: Boolean = isStatic
     override var isStatic: Boolean

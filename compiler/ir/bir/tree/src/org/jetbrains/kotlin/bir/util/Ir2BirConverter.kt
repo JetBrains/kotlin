@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl.descriptor
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 // todo: Could be adjusted for the change that all child fields are now nullable
@@ -48,6 +49,7 @@ class Ir2BirConverter(
     private val typeAliases = createElementMap<BirTypeAlias, IrTypeAlias>()
     private val loops = createElementMap<BirLoop, IrLoop>()
 
+    private val Descriptor = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.Descriptor)
     private val Metadata = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.Metadata)
     private val ContainerSource = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.ContainerSource)
     private val SealedSubclasses = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.SealedSubclasses)
@@ -129,7 +131,6 @@ class Ir2BirConverter(
     private fun copyValueParameter(old: IrValueParameter): BirValueParameter = copyReferencedElement(old, valueParameters, {
         BirValueParameterImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             name = old.name,
             type = BirUninitializedType,
@@ -153,7 +154,6 @@ class Ir2BirConverter(
     private fun copyClass(old: IrClass): BirClass = copyReferencedElement(old, classes, {
         BirClassImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             visibility = old.visibility,
             name = old.name,
@@ -187,7 +187,6 @@ class Ir2BirConverter(
     private fun copyAnonymousInitializer(old: IrAnonymousInitializer): BirAnonymousInitializer = copyNotReferencedElement(old) {
         val new = BirAnonymousInitializerImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             isStatic = old.isStatic,
             body = copyElement(old.body),
@@ -201,7 +200,6 @@ class Ir2BirConverter(
     private fun copyTypeParameter(old: IrTypeParameter): BirTypeParameter = copyReferencedElement(old, typeParameters, {
         BirTypeParameterImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             name = old.name,
             variance = old.variance,
@@ -219,7 +217,6 @@ class Ir2BirConverter(
     private fun copyConstructor(old: IrConstructor): BirConstructor = copyReferencedElement(old, constructors, {
         BirConstructorImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             visibility = old.visibility,
             name = old.name,
@@ -248,7 +245,6 @@ class Ir2BirConverter(
     private fun copyEnumEntry(old: IrEnumEntry): BirEnumEntry = copyReferencedElement(old, enumEntries, {
         BirEnumEntryImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             name = old.name,
             initializerExpression = null,
@@ -265,7 +261,6 @@ class Ir2BirConverter(
     private fun copyErrorDeclaration(old: IrErrorDeclaration): BirErrorDeclaration = copyNotReferencedElement(old) {
         val new = BirErrorDeclarationImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             signature = old.symbol.signature,
         )
@@ -277,7 +272,6 @@ class Ir2BirConverter(
     private fun copyField(old: IrField): BirField = copyReferencedElement(old, fields, {
         BirFieldImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             visibility = old.visibility,
             name = old.name,
@@ -301,7 +295,6 @@ class Ir2BirConverter(
         copyReferencedElement(old, localDelegatedProperties, {
             BirLocalDelegatedPropertyImpl(
                 sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-                descriptor = mapDescriptor(old),
                 origin = old.origin,
                 name = old.name,
                 type = BirUninitializedType,
@@ -332,7 +325,6 @@ class Ir2BirConverter(
     private fun copyProperty(old: IrProperty): BirProperty = copyReferencedElement(old, properties, {
         BirPropertyImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             name = old.name,
             isExternal = old.isExternal,
@@ -363,7 +355,6 @@ class Ir2BirConverter(
     private fun copyScript(old: IrScript): BirScript = copyReferencedElement(old, scripts, {
         BirScriptImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor { old.descriptor as ScriptDescriptor },
             origin = old.origin,
             name = old.name,
             thisReceiver = null,
@@ -393,7 +384,6 @@ class Ir2BirConverter(
     private fun copySimpleFunction(old: IrSimpleFunction): BirSimpleFunction = copyReferencedElement(old, functions, {
         BirSimpleFunctionImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             visibility = old.visibility,
             name = old.name,
@@ -432,7 +422,6 @@ class Ir2BirConverter(
     private fun copyTypeAlias(old: IrTypeAlias): BirTypeAlias = copyReferencedElement(old, typeAliases, {
         BirTypeAliasImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             name = old.name,
             visibility = old.visibility,
@@ -450,7 +439,6 @@ class Ir2BirConverter(
     private fun copyVariable(old: IrVariable): BirVariable = copyReferencedElement(old, variables, {
         BirVariableImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             origin = old.origin,
             name = old.name,
             type = BirUninitializedType,
@@ -472,7 +460,6 @@ class Ir2BirConverter(
         copyReferencedElement(old, externalPackageFragments, {
             BirExternalPackageFragmentImpl(
                 sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-                descriptor = if (old.symbol is DescriptorlessExternalPackageFragmentSymbol) null else mapDescriptor { old.packageFragmentDescriptor },
                 packageFqName = old.packageFqName,
                 containerSource = if (old.symbol is DescriptorlessExternalPackageFragmentSymbol) null else old.containerSource,
                 signature = if (old.symbol is DescriptorlessExternalPackageFragmentSymbol) null else old.symbol.signature,
@@ -485,7 +472,6 @@ class Ir2BirConverter(
     private fun copyFile(old: IrFile): BirFile = copyReferencedElement(old, files, {
         BirFileImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             packageFqName = old.packageFqName,
             fileEntry = old.fileEntry,
             signature = old.symbol.signature,
@@ -593,7 +579,6 @@ class Ir2BirConverter(
     private fun copyReturnableBlock(old: IrReturnableBlock): BirReturnableBlock = copyReferencedElement(old, returnableBlocks, {
         BirReturnableBlockImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor(old),
             type = remapType(old.type),
             origin = old.origin,
             signature = old.symbol.signature,
@@ -1139,6 +1124,15 @@ class Ir2BirConverter(
 
     private fun BirElement.copyDynamicProperties(from: IrElement) {
         this as BirElementBase
+
+        if (from is IrExternalPackageFragment) {
+            (this as BirExternalPackageFragment)[Descriptor] =
+                if (from.symbol is DescriptorlessExternalPackageFragmentSymbol) null
+                else mapDescriptor { from.packageFragmentDescriptor }
+        } else if (from is IrDeclaration) {
+            (this as BirDeclaration)[Descriptor] = mapDescriptor { from.descriptor }
+        }
+
         if (from is IrMetadataSourceOwner) {
             (this as BirMetadataSourceOwner)[Metadata] = from.metadata
         }

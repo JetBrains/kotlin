@@ -25,9 +25,6 @@ class BirLazyTypeAlias(
 ) : BirLazyElementBase(converter), BirTypeAlias {
     override val owner: BirTypeAlias
         get() = this
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override val descriptor: TypeAliasDescriptor
-        get() = originalIrElement.descriptor
     override var isActual: Boolean
         get() = originalIrElement.isActual
         set(value) = mutationNotSupported()

@@ -10,8 +10,6 @@ package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
  * A non-leaf IR tree element.
@@ -19,8 +17,5 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.returnTarget]
  */
 interface BirReturnTarget : BirElement, BirSymbolOwner, BirReturnTargetSymbol {
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor?
-
     companion object
 }

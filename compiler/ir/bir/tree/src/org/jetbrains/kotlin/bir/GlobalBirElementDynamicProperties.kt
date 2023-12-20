@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.bir
 
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 object GlobalBirElementDynamicProperties {
+    val Descriptor = BirElementDynamicPropertyKey<BirSymbolOwner, DeclarationDescriptor>()
+
     val Metadata = BirElementDynamicPropertyKey<BirMetadataSourceOwner, MetadataSource?>() // probably rename e.g. to 'source'
 
     val ContainerSource = BirElementDynamicPropertyKey<BirMemberWithContainerSource, DeserializedContainerSource?>()

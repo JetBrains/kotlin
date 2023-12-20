@@ -29,9 +29,6 @@ class BirLazySimpleFunction(
 ) : BirLazyElementBase(converter), BirSimpleFunction {
     override val owner: BirSimpleFunction
         get() = this
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override val descriptor: FunctionDescriptor
-        get() = originalIrElement.descriptor
     override var isExternal: Boolean
         get() = originalIrElement.isExternal
         set(value) = mutationNotSupported()

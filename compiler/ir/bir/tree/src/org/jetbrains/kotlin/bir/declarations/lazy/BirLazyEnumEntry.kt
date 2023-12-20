@@ -30,9 +30,6 @@ class BirLazyEnumEntry(
 ) : BirLazyElementBase(converter), BirEnumEntry {
     override val owner: BirEnumEntry
         get() = this
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override val descriptor: ClassDescriptor
-        get() = originalIrElement.descriptor
     override var name: Name
         get() = originalIrElement.name
         set(value) = mutationNotSupported()

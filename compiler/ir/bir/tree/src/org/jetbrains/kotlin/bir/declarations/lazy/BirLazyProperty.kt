@@ -26,9 +26,6 @@ class BirLazyProperty(
 ) : BirLazyElementBase(converter), BirProperty {
     override val owner: BirProperty
         get() = this
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override val descriptor: PropertyDescriptor
-        get() = originalIrElement.descriptor
     override var isExternal: Boolean
         get() = originalIrElement.isExternal
         set(value) = mutationNotSupported()
