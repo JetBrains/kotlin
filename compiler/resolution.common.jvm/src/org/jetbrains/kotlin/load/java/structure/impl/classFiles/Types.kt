@@ -39,9 +39,17 @@ internal class PlainJavaClassifierType(
     private val classifierResolverResult by lazy(LazyThreadSafetyMode.NONE, classifierComputation)
 
     override val classifier get() = classifierResolverResult.classifier
-    override val isRaw
-        get() = typeArguments.isEmpty() &&
-                (classifierResolverResult.classifier as? JavaClass)?.typeParameters?.isNotEmpty() == true
+    override val isRaw: Boolean
+        get() {
+            if (typeArguments.isNotEmpty()) return false
+            var javaClass = classifierResolverResult.classifier as? JavaClass
+            while (javaClass != null) {
+                if (javaClass.typeParameters.isNotEmpty()) return true
+                if (javaClass.isStatic) return false
+                javaClass = javaClass.outerClass
+            }
+            return false
+        }
 
     override val classifierQualifiedName: String
         get() = classifierResolverResult.qualifiedName
