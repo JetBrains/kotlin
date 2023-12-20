@@ -327,6 +327,15 @@ class BirDatabase : BirElementParent() {
         return key in indexerIndexes
     }
 
+    /**
+     * Returns an unordered and live sequence of unique elements in this database which match a given index key.
+     *
+     * The returned sequence is live, meaning it reflects the changes made to the database during the iteration,
+     * up until the last element in the sequence is reached (i.e., once [Iterator.hasNext] returns false, it won't return true again).
+     *
+     * The index keys have to be provided to this function in the same order they were registered.
+     * This function cannot be called twice with the same key.
+     */
     fun <E : BirElement> getElementsWithIndex(key: BirElementsIndexKey<E>): Sequence<E> {
         flushElementsWithInvalidatedIndexBuffer()
 
@@ -400,7 +409,7 @@ class BirDatabase : BirElementParent() {
         private var canceled = false
         var mainListIdx = 0
             private set
-        private val slotIndex = slot.index
+        private val slotIndex = slot.index.toUByte()
         private var next: BirElementBase? = null
 
         override fun hasNext(): Boolean {
@@ -427,12 +436,22 @@ class BirDatabase : BirElementParent() {
             // some element which we are about to yield here, so check for that.
             flushElementsWithInvalidatedIndexBuffer()
 
+            val slotIndex = slotIndex
             while (true) {
                 val idx = mainListIdx
                 var element: BirElementBase? = null
                 while (idx < slot.size) {
                     element = array[idx]!!
-                    if (element.indexSlot.toInt() == slotIndex) {
+                    if (
+                        // We have to check whether this element sill matches the given index,
+                        //  because elements are not removed eagerly.
+                        element.indexSlot == slotIndex
+                        // We have to check if this element has not been returned before,
+                        //  as the the sequence is guaranteed to yield each one only once.
+                        //  An element may be encountered twice in the buffer in the case
+                        //  it was yielded, then removed, and then added to the index again.
+                        && element.lastReturnedInQueryOfIndexSlot != slotIndex
+                    ) {
                         array[idx] = null
                         break
                     } else {
@@ -453,6 +472,7 @@ class BirDatabase : BirElementParent() {
                     // have to check whether it will also match some proceeding one.
                     elementIndexInvalidated(element)
 
+                    element.lastReturnedInQueryOfIndexSlot = slotIndex
                     mainListIdx++
                     return element
                 } else {
