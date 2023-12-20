@@ -31,6 +31,7 @@ abstract class KotlinToolRunner(
         ReplaceWith("KotlinToolRunner(GradleExecutionContext.fromTaskContext())"),
         DeprecationLevel.WARNING
     )
+    @Suppress("DEPRECATION") // we have KT-64427 to remove this constructor
     constructor(project: Project) : this(GradleExecutionContext.fromProject(project))
 
     /**

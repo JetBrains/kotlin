@@ -263,6 +263,7 @@ internal class KotlinNativeLibraryGenerationRunner(
     AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", settings, executionContext, metricsReporter) {
 
     companion object {
+        @Suppress("DEPRECATION") // TODO(Dmitrii Krasnov): after KT-52567 it will be possible to use GradleExecutionContext#fromTaskContext here
         fun fromProject(project: Project) = KotlinNativeLibraryGenerationRunner(
             settings = Settings.of(project.konanHome, project.konanDataDir, project),
             executionContext = GradleExecutionContext.fromProject(project),
