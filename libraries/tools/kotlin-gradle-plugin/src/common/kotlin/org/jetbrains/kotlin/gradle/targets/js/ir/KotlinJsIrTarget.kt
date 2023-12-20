@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator.Companion.configureJsDefaultOptions
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
@@ -151,7 +150,7 @@ constructor(
             compilation.binaries
                 .withType(JsIrBinary::class.java)
                 .all { binary ->
-                    val syncTask = registerCompileSync(binary)
+                    val syncTask = binary.linkSyncTask
                     binaryenReplaceInput[binary]?.invoke()
                     val tsValidationTask = registerTypeScriptCheckTask(binary)
 
@@ -168,25 +167,6 @@ constructor(
     }
 
     private val commonLazy by commonLazyDelegate
-
-    private fun registerCompileSync(binary: JsIrBinary): TaskProvider<DefaultIncrementalSyncTask> {
-        val compilation = binary.compilation
-        val npmProject = compilation.npmProject
-
-        return project.registerTask<DefaultIncrementalSyncTask>(
-            binary.linkSyncTaskName
-        ) { task ->
-            task.from.from(
-                binary.linkTask.flatMap { linkTask ->
-                    linkTask.destinationDirectory.map { it.asFile }
-                }
-            )
-
-            task.from.from(project.tasks.named(compilation.processResourcesTaskName))
-
-            task.destinationDirectory.set(npmProject.dist.mapToFile())
-        }
-    }
 
     private fun registerTypeScriptCheckTask(binary: JsIrBinary): TaskProvider<TypeScriptValidationTask> {
         val linkTask = binary.linkTask
@@ -280,7 +260,7 @@ constructor(
 
             whenNodejsConfigured {
                 testTask {
-                    val name = binary.linkTask.flatMap { it.outputFileProperty.map { it.name } }
+                    val name = binary.mainFileName
                     it.inputFileProperty.fileProvider(
                         binaryenExec.flatMap { it.outputFileProperty.map { it.asFile.parentFile.resolve(name.get()) } }
                     )

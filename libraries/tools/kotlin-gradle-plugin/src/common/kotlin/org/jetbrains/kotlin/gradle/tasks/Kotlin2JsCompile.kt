@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingServi
 import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.ClasspathChanges
@@ -83,9 +81,15 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Internal
     internal abstract val defaultDestinationDirectory: DirectoryProperty
 
-    @Deprecated("Use destinationDirectory and moduleName instead")
+    // To be sure that outputFileProperty will be correct on transition period
     @get:Internal
-    abstract val outputFileProperty: Property<File>
+    internal abstract val _outputFileProperty: Property<File>
+
+    // hidden to keep ABI compatiblity, because we have plugins which still use outputFileProperty
+    @Deprecated("Use destinationDirectory and moduleName instead", level = DeprecationLevel.HIDDEN)
+    @get:Internal
+    val outputFileProperty: Property<File>
+        get() = _outputFileProperty
 
     // Workaround to add additional compiler args based on the exising one
     // Currently there is a logic to add additional compiler arguments based on already existing one.
@@ -104,6 +108,13 @@ abstract class Kotlin2JsCompile @Inject constructor(
      */
     @get:Internal
     internal var executionTimeFreeCompilerArgs: List<String>? = null
+
+    @get:Deprecated(
+        message = "Task.moduleName is not used in Kotlin/JS"
+    )
+    @get:Optional
+    @get:Input
+    abstract override val moduleName: Property<String>
 
     @get:Nested
     override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
@@ -128,15 +139,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
             KotlinJsCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
-            val outputFilePath: String? = compilerOptions.outputFile.orNull
-            if (outputFilePath != null) {
-                val outputFile = File(outputFilePath)
-                args.outputDir = (if (outputFile.extension == "") outputFile else outputFile.parentFile).normalize().absolutePath
-                args.moduleName = outputFile.nameWithoutExtension
-            } else {
-                args.outputDir = destinationDirectory.get().asFile.normalize().absolutePath
-                args.moduleName = compilerOptions.moduleName.get()
-            }
+            args.outputDir = destinationDirectory.get().asFile.normalize().absolutePath
+            args.moduleName = compilerOptions.moduleName.get()
 
             if (compilerOptions.usesK2.get()) {
                 args.fragments = multiplatformStructure.fragmentsCompilerArgs
@@ -234,8 +238,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     ) {
         logger.debug("Calling compiler")
 
-        validateOutputDirectory()
-
         val dependencies = libraries
             .filter { it.exists() && libraryFilter(it) }
             .map { it.normalize().absolutePath }
@@ -288,18 +290,4 @@ abstract class Kotlin2JsCompile @Inject constructor(
     }
 
     private val rootProjectDir = project.rootDir
-
-    private fun validateOutputDirectory() {
-        val outputFile = outputFileProperty.get()
-        val outputDir = outputFile.parentFile
-
-        if (outputDir.isParentOf(rootProjectDir)) {
-            throw InvalidUserDataException(
-                "The output directory '$outputDir' (defined by outputFile of ':$name') contains or " +
-                        "matches the project root directory '${rootProjectDir}'.\n" +
-                        "Gradle will not be able to build the project because of the root directory lock.\n" +
-                        "To fix this, consider using the default outputFile location instead of providing it explicitly."
-            )
-        }
-    }
 }

@@ -10,6 +10,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
 import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import javax.inject.Inject
 

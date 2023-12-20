@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Action
-import org.gradle.api.file.Directory
-import org.gradle.api.file.RegularFile
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
@@ -27,7 +25,6 @@ class KotlinCompilationNpmResolution(
     val compilationDisambiguatedName: String,
     val npmProjectName: String,
     val npmProjectVersion: String,
-    val npmProjectMain: String,
     val tasksRequirements: TasksRequirements,
 ) : Serializable {
 
@@ -127,12 +124,13 @@ class KotlinCompilationNpmResolution(
 
     fun createPackageJson(
         resolution: PreparedKotlinCompilationNpmResolution,
+        npmProjectMain: Provider<String>,
         packageJsonHandlers: ListProperty<Action<PackageJson>>,
     ) {
         val packageJson = packageJson(
             npmProjectName,
             npmProjectVersion,
-            npmProjectMain,
+            npmProjectMain.get(),
             resolution.externalNpmDependencies,
             packageJsonHandlers.get()
         )

@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
@@ -40,7 +41,7 @@ interface IncrementalSyncTask : Task {
      * @suppress
      */
     @get:Internal
-    @Deprecated("Use destinationDirProperty with Provider API", ReplaceWith("destinationDirProperty.get()"))
+    @Deprecated("Use destinationDirectory with Provider API", ReplaceWith("destinationDirectory.get()"))
     val destinationDir: File
         get() = destinationDirectory.get()
 }

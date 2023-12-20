@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Task
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
@@ -15,7 +17,6 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
@@ -29,8 +30,9 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
-import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
@@ -156,7 +158,9 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.commonConfigure(
                         binary = binary,
                         mode = mode,
-                        inputFilesDirectory = task.project.provider { binary.linkSyncTask.get().destinationDirectory.get() },
+                        inputFilesDirectory = task.project.objects.directoryProperty().fileProvider(
+                            task.project.provider { binary.linkSyncTask.get().destinationDirectory.get() },
+                        ),
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,
                         nodeJs = nodeJs,
@@ -209,7 +213,9 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.commonConfigure(
                         binary = binary,
                         mode = mode,
-                        inputFilesDirectory = task.project.provider { binary.linkSyncTask.get().destinationDirectory.get() },
+                        inputFilesDirectory = task.project.objects.directoryProperty().fileProvider(
+                            task.project.provider { binary.linkSyncTask.get().destinationDirectory.get() },
+                        ),
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
                         nodeJs = nodeJs,
@@ -257,7 +263,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     private fun KotlinWebpack.commonConfigure(
         binary: JsIrBinary,
         mode: KotlinJsBinaryMode,
-        inputFilesDirectory: Provider<File>,
+        inputFilesDirectory: Provider<Directory>,
         entryModuleName: Provider<String>,
         configurationActions: DomainObjectSet<Action<KotlinWebpack>>,
         nodeJs: NodeJsRootExtension,
@@ -271,7 +277,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         configureOptimization(mode)
 
-        this.inputFilesDirectory.fileProvider(inputFilesDirectory)
+        this.inputFilesDirectory.set(inputFilesDirectory)
 
         val platformType = binary.compilation.platformType
         val moduleKind = binary.linkTask.flatMap { it.compilerOptions.moduleKind }

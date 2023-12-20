@@ -847,7 +847,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 """
                 |project("app") {
                 |   tasks.$taskSelector {
-                |        kotlinOptions.outputFile = "${'$'}{buildDir}/kotlin2js/app.js"
+                |       destinationDirectory.set(file("${'$'}{buildDir}/kotlin2js"))
+                |       kotlinOptions.moduleName = "app"
                 |   }
                 |}
                 |

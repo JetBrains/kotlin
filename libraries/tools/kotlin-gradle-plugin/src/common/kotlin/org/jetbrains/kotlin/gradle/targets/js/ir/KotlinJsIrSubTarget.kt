@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
 abstract class KotlinJsIrSubTarget(
     val target: KotlinJsIrTarget,
@@ -124,28 +123,20 @@ abstract class KotlinJsIrSubTarget(
 
             val inputFileProperty = if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
                 testJs.dependsOn(binary.linkSyncTask)
-                binary.linkSyncTask.flatMap { linkSyncTask ->
-                    binary.linkTask.flatMap { linkTask ->
-                        linkTask.outputFileProperty.map { file ->
-                            linkSyncTask.destinationDirectory.get().resolve(file.name)
-                        }
-                    }
-                }
+                binary.mainFileSyncPath
             } else {
                 if (project.locateTask<BinaryenExec>((binary as ExecutableWasm).optimizeTaskName) != null) {
                     testJs.dependsOn(binary.optimizeTask)
                     binary.optimizeTask.flatMap { optimizeTask ->
-                        optimizeTask.outputFileProperty.asFile
+                        optimizeTask.outputFileProperty
                     }
                 } else {
                     testJs.dependsOn(binary.linkTask)
-                    binary.linkTask.flatMap { linkTask ->
-                        linkTask.outputFileProperty
-                    }
+                    binary.mainFile
                 }
             }
 
-            testJs.inputFileProperty.fileProvider(
+            testJs.inputFileProperty.set(
                 inputFileProperty
             )
 

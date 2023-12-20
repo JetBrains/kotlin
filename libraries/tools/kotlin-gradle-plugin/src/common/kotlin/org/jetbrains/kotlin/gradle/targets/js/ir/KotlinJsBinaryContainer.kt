@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary.Companion.configLinkTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
@@ -25,8 +26,8 @@ open class KotlinJsBinaryContainer
 @Inject
 constructor(
     val target: KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>,
-    backingContainer: DomainObjectSet<JsBinary>,
-) : DomainObjectSet<JsBinary> by backingContainer {
+    backingContainer: DomainObjectSet<JsIrBinary>,
+) : DomainObjectSet<JsIrBinary> by backingContainer {
     val project: Project
         get() = target.project
 
@@ -37,14 +38,14 @@ constructor(
 
     fun executable(
         compilation: KotlinJsIrCompilation,
-    ): List<JsBinary> {
+    ): List<JsIrBinary> {
         return executable(compilation as KotlinJsCompilation)
     }
 
     @JvmOverloads
     fun executable(
         compilation: KotlinJsCompilation = defaultCompilation,
-    ): List<JsBinary> {
+    ): List<JsIrBinary> {
         if (target is KotlinJsIrTarget) {
             target.whenBrowserConfigured {
                 (this as KotlinJsIrSubTarget).produceExecutable()
@@ -64,7 +65,7 @@ constructor(
         throw GradleException("Target should be KotlinJsIrTarget, but found $target")
     }
 
-    internal fun executableIrInternal(compilation: KotlinJsIrCompilation): List<JsBinary> = createBinaries(
+    internal fun executableIrInternal(compilation: KotlinJsIrCompilation): List<JsIrBinary> = createBinaries(
         compilation = compilation,
         jsBinaryType = KotlinJsBinaryType.EXECUTABLE,
         create = { compilation, name, mode ->
@@ -80,7 +81,7 @@ constructor(
     @JvmOverloads
     fun library(
         compilation: KotlinJsIrCompilation = defaultCompilation,
-    ): List<JsBinary> {
+    ): List<JsIrBinary> {
         if (target is KotlinJsIrTarget) {
             target.whenBrowserConfigured {
                 (this as KotlinJsIrSubTarget).produceLibrary()
@@ -115,7 +116,7 @@ constructor(
         withType(JsIrBinary::class.java)
             .matching { it.mode == mode }
 
-    private fun <T : JsBinary> createBinaries(
+    private fun <T : JsIrBinary> createBinaries(
         compilation: KotlinJsIrCompilation,
         modes: Collection<KotlinJsBinaryMode> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: KotlinJsBinaryType,
@@ -130,12 +131,12 @@ constructor(
             )
         }
 
-    private fun <T : JsBinary> createBinary(
+    private fun <T : JsIrBinary> createBinary(
         compilation: KotlinJsIrCompilation,
         mode: KotlinJsBinaryMode,
         jsBinaryType: KotlinJsBinaryType,
         create: (compilation: KotlinJsIrCompilation, name: String, mode: KotlinJsBinaryMode) -> T,
-    ): JsBinary {
+    ): JsIrBinary {
         val name = generateBinaryName(
             compilation,
             mode,
@@ -148,7 +149,10 @@ constructor(
 
         binaryNames.add(name)
 
-        val binary = create(compilation, name, mode)
+        val binary = create(compilation, name, mode).also {
+            it.configLinkTask()
+        }
+
         add(binary)
         // Allow accessing binaries as properties of the container in Groovy DSL.
         if (this is ExtensionAware) {
