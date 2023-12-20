@@ -53,6 +53,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     }
 
     private fun ArgsBuilder.applyCommonArgs() {
+        add("-kotlin-home", home.dir.absolutePath) // To resolve and use libraries and their static caches from the tested distribution.
         add("-target", targets.testTarget.name)
         optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         add(

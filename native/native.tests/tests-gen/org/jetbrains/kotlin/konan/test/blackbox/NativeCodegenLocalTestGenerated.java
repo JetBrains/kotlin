@@ -3148,6 +3148,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("noPurgeForDependencies.kt")
+        public void testNoPurgeForDependencies() throws Exception {
+            runTest("native/native.tests/testData/codegen/link/noPurgeForDependencies.kt");
+        }
+
+        @Test
         @TestMetadata("omitUnused.kt")
         public void testOmitUnused() throws Exception {
             runTest("native/native.tests/testData/codegen/link/omitUnused.kt");
