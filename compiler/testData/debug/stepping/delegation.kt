@@ -23,6 +23,13 @@ fun box() {
 // test.kt:14 <init>
 // test.kt:17 box
 // test.kt:18 box
+// EXPECTATIONS FIR JVM_IR
+// test.kt:14 f
+// test.kt:10 f
+// test.kt:11 f
+// test.kt:14 f
+// test.kt:19 box
+// EXPECTATIONS ClassicFrontend JVM_IR
 // test.kt:11 f
 // test.kt:-1 f
 // test.kt:19 box

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -193,8 +192,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             irFunction.declareThisReceiverParameter(
                 irClass.defaultType,
                 IrDeclarationOrigin.DEFINED,
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET
+                SYNTHETIC_OFFSET,
+                SYNTHETIC_OFFSET
             )
 
         fun generateHeaders(): List<FirDeclaration> {
@@ -313,8 +312,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             val signature = if (klass.symbol.classId.isLocal) null else components.signatureComposer.composeSignature(syntheticCounterpart)
             val symbol = components.declarationStorage.createFunctionSymbol(signature)
             return components.irFactory.createSimpleFunction(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
+                startOffset = SYNTHETIC_OFFSET,
+                endOffset = SYNTHETIC_OFFSET,
                 origin = origin,
                 name = name,
                 visibility = DescriptorVisibilities.PUBLIC,
@@ -351,8 +350,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
 
         private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType, index: Int = 0): IrValueParameter =
             components.irFactory.createValueParameter(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
+                startOffset = SYNTHETIC_OFFSET,
+                endOffset = SYNTHETIC_OFFSET,
                 origin = IrDeclarationOrigin.DEFINED,
                 name = name,
                 type = type,
