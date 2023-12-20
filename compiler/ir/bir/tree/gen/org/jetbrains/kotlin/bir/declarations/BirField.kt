@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.symbols.BirFieldSymbol
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
  * A leaf IR tree element.
@@ -24,8 +22,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.field]
  */
 interface BirField : BirElement, BirDeclaration, BirPossiblyExternalDeclaration, BirDeclarationWithVisibility, BirDeclarationParent, BirMetadataSourceOwner, BirFieldSymbol {
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor?
     var type: BirType
     var isFinal: Boolean
     var isStatic: Boolean

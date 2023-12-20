@@ -27,9 +27,6 @@ class BirLazyValueParameter(
     override val owner: BirValueParameter
         get() = this
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override val descriptor: ParameterDescriptor
-        get() = originalIrElement.descriptor
     override var index: Int
         get() = originalIrElement.index
         set(value) = mutationNotSupported()

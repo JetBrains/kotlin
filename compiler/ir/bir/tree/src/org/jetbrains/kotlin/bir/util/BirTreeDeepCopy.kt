@@ -297,7 +297,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, valueParameters, mustProduceNewCopy) {
             val new = BirValueParameterImpl(
                 sourceSpan = old.sourceSpan,
-                descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
                 type = BirUninitializedType,
@@ -323,7 +322,6 @@ open class BirTreeDeepCopier {
     open fun copyClass(old: BirClass, mustProduceNewCopy: Boolean): BirElement = copyReferencedElement(old, classes, mustProduceNewCopy) {
         val new = BirClassImpl(
             sourceSpan = old.sourceSpan,
-            descriptor = old.descriptor,
             origin = old.origin,
             visibility = old.visibility,
             name = old.name,
@@ -359,7 +357,6 @@ open class BirTreeDeepCopier {
     open fun copyAnonymousInitializer(old: BirAnonymousInitializer): BirElement {
         val new = BirAnonymousInitializerImpl(
             sourceSpan = old.sourceSpan,
-            descriptor = old.descriptor,
             origin = old.origin,
             isStatic = old.isStatic,
             body = copyElementPossiblyUnfinished(old.body),
@@ -376,7 +373,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, typeParameters, mustProduceNewCopy) {
             val new = BirTypeParameterImpl(
                 sourceSpan = old.sourceSpan,
-                descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
                 variance = old.variance,
@@ -397,7 +393,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, constructors, mustProduceNewCopy) {
             val new = BirConstructorImpl(
                 sourceSpan = old.sourceSpan,
-                descriptor = old.descriptor,
                 origin = old.origin,
                 visibility = old.visibility,
                 name = old.name,
@@ -429,7 +424,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, enumEntries, mustProduceNewCopy) {
             val new = BirEnumEntryImpl(
                 sourceSpan = old.sourceSpan,
-                descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
                 initializerExpression = null,
@@ -448,7 +442,6 @@ open class BirTreeDeepCopier {
     open fun copyErrorDeclaration(old: BirErrorDeclaration): BirElement {
         val new = BirErrorDeclarationImpl(
             sourceSpan = old.sourceSpan,
-            descriptor = old.descriptor,
             origin = old.origin,
             signature = old.signature,
         )
@@ -462,7 +455,6 @@ open class BirTreeDeepCopier {
     open fun copyField(old: BirField, mustProduceNewCopy: Boolean): BirElement = copyReferencedElement(old, fields, mustProduceNewCopy) {
         val new = BirFieldImpl(
             sourceSpan = old.sourceSpan,
-            descriptor = old.descriptor,
             origin = old.origin,
             visibility = old.visibility,
             name = old.name,
@@ -488,7 +480,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, localDelegatedProperties, mustProduceNewCopy) {
             val new = BirLocalDelegatedPropertyImpl(
                 sourceSpan = old.sourceSpan,
-                descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
                 type = BirUninitializedType,
@@ -526,7 +517,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, properties, mustProduceNewCopy) {
             val new = BirPropertyImpl(
                 sourceSpan = old.sourceSpan,
-                descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
                 isExternal = old.isExternal,
@@ -559,7 +549,6 @@ open class BirTreeDeepCopier {
     open fun copyScript(old: BirScript, mustProduceNewCopy: Boolean): BirElement = copyReferencedElement(old, scripts, mustProduceNewCopy) {
         val new = BirScriptImpl(
             sourceSpan = old.sourceSpan,
-            descriptor = old.descriptor as ScriptDescriptor,
             origin = old.origin,
             name = old.name,
             thisReceiver = null,
@@ -597,7 +586,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, functions, mustProduceNewCopy) {
             val new = BirSimpleFunctionImpl(
                 sourceSpan = old.sourceSpan,
-                descriptor = old.descriptor,
                 origin = old.origin,
                 visibility = old.visibility,
                 name = old.name,
@@ -639,7 +627,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, typeAliases, mustProduceNewCopy) {
             val new = BirTypeAliasImpl(
                 sourceSpan = old.sourceSpan,
-                descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
                 visibility = old.visibility,
@@ -660,7 +647,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, variables, mustProduceNewCopy) {
             val new = BirVariableImpl(
                 sourceSpan = old.sourceSpan,
-                descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
                 type = BirUninitializedType,
@@ -684,7 +670,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, externalPackageFragments, mustProduceNewCopy) {
             val new = BirExternalPackageFragmentImpl(
                 sourceSpan = old.sourceSpan,
-                descriptor = old.descriptor,
                 packageFqName = old.packageFqName,
                 containerSource = old.containerSource,
                 signature = old.signature,
@@ -700,7 +685,6 @@ open class BirTreeDeepCopier {
     open fun copyFile(old: BirFile, mustProduceNewCopy: Boolean): BirElement = copyReferencedElement(old, files, mustProduceNewCopy) {
         val new = BirFileImpl(
             sourceSpan = old.sourceSpan,
-            descriptor = old.descriptor,
             packageFqName = old.packageFqName,
             fileEntry = old.fileEntry,
             signature = old.signature,
@@ -827,7 +811,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, returnableBlocks, mustProduceNewCopy) {
             val new = BirReturnableBlockImpl(
                 sourceSpan = old.sourceSpan,
-                descriptor = old.descriptor,
                 type = remapType(old.type),
                 origin = old.origin,
                 signature = old.signature,

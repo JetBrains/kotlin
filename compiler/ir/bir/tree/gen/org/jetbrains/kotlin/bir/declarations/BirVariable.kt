@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
  * A leaf IR tree element.
@@ -23,8 +21,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.variable]
  */
 abstract class BirVariable : BirImplElementBase(), BirElement, BirDeclaration, BirValueDeclaration, BirVariableSymbol {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: VariableDescriptor?
     abstract var isVar: Boolean
     abstract var isConst: Boolean
     abstract var isLateinit: Boolean

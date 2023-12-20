@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.expressions.BirBody
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
  * A non-leaf IR tree element.
@@ -22,8 +20,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.function]
  */
 interface BirFunction : BirElement, BirDeclaration, BirPossiblyExternalDeclaration, BirDeclarationWithVisibility, BirTypeParametersContainer, BirSymbolOwner, BirDeclarationParent, BirReturnTarget, BirMemberWithContainerSource, BirMetadataSourceOwner, BirFunctionSymbol {
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor?
     var isInline: Boolean
     var isExpect: Boolean
     var returnType: BirType

@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
@@ -30,17 +31,6 @@ object BirTree : AbstractTreeBuilder() {
     private fun symbol(type: TypeRefWithNullability, mutable: Boolean = false): SingleField =
         field("symbol", type, mutable = mutable, isChild = false)
 
-    private fun descriptor(typeName: String, nullable: Boolean = true, initializer: SingleField.() -> Unit = {}): SingleField =
-        field(
-            "descriptor",
-            ClassRef<TypeParameterRef>(TypeKind.Interface, Packages.descriptors, typeName),
-            nullable = nullable,
-            mutable = false,
-        ) {
-            optInAnnotation = obsoleteDescriptorBasedApiAnnotation
-            initializer()
-        }
-
     override val rootElement: Element by element(Other, name = "Element") {
         +field("sourceSpan", type(Packages.tree, "SourceSpan")) {
             kDoc = """
@@ -62,7 +52,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(symbolOwner)
         parent(annotationContainerElement)
 
-        +descriptor("DeclarationDescriptor")
         +field("origin", type("org.jetbrains.kotlin.ir.declarations", "IrDeclarationOrigin"))
     }
     val declarationParent: Element by element(Declaration)
@@ -84,7 +73,6 @@ object BirTree : AbstractTreeBuilder() {
     val symbolOwner: Element by element(Declaration) {
         parent(type(Packages.symbols, "BirUntypedPossiblyElementSymbol"))
 
-        +descriptor("DeclarationDescriptor")
         +field("signature", type("org.jetbrains.kotlin.ir.util", "IdSignature"), nullable = true) {
             isOverride = true
         }
@@ -124,7 +112,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(declarationWithName)
         parent(symbolOwner)
 
-        +descriptor("ValueDescriptor")
         +symbol(SymbolTypes.value)
         +field("type", irTypeType)
         +field("isAssignable", boolean)
@@ -135,7 +122,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(declaration)
         parent(valueDeclaration)
 
-        +descriptor("ParameterDescriptor")
         +symbol(SymbolTypes.valueParameter)
         +field("index", int)
         +field("varargElementType", irTypeType, nullable = true)
@@ -184,7 +170,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(attributeContainer)
         parent(metadataSourceOwner)
 
-        +descriptor("ClassDescriptor")
         +symbol(SymbolTypes.`class`)
         +field("kind", type<ClassKind>())
         +field("modality", type<Modality>())
@@ -235,7 +220,6 @@ object BirTree : AbstractTreeBuilder() {
     val anonymousInitializer: Element by element(Declaration) {
         parent(declaration)
 
-        +descriptor("ClassDescriptor") // TODO special descriptor for anonymous initializer blocks
         +symbol(SymbolTypes.anonymousInitializer)
         +field("isStatic", boolean)
         +field("body", blockBody, nullable = true)
@@ -255,7 +239,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(declaration)
         parent(declarationWithName)
 
-        +descriptor("TypeParameterDescriptor")
         +symbol(SymbolTypes.typeParameter)
         +field("variance", type<Variance>())
         +field("index", int)
@@ -265,7 +248,6 @@ object BirTree : AbstractTreeBuilder() {
     val returnTarget: Element by element(Declaration) {
         parent(symbolOwner)
 
-        +descriptor("FunctionDescriptor")
         +symbol(SymbolTypes.returnTarget)
     }
     val function: Element by element(Declaration) {
@@ -279,7 +261,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(memberWithContainerSource)
         parent(metadataSourceOwner)
 
-        +descriptor("FunctionDescriptor")
         +symbol(SymbolTypes.function)
         // NB: there's an inline constructor for Array and each primitive array class.
         +field("isInline", boolean)
@@ -297,7 +278,6 @@ object BirTree : AbstractTreeBuilder() {
 
         parent(function)
 
-        +descriptor("ClassConstructorDescriptor")
         +symbol(SymbolTypes.constructor)
         +field("isPrimary", boolean)
     }
@@ -307,7 +287,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(declaration)
         parent(declarationWithName)
 
-        +descriptor("ClassDescriptor")
         +symbol(SymbolTypes.enumEntry)
         +field("initializerExpression", expressionBody, nullable = true)
         +field("correspondingClass", `class`, nullable = true)
@@ -326,7 +305,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(declarationParent)
         parent(metadataSourceOwner)
 
-        +descriptor("PropertyDescriptor")
         +symbol(SymbolTypes.field)
         +field("type", irTypeType)
         +field("isFinal", boolean)
@@ -340,7 +318,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(symbolOwner)
         parent(metadataSourceOwner)
 
-        +descriptor("VariableDescriptorWithAccessors")
         +symbol(SymbolTypes.localDelegatedProperty)
         +field("type", irTypeType)
         +field("isVar", boolean)
@@ -349,8 +326,10 @@ object BirTree : AbstractTreeBuilder() {
         +field("setter", simpleFunction, nullable = true)
     }
     val moduleFragment: Element by element(Declaration) {
-        +descriptor("ModuleDescriptor")
         +field("name", type<Name>(), mutable = false)
+        +field("descriptor", type(Packages.descriptors, "ModuleDescriptor"), mutable = false) {
+            optInAnnotation = obsoleteDescriptorBasedApiAnnotation
+        }
         +listField("files", file, mutability = List)
     }
     val property: Element by element(Declaration) {
@@ -364,7 +343,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(attributeContainer)
         parent(memberWithContainerSource)
 
-        +descriptor("PropertyDescriptor")
         +symbol(SymbolTypes.property)
         +field("isVar", boolean)
         +field("isConst", boolean)
@@ -430,7 +408,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(declarationWithVisibility)
         parent(typeParametersContainer)
 
-        +descriptor("TypeAliasDescriptor")
         +symbol(SymbolTypes.typeAlias)
         +field("isActual", boolean)
         +field("expandedType", irTypeType)
@@ -439,7 +416,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(declaration)
         parent(valueDeclaration)
 
-        +descriptor("VariableDescriptor")
         +symbol(SymbolTypes.variable)
         +field("isVar", boolean)
         +field("isConst", boolean)
@@ -451,7 +427,6 @@ object BirTree : AbstractTreeBuilder() {
         parent(symbolOwner)
 
         +symbol(SymbolTypes.packageFragment)
-        +descriptor("PackageFragmentDescriptor")
         +field("packageFqName", type<FqName>())
     }
     val externalPackageFragment: Element by element(Declaration) {

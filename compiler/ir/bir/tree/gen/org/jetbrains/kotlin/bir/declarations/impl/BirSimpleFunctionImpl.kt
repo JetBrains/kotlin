@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -33,7 +31,6 @@ class BirSimpleFunctionImpl(
     name: Name,
     isExternal: Boolean,
     visibility: DescriptorVisibility,
-    descriptor: FunctionDescriptor?,
     isInline: Boolean,
     isExpect: Boolean,
     returnType: BirType,
@@ -138,9 +135,6 @@ class BirSimpleFunctionImpl(
                 invalidate(11)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor? = descriptor
 
     private var _isInline: Boolean = isInline
     override var isInline: Boolean

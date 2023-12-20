@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.types.Variance
 fun BirAnonymousInitializer.Companion.build(init: BirAnonymousInitializerImpl.() -> Unit): BirAnonymousInitializerImpl =
     BirAnonymousInitializerImpl(
         sourceSpan = SourceSpan.UNDEFINED,
-        descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         isStatic = false,
         body = BirBlockBodyImpl(SourceSpan.UNDEFINED),
@@ -40,7 +39,6 @@ fun BirConstructor.Companion.build(init: BirConstructorImpl.() -> Unit): BirCons
     BirConstructorImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = SpecialNames.INIT,
-        descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         visibility = DescriptorVisibilities.PUBLIC,
         dispatchReceiverParameter = null,
@@ -60,7 +58,6 @@ fun BirClass.Companion.build(init: BirClassImpl.() -> Unit): BirClassImpl =
     BirClassImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
-        descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         source = SourceElement.NO_SOURCE,
         kind = ClassKind.CLASS,
@@ -85,7 +82,6 @@ fun BirEnumEntry.Companion.build(init: BirEnumEntryImpl.() -> Unit): BirEnumEntr
     BirEnumEntryImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
-        descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         initializerExpression = null,
         correspondingClass = null,
@@ -97,7 +93,6 @@ fun BirField.Companion.build(init: BirFieldImpl.() -> Unit): BirFieldImpl =
     BirFieldImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
-        descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         visibility = DescriptorVisibilities.PUBLIC,
         isExternal = false,
@@ -114,7 +109,6 @@ fun BirLocalDelegatedProperty.Companion.build(init: BirLocalDelegatedPropertyImp
     BirLocalDelegatedPropertyImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
-        descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         type = BirUninitializedType,
         isVar = false,
@@ -129,7 +123,6 @@ fun BirProperty.Companion.build(init: BirPropertyImpl.() -> Unit): BirPropertyIm
     BirPropertyImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
-        descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         visibility = DescriptorVisibilities.PUBLIC,
         modality = Modality.FINAL,
@@ -152,7 +145,6 @@ fun BirSimpleFunction.Companion.build(init: BirSimpleFunctionImpl.() -> Unit): B
     BirSimpleFunctionImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
-        descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         visibility = DescriptorVisibilities.PUBLIC,
         modality = Modality.FINAL,
@@ -179,7 +171,6 @@ fun BirTypeParameter.Companion.build(init: BirTypeParameterImpl.() -> Unit): Bir
     BirTypeParameterImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
-        descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         variance = Variance.INVARIANT,
         superTypes = emptyList(),
@@ -193,7 +184,6 @@ fun BirValueParameter.Companion.build(init: BirValueParameterImpl.() -> Unit): B
     BirValueParameterImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
-        descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         type = BirUninitializedType,
         isAssignable = false,
@@ -211,7 +201,6 @@ fun BirVariable.Companion.build(init: BirVariableImpl.() -> Unit): BirVariableIm
     BirVariableImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
-        descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         type = BirUninitializedType,
         isAssignable = true,

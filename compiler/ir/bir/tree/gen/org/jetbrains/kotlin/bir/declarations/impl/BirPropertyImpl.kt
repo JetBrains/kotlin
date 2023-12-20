@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -31,7 +29,6 @@ class BirPropertyImpl(
     isExternal: Boolean,
     visibility: DescriptorVisibility,
     modality: Modality,
-    descriptor: PropertyDescriptor?,
     isVar: Boolean,
     isConst: Boolean,
     isLateinit: Boolean,
@@ -157,9 +154,6 @@ class BirPropertyImpl(
                 invalidate(5)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor? = descriptor
 
     private var _isVar: Boolean = isVar
     override var isVar: Boolean

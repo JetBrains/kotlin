@@ -30,6 +30,15 @@ internal class BirElementAncestorsSequence(private val element: BirElementBase?)
 fun BirElement.ancestors(includeSelf: Boolean = false): Sequence<BirElementBase> =
     BirElementAncestorsSequence(if (includeSelf) this as BirElementBase else parent)
 
+fun BirElement.collectAllElementsInTree(): List<BirElement> {
+    val list = ArrayList<BirElement>()
+    accept {
+        list += it
+        it.walkIntoChildren()
+    }
+    return list
+}
+
 fun BirElement.countAllElementsInTree(): Int {
     var count = 0
     accept {

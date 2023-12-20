@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -26,7 +24,6 @@ class BirVariableImpl(
     name: Name,
     type: BirType,
     isAssignable: Boolean,
-    descriptor: VariableDescriptor?,
     isVar: Boolean,
     isConst: Boolean,
     isLateinit: Boolean,
@@ -120,9 +117,6 @@ class BirVariableImpl(
                 invalidate(6)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: VariableDescriptor? = descriptor
 
     private var _isVar: Boolean = isVar
     override var isVar: Boolean

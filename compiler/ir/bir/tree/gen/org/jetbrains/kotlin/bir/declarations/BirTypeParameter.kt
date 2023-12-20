@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.symbols.BirTypeParameterSymbol
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.types.Variance
 
 /**
@@ -23,8 +21,6 @@ import org.jetbrains.kotlin.types.Variance
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeParameter]
  */
 abstract class BirTypeParameter : BirImplElementBase(), BirElement, BirDeclaration, BirDeclarationWithName, BirTypeParameterSymbol {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: TypeParameterDescriptor?
     abstract var variance: Variance
     abstract var index: Int
     abstract var isReified: Boolean

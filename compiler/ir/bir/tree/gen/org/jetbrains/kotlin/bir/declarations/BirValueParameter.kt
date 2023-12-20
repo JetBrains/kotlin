@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.symbols.BirValueParameterSymbol
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
  * A leaf IR tree element.
@@ -23,8 +21,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.valueParameter]
  */
 interface BirValueParameter : BirElement, BirDeclaration, BirValueDeclaration, BirValueParameterSymbol {
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ParameterDescriptor?
     var index: Int
     var varargElementType: BirType?
     var isCrossinline: Boolean

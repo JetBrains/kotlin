@@ -15,9 +15,6 @@ interface BirSymbolOwner : BirElement, BirSymbol {
     override val isBound: Boolean
         get() = true
 
-    @ObsoleteDescriptorBasedAPI
-    val descriptor: DeclarationDescriptor?
-
     override var signature: IdSignature?
 
     companion object

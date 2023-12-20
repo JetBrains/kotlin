@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -25,7 +23,6 @@ class BirLocalDelegatedPropertyImpl(
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
-    descriptor: VariableDescriptorWithAccessors?,
     type: BirType,
     isVar: Boolean,
     delegate: BirVariable?,
@@ -94,9 +91,6 @@ class BirLocalDelegatedPropertyImpl(
                 invalidate(6)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: VariableDescriptorWithAccessors? = descriptor
 
     private var _type: BirType = type
     override var type: BirType

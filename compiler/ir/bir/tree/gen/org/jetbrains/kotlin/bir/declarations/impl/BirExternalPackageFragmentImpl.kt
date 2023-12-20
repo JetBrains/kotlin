@@ -11,8 +11,6 @@ package org.jetbrains.kotlin.bir.declarations.impl
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirDeclaration
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 class BirExternalPackageFragmentImpl(
     sourceSpan: SourceSpan,
     signature: IdSignature?,
-    descriptor: PackageFragmentDescriptor?,
     packageFqName: FqName,
     containerSource: DeserializedContainerSource?,
 ) : BirExternalPackageFragment() {
@@ -60,9 +57,6 @@ class BirExternalPackageFragmentImpl(
                 invalidate(4)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: PackageFragmentDescriptor? = descriptor
 
     private var _packageFqName: FqName = packageFqName
     override var packageFqName: FqName

@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 import org.jetbrains.kotlin.bir.symbols.BirAnonymousInitializerSymbol
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
  * A leaf IR tree element.
@@ -23,8 +21,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.anonymousInitializer]
  */
 abstract class BirAnonymousInitializer : BirImplElementBase(), BirElement, BirDeclaration, BirAnonymousInitializerSymbol {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ClassDescriptor?
     abstract var isStatic: Boolean
     abstract var body: BirBlockBody?
 

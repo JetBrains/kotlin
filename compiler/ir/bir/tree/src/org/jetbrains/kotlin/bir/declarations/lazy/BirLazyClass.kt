@@ -24,9 +24,6 @@ class BirLazyClass(
 ) : BirLazyElementBase(converter), BirClass {
     override val owner: BirClass
         get() = this
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override val descriptor: ClassDescriptor
-        get() = originalIrElement.descriptor
     override var kind: ClassKind
         get() = originalIrElement.kind
         set(value) = mutationNotSupported()

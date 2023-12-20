@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -26,7 +25,6 @@ class BirClassImpl(
     name: Name,
     isExternal: Boolean,
     visibility: DescriptorVisibility,
-    descriptor: ClassDescriptor?,
     kind: ClassKind,
     modality: Modality,
     isCompanion: Boolean,
@@ -142,9 +140,6 @@ class BirClassImpl(
                 invalidate(5)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor? = descriptor
 
     private var _kind: ClassKind = kind
     override var kind: ClassKind
