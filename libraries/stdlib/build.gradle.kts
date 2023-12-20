@@ -1,5 +1,7 @@
 @file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -71,18 +73,20 @@ kotlin {
         compilations {
             all {
                 compileTaskProvider.configure {
-                    kotlinOptions {
-                        freeCompilerArgs = listOfNotNull(
-                            "-Xallow-kotlin-package",
-                            "-module-name", "kotlin-stdlib-common",
-                            "-Xexpect-actual-classes",
-                            "-Xexplicit-api=strict",
-                            diagnosticNamesArg,
+                    compilerOptions {
+                        freeCompilerArgs.set(
+                            listOfNotNull(
+                                "-Xallow-kotlin-package",
+                                "-module-name", "kotlin-stdlib-common",
+                                "-Xexpect-actual-classes",
+                                "-Xexplicit-api=strict",
+                                diagnosticNamesArg,
+                            )
                         )
+                        // workaround for compiling legacy MPP metadata, remove when this compilation is not needed anymore
+                        // restate the list of opt-ins
+                        compilerOptions.optIn.addAll(commonOptIns)
                     }
-                    // workaround for compiling legacy MPP metadata, remove when this compilation is not needed anymore
-                    // restate the list of opt-ins
-                    compilerOptions.optIn.addAll(commonOptIns)
                 }
             }
         }
@@ -92,8 +96,8 @@ kotlin {
         compilations {
             val compileOnlyDeclarations by creating {
                 compileTaskProvider.configure {
-                    kotlinOptions {
-                        freeCompilerArgs = listOfNotNull("-Xallow-kotlin-package", diagnosticNamesArg)
+                    compilerOptions {
+                        freeCompilerArgs.set(listOfNotNull("-Xallow-kotlin-package", diagnosticNamesArg))
                     }
                 }
             }
@@ -102,18 +106,20 @@ kotlin {
                 compileTaskProvider.configure {
                     this as UsesKotlinJavaToolchain
                     kotlinJavaToolchain.toolchain.use(getToolchainLauncherFor(JdkMajorVersion.JDK_1_6))
-                    kotlinOptions {
+                    compilerOptions {
                         moduleName = "kotlin-stdlib"
-                        jvmTarget = "1.8"
+                        jvmTarget = JvmTarget.JVM_1_8
                         // providing exhaustive list of args here
-                        freeCompilerArgs = listOfNotNull(
-                            "-Xallow-kotlin-package",
-                            "-Xexpect-actual-classes",
-                            "-Xmultifile-parts-inherit",
-                            "-Xuse-14-inline-classes-mangling-scheme",
-                            "-Xbuiltins-from-sources",
-                            "-Xno-new-java-annotation-targets",
-                            diagnosticNamesArg,
+                        freeCompilerArgs.set(
+                            listOfNotNull(
+                                "-Xallow-kotlin-package",
+                                "-Xexpect-actual-classes",
+                                "-Xmultifile-parts-inherit",
+                                "-Xuse-14-inline-classes-mangling-scheme",
+                                "-Xbuiltins-from-sources",
+                                "-Xno-new-java-annotation-targets",
+                                diagnosticNamesArg,
+                            )
                         )
                     }
                 }
@@ -128,15 +134,17 @@ kotlin {
                 compileTaskProvider.configure {
                     this as UsesKotlinJavaToolchain
                     kotlinJavaToolchain.toolchain.use(getToolchainLauncherFor(JdkMajorVersion.JDK_1_7))
-                    kotlinOptions {
+                    compilerOptions {
                         moduleName = "kotlin-stdlib-jdk7"
-                        jvmTarget = "1.8"
-                        freeCompilerArgs = listOfNotNull(
-                            "-Xallow-kotlin-package",
-                            "-Xmultifile-parts-inherit",
-                            "-Xno-new-java-annotation-targets",
-                            "-Xexplicit-api=strict",
-                            diagnosticNamesArg,
+                        jvmTarget = JvmTarget.JVM_1_8
+                        freeCompilerArgs.set(
+                            listOfNotNull(
+                                "-Xallow-kotlin-package",
+                                "-Xmultifile-parts-inherit",
+                                "-Xno-new-java-annotation-targets",
+                                "-Xexplicit-api=strict",
+                                diagnosticNamesArg,
+                            )
                         )
                     }
                 }
@@ -145,14 +153,16 @@ kotlin {
                 associateWith(main)
                 associateWith(mainJdk7)
                 compileTaskProvider.configure {
-                    kotlinOptions {
+                    compilerOptions {
                         moduleName = "kotlin-stdlib-jdk8"
-                        freeCompilerArgs = listOfNotNull(
-                            "-Xallow-kotlin-package",
-                            "-Xmultifile-parts-inherit",
-                            "-Xno-new-java-annotation-targets",
-                            "-Xexplicit-api=strict",
-                            diagnosticNamesArg,
+                        freeCompilerArgs.set(
+                            listOfNotNull(
+                                "-Xallow-kotlin-package",
+                                "-Xmultifile-parts-inherit",
+                                "-Xno-new-java-annotation-targets",
+                                "-Xexplicit-api=strict",
+                                diagnosticNamesArg,
+                            )
                         )
                     }
                 }
@@ -169,16 +179,21 @@ kotlin {
                 associateWith(mainJdk7)
                 associateWith(mainJdk8)
                 compileTaskProvider.configure {
-                    kotlinOptions {
-                        freeCompilerArgs += listOf(
-                            "-Xallow-kotlin-package", // TODO: maybe rename test packages
-                            "-Xexpect-actual-classes",
+                    compilerOptions {
+                        freeCompilerArgs.addAll(
+                            listOf(
+                                "-Xallow-kotlin-package", // TODO: maybe rename test packages
+                                "-Xexpect-actual-classes",
+                            )
                         )
                         if (kotlinBuildProperties.useFir) {
-                            freeCompilerArgs += "-Xuse-k2"
+                            freeCompilerArgs.add("-Xuse-k2")
                         }
                         // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
-                        freeCompilerArgs -= "-Xno-optimized-callable-references"
+                        val currentFreeArgs = freeCompilerArgs.get()
+                        freeCompilerArgs
+                            .value(currentFreeArgs.filter { it != "-Xno-optimized-callable-references" })
+                            .finalizeValue()
                     }
                 }
             }

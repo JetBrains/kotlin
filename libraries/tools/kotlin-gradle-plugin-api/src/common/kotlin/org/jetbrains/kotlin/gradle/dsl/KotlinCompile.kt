@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
  *
  * @see [KotlinCommonOptions]
  */
+@KotlinGradlePluginDsl
 interface KotlinCompile<out T : KotlinCommonOptions> : Task {
 
     /**
