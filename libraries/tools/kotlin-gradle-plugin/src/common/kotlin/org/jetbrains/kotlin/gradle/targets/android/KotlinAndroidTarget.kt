@@ -6,7 +6,6 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
@@ -145,14 +144,15 @@ abstract class KotlinAndroidTarget @Inject constructor(
         KotlinAndroidPlugin.androidTargetHandler().doCreateComponents()
     }
 
-    private fun isVariantPublished(variant: BaseVariant): Boolean {
-        return publishLibraryVariants?.contains(getVariantName(variant)) ?: true
-    }
+    private fun isVariantPublished(
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
+    ): Boolean = publishLibraryVariants?.contains(getVariantName(variant)) ?: true
 
     private fun AndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
         assert(project.state.executed) { "Android: doCreateComponents requires 'afterEvaluate' based project state" }
 
-        val publishableVariants = mutableListOf<BaseVariant>()
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        val publishableVariants = mutableListOf<DeprecatedAndroidBaseVariant>()
             .apply { project.forAllAndroidVariants { add(it) } }
             .toList() // Defensive copy against unlikely modification by the lambda that captures the list above in forEachVariant { }
             .filter { getLibraryOutputTask(it) != null }
@@ -209,7 +209,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     }
 
     private fun AndroidProjectHandler.createAndroidUsageContexts(
-        variant: BaseVariant,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant,
         compilation: KotlinCompilation<*>,
         isSingleBuildType: Boolean,
     ): Set<DefaultKotlinUsageContext> {
