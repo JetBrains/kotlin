@@ -85,6 +85,14 @@ fun main(args: Array<String>) {
                 model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
             }
 
+            testClass<AbstractJsIrInvalidationPerFileWithPLTest> {
+                model("incremental/invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+
+            testClass<AbstractJsIrInvalidationPerModuleWithPLTest> {
+                model("incremental/invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+
             testClass<AbstractJsFirInvalidationPerFileTest> {
                 model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
@@ -101,11 +109,11 @@ fun main(args: Array<String>) {
                 model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
             }
 
-            testClass<AbstractJsIrInvalidationPerFileWithPLTest> {
+            testClass<AbstractJsFirInvalidationPerFileWithPLTest> {
                 model("incremental/invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
 
-            testClass<AbstractJsIrInvalidationPerModuleWithPLTest> {
+            testClass<AbstractJsFirInvalidationPerModuleWithPLTest> {
                 model("incremental/invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
         }

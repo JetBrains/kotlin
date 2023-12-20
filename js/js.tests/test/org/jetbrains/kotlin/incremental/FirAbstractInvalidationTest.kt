@@ -16,6 +16,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
+import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -30,6 +35,23 @@ abstract class AbstractJsFirES6InvalidationPerFileTest :
     FirAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFirES6/perFile")
 abstract class AbstractJsFirES6InvalidationPerModuleTest :
     FirAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFirES6/perModule")
+abstract class AbstractJsFirInvalidationPerFileWithPLTest :
+    AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationWithPL/perFile")
+abstract class AbstractJsFirInvalidationPerModuleWithPLTest :
+    AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationWithPL/perModule")
+
+abstract class AbstractJsFirInvalidationWithPLTest(granularity: JsGenerationGranularity, workingDirPath: String) :
+    FirAbstractInvalidationTest(
+        TargetBackend.JS_IR,
+        granularity,
+        workingDirPath
+    ) {
+    override fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
+        val config = super.createConfiguration(moduleName, language, moduleKind)
+        config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
+        return config
+    }
+}
 
 abstract class FirAbstractInvalidationTest(
     targetBackend: TargetBackend,
