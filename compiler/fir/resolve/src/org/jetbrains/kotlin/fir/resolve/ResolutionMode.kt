@@ -11,13 +11,20 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
-sealed class ResolutionMode(val forceFullCompletion: Boolean) {
-    sealed class ContextDependent : ResolutionMode(forceFullCompletion = false) {
+sealed class ResolutionMode(
+    val forceFullCompletion: Boolean,
+    // Only true AugmentedAssignmentCallOption, don't run an even slightest form of completion
+    val skipEvenPartialCompletion: Boolean = false,
+) {
+    sealed class ContextDependent(
+        skipCompletion: Boolean = false,
+    ) : ResolutionMode(forceFullCompletion = false, skipCompletion) {
         companion object Default : ContextDependent() {
             override fun toString(): String = "ContextDependent"
         }
 
         data object Delegate : ContextDependent()
+        data object AugmentedAssignmentCallOption : ContextDependent(skipCompletion = true)
     }
 
     data object ContextIndependent : ResolutionMode(forceFullCompletion = true)
