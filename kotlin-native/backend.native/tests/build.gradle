@@ -229,40 +229,6 @@ Task standaloneTest(String name, Closure configureClosure) {
 }
 
 /**
- * Creates a task for a linking test. Configures runner and adds library and test build tasks.
- */
-Task linkTest(String name, Closure<KonanLinkTest> configureClosure) {
-    return KotlinNativeTestKt.createTest(project, name, KonanLinkTest) { task ->
-        task.configure(configureClosure)
-        if (task.enabled) {
-            konanArtifacts {
-                def lib = "lib$name"
-                def targetName = target.name
-                // build a library from KonanLinkTest::lib property
-                library(lib, targets: [targetName]) {
-                    srcFiles task.lib
-                    baseDir  "$testOutputLocal/$name"
-                    extraOpts task.flags
-                    extraOpts project.globalTestArgs.findAll { !it.contains("-Xpartial-linkage") }
-                }
-                UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
-
-                // Build an executable with library
-                program(name, targets: [targetName]) {
-                    libraries {
-                        klibFile file("$testOutputLocal/$name/$targetName/${lib}.klib")
-                    }
-                    baseDir  "$testOutputLocal/$name"
-                    srcFiles  task.getSources()
-                    extraOpts task.flags
-                    extraOpts project.globalTestArgs
-                }
-            }
-        }
-    }
-}
-
-/**
  * Creates a task for a dynamic test. Configures runner and adds library and test build tasks.
  */
 Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
@@ -598,13 +564,6 @@ tasks.register("empty_string", KonanLocalTest) {
 standaloneTest("link_default_libs") {
     useGoldenData = true
     source = "link/default/default.kt"
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
-linkTest("no_purge_for_dependencies") {
-    useGoldenData = true
-    source = "link/purge1/prog.kt"
-    lib = "link/purge1/lib.kt"
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
@@ -1507,7 +1466,7 @@ Task interopTestBase(String name, boolean multiFile, boolean interop2ForMainOnly
                 def lib = "lib$name"
                 def hasIntermediateLib = task.lib != null
                 if (hasIntermediateLib) {
-                    // build a library from KonanLinkTest::lib property
+                    // build a library from KonanInteropTest::lib property
                     library(lib, targets: [targetName]) {
                         libraries {
                             artifact interopLib
@@ -2945,9 +2904,6 @@ task buildKonanTests { t ->
             .withType(KonanStandaloneTest.class)
             .each {
                 // add library and source files
-                if (it instanceof KonanLinkTest) {
-                    excludeList += it.lib
-                }
                 if (it.source != null) {
                     excludeList += it.source
                 }
