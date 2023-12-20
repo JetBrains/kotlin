@@ -92,6 +92,23 @@ class Fir2IrDeclarationStorage(
     private val delegateVariableForPropertyCache: ConcurrentHashMap<IrLocalDelegatedPropertySymbol, IrVariableSymbol> =
         commonMemberStorage.delegateVariableForPropertyCache
 
+    /**
+     * This function is quite messy and doesn't have a good contract of what exactly is traversed.
+     * The basic idea is to traverse the symbols which can be reasonably referenced from other modules.
+     *
+     * Be careful when using it, and avoid it, except really needed.
+     */
+    fun forEachCachedDeclarationSymbol(block: (IrSymbol) -> Unit) {
+        functionCache.values.forEach(block)
+        constructorCache.values.forEach(block)
+        propertyCache.values.forEach(block)
+        getterForPropertyCache.values.forEach(block)
+        setterForPropertyCache.values.forEach(block)
+        backingFieldForPropertyCache.values.forEach(block)
+        propertyForBackingFieldCache.values.forEach(block)
+        delegateVariableForPropertyCache.values.forEach(block)
+    }
+
     // interface A { /* $1 */ fun foo() }
     // interface B : A {
     //      /* $2 */ fake_override fun foo()
