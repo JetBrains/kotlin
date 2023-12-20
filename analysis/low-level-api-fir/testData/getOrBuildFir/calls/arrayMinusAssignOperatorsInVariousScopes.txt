@@ -1,0 +1,37 @@
+KT element: KtBinaryExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: DesugaredArrayMinusAssign
+
+FIR element rendered:
+R|<local>/<array>|.R|/set|(R|<local>/<index_0>|, R|<local>/<array>|.R|/Foo.Companion.get|(R|<local>/<index_0>|).R|kotlin/Int.minus|(Int(5)))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] arrayMinusAssignOperatorsInVariousScopes.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Foo.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Int| {
+                ^get IntegerLiteral(42)
+            }
+
+        }
+
+    }
+    private final operator [ResolvedTo(CONTRACTS)] fun R|kotlin/Any|.set([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun usageFoo(): R|kotlin/Unit| {
+         {
+            [ResolvedTo(BODY_RESOLVE)] lval <array>: R|Foo.Companion| = Q|Foo|
+            [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/Int| = Int(1)
+            R|<local>/<array>|.R|/set|(R|<local>/<index_0>|, R|<local>/<array>|.R|/Foo.Companion.get|(R|<local>/<index_0>|).R|kotlin/Int.minus|(Int(5)))
+        }
+
+        Unit
+    }

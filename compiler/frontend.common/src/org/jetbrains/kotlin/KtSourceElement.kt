@@ -200,6 +200,16 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // list[0] -> list.get(0) where name reference will have a fake source element
     object ArrayAccessNameReference : KtFakeSourceElementKind()
 
+    // a[b] += c -> a.set(b, a.get(b) + c) or a.get(b).plusAssign(c)
+    // set, get, '+', and plusAssign will have a fake source element
+    sealed class DesugaredArrayAugmentedAssign : KtFakeSourceElementKind()
+    object DesugaredArrayPlusAssign : DesugaredArrayAugmentedAssign()
+    object DesugaredArrayMinusAssign : DesugaredArrayAugmentedAssign()
+    object DesugaredArrayTimesAssign : DesugaredArrayAugmentedAssign()
+    object DesugaredArrayDivAssign : DesugaredArrayAugmentedAssign()
+    object DesugaredArrayRemAssign : DesugaredArrayAugmentedAssign()
+
+
     // a[b]++
     // b -> val <index0> = b where b will have fake property
     object ArrayIndexExpressionReference : KtFakeSourceElementKind()

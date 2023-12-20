@@ -294,6 +294,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("arrayMinusAssignOperatorsInVariousScopes.kt")
+        public void testArrayMinusAssignOperatorsInVariousScopes() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayMinusAssignOperatorsInVariousScopes.kt");
+        }
+
+        @Test
+        @TestMetadata("arrayTimesAssignOperatorsInVariousScopes.kt")
+        public void testArrayTimesAssignOperatorsInVariousScopes() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/arrayTimesAssignOperatorsInVariousScopes.kt");
+        }
+
+        @Test
         @TestMetadata("callArgument.kt")
         public void testCallArgument() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callArgument.kt");

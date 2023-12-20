@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.FirOperation.AS
-import org.jetbrains.kotlin.fir.expressions.FirOperation.IS
-import org.jetbrains.kotlin.fir.expressions.FirOperation.NOT_IS
-import org.jetbrains.kotlin.fir.expressions.FirOperation.SAFE_AS
+import org.jetbrains.kotlin.fir.expressions.FirOperation.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
@@ -28,6 +25,7 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -600,7 +598,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         )
 
         // x.plusAssign(y)
-        val assignOperatorCall = generator.createAssignOperatorCall()
+        val assignOperatorCall = generator.createAssignOperatorCall(KtFakeSourceElementKind.DesugaredCompoundAssignment)
         val resolvedAssignCall = resolveCandidateForAssignmentOperatorCall {
             assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
         }
@@ -608,7 +606,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val assignIsSuccessful = assignCallReference?.isError == false
 
         // x = x + y
-        val simpleOperatorCall = generator.createSimpleOperatorCall()
+        val simpleOperatorCall = generator.createSimpleOperatorCall(KtFakeSourceElementKind.DesugaredCompoundAssignment)
         val resolvedOperatorCall = resolveCandidateForAssignmentOperatorCall {
             simpleOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
         }
@@ -1372,10 +1370,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
-        private fun createFunctionCall(name: Name): FirFunctionCall {
+        private fun createFunctionCall(name: Name, fakeSourceElementKind: KtFakeSourceElementKind): FirFunctionCall {
             return createFunctionCall(
                 name,
-                baseElement.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment),
+                baseElement.source?.fakeElement(fakeSourceElementKind),
                 referenceSource,
                 baseElement.annotations,
                 lhs,
@@ -1383,12 +1381,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             )
         }
 
-        fun createAssignOperatorCall(): FirFunctionCall {
-            return createFunctionCall(FirOperationNameConventions.ASSIGNMENTS.getValue(operation))
+        fun createAssignOperatorCall(fakeSourceElementKind: KtFakeSourceElementKind): FirFunctionCall {
+            return createFunctionCall(FirOperationNameConventions.ASSIGNMENTS.getValue(operation), fakeSourceElementKind)
         }
 
-        fun createSimpleOperatorCall(): FirFunctionCall {
-            return createFunctionCall(FirOperationNameConventions.ASSIGNMENTS_TO_SIMPLE_OPERATOR.getValue(operation))
+        fun createSimpleOperatorCall(fakeSourceElementKind: KtFakeSourceElementKind): FirFunctionCall {
+            return createFunctionCall(FirOperationNameConventions.ASSIGNMENTS_TO_SIMPLE_OPERATOR.getValue(operation), fakeSourceElementKind)
         }
     }
 
@@ -1412,6 +1410,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         dataFlowAnalyzer.enterCallArguments(augmentedArraySetCall, listOf(augmentedArraySetCall.rhs))
         // transformedLhsCall: a.get(index)
         val transformedLhsCall = augmentedArraySetCall.lhsGetCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
+            .also { it.setArrayAugmentedAssignSource(operation) }
         val transformedRhs = augmentedArraySetCall.rhs.transformSingle(transformer, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitCallArguments()
 
@@ -1424,7 +1423,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         )
 
         // a.get(b).plusAssign(c)
-        val assignOperatorCall = generator.createAssignOperatorCall()
+        val assignOperatorCall = generator.createAssignOperatorCall(operation.toArrayAugmentedAssignSourceKind())
         val resolvedAssignCall = resolveCandidateForAssignmentOperatorCall {
             assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
         }
@@ -1523,6 +1522,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 statements += arrayVariable
                 statements += indexVariables
                 statements += setCall
+                source = augmentedArraySetCall.source?.fakeElement(augmentedArraySetCall.operation.toArrayAugmentedAssignSourceKind())
             }.also {
                 it.replaceConeTypeOrNull(session.builtinTypes.unitType.type)
             }
@@ -1627,14 +1627,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             transformedRhs
         )
 
-        val operatorCall = generator.createSimpleOperatorCall()
+        val operatorCall = generator.createSimpleOperatorCall(augmentedArraySetCall.operation.toArrayAugmentedAssignSourceKind())
         val resolvedOperatorCall = resolveCandidateForAssignmentOperatorCall {
             operatorCall.transformSingle(this, ResolutionMode.ContextDependent)
         }
 
         val setCall = GeneratorOfPlusAssignCalls.createFunctionCall(
             OperatorNameConventions.SET,
-            augmentedArraySetCall.source,
+            augmentedArraySetCall.source?.fakeElement(augmentedArraySetCall.operation.toArrayAugmentedAssignSourceKind()),
             augmentedArraySetCall.calleeReference.source,
             annotations = augmentedArraySetCall.annotations,
             receiver = arrayAccess, // a
@@ -1725,4 +1725,27 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         } ?: typeFromCallee.type
     }
 
+}
+
+private fun FirOperation.toArrayAugmentedAssignSourceKind() = when (this) {
+    PLUS_ASSIGN -> KtFakeSourceElementKind.DesugaredArrayPlusAssign
+    MINUS_ASSIGN -> KtFakeSourceElementKind.DesugaredArrayMinusAssign
+    TIMES_ASSIGN -> KtFakeSourceElementKind.DesugaredArrayTimesAssign
+    DIV_ASSIGN -> KtFakeSourceElementKind.DesugaredArrayDivAssign
+    REM_ASSIGN -> KtFakeSourceElementKind.DesugaredArrayRemAssign
+    else -> error("Unexpected operator: $name")
+}
+
+private fun FirFunctionCall.setArrayAugmentedAssignSource(operation: FirOperation) {
+    if (calleeReference.isError()) return
+    val newSource = source?.fakeElement(operation.toArrayAugmentedAssignSourceKind())
+    @OptIn(FirImplementationDetail::class)
+    replaceSource(newSource)
+    val oldCalleeReference = calleeReference as? FirResolvedNamedReference
+        ?: error("${FirResolvedNamedReference::class.simpleName}} expected, got ${calleeReference.render()}")
+    replaceCalleeReference(buildResolvedNamedReference {
+        this.name = oldCalleeReference.name
+        this.source = newSource
+        this.resolvedSymbol = oldCalleeReference.resolvedSymbol
+    })
 }

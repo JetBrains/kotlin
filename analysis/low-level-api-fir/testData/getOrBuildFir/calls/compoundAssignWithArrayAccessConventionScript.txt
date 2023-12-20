@@ -1,6 +1,6 @@
 KT element: KtBinaryExpression
 FIR element: FirFunctionCallImpl
-FIR source kind: KtRealSourceElementKind
+FIR source kind: DesugaredArrayPlusAssign
 
 FIR element rendered:
 R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride</MyMap.get: R|kotlin/Int|>|(R|<local>/<index_0>|).R|kotlin/Int.plus|(Int(1)))

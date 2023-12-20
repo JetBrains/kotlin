@@ -1,0 +1,20 @@
+KT element: KtBinaryExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: DesugaredArrayTimesAssign
+
+FIR element rendered:
+R|<local>/bar|.R|/get|(Int(1)).R|/timesAssign|(String(bar))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] arrayTimesAssignOperatorsInVariousScopes.kt
+    public abstract [ResolvedTo(STATUS)] interface Bar : R|kotlin/Any| {
+    }
+    public final operator [ResolvedTo(CONTRACTS)] fun R|Bar|.get([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Int| {
+        ^get IntegerLiteral(42)
+    }
+    private final operator [ResolvedTo(CONTRACTS)] fun R|kotlin/Int|.timesAssign([ResolvedTo(CONTRACTS)] s: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun usageBar([ResolvedTo(BODY_RESOLVE)] bar: R|Bar|): R|kotlin/Unit| {
+        R|<local>/bar|.R|/get|(Int(1)).R|/timesAssign|(String(bar))
+        Unit
+    }

@@ -1,6 +1,6 @@
 KT element: KtArrayAccessExpression
 FIR element: FirFunctionCallImpl
-FIR source kind: KtRealSourceElementKind
+FIR source kind: DesugaredArrayPlusAssign
 
 FIR element rendered:
 R|<local>/m|.R|SubstitutionOverride</MyMap.get: R|A|>|(String(a))

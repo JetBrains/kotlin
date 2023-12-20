@@ -330,6 +330,12 @@ class CallAndReferenceGenerator(
                 else -> error("Unexpected name")
             }
 
+            is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign -> when (calleeReference.resolved?.name) {
+                OperatorNameConventions.SET -> IrDynamicOperator.EQ
+                OperatorNameConventions.GET -> IrDynamicOperator.ARRAY_ACCESS
+                else -> error("Unexpected name")
+            }
+
             else -> null
         }
 

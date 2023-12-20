@@ -905,9 +905,15 @@ class Fir2IrVisitor(
         expectedType: ConeKotlinType? = null,
     ): IrExpression {
         return when (expression) {
-            is FirBlock -> expression.convertToIrExpressionOrBlock(
-                if (expression.source?.kind == KtFakeSourceElementKind.DesugaredForLoop) IrStatementOrigin.FOR_LOOP else null
-            )
+            is FirBlock -> {
+                val origin = when (expression.source?.kind) {
+                    is KtFakeSourceElementKind.DesugaredForLoop -> IrStatementOrigin.FOR_LOOP
+                    is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign ->
+                        augmentedArrayAssignSourceKindToIrStatementOrigin[expression.source?.kind]
+                    else -> null
+                }
+                expression.convertToIrExpressionOrBlock(origin)
+            }
             is FirUnitExpression -> expression.convertWithOffsets { _, endOffset ->
                 IrGetObjectValueImpl(
                     endOffset, endOffset, irBuiltIns.unitType, this.irBuiltIns.unitClass

@@ -544,6 +544,9 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
                 else -> null
             }
 
+            source?.kind is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign ->
+                augmentedArrayAssignSourceKindToIrStatementOrigin[source?.kind]
+
             else ->
                 null
         }
@@ -882,3 +885,11 @@ internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(): Co
     }
     return ConeSubstitutorByMap(map, session)
 }
+
+val augmentedArrayAssignSourceKindToIrStatementOrigin = mapOf(
+    KtFakeSourceElementKind.DesugaredArrayPlusAssign to IrStatementOrigin.PLUSEQ,
+    KtFakeSourceElementKind.DesugaredArrayMinusAssign to IrStatementOrigin.MINUSEQ,
+    KtFakeSourceElementKind.DesugaredArrayTimesAssign to IrStatementOrigin.MULTEQ,
+    KtFakeSourceElementKind.DesugaredArrayDivAssign to IrStatementOrigin.DIVEQ,
+    KtFakeSourceElementKind.DesugaredArrayRemAssign to IrStatementOrigin.PERCEQ
+)
