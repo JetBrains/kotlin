@@ -20,6 +20,7 @@ import java.io.Serializable
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.javaField
 
+@kotlinx.serialization.Serializable
 abstract class CommonToolArguments : Freezable(), Serializable {
     companion object {
         @JvmStatic
@@ -33,6 +34,7 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         }
 
     @Transient
+    @kotlinx.serialization.Transient
     var errors: ArgumentParseErrors? = null
 
     @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options.")

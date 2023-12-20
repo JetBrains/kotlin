@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 
+@Serializable
 class K2JSCompilerArguments : CommonCompilerArguments() {
     companion object {
         @JvmStatic private val serialVersionUID = 0L

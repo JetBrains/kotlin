@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    kotlin("plugin.serialization")
 }
 
 dependencies {
@@ -15,6 +16,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.guava)
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    implementation(libs.kotlinx.serialization.json)
 }
 
 sourceSets {
