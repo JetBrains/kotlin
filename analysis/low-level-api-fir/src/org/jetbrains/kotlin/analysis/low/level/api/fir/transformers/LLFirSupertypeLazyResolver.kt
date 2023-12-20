@@ -175,7 +175,7 @@ private class LLFirSuperTypeTargetResolver(
     }
 
     private fun FirClassLikeDeclaration.asResolveTarget(): LLFirSingleResolveTarget? {
-        return takeIf { it.canHaveLoopInSupertypesHierarchy(resolveTargetSession) }
+        return takeIf { canHaveLoopInSupertypesHierarchy(it, resolveTargetSession) }
             ?.tryCollectDesignationWithFile()
             ?.asResolveTarget()
     }
@@ -201,7 +201,7 @@ private class LLFirSuperTypeTargetResolver(
         if (classLikeDeclaration !is FirClassLikeDeclaration) return
         if (classLikeDeclaration in visitedElements) return
         if (classLikeDeclaration is FirJavaClass) {
-            if (!classLikeDeclaration.canHaveLoopInSupertypesHierarchy(resolveTargetSession)) return
+            if (!canHaveLoopInSupertypesHierarchy(classLikeDeclaration, resolveTargetSession)) return
 
             visitedElements += classLikeDeclaration
             val parentClass = classLikeDeclaration.outerClass(resolveTargetSession)
@@ -239,14 +239,17 @@ private class LLFirSuperTypeTargetResolver(
  * means that this class can't have loop with our class, because in this case this declaration will be present
  * in the current supertypes resolve session
  */
-private fun FirClassLikeDeclaration.canHaveLoopInSupertypesHierarchy(session: FirSession): Boolean = when {
-    this is FirJavaClass -> origin is FirDeclarationOrigin.Java.Source
-    origin !is FirDeclarationOrigin.Source -> false
-    resolvePhase < FirResolvePhase.SUPER_TYPES -> true
+private fun canHaveLoopInSupertypesHierarchy(
+    classLikeDeclaration: FirClassLikeDeclaration,
+    session: FirSession,
+): Boolean = when {
+    classLikeDeclaration is FirJavaClass -> classLikeDeclaration.origin is FirDeclarationOrigin.Java.Source
+    classLikeDeclaration.origin !is FirDeclarationOrigin.Source -> false
+    classLikeDeclaration.resolvePhase < FirResolvePhase.SUPER_TYPES -> true
     // We should still process resolved if it has loop in super type refs, because we can be part of this cycle
-    this is FirRegularClass && superTypeRefs.any(FirTypeRef::isLoopedSupertypeRef) -> true
-    this is FirTypeAlias && expandedTypeRef.isLoopedSupertypeRef -> true
-    else -> outerClass(session)?.canHaveLoopInSupertypesHierarchy(session) == true
+    classLikeDeclaration is FirRegularClass && classLikeDeclaration.superTypeRefs.any(FirTypeRef::isLoopedSupertypeRef) -> true
+    classLikeDeclaration is FirTypeAlias && classLikeDeclaration.expandedTypeRef.isLoopedSupertypeRef -> true
+    else -> classLikeDeclaration.outerClass(session)?.let { canHaveLoopInSupertypesHierarchy(it, session) } == true
 }
 
 private fun FirClassLikeDeclaration.outerClass(session: FirSession): FirRegularClass? = symbol.classId.parentClassId?.let { parentClassId ->
@@ -299,7 +302,7 @@ private class LLFirSupertypeComputationSession(private val session: FirSession) 
     }
 
     override fun isAlreadyResolved(classLikeDeclaration: FirClassLikeDeclaration): Boolean {
-        return !classLikeDeclaration.canHaveLoopInSupertypesHierarchy(session)
+        return !canHaveLoopInSupertypesHierarchy(classLikeDeclaration, session)
     }
 
     /**
