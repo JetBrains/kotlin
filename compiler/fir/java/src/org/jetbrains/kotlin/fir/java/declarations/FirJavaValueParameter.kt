@@ -39,10 +39,16 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val name: Name,
     override val symbol: FirValueParameterSymbol,
     annotationBuilder: () -> List<FirAnnotation>,
-    override var defaultValue: FirExpression?,
+    var lazyDefaultValue: Lazy<FirExpression>?,
     override val containingFunctionSymbol: FirFunctionSymbol<*>,
     override val isVararg: Boolean,
 ) : FirValueParameter() {
+    override var defaultValue: FirExpression?
+        get() = lazyDefaultValue?.value
+        set(value) {
+            lazyDefaultValue = value?.let(::lazyOf)
+        }
+
     init {
         symbol.bind(this)
 
@@ -210,7 +216,7 @@ class FirJavaValueParameterBuilder {
     lateinit var returnTypeRef: FirTypeRef
     lateinit var name: Name
     lateinit var annotationBuilder: () -> List<FirAnnotation>
-    var defaultValue: FirExpression? = null
+    var defaultValue: Lazy<FirExpression>? = null
     lateinit var containingFunctionSymbol: FirFunctionSymbol<*>
     var isVararg: Boolean by Delegates.notNull()
     var isFromSource: Boolean by Delegates.notNull()
@@ -252,7 +258,7 @@ inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJav
     copyBuilder.name = original.name
     val annotations = original.annotations
     copyBuilder.annotationBuilder = { annotations }
-    copyBuilder.defaultValue = original.defaultValue
+    copyBuilder.defaultValue = if (original is FirJavaValueParameter) original.lazyDefaultValue else original.defaultValue?.let(::lazyOf)
     copyBuilder.containingFunctionSymbol = original.containingFunctionSymbol
     copyBuilder.isVararg = original.isVararg
     return copyBuilder.apply(init).build()

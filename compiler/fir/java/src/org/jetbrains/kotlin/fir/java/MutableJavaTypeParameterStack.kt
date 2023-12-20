@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.java
@@ -28,6 +28,13 @@ class MutableJavaTypeParameterStack : JavaTypeParameterStack() {
         return typeParameterMap.iterator()
     }
 
+    fun snapshot(): JavaTypeParameterStack {
+        val snapshot = typeParameterMap.toMap()
+        return object : JavaTypeParameterStack() {
+            override fun get(javaTypeParameter: JavaTypeParameter): FirTypeParameterSymbol = snapshot.getValue(javaTypeParameter)
+            override fun iterator(): Iterator<Map.Entry<JavaTypeParameter, FirTypeParameterSymbol>> = snapshot.iterator()
+        }
+    }
 }
 
 abstract class JavaTypeParameterStack : Iterable<Map.Entry<JavaTypeParameter, FirTypeParameterSymbol>> {

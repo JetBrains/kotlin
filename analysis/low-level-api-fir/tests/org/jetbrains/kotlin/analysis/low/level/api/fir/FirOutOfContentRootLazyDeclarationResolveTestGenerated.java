@@ -952,6 +952,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("javaAnnotationWithDefaultValueForenumArray.kt")
+        public void testJavaAnnotationWithDefaultValueForenumArray() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/javaAnnotationWithDefaultValueForenumArray.kt");
+        }
+
+        @Test
         @TestMetadata("simpleLoopInOverride.kt")
         public void testSimpleLoopInOverride() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/simpleLoopInOverride.kt");

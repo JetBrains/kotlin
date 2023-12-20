@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.java
 
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.impl.light.LightRecordCanonicalConstructor
 import com.intellij.psi.util.JavaPsiRecordUtil
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -397,11 +396,13 @@ abstract class FirJavaFacade(
             }
 
             if (classIsAnnotation) {
+                val javaTypeParameterStackSnapshot = javaTypeParameterStack.snapshot()
                 // Cannot load these until the symbol is bound because they may be self-referential.
                 valueParametersForAnnotationConstructor.forEach { javaMethod, firValueParameter ->
                     javaMethod.annotationParameterDefaultValue?.let { javaDefaultValue ->
-                        firValueParameter.defaultValue =
-                            javaDefaultValue.toFirExpression(session, javaTypeParameterStack, firValueParameter.returnTypeRef)
+                        firValueParameter.lazyDefaultValue = lazy {
+                            javaDefaultValue.toFirExpression(session, javaTypeParameterStackSnapshot, firValueParameter.returnTypeRef)
+                        }
                     }
                 }
             }
