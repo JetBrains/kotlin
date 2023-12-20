@@ -1,3 +1,36 @@
+## 1.9.22
+
+### JavaScript
+
+- [`KT-63719`](https://youtrack.jetbrains.com/issue/KT-63719) KJS: Test results ignored for ES module kind
+- [`KT-63808`](https://youtrack.jetbrains.com/issue/KT-63808) compileTestDevelopmentExecutableKotlinJs failed in JsIntrinsicTransformers
+
+### Native
+
+- [`KT-64139`](https://youtrack.jetbrains.com/issue/KT-64139) Weird bug with while and coroutine in Kotlin Native
+- [`KT-63471`](https://youtrack.jetbrains.com/issue/KT-63471) linkDebugTestIosX64 Failed to build cache: NoSuchFileException bitcode_deps
+- [`KT-63789`](https://youtrack.jetbrains.com/issue/KT-63789) Native: Incremental compilation problem with compose
+
+### Tools. CLI
+
+- [`KT-64485`](https://youtrack.jetbrains.com/issue/KT-64485) CLI: cache and optimize parsing of command-line arguments
+
+### Tools. Gradle
+
+- [`KT-63990`](https://youtrack.jetbrains.com/issue/KT-63990) "Cannot query the value of property 'buildFlowServiceProperty' because it has no value available" with Isolated Projects
+
+### Tools. Gradle. Native
+
+- [`KT-63363`](https://youtrack.jetbrains.com/issue/KT-63363) Kotlin Gradle Plugin: `KotlinNativeHostSpecificMetadataArtifact` breaks configuration cache, implicitly includes output file as configuration cache input
+- [`KT-63742`](https://youtrack.jetbrains.com/issue/KT-63742) Gradle wrongly caches Kotlin/Native compiler flags
+
+### Tools. JPS
+
+- [`KT-64305`](https://youtrack.jetbrains.com/issue/KT-64305) Kotlin JPS builder requests chunk rebuild with graph implementation
+- [`KT-64112`](https://youtrack.jetbrains.com/issue/KT-64112) Avoid using IJ's JPS mappings in Kotlin JPS tests
+- [`KT-63799`](https://youtrack.jetbrains.com/issue/KT-63799) Make plugin classpath serialization path agnostic
+
+
 ## 1.9.21
 
 ### Compiler
