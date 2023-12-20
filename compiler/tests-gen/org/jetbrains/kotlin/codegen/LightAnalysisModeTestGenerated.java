@@ -25941,6 +25941,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/javaInterop/javaOuterClassDependsOnInner.kt");
         }
 
+        @TestMetadata("javaTypeFromAnotherModuleWithRawTypedWildcardBound.kt")
+        public void testJavaTypeFromAnotherModuleWithRawTypedWildcardBound() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/javaTypeFromAnotherModuleWithRawTypedWildcardBound.kt");
+        }
+
+        @TestMetadata("javaTypeFromSameModuleWithRawTypedWildcardBound.kt")
+        public void testJavaTypeFromSameModuleWithRawTypedWildcardBound() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/javaTypeFromSameModuleWithRawTypedWildcardBound.kt");
+        }
+
         @TestMetadata("kt43217.kt")
         public void testKt43217() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/kt43217.kt");
