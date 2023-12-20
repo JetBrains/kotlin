@@ -41023,6 +41023,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("suspendNotImplemented.kt")
+            public void testSuspendNotImplemented() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendNotImplemented.kt");
+            }
+
+            @Test
             @TestMetadata("suspendOverridability.kt")
             public void testSuspendOverridability() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendOverridability.kt");
