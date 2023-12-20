@@ -6,6 +6,8 @@
 // This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
+@file:OptIn(IrImplementationDetail::class)
+
 package org.jetbrains.kotlin.bir.util
 
 import org.jetbrains.kotlin.bir.*
@@ -13,6 +15,7 @@ import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
