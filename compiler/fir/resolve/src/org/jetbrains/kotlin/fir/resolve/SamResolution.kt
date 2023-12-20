@@ -81,9 +81,10 @@ class FirSamResolver(
             }
 
             is ConeStubType, is ConeTypeParameterType, is ConeTypeVariableType,
-            is ConeCapturedType, is ConeDefinitelyNotNullType, is ConeIntersectionType,
-            is ConeIntegerLiteralType,
+            is ConeDefinitelyNotNullType, is ConeIntersectionType, is ConeIntegerLiteralType,
             -> null
+
+            is ConeCapturedType -> type.lowerType?.let { getFunctionTypeForPossibleSamType(it) }
 
             is ConeLookupTagBasedType -> unreachableBranch(type)
         }

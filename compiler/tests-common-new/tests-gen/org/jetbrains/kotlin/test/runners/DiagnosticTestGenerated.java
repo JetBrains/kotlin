@@ -13927,6 +13927,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             public void testUnitInContravariantPosition() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/funInterface/unitInContravariantPosition.kt");
             }
+
+            @Test
+            @TestMetadata("unitInCovariantPosition.kt")
+            public void testUnitInCovariantPosition() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/funInterface/unitInCovariantPosition.kt");
+            }
         }
 
         @Nested
