@@ -13915,6 +13915,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             public void testSuspendFunInterfaceConversion() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/funInterface/suspendFunInterfaceConversion.kt");
             }
+
+            @Test
+            @TestMetadata("unitInContravariantPosition.kt")
+            public void testUnitInContravariantPosition() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/funInterface/unitInContravariantPosition.kt");
+            }
         }
 
         @Nested
