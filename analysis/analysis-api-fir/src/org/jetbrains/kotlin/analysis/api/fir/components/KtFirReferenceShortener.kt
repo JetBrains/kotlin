@@ -617,7 +617,7 @@ private class ElementsToShortenCollector(
     private fun FirScope.correspondingClassIdIfExists(): ClassId = when (this) {
         is FirNestedClassifierScope -> klass.classId
         is FirNestedClassifierScopeWithSubstitution -> originalScope.correspondingClassIdIfExists()
-        is FirClassUseSiteMemberScope -> classId
+        is FirClassUseSiteMemberScope -> ownerClassLookupTag.classId
         else -> errorWithAttachment("FirScope ${this::class}` is expected to be one of FirNestedClassifierScope and FirClassUseSiteMemberScope to get ClassId") {
             withEntry("firScope", this@correspondingClassIdIfExists) { it.toString() }
         }

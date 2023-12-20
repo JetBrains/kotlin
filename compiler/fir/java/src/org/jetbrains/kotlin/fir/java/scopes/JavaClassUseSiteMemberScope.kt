@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.java.syntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
@@ -55,7 +55,7 @@ class JavaClassUseSiteMemberScope(
     superTypeScopes: List<FirTypeScope>,
     declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirUseSiteMemberScope(
-    klass.classId,
+    klass.symbol.toLookupTag(),
     session,
     JavaOverrideChecker(session, klass.javaTypeParameterStack, superTypeScopes, considerReturnTypeKinds = true),
     superTypeScopes,
@@ -343,7 +343,7 @@ class JavaClassUseSiteMemberScope(
 
     private fun FirNamedFunctionSymbol.createSuspendView(): FirSimpleFunction? {
         val continuationParameter = fir.valueParameters.lastOrNull() ?: return null
-        val owner = classId.toSymbol(session)?.fir as? FirJavaClass ?: return null
+        val owner = ownerClassLookupTag.toSymbol(session)?.fir as? FirJavaClass ?: return null
         val continuationParameterType = continuationParameter
             .returnTypeRef
             .resolveIfJavaType(session, owner.javaTypeParameterStack)
@@ -824,6 +824,6 @@ class JavaClassUseSiteMemberScope(
     }
 
     override fun toString(): String {
-        return "Java use site scope of $classId"
+        return "Java use site scope of ${ownerClassLookupTag.classId}"
     }
 }

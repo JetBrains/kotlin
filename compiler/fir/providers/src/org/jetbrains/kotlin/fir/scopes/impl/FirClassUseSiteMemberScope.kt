@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -22,7 +21,7 @@ class FirClassUseSiteMemberScope(
     superTypeScopes: List<FirTypeScope>,
     declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirUseSiteMemberScope(
-    klass.classId,
+    klass.symbol.toLookupTag(),
     session,
     session.firOverrideChecker,
     superTypeScopes,
@@ -92,6 +91,6 @@ class FirClassUseSiteMemberScope(
     }
 
     override fun toString(): String {
-        return "Use site scope of $classId"
+        return "Use site scope of ${ownerClassLookupTag.classId}"
     }
 }
