@@ -49,16 +49,24 @@ fun main(args: Array<String>) {
                 model("boxIr")
             }
 
-            testClass<AbstractSerializationJdk11IrBoxTest> {
-                model("jdk11BoxIr")
-            }
-
             testClass<AbstractSerializationFirLightTreeBlackBoxTest> {
                 model("boxIr")
                 model("firMembers")
             }
 
+            testClass<AbstractSerializationJdk11IrBoxTest> {
+                model("jdk11BoxIr")
+            }
+
+            testClass<AbstractSerializationJdk11FirLightTreeBoxTest> {
+                model("jdk11BoxIr")
+            }
+
             testClass<AbstractSerializationWithoutRuntimeIrBoxTest> {
+                model("boxWithoutRuntime")
+            }
+
+            testClass<AbstractSerializationWithoutRuntimeFirLightTreeBoxTest> {
                 model("boxWithoutRuntime")
             }
 

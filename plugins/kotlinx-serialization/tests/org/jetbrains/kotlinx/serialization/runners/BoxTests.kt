@@ -42,6 +42,20 @@ open class AbstractSerializationFirLightTreeBlackBoxTest : AbstractFirLightTreeB
     }
 }
 
+open class AbstractSerializationJdk11FirLightTreeBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureForKotlinxSerialization(useJdk11 = true)
+    }
+}
+
+open class AbstractSerializationWithoutRuntimeFirLightTreeBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureForKotlinxSerialization(noLibraries = true)
+    }
+}
+
 open class AbstractSerializationIrJsBoxTest : AbstractJsIrTest(
     pathToTestDir = "plugins/kotlinx-serialization/testData/boxIr/",
     testGroupOutputDirPrefix = "codegen/serializationBoxIr/"
