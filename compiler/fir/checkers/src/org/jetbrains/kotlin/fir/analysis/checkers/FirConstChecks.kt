@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -53,21 +54,11 @@ internal fun checkConstantArguments(
     fun FirExpression.getExpandedType() = resolvedType.fullyExpandedType(session)
 
     when {
-        expressionSymbol is FirEnumEntrySymbol
-                || expressionSymbol?.isConst == true
-                || expressionSymbol is FirConstructorSymbol && classKindOfParent == ClassKind.ANNOTATION_CLASS -> {
+        expressionSymbol is FirConstructorSymbol && classKindOfParent == ClassKind.ANNOTATION_CLASS -> {
             return ConstantArgumentKind.VALID_CONST
-        }
-        classKindOfParent == ClassKind.ENUM_CLASS -> {
-            return ConstantArgumentKind.ENUM_NOT_CONST
         }
         expressionSymbol == null -> {
             return ConstantArgumentKind.VALID_CONST
-        }
-        expressionSymbol is FirFieldSymbol -> {
-            if (!expressionSymbol.isStatic || expressionSymbol.modality != Modality.FINAL || !expressionSymbol.hasConstantInitializer) {
-                return ConstantArgumentKind.NOT_CONST
-            }
         }
         expressionSymbol is FirConstructorSymbol -> {
             if (expression is FirCallableReferenceAccess) return ConstantArgumentKind.VALID_CONST
@@ -214,6 +205,34 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
         return ConstantArgumentKind.NOT_CONST
     }
 
+    override fun visitPropertyAccessExpression(
+        propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?
+    ): ConstantArgumentKind {
+        val propertySymbol = propertyAccessExpression.toReference()?.toResolvedCallableSymbol(discardErrorReference = true)
+
+        when (propertySymbol) {
+            null -> return ConstantArgumentKind.VALID_CONST
+            is FirPropertySymbol -> {
+                val classKindOfParent = (propertySymbol.getReferencedClassSymbol() as? FirRegularClassSymbol)?.classKind
+                if (classKindOfParent == ClassKind.ENUM_CLASS) {
+                    return ConstantArgumentKind.ENUM_NOT_CONST
+                }
+
+                if (propertySymbol.isConst) {
+                    return ConstantArgumentKind.VALID_CONST
+                }
+            }
+            is FirFieldSymbol -> {
+                if (propertySymbol.isStatic && propertySymbol.modality == Modality.FINAL && propertySymbol.hasConstantInitializer) {
+                    return ConstantArgumentKind.VALID_CONST
+                }
+            }
+            is FirEnumEntrySymbol -> return ConstantArgumentKind.VALID_CONST
+        }
+
+        return ConstantArgumentKind.NOT_CONST
+    }
+
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): ConstantArgumentKind {
         val calleeReference = functionCall.calleeReference
         if (calleeReference is FirErrorNamedReference) {
@@ -245,8 +264,7 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
     }
 
     override fun visitQualifiedAccessExpression(
-        qualifiedAccessExpression: FirQualifiedAccessExpression,
-        data: Nothing?
+        qualifiedAccessExpression: FirQualifiedAccessExpression, data: Nothing?
     ): ConstantArgumentKind {
         val expressionType = qualifiedAccessExpression.getExpandedType()
         if (expressionType.isReflectFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(session)) {
