@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -26,7 +24,6 @@ class BirTypeAliasImpl(
     origin: IrDeclarationOrigin,
     name: Name,
     visibility: DescriptorVisibility,
-    descriptor: TypeAliasDescriptor?,
     isActual: Boolean,
     expandedType: BirType,
 ) : BirImplElementBase(), BirTypeAlias {
@@ -105,9 +102,6 @@ class BirTypeAliasImpl(
                 invalidate(5)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: TypeAliasDescriptor? = descriptor
 
     private var _isActual: Boolean = isActual
     override var isActual: Boolean

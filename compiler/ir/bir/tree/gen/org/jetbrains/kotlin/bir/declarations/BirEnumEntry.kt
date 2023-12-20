@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.symbols.BirEnumEntrySymbol
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
  * A leaf IR tree element.
@@ -22,8 +20,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.enumEntry]
  */
 interface BirEnumEntry : BirElement, BirDeclaration, BirDeclarationWithName, BirEnumEntrySymbol {
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor?
     var initializerExpression: BirExpressionBody?
     var correspondingClass: BirClass?
 

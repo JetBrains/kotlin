@@ -131,7 +131,7 @@ class BirDirectInvokeLowering : BirLoweringPhase() {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun BirFunction.inline(target: BirDeclarationParent, arguments: List<BirValueDeclaration> = listOf()): BirReturnableBlock {
         val movedBody = body!!.move(this@inline, this, (explicitParameters zip arguments).toMap())
-        return BirReturnableBlockImpl(this.sourceSpan, this.returnType, null, null, null).apply<BirReturnableBlockImpl> {
+        return BirReturnableBlockImpl(this.sourceSpan, this.returnType, null, null).apply<BirReturnableBlockImpl> {
             this.statements += movedBody.statements
         }
     }

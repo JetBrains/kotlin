@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.bir.declarations.BirValueParameter
 import org.jetbrains.kotlin.bir.expressions.BirBody
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -36,7 +34,6 @@ class BirConstructorImpl(
     extensionReceiverParameter: BirValueParameter?,
     contextReceiverParametersCount: Int,
     body: BirBody?,
-    descriptor: ClassConstructorDescriptor?,
     isPrimary: Boolean,
 ) : BirImplElementBase(), BirConstructor {
     override val owner: BirConstructorImpl
@@ -221,9 +218,6 @@ class BirConstructorImpl(
                 invalidate(6)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassConstructorDescriptor? = descriptor
 
     private var _isPrimary: Boolean = isPrimary
     override var isPrimary: Boolean

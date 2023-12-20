@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.bir.declarations.BirValueParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -26,7 +24,6 @@ class BirValueParameterImpl(
     name: Name,
     type: BirType,
     isAssignable: Boolean,
-    descriptor: ParameterDescriptor?,
     index: Int,
     varargElementType: BirType?,
     isCrossinline: Boolean,
@@ -122,9 +119,6 @@ class BirValueParameterImpl(
                 invalidate(6)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ParameterDescriptor? = descriptor
 
     private var _index: Int = index
     override var index: Int

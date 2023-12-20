@@ -32,7 +32,7 @@ class Bir2IrConverter(
     private val irBuiltIns: IrBuiltIns,
     compiledBir: BirDatabase,
     expectedTreeSize: Int = 0,
-) : Bir2IrConverterBase(remappedIr2BirElements, compiledBir) {
+) : Bir2IrConverterBase(dynamicPropertyManager, remappedIr2BirElements, compiledBir) {
     private val modules = createElementMap<IrModuleFragment, BirModuleFragment>(1)
     private val classes = createElementMap<IrClass, BirClass>((expectedTreeSize * 0.004).toInt())
     private val scripts = createElementMap<IrScript, BirScript>()
@@ -311,7 +311,7 @@ class Bir2IrConverter(
         IrErrorDeclarationImpl(
             startOffset = old.sourceSpan.start,
             endOffset = old.sourceSpan.end,
-            old.descriptor,
+            old[Descriptor],
         )
     }) {
         origin = old.origin

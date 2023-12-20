@@ -11,15 +11,12 @@ package org.jetbrains.kotlin.bir.declarations.impl
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirErrorDeclaration
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 
 class BirErrorDeclarationImpl(
     sourceSpan: SourceSpan,
     signature: IdSignature?,
-    descriptor: DeclarationDescriptor?,
     origin: IrDeclarationOrigin,
 ) : BirErrorDeclaration() {
     override val owner: BirErrorDeclarationImpl
@@ -58,9 +55,6 @@ class BirErrorDeclarationImpl(
                 invalidate(4)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: DeclarationDescriptor? = descriptor
 
     private var _origin: IrDeclarationOrigin = origin
     override var origin: IrDeclarationOrigin

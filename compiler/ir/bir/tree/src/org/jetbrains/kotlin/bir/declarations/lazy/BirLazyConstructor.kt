@@ -25,9 +25,6 @@ class BirLazyConstructor(
     override val owner: BirConstructor
         get() = this
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override val descriptor: ClassConstructorDescriptor
-        get() = originalIrElement.descriptor
     override var isPrimary: Boolean
         get() = originalIrElement.isPrimary
         set(value) = mutationNotSupported()

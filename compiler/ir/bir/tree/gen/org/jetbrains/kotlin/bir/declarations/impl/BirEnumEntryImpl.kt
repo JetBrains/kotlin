@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.bir.declarations.BirEnumEntry
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -24,7 +22,6 @@ class BirEnumEntryImpl(
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
-    descriptor: ClassDescriptor?,
     initializerExpression: BirExpressionBody?,
     correspondingClass: BirClass?,
 ) : BirImplElementBase(), BirEnumEntry {
@@ -90,9 +87,6 @@ class BirEnumEntryImpl(
                 invalidate(5)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor? = descriptor
 
     private var _initializerExpression: BirExpressionBody? = initializerExpression
     override var initializerExpression: BirExpressionBody?

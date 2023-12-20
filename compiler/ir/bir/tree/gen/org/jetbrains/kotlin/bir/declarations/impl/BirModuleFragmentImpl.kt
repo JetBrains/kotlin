@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.name.Name
 
 class BirModuleFragmentImpl(
     sourceSpan: SourceSpan,
-    descriptor: ModuleDescriptor?,
     name: Name,
+    descriptor: ModuleDescriptor,
 ) : BirModuleFragment() {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
@@ -41,10 +41,10 @@ class BirModuleFragmentImpl(
             }
         }
 
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ModuleDescriptor? = descriptor
-
     override val name: Name = name
+
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: ModuleDescriptor = descriptor
 
     override val files: BirImplChildElementList<BirFile> = BirImplChildElementList(this, 1, false)
 
