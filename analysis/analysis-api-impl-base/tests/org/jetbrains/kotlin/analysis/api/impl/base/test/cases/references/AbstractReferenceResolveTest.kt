@@ -78,8 +78,9 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
         val resolvedTo = analyzeReferenceElement(ktReferences.first().element, mainModule) {
             val symbols = ktReferences.flatMap { it.resolveToSymbols() }
             checkReferenceResultForValidity(ktReferences, mainModule, testServices, symbols)
-            renderResolvedTo(symbols, renderingOptions) { getAdditionalSymbolInfo(it) }
-        }
+            val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in mainModule.directives
+                renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
+            }
 
         if (Directives.UNRESOLVED_REFERENCE in mainModule.directives) {
             return
@@ -118,6 +119,10 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     private object Directives : SimpleDirectivesContainer() {
         val UNRESOLVED_REFERENCE by directive(
             "Reference should be unresolved",
+        )
+
+        val RENDER_PSI_CLASS_NAME by directive(
+            "Render also PSI class name for resolved reference"
         )
     }
 

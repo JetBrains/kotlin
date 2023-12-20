@@ -119,6 +119,12 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
     }
 
     @Test
+    @TestMetadata("CollectionStream.kt")
+    public void testCollectionStream() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/CollectionStream.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionObjectWithName1.kt")
     public void testCompanionObjectWithName1() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/CompanionObjectWithName1.kt");

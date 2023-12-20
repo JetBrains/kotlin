@@ -223,6 +223,7 @@ class JvmMappedScope(
             newDispatchReceiverType = kotlinDispatchReceiverType,
             newParameterTypes = oldFunction.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
             newReturnType = substitutor.substituteOrSelf(oldFunction.returnTypeRef.coneType),
+            newSource = symbol.fir.source,
         ).apply {
             if (jdkMemberStatus == JDKMemberStatus.HIDDEN) {
                 isHiddenEverywhereBesideSuperCalls = true
@@ -295,7 +296,8 @@ class JvmMappedScope(
             newTypeParameters = null,
             newContextReceiverTypes = emptyList(),
             isExpect = false,
-            callableCopySubstitutionForTypeUpdater = null
+            callableCopySubstitutionForTypeUpdater = null,
+            newSource = oldConstructor.source,
         )
         return newSymbol
     }

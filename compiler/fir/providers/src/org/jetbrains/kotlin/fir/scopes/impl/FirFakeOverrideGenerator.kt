@@ -120,8 +120,9 @@ object FirFakeOverrideGenerator {
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
         callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null,
+        newSource: KtSourceElement? = null,
     ): FirSimpleFunction = buildSimpleFunction {
-        source = derivedClassLookupTag?.toSymbol(session)?.source ?: baseFunction.source
+        source = newSource ?: derivedClassLookupTag?.toSymbol(session)?.source ?: baseFunction.source
         moduleData = session.nullableModuleData ?: baseFunction.moduleData
         this.origin = origin
         name = baseFunction.name
@@ -153,11 +154,12 @@ object FirFakeOverrideGenerator {
         newTypeParameters: List<FirTypeParameterRef>?,
         isExpect: Boolean,
         callableCopySubstitutionForTypeUpdater: CallableCopySubstitution?,
+        newSource: KtSourceElement? = null,
     ): FirConstructor = buildConstructor {
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         annotations += baseConstructor.annotations
-        source = derivedClassLookupTag?.toSymbol(session)?.source ?: baseConstructor.source
+        source = newSource ?: derivedClassLookupTag?.toSymbol(session)?.source ?: baseConstructor.source
         moduleData = session.nullableModuleData ?: baseConstructor.moduleData
         this.origin = origin
         receiverParameter = baseConstructor.receiverParameter?.let { receiverParameter ->

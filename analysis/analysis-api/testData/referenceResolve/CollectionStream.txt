@@ -1,0 +1,2 @@
+Resolved to:
+0: (in kotlin.collections.Collection) fun stream(): java.util.stream.Stream<E> (psi: ClsMethodImpl)
