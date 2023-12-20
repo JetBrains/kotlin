@@ -2963,6 +2963,25 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Nested
+    @TestMetadata("native/native.tests/testData/codegen/link")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("frontend-fir")
+    @FirPipeline()
+    @UseExtTestCaseGroupProvider()
+    public class Link {
+        @Test
+        public void testAllFilesPresentInLink() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/link"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("noPurgeForDependencies.kt")
+        public void testNoPurgeForDependencies() throws Exception {
+            runTest("native/native.tests/testData/codegen/link/noPurgeForDependencies.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("native/native.tests/testData/codegen/localClass")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("frontend-fir")
