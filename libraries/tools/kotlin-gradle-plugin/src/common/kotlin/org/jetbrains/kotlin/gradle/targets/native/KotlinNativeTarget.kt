@@ -80,7 +80,7 @@ abstract class KotlinNativeTarget @Inject constructor(
                         }
 
                         metadataCompilations.forEach { compilation ->
-                            metadataJar.from(project.filesWithUnpackedArchives(compilation.output.allOutputs, setOf("klib"))) { spec ->
+                            metadataJar.from(compilation.output.allOutputs) { spec ->
                                 spec.into(compilation.name)
                             }
                             metadataJar.dependsOn(compilation.output.classesDirs)

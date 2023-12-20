@@ -320,8 +320,7 @@ class KotlinMetadataTargetConfigurator :
             configureMetadataDependenciesForCompilation(this@apply)
 
             if (!isHostSpecific) {
-                val metadataContent = project.filesWithUnpackedArchives(this@apply.output.allOutputs, setOf("klib"))
-                allMetadataJar.configure { it.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) } }
+                allMetadataJar.configure { it.from(this@apply.output.allOutputs) { spec -> spec.into(this@apply.defaultSourceSet.name) } }
                 if (this is KotlinSharedNativeCompilation) {
                     project.includeCommonizedCInteropMetadata(allMetadataJar, this)
                 }
@@ -476,16 +475,6 @@ internal suspend fun getPublishedPlatformCompilations(project: Project): Map<Kot
 
     return result
 }
-
-internal fun Project.filesWithUnpackedArchives(from: FileCollection, extensions: Set<String>): FileCollection =
-    project.files(project.provider {
-        from.mapNotNull {
-            @Suppress("IMPLICIT_CAST_TO_ANY")
-            if (it.extension in extensions) {
-                if (it.exists()) project.zipTree(it) else null
-            } else it
-        }
-    }).builtBy(from)
 
 private val KotlinMetadataTarget.metadataCompilationsCreated: CompletableFuture<Unit> by extrasLazyProperty("metadataCompilationsCreated") {
     CompletableFuture()

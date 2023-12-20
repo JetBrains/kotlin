@@ -18,14 +18,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
-import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KpmFragment
 import java.util.concurrent.Callable
 
@@ -162,7 +160,7 @@ private fun configureMetadataJarTask(
                 val compilationData = registry.getForFragmentOrNull(fragment)
                     .takeIf { !fragment.isNativeHostSpecific() }
                     ?: return@filesProvider emptyList<Any>()
-                project.filesWithUnpackedArchives(compilationData.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
+                compilationData.output.allOutputs
             }
             jar.from(metadataOutput) { spec ->
                 spec.into(fragment.fragmentName)

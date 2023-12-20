@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.artifacts.Dependency
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
-import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 
 /**
  * Will register a 'hostSpecificMetadataJar' [Jar] task containing compilation outputs of host specific metadata.
@@ -29,7 +27,7 @@ val GradleKpmHostSpecificMetadataArtifact = GradleKpmConfigurationArtifactsSetup
                 if (metadataCompilation is GradleKpmNativeFragmentMetadataCompilationData) {
                     jar.from(project.files(project.provider {
                         if (metadataFragment in fragment.withRefinesClosure && metadataFragment.isNativeHostSpecific())
-                            project.filesWithUnpackedArchives(metadataCompilation.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
+                            metadataCompilation.output.allOutputs
                         else emptyList<Any>()
                     })) { spec -> spec.into(metadataFragment.name) }
                 }

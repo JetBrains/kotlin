@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
@@ -45,8 +46,6 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.gradle.utils.XcodeUtils
-import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.valueSourceWithExecProviderCompat
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -366,6 +365,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         ): TaskProvider<KotlinNativeCompile> {
             val project = compilationInfo.project
             val ext = project.topLevelExtension
+            val isMetadataCompilation = checkCompilationIsMetadataCompilation(compilationInfo)
             val compileTaskProvider = project.registerTask<KotlinNativeCompile>(
                 compilationInfo.compileKotlinTaskName,
                 listOf(
@@ -399,6 +399,8 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                     )
                     .finalizeValueOnRead()
 
+                // for metadata tasks we should provide unpacked klib
+                it.produceUnpackedKlib.set(isMetadataCompilation)
             }
 
             compilationInfo.classesDirs.from(compileTaskProvider.map { it.outputFile })
@@ -427,6 +429,13 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             }
 
             return compileTaskProvider
+        }
+
+        private fun checkCompilationIsMetadataCompilation(compilationInfo: KotlinCompilationInfo): Boolean {
+            return when (compilationInfo) {
+                is KPM -> compilationInfo.compilationData is GradleKpmMetadataCompilationData<*>
+                is KotlinCompilationInfo.TCS -> compilationInfo.compilation is KotlinMetadataCompilation<*>
+            }
         }
 
         private fun Project.klibOutputDirectory(

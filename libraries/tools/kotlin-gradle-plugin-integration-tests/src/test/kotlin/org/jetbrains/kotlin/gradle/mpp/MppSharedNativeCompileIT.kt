@@ -26,8 +26,8 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
     fun `test - shared native klib - does not contain 'depends=' manifest property`(gradleVersion: GradleVersion) {
         project("kt-54995-compileSharedNative-with-okio", gradleVersion) {
             build("compileNativeMainKotlinMetadata") {
-                val nativeMainKlib = projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain.klib")
-                assertFileExists(nativeMainKlib)
+                val nativeMainKlib = projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain")
+                assertDirectoryExists(nativeMainKlib)
 
                 val libraryFile = org.jetbrains.kotlin.library.resolveSingleFileKlib(
                     org.jetbrains.kotlin.konan.file.File(nativeMainKlib),

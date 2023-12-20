@@ -28,7 +28,7 @@ class DependsOnClosureCompilePathTest {
         project.evaluate()
 
         assertEquals(
-            listOf("test_appleMain.klib", "test_nativeMain.klib", "test_commonMain.klib"),
+            listOf("test_appleMain", "test_nativeMain", "test_commonMain"),
             kotlin.sourceSets.iosMain.get().dependsOnClosureCompilePath.toList().map { it.name }
         )
     }
@@ -78,7 +78,7 @@ class DependsOnClosureCompilePathTest {
         project.evaluate()
 
         assertEquals(
-            listOf("test_c.klib", "test_a.klib", "test_b.klib", "test_commonMain.klib"),
+            listOf("test_c", "test_a", "test_b", "test_commonMain"),
             kotlin.sourceSets.linuxMain.get().dependsOnClosureCompilePath.toList().map { it.name }
         )
     }
@@ -130,7 +130,7 @@ class DependsOnClosureCompilePathTest {
         If the order changed, please investigate the root cause; Do not update the assertion!
          */
         assertEquals(
-            listOf("test_bottom.klib", "test_left.klib", "test_right.klib", "test_commonMain.klib"),
+            listOf("test_bottom", "test_left", "test_right", "test_commonMain"),
             kotlin.sourceSets.linuxMain.get().dependsOnClosureCompilePath.toList().map { it.name }
         )
     }

@@ -380,7 +380,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
         ) {
             build("assemble") {
                 assertFileExists(projectPath.resolve("build/libs/test-project-jvm.jar"))
-                assertFileExists(projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain.klib"))
+                assertDirectoryExists(projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain"))
             }
         }
     }
