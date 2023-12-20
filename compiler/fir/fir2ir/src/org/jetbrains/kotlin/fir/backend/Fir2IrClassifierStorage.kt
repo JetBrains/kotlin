@@ -53,6 +53,22 @@ class Fir2IrClassifierStorage(
 
     private val localClassesCreatedOnTheFly: MutableMap<FirClass, IrClass> = mutableMapOf()
 
+    /**
+     * This function is quite messy and doesn't have a good contract of what exactly is traversed.
+     * The basic idea is to traverse the symbols which can be reasonably referenced from other modules.
+     *
+     * Be careful when using it, and avoid it, except really needed.
+     */
+    @DelicateDeclarationStorageApi
+    fun forEachCachedDeclarationSymbol(block: (IrSymbol) -> Unit) {
+        classCache.values.forEach { block(it.symbol) }
+        typeAliasCache.values.forEach { block(it.symbol) }
+        enumEntryCache.values.forEach { block(it.symbol) }
+        fieldsForContextReceivers.values.forEach { fields ->
+            fields.forEach { block(it.symbol) }
+        }
+    }
+
     private var processMembersOfClassesOnTheFlyImmediately = false
 
     private fun FirTypeRef.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType =
