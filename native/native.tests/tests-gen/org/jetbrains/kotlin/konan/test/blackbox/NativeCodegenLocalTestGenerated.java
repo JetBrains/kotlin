@@ -655,6 +655,18 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("multipleModules1.kt")
+        public void testMultipleModules1() throws Exception {
+            runTest("native/native.tests/testData/codegen/bridges/multipleModules1.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleModules2.kt")
+        public void testMultipleModules2() throws Exception {
+            runTest("native/native.tests/testData/codegen/bridges/multipleModules2.kt");
+        }
+
+        @Test
         @TestMetadata("nativePointed.kt")
         public void testNativePointed() throws Exception {
             runTest("native/native.tests/testData/codegen/bridges/nativePointed.kt");
@@ -813,6 +825,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         @TestMetadata("method.kt")
         public void testMethod() throws Exception {
             runTest("native/native.tests/testData/codegen/classDelegation/method.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleModules.kt")
+        public void testMultipleModules() throws Exception {
+            runTest("native/native.tests/testData/codegen/classDelegation/multipleModules.kt");
         }
 
         @Test
@@ -1290,6 +1308,18 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("correctFieldsOrder.kt")
+        public void testCorrectFieldsOrder() throws Exception {
+            runTest("native/native.tests/testData/codegen/delegatedProperty/correctFieldsOrder.kt");
+        }
+
+        @Test
+        @TestMetadata("delegatedOverride.kt")
+        public void testDelegatedOverride() throws Exception {
+            runTest("native/native.tests/testData/codegen/delegatedProperty/delegatedOverride.kt");
+        }
+
+        @Test
         @TestMetadata("lazy.kt")
         public void testLazy() throws Exception {
             runTest("native/native.tests/testData/codegen/delegatedProperty/lazy.kt");
@@ -1420,9 +1450,21 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("multipleModules.kt")
+        public void testMultipleModules() throws Exception {
+            runTest("native/native.tests/testData/codegen/enum/multipleModules.kt");
+        }
+
+        @Test
         @TestMetadata("nested.kt")
         public void testNested() throws Exception {
             runTest("native/native.tests/testData/codegen/enum/nested.kt");
+        }
+
+        @Test
+        @TestMetadata("openMethodNoOverrides.kt")
+        public void testOpenMethodNoOverrides() throws Exception {
+            runTest("native/native.tests/testData/codegen/enum/openMethodNoOverrides.kt");
         }
 
         @Test
@@ -1908,6 +1950,18 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("multipleModules1.kt")
+        public void testMultipleModules1() throws Exception {
+            runTest("native/native.tests/testData/codegen/initializers/multipleModules1.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleModules2.kt")
+        public void testMultipleModules2() throws Exception {
+            runTest("native/native.tests/testData/codegen/initializers/multipleModules2.kt");
+        }
+
+        @Test
         @TestMetadata("object.kt")
         public void testObject() throws Exception {
             runTest("native/native.tests/testData/codegen/initializers/object.kt");
@@ -1923,6 +1977,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         @TestMetadata("return2.kt")
         public void testReturn2() throws Exception {
             runTest("native/native.tests/testData/codegen/initializers/return2.kt");
+        }
+
+        @Test
+        @TestMetadata("sharedVarInInitBlock.kt")
+        public void testSharedVarInInitBlock() throws Exception {
+            runTest("native/native.tests/testData/codegen/initializers/sharedVarInInitBlock.kt");
         }
 
         @Test
@@ -2180,6 +2240,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("defaultArgsMultipleModules.kt")
+        public void testDefaultArgsMultipleModules() throws Exception {
+            runTest("native/native.tests/testData/codegen/inline/defaultArgsMultipleModules.kt");
+        }
+
+        @Test
         @TestMetadata("genericFunctionReference.kt")
         public void testGenericFunctionReference() throws Exception {
             runTest("native/native.tests/testData/codegen/inline/genericFunctionReference.kt");
@@ -2354,6 +2420,18 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("inlineCtor.kt")
+        public void testInlineCtor() throws Exception {
+            runTest("native/native.tests/testData/codegen/inline/inlineCtor.kt");
+        }
+
+        @Test
+        @TestMetadata("innerInlineFunCapturesOuter.kt")
+        public void testInnerInlineFunCapturesOuter() throws Exception {
+            runTest("native/native.tests/testData/codegen/inline/innerInlineFunCapturesOuter.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaAsAny.kt")
         public void testLambdaAsAny() throws Exception {
             runTest("native/native.tests/testData/codegen/inline/lambdaAsAny.kt");
@@ -2363,6 +2441,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         @TestMetadata("lambdaInDefaultValue.kt")
         public void testLambdaInDefaultValue() throws Exception {
             runTest("native/native.tests/testData/codegen/inline/lambdaInDefaultValue.kt");
+        }
+
+        @Test
+        @TestMetadata("lateinitProperty.kt")
+        public void testLateinitProperty() throws Exception {
+            runTest("native/native.tests/testData/codegen/inline/lateinitProperty.kt");
         }
 
         @Test
@@ -2405,6 +2489,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         @TestMetadata("returnLocalClassFromBlock.kt")
         public void testReturnLocalClassFromBlock() throws Exception {
             runTest("native/native.tests/testData/codegen/inline/returnLocalClassFromBlock.kt");
+        }
+
+        @Test
+        @TestMetadata("sharedVar.kt")
+        public void testSharedVar() throws Exception {
+            runTest("native/native.tests/testData/codegen/inline/sharedVar.kt");
         }
 
         @Test
@@ -2499,6 +2589,30 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         @TestMetadata("getOuterVal.kt")
         public void testGetOuterVal() throws Exception {
             runTest("native/native.tests/testData/codegen/innerClass/getOuterVal.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceMultipleModules1.kt")
+        public void testInheritanceMultipleModules1() throws Exception {
+            runTest("native/native.tests/testData/codegen/innerClass/inheritanceMultipleModules1.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceMultipleModules2.kt")
+        public void testInheritanceMultipleModules2() throws Exception {
+            runTest("native/native.tests/testData/codegen/innerClass/inheritanceMultipleModules2.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceMultipleModules3.kt")
+        public void testInheritanceMultipleModules3() throws Exception {
+            runTest("native/native.tests/testData/codegen/innerClass/inheritanceMultipleModules3.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleModules.kt")
+        public void testMultipleModules() throws Exception {
+            runTest("native/native.tests/testData/codegen/innerClass/multipleModules.kt");
         }
 
         @Test
@@ -2893,6 +3007,47 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Nested
+    @TestMetadata("native/native.tests/testData/codegen/link")
+    @TestDataPath("$PROJECT_ROOT")
+    @UseExtTestCaseGroupProvider()
+    public class Link {
+        @Test
+        public void testAllFilesPresentInLink() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/link"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("klibName.kt")
+        public void testKlibName() throws Exception {
+            runTest("native/native.tests/testData/codegen/link/klibName.kt");
+        }
+
+        @Test
+        @TestMetadata("link.kt")
+        public void testLink() throws Exception {
+            runTest("native/native.tests/testData/codegen/link/link.kt");
+        }
+
+        @Test
+        @TestMetadata("omitUnused.kt")
+        public void testOmitUnused() throws Exception {
+            runTest("native/native.tests/testData/codegen/link/omitUnused.kt");
+        }
+
+        @Test
+        @TestMetadata("privateFakeOverridesInherit.kt")
+        public void testPrivateFakeOverridesInherit() throws Exception {
+            runTest("native/native.tests/testData/codegen/link/privateFakeOverridesInherit.kt");
+        }
+
+        @Test
+        @TestMetadata("privateFakeOverridesOverride.kt")
+        public void testPrivateFakeOverridesOverride() throws Exception {
+            runTest("native/native.tests/testData/codegen/link/privateFakeOverridesOverride.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("native/native.tests/testData/codegen/localClass")
     @TestDataPath("$PROJECT_ROOT")
     @UseExtTestCaseGroupProvider()
@@ -2977,6 +3132,52 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         @TestMetadata("arraysFieldWrite.kt")
         public void testArraysFieldWrite() throws Exception {
             runTest("native/native.tests/testData/codegen/localEscapeAnalysis/arraysFieldWrite.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/codegen/lower")
+    @TestDataPath("$PROJECT_ROOT")
+    @UseExtTestCaseGroupProvider()
+    public class Lower {
+        @Test
+        public void testAllFilesPresentInLower() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/lower"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("localDelegatedProperty.kt")
+        public void testLocalDelegatedProperty() throws Exception {
+            runTest("native/native.tests/testData/codegen/lower/localDelegatedProperty.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/codegen/mangling")
+    @TestDataPath("$PROJECT_ROOT")
+    @UseExtTestCaseGroupProvider()
+    public class Mangling {
+        @Test
+        public void testAllFilesPresentInMangling() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/mangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("direct.kt")
+        public void testDirect() throws Exception {
+            runTest("native/native.tests/testData/codegen/mangling/direct.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleConstructors.kt")
+        public void testMultipleConstructors() throws Exception {
+            runTest("native/native.tests/testData/codegen/mangling/multipleConstructors.kt");
+        }
+
+        @Test
+        @TestMetadata("param.kt")
+        public void testParam() throws Exception {
+            runTest("native/native.tests/testData/codegen/mangling/param.kt");
         }
     }
 
@@ -3144,6 +3345,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("multipleModules.kt")
+        public void testMultipleModules() throws Exception {
+            runTest("native/native.tests/testData/codegen/propertyCallableReference/multipleModules.kt");
+        }
+
+        @Test
         @TestMetadata("valClass.kt")
         public void testValClass() throws Exception {
             runTest("native/native.tests/testData/codegen/propertyCallableReference/valClass.kt");
@@ -3177,6 +3384,59 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         @TestMetadata("varModule.kt")
         public void testVarModule() throws Exception {
             runTest("native/native.tests/testData/codegen/propertyCallableReference/varModule.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/codegen/serialization")
+    @TestDataPath("$PROJECT_ROOT")
+    @UseExtTestCaseGroupProvider()
+    public class Serialization {
+        @Test
+        public void testAllFilesPresentInSerialization() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/serialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("deserializedMembers.kt")
+        public void testDeserializedMembers() throws Exception {
+            runTest("native/native.tests/testData/codegen/serialization/deserializedMembers.kt");
+        }
+
+        @Test
+        @TestMetadata("serializedCatch.kt")
+        public void testSerializedCatch() throws Exception {
+            runTest("native/native.tests/testData/codegen/serialization/serializedCatch.kt");
+        }
+
+        @Test
+        @TestMetadata("serializedCharConstant.kt")
+        public void testSerializedCharConstant() throws Exception {
+            runTest("native/native.tests/testData/codegen/serialization/serializedCharConstant.kt");
+        }
+
+        @Test
+        @TestMetadata("serializedDefaultArgs.kt")
+        public void testSerializedDefaultArgs() throws Exception {
+            runTest("native/native.tests/testData/codegen/serialization/serializedDefaultArgs.kt");
+        }
+
+        @Test
+        @TestMetadata("serializedDoWhile.kt")
+        public void testSerializedDoWhile() throws Exception {
+            runTest("native/native.tests/testData/codegen/serialization/serializedDoWhile.kt");
+        }
+
+        @Test
+        @TestMetadata("serializedEnumOrdinal.kt")
+        public void testSerializedEnumOrdinal() throws Exception {
+            runTest("native/native.tests/testData/codegen/serialization/serializedEnumOrdinal.kt");
+        }
+
+        @Test
+        @TestMetadata("serializedVararg.kt")
+        public void testSerializedVararg() throws Exception {
+            runTest("native/native.tests/testData/codegen/serialization/serializedVararg.kt");
         }
     }
 

@@ -298,11 +298,6 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
     }
 }
 
-linkTest("localDelegatedPropertyLink") {
-    source = "lower/local_delegated_property_link/main.kt"
-    lib = "lower/local_delegated_property_link/lib.kt"
-}
-
 // This test checks object layout can't be done in
 // KonanLocalTest paradigm
 //tasks.register("constructor", UnitKonanTest) {
@@ -554,103 +549,9 @@ standaloneTest("leakMemoryWithWorkerTermination") {
     source = "runtime/workers/leak_memory_with_worker_termination.kt"
 }
 
-linkTest("enum_linkTest") {
-    useGoldenData = true
-    source = "codegen/enum/linkTest_main.kt"
-    lib = "codegen/enum/linkTest_lib.kt"
-}
-
-linkTest("enum_openMethodNoOverrides") {
-    useGoldenData = true
-    source = "codegen/enum/openMethodNoOverrides_main.kt"
-    lib = "codegen/enum/openMethodNoOverrides_lib.kt"
-}
-
-linkTest("mangling") {
-    useGoldenData = true
-    source = "mangling/mangling.kt"
-    lib = "mangling/manglinglib.kt"
-}
-
-linkTest("innerClass_linkTest") {
-    source = "codegen/innerClass/linkTest_main.kt"
-    lib = "codegen/innerClass/linkTest_lib.kt"
-}
-
-linkTest("innerClass_inheritance_linkTest") {
-    useGoldenData = true
-    source = "codegen/innerClass/inheritance_linkTest_main.kt"
-    lib = "codegen/innerClass/inheritance_linkTest_lib.kt"
-}
-
-linkTest("innerClass_inheritance2_linkTest") {
-    useGoldenData = true
-    source = "codegen/innerClass/inheritance2_linkTest_main.kt"
-    lib = "codegen/innerClass/inheritance2_linkTest_lib.kt"
-}
-
-linkTest("innerClass_inheritance3_linkTest") {
-    useGoldenData = true
-    source = "codegen/innerClass/inheritance3_linkTest_main.kt"
-    lib = "codegen/innerClass/inheritance3_linkTest_lib.kt"
-}
-
 standaloneTest("initializers_testInfrastructure") {
     source = "codegen/initializers/testInfrastructure.kt"
     flags = ["-tr"]
-}
-
-linkTest("initializers_linkTest1") {
-    useGoldenData = true
-    source = "codegen/initializers/linkTest1_main.kt"
-    lib = "codegen/initializers/linkTest1_lib.kt"
-}
-
-linkTest("initializers_linkTest2") {
-    useGoldenData = true
-    source = "codegen/initializers/linkTest2_main.kt"
-    lib = "codegen/initializers/linkTest2_lib.kt"
-}
-
-linkTest("initializers_sharedVarInInitBlock") {
-    source = "codegen/initializers/sharedVarInInitBlock_main.kt"
-    lib = "codegen/initializers/sharedVarInInitBlock_lib.kt"
-}
-
-linkTest("bridges_linkTest") {
-    useGoldenData = true
-    source = "codegen/bridges/linkTest_main.kt"
-    lib = "codegen/bridges/linkTest_lib.kt"
-}
-
-linkTest("bridges_linkTest2") {
-    useGoldenData = true
-    source = "codegen/bridges/linkTest2_main.kt"
-    lib = "codegen/bridges/linkTest2_lib.kt"
-}
-
-linkTest("classDelegation_linkTest") {
-    useGoldenData = true
-    source = "codegen/classDelegation/linkTest_main.kt"
-    lib = "codegen/classDelegation/linkTest_lib.kt"
-}
-
-linkTest("delegatedProperty_delegatedOverride") {
-    useGoldenData = true
-    source = "codegen/delegatedProperty/delegatedOverride_main.kt"
-    lib = "codegen/delegatedProperty/delegatedOverride_lib.kt"
-}
-
-linkTest("delegatedProperty_correctFieldsOrder") {
-    useGoldenData = true
-    source = "codegen/delegatedProperty/correctFieldsOrder_main.kt"
-    lib = "codegen/delegatedProperty/correctFieldsOrder_lib.kt"
-}
-
-linkTest("propertyCallableReference_linkTest") {
-    useGoldenData = true
-    source = "codegen/propertyCallableReference/linkTest_main.kt"
-    lib = "codegen/propertyCallableReference/linkTest_lib.kt"
 }
 
 tasks.register("sanity_assertions_enabled_for_local_tests", KonanLocalTest) {
@@ -694,21 +595,6 @@ tasks.register("empty_string", KonanLocalTest) {
     source = "datagen/literals/empty_string.kt"
 }
 
-//    Disabled until we extract the classes that should be
-//    always present from stdlib into a separate binary.
-//
-//linkTest("link") {
-//    useGoldenData = true
-//    source = "link/src/bar.kt"
-//    lib = "link/lib"
-//}(
-
-linkTest("link_omit_unused") {
-    useGoldenData = true
-    source = "link/omit/main.kt"
-    lib = "link/omit/library.kt"
-}
-
 standaloneTest("link_default_libs") {
     useGoldenData = true
     source = "link/default/default.kt"
@@ -720,12 +606,6 @@ linkTest("no_purge_for_dependencies") {
     source = "link/purge1/prog.kt"
     lib = "link/purge1/lib.kt"
     UtilsKt.dependsOnPlatformLibs(it)
-}
-
-linkTest("lib@name") {
-    useGoldenData = true
-    source = "link/klib_name/prog.kt"
-    lib = "link/klib_name/lib.kt"
 }
 
 tasks.register("throw0", KonanLocalTest) {
@@ -1051,50 +931,8 @@ KotlinNativeTestKt.createTest(project, "kt39548", KonanStandaloneTest) { task ->
     }
 }
 
-linkTest("deserialized_members") {
-    source = "serialization/deserialized_members/main.kt"
-    lib = "serialization/deserialized_members/library.kt"
-    useGoldenData = true
-}
-
-linkTest("serialized_catch") {
-    source = "serialization/serialized_catch/main.kt"
-    lib = "serialization/serialized_catch/library.kt"
-    useGoldenData = true
-}
-
-linkTest("serialized_doWhile") {
-    source = "serialization/serialized_doWhile/main.kt"
-    lib = "serialization/serialized_doWhile/library.kt"
-    useGoldenData = true
-}
-
-linkTest("serialized_vararg") {
-    source = "serialization/serialized_vararg/main.kt"
-    lib = "serialization/serialized_vararg/library.kt"
-    useGoldenData = true
-}
-
-linkTest("serialized_default_args") {
-    source = "serialization/serialized_default_args/main.kt"
-    lib = "serialization/serialized_default_args/library.kt"
-    useGoldenData = true
-}
-
 standaloneTest("serialized_no_typemap") {
     source = "serialization/regression/no_type_map.kt"
-    useGoldenData = true
-}
-
-linkTest("serialized_enum_ordinal") {
-    source = "serialization/enum_ordinal/main.kt"
-    lib = "serialization/enum_ordinal/library.kt"
-    useGoldenData = true
-}
-
-linkTest("serialized_char_constant") {
-    source = "serialization/serialized_char_constant/main.kt"
-    lib = "serialization/serialized_char_constant/library.kt"
     useGoldenData = true
 }
 
@@ -1299,36 +1137,6 @@ tasks.register("driver_opt", KonanDriverTest) {
     useGoldenData = true
     source = "runtime/basic/driver_opt.kt"
     flags = ["-opt"]
-}
-
-// Enable when deserialization for default arguments is fixed.
-linkTest("inline_defaultArgs_linkTest") {
-    useGoldenData = true
-    source = "codegen/inline/defaultArgs_linkTest_main.kt"
-    lib = "codegen/inline/defaultArgs_linkTest_lib.kt"
-}
-
-linkTest("inline_sharedVar_linkTest") {
-    useGoldenData = true
-    source = "codegen/inline/sharedVar_linkTest_main.kt"
-    lib = "codegen/inline/sharedVar_linkTest_lib.kt"
-}
-
-linkTest("inline_lateinitProperty_linkTest") {
-    useGoldenData = true
-    source = "codegen/inline/lateinitProperty_linkTest_main.kt"
-    lib = "codegen/inline/lateinitProperty_linkTest_lib.kt"
-}
-
-linkTest("inline_inlineCtor_linkTest") {
-    source = "codegen/inline/inlineCtor_linkTest_main.kt"
-    lib = "codegen/inline/inlineCtor_linkTest_lib.kt"
-}
-
-linkTest("inline_innerInlineFunCapturesOuter_linkTest") {
-    useGoldenData = true
-    source = "codegen/inline/innerInlineFunCapturesOuter_linkTest_main.kt"
-    lib = "codegen/inline/innerInlineFunCapturesOuter_linkTest_lib.kt"
 }
 
 def generateWithSpaceDefFile() {
@@ -2700,18 +2508,6 @@ standaloneTest("split_compilation_pipeline") {
                 "-Xwrite-dependencies-to=${dir}/split_compilation_pipeline.deps")
     }
     flags = ["-Xread-dependencies-from=${dir}/split_compilation_pipeline.deps", "-Xcompile-from-bitcode=${dir}/tmp/split/out.bc"]
-    useGoldenData = true
-}
-
-linkTest("private_fake_overrides_0") {
-    source = "link/private_fake_overrides/inherit_main.kt"
-    lib = "link/private_fake_overrides/inherit_lib.kt"
-    useGoldenData = true
-}
-
-linkTest("private_fake_overrides_1") {
-    source = "link/private_fake_overrides/override_main.kt"
-    lib = "link/private_fake_overrides/override_lib.kt"
     useGoldenData = true
 }
 
