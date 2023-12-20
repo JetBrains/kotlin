@@ -260,6 +260,12 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
         return ConstantArgumentKind.NOT_CONST
     }
 
+    override fun visitIntegerLiteralOperatorCall(
+        integerLiteralOperatorCall: FirIntegerLiteralOperatorCall, data: Nothing?
+    ): ConstantArgumentKind {
+        return visitFunctionCall(integerLiteralOperatorCall, data)
+    }
+
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): ConstantArgumentKind {
         val calleeReference = functionCall.calleeReference
         if (calleeReference is FirErrorNamedReference || calleeReference is FirResolvedErrorReference) {
