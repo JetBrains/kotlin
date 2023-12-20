@@ -40861,12 +40861,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
-            @TestMetadata("suspendCovarianJavaOverride.kt")
-            public void testSuspendCovarianJavaOverride() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCovarianJavaOverride.kt");
-            }
-
-            @Test
             @TestMetadata("suspendDestructuring.kt")
             public void testSuspendDestructuring() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendDestructuring.kt");
