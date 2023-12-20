@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
@@ -75,7 +77,7 @@ abstract class AbstractFirUseSiteMemberScope(
             if (!symbol.isVisibleInCurrentClass()) return@processFunctionsByName
             val directOverridden = computeDirectOverriddenForDeclaredFunction(symbol)
             directOverriddenFunctions[symbol] = directOverridden
-            destination += symbol
+            destination += (symbol.takeIf { it.isJavaOrEnhancement }?.createSuspendView()?.symbol ?: symbol)
         }
     }
 
@@ -215,5 +217,9 @@ abstract class AbstractFirUseSiteMemberScope(
 
     override fun getClassifierNames(): Set<Name> {
         return classifierNamesCached
+    }
+
+    protected open fun FirNamedFunctionSymbol.createSuspendView(): FirSimpleFunction? {
+        return null
     }
 }

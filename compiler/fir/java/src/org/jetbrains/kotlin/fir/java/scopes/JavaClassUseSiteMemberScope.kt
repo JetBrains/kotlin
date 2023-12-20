@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethodCopy
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameterCopy
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
-import org.jetbrains.kotlin.fir.java.syntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.java.syntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -273,8 +273,7 @@ class JavaClassUseSiteMemberScope(
         if (hasCorrespondingProperty) return false
 
         return !doesOverrideRenamedBuiltins() &&
-                !shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters() &&
-                !doesOverrideSuspendFunction()
+                !shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters()
     }
 
     private fun FirNamedFunctionSymbol.doesOverrideRenamedBuiltins(): Boolean {
@@ -334,14 +333,7 @@ class JavaClassUseSiteMemberScope(
         }
     }
 
-    private fun FirNamedFunctionSymbol.doesOverrideSuspendFunction(): Boolean {
-        val suspendView = createSuspendView() ?: return false
-        return superTypeScopes.any { scope ->
-            scope.getFunctions(name).any { it.isSuspend && overrideChecker.isOverriddenFunction(suspendView, it.fir) }
-        }
-    }
-
-    private fun FirNamedFunctionSymbol.createSuspendView(): FirSimpleFunction? {
+    override fun FirNamedFunctionSymbol.createSuspendView(): FirSimpleFunction? {
         val continuationParameter = fir.valueParameters.lastOrNull() ?: return null
         val owner = ownerClassLookupTag.toSymbol(session)?.fir as? FirJavaClass ?: return null
         val continuationParameterType = continuationParameter
