@@ -764,7 +764,11 @@ publishing {
 
             if (publishBundlesFromLocation) {
                 def bundleArchives = bundlesLocationFiles
-                        .findAll { it.name.startsWith("kotlin-native") && !it.name.contains("prebuilt") && !it.name.endsWith("spdx.json") }
+                        .findAll {
+                            it.name.startsWith("kotlin-native")
+                                    && !it.name.contains("prebuilt")
+                                    && (it.name.endsWith("zip") || it.name.endsWith("tar.gz"))
+                        }
                 def bundleConfigs = createConfigurations(bundleArchives)
                 bundleConfigs.forEach { target, file ->
                     def archiveExtension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
@@ -798,7 +802,10 @@ publishing {
 
             if (publishBundlesFromLocation) {
                 def prebuiltBundleArchives = bundlesLocationFiles
-                        .findAll { it.name.startsWith("kotlin-native-prebuilt") && !it.name.endsWith("spdx.json") }
+                        .findAll {
+                            it.name.startsWith("kotlin-native-prebuilt")
+                                    && (it.name.endsWith("zip") || it.name.endsWith("tar.gz"))
+                        }
                 def bundlePrebuiltConfigs = createConfigurations(prebuiltBundleArchives)
                 bundlePrebuiltConfigs.forEach { target, file ->
                     def archiveExtension = (target.family == Family.MINGW) ? 'zip' : 'tar.gz'
