@@ -567,6 +567,7 @@ class NewConstraintSystemImpl(
         variable: TypeVariableMarker,
         resultType: KotlinTypeMarker,
         position: FixVariableConstraintPosition<*>,
+        resultTypeForOnlyInputTypes: KotlinTypeMarker,
     ) = with(utilContext) {
         checkState(State.BUILDING, State.COMPLETION)
 
@@ -593,7 +594,7 @@ class NewConstraintSystemImpl(
         // Substitute freshly fixed type variable into missed constraints
         substituteMissedConstraints()
 
-        postponeOnlyInputTypesCheck(variableWithConstraints, resultType)
+        postponeOnlyInputTypesCheck(variableWithConstraints, resultTypeForOnlyInputTypes)
 
         doPostponedComputationsIfAllVariablesAreFixed()
     }

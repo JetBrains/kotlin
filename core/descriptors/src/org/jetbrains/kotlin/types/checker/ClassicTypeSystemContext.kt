@@ -533,6 +533,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun CapturedTypeMarker.isOldCapturedType(): Boolean = this is CapturedType
 
+    override fun CapturedTypeMarker.hasRawSuperType(): Boolean {
+        error("Is not expected to be called in K1")
+    }
+
     override fun KotlinTypeMarker.isNullableType(): Boolean {
         require(this is KotlinType, this::errorMessage)
         return TypeUtils.isNullableType(this)

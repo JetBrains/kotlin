@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.finalApproximationOrSelf
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
@@ -383,7 +384,10 @@ private val FirExpression.mostOriginalTypeIfSmartCast: ConeKotlinType
 
 private fun FirExpression.toArgumentInfo(context: CheckerContext) =
     ArgumentInfo(
-        this, resolvedType, mostOriginalTypeIfSmartCast.fullyExpandedType(context.session), context.session,
+        this,
+        userType = resolvedType.finalApproximationOrSelf(context),
+        originalType = mostOriginalTypeIfSmartCast.fullyExpandedType(context.session).finalApproximationOrSelf(context),
+        context.session,
     )
 
 /**

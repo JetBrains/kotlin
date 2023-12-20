@@ -20,11 +20,11 @@ fun getTag7(): Tag7<*> = Tag7<Int> { }
 fun getTag8(): Tag8<*> = Tag8<Int> { 1 }
 
 fun main() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag2().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag3().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag4().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Any?>")!>getTag5().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Action<CapturedType(*)>")!>getTag().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Action<in CapturedType(*)>")!>getTag2().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Action<CapturedType(*)>")!>getTag3().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Action<in CapturedType(*)>")!>getTag4().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Action2<CapturedType(*)>")!>getTag5().action<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Action<in kotlin.Any?>")!>getTag6().action<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Action<kotlin.Any?>")!>getTag7().action<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Action2<kotlin.Any?>")!>getTag8().action<!>

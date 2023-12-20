@@ -1,7 +1,7 @@
 // ISSUE: KT-57958
 
 fun ListVM<*>.foo() {
-    val currentItem1: MutableProperty<out Any?> = <!DEBUG_INFO_EXPRESSION_TYPE("MutableProperty<in kotlin.Nothing?>")!>currentItem<!>
+    val currentItem1: MutableProperty<out Any?> = <!DEBUG_INFO_EXPRESSION_TYPE("MutableProperty<CapturedType(*)?>")!>currentItem<!>
 }
 
 interface MutableProperty<T> {

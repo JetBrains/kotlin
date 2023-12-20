@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.CastingType
 import org.jetbrains.kotlin.fir.analysis.checkers.checkCasting
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.finalApproximationOrSelf
 import org.jetbrains.kotlin.fir.analysis.checkers.isCastErased
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirOperation
@@ -24,9 +25,9 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker() {
     override fun check(expression: FirTypeOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
         val firstArgument = expression.argumentList.arguments[0]
-        val actualType = firstArgument.unwrapSmartcastExpression().resolvedType.fullyExpandedType(session)
+        val actualType = firstArgument.unwrapSmartcastExpression().resolvedType.fullyExpandedType(session).finalApproximationOrSelf(context)
         val conversionTypeRef = expression.conversionTypeRef
-        val targetType = conversionTypeRef.coneType.fullyExpandedType(session)
+        val targetType = conversionTypeRef.coneType.fullyExpandedType(session).finalApproximationOrSelf(context)
 
         if (expression.operation in FirOperation.TYPES && targetType is ConeDynamicType) {
             reporter.reportOn(conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED, context)

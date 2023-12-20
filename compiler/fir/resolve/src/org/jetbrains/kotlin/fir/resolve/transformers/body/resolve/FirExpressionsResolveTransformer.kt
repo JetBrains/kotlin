@@ -1717,7 +1717,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             )
         } else {
             session.typeApproximator.approximateToSuperType(
-                typeFromCallee.type, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+                typeFromCallee.type, TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
             )
         } ?: typeFromCallee.type
     }

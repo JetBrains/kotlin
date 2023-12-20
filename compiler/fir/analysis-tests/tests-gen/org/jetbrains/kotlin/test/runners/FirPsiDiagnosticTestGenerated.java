@@ -3526,6 +3526,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("onlyInputTypesCapturedTypeWithRecursiveBounds.kt")
+            public void testOnlyInputTypesCapturedTypeWithRecursiveBounds() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/inference/onlyInputTypesCapturedTypeWithRecursiveBounds.kt");
+            }
+
+            @Test
             @TestMetadata("overloadResolutionByLambdaArgumentType.kt")
             public void testOverloadResolutionByLambdaArgumentType() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/inference/overloadResolutionByLambdaArgumentType.kt");

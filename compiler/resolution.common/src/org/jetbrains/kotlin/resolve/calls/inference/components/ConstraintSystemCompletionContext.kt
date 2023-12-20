@@ -32,7 +32,12 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     // mutable operations
     abstract fun addError(error: ConstraintSystemError)
 
-    abstract fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, position: FixVariableConstraintPosition<*>)
+    abstract fun fixVariable(
+        variable: TypeVariableMarker,
+        resultType: KotlinTypeMarker,
+        position: FixVariableConstraintPosition<*>,
+        resultTypeForOnlyInputTypes: KotlinTypeMarker = resultType
+    )
 
     abstract fun couldBeResolvedWithUnrestrictedBuilderInference(): Boolean
     abstract fun resolveForkPointsConstraints()

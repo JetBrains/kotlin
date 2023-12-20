@@ -24,9 +24,11 @@ val FirComparisonExpression.left: FirExpression
 val FirComparisonExpression.right: FirExpression
     get() = compareToCall.arguments.getOrNull(0) ?: error("There should be a first arg for ${compareToCall.render()}")
 
+context(Fir2IrComponents)
 fun FirComparisonExpression.inferPrimitiveNumericComparisonInfo(): PrimitiveConeNumericComparisonInfo? =
     inferPrimitiveNumericComparisonInfo(left, right)
 
+context(Fir2IrComponents)
 fun inferPrimitiveNumericComparisonInfo(left: FirExpression, right: FirExpression): PrimitiveConeNumericComparisonInfo? {
     val leftType = left.resolvedType
     val rightType = right.resolvedType
@@ -57,6 +59,7 @@ private fun ConeClassLikeType.promoteIntegerTypeToIntIfRequired(): ConeClassLike
         else -> error("Primitive number type expected: $this")
     }
 
+context(Fir2IrComponents)
 private fun ConeKotlinType.getPrimitiveTypeOrSupertype(): ConeClassLikeType? =
     when {
         this is ConeTypeParameterType ->
@@ -67,6 +70,8 @@ private fun ConeKotlinType.getPrimitiveTypeOrSupertype(): ConeClassLikeType? =
             this
         this is ConeFlexibleType ->
             this.lowerBound.getPrimitiveTypeOrSupertype()
+        this is ConeCapturedType ->
+            this.approximateForIrOrSelf().getPrimitiveTypeOrSupertype()
         else ->
             null
     }

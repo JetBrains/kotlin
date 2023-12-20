@@ -1,8 +1,8 @@
 // ISSUE: KT-62959
 
 fun bar(x: Inv<out CharSequence>) {
-    x.foo { <!ARGUMENT_TYPE_MISMATCH("CapturedType(out kotlin.CharSequence); kotlin.CharSequence")!>it<!> }
-    x.bar { <!ARGUMENT_TYPE_MISMATCH("CapturedType(out kotlin.CharSequence); kotlin.CharSequence"), TYPE_MISMATCH("CapturedType(out kotlin.CharSequence); CapturedType(out kotlin.CharSequence)")!>it.e()<!> }
+    x.foo { it }
+    x.bar { it.e() }
 }
 
 interface Inv<E> {

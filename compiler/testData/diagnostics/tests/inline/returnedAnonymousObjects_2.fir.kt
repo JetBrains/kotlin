@@ -65,17 +65,17 @@ fun test10(b: Boolean) {
 }
 
 fun test11(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>foo11 { 1 }.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Any)")!>foo11 { 1 }.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>foo11 { 2 }.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Any)")!>foo11 { 2 }.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 fun test12(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>foo12 { 1 }.value.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Any)")!>foo12 { 1 }.value.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>foo12 { 2 }.value.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Any)")!>foo12 { 2 }.value.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
@@ -91,17 +91,17 @@ fun test20(b: Boolean) {
 }
 
 fun test21(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo21 { 1 }.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo21 { 1 }.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo21 { 2 }.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo21 { 2 }.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 fun test22(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo22 { 1 }.value.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo22 { 1 }.value.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo22 { 2 }.value.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo22 { 2 }.value.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
@@ -117,17 +117,17 @@ fun test30(b: Boolean) {
 }
 
 fun test31(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo31 { 1 }.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo31 { 1 }.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo31 { 2 }.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo31 { 2 }.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 fun test32(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo32 { 1 }.value.value<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo32 { 1 }.value.value<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo32 { 2 }.value.value<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out I1)")!>foo32 { 2 }.value.value<!>
     }
     x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }

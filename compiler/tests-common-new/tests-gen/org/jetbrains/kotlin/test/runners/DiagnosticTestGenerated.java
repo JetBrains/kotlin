@@ -17918,6 +17918,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("capturingOfDnn.kt")
+                public void testCapturingOfDnn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturingOfDnn.kt");
+                }
+
+                @Test
                 @TestMetadata("differentCapturedTypes.kt")
                 public void testDifferentCapturedTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/differentCapturedTypes.kt");
@@ -33740,6 +33746,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("DoubleInner.kt")
             public void testDoubleInner() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/DoubleInner.kt");
+            }
+
+            @Test
+            @TestMetadata("ExhaustiveOnCaptured.kt")
+            public void testExhaustiveOnCaptured() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/ExhaustiveOnCaptured.kt");
             }
 
             @Test

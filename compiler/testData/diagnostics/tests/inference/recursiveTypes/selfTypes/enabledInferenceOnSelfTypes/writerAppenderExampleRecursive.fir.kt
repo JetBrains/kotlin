@@ -19,17 +19,17 @@ public class JavaWriterAppender {
 
 // FILE: main.kt
 fun test() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<*>")!>WriterAppender.newBuilder()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<out WriterAppender.Builder1<*>>")!>WriterAppender.Builder1()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)")!>WriterAppender.newBuilder()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<CapturedType(*)>")!>WriterAppender.Builder1()<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<*> & WriterAppender.Builder2<*>")!>WriterAppender.intersectTwoSelfTypes()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)")!>WriterAppender.intersectTwoSelfTypes()<!>
 }
 
 fun testJava(appender: JavaWriterAppender) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<*>..JavaWriterAppender.Builder1<*>?!")!>appender.newBuilder()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<out JavaWriterAppender.Builder1<*>..JavaWriterAppender.Builder1<*>?!>")!>appender.Builder1()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)!!..CapturedType(*)?!")!>appender.newBuilder()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<CapturedType(*)>")!>appender.Builder1()<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<*> & JavaWriterAppender.Builder2<*>..JavaWriterAppender.Builder1<*>? & JavaWriterAppender.Builder2<*>?")!>appender.intersectTwoSelfTypes()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)!!..CapturedType(*)?!")!>appender.intersectTwoSelfTypes()<!>
 }
 
 object WriterAppender {

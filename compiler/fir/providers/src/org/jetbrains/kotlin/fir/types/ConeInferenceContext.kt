@@ -343,6 +343,13 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return isProjectionNotNull
     }
 
+    override fun CapturedTypeMarker.hasRawSuperType(): Boolean {
+        require(this is ConeCapturedType)
+        return constructor.supertypes?.any { superType ->
+            superType.contains { it is ConeKotlinType && it.isRaw() }
+        } == true
+    }
+
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {
         require(this is ConeDefinitelyNotNullType)
         return this.original
