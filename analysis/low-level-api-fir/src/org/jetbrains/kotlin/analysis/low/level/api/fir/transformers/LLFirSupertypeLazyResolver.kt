@@ -263,7 +263,7 @@ private val FirTypeRef.isLoopedSupertypeRef: Boolean
         return diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.LoopInSupertype
     }
 
-private class LLFirSupertypeComputationSession(private val session: FirSession) : SupertypeComputationSession() {
+private class LLFirSupertypeComputationSession(private val useSiteSession: FirSession) : SupertypeComputationSession() {
     /**
      * These collections exist to reuse a collection for each search to avoid repeated memory allocation.
      * Can be replaced with a new collection on each invocation of [findLoopFor]
@@ -287,7 +287,7 @@ private class LLFirSupertypeComputationSession(private val session: FirSession) 
     fun findLoopFor(declaration: FirClassLikeDeclaration): List<FirResolvedTypeRef>? {
         breakLoopFor(
             declaration = declaration,
-            session = session,
+            session = useSiteSession,
             visited = visited,
             looped = looped,
             pathSet = pathSet,
@@ -302,7 +302,7 @@ private class LLFirSupertypeComputationSession(private val session: FirSession) 
     }
 
     override fun isAlreadyResolved(classLikeDeclaration: FirClassLikeDeclaration): Boolean {
-        return !canHaveLoopInSupertypesHierarchy(classLikeDeclaration, session)
+        return !canHaveLoopInSupertypesHierarchy(classLikeDeclaration, useSiteSession)
     }
 
     /**
