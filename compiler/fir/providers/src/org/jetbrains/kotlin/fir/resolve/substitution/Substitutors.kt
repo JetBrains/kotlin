@@ -24,18 +24,48 @@ import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContext) : ConeSubstitutor() {
-    protected fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypeProjection {
-        return when (old) {
-            is ConeStarProjection -> old
-            is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
-            is ConeKotlinTypeProjectionOut -> ConeKotlinTypeProjectionOut(newType)
-            is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(newType)
-            is ConeKotlinType -> newType
-            else -> old
-        }
-    }
+inline fun ConeCapturedType.substitute(f: (ConeKotlinType) -> ConeKotlinType?): ConeCapturedType? {
+    val innerType = this.lowerType ?: this.constructor.projection.type
+    // TODO(KT-64024): This early return looks suspicious.
+    //  In fact, if the inner type wasn't substituted we will ignore potential substitution in
+    //  super types
+    val substitutedInnerType = innerType?.let(f) ?: return null
+    if (substitutedInnerType is ConeCapturedType) return substitutedInnerType
+    val substitutedSuperTypes =
+        this.constructor.supertypes?.map { f(it) ?: it }
 
+    // TODO(KT-64027): Creation of new captured types creates unexpected behavior by breaking substitution consistency.
+    //  E.g:
+    //  ```
+    //   substitution = { A => B }
+    //   substituteOrSelf(C<CapturedType(out A)_0>) -> C<CapturedType(out B)_1>
+    //   substituteOrSelf(C<CapturedType(out A)_0>) -> C<CapturedType(out B)_2>
+    //   C<CapturedType(out B)_1> <!:> C<CapturedType(out B)_2>
+    //  ```
+
+    return ConeCapturedType(
+        captureStatus,
+        constructor = ConeCapturedTypeConstructor(
+            wrapProjection(constructor.projection, substitutedInnerType),
+            substitutedSuperTypes,
+            typeParameterMarker = constructor.typeParameterMarker
+        ),
+        lowerType = if (lowerType != null) substitutedInnerType else null
+    )
+}
+
+fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypeProjection {
+    return when (old) {
+        is ConeStarProjection -> old
+        is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
+        is ConeKotlinTypeProjectionOut -> ConeKotlinTypeProjectionOut(newType)
+        is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(newType)
+        is ConeKotlinType -> newType
+        else -> old
+    }
+}
+
+abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContext) : ConeSubstitutor() {
     abstract fun substituteType(type: ConeKotlinType): ConeKotlinType?
     open fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
         val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
@@ -84,42 +114,12 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
                 if (it.lowerBound == it.upperBound) it.lowerBound
                 else it
             }
-            is ConeCapturedType -> return substituteCapturedType()
+            is ConeCapturedType -> return substitute(::substituteOrNull)
             is ConeDefinitelyNotNullType -> this.substituteOriginal()
             is ConeIntersectionType -> this.substituteIntersectedTypes()
             is ConeStubType -> return null
             is ConeIntegerLiteralType -> return null
         }
-    }
-
-    private fun ConeCapturedType.substituteCapturedType(): ConeCapturedType? {
-        val innerType = this.lowerType ?: this.constructor.projection.type
-        // TODO(KT-64024): This early return looks suspicious.
-        //  In fact, if the inner type wasn't substituted we will ignore potential substitution in
-        //  super types
-        val substitutedInnerType = substituteOrNull(innerType) ?: return null
-        if (substitutedInnerType is ConeCapturedType) return substitutedInnerType
-        val substitutedSuperTypes =
-            this.constructor.supertypes?.map { substituteOrSelf(it) }
-
-        // TODO(KT-64027): Creation of new captured types creates unexpected behavior by breaking substitution consistency.
-        //  E.g:
-        //  ```
-        //   substitution = { A => B }
-        //   substituteOrSelf(C<CapturedType(out A)_0>) -> C<CapturedType(out B)_1>
-        //   substituteOrSelf(C<CapturedType(out A)_0>) -> C<CapturedType(out B)_2>
-        //   C<CapturedType(out B)_1> <!:> C<CapturedType(out B)_2>
-        //  ```
-
-        return ConeCapturedType(
-            captureStatus,
-            constructor = ConeCapturedTypeConstructor(
-                wrapProjection(constructor.projection, substitutedInnerType),
-                substitutedSuperTypes,
-                typeParameterMarker = constructor.typeParameterMarker
-            ),
-            lowerType = if (lowerType != null) substitutedInnerType else null
-        )
     }
 
     private fun ConeIntersectionType.substituteIntersectedTypes(): ConeIntersectionType? {

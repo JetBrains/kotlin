@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringErasureError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.substitution.substitute
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
@@ -431,6 +432,14 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
 }
 
 internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType): ConeKotlinType? {
+    if (type is ConeCapturedType) {
+        return type.substitute { captureFromExpressionInternal(it) }
+    }
+
+    if (type is ConeDefinitelyNotNullType) {
+        return captureFromExpressionInternal(type.original)?.makeConeTypeDefinitelyNotNullOrNotNull(this)
+    }
+
     if (type !is ConeIntersectionType && type !is ConeFlexibleType) {
         return captureFromArgumentsInternal(type, CaptureStatus.FROM_EXPRESSION)
     }
