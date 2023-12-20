@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -80,6 +81,15 @@ abstract class BirLazyElementBase(
     override var origin: IrDeclarationOrigin
         get() = originalIrElement.origin
         set(value) = mutationNotSupported()
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    final override fun <T> getDynamicProperty(token: BirElementDynamicPropertyToken<*, T>): T? {
+        if (token.key == GlobalBirElementDynamicProperties.Descriptor) {
+            return originalIrElement.descriptor as T
+        }
+
+        return super.getDynamicProperty(token)
+    }
 
 
     final override fun replaceWith(new: BirElement?) = mutationNotSupported()

@@ -28,9 +28,6 @@ class BirLazyField(
 ) : BirLazyElementBase(converter), BirField {
     override val owner: BirField
         get() = this
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override val descriptor: PropertyDescriptor
-        get() = originalIrElement.descriptor
     override var isFinal: Boolean
         get() = originalIrElement.isFinal
         set(value) = mutationNotSupported()

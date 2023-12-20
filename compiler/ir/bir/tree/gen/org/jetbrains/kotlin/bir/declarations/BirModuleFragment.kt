@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.name.Name
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.moduleFragment]
  */
 abstract class BirModuleFragment : BirImplElementBase(), BirElement {
-    @ObsoleteDescriptorBasedAPI
-    abstract val descriptor: ModuleDescriptor?
     abstract val name: Name
+    @ObsoleteDescriptorBasedAPI
+    abstract val descriptor: ModuleDescriptor
     abstract val files: BirChildElementList<BirFile>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

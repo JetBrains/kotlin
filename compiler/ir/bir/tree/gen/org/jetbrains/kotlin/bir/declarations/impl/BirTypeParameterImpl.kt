@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -24,7 +22,6 @@ class BirTypeParameterImpl(
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     name: Name,
-    descriptor: TypeParameterDescriptor?,
     variance: Variance,
     index: Int,
     isReified: Boolean,
@@ -92,9 +89,6 @@ class BirTypeParameterImpl(
                 invalidate(3)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: TypeParameterDescriptor? = descriptor
 
     private var _variance: Variance = variance
     override var variance: Variance

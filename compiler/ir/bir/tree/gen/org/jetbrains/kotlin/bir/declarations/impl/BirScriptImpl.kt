@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.symbols.BirScriptSymbol
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.name.Name
 class BirScriptImpl(
     sourceSpan: SourceSpan,
     signature: IdSignature?,
-    descriptor: DeclarationDescriptor?,
     origin: IrDeclarationOrigin,
     name: Name,
     thisReceiver: BirValueParameter?,
@@ -76,9 +73,6 @@ class BirScriptImpl(
                 invalidate(14)
             }
         }
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: DeclarationDescriptor? = descriptor
 
     private var _origin: IrDeclarationOrigin = origin
     override var origin: IrDeclarationOrigin

@@ -52,12 +52,15 @@ import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class Bir2IrConverterBase(
+    dynamicPropertyManager: BirElementDynamicPropertyManager,
     protected val remappedIr2BirElements: Map<BirElement, IrElement>,
     protected val compiledBir: BirDatabase,
 ) {
     var elementConvertedCallback: ((BirElement, IrElement) -> Unit)? = null
     var reuseOnlyExternalElements = false
     var remappedIr2BirTypes: Map<BirType, IrType>? = null
+
+    protected val Descriptor = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.Descriptor)
 
     protected fun <Ir : IrElement, Bir : BirElement> createElementMap(expectedMaxSize: Int = 8): MutableMap<Bir, Ir> =
         IdentityHashMap<Bir, Ir>(expectedMaxSize)
@@ -152,7 +155,8 @@ abstract class Bir2IrConverterBase(
     fun <IrS : IrSymbol, BirS : BirSymbol> remapSymbol(old: BirS?): IrS? = if (old == null) null else remapSymbol(old)
 
     protected fun <BirS : BirSymbol, IrS : IrBindableSymbol<*, *>> createBindableSymbol(old: BirS): IrS {
-        val descriptor = (old as? BirSymbolOwner)?.descriptor
+        val descriptor = (old as? BirModuleFragment)?.descriptor
+            ?: (old as? BirDeclaration)?.get(Descriptor)
 
         @Suppress("UNCHECKED_CAST")
         return when (old) {
