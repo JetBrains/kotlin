@@ -1808,7 +1808,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         ) // +
         map.put(
             LOCAL_INTERFACE_NOT_ALLOWED,
-            "''{0}'' is an interface, so it cannot be local. Try to use an anonymous object or abstract class instead.",
+            "Interface ''{0}'' cannot be local. Try to use an anonymous object or abstract class instead.",
             TO_STRING
         )
 
