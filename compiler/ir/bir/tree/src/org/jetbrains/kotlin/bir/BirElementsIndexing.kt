@@ -162,6 +162,10 @@ internal object BirElementIndexClassifierFunctionGenerator {
         il.add(InsnNode(Opcodes.ICONST_0))
         il.add(VarInsnNode(Opcodes.ISTORE, resultVarIdx))
 
+        val indexersIndexLimit = indexers.maxOf { it.index } + 1
+
+        // Compute a key to the switch table.
+        // key = element.classId * totalIndexersCount + minIndex
         il.add(VarInsnNode(Opcodes.ALOAD, elementVarIdx))
         il.add(
             MethodInsnNode(
@@ -171,24 +175,35 @@ internal object BirElementIndexClassifierFunctionGenerator {
                 Type.getMethodDescriptor(Type.BYTE_TYPE)
             )
         )
+        il.add(IntInsnNode(Opcodes.SIPUSH, indexersIndexLimit))
+        il.add(InsnNode(Opcodes.IMUL))
+        il.add(VarInsnNode(Opcodes.ILOAD, minIndexVarIdx))
+        il.add(InsnNode(Opcodes.IADD))
+
         val switchInstPlaceholder = InsnNode(Opcodes.NOP)
         il.add(switchInstPlaceholder)
 
+        val topLevelElementClassNodes = buildClassMatchingStructure(indexers)
         val switchTableLabels = mutableListOf<LabelNode>()
         val switchTableKeys = mutableListOf<Int>()
         val endLabel = LabelNode()
-        val topLevelElementClassNodes = buildClassMatchingStructure(indexers).sortedBy { it.elementClass.id }
         for (node in topLevelElementClassNodes) {
-            val caseLabel = LabelNode()
-            il.add(caseLabel)
-            switchTableLabels += caseLabel
-            switchTableKeys += node.elementClass.id
+            val indexersByIndex = node.indexers.associateBy { it.index }
+            for (index in 0..node.indexers.maxOf { it.index }) {
+                val switchKey = node.elementClass.id * indexersIndexLimit + index
 
-            for (indexer in node.indexers) {
-                generateIndexerCase(
-                    il, indexer, capturedIndexerInstances[indexer], clazz,
-                    elementVarIdx, minIndexVarIdx, referenceRecorderVarIdx, resultVarIdx
-                )
+                val caseLabel = LabelNode()
+                il.add(caseLabel)
+                switchTableLabels += caseLabel
+                switchTableKeys += switchKey
+
+                val indexer = indexersByIndex[index]
+                if (indexer != null) {
+                    generateIndexerCase(
+                        il, indexer, capturedIndexerInstances[indexer], clazz,
+                        elementVarIdx, referenceRecorderVarIdx, resultVarIdx
+                    )
+                }
             }
 
             il.add(JumpInsnNode(Opcodes.GOTO, endLabel))
@@ -207,12 +222,9 @@ internal object BirElementIndexClassifierFunctionGenerator {
 
     private fun generateIndexerCase(
         il: InsnList, indexer: Indexer, indexerField: FieldNode?, clazz: ClassNode,
-        elementVarIdx: Int, minIndexVarIdx: Int, referenceRecorderVarIdx: Int, resultVarIdx: Int,
+        elementVarIdx: Int, referenceRecorderVarIdx: Int, resultVarIdx: Int,
     ) {
         val matcherLabel = LabelNode()
-        il.add(IntInsnNode(Opcodes.SIPUSH, indexer.index))
-        il.add(VarInsnNode(Opcodes.ILOAD, minIndexVarIdx))
-        il.add(JumpInsnNode(Opcodes.IF_ICMPLT, matcherLabel))
 
         if (indexer.kind == BirElementGeneralIndexer.Kind.IndexMatcher) {
             // skip if already got a result
@@ -291,7 +303,13 @@ internal object BirElementIndexClassifierFunctionGenerator {
             }
         }
 
-        return elementClassNodes.values.filter { it.indexers.isNotEmpty() }
+        for (element in elementClassNodes.values) {
+            element.indexers.sortBy { it.index }
+        }
+
+        return elementClassNodes.values
+            .filter { it.indexers.isNotEmpty() }
+            .sortedBy { it.elementClass.id }
     }
 
     private class ElementClassBucket(
