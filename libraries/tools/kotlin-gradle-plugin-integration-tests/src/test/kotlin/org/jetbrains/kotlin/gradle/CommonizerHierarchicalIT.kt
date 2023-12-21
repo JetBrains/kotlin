@@ -136,6 +136,19 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-51026 - changing optimistic commonization setting - recommonizes cinterops")
+    @GradleTest
+    fun testChangingOptimisticCommonization(gradleVersion: GradleVersion) {
+        nativeProject("optimisticCommonization", gradleVersion = gradleVersion) {
+            buildAndFail(":compileCommonMainKotlinMetadata", "-Pkotlin.mpp.enableOptimisticNumberCommonization=false") {
+                assertOutputContains("Unresolved reference 'unsafeProp'")
+            }
+            buildAndFail(":compileCommonMainKotlinMetadata", "-Pkotlin.mpp.enableOptimisticNumberCommonization=true") {
+                assertOutputContains("Unresolved reference 'unsafeProp'")
+            }
+        }
+    }
+
     @DisplayName("KT-52050 - DIR retains CPointed supertype")
     @GradleTest
     fun testDIRRetainsCPointedSupertype(gradleVersion: GradleVersion) {

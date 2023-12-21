@@ -129,4 +129,43 @@ public class CommonizeNativeDistributionTest {
             logLevel = CommonizerLogLevel.Info
         )
     }
+
+    @Test
+    public fun `commonize - with different cache affecting settings - produces distinct commonized outputs`() {
+        val linuxTarget1 = CommonizerTarget(LINUX_X64, LINUX_ARM64)
+
+        fun commonize(additionalSettings: List<AdditionalCommonizerSetting<*>>) = CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
+            konanHome = konanHome,
+            outputTargets = setOf(linuxTarget1),
+            outputDirectory = temporaryOutputDirectory.root,
+            logLevel = CommonizerLogLevel.Info,
+            additionalSettings = additionalSettings,
+        )
+
+        val withoutOptimisticIntegerCommonization = listOf(OptimisticNumberCommonizationEnabledKey setTo false)
+        val withOptimisticIntegerCommonization = listOf(OptimisticNumberCommonizationEnabledKey setTo true)
+
+        commonize(withoutOptimisticIntegerCommonization)
+        commonize(withOptimisticIntegerCommonization)
+
+        val commonizedOutputWithoutOptimisticIntegerCommonization = resolveCommonizedDirectory(
+            temporaryOutputDirectory.root, linuxTarget1
+        )
+        val commonizedOutputWithOptimisticIntegerCommonization = resolveCommonizedDirectory(
+            temporaryOutputDirectory.root, linuxTarget1
+        )
+
+        assertTrue(
+            commonizedOutputWithoutOptimisticIntegerCommonization.isDirectory,
+            "Expected directory for $linuxTarget1"
+        )
+        assertTrue(
+            commonizedOutputWithOptimisticIntegerCommonization.isDirectory,
+            "Expected directory for $linuxTarget1"
+        )
+        assertTrue(
+            commonizedOutputWithOptimisticIntegerCommonization == commonizedOutputWithoutOptimisticIntegerCommonization,
+            "Expected commonization output file with different settings to be distinct"
+        )
+    }
 }

@@ -62,6 +62,22 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Changing optimistic number commonization setting recommonizes native libraries")
+    @GradleTest
+    fun testChangingOptimisticNumberCommonizationInNativeDistributionCommonization(gradleVersion: GradleVersion) {
+        nativeProject("commonizeNativeDistributionWithIosLinuxWindows", gradleVersion) {
+            build(":cleanNativeDistributionCommonization")
+            build(":commonizeNativeDistribution", "-Pkotlin.mpp.enableOptimisticNumberCommonization=false") {
+                assertTasksExecuted(":commonizeNativeDistribution")
+                assertNotNativeDistributionCommonizationCacheHit()
+            }
+            build(":commonizeNativeDistribution", "-Pkotlin.mpp.enableOptimisticNumberCommonization=true") {
+                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertNativeDistributionCommonizationCacheHit()
+            }
+        }
+    }
+
     @DisplayName("Clean commonized native distribution")
     @GradleTest
     fun testCleanNativeDistributionCommonization(gradleVersion: GradleVersion, @TempDir konanData: Path) {
@@ -714,8 +730,13 @@ open class CommonizerIT : KGPBaseTest() {
         buildGradleKts.replaceText("<targetB>", CommonizableTargets.targetB.value)
     }
 
+    private val commonizerCacheHitLog = "Native Distribution Commonization: Cache hit"
     private fun BuildResult.assertNativeDistributionCommonizationCacheHit() {
-        assertOutputContains("Native Distribution Commonization: Cache hit")
+        assertOutputContains(commonizerCacheHitLog)
+    }
+
+    private fun BuildResult.assertNotNativeDistributionCommonizationCacheHit() {
+        assertOutputDoesNotContain(commonizerCacheHitLog)
     }
 }
 
