@@ -300,6 +300,7 @@ private class ExtTestDataFile(
                         || importedFqName.startsWith(KOTLINX_PACKAGE_NAME)
                         || importedFqName.startsWith(HELPERS_PACKAGE_NAME)
                         || importedFqName.startsWith(CNAMES_PACKAGE_NAME)
+                        || importedFqName.startsWith(PLATFORM_PACKAGE_NAME)
                         || packagesOfDefFiles.any { importedFqName.startsWith(it) }
                     ) {
                         return
@@ -594,6 +595,7 @@ private class ExtTestDataFile(
         private val HELPERS_PACKAGE_NAME = Name.identifier("helpers")
         private val KOTLINX_PACKAGE_NAME = Name.identifier("kotlinx")
         private val CNAMES_PACKAGE_NAME = Name.identifier("cnames")
+        private val PLATFORM_PACKAGE_NAME = Name.identifier("platform")
 
         private val MANDATORY_SOURCE_TRANSFORMERS: ExternalSourceTransformers = listOf(DiagnosticsRemovingSourceTransformer)
     }
