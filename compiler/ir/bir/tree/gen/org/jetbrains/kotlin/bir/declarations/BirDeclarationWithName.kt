@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -19,5 +20,5 @@ import org.jetbrains.kotlin.name.Name
 interface BirDeclarationWithName : BirElement, BirDeclaration {
     var name: Name
 
-    companion object
+    companion object : BirElementClass(BirDeclarationWithName::class.java, 28)
 }

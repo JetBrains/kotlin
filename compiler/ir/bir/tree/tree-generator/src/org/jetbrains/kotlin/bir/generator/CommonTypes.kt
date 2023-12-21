@@ -28,6 +28,7 @@ val mutableAnnotationContainerType = type(declarations, "BirMutableAnnotationCon
 val irTypeType = type(types, "BirType")
 val childElementList = type(tree, "BirChildElementList")
 val obsoleteDescriptorBasedApiAnnotation = type("org.jetbrains.kotlin.ir", "ObsoleteDescriptorBasedAPI", TypeKind.Class)
+val elementClassType = type(tree, "BirElementClass")
 
 val symbolType = type(symbols, "BirSymbol")
 object SymbolTypes {

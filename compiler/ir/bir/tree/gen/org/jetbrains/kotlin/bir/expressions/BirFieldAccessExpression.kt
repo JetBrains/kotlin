@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.symbols.BirFieldSymbol
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -24,5 +25,5 @@ abstract class BirFieldAccessExpression : BirDeclarationReference(), BirElement 
     abstract var receiver: BirExpression?
     abstract var origin: IrStatementOrigin?
 
-    companion object
+    companion object : BirElementClass(BirFieldAccessExpression::class.java, 46)
 }

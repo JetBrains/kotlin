@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.bir.generator.print
 
+import com.intellij.psi.util.PsiExpressionTrimRenderer.render
 import org.jetbrains.kotlin.bir.generator.*
 import org.jetbrains.kotlin.bir.generator.TREE_GENERATOR_README
 import org.jetbrains.kotlin.bir.generator.model.*
@@ -78,7 +79,10 @@ private fun SmartPrinter.printElement(element: Element) {
             }
 
             println()
-            println("companion object : ${elementClassType.render()}(${element.classId})")
+            print("companion object : ${elementClassType.render()}(")
+            print("${element.withArgs().render()}::class.java")
+            print(", ${element.classId}")
+            println(")")
         }
     }.toString()
 

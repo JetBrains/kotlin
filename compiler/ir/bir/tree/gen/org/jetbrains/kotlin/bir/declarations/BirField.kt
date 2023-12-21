@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
@@ -33,5 +34,5 @@ interface BirField : BirElement, BirDeclaration, BirPossiblyExternalDeclaration,
         initializer?.accept(data, visitor)
     }
 
-    companion object
+    companion object : BirElementClass(BirField::class.java, 45)
 }

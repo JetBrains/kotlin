@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 
 /**
@@ -24,5 +25,5 @@ abstract class BirStringConcatenation : BirExpression(), BirElement {
         arguments.acceptChildren(visitor, data)
     }
 
-    companion object
+    companion object : BirElementClass(BirStringConcatenation::class.java, 84)
 }

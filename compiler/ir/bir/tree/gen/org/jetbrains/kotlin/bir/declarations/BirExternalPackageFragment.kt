@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.symbols.BirExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -25,5 +26,5 @@ abstract class BirExternalPackageFragment : BirPackageFragment(), BirElement, Bi
         declarations.acceptChildren(visitor, data)
     }
 
-    companion object
+    companion object : BirElementClass(BirExternalPackageFragment::class.java, 44)
 }

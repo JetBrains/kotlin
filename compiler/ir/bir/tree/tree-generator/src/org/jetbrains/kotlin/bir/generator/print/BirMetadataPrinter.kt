@@ -1,0 +1,37 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.bir.generator.print
+
+import org.jetbrains.kotlin.bir.generator.BirTree
+import org.jetbrains.kotlin.bir.generator.Packages
+import org.jetbrains.kotlin.bir.generator.TREE_GENERATOR_README
+import org.jetbrains.kotlin.bir.generator.model.Model
+import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
+import org.jetbrains.kotlin.generators.tree.printer.printBlock
+import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
+import org.jetbrains.kotlin.generators.tree.render
+import org.jetbrains.kotlin.generators.tree.type
+import org.jetbrains.kotlin.utils.withIndent
+import java.io.File
+import javax.swing.text.html.HTML.Tag.P
+
+fun printBirMetadata(generationPath: File, model: Model): GeneratedFile {
+    val className = "BirMetadata"
+    return printGeneratedType(generationPath, TREE_GENERATOR_README, Packages.tree, className) {
+        print("object $className")
+        printBlock {
+            println("val allElements = listOf<${type(Packages.tree, "BirElementClass").render()}>(")
+            withIndent {
+                model.elements.filterNot { it == model.rootElement }
+                    .forEach { element ->
+                        print(element.copy(emptyMap()).render())
+                        println(",")
+                    }
+            }
+            println(")")
+        }
+    }
+}

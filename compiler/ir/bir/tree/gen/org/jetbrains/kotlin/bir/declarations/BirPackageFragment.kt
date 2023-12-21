@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.symbols.BirPackageFragmentSymbol
 import org.jetbrains.kotlin.name.FqName
@@ -21,5 +22,5 @@ import org.jetbrains.kotlin.name.FqName
 abstract class BirPackageFragment : BirImplElementBase(), BirElement, BirDeclarationContainer, BirSymbolOwner, BirPackageFragmentSymbol {
     abstract var packageFqName: FqName
 
-    companion object
+    companion object : BirElementClass(BirPackageFragment::class.java, 69)
 }
