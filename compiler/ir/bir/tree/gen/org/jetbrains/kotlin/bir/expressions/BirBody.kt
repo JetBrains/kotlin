@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirImplElementBase
 
 /**
@@ -17,5 +18,5 @@ import org.jetbrains.kotlin.bir.BirImplElementBase
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.body]
  */
 abstract class BirBody : BirImplElementBase(), BirElement {
-    companion object
+    companion object : BirElementClass(BirBody::class.java, 5)
 }

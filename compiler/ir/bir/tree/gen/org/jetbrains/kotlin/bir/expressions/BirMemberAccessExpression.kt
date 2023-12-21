@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -27,5 +28,5 @@ abstract class BirMemberAccessExpression<S : BirSymbol> : BirDeclarationReferenc
     abstract val valueArguments: BirChildElementList<BirExpression?>
     abstract var typeArguments: List<BirType?>
 
-    companion object
+    companion object : BirElementClass(BirMemberAccessExpression::class.java, 63)
 }

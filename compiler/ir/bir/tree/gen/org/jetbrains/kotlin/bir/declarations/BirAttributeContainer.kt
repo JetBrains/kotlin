@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 
 /**
  * Represents an IR element that can be copied, but must remember its original element. It is
@@ -21,5 +22,5 @@ import org.jetbrains.kotlin.bir.BirElement
 interface BirAttributeContainer : BirElement {
     var attributeOwnerId: BirAttributeContainer
 
-    companion object
+    companion object : BirElementClass(BirAttributeContainer::class.java, 2)
 }

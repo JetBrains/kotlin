@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.bir
 
+import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.util.CheckClassAdapter
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -82,9 +85,13 @@ internal object BirElementIndexClassifierFunctionGenerator {
         val key = indexers.map { IndexerCacheKey(it.indexerFunction?.javaClass, it.elementClass, it.index) }.toHashSet()
         return classifierFunctionClassCache.computeIfAbsent(key) { _ ->
             val clazzNode = generateClassifierFunctionClass(indexers)
-            val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
-            clazzNode.accept(cw)
-            val binary = cw.toByteArray()
+            val classWriter = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+
+            var classVisitor: ClassVisitor = classWriter
+            classVisitor = CheckClassAdapter(classVisitor, false)
+            clazzNode.accept(classVisitor)
+
+            val binary = classWriter.toByteArray()
             val binaryName = clazzNode.name.replace('/', '.')
 
             staticIndexerFunctionsInitializationBuffers[clazzNode.name] = indexersFunctions
@@ -124,8 +131,6 @@ internal object BirElementIndexClassifierFunctionGenerator {
             )
         }
 
-        val topLevelElementClassNodes = buildClassMatchingTree(indexers)
-
         val capturedIndexerInstances = mutableMapOf<Indexer, FieldNode>()
         for (indexer in indexers) {
             indexer.indexerFunction?.javaClass?.let { conditionFunctionClass ->
@@ -149,42 +154,50 @@ internal object BirElementIndexClassifierFunctionGenerator {
         }
 
         val il = classifyMethod.instructions
+        val elementVarIdx = 1
+        val minIndexVarIdx = 2
+        val referenceRecorderVarIdx = 3
+        val resultVarIdx = 4
 
-        // result variable
         il.add(InsnNode(Opcodes.ICONST_0))
-        il.add(VarInsnNode(Opcodes.ISTORE, 4))
+        il.add(VarInsnNode(Opcodes.ISTORE, resultVarIdx))
 
-        fun generateClassBranch(
-            node: ElementClassNode,
-            descendantNodes: Sequence<ElementClassNode>,
-            isInstanceButNoMatchesLabel: LabelNode,
-        ) {
-            il.add(VarInsnNode(Opcodes.ALOAD, 1))
-            il.add(TypeInsnNode(Opcodes.INSTANCEOF, Type.getInternalName(node.elementClass)))
-            val notInstanceOfLabel = LabelNode()
-            il.add(JumpInsnNode(Opcodes.IFEQ, notInstanceOfLabel))
+        il.add(VarInsnNode(Opcodes.ALOAD, elementVarIdx))
+        il.add(
+            MethodInsnNode(
+                Opcodes.INVOKEVIRTUAL,
+                Type.getInternalName(BirElementBase::class.java),
+                BirElementBase::class.java.declaredMethods.single { it.name.startsWith("getClassId") }.name,
+                Type.getMethodDescriptor(Type.BYTE_TYPE)
+            )
+        )
+        val switchInstPlaceholder = InsnNode(Opcodes.NOP)
+        il.add(switchInstPlaceholder)
 
-            val descendantNodesAndSelf = descendantNodes + node
-            for (subNode in node.subNodes) {
-                generateClassBranch(subNode, descendantNodesAndSelf, notInstanceOfLabel)
-            }
-
-            val allIndexers = descendantNodesAndSelf.flatMap { it.indexers }.sortedBy { it.index }
-            for (indexer in allIndexers) {
-                generateIndexerCase(il, indexer, capturedIndexerInstances[indexer], clazz)
-            }
-
-            il.add(JumpInsnNode(Opcodes.GOTO, isInstanceButNoMatchesLabel))
-            il.add(notInstanceOfLabel)
-        }
-
+        val switchTableLabels = mutableListOf<LabelNode>()
+        val switchTableKeys = mutableListOf<Int>()
         val endLabel = LabelNode()
+        val topLevelElementClassNodes = buildClassMatchingStructure(indexers).sortedBy { it.elementClass.id }
         for (node in topLevelElementClassNodes) {
-            generateClassBranch(node, emptySequence(), endLabel)
+            val caseLabel = LabelNode()
+            il.add(caseLabel)
+            switchTableLabels += caseLabel
+            switchTableKeys += node.elementClass.id
+
+            for (indexer in node.indexers) {
+                generateIndexerCase(
+                    il, indexer, capturedIndexerInstances[indexer], clazz,
+                    elementVarIdx, minIndexVarIdx, referenceRecorderVarIdx, resultVarIdx
+                )
+            }
+
+            il.add(JumpInsnNode(Opcodes.GOTO, endLabel))
         }
+
+        il.set(switchInstPlaceholder, LookupSwitchInsnNode(endLabel, switchTableKeys.toIntArray(), switchTableLabels.toTypedArray()))
 
         il.add(endLabel)
-        il.add(VarInsnNode(Opcodes.ILOAD, 4))
+        il.add(VarInsnNode(Opcodes.ILOAD, resultVarIdx))
         il.add(InsnNode(Opcodes.IRETURN))
 
         clazz.methods.add(classifyMethod)
@@ -192,15 +205,18 @@ internal object BirElementIndexClassifierFunctionGenerator {
         return capturedIndexerInstances
     }
 
-    private fun generateIndexerCase(il: InsnList, indexer: Indexer, indexerField: FieldNode?, clazz: ClassNode) {
+    private fun generateIndexerCase(
+        il: InsnList, indexer: Indexer, indexerField: FieldNode?, clazz: ClassNode,
+        elementVarIdx: Int, minIndexVarIdx: Int, referenceRecorderVarIdx: Int, resultVarIdx: Int,
+    ) {
         val matcherLabel = LabelNode()
         il.add(IntInsnNode(Opcodes.SIPUSH, indexer.index))
-        il.add(VarInsnNode(Opcodes.ILOAD, 2))
+        il.add(VarInsnNode(Opcodes.ILOAD, minIndexVarIdx))
         il.add(JumpInsnNode(Opcodes.IF_ICMPLT, matcherLabel))
 
         if (indexer.kind == BirElementGeneralIndexer.Kind.IndexMatcher) {
-            // skip if already got result
-            il.add(VarInsnNode(Opcodes.ILOAD, 4))
+            // skip if already got a result
+            il.add(VarInsnNode(Opcodes.ILOAD, resultVarIdx))
             il.add(JumpInsnNode(Opcodes.IFNE, matcherLabel))
         }
 
@@ -216,7 +232,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
         when (indexer.kind) {
             BirElementGeneralIndexer.Kind.IndexMatcher -> {
                 if (indexerField != null) {
-                    il.add(VarInsnNode(Opcodes.ALOAD, 1))
+                    il.add(VarInsnNode(Opcodes.ALOAD, elementVarIdx))
                     il.add(
                         MethodInsnNode(
                             Opcodes.INVOKEINTERFACE,
@@ -229,12 +245,12 @@ internal object BirElementIndexClassifierFunctionGenerator {
                 }
 
                 il.add(IntInsnNode(Opcodes.SIPUSH, indexer.index))
-                il.add(VarInsnNode(Opcodes.ISTORE, 4))
+                il.add(VarInsnNode(Opcodes.ISTORE, resultVarIdx))
             }
             BirElementGeneralIndexer.Kind.BackReferenceRecorder -> {
                 require(indexerField != null)
-                il.add(VarInsnNode(Opcodes.ALOAD, 3))
-                il.add(VarInsnNode(Opcodes.ALOAD, 1))
+                il.add(VarInsnNode(Opcodes.ALOAD, referenceRecorderVarIdx))
+                il.add(VarInsnNode(Opcodes.ALOAD, elementVarIdx))
                 il.add(
                     MethodInsnNode(
                         Opcodes.INVOKEINTERFACE,
@@ -253,55 +269,45 @@ internal object BirElementIndexClassifierFunctionGenerator {
         il.add(matcherLabel)
     }
 
-    private fun buildClassMatchingTree(indexers: List<Indexer>): MutableList<ElementClassNode> {
-        val elementClassNodes = mutableMapOf<Class<*>, ElementClassNode>()
-        for (indexer in indexers) {
-            val node: ElementClassNode = elementClassNodes.computeIfAbsent(indexer.elementClass) { ElementClassNode(indexer.elementClass) }
-            node.indexers += indexer
+    private fun buildClassMatchingStructure(indexers: List<Indexer>): List<ElementClassBucket> {
+        val elementClassNodes = BirMetadata.allElements.associate { it.javaClass to ElementClassBucket(it) }
+
+        elementClassNodes.values.forEach { element ->
+            val clazz = element.elementClass.javaClass
+            val superElementClasses = (listOf(clazz.superclass) + clazz.interfaces)
+                .mapNotNull { elementClassNodes[it] }
+            element.superClasses = superElementClasses.toSet()
+            superElementClasses.forEach {
+                it.subClasses += element
+            }
         }
 
-        val topLevelElementClassNodes = elementClassNodes.values.toMutableList()
-        topLevelElementClassNodes.removeAll { node ->
-            val visitedTypes = hashSetOf<Class<*>>()
-            var isTopLevel = true
-            fun visitType(type: Class<*>?, isDescendant: Boolean) {
-                if (type == null || type == Any::class.java) {
-                    return
-                }
-
-                if (type == BirElement::class.java || type == BirElementBase::class.java) {
-                    return
-                }
-
-                if (!visitedTypes.add(type)) {
-                    return
-                }
-
-                if (isDescendant) {
-                    val parentNode = elementClassNodes[type]
-                    if (parentNode != null) {
-                        parentNode.subNodes += node
-                        isTopLevel = false
-                        return
-                    }
-                }
-
-                visitType(type.superclass, true)
-                for (parentType in type.interfaces) {
-                    visitType(parentType, true)
+        for (indexer in indexers) {
+            val node = elementClassNodes.getValue(indexer.elementClass)
+            node.descendantClasses().forEach { descendantNode ->
+                if (descendantNode.isLeaf) {
+                    descendantNode.indexers += indexer
                 }
             }
-            visitType(node.elementClass, false)
-
-            !isTopLevel
         }
-        return topLevelElementClassNodes
+
+        return elementClassNodes.values.filter { it.indexers.isNotEmpty() }
     }
 
-    private class ElementClassNode(val elementClass: Class<*>) {
+    private class ElementClassBucket(
+        val elementClass: BirElementClass,
+    ) {
+        var superClasses: Set<ElementClassBucket> = emptySet()
+        val subClasses = mutableSetOf<ElementClassBucket>()
         val indexers = mutableListOf<Indexer>()
-        val subNodes = mutableListOf<ElementClassNode>()
+
+        val isLeaf get() = subClasses.isEmpty()
+        fun descendantClasses() = DFS.topologicalOrder(listOf(this)) { it.subClasses }
     }
+
+    private class IndexBucket(
+        val indexer: Indexer,
+    )
 
     private fun generateConstructor(
         clazz: ClassNode,

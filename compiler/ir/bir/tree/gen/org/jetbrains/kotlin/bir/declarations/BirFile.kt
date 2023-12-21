@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.symbols.BirFileSymbol
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -26,5 +27,5 @@ abstract class BirFile : BirPackageFragment(), BirElement, BirAnnotationContaine
         annotations.acceptChildren(visitor, data)
     }
 
-    companion object
+    companion object : BirElementClass(BirFile::class.java, 47)
 }

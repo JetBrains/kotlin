@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
 
 /**
@@ -17,5 +18,5 @@ import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.returnTarget]
  */
 interface BirReturnTarget : BirElement, BirSymbolOwner, BirReturnTargetSymbol {
-    companion object
+    companion object : BirElementClass(BirReturnTarget::class.java, 75)
 }
