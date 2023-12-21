@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTreeVerifierHandler
 import org.jetbrains.kotlin.test.backend.handlers.JvmBoxRunner
-import org.jetbrains.kotlin.test.backend.ir.IrActualizerAndPluginsFacade
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.fir2IrStep
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
@@ -67,8 +67,7 @@ abstract class AbstractDataFrameTransformTest : BaseTestRunner() {
                 ::FirScopeDumpHandler,
             )
         }
-        fir2IrStep()
-        facadeStep(::IrActualizerAndPluginsFacade)
+        facadeStep(::Fir2IrResultsConverter)
         irHandlersStep {
             useHandlers(
                 ::IrTextDumpHandler,

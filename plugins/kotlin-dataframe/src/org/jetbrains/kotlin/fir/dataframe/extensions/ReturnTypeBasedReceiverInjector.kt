@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toSymbol
 
 class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolutionExtension(session) {
@@ -26,7 +26,7 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
     }
 
     private fun generatedTokenOrNull(call: FirFunctionCall): ConeClassLikeType? {
-        val callReturnType = call.coneTypeSafe<ConeClassLikeType>() ?: return null
+        val callReturnType = call.resolvedType
         if (callReturnType.classId != Names.DF_CLASS_ID) return null
         val rootMarker = callReturnType.typeArguments[0]
         if (rootMarker !is ConeClassLikeType) {

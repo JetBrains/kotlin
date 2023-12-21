@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.classFqName
@@ -75,7 +75,8 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         return declaration
     }
 
-    @OptIn(IrSymbolInternals::class)
+//    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun generateBodyForDefaultConstructor(declaration: IrConstructor): IrBody? {
         val irType = declaration.returnType.superTypes()[0]
         val symbol = irType.classOrFail.owner.primaryConstructor?.symbol ?: return null
@@ -99,6 +100,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         return context.irFactory.createBlockBody(-1, -1, listOf(delegatingAnyCall, initializerCall))
     }
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun visitProperty(declaration: IrProperty): IrStatement {
         val origin = declaration.origin
         if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin)) return declaration
@@ -148,6 +150,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         return declaration
     }
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
         val origin = (expression.type.classifierOrNull?.owner as? IrClass)?.origin ?: return expression
         val fromPlugin = origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin
