@@ -5,17 +5,9 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.util.IdSignature
 
-interface BirSymbolOwner : BirElement, BirSymbol {
+sealed interface BirSymbolOwnerFacade : BirSymbol {
     override val isBound: Boolean
         get() = true
-
-    override var signature: IdSignature?
-
-    companion object
 }
