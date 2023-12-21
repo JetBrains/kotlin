@@ -249,21 +249,6 @@ internal fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode
     return if (code == 0) ExitCode.OK else ExitCode.COMPILATION_ERROR
 }
 
-//Copy of CommonCompilerArguments.parseOrConfigureLanguageVersion to avoid direct dependency
-internal fun parseLanguageVersion(languageVersion: String?, useK2: Boolean): KotlinVersion {
-    val explicitVersion = languageVersion?.let { KotlinVersion.fromVersion(languageVersion) } ?: KotlinVersion.DEFAULT
-    return if (useK2 && (explicitVersion < KotlinVersion.KOTLIN_2_0)) KotlinVersion.KOTLIN_2_0 else explicitVersion
-}
-
-internal fun parseLanguageVersion(args: List<String>): KotlinVersion {
-    val languageVersionIndex = args.indexOf("-language-version")
-    val languageVersion = if (languageVersionIndex >= 0) {
-        args[languageVersionIndex + 1]
-    } else null
-    val useK2 = args.indexOf("-Xuse-k2") >= 0
-    return parseLanguageVersion(languageVersion, useK2)
-}
-
 internal fun UsesBuildMetricsService.addBuildMetricsForTaskAction(
     metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     languageVersion: KotlinVersion?,

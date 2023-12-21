@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -235,7 +236,7 @@ internal open class GradleCompilerRunner(
             errorsFiles = errorsFiles,
             kotlinPluginVersion = getKotlinPluginVersion(loggerProvider),
             //no need to log warnings in MessageCollector hear it will be logged by compiler
-            kotlinLanguageVersion = parseLanguageVersion(compilerArgs.languageVersion, compilerArgs.useK2),
+            kotlinLanguageVersion = compilerArgs.languageVersion?.let { v -> KotlinVersion.fromVersion(v) } ?: KotlinVersion.DEFAULT,
             compilerArgumentsLogLevel = environment.compilerArgumentsLogLevel,
         )
         TaskLoggers.put(pathProvider, loggerProvider)

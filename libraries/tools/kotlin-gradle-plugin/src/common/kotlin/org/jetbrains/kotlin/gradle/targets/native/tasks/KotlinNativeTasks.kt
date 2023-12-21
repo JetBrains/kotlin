@@ -515,7 +515,7 @@ internal constructor(
         val buildMetrics = metrics.get()
         addBuildMetricsForTaskAction(
             metricsReporter = buildMetrics,
-            languageVersion = parseLanguageVersion(compilerOptions.languageVersion.orNull?.version, compilerOptions.useK2.get())
+            languageVersion = resolveLanguageVersion()
         ) {
             val arguments = createCompilerArguments()
             val buildArguments = buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
@@ -534,6 +534,9 @@ internal constructor(
         }
 
     }
+
+    private fun resolveLanguageVersion() =
+        compilerOptions.languageVersion.orNull?.version?.let { v -> KotlinVersion.fromVersion(v) }
 
     private fun collectCommonCompilerStats() {
         buildFusService.orNull?.reportFusMetrics {
@@ -554,7 +557,7 @@ internal class ExternalDependenciesBuilder(
     intermediateLibraryName: String?,
 ) {
     constructor(project: Project, compilation: KotlinNativeCompilation) : this(
-        project, compilation, compilation.compileKotlinTask.moduleName
+        project, compilation, compilation.compileTaskProvider.get().compilerOptions.moduleName.get()
     )
 
     private val compileDependencyConfiguration: Configuration
