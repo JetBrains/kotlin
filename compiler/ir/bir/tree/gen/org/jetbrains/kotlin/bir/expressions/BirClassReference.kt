@@ -22,5 +22,5 @@ abstract class BirClassReference : BirDeclarationReference(), BirElement {
     abstract override var symbol: BirClassifierSymbol
     abstract var classType: BirType
 
-    companion object : BirElementClass(BirClassReference::class.java, 13)
+    companion object : BirElementClass(BirClassReference::class.java, 13, true)
 }

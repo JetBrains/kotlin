@@ -30,5 +30,5 @@ interface BirEnumEntry : BirElement, BirDeclaration, BirDeclarationWithName, Bir
         correspondingClass?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirEnumEntry::class.java, 38)
+    companion object : BirElementClass(BirEnumEntry::class.java, 38, true)
 }

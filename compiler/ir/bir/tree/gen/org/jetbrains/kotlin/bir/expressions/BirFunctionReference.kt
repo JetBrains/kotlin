@@ -29,5 +29,5 @@ abstract class BirFunctionReference : BirCallableReference<BirFunctionSymbol>(),
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirFunctionReference::class.java, 51)
+    companion object : BirElementClass(BirFunctionReference::class.java, 51, true)
 }

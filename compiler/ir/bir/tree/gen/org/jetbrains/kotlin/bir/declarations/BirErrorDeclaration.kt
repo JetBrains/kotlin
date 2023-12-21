@@ -24,5 +24,5 @@ abstract class BirErrorDeclaration : BirImplElementBase(), BirElement, BirDeclar
         annotations.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirErrorDeclaration::class.java, 40)
+    companion object : BirElementClass(BirErrorDeclaration::class.java, 40, true)
 }

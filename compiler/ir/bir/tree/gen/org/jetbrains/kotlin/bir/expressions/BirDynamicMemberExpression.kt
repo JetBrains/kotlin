@@ -26,5 +26,5 @@ abstract class BirDynamicMemberExpression : BirDynamicExpression(), BirElement {
         receiver?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirDynamicMemberExpression::class.java, 33)
+    companion object : BirElementClass(BirDynamicMemberExpression::class.java, 33, true)
 }

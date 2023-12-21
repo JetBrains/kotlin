@@ -17,5 +17,5 @@ import org.jetbrains.kotlin.bir.BirElementClass
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.continue]
  */
 abstract class BirContinue : BirBreakContinue(), BirElement {
-    companion object : BirElementClass(BirContinue::class.java, 23)
+    companion object : BirElementClass(BirContinue::class.java, 23, true)
 }

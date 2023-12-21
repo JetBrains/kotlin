@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 interface BirSymbolOwner : BirElement, BirSymbolOwnerFacade {
     override var signature: IdSignature?
 
-    companion object : BirElementClass(BirSymbolOwner::class.java, 87)
+    companion object : BirElementClass(BirSymbolOwner::class.java, 87, false)
 }
