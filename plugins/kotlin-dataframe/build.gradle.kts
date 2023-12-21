@@ -2,7 +2,7 @@ import org.gradle.api.tasks.bundling.Jar
 
 plugins {
     id("java")
-    kotlin("jvm") version "1.9.255-SNAPSHOT"
+    kotlin("jvm") version "2.0.255-SNAPSHOT"
     kotlin("libs.publisher") version "0.0.60-dev-30"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
@@ -88,6 +88,18 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 tasks.withType<JavaCompile> {
     sourceCompatibility = JavaVersion.VERSION_1_8.toString()
     targetCompatibility = JavaVersion.VERSION_1_8.toString()
+}
+
+tasks.compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+tasks.compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 tasks.create<JavaExec>("generateTests") {
