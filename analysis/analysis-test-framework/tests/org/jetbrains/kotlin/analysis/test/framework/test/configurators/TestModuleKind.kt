@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.test.configurators
 
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.model.TestModule
+
 /**
  * In an Analysis API test configuration, the [TestModuleKind] determines the kind of the default
  * [KtModule][org.jetbrains.kotlin.analysis.project.structure.KtModule]s used in the test. This essentially defines the context in which a
@@ -35,3 +39,6 @@ enum class TestModuleKind(val suffix: String) {
      */
     ScriptSource("ScriptSource"),
 }
+
+val TestModule.moduleKind: TestModuleKind?
+    get() = directives.singleOrZeroValue(AnalysisApiTestDirectives.MODULE_KIND)
