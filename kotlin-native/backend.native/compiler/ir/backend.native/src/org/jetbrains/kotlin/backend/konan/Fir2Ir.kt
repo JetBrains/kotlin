@@ -123,7 +123,7 @@ internal fun PhaseContext.fir2Ir(
 
     val usedPackages = buildSet {
         fun addExternalPackage(it: IrSymbol) {
-            val p = it.owner as? IrDeclaration ?: return
+            val p = it.takeIf { it.isBound }?.owner as? IrDeclaration ?: return
             val fragment = (p.getPackageFragment() as? IrExternalPackageFragment) ?: return
             add(fragment.packageFqName)
         }
