@@ -1,5 +1,7 @@
-/deprecatedError.kt:(237,238): error: '@Deprecated(...) class C : Any' is deprecated. alas.
+/deprecatedError.kt:(319,320): error: '@Deprecated(...) class C : Any' is deprecated. alas.
 
-/deprecatedError.kt:(246,249): error: '@Deprecated(...) fun foo(s: @Foo() String): Unit' is deprecated. alas.
+/deprecatedError.kt:(328,331): error: '@Deprecated(...) fun foo(s: @Foo() String): Unit' is deprecated. alas.
 
-/deprecatedError.kt:(258,259): error: 'constructor(): C' is deprecated. alas.
+/deprecatedError.kt:(340,341): error: 'constructor(): C' is deprecated. alas.
+
+/deprecatedError.kt:(348,351): error: '@Deprecated(...) @field:Foo() val bar: Int' is deprecated. alas.

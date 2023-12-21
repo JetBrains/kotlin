@@ -46,7 +46,9 @@ object FirDiagnosticRenderers {
                 modifierRenderer = FirPartialModifierRenderer(),
                 valueParameterRenderer = FirValueParameterRendererNoDefaultValue(),
                 declarationRenderer = FirDeclarationRenderer("local "),
+                annotationRenderer = FirAnnotationRendererForReadability(),
                 lineBreakAfterContextReceivers = false,
+                renderFieldAnnotationSeparately = false,
             ).renderElementAsString(symbol.fir, trim = true)
             is FirTypeParameterSymbol -> symbol.name.asString()
             else -> "???"

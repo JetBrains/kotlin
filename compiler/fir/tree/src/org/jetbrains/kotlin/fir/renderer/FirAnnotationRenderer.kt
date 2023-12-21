@@ -32,7 +32,7 @@ open class FirAnnotationRenderer {
     internal fun renderAnnotation(annotation: FirAnnotation, explicitAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null) {
         printer.print("@")
         (explicitAnnotationUseSiteTarget ?: annotation.useSiteTarget)?.let {
-            printer.print(it.name)
+            renderUseSiteTarget(it)
             printer.print(":")
         }
 
@@ -55,5 +55,15 @@ open class FirAnnotationRenderer {
         } else {
             printer.print(" ")
         }
+    }
+
+    open protected fun renderUseSiteTarget(it: AnnotationUseSiteTarget) {
+        printer.print(it.name)
+    }
+}
+
+class FirAnnotationRendererForReadability : FirAnnotationRenderer() {
+    override fun renderUseSiteTarget(it: AnnotationUseSiteTarget) {
+        printer.print(it.renderName)
     }
 }

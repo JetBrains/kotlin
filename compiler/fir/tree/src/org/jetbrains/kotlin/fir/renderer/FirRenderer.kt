@@ -47,6 +47,7 @@ class FirRenderer(
     override val resolvedNamedReferenceRenderer: FirResolvedNamedReferenceRenderer = FirResolvedNamedReferenceRendererWithLabel(),
     override val resolvedQualifierRenderer: FirResolvedQualifierRenderer = FirResolvedQualifierRendererWithLabel(),
     private val lineBreakAfterContextReceivers: Boolean = true,
+    private val renderFieldAnnotationSeparately: Boolean = true,
     override val getClassCallRenderer: FirGetClassCallRenderer = FirGetClassCallRendererForDebugging(),
 ) : FirRendererComponents {
 
@@ -258,7 +259,9 @@ class FirRenderer(
             if (callableDeclaration is FirProperty) {
                 val backingField = callableDeclaration.backingField
                 if (backingField?.annotations?.isNotEmpty() == true) {
-                    print("field:")
+                    if (renderFieldAnnotationSeparately) {
+                        print("field:")
+                    }
                     annotationRenderer?.render(backingField)
                 }
             }
