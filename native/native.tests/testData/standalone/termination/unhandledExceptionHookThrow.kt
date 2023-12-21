@@ -1,5 +1,5 @@
 // EXIT_CODE: !0
-// OUTPUT_REGEX: Hook\nUncaught Kotlin exception: kotlin\.Error: another error\n(?!.*an error.*).*
+// OUTPUT_REGEX: Hook\RUncaught Kotlin exception: kotlin\.Error: another error\R(?!.*an error.*).*
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
 import kotlin.test.*

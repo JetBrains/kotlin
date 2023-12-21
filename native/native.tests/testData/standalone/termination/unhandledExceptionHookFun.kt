@@ -1,6 +1,6 @@
 // EXIT_CODE: !0
 // FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative
-// OUTPUT_REGEX: value true: Error\. Runnable state: true\nUncaught Kotlin exception: kotlin\.Error: an error\n.*
+// OUTPUT_REGEX: value true: Error\. Runnable state: true\RUncaught Kotlin exception: kotlin\.Error: an error\R.*
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 import kotlin.native.runtime.Debugging
