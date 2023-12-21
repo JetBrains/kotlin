@@ -37,7 +37,7 @@ object FirDiagnosticRenderers {
             is FirClassLikeSymbol<*>,
             is FirCallableSymbol<*>,
             -> FirRenderer(
-                typeRenderer = ConeTypeRenderer(),
+                typeRenderer = ConeTypeRendererForReadability { ConeIdShortRenderer() },
                 idRenderer = ConeIdShortRenderer(),
                 classMemberRenderer = FirNoClassMemberRenderer(),
                 bodyRenderer = null,
