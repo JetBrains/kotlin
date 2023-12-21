@@ -1,0 +1,4 @@
+Diagnostics from elements:
+  for PSI element of type KtWhenExpression at (14,12) - (16,6)
+    NO_ELSE_IN_WHEN      text ranges: [(106,110)]
+      PSI: KtWhenExpression at (14,12) - (16,6)

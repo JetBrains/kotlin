@@ -253,4 +253,86 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
             runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/deprecationAtTopLevel.kt");
         }
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when")
+    @TestDataPath("$PROJECT_ROOT")
+    public class When {
+        @Test
+        public void testAllFilesPresentInWhen() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("sealedClassFromDependencyExhaustive.kt")
+        public void testSealedClassFromDependencyExhaustive() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassFromDependencyExhaustive.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedClassFromDependencyMissingCase.kt")
+        public void testSealedClassFromDependencyMissingCase() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassFromDependencyMissingCase.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedClassFromLibraryExhaustive.kt")
+        public void testSealedClassFromLibraryExhaustive() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassFromLibraryExhaustive.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedClassFromLibraryMissingCase.kt")
+        public void testSealedClassFromLibraryMissingCase() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassFromLibraryMissingCase.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedClassSameModuleExhaustive.kt")
+        public void testSealedClassSameModuleExhaustive() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassSameModuleExhaustive.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedClassSameModuleMissingCase.kt")
+        public void testSealedClassSameModuleMissingCase() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassSameModuleMissingCase.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedInterfaceFromDependencyExhaustive.kt")
+        public void testSealedInterfaceFromDependencyExhaustive() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceFromDependencyExhaustive.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedInterfaceFromDependencyMissingCase.kt")
+        public void testSealedInterfaceFromDependencyMissingCase() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceFromDependencyMissingCase.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedInterfaceFromLibraryExhaustive.kt")
+        public void testSealedInterfaceFromLibraryExhaustive() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceFromLibraryExhaustive.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedInterfaceFromLibraryMissingCase.kt")
+        public void testSealedInterfaceFromLibraryMissingCase() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceFromLibraryMissingCase.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedInterfaceSameModuleExhaustive.kt")
+        public void testSealedInterfaceSameModuleExhaustive() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceSameModuleExhaustive.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedInterfaceSameModuleMissingCase.kt")
+        public void testSealedInterfaceSameModuleMissingCase() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceSameModuleMissingCase.kt");
+        }
+    }
 }

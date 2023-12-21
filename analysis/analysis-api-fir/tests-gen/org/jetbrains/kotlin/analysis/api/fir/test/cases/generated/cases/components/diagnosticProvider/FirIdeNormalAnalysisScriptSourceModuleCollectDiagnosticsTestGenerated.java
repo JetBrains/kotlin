@@ -67,4 +67,14 @@ public class FirIdeNormalAnalysisScriptSourceModuleCollectDiagnosticsTestGenerat
             runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/scriptUninitializedTopLevelProperty2.kts");
         }
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when")
+    @TestDataPath("$PROJECT_ROOT")
+    public class When {
+        @Test
+        public void testAllFilesPresentInWhen() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+    }
 }
