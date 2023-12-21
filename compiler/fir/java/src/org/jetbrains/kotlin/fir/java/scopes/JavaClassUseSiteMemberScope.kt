@@ -333,26 +333,27 @@ class JavaClassUseSiteMemberScope(
         }
     }
 
-    override fun FirNamedFunctionSymbol.createSuspendView(): FirSimpleFunction? {
-        val continuationParameter = fir.valueParameters.lastOrNull() ?: return null
-        val owner = ownerClassLookupTag.toSymbol(session)?.fir as? FirJavaClass ?: return null
+    override fun FirNamedFunctionSymbol.replaceWithWrapperSymbolIfNeeded(): FirNamedFunctionSymbol {
+        if (!isJavaOrEnhancement) return this
+        val continuationParameter = fir.valueParameters.lastOrNull() ?: return this
+        val owner = ownerClassLookupTag.toSymbol(session)?.fir as? FirJavaClass ?: return this
         val continuationParameterType = continuationParameter
             .returnTypeRef
             .resolveIfJavaType(session, owner.javaTypeParameterStack)
             .coneTypeSafe<ConeKotlinType>()
             ?.lowerBoundIfFlexible() as? ConeClassLikeType
-            ?: return null
-        if (continuationParameterType.lookupTag.classId.asSingleFqName() != StandardNames.CONTINUATION_INTERFACE_FQ_NAME) return null
+            ?: return this
+        if (continuationParameterType.lookupTag.classId.asSingleFqName() != StandardNames.CONTINUATION_INTERFACE_FQ_NAME) return this
 
         return buildSimpleFunctionCopy(fir) {
             valueParameters.clear()
             valueParameters.addAll(fir.valueParameters.dropLast(1))
             returnTypeRef = buildResolvedTypeRef {
-                type = continuationParameterType.typeArguments[0].type ?: return null
+                type = continuationParameterType.typeArguments[0].type ?: return this@replaceWithWrapperSymbolIfNeeded
             }
             (status as FirDeclarationStatusImpl).isSuspend = true
             symbol = FirNamedFunctionSymbol(callableId)
-        }
+        }.symbol
     }
 
     // ---------------------------------------------------------------------------------------------------------
