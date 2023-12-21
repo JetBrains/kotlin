@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.symbols.BirTypeAliasSymbol
 import org.jetbrains.kotlin.bir.types.BirType
@@ -27,5 +28,5 @@ interface BirTypeAlias : BirElement, BirDeclaration, BirDeclarationWithName, Bir
         typeParameters.acceptChildren(visitor, data)
     }
 
-    companion object
+    companion object : BirElementClass(BirTypeAlias::class.java, 91)
 }

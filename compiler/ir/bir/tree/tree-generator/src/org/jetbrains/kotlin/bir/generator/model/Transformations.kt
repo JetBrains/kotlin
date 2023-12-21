@@ -16,6 +16,7 @@ fun transformModel(model: Model) {
     addPureAbstractElement(model.elements, elementImplBaseType)
     adjustSymbolOwners(model.elements)
     markLeaves(model.elements)
+    setClassIds(model.elements)
     processFieldOverrides(model.elements)
     computeFieldProperties(model.elements)
     computeFieldFakeOverrides(model.elements)
@@ -55,6 +56,13 @@ private fun adjustSymbolOwners(elements: List<Element>) {
                 element.otherParents += symbolType
             }
         }
+    }
+}
+
+private fun setClassIds(elements: List<Element>) {
+    var id = 0
+    for (element in elements.sortedBy { it.name }) {
+        element.classId = id++
     }
 }
 

@@ -82,6 +82,7 @@ class Element(
 
     override val namePrefix = "Bir"
     val elementImplName = type(packageName + ".impl", typeName + "Impl")
+    var classId = 0
 
     /**
      * Whether this element is semantically a leaf element in the hierarchy.

@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 
@@ -20,5 +21,5 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 interface BirDeclaration : BirElement, BirStatement, BirSymbolOwner, BirAnnotationContainerElement {
     var origin: IrDeclarationOrigin
 
-    companion object
+    companion object : BirElementClass(BirDeclaration::class.java, 24)
 }

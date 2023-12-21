@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 
 /**
@@ -19,5 +20,5 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 abstract class BirSyntheticBody : BirBody(), BirElement {
     abstract var kind: IrSyntheticBodyKind
 
-    companion object
+    companion object : BirElementClass(BirSyntheticBody::class.java, 88)
 }

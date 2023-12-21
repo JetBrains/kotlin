@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.symbols.BirTypeParameterSymbol
@@ -30,5 +31,5 @@ abstract class BirTypeParameter : BirImplElementBase(), BirElement, BirDeclarati
         annotations.acceptChildren(visitor, data)
     }
 
-    companion object
+    companion object : BirElementClass(BirTypeParameter::class.java, 93)
 }

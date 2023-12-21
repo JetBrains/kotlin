@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirImplElementBase
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.name.Name
@@ -31,5 +28,5 @@ abstract class BirModuleFragment : BirImplElementBase(), BirElement {
         files.acceptChildren(visitor, data)
     }
 
-    companion object
+    companion object : BirElementClass(BirModuleFragment::class.java, 66)
 }

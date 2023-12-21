@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 
 /**
  * A leaf IR tree element.
@@ -18,5 +19,5 @@ import org.jetbrains.kotlin.bir.BirElement
 abstract class BirErrorExpression : BirExpression(), BirElement {
     abstract var description: String
 
-    companion object
+    companion object : BirElementClass(BirErrorExpression::class.java, 41)
 }

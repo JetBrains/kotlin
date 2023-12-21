@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 
 /**
  * A non-leaf IR tree element.
@@ -16,5 +17,5 @@ import org.jetbrains.kotlin.bir.BirElement
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.getSingletonValue]
  */
 abstract class BirGetSingletonValue : BirDeclarationReference(), BirElement {
-    companion object
+    companion object : BirElementClass(BirGetSingletonValue::class.java, 56)
 }

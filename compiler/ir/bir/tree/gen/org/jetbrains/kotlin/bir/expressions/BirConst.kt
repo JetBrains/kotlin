@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 
 /**
@@ -20,5 +21,5 @@ abstract class BirConst<T> : BirExpression(), BirElement {
     abstract var kind: IrConstKind<T>
     abstract var value: T
 
-    companion object
+    companion object : BirElementClass(BirConst::class.java, 15)
 }

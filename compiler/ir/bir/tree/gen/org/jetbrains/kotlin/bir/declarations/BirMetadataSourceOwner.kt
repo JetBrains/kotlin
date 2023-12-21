@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 
 /**
  * An [BirElement] capable of holding something which backends can use to write
@@ -22,5 +23,5 @@ import org.jetbrains.kotlin.bir.BirElement
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.metadataSourceOwner]
  */
 interface BirMetadataSourceOwner : BirElement {
-    companion object
+    companion object : BirElementClass(BirMetadataSourceOwner::class.java, 65)
 }

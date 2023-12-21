@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirStatement
 
 /**
@@ -20,5 +21,5 @@ import org.jetbrains.kotlin.bir.BirStatement
 interface BirStatementContainer : BirElement {
     val statements: BirChildElementList<BirStatement>
 
-    companion object
+    companion object : BirElementClass(BirStatementContainer::class.java, 83)
 }

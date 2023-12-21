@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 /**
@@ -22,5 +23,5 @@ abstract class BirLoop : BirExpression(), BirElement {
     abstract var condition: BirExpression?
     abstract var label: String?
 
-    companion object
+    companion object : BirElementClass(BirLoop::class.java, 62)
 }

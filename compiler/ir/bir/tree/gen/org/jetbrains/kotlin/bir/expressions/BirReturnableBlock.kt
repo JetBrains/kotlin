@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.declarations.BirReturnTarget
 import org.jetbrains.kotlin.bir.declarations.BirSymbolOwner
@@ -24,5 +25,5 @@ abstract class BirReturnableBlock : BirBlock(), BirElement, BirSymbolOwner, BirR
         statements.acceptChildren(visitor, data)
     }
 
-    companion object
+    companion object : BirElementClass(BirReturnableBlock::class.java, 76)
 }

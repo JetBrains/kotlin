@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.descriptors.Modality
 
 /**
@@ -19,5 +20,5 @@ import org.jetbrains.kotlin.descriptors.Modality
 interface BirOverridableMember : BirElement, BirDeclaration, BirDeclarationWithVisibility, BirDeclarationWithName, BirSymbolOwner {
     var modality: Modality
 
-    companion object
+    companion object : BirElementClass(BirOverridableMember::class.java, 68)
 }

@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 
 /**
@@ -21,5 +22,5 @@ abstract class BirBlockBody : BirBody(), BirElement, BirStatementContainer {
         statements.acceptChildren(visitor, data)
     }
 
-    companion object
+    companion object : BirElementClass(BirBlockBody::class.java, 4)
 }

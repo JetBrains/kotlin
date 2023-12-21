@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 
@@ -26,5 +27,5 @@ abstract class BirSuspendableExpression : BirExpression(), BirElement {
         result?.accept(data, visitor)
     }
 
-    companion object
+    companion object : BirElementClass(BirSuspendableExpression::class.java, 85)
 }

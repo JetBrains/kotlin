@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.bir
 
 import kotlin.experimental.or
 
-abstract class BirImplElementBase : BirElementBase() {
+abstract class BirImplElementBase() : BirElementBase() {
     // bits reservation: 0 - parent, 1-n - child element lists, n-14 - all other properties, 15 - dynamic properties
     private var observedPropertiesBitSet: Short = 0
     private var dependentIndexedElements: Any? = null // null | BirImplElementBase | Array<BirImplElementBase?>

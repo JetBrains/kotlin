@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 
 /**
@@ -19,5 +20,5 @@ import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 abstract class BirGetObjectValue : BirGetSingletonValue(), BirElement {
     abstract override var symbol: BirClassSymbol
 
-    companion object
+    companion object : BirElementClass(BirGetObjectValue::class.java, 55)
 }

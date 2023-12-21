@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirImplElementBase
-import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
 
@@ -31,5 +28,5 @@ abstract class BirVariable : BirImplElementBase(), BirElement, BirDeclaration, B
         initializer?.accept(data, visitor)
     }
 
-    companion object
+    companion object : BirElementClass(BirVariable::class.java, 100)
 }

@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
@@ -22,5 +23,5 @@ import org.jetbrains.kotlin.bir.types.BirType
 abstract class BirExpression : BirImplElementBase(), BirElement, BirStatement, BirVarargElement, BirAttributeContainer {
     abstract var type: BirType
 
-    companion object
+    companion object : BirElementClass(BirExpression::class.java, 42)
 }

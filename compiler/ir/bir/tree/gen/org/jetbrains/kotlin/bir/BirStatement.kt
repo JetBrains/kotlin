@@ -14,5 +14,5 @@ package org.jetbrains.kotlin.bir
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.statement]
  */
 interface BirStatement : BirElement {
-    companion object
+    companion object : BirElementClass(BirStatement::class.java, 82)
 }

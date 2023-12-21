@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
@@ -23,5 +24,5 @@ abstract class BirErrorDeclaration : BirImplElementBase(), BirElement, BirDeclar
         annotations.acceptChildren(visitor, data)
     }
 
-    companion object
+    companion object : BirElementClass(BirErrorDeclaration::class.java, 40)
 }

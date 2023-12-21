@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 
 /**
  * A non-leaf IR tree element.
@@ -19,5 +20,5 @@ import org.jetbrains.kotlin.bir.BirElement
 interface BirDeclarationContainer : BirElement, BirDeclarationParent {
     val declarations: BirChildElementList<BirDeclaration>
 
-    companion object
+    companion object : BirElementClass(BirDeclarationContainer::class.java, 25)
 }

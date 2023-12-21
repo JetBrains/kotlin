@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirImplElementBase
-import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.*
 
 /**
  * A leaf IR tree element.
@@ -27,5 +24,5 @@ abstract class BirBranch : BirImplElementBase(), BirElement {
         result?.accept(data, visitor)
     }
 
-    companion object
+    companion object : BirElementClass(BirBranch::class.java, 6)
 }

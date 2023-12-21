@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.bir.generator
 
 import org.jetbrains.kotlin.bir.generator.model.transformModel
+import org.jetbrains.kotlin.bir.generator.print.printBirMetadata
 import org.jetbrains.kotlin.bir.generator.print.printElementImpls
 import org.jetbrains.kotlin.bir.generator.print.printElements
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
@@ -28,6 +29,7 @@ fun main(args: Array<String>) {
     val generatedFiles = sequence {
         yieldAll(printElements(generationPath, model))
         yieldAll(printElementImpls(generationPath, model))
+        yield(printBirMetadata(generationPath, model))
     }.map {
         GeneratorsFileUtil.writeFileIfContentChanged(it.file, it.newText, logNotChanged = false)
         it.file
