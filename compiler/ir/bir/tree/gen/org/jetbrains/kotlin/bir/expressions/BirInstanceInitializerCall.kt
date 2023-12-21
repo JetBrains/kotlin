@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 
 /**
@@ -19,5 +20,5 @@ import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 abstract class BirInstanceInitializerCall : BirExpression(), BirElement {
     abstract var classSymbol: BirClassSymbol
 
-    companion object
+    companion object : BirElementClass(BirInstanceInitializerCall::class.java, 59)
 }

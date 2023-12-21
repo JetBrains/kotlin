@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirValueSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
@@ -21,5 +22,5 @@ interface BirValueDeclaration : BirElement, BirDeclarationWithName, BirSymbolOwn
     var type: BirType
     var isAssignable: Boolean
 
-    companion object
+    companion object : BirElementClass(BirValueDeclaration::class.java, 96)
 }

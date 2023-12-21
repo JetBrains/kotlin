@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 
 /**
@@ -20,5 +21,5 @@ interface BirOverridableDeclaration<S : BirSymbol> : BirElement, BirOverridableM
     var isFakeOverride: Boolean
     var overriddenSymbols: List<S>
 
-    companion object
+    companion object : BirElementClass(BirOverridableDeclaration::class.java, 67)
 }

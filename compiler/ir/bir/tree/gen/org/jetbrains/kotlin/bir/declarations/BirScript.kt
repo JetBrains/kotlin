@@ -44,5 +44,5 @@ abstract class BirScript : BirImplElementBase(), BirElement, BirDeclaration, Bir
         earlierScriptsParameter?.accept(data, visitor)
     }
 
-    companion object
+    companion object : BirElementClass(BirScript::class.java, 77)
 }

@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirImplElementBase
-import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 import org.jetbrains.kotlin.bir.symbols.BirAnonymousInitializerSymbol
 
@@ -29,5 +26,5 @@ abstract class BirAnonymousInitializer : BirImplElementBase(), BirElement, BirDe
         body?.accept(data, visitor)
     }
 
-    companion object
+    companion object : BirElementClass(BirAnonymousInitializer::class.java, 1)
 }

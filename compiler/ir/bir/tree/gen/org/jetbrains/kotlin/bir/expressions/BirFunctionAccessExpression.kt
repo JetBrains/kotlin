@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 
 /**
@@ -19,5 +20,5 @@ import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 abstract class BirFunctionAccessExpression : BirMemberAccessExpression<BirFunctionSymbol>(), BirElement {
     abstract var contextReceiversCount: Int
 
-    companion object
+    companion object : BirElementClass(BirFunctionAccessExpression::class.java, 49)
 }

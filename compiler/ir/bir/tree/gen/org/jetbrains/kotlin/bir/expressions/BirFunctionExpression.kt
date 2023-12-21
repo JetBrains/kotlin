@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
@@ -27,5 +28,5 @@ abstract class BirFunctionExpression : BirExpression(), BirElement {
         function?.accept(data, visitor)
     }
 
-    companion object
+    companion object : BirElementClass(BirFunctionExpression::class.java, 50)
 }

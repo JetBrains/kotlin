@@ -20,13 +20,14 @@ import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
 
-abstract class BirElementBase : BirElementParent(), BirElement {
+abstract class BirElementBase() : BirElementParent(), BirElement {
     /**
      * Database reference may be stale.
      * To actualize it for all elements in a database, call [BirDatabase.realizeTreeMovements]
      */
     internal var _containingDatabase: BirDatabase? = null
     internal var _parent: BirElementParent? = null
+    internal val classId = BirElementClassCache.get(this.javaClass).id.toUByte()
     private var flags: Byte = 0
     internal var indexSlot: UByte = 0u
     internal var lastReturnedInQueryOfIndexSlot: UByte = 0u

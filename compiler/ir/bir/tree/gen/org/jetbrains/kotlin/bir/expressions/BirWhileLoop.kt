@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 
@@ -23,5 +24,5 @@ abstract class BirWhileLoop : BirLoop(), BirElement {
         body?.accept(data, visitor)
     }
 
-    companion object
+    companion object : BirElementClass(BirWhileLoop::class.java, 102)
 }

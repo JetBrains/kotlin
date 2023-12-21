@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirClassifierSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
@@ -21,5 +22,5 @@ abstract class BirClassReference : BirDeclarationReference(), BirElement {
     abstract override var symbol: BirClassifierSymbol
     abstract var classType: BirType
 
-    companion object
+    companion object : BirElementClass(BirClassReference::class.java, 13)
 }

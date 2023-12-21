@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.expressions.BirBody
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 import org.jetbrains.kotlin.bir.types.BirType
@@ -29,5 +30,5 @@ interface BirFunction : BirElement, BirDeclaration, BirPossiblyExternalDeclarati
     var contextReceiverParametersCount: Int
     var body: BirBody?
 
-    companion object
+    companion object : BirElementClass(BirFunction::class.java, 48)
 }
