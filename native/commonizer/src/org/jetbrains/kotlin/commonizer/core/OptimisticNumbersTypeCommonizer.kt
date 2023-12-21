@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.commonizer.utils.*
 
 private typealias BitWidth = Int
 
-private class SubstitutableNumbers(private val numbers: Map<CirEntityId, BitWidth>) {
+private class SubstitutableNumbers(val numbers: Map<CirEntityId, BitWidth>) {
     operator fun contains(id: CirEntityId) = id in numbers
     fun choose(first: CirClassType, second: CirClassType): CirClassType? {
         val firstBitWidth = numbers[first.classifierId] ?: return null
@@ -71,14 +71,21 @@ private val floatingPointVars = SubstitutableNumbers(
 )
 
 internal object OptimisticNumbersTypeCommonizer : AssociativeCommonizer<CirClassType> {
-    override fun commonize(first: CirClassType, second: CirClassType): CirClassType? {
-        val result = signedIntegers.choose(first, second)
-            ?: unsignedIntegers.choose(first, second)
-            ?: floatingPoints.choose(first, second)
-            ?: signedVarIntegers.choose(first, second)
-            ?: unsignedVarIntegers.choose(first, second)
-            ?: floatingPointVars.choose(first, second)
+    private val commonizableNumberTypes = listOf(
+        signedIntegers,
+        unsignedIntegers,
+        floatingPoints,
+        signedVarIntegers,
+        unsignedVarIntegers,
+        floatingPointVars,
+    )
 
+    private val commonizableNumberIdentifiers = commonizableNumberTypes.flatMap { it.numbers.keys }.toSet()
+
+    fun isOptimisticallyCommonizableNumber(identifier: CirEntityId): Boolean = identifier in commonizableNumberIdentifiers
+
+    override fun commonize(first: CirClassType, second: CirClassType): CirClassType? {
+        val result = commonizableNumberTypes.firstNotNullOfOrNull { it.choose(first, second) }
         return result?.withMarker()
     }
 

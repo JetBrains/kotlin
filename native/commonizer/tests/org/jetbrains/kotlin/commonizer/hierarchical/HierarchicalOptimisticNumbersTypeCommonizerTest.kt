@@ -972,7 +972,6 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b, c)", """
                 expect class X
-                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int", "c: kotlin.Any"])
                 expect fun foo(x: X): X
             """.trimIndent()
         )
