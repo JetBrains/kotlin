@@ -2374,7 +2374,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INC_DEC_SHOULD_NOT_RETURN_UNIT, "Functions 'inc()', 'dec()' shouldn't return 'Unit' to be used by operators ++, --.")
         map.put(
             ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT,
-            "Function ''{0}'' should return ''Unit'' to be used by corresponding operator ''{1}''.",
+            "Function ''{0}'' must return ''Unit'' to be used by corresponding operator ''{1}''.",
             SYMBOL,
             TO_STRING
         )
