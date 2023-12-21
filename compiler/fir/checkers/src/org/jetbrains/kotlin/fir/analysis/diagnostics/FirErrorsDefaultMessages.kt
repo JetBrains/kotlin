@@ -1153,7 +1153,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Modifiers
         map.put(INAPPLICABLE_INFIX_MODIFIER, "'infix' modifier is inapplicable to this function.")
         map.put(REPEATED_MODIFIER, "Repeated ''{0}''.", TO_STRING)
-        map.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present.", TO_STRING, TO_STRING)
+        map.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant in presence of ''{1}''.", TO_STRING, TO_STRING)
         map.put(DEPRECATED_MODIFIER, "Modifier ''{0}'' is deprecated; use ''{1}'' instead.", TO_STRING, TO_STRING)
         map.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''.", TO_STRING, TO_STRING)
         map.put(DEPRECATED_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is deprecated for ''{1}''.", TO_STRING, STRING)
