@@ -28,5 +28,5 @@ abstract class BirMemberAccessExpression<S : BirSymbol> : BirDeclarationReferenc
     abstract val valueArguments: BirChildElementList<BirExpression?>
     abstract var typeArguments: List<BirType?>
 
-    companion object : BirElementClass(BirMemberAccessExpression::class.java, 63, false)
+    companion object : BirElementClass(BirMemberAccessExpression::class.java, 88, false)
 }

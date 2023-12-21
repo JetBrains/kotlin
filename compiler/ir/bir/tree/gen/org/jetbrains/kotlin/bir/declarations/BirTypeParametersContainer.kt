@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.bir.BirElementClass
 interface BirTypeParametersContainer : BirElement, BirDeclaration, BirDeclarationParent {
     val typeParameters: BirChildElementList<BirTypeParameter>
 
-    companion object : BirElementClass(BirTypeParametersContainer::class.java, 94, false)
+    companion object : BirElementClass(BirTypeParametersContainer::class.java, 99, false)
 }

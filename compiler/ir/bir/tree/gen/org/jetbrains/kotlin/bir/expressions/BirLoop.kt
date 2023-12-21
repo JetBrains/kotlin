@@ -23,5 +23,5 @@ abstract class BirLoop : BirExpression(), BirElement {
     abstract var condition: BirExpression?
     abstract var label: String?
 
-    companion object : BirElementClass(BirLoop::class.java, 62, false)
+    companion object : BirElementClass(BirLoop::class.java, 87, false)
 }
