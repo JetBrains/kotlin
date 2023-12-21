@@ -28,5 +28,5 @@ abstract class BirFunctionExpression : BirExpression(), BirElement {
         function?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirFunctionExpression::class.java, 50)
+    companion object : BirElementClass(BirFunctionExpression::class.java, 50, true)
 }

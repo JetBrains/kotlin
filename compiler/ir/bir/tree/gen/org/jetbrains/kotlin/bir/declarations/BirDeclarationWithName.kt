@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.name.Name
 interface BirDeclarationWithName : BirElement, BirDeclaration {
     var name: Name
 
-    companion object : BirElementClass(BirDeclarationWithName::class.java, 28)
+    companion object : BirElementClass(BirDeclarationWithName::class.java, 28, false)
 }

@@ -17,5 +17,5 @@ import org.jetbrains.kotlin.bir.BirElementClass
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.declarationParent]
  */
 interface BirDeclarationParent : BirElement {
-    companion object : BirElementClass(BirDeclarationParent::class.java, 26)
+    companion object : BirElementClass(BirDeclarationParent::class.java, 26, false)
 }

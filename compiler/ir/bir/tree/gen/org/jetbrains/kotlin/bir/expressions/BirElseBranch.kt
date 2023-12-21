@@ -24,5 +24,5 @@ abstract class BirElseBranch : BirBranch(), BirElement {
         result?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirElseBranch::class.java, 36)
+    companion object : BirElementClass(BirElseBranch::class.java, 36, true)
 }

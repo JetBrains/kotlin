@@ -82,6 +82,7 @@ private fun SmartPrinter.printElement(element: Element) {
             print("companion object : ${elementClassType.render()}(")
             print("${element.withArgs().render()}::class.java")
             print(", ${element.classId}")
+            print(", ${element.isLeaf}")
             println(")")
         }
     }.toString()

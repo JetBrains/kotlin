@@ -22,5 +22,5 @@ import org.jetbrains.kotlin.name.FqName
 abstract class BirPackageFragment : BirImplElementBase(), BirElement, BirDeclarationContainer, BirSymbolOwner, BirPackageFragmentSymbol {
     abstract var packageFqName: FqName
 
-    companion object : BirElementClass(BirPackageFragment::class.java, 69)
+    companion object : BirElementClass(BirPackageFragment::class.java, 69, false)
 }

@@ -24,5 +24,5 @@ abstract class BirErrorCallExpression : BirErrorExpression(), BirElement {
         arguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirErrorCallExpression::class.java, 39)
+    companion object : BirElementClass(BirErrorCallExpression::class.java, 39, true)
 }

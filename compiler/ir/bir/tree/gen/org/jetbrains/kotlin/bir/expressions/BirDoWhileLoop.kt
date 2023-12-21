@@ -24,5 +24,5 @@ abstract class BirDoWhileLoop : BirLoop(), BirElement {
         condition?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirDoWhileLoop::class.java, 31)
+    companion object : BirElementClass(BirDoWhileLoop::class.java, 31, true)
 }

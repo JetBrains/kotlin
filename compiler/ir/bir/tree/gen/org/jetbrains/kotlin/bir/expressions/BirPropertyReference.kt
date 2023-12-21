@@ -33,5 +33,5 @@ abstract class BirPropertyReference : BirCallableReference<BirPropertySymbol>(),
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirPropertyReference::class.java, 72)
+    companion object : BirElementClass(BirPropertyReference::class.java, 72, true)
 }
