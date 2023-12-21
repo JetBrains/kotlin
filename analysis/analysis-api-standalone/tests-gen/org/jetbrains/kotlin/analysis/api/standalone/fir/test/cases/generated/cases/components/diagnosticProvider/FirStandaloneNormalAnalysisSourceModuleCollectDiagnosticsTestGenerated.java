@@ -65,6 +65,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
     }
 
     @Test
+    @TestMetadata("errorsInFunctionalInterfacesInstances.kt")
+    public void testErrorsInFunctionalInterfacesInstances() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/errorsInFunctionalInterfacesInstances.kt");
+    }
+
+    @Test
     @TestMetadata("incompleteDelegation.kt")
     public void testIncompleteDelegation() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/incompleteDelegation.kt");
