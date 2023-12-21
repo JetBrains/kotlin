@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.types.ConeAttribute
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 abstract class ConeAttributeRenderer {
     abstract fun render(attributes: Iterable<ConeAttribute<*>>): String
@@ -17,6 +18,6 @@ abstract class ConeAttributeRenderer {
 
     object ForReadability : ConeAttributeRenderer() {
         override fun render(attributes: Iterable<ConeAttribute<*>>): String =
-            attributes.joinToString(separator = " ", postfix = " ") { it.renderForReadability() }
+            attributes.mapNotNull { it.renderForReadability() }.ifNotEmpty { joinToString(separator = " ", postfix = " ") } ?: ""
     }
 }

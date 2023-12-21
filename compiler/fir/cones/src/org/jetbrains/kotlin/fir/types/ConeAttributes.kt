@@ -30,7 +30,7 @@ abstract class ConeAttribute<out T : ConeAttribute<T>> : AnnotationMarker {
     abstract fun isSubtypeOf(other: @UnsafeVariance T?): Boolean
 
     abstract override fun toString(): String
-    open fun renderForReadability(): String = toString()
+    open fun renderForReadability(): String? = null
 
     abstract val key: KClass<out T>
 
