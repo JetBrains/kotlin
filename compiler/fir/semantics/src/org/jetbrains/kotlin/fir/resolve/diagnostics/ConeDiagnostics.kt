@@ -175,27 +175,27 @@ object ConeVariableExpectedError : ConeDiagnostic {
 sealed class ConeContractDescriptionError : ConeDiagnostic {
     class IllegalElement(val element: FirElement) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "Illegal element in contract description"
+            get() = "illegal element in contract description"
     }
 
     class UnresolvedCall(val name: Name) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "Unresolved call in contract description: ${name.asString()}"
+            get() = "unresolved call in contract description: ${name.asString()}"
     }
 
     class NoReceiver(val name: Name) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "No receiver for call ${name.asString()} found"
+            get() = "no receiver for call '${name.asString()}' found"
     }
 
     class NoArgument(val name: Name) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "No argument for call ${name.asString()} found"
+            get() = "no argument for call '${name.asString()}' found"
     }
 
     class NotAConstant(val element: Any) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "$element is not a constant reference"
+            get() = "'$element' is not a constant reference"
     }
 
     class IllegalConst(
