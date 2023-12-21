@@ -171,7 +171,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
             MethodInsnNode(
                 Opcodes.INVOKEVIRTUAL,
                 Type.getInternalName(BirElementBase::class.java),
-                BirElementBase::class.java.declaredMethods.single { it.name.startsWith("getClassId") }.name,
+                BirElementBase::class.java.declaredMethods.single { it.name.startsWith("getElementClassId") }.name,
                 Type.getMethodDescriptor(Type.BYTE_TYPE)
             )
         )

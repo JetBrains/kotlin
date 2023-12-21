@@ -27,7 +27,7 @@ abstract class BirElementBase() : BirElementParent(), BirElement {
      */
     internal var _containingDatabase: BirDatabase? = null
     internal var _parent: BirElementParent? = null
-    internal val classId = BirElementClassCache.get(this.javaClass).id.toUByte()
+    internal val elementClassId = BirElementClassCache.get(this.javaClass).id.toUByte()
     private var flags: Byte = 0
     internal var indexSlot: UByte = 0u
     internal var lastReturnedInQueryOfIndexSlot: UByte = 0u
