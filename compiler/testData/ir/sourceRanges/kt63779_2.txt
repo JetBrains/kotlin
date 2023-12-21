@@ -1,0 +1,16 @@
+@0:0..5:0 FILE fqName:<root> fileName:/kt63779_2.kt
+  @1:0..4:1 FUN name:topLevelMethod visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    @1:21..4:1 BLOCK_BODY
+      @2:8..9 VAR name:z type:kotlin.Int [var]
+        @2:12..13 CONST Int type=kotlin.Int value=3
+      @3:4..37 WHEN type=kotlin.Unit origin=IF
+        @3:4..37 BRANCH
+          @3:7..11 CONST Boolean type=kotlin.Boolean value=true
+          @3:13..22 BLOCK type=kotlin.Unit origin=null
+            @3:15..16 SET_VAR 'var z: kotlin.Int [var] declared in <root>.topLevelMethod' type=kotlin.Unit origin=EQ
+              @3:19..20 CONST Int type=kotlin.Int value=4
+        @3:4..37 BRANCH
+          @3:4..37 CONST Boolean type=kotlin.Boolean value=true
+          @3:28..37 BLOCK type=kotlin.Unit origin=null
+            @3:30..31 SET_VAR 'var z: kotlin.Int [var] declared in <root>.topLevelMethod' type=kotlin.Unit origin=EQ
+              @3:34..35 CONST Int type=kotlin.Int value=5

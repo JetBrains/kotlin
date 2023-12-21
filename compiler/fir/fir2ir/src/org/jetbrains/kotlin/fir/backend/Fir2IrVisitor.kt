@@ -1291,13 +1291,13 @@ class Fir2IrVisitor(
     }
 
     private fun FirWhenBranch.toIrWhenBranch(whenExpressionType: ConeKotlinType): IrBranch {
-        return convertWithOffsets { startOffset, endOffset ->
+        return convertWithOffsets { startOffset, _ ->
             val condition = condition
             val irResult = convertToIrExpression(result).insertImplicitCast(result, result.resolvedType, whenExpressionType)
             if (condition is FirElseIfTrueCondition) {
                 IrElseBranchImpl(IrConstImpl.boolean(irResult.startOffset, irResult.endOffset, irBuiltIns.booleanType, true), irResult)
             } else {
-                IrBranchImpl(startOffset, endOffset, convertToIrExpression(condition), irResult)
+                IrBranchImpl(startOffset, irResult.endOffset, convertToIrExpression(condition), irResult)
             }
         }
     }
