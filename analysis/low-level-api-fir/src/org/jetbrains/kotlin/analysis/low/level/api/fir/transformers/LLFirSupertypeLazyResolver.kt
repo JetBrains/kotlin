@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarg
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationStatus
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.platformSupertypeUpdater
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 
@@ -157,8 +161,10 @@ private class LLFirSuperTypeTargetResolver(
         // 2. Resolve super declarations
         val status = supertypeComputationSession.getSupertypesComputationStatus(declaration)
         if (status is SupertypeComputationStatus.Computed) {
-            for (computedType in status.supertypeRefs) {
-                crawlSupertype(computedType.type)
+            supertypeComputationSession.withClassLikeDeclaration(declaration) {
+                for (computedType in status.supertypeRefs) {
+                    crawlSupertype(computedType.type, resolveTargetSession)
+                }
             }
         }
 
@@ -175,7 +181,7 @@ private class LLFirSuperTypeTargetResolver(
     }
 
     private fun FirClassLikeDeclaration.asResolveTarget(): LLFirSingleResolveTarget? {
-        return takeIf { canHaveLoopInSupertypesHierarchy(it, resolveTargetSession) }
+        return takeIf { supertypeComputationSession.canHaveLoopInSupertypesHierarchy(it) }
             ?.tryCollectDesignationWithFile()
             ?.asResolveTarget()
     }
@@ -184,7 +190,7 @@ private class LLFirSuperTypeTargetResolver(
         LLFirSuperTypeTargetResolver(
             target = target,
             lockProvider = lockProvider,
-            scopeSession = scopeSession,
+            scopeSession = target.session.getScopeSession(),
             supertypeComputationSession = supertypeComputationSession,
             visitedElements = visitedElements,
         ).resolveDesignation()
@@ -196,21 +202,41 @@ private class LLFirSuperTypeTargetResolver(
      * We want to apply resolved supertypes to as many designations as possible.
      * So we crawl the resolved supertypes of visited designations to find more designations to collect.
      */
-    private fun crawlSupertype(type: ConeKotlinType) {
-        val classLikeDeclaration = type.toSymbol(resolveTargetSession)?.fir
+    private fun crawlSupertype(type: ConeKotlinType, declarationSiteSession: LLFirSession) {
+        // Resolve an 'expect' declaration before an 'actual' as it is like 'super' and 'sub' classes
+        for (session in listOf(declarationSiteSession, supertypeComputationSession.useSiteSession)) {
+            /**
+             * We can avoid deduplication here as the symbol will be checked with [visitedElements]
+             */
+            type.toSymbol(session)?.let(::crawlSupertype)
+        }
+
+        if (type is ConeClassLikeType) {
+            // The `classLikeDeclaration` is not associated with a file, and thus there is no need to resolve it, but it may still point
+            // to declarations via its type arguments which need to be collected and have a containing file.
+            // For example, a `Function1` could point to a type alias.
+            type.typeArguments.forEach { it.type?.let { crawlSupertype(it, declarationSiteSession) } }
+        }
+    }
+
+    private fun crawlSupertype(symbol: FirClassifierSymbol<*>) {
+        val classLikeDeclaration = symbol.fir
         if (classLikeDeclaration !is FirClassLikeDeclaration) return
         if (classLikeDeclaration in visitedElements) return
+
         if (classLikeDeclaration is FirJavaClass) {
-            if (!canHaveLoopInSupertypesHierarchy(classLikeDeclaration, resolveTargetSession)) return
+            if (!supertypeComputationSession.canHaveLoopInSupertypesHierarchy(classLikeDeclaration)) return
 
             visitedElements += classLikeDeclaration
-            val parentClass = classLikeDeclaration.outerClass(resolveTargetSession)
+
+            val session = classLikeDeclaration.llFirSession
+            val parentClass = classLikeDeclaration.outerClass(session)
             if (parentClass != null) {
-                crawlSupertype(parentClass.defaultType())
+                crawlSupertype(parentClass.defaultType(), session)
             }
 
             classLikeDeclaration.superTypeRefs.filterIsInstance<FirResolvedTypeRef>().forEach {
-                crawlSupertype(it.type)
+                crawlSupertype(it.type, session)
             }
 
             return
@@ -219,37 +245,12 @@ private class LLFirSuperTypeTargetResolver(
         val resolveTarget = classLikeDeclaration.asResolveTarget()
         if (resolveTarget != null) {
             resolveToSupertypePhase(resolveTarget)
-        } else if (type is ConeClassLikeType) {
-            // The `classLikeDeclaration` is not associated with a file, and thus there is no need to resolve it, but it may still point
-            // to declarations via its type arguments which need to be collected and have a containing file.
-            // For example, a `Function1` could point to a type alias.
-            type.typeArguments.forEach { it.type?.let(::crawlSupertype) }
         }
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         error("Should be resolved without lock in ${::doResolveWithoutLock.name}")
     }
-}
-
-/**
- * We shouldn't skip Java source classes because they're marked as BODY_RESOLVE,
- * but this doesn't give us knowledge about its participation in the calculation of supertypes.
- * The contract here – if a declaration is already resolved to FirResolvePhase.SUPER_TYPES or higher that this
- * means that this class can't have loop with our class, because in this case this declaration will be present
- * in the current supertypes resolve session
- */
-private fun canHaveLoopInSupertypesHierarchy(
-    classLikeDeclaration: FirClassLikeDeclaration,
-    session: FirSession,
-): Boolean = when {
-    classLikeDeclaration is FirJavaClass -> classLikeDeclaration.origin is FirDeclarationOrigin.Java.Source
-    classLikeDeclaration.origin !is FirDeclarationOrigin.Source -> false
-    classLikeDeclaration.resolvePhase < FirResolvePhase.SUPER_TYPES -> true
-    // We should still process resolved if it has loop in super type refs, because we can be part of this cycle
-    classLikeDeclaration is FirRegularClass && classLikeDeclaration.superTypeRefs.any(FirTypeRef::isLoopedSupertypeRef) -> true
-    classLikeDeclaration is FirTypeAlias && classLikeDeclaration.expandedTypeRef.isLoopedSupertypeRef -> true
-    else -> classLikeDeclaration.outerClass(session)?.let { canHaveLoopInSupertypesHierarchy(it, session) } == true
 }
 
 private fun FirClassLikeDeclaration.outerClass(session: FirSession): FirRegularClass? = symbol.classId.parentClassId?.let { parentClassId ->
@@ -263,7 +264,40 @@ private val FirTypeRef.isLoopedSupertypeRef: Boolean
         return diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.LoopInSupertype
     }
 
-private class LLFirSupertypeComputationSession(private val useSiteSession: FirSession) : SupertypeComputationSession() {
+private class LLFirSupertypeComputationSession(val useSiteSession: LLFirSession) : SupertypeComputationSession() {
+    private var shouldCheckForActualization: Boolean = false
+
+    inline fun withClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, transformer: (FirClassLikeDeclaration) -> Unit) {
+        val oldValue = shouldCheckForActualization
+        if (classLikeDeclaration.isActual) {
+            shouldCheckForActualization = true
+        }
+
+        try {
+            transformer(classLikeDeclaration)
+        } finally {
+            shouldCheckForActualization = oldValue
+        }
+    }
+
+    /**
+     * We shouldn't skip Java source classes because they're marked as BODY_RESOLVE,
+     * but this doesn't give us knowledge about its participation in the calculation of supertypes.
+     * The contract here – if a declaration is already resolved to FirResolvePhase.SUPER_TYPES or higher that this
+     * means that this class can't have loop with our class, because in this case this declaration will be present
+     * in the current supertypes resolve session
+     */
+    fun canHaveLoopInSupertypesHierarchy(classLikeDeclaration: FirClassLikeDeclaration): Boolean = when {
+        classLikeDeclaration is FirJavaClass -> classLikeDeclaration.origin is FirDeclarationOrigin.Java.Source
+        classLikeDeclaration.origin !is FirDeclarationOrigin.Source -> false
+        shouldCheckForActualization -> true
+        classLikeDeclaration.resolvePhase < FirResolvePhase.SUPER_TYPES -> true
+        // We should still process resolved if it has loop in super type refs, because we can be part of this cycle
+        classLikeDeclaration is FirRegularClass && classLikeDeclaration.superTypeRefs.any(FirTypeRef::isLoopedSupertypeRef) -> true
+        classLikeDeclaration is FirTypeAlias && classLikeDeclaration.expandedTypeRef.isLoopedSupertypeRef -> true
+        else -> classLikeDeclaration.outerClass(classLikeDeclaration.llFirSession)?.let(::canHaveLoopInSupertypesHierarchy) == true
+    }
+
     /**
      * These collections exist to reuse a collection for each search to avoid repeated memory allocation.
      * Can be replaced with a new collection on each invocation of [findLoopFor]
@@ -302,7 +336,7 @@ private class LLFirSupertypeComputationSession(private val useSiteSession: FirSe
     }
 
     override fun isAlreadyResolved(classLikeDeclaration: FirClassLikeDeclaration): Boolean {
-        return !canHaveLoopInSupertypesHierarchy(classLikeDeclaration, useSiteSession)
+        return !canHaveLoopInSupertypesHierarchy(classLikeDeclaration)
     }
 
     /**

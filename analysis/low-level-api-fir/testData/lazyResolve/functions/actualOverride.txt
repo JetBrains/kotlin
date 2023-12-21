@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>|
+    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
 
         public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
@@ -45,8 +45,8 @@ FILE: [ResolvedTo(RAW_FIR)] jvm.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>|
+    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
 
         public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
@@ -90,8 +90,8 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>|
+    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
 
         public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
@@ -135,8 +135,8 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>|
+    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
 
         public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
@@ -180,8 +180,8 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>|
+    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
 
         public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
@@ -225,8 +225,8 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public? open expect [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>|
+    public? open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
 
         public? open expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
