@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-53109
 
 class Buildee<T> {
