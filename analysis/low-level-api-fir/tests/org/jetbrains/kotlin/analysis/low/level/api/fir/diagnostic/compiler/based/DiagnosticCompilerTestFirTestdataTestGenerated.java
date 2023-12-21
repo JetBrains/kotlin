@@ -6053,9 +6053,27 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
                         }
 
                         @Test
+                        @TestMetadata("infiniteLoop.kt")
+                        public void testInfiniteLoop() throws Exception {
+                            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/infiniteLoop.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("namedArgument.kt")
+                        public void testNamedArgument() throws Exception {
+                            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/namedArgument.kt");
+                        }
+
+                        @Test
                         @TestMetadata("simple.kt")
                         public void testSimple() throws Exception {
                             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/simple.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("tryFinally.kt")
+                        public void testTryFinally() throws Exception {
+                            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/tryFinally.kt");
                         }
 
                         @Test
