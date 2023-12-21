@@ -51408,6 +51408,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public void testScriptPropFromAnotherModuleK2() {
       runTest("compiler/testData/codegen/box/script/scriptPropFromAnotherModuleK2.kt");
     }
+
+    @Test
+    @TestMetadata("syntheticJavaPropertyInScript.kt")
+    public void testSyntheticJavaPropertyInScript() {
+      runTest("compiler/testData/codegen/box/script/syntheticJavaPropertyInScript.kt");
+    }
   }
 
   @Nested
