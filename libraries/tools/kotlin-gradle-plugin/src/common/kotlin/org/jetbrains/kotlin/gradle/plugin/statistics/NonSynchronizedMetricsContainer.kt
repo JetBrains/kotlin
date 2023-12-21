@@ -28,23 +28,17 @@ class NonSynchronizedMetricsContainer : StatisticsValuesConsumer, Serializable {
     private val stringMetrics = HashMap<MetricDescriptor<StringMetrics>, IMetricContainer<String>>()
 
     override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?): Boolean {
-        booleanMetrics.getOrPut(MetricDescriptor(metric, subprojectName)) { metric.type.newMetricContainer() }.let { metricContainer ->
-            metricContainer.addValue(value, weight)
-        }
+        booleanMetrics.getOrPut(MetricDescriptor(metric, subprojectName)) { metric.type.newMetricContainer() }.addValue(value, weight)
         return true
     }
 
     override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?, weight: Long?): Boolean {
-        numericalMetrics.getOrPut(MetricDescriptor(metric, subprojectName)) { metric.type.newMetricContainer() }.let { metricContainer ->
-            metricContainer.addValue(value, weight)
-        }
+        numericalMetrics.getOrPut(MetricDescriptor(metric, subprojectName)) { metric.type.newMetricContainer() }.addValue(value, weight)
         return true
     }
 
     override fun report(metric: StringMetrics, value: String, subprojectName: String?, weight: Long?): Boolean {
-        stringMetrics.getOrPut(MetricDescriptor(metric, subprojectName)) { metric.type.newMetricContainer() }.let { metricContainer ->
-            metricContainer.addValue(value, weight)
-        }
+        stringMetrics.getOrPut(MetricDescriptor(metric, subprojectName)) { metric.type.newMetricContainer() }.addValue(value, weight)
         return true
     }
 

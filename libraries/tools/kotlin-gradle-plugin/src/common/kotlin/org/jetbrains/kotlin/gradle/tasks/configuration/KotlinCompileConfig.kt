@@ -13,8 +13,6 @@ import org.gradle.api.artifacts.transform.TransformSpec
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
@@ -42,6 +40,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
     init {
         configureTaskProvider { taskProvider ->
             val useClasspathSnapshot = propertiesProvider.useClasspathSnapshot
+
             val classpathConfiguration = if (useClasspathSnapshot) {
                 val jvmToolchain = taskProvider.flatMap { it.defaultKotlinJavaToolchain }
                 val runKotlinCompilerViaBuildToolsApi = propertiesProvider.runKotlinCompilerViaBuildToolsApi

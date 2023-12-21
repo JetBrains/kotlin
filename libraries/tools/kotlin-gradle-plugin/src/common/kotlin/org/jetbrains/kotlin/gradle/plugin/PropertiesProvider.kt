@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.MPP_13X_FLAGS_SET_BY_PLUGIN
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -58,7 +57,6 @@ import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.localProperties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
-import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.util.prefixIfNot
@@ -158,18 +156,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.incremental.usePreciseJavaTracking")
 
     val useClasspathSnapshot: Boolean
-        get() {
-            val reporter = KotlinBuildStatsService.getInstance()
-
-            val gradleProperty = booleanProperty(KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT)
-            if (gradleProperty != null) {
-                reporter?.report(StringMetrics.USE_CLASSPATH_SNAPSHOT, gradleProperty.toString())
-                return gradleProperty
-            } else {
-                reporter?.report(StringMetrics.USE_CLASSPATH_SNAPSHOT, "default-true")
-                return true
-            }
-        }
+        get() = booleanProperty(KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT) ?: true
 
     val useKotlinAbiSnapshot: Boolean
         get() = booleanProperty(KOTLIN_ABI_SNAPSHOT) ?: false

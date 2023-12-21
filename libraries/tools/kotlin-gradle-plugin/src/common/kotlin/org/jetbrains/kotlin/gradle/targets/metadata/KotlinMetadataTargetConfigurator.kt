@@ -8,12 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
-import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
-import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
@@ -21,9 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropMetadataDependencyClasspath
-import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
 import org.jetbrains.kotlin.gradle.targets.native.internal.sharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -60,7 +54,9 @@ class KotlinMetadataTargetConfigurator :
         super.configureTarget(target)
 
         if (target.project.isKotlinGranularMetadataEnabled) {
-            KotlinBuildStatsService.getInstance()?.report(BooleanMetrics.ENABLED_HMPP, true)
+            target.project.addConfigurationMetrics {
+                it.put(BooleanMetrics.ENABLED_HMPP, true)
+            }
 
             target.compilations.withType(KotlinCommonCompilation::class.java).getByName(KotlinCompilation.MAIN_COMPILATION_NAME).run {
                 // Force the default 'main' compilation to produce *.kotlin_metadata regardless of the klib feature flag.
@@ -260,7 +256,6 @@ class KotlinMetadataTargetConfigurator :
     }
 
     private val ResolvedArtifactResult.isMpp: Boolean get() = variant.attributes.containsMultiplatformAttributes
-
 
 
 }

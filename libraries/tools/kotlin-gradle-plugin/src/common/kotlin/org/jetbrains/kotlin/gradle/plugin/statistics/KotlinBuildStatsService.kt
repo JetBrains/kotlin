@@ -66,7 +66,7 @@ internal abstract class KotlinBuildStatsService internal constructor() : Statist
          */
         @JvmStatic
         @Synchronized
-        fun getInstance(): KotlinBuildStatsService? {
+        private fun getInstance(): KotlinBuildStatsService? {
             if (statisticsIsEnabled != true) {
                 return null
             }

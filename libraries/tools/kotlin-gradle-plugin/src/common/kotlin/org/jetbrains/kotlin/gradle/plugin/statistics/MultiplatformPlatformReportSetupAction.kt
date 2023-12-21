@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 internal val MultiplatformBuildStatsReportSetupAction = KotlinProjectSetupAction {
@@ -15,6 +16,8 @@ internal val MultiplatformBuildStatsReportSetupAction = KotlinProjectSetupAction
         /* Report the platform to tbe build stats service */
         val targetName = if (target is KotlinNativeTarget) target.konanTarget.name
         else target.platformType.name
-        KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, targetName)
+        project.addConfigurationMetrics {
+            it.put(StringMetrics.MPP_PLATFORMS, targetName)
+        }
     }
 }

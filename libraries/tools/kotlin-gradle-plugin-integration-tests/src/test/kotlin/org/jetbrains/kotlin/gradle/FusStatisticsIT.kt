@@ -25,6 +25,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         "GRADLE_VERSION",
         "KOTLIN_STDLIB_VERSION",
         "KOTLIN_COMPILER_VERSION",
+        "USE_CLASSPATH_SNAPSHOT=true"
     )
 
     private val GradleProject.fusStatisticsPath: Path
@@ -56,7 +57,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
     fun testMetricCollectingOfApplyingCocoapodsPlugin(gradleVersion: GradleVersion) {
         project("native-cocoapods-template", gradleVersion) {
             build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
-                assertFileContains(fusStatisticsPath, "COCOAPODS_PLUGIN_ENABLED=true")
+                assertFileContains(fusStatisticsPath, "COCOAPODS_PLUGIN_ENABLED=true", "ENABLED_HMPP=true", "MPP_PLATFORMS")
             }
         }
     }
@@ -122,7 +123,6 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
             gradleVersion,
         ) {
             build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
-                val fusStatisticsPath = fusStatisticsPath
                 assertFileContains(
                     fusStatisticsPath,
                     *expectedMetrics,

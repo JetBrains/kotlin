@@ -23,6 +23,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
@@ -65,10 +66,11 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
     internal fun reportFusMetrics(reportAction: (StatisticsValuesConsumer) -> Unit) {
         reportAction(fusMetricsConsumer)
     }
+
     private val buildId = randomUUID().toString()
 
     companion object {
-        private val serviceName = "${BuildFusService::class.simpleName}_${BuildFusService::class.java.classLoader.hashCode()}"
+        internal val serviceName = "${BuildFusService::class.simpleName}_${BuildFusService::class.java.classLoader.hashCode()}"
 
         fun registerIfAbsent(project: Project, pluginVersion: String) =
             registerIfAbsentImpl(project, pluginVersion).also { serviceProvider ->
@@ -89,10 +91,12 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
 
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
-                return (it.service as Provider<BuildFusService>).also {
-                    it.get().parameters.configurationMetrics.add(project.provider {
-                        KotlinBuildStatHandler.collectProjectConfigurationTimeMetrics(project)
-                    })
+                return (it.service as Provider<BuildFusService>).also { buildServiceProvider ->
+                    project.afterEvaluate {
+                        buildServiceProvider.get().parameters.configurationMetrics.add(
+                            project.provider { KotlinBuildStatHandler.collectProjectConfigurationTimeMetrics(project) }
+                        )
+                    }
                 }
             }
 
@@ -102,6 +106,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             }
 
             val buildReportOutputs = reportingSettings(project).buildReportOutputs
+            val useClasspathSnapshot = PropertiesProvider(project).useClasspathSnapshot
             val gradle = project.gradle
 
             //Workaround for known issues for Gradle 8+: https://github.com/gradle/gradle/issues/24887:
@@ -113,13 +118,10 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
                     KotlinBuildStatHandler.collectGeneralConfigurationTimeMetrics(
                         gradle,
                         buildReportOutputs,
+                        useClasspathSnapshot,
                         pluginVersion,
                         isProjectIsolationEnabled
                     )
-                })
-
-                spec.parameters.configurationMetrics.add(project.provider {
-                    KotlinBuildStatHandler.collectProjectConfigurationTimeMetrics(project)
                 })
                 spec.parameters.useBuildFinishFlowAction.set(GradleVersion.current().baseVersion >= GradleVersion.version("8.1"))
             }.also { buildService ->
@@ -132,6 +134,11 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
                 }
                 if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
                     StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult()
+                }
+                project.afterEvaluate {
+                    buildService.get().parameters.configurationMetrics.add(project.provider {
+                        KotlinBuildStatHandler.collectProjectConfigurationTimeMetrics(project)
+                    })
                 }
 
             }

@@ -53,14 +53,15 @@ class KotlinBuildStatHandler {
         internal fun collectGeneralConfigurationTimeMetrics(
             gradle: Gradle,
             buildReportOutputs: List<BuildReportType>,
+            useClasspathSnapshot: Boolean,
             pluginVersion: String,
             isProjectIsolationEnabled: Boolean,
         ): MetricContainer {
             val configurationTimeMetrics = MetricContainer()
 
-            configurationTimeMetrics.put(StringMetrics.KOTLIN_COMPILER_VERSION, pluginVersion)
-
             val statisticOverhead = measureTimeMillis {
+                configurationTimeMetrics.put(StringMetrics.KOTLIN_COMPILER_VERSION, pluginVersion)
+                configurationTimeMetrics.put(StringMetrics.USE_CLASSPATH_SNAPSHOT, useClasspathSnapshot.toString())
                 buildReportOutputs.forEach {
                     when (it) {
                         BuildReportType.BUILD_SCAN -> configurationTimeMetrics.put(BooleanMetrics.BUILD_SCAN_BUILD_REPORT, true)
@@ -89,7 +90,7 @@ class KotlinBuildStatHandler {
         }
 
         /**
-         * Collect project's configuration metrics
+         * Collect project's configuration metrics including applied plugins. It should be called inside afterEvaluate block.
          */
         internal fun collectProjectConfigurationTimeMetrics(
             project: Project,
