@@ -39760,6 +39760,24 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("InnerAndNestedClasses.kt")
+                public void testInnerAndNestedClasses() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/InnerAndNestedClasses.kt");
+                }
+
+                @Test
+                @TestMetadata("InnerClasses.kt")
+                public void testInnerClasses() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/InnerClasses.kt");
+                }
+
+                @Test
+                @TestMetadata("NestedClasses.kt")
+                public void testNestedClasses() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/NestedClasses.kt");
+                }
+
+                @Test
                 @TestMetadata("NotApiMarkerAsArgument.kt")
                 public void testNotApiMarkerAsArgument() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/NotApiMarkerAsArgument.kt");
