@@ -2385,7 +2385,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DSL_SCOPE_VIOLATION,
-            "''{0}'' cannot be called in this context by implicit receiver. Use the explicit one if necessary.",
+            "''{0}'' cannot be called in this context with an implicit receiver. Use an explicit receiver if necessary.",
             SYMBOL
         )
 
