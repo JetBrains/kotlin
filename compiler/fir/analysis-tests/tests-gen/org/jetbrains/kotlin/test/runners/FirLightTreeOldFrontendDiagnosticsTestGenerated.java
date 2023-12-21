@@ -39646,6 +39646,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("Typealias.kt")
+                public void testTypealias() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/Typealias.kt");
+                }
+
+                @Test
                 @TestMetadata("UsageOptInIsNotImplied.kt")
                 public void testUsageOptInIsNotImplied() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired/UsageOptInIsNotImplied.kt");
