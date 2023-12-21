@@ -137,12 +137,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         testServices = testConfiguration.testServices
         val moduleStructure = createModuleStructure(testConfiguration)
 
-        try {
-            prepareToTheAnalysis(testConfiguration)
-        } catch (ignored: SkipTestException) {
-            return
-        }
-
         if (configurator.analyseInDependentSession && isDependentModeDisabledForTheTest()) {
             return
         }
@@ -152,6 +146,13 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         ) {
             return
         }
+
+        try {
+            prepareToTheAnalysis(testConfiguration)
+        } catch (ignored: SkipTestException) {
+            return
+        }
+
 
         doTestByModuleStructure(moduleStructure, testServices)
     }
