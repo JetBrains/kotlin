@@ -2594,13 +2594,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             BUILDER_INFERENCE_STUB_RECEIVER,
-            "The type of a receiver hasn''t been inferred yet. Please specify type argument for generic parameter `{0}` of `{1}` explicitly",
+            "The type of a receiver hasn''t been inferred yet. Please specify type argument for generic parameter ''{0}'' of ''{1}'' explicitly",
             TO_STRING,
             TO_STRING
         )
         map.put(
             BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION,
-            "Unstable inference behaviour with multiple lambdas. Please either specify the type argument for generic parameter `{0}` of `{1}` explicitly",
+            "Unstable inference behaviour with multiple lambdas. Please specify the type argument for generic parameter ''{0}'' of ''{1}'' explicitly",
             TO_STRING,
             TO_STRING
         )
