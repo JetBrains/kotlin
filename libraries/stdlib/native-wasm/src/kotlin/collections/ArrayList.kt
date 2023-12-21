@@ -66,11 +66,13 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
     actual override operator fun set(index: Int, element: E): E {
         checkIsMutable()
         AbstractList.checkElementIndex(index, length)
-        val old = noBoundsCheck { backing[index] }
+        noBoundsCheck {
+            val old = backing[index]
 //        val old = noBoundsCheckRequired(backing[index])
 //        val old = (@NoBoundsCheckRequired backing[index])
-        backing[index] = element
-        return old
+            backing[index] = element
+            return old
+        }
     }
 
     actual override fun indexOf(element: E): Int {
@@ -318,7 +320,7 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
         override fun set(element: E) {
             checkForComodification()
             check(lastIndex != -1) { "Call next() or previous() before replacing element from the iterator." }
-            list[lastIndex] = element
+            noBoundsCheck { list[lastIndex] = element }
         }
 
         override fun add(element: E) {
@@ -386,11 +388,13 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
             checkIsMutable()
             checkForComodification()
             AbstractList.checkElementIndex(index, length)
-            val old = noBoundsCheck { backing[offset + index] }
+            noBoundsCheck {
+                val old = backing[offset + index]
 //            val old = noBoundsCheckRequired(backing[offset + index])
 //            val old = (@NoBoundsCheckRequired backing[offset + index])
-            backing[offset + index] = element
-            return old
+                backing[offset + index] = element
+                return old
+            }
         }
 
         override fun indexOf(element: E): Int {
@@ -637,7 +641,7 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
             override fun set(element: E) {
                 checkForComodification()
                 check(lastIndex != -1) { "Call next() or previous() before replacing element from the iterator." }
-                list[lastIndex] = element
+                noBoundsCheck { list[lastIndex] = element }
             }
 
             override fun add(element: E) {

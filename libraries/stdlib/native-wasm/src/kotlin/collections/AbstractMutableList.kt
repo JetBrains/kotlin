@@ -178,7 +178,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
         override fun set(element: E) {
             checkForComodification()
             check(last != -1) { "Call next() or previous() before updating element value with the iterator."}
-            this@AbstractMutableList[last] = element
+            noBoundsCheck { this@AbstractMutableList[last] = element }
             expectedModCount = modCount
         }
     }
@@ -231,7 +231,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
             checkForComodification()
             AbstractList.checkElementIndex(index, _size)
 
-            return list.set(fromIndex + index, element)
+            return noBoundsCheck { list.set(fromIndex + index, element) }
         }
 
         override val size: Int

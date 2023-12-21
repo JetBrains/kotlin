@@ -44,15 +44,25 @@ internal class FunctionsWithoutBoundsCheckSupport(
         private val irFactory: IrFactory,
 ) {
     private val list = symbols.list.owner
+    private val mutableList = symbols.mutableList.owner
 
     fun IrFunction.isGet() =
             name == OperatorNameConventions.GET && dispatchReceiverParameter != null
                     && valueParameters.singleOrNull()?.type == irBuiltIns.intType
 
-    fun IrClass.getGet() = functions.single { it.isGet() }
+    fun IrFunction.isSet() =
+            name == OperatorNameConventions.SET && dispatchReceiverParameter != null
+                    && valueParameters.size == 2
+                    && valueParameters[0].type == irBuiltIns.intType
 
-    fun IrClass.needFunctionsWithoutBoundsCheck() =
+    fun IrClass.getGet() = functions.single { it.isGet() }
+    fun IrClass.getSet() = functions.single { it.isSet() }
+
+    fun IrClass.needGetWithoutBoundsCheck() =
             this == list || list in this.getAllSuperclasses()
+
+    fun IrClass.needSetWithoutBoundsCheck() =
+            this == mutableList || mutableList in this.getAllSuperclasses()
 
     fun IrClass.getGetWithoutBoundsCheck(): IrSimpleFunction = mapping.listGetWithoutBoundsCheck.getOrPut(this) {
         val get = this.getGet()
@@ -73,6 +83,32 @@ internal class FunctionsWithoutBoundsCheckSupport(
 
             val parentDeclarations = this@getGetWithoutBoundsCheck.declarations
             parentDeclarations.add(parentDeclarations.indexOf(get) + 1, this)
+        }
+    }
+
+    fun IrClass.getSetWithoutBoundsCheck(): IrSimpleFunction = mapping.listSetWithoutBoundsCheck.getOrPut(this) {
+        val set = this.getSet()
+        irFactory.buildFun {
+            name = KonanNameConventions.setWithoutBoundCheck
+            modality = set.modality
+            returnType = set.returnType
+            isFakeOverride = set.isFakeOverride
+        }.apply {
+            parent = this@getSetWithoutBoundsCheck
+            createDispatchReceiverParameter()
+            addValueParameter {
+                name = Name.identifier("index")
+                type = irBuiltIns.intType
+            }
+            addValueParameter {
+                name = Name.identifier("element")
+                type = set.valueParameters[1].type
+            }
+
+            overriddenSymbols = set.overriddenSymbols.map { it.owner.parentAsClass.getSetWithoutBoundsCheck().symbol }
+
+            val parentDeclarations = this@getSetWithoutBoundsCheck.declarations
+            parentDeclarations.add(parentDeclarations.indexOf(set) + 1, this)
         }
     }
 }
@@ -100,7 +136,7 @@ internal class BoundsCheckOptimizer(val context: Context) : BodyLoweringPass {
                             val getWithoutBoundsCheck = when {
                                 irClass.symbol in arrays ->
                                     irClass.functions.single { it.name == KonanNameConventions.getWithoutBoundCheck }
-                                irClass.needFunctionsWithoutBoundsCheck() ->
+                                irClass.needGetWithoutBoundsCheck() ->
                                     irClass.getGetWithoutBoundsCheck()
                                 else -> null
                             }
@@ -109,6 +145,24 @@ internal class BoundsCheckOptimizer(val context: Context) : BodyLoweringPass {
                                         .irCall(getWithoutBoundsCheck, superQualifierSymbol = expression.superQualifierSymbol).apply {
                                             dispatchReceiver = expression.dispatchReceiver
                                             putValueArgument(0, expression.getValueArgument(0))
+                                        }
+                            }
+                        }
+                        if (callee.isSet()) {
+                            val irClass = callee.parentAsClass
+                            val setWithoutBoundsCheck = when {
+                                irClass.symbol in arrays ->
+                                    irClass.functions.single { it.name == KonanNameConventions.setWithoutBoundCheck }
+                                irClass.needSetWithoutBoundsCheck() ->
+                                    irClass.getSetWithoutBoundsCheck()
+                                else -> null
+                            }
+                            if (setWithoutBoundsCheck != null) {
+                                return irBuilder.at(expression)
+                                        .irCall(setWithoutBoundsCheck, superQualifierSymbol = expression.superQualifierSymbol).apply {
+                                            dispatchReceiver = expression.dispatchReceiver
+                                            putValueArgument(0, expression.getValueArgument(0))
+                                            putValueArgument(1, expression.getValueArgument(1))
                                         }
                             }
                         }
@@ -137,7 +191,7 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
     }
 
     override fun lower(irClass: IrClass) = with(functionsWithoutBoundsCheckSupport) {
-        if (irClass.needFunctionsWithoutBoundsCheck()) {
+        if (irClass.needGetWithoutBoundsCheck()) {
             val get = irClass.getGet()
             val getWithoutBoundsCheck = irClass.getGetWithoutBoundsCheck()
             if (getWithoutBoundsCheck.modality != Modality.ABSTRACT && !getWithoutBoundsCheck.isFakeOverride) {
@@ -161,12 +215,37 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
                         }
             }
         }
+        if (irClass.needSetWithoutBoundsCheck()) {
+            val set = irClass.getSet()
+            val setWithoutBoundsCheck = irClass.getSetWithoutBoundsCheck()
+            if (setWithoutBoundsCheck.modality != Modality.ABSTRACT && !setWithoutBoundsCheck.isFakeOverride) {
+                val irBuilder = context.createIrBuilder(setWithoutBoundsCheck.symbol)
+                val body = set.body
+                        .takeIf { (irClass.packageFqName?.asString()?.startsWith("kotlin.") == true) }
+                        ?.deepCopyWithVariables()
+                        ?.setDeclarationsParent(setWithoutBoundsCheck)
+                body?.transformGetBody(irBuilder, set, setWithoutBoundsCheck)
+                setWithoutBoundsCheck.body =
+                        body ?: irBuilder.run {
+                            // Unknown List inheritor: just conservatively delegate to set.
+                            irBlockBody {
+                                +irReturn(
+                                        irCall(set, superQualifierSymbol = irClass.symbol).apply {
+                                            dispatchReceiver = irGet(setWithoutBoundsCheck.dispatchReceiverParameter!!)
+                                            putValueArgument(0, irGet(setWithoutBoundsCheck.valueParameters[0]))
+                                            putValueArgument(1, irGet(setWithoutBoundsCheck.valueParameters[1]))
+                                        }
+                                )
+                            }
+                        }
+            }
+        }
     }
 
-    private fun IrBody.transformGetBody(irBuilder: DeclarationIrBuilder, get: IrFunction, getWithoutBoundsCheck: IrFunction) {
+    private fun IrBody.transformGetBody(irBuilder: DeclarationIrBuilder, function: IrFunction, functionWithoutBoundsCheck: IrFunction) {
         transformChildren(object : IrElementTransformer<Boolean> {
             override fun visitReturn(expression: IrReturn, data: Boolean): IrExpression {
-                if (expression.returnTargetSymbol != get.symbol)
+                if (expression.returnTargetSymbol != function.symbol)
                     return super.visitReturn(expression, data)
 
                 expression.transformChildren(this, data)
@@ -210,8 +289,8 @@ internal class ListAccessorsWithoutBoundsCheckLowering(val context: Context) : C
                 expression.transformChildren(this, data)
 
                 return when (val value = expression.symbol.owner) {
-                    get.dispatchReceiverParameter -> irBuilder.at(expression).irGet(getWithoutBoundsCheck.dispatchReceiverParameter!!)
-                    is IrValueParameter -> irBuilder.at(expression).irGet(getWithoutBoundsCheck.valueParameters[value.index])
+                    function.dispatchReceiverParameter -> irBuilder.at(expression).irGet(functionWithoutBoundsCheck.dispatchReceiverParameter!!)
+                    is IrValueParameter -> irBuilder.at(expression).irGet(functionWithoutBoundsCheck.valueParameters[value.index])
                     else -> expression
                 }
             }

@@ -57,6 +57,7 @@ internal class NativeMapping : DefaultMapping() {
     val volatileFieldToAtomicFunction = mutableMapOf<AtomicFunctionKey, IrSimpleFunction>()
     val functionToVolatileField = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrSimpleFunction, IrField>()
     val listGetWithoutBoundsCheck = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val listSetWithoutBoundsCheck = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 }
 
 // TODO: Can be renamed or merged with KonanBackendContext
