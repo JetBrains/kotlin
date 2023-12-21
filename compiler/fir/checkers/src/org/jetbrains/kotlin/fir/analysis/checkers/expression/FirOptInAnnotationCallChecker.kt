@@ -54,13 +54,19 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
             val declaration = context.containingDeclarations.lastOrNull() as? FirClass
             if (declaration != null) {
                 val kind = declaration.classKind
+                val classKindRepresentation = kind.representation
                 if (kind == ClassKind.ENUM_CLASS || kind == ClassKind.OBJECT || kind == ClassKind.ANNOTATION_CLASS) {
-                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, kind.toString(), context)
+                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, classKindRepresentation, context)
                     return
                 }
                 val modality = declaration.modality()
                 if (modality == Modality.FINAL || modality == Modality.SEALED) {
-                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, "$modality $kind", context)
+                    reporter.reportOn(
+                        expression.source,
+                        FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE,
+                        "${modality.name.lowercase()} $classKindRepresentation",
+                        context,
+                    )
                     return
                 }
                 if (declaration.isFun) {
@@ -68,7 +74,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                     return
                 }
                 if (declaration.isLocal) {
-                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, "local $kind", context)
+                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, "local $classKindRepresentation", context)
                     return
                 }
             }
@@ -77,10 +83,16 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
         }
     }
 
+    private val ClassKind.representation: String
+        get() = when (this) {
+            ClassKind.ENUM_ENTRY -> "enum entry"
+            else -> codeRepresentation!!
+        }
+
     private fun checkOptInIsEnabled(
         element: KtSourceElement?,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         val languageVersionSettings = context.session.languageVersionSettings
         val optInFqNames = languageVersionSettings.getFlag(AnalysisFlags.optIn)
