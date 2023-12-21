@@ -45,7 +45,7 @@ internal class LLFirResolvableResolveSession(
 ) {
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
         val moduleComponents = getModuleComponentsForElement(element)
-        return moduleComponents.elementsBuilder.getOrBuildFirFor(element, this)
+        return moduleComponents.elementsBuilder.getOrBuildFirFor(element)
     }
 
     override fun getOrBuildFirFile(ktFile: KtFile): FirFile {
