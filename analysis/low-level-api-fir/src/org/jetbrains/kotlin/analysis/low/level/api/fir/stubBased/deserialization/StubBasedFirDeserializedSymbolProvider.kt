@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -136,12 +137,9 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         classId: ClassId,
         parentContext: StubBasedFirDeserializationContext?,
     ): FirRegularClassSymbol? {
-        val (classLikeDeclaration, context) =
-            if (parentContext?.classLikeDeclaration != null) {
-                parentContext.classLikeDeclaration to null
-            } else {
-                (declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null) to parentContext
-            }
+        val classLikeDeclaration = parentContext?.classLikeDeclaration
+            ?: declarationProvider.getClassLikeDeclarationByClassId(classId)
+            ?: return null
 
         val symbol = FirRegularClassSymbol(classId)
         if (classLikeDeclaration is KtClassOrObject) {
@@ -153,11 +151,12 @@ internal open class StubBasedFirDeserializedSymbolProvider(
                 moduleData,
                 StubBasedAnnotationDeserializer(session),
                 kotlinScopeProvider,
-                parentContext = context,
+                parentContext = parentContext,
                 containerSource = JvmStubDeserializedContainerSource(classId),
                 deserializeNestedClass = this::getClass,
-                initialOrigin = getDeclarationOriginFor(classLikeDeclaration.containingKtFile)
+                initialOrigin = parentContext?.initialOrigin ?: getDeclarationOriginFor(classLikeDeclaration.containingKtFile)
             )
+
             return symbol
         }
         return null
@@ -315,11 +314,35 @@ internal open class StubBasedFirDeserializedSymbolProvider(
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
+
+        classId.takeIf(ClassId::isNestedClass)?.outermostClassId?.let { outermostClassId ->
+            // We have to load root declaration to initialize nested classes correctly
+            getClassLikeSymbolByClassId(outermostClassId)
+
+            // Nested declarations already loaded
+            val computedValue = classCache.getValueIfComputed(classId) ?: typeAliasCache.getValueIfComputed(classId)
+            computedValue?.let { return it }
+        }
+
         return getClass(classId) ?: getTypeAlias(classId)
     }
 
     @FirSymbolProviderInternals
     override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
+        val topmostClassLikeDeclaration = classLikeDeclaration.takeIf {
+            classId.isNestedClass
+        }?.getTopmostParentOfType<KtClassLikeDeclaration>()
+
+        val outermostClassId = topmostClassLikeDeclaration?.getClassId()
+        val cache = if (classLikeDeclaration is KtClassOrObject) classCache else typeAliasCache
+        if (outermostClassId != null) {
+            // We have to load root declaration to initialize nested classes correctly
+            getClassLikeSymbolByClassId(outermostClassId, topmostClassLikeDeclaration)
+
+            // Nested declarations already loaded
+            cache.getValueIfComputed(classId)?.let { return it }
+        }
+
         val annotationDeserializer = StubBasedAnnotationDeserializer(session)
         val classOrigin = getDeclarationOriginFor(classLikeDeclaration.containingKtFile)
         val deserializationContext = StubBasedFirDeserializationContext(
@@ -342,7 +365,6 @@ internal open class StubBasedFirDeserializedSymbolProvider(
             classLikeDeclaration,
         )
 
-        val cache = if (classLikeDeclaration is KtClassOrObject) classCache else typeAliasCache
         return cache.getNotNullValueForNotNullContext(classId, deserializationContext)
     }
 

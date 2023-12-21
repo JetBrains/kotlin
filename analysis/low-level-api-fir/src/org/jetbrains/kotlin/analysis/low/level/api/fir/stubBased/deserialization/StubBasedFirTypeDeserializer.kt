@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -63,6 +63,7 @@ internal class StubBasedFirTypeDeserializer(
                 val symbol = FirTypeParameterSymbol().also {
                     typeParametersByName[name.asString()] = it
                 }
+
                 builders += FirTypeParameterBuilder().apply {
                     source = KtRealPsiSourceElement(typeParameter)
                     moduleData = this@StubBasedFirTypeDeserializer.moduleData
@@ -70,7 +71,11 @@ internal class StubBasedFirTypeDeserializer(
                     origin = initialOrigin
                     this.name = name
                     this.symbol = symbol
-                    this.containingDeclarationSymbol = containingSymbol ?: error("Top-level type parameter ???")
+                    this.containingDeclarationSymbol = containingSymbol ?: errorWithAttachment("Top-level type parameter ???") {
+                        withPsiEntry("owner", owner)
+                        withPsiEntry("parameter", typeParameter)
+                    }
+
                     variance = typeParameter.variance
                     isReified = typeParameter.hasModifier(KtTokens.REIFIED_KEYWORD)
                     annotations += annotationDeserializer.loadAnnotations(typeParameter)
