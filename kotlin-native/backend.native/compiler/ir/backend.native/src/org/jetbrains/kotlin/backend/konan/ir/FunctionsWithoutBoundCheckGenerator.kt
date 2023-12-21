@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -66,50 +67,46 @@ internal class FunctionsWithoutBoundsCheckSupport(
 
     fun IrClass.getGetWithoutBoundsCheck(): IrSimpleFunction = mapping.listGetWithoutBoundsCheck.getOrPut(this) {
         val get = this.getGet()
-        irFactory.buildFun {
-            name = KonanNameConventions.getWithoutBoundCheck
-            modality = get.modality
-            returnType = get.returnType
-            isFakeOverride = get.isFakeOverride
-        }.apply {
-            parent = this@getGetWithoutBoundsCheck
-            createDispatchReceiverParameter()
-            addValueParameter {
-                name = Name.identifier("index")
-                type = irBuiltIns.intType
-            }
-
-            overriddenSymbols = get.overriddenSymbols.map { it.owner.parentAsClass.getGetWithoutBoundsCheck().symbol }
-
-            val parentDeclarations = this@getGetWithoutBoundsCheck.declarations
-            parentDeclarations.add(parentDeclarations.indexOf(get) + 1, this)
-        }
+        buildFunctionWithoutBoundsCheck(
+                get,
+                KonanNameConventions.getWithoutBoundCheck,
+                get.overriddenSymbols.map { it.owner.parentAsClass.getGetWithoutBoundsCheck().symbol }
+        )
     }
 
     fun IrClass.getSetWithoutBoundsCheck(): IrSimpleFunction = mapping.listSetWithoutBoundsCheck.getOrPut(this) {
         val set = this.getSet()
-        irFactory.buildFun {
-            name = KonanNameConventions.setWithoutBoundCheck
-            modality = set.modality
-            returnType = set.returnType
-            isFakeOverride = set.isFakeOverride
-        }.apply {
-            parent = this@getSetWithoutBoundsCheck
-            createDispatchReceiverParameter()
-            addValueParameter {
-                name = Name.identifier("index")
-                type = irBuiltIns.intType
-            }
-            addValueParameter {
-                name = Name.identifier("element")
-                type = set.valueParameters[1].type
-            }
+        buildFunctionWithoutBoundsCheck(
+                set,
+                KonanNameConventions.setWithoutBoundCheck,
+                set.overriddenSymbols.map { it.owner.parentAsClass.getSetWithoutBoundsCheck().symbol }
+        )
+    }
 
-            overriddenSymbols = set.overriddenSymbols.map { it.owner.parentAsClass.getSetWithoutBoundsCheck().symbol }
+    private fun IrClass.buildFunctionWithoutBoundsCheck(
+            function: IrSimpleFunction,
+            name: Name,
+            overriddenSymbols: List<IrSimpleFunctionSymbol>
+    ) = irFactory.buildFun {
+        this.name = name
+        modality = function.modality
+        returnType = function.returnType
+        isFakeOverride = function.isFakeOverride
+    }.apply {
+        parent = this@buildFunctionWithoutBoundsCheck
+        createDispatchReceiverParameter()
 
-            val parentDeclarations = this@getSetWithoutBoundsCheck.declarations
-            parentDeclarations.add(parentDeclarations.indexOf(set) + 1, this)
+        function.valueParameters.forEach {
+            addValueParameter {
+                this.name = it.name
+                type = it.type
+            }
         }
+
+        this.overriddenSymbols = overriddenSymbols
+
+        val parentDeclarations = this@buildFunctionWithoutBoundsCheck.declarations
+        parentDeclarations.add(parentDeclarations.indexOf(function) + 1, this)
     }
 }
 
