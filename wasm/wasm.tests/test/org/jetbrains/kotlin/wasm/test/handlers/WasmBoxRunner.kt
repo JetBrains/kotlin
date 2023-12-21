@@ -7,13 +7,10 @@ package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
-import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
-import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
@@ -22,6 +19,8 @@ import java.io.File
 class WasmBoxRunner(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
+    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.V8, WasmVM.SpiderMonkey)
+
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
             runWasmCode()
@@ -71,6 +70,7 @@ class WasmBoxRunner(
             dir.mkdirs()
 
             writeCompilationResult(res, dir, baseFileName)
+
             File(dir, "test.mjs").writeText(testJs)
 
             val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(dir)
@@ -117,7 +117,7 @@ class WasmBoxRunner(
 
             val disableExceptions = DISABLE_WASM_EXCEPTION_HANDLING in testServices.moduleStructure.allDirectives
 
-            val exceptions = listOf(WasmVM.V8, WasmVM.SpiderMonkey).mapNotNull { vm ->
+            val exceptions = vmsToCheck.mapNotNull { vm ->
                 vm.runWithCathedExceptions(
                     debugMode = debugMode,
                     disableExceptions = disableExceptions,
@@ -130,13 +130,15 @@ class WasmBoxRunner(
 
             processExceptions(exceptions)
 
-            if (mode == "dce") {
-                checkExpectedOutputSize(debugMode, testFileText, dir)
+            when (mode) {
+                "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, dir)
+                "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, dir)
             }
         }
 
         writeToFilesAndRunTest("dev", artifacts.compilerResult)
         writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE)
+        artifacts.compilerResultWithOptimizer?.let { writeToFilesAndRunTest("optimized", it) }
     }
 }
 
@@ -169,8 +171,8 @@ internal fun WasmVM.runWithCathedExceptions(
     return null
 }
 
-fun checkExpectedOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File) {
-    val expectedSizes =
+fun checkExpectedDceOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File) {
+    val expectedDceSizes =
         InTextDirectivesUtils.findListWithPrefixes(testFileContent, "// WASM_DCE_EXPECTED_OUTPUT_SIZE: ")
             .map {
                 val i = it.indexOf(' ')
@@ -178,10 +180,27 @@ fun checkExpectedOutputSize(debugMode: DebugMode, testFileContent: String, testD
                 val size = it.substring(i + 1)
                 extension.trim().lowercase() to size.filter(Char::isDigit).toInt()
             }
+    assertExpectedSizesMatchActual(debugMode, testDir, expectedDceSizes)
+}
 
+fun checkExpectedOptimizedOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File) {
+    val expectedOptimizeSizes = InTextDirectivesUtils
+        .findListWithPrefixes(testFileContent, "// WASM_OPT_EXPECTED_OUTPUT_SIZE: ")
+        .lastOrNull()
+        ?.filter(Char::isDigit)
+        ?.toInt() ?: return
+
+    assertExpectedSizesMatchActual(debugMode, testDir, listOf("wasm" to expectedOptimizeSizes))
+}
+
+private fun assertExpectedSizesMatchActual(
+    debugMode: DebugMode,
+    testDir: File,
+    fileExtensionToItsExpectedSize: Iterable<Pair<String, Int>>
+) {
     val filesByExtension = testDir.listFiles()?.groupBy { it.extension }.orEmpty()
 
-    val errors = expectedSizes.mapNotNull { (extension, expectedSize) ->
+    val errors = fileExtensionToItsExpectedSize.mapNotNull { (extension, expectedSize) ->
         val totalSize = filesByExtension[extension].orEmpty().sumOf { it.length() }
 
         val thresholdPercent = 1

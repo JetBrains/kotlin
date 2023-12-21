@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
@@ -32,12 +33,15 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
+import org.jetbrains.kotlin.wasm.test.tools.WasmOptimizer
 import java.io.File
 
 class WasmBackendFacade(
     private val testServices: TestServices
 ) : AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Wasm>() {
+    private val supportedOptimizer: WasmOptimizer = WasmOptimizer.Binaryen
 
     override val inputKind = ArtifactKinds.KLib
     override val outputKind = ArtifactKinds.Wasm
@@ -126,12 +130,26 @@ class WasmBackendFacade(
 
         return BinaryArtifacts.Wasm(
             compilerResult,
-            compilerResultWithDCE
+            compilerResultWithDCE,
+            runIf(WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER in testServices.moduleStructure.allDirectives) {
+                compilerResultWithDCE.runThirdPartyOptimizer()
+            }
         )
     }
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
         return WasmEnvironmentConfigurator.isMainModule(module, testServices)
+    }
+
+    private fun WasmCompilerResult.runThirdPartyOptimizer(): WasmCompilerResult {
+        val (newWasm, newWat) = supportedOptimizer.run(wasm, withText = wat != null)
+        return WasmCompilerResult(
+            wat = newWat,
+            jsUninstantiatedWrapper = jsUninstantiatedWrapper,
+            jsWrapper = jsWrapper,
+            sourceMap = null,
+            wasm = newWasm
+        )
     }
 }
 

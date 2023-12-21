@@ -13,6 +13,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
 import javax.inject.Inject
 
 @DisableCachingByDefault
@@ -33,39 +34,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     }
 
     @Input
-    var binaryenArgs: MutableList<String> = mutableListOf(
-        // Proposals
-        "--enable-gc",
-        "--enable-reference-types",
-        "--enable-exception-handling",
-        "--enable-bulk-memory",  // For array initialization from data sections
-
-        // Other options
-        "--enable-nontrapping-float-to-int",
-        // It's turned out that it's not safe
-        // "--closed-world",
-
-        // Optimizations:
-        // Note the order and repetition of the next options matter.
-        // 
-        // About Binaryen optimizations:
-        // GC Optimization Guidebook -- https://github.com/WebAssembly/binaryen/wiki/GC-Optimization-Guidebook
-        // Optimizer Cookbook -- https://github.com/WebAssembly/binaryen/wiki/Optimizer-Cookbook
-        //
-        "--inline-functions-with-loops",
-        "--traps-never-happen",
-        "--fast-math",
-        // without "--type-merging" it produces increases the size 
-        // "--type-ssa",
-        "-O3",
-        "-O3",
-        "--gufa",
-        "-O3",
-        // requires --closed-world
-        // "--type-merging",
-        "-O3",
-        "-Oz",
-    )
+    var binaryenArgs: MutableList<String> = BinaryenConfig.binaryenArgs.toMutableList()
 
     @PathSensitive(PathSensitivity.RELATIVE)
     @InputFile

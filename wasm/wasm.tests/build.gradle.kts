@@ -79,6 +79,7 @@ val generationRoot = projectDir.resolve("tests-gen")
 
 useD8Plugin()
 useNodeJsPlugin()
+useBinaryenPlugin()
 optInToExperimentalCompilerApi()
 
 sourceSets {
@@ -147,6 +148,7 @@ fun Project.wasmProjectTest(
         workingDir = rootDir
         setupV8()
         setupNodeJs()
+        setupBinaryen()
         setupSpiderMonkey()
         useJUnitPlatform()
         setupWasmStdlib("js")

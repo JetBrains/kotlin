@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
-import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
-import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
@@ -21,6 +18,8 @@ import java.io.File
 class WasiBoxRunner(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
+    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs)
+
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
             runWasmCode()
@@ -66,6 +65,7 @@ class WasiBoxRunner(
             dir.mkdirs()
 
             writeCompilationResult(res, dir, baseFileName)
+
             File(dir, "test.mjs").writeText(testWasi)
 
             if (debugMode >= DebugMode.DEBUG) {
@@ -79,25 +79,27 @@ class WasiBoxRunner(
             val testFileText = originalFile.readText()
             val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
-            val exception = WasmVM.NodeJs.runWithCathedExceptions(
-                debugMode = debugMode,
-                disableExceptions = false,
-                failsIn = failsIn,
-                entryMjs = "test.mjs",
-                jsFilePaths = emptyList(),
-                workingDirectory = dir
-            )
-
-            if (exception != null) {
-                throw exception
+            val exceptions = vmsToCheck.mapNotNull { vm ->
+                vm.runWithCathedExceptions(
+                    debugMode = debugMode,
+                    disableExceptions = false,
+                    failsIn = failsIn,
+                    entryMjs = "test.mjs",
+                    jsFilePaths = emptyList(),
+                    workingDirectory = dir
+                )
             }
 
-            if (mode == "dce") {
-                checkExpectedOutputSize(debugMode, testFileText, dir)
+            processExceptions(exceptions)
+
+            when (mode) {
+                "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, dir)
+                "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, dir)
             }
         }
 
         writeToFilesAndRunTest("dev", artifacts.compilerResult)
         writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE)
+        artifacts.compilerResultWithOptimizer?.let { writeToFilesAndRunTest("optimized", it) }
     }
 }

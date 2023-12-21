@@ -39,4 +39,8 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Enables generation of source map",
         applicability = DirectiveApplicability.Global
     )
+
+    val RUN_THIRD_PARTY_OPTIMIZER by directive(
+        description = "Also run third-party optimizer (for now, only binaryen is supported) after the main compilation",
+    )
 }

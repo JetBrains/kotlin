@@ -119,5 +119,5 @@ internal class ExternalTool(val path: String) {
     }
 }
 
-private fun escapeShellArgument(arg: String): String =
+internal fun escapeShellArgument(arg: String): String =
     "'${arg.replace("'", "'\\''")}'"
