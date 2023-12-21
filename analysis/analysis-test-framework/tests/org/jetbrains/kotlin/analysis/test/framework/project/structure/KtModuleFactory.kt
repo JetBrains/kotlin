@@ -25,6 +25,11 @@ private val TestServices.ktModuleFactory: KtModuleFactory by TestServices.testSe
  *
  * By default, the [KtModuleFactory] registered with these [TestServices] is returned. It may be overruled by the
  * [MODULE_KIND][org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives.MODULE_KIND] directive for a specific test module.
+ *
+ * [DependencyKindModuleStructureTransformer][org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer]
+ * should be used to properly set up [DependencyKind][org.jetbrains.kotlin.test.model.DependencyKind] for module dependencies
+ *
+ * @see org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer
  */
 fun TestServices.getKtModuleFactoryForTestModule(testModule: TestModule): KtModuleFactory = when (testModule.moduleKind) {
     TestModuleKind.Source -> KtSourceModuleFactory

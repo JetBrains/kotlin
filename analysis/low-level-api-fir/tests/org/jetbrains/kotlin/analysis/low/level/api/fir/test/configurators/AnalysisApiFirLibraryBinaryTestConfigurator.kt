@@ -30,6 +30,12 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
             useAdditionalService<KtModuleFactory> { KtLibraryBinaryModuleFactory }
+            configureLibraryCompilationSupport(this)
+        }
+    }
+
+    fun configureLibraryCompilationSupport(builder: TestConfigurationBuilder) {
+        builder.apply {
             useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
             useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
         }
