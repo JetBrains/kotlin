@@ -75,14 +75,11 @@ internal class FirElementBuilder(
         else -> true
     }
 
-    fun getOrBuildFirFor(
-        element: KtElement,
-        firResolveSession: LLFirResolveSession,
-    ): FirElement? {
+    fun getOrBuildFirFor(element: KtElement): FirElement? {
         return if (element is KtFile && element !is KtCodeFragment) {
             getOrBuildFirForKtFile(element)
         } else {
-            getFirForNonKtFileElement(element, firResolveSession)
+            getFirForNonKtFileElement(element)
         }
     }
 
@@ -92,18 +89,15 @@ internal class FirElementBuilder(
         return firFile
     }
 
-    private fun getFirForNonKtFileElement(
-        element: KtElement,
-        firResolveSession: LLFirResolveSession,
-    ): FirElement? {
+    private fun getFirForNonKtFileElement(element: KtElement): FirElement? {
         require(element !is KtFile || element is KtCodeFragment)
 
         if (!doKtElementHasCorrespondingFirElement(element)) {
             return null
         }
 
-        getFirForElementInsideAnnotations(element, firResolveSession)?.let { return it }
-        getFirForElementInsideTypes(element, firResolveSession)?.let { return it }
+        getFirForElementInsideAnnotations(element)?.let { return it }
+        getFirForElementInsideTypes(element)?.let { return it }
 
         val psi = getPsiAsFirElementSource(element) ?: return null
         val firFile = element.containingKtFile
@@ -116,7 +110,6 @@ internal class FirElementBuilder(
 
     private inline fun <T : KtElement> getFirForNonBodyElement(
         element: KtElement,
-        firResolveSession: LLFirResolveSession,
         anchorElementProvider: (KtElement) -> T?,
         declarationProvider: (T) -> KtDeclaration?,
         resolveAndFindFirForAnchor: (FirDeclaration, T) -> FirElement?,
@@ -128,7 +121,7 @@ internal class FirElementBuilder(
 
         val firDeclaration = nonLocalDeclaration.findSourceNonLocalFirDeclaration(
             firFileBuilder = moduleComponents.firFileBuilder,
-            provider = firResolveSession.useSiteFirSession.firProvider,
+            provider = moduleComponents.session.firProvider,
         )
 
         val anchorFir = resolveAndFindFirForAnchor(firDeclaration, anchorElement) ?: return null
@@ -144,23 +137,15 @@ internal class FirElementBuilder(
         return modifierList.owner as? KtDeclaration
     }
 
-    private fun getFirForElementInsideAnnotations(
-        element: KtElement,
-        firResolveSession: LLFirResolveSession,
-    ): FirElement? = getFirForNonBodyElement(
+    private fun getFirForElementInsideAnnotations(element: KtElement): FirElement? = getFirForNonBodyElement(
         element = element,
-        firResolveSession = firResolveSession,
         anchorElementProvider = { it.parentOfType<KtAnnotationEntry>(withSelf = true) },
         declarationProvider = { it.owner() },
         resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindAnnotation(anchor, goDeep = true) },
     )
 
-    private fun getFirForElementInsideTypes(
-        element: KtElement,
-        firResolveSession: LLFirResolveSession,
-    ): FirElement? = getFirForNonBodyElement(
+    private fun getFirForElementInsideTypes(element: KtElement): FirElement? = getFirForNonBodyElement(
         element = element,
-        firResolveSession = firResolveSession,
         anchorElementProvider = { it.parentsOfType<KtTypeReference>(withSelf = true).lastOrNull() },
         declarationProvider = {
             when (val parent = it.parent) {
