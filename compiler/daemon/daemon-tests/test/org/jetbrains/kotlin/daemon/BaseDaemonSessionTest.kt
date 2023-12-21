@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
+import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.CompileService
@@ -74,6 +75,7 @@ abstract class BaseDaemonSessionTest {
         jvmOptions: DaemonJVMOptions = defaultDaemonJvmOptions,
         daemonOptions: DaemonOptions = defaultDaemonOptions,
         logFile: File? = null,
+        daemonMessagesCollector: MutableCollection<DaemonReportMessage>? = null,
     ): CompileServiceSession {
         val actualJvmOptions = logFile?.let { jvmOptions.withLogFile(it) } ?: jvmOptions
         println("Leasing a session with $actualJvmOptions and $daemonOptions")
@@ -85,7 +87,7 @@ abstract class BaseDaemonSessionTest {
             clientMarkerFile,
             actualJvmOptions,
             daemonOptions,
-            DaemonReportingTargets(out = System.err),
+            DaemonReportingTargets(messages = daemonMessagesCollector, out = System.err),
             autostart = true,
             leaseSession = true,
             sessionAliveFlagFile = sessionMarkerFile,
