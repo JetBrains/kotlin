@@ -9,7 +9,7 @@ inline fun myRun(f: () -> Unit) {
 
 @OptIn(ExperimentalContracts::class)
 inline fun test_1(g: () -> Unit) {
-    <!WRONG_INVOCATION_KIND!>contract { callsInPlace(g, InvocationKind.EXACTLY_ONCE) }<!>
+    contract { callsInPlace(g, InvocationKind.EXACTLY_ONCE) }
     myRun(f = g)
 }
 

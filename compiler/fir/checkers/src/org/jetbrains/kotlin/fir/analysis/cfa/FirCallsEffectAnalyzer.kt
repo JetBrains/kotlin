@@ -200,7 +200,8 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
             }
 
             for (arg in node.fir.argumentList.arguments) {
-                data.checkExpressionForLeakedSymbols(arg) {
+                val unwrappedArg = arg.unwrapArgument()
+                data.checkExpressionForLeakedSymbols(unwrappedArg) {
                     node.fir.getArgumentCallsEffect(arg) == null
                 }
             }
@@ -307,7 +308,9 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         return this is FirAnonymousFunction && this.isLambda && this.invocationKind != null
     }
 
-    private fun FirExpression?.toQualifiedReference(): FirReference? = (this as? FirQualifiedAccessExpression)?.calleeReference
+    private fun FirExpression?.toQualifiedReference(): FirReference? {
+        return (this?.unwrapArgument() as? FirQualifiedAccessExpression)?.calleeReference
+    }
 
     private fun referenceToSymbol(reference: FirReference?): FirBasedSymbol<*>? = when (reference) {
         is FirResolvedNamedReference -> reference.resolvedSymbol
