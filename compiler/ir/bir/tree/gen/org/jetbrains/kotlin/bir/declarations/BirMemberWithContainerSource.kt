@@ -17,5 +17,5 @@ import org.jetbrains.kotlin.bir.BirElementClass
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.memberWithContainerSource]
  */
 interface BirMemberWithContainerSource : BirElement, BirDeclarationWithName {
-    companion object : BirElementClass(BirMemberWithContainerSource::class.java, 64, false)
+    companion object : BirElementClass(BirMemberWithContainerSource::class.java, 89, false)
 }

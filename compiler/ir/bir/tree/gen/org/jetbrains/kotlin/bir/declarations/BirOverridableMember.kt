@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.descriptors.Modality
 interface BirOverridableMember : BirElement, BirDeclaration, BirDeclarationWithVisibility, BirDeclarationWithName, BirSymbolOwner {
     var modality: Modality
 
-    companion object : BirElementClass(BirOverridableMember::class.java, 68, false)
+    companion object : BirElementClass(BirOverridableMember::class.java, 92, false)
 }

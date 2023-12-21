@@ -25,5 +25,5 @@ abstract class BirConstantPrimitive : BirConstantValue(), BirElement {
         value?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirConstantPrimitive::class.java, 18, true)
+    companion object : BirElementClass(BirConstantPrimitive::class.java, 13, true)
 }

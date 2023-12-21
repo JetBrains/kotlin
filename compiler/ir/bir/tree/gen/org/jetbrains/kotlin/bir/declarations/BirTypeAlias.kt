@@ -28,5 +28,5 @@ interface BirTypeAlias : BirElement, BirDeclaration, BirDeclarationWithName, Bir
         typeParameters.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirTypeAlias::class.java, 91, true)
+    companion object : BirElementClass(BirTypeAlias::class.java, 59, true)
 }

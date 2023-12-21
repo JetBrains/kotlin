@@ -28,5 +28,5 @@ abstract class BirEnumConstructorCall : BirFunctionAccessExpression(), BirElemen
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirEnumConstructorCall::class.java, 37, true)
+    companion object : BirElementClass(BirEnumConstructorCall::class.java, 22, true)
 }

@@ -61,9 +61,11 @@ private fun adjustSymbolOwners(elements: List<Element>) {
 
 private fun setClassIds(elements: List<Element>) {
     var id = 0
-    for (element in elements.sortedBy { it.name }) {
-        element.classId = id++
-    }
+    elements.sortedBy { it.name }
+        .sortedByDescending { it.isLeaf } // Optimization for dispatching by class
+        .forEach { element ->
+            element.classId = id++
+        }
 }
 
 private fun processFieldOverrides(elements: List<Element>) {

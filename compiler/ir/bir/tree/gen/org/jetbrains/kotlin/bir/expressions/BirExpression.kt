@@ -23,5 +23,5 @@ import org.jetbrains.kotlin.bir.types.BirType
 abstract class BirExpression : BirImplElementBase(), BirElement, BirStatement, BirVarargElement, BirAttributeContainer {
     abstract var type: BirType
 
-    companion object : BirElementClass(BirExpression::class.java, 42, false)
+    companion object : BirElementClass(BirExpression::class.java, 82, false)
 }

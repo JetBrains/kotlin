@@ -21,5 +21,5 @@ abstract class BirConst<T> : BirExpression(), BirElement {
     abstract var kind: IrConstKind<T>
     abstract var value: T
 
-    companion object : BirElementClass(BirConst::class.java, 15, true)
+    companion object : BirElementClass(BirConst::class.java, 10, true)
 }

@@ -20,5 +20,5 @@ abstract class BirBreakContinue : BirExpression(), BirElement {
     abstract var loop: BirLoop
     abstract var label: String?
 
-    companion object : BirElementClass(BirBreakContinue::class.java, 8, false)
+    companion object : BirElementClass(BirBreakContinue::class.java, 70, false)
 }

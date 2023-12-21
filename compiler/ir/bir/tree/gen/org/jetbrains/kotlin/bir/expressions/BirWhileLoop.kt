@@ -24,5 +24,5 @@ abstract class BirWhileLoop : BirLoop(), BirElement {
         body?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirWhileLoop::class.java, 102, true)
+    companion object : BirElementClass(BirWhileLoop::class.java, 66, true)
 }

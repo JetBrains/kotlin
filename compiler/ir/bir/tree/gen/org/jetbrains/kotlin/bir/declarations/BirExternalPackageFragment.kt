@@ -26,5 +26,5 @@ abstract class BirExternalPackageFragment : BirPackageFragment(), BirElement, Bi
         declarations.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirExternalPackageFragment::class.java, 44, true)
+    companion object : BirElementClass(BirExternalPackageFragment::class.java, 28, true)
 }

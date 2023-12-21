@@ -21,5 +21,5 @@ import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 interface BirAnnotationContainerElement : BirElement, BirAnnotationContainer {
     override val annotations: BirChildElementList<BirConstructorCall>
 
-    companion object : BirElementClass(BirAnnotationContainerElement::class.java, 0, false)
+    companion object : BirElementClass(BirAnnotationContainerElement::class.java, 67, false)
 }

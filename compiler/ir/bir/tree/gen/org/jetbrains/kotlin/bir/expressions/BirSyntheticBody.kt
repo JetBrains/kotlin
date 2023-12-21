@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 abstract class BirSyntheticBody : BirBody(), BirElement {
     abstract var kind: IrSyntheticBodyKind
 
-    companion object : BirElementClass(BirSyntheticBody::class.java, 88, true)
+    companion object : BirElementClass(BirSyntheticBody::class.java, 56, true)
 }

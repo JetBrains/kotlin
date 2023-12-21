@@ -31,5 +31,5 @@ abstract class BirLocalDelegatedProperty : BirImplElementBase(), BirElement, Bir
         setter?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirLocalDelegatedProperty::class.java, 60, true)
+    companion object : BirElementClass(BirLocalDelegatedProperty::class.java, 40, true)
 }

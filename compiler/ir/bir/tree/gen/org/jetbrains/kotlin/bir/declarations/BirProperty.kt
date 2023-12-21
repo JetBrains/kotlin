@@ -38,5 +38,5 @@ interface BirProperty : BirElement, BirDeclaration, BirPossiblyExternalDeclarati
         setter?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirProperty::class.java, 71, true)
+    companion object : BirElementClass(BirProperty::class.java, 43, true)
 }
