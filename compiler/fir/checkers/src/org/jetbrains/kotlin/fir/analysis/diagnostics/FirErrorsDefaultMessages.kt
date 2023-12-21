@@ -2228,7 +2228,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         // When expressions
         map.put(EXPECTED_CONDITION, "Condition of type 'Boolean' expected.")
-        map.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive. Add the necessary {0}{1}", WHEN_MISSING_CASES, STRING)
+        map.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive. Add {0}{1}.", WHEN_MISSING_CASES, STRING)
         map.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches when used as an expression.")
         map.put(
             NON_EXHAUSTIVE_WHEN_STATEMENT,

@@ -169,11 +169,11 @@ object FirDiagnosticRenderers {
 
     val WHEN_MISSING_CASES = Renderer { missingCases: List<WhenMissingCase> ->
         if (missingCases.singleOrNull() == WhenMissingCase.Unknown) {
-            "'else' branch"
+            "an 'else' branch"
         } else {
             val list = missingCases.joinToString(", ", limit = WHEN_MISSING_LIMIT) { "'$it'" }
             val branches = if (missingCases.size > 1) "branches" else "branch"
-            "$list $branches or 'else' branch instead"
+            "the $list $branches or an 'else' branch"
         }
     }
 
