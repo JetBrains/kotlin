@@ -287,6 +287,7 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
                     it.unexpandedClassId == StandardClassIds.Annotations.DeprecatedSinceKotlin
                 }
                 val message = deprecated.getStringArgument(ParameterNames.deprecatedMessage)
+                    ?: deprecated.getFirstArgumentStringIfNotNamed()
 
                 val deprecatedInfo =
                     if (deprecatedSinceKotlin == null) {
@@ -308,6 +309,12 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
             add(null, RequireKotlinInfo(it))
         }
     }
+}
+
+private fun FirAnnotation.getFirstArgumentStringIfNotNamed(): String? {
+    if (this !is FirAnnotationCall) return null
+    val firstArgument = argumentList.arguments.firstOrNull() ?: return null
+    return (firstArgument as? FirConstExpression<*>)?.value?.toString()
 }
 
 

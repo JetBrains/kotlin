@@ -1,0 +1,5 @@
+/deprecatedError.kt:(237,238): error: '@Deprecated(...) class C : Any' is deprecated. alas.
+
+/deprecatedError.kt:(246,249): error: '@Deprecated(...) fun foo(s: @R|Foo|()  String): Unit' is deprecated. alas.
+
+/deprecatedError.kt:(258,259): error: 'constructor(): C' is deprecated. alas.
