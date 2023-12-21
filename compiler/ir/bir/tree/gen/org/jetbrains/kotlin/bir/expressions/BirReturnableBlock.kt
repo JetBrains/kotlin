@@ -25,5 +25,5 @@ abstract class BirReturnableBlock : BirBlock(), BirElement, BirSymbolOwner, BirR
         statements.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirReturnableBlock::class.java, 76)
+    companion object : BirElementClass(BirReturnableBlock::class.java, 76, true)
 }

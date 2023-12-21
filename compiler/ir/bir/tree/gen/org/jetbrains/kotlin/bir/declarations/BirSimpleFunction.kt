@@ -38,5 +38,5 @@ interface BirSimpleFunction : BirElement, BirFunction, BirOverridableDeclaration
         body?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirSimpleFunction::class.java, 80)
+    companion object : BirElementClass(BirSimpleFunction::class.java, 80, true)
 }

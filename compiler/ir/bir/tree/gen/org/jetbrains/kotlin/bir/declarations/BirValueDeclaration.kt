@@ -22,5 +22,5 @@ interface BirValueDeclaration : BirElement, BirDeclarationWithName, BirSymbolOwn
     var type: BirType
     var isAssignable: Boolean
 
-    companion object : BirElementClass(BirValueDeclaration::class.java, 96)
+    companion object : BirElementClass(BirValueDeclaration::class.java, 96, false)
 }

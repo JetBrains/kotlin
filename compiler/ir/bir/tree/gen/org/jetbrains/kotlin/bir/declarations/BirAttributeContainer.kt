@@ -22,5 +22,5 @@ import org.jetbrains.kotlin.bir.BirElementClass
 interface BirAttributeContainer : BirElement {
     var attributeOwnerId: BirAttributeContainer
 
-    companion object : BirElementClass(BirAttributeContainer::class.java, 2)
+    companion object : BirElementClass(BirAttributeContainer::class.java, 2, false)
 }

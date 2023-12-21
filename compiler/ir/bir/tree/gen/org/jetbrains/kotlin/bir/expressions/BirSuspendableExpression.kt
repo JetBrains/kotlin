@@ -27,5 +27,5 @@ abstract class BirSuspendableExpression : BirExpression(), BirElement {
         result?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirSuspendableExpression::class.java, 85)
+    companion object : BirElementClass(BirSuspendableExpression::class.java, 85, true)
 }

@@ -23,5 +23,5 @@ import org.jetbrains.kotlin.bir.BirElementClass
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.metadataSourceOwner]
  */
 interface BirMetadataSourceOwner : BirElement {
-    companion object : BirElementClass(BirMetadataSourceOwner::class.java, 65)
+    companion object : BirElementClass(BirMetadataSourceOwner::class.java, 65, false)
 }

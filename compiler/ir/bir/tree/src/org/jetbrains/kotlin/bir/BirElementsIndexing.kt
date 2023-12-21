@@ -300,7 +300,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
         for (indexer in indexers) {
             val node = elementClassNodes.getValue(indexer.elementClass)
             node.descendantClasses().forEach { descendantNode ->
-                if (descendantNode.isLeaf) {
+                if (descendantNode.elementClass.hasImplementation) {
                     descendantNode.indexers += indexer
                 }
             }
@@ -322,7 +322,6 @@ internal object BirElementIndexClassifierFunctionGenerator {
         val subClasses = mutableSetOf<ElementClassBucket>()
         val indexers = mutableListOf<Indexer>()
 
-        val isLeaf get() = subClasses.isEmpty()
         fun descendantClasses() = DFS.topologicalOrder(listOf(this)) { it.subClasses }
     }
 
