@@ -2958,8 +2958,8 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CommaInWhenConditionWithoutArgument::class
     }
 
-    interface DuplicateLabelInWhen : KtFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = DuplicateLabelInWhen::class
+    interface DuplicateBranchConditionInWhen : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = DuplicateBranchConditionInWhen::class
     }
 
     interface ConfusingBranchConditionError : KtFirDiagnostic<PsiElement> {

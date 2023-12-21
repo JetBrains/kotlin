@@ -3563,10 +3563,10 @@ internal class CommaInWhenConditionWithoutArgumentImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.CommaInWhenConditionWithoutArgument
 
-internal class DuplicateLabelInWhenImpl(
+internal class DuplicateBranchConditionInWhenImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.DuplicateLabelInWhen
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.DuplicateBranchConditionInWhen
 
 internal class ConfusingBranchConditionErrorImpl(
     firDiagnostic: KtPsiDiagnostic,

@@ -52,14 +52,14 @@ object FirWhenConditionChecker : FirWhenExpressionChecker() {
                             else -> continue
                         }
                         if (!checkedConstants.add(value)) {
-                            reporter.reportOn(condition.source, FirErrors.DUPLICATE_LABEL_IN_WHEN, context)
+                            reporter.reportOn(condition.source, FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN, context)
                         }
                     }
                 }
                 is FirTypeOperatorCall -> {
                     val coneType = condition.conversionTypeRef.coneType
                     if (!checkedTypes.add(coneType to condition.operation)) {
-                        reporter.reportOn(condition.conversionTypeRef.source, FirErrors.DUPLICATE_LABEL_IN_WHEN, context)
+                        reporter.reportOn(condition.conversionTypeRef.source, FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN, context)
                     }
                 }
             }

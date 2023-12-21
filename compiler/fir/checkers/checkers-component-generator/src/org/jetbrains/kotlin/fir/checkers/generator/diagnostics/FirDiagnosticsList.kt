@@ -1470,7 +1470,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("illegalReason")
         }
         val COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT by error<PsiElement>(PositioningStrategy.COMMAS)
-        val DUPLICATE_LABEL_IN_WHEN by warning<KtElement>()
+        val DUPLICATE_BRANCH_CONDITION_IN_WHEN by warning<KtElement>()
         val CONFUSING_BRANCH_CONDITION by deprecationError<PsiElement>(LanguageFeature.ProhibitConfusingSyntaxInWhenBranches)
     }
 

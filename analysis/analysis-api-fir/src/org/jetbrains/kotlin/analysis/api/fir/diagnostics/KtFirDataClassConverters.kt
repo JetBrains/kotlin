@@ -4245,8 +4245,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.DUPLICATE_LABEL_IN_WHEN) { firDiagnostic ->
-        DuplicateLabelInWhenImpl(
+    add(FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN) { firDiagnostic ->
+        DuplicateBranchConditionInWhenImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

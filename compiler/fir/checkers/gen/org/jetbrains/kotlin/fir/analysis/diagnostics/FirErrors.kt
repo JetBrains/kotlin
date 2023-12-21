@@ -750,7 +750,7 @@ object FirErrors {
     val ELSE_MISPLACED_IN_WHEN: KtDiagnosticFactory0 by error0<KtWhenEntry>(SourceElementPositioningStrategies.ELSE_ENTRY)
     val ILLEGAL_DECLARATION_IN_WHEN_SUBJECT: KtDiagnosticFactory1<String> by error1<KtElement, String>()
     val COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT: KtDiagnosticFactory0 by error0<PsiElement>(SourceElementPositioningStrategies.COMMAS)
-    val DUPLICATE_LABEL_IN_WHEN: KtDiagnosticFactory0 by warning0<KtElement>()
+    val DUPLICATE_BRANCH_CONDITION_IN_WHEN: KtDiagnosticFactory0 by warning0<KtElement>()
     val CONFUSING_BRANCH_CONDITION: KtDiagnosticFactoryForDeprecation0 by deprecationError0<PsiElement>(ProhibitConfusingSyntaxInWhenBranches)
 
     // Context tracking
