@@ -22,5 +22,5 @@ abstract class BirValueAccessExpression : BirDeclarationReference(), BirElement 
     abstract override var symbol: BirValueDeclaration
     abstract var origin: IrStatementOrigin?
 
-    companion object : BirElementClass(BirValueAccessExpression::class.java, 95)
+    companion object : BirElementClass(BirValueAccessExpression::class.java, 95, false)
 }

@@ -19,5 +19,5 @@ import org.jetbrains.kotlin.bir.BirElementClass
 interface BirPossiblyExternalDeclaration : BirElement, BirDeclarationWithName {
     var isExternal: Boolean
 
-    companion object : BirElementClass(BirPossiblyExternalDeclaration::class.java, 70)
+    companion object : BirElementClass(BirPossiblyExternalDeclaration::class.java, 70, false)
 }

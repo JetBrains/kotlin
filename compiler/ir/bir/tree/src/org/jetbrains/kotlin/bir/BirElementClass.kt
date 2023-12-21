@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.bir
 
 import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
 
-abstract class BirElementClass(val javaClass: Class<*>, val id: Int)
+abstract class BirElementClass(val javaClass: Class<*>, val id: Int, val hasImplementation: Boolean)
 
 internal object BirElementClassCache : ClassValue<BirElementClass>() {
     override fun computeValue(type: Class<*>): BirElementClass {
