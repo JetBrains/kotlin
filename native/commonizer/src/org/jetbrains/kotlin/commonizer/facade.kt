@@ -94,7 +94,7 @@ internal fun serializeTarget(
         val manifestData = parameters.manifestProvider[outputTarget].buildManifest(libraryName)
         parameters.resultsConsumer.consume(
             parameters, outputTarget,
-            ResultsConsumer.ModuleResult.Commonized(libraryName, serializedMetadata, manifestData)
+            ResultsConsumer.ModuleResult(libraryName, serializedMetadata, manifestData)
         )
     }
     parameters.resultsConsumer.targetConsumed(parameters, outputTarget)

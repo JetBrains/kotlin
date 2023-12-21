@@ -77,8 +77,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         assertEquals(sharedTarget, results.sharedTarget)
 
         val sharedModuleAsExpected: SerializedMetadata = analyzedModules.commonizedModules.getValue(sharedTarget)
-        val sharedModuleByCommonizer: SerializedMetadata =
-            (results.modulesByTargets.getValue(sharedTarget).single() as ModuleResult.Commonized).metadata
+        val sharedModuleByCommonizer: SerializedMetadata = results.modulesByTargets.getValue(sharedTarget).single().metadata
 
         assertModulesAreEqual(sharedModuleAsExpected, sharedModuleByCommonizer, sharedTarget)
     }
