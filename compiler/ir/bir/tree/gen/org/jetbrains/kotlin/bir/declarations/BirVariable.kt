@@ -28,5 +28,5 @@ abstract class BirVariable : BirImplElementBase(), BirElement, BirDeclaration, B
         initializer?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirVariable::class.java, 100, true)
+    companion object : BirElementClass(BirVariable::class.java, 64, true)
 }

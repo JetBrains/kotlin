@@ -30,5 +30,5 @@ interface BirFunction : BirElement, BirDeclaration, BirPossiblyExternalDeclarati
     var contextReceiverParametersCount: Int
     var body: BirBody?
 
-    companion object : BirElementClass(BirFunction::class.java, 48, false)
+    companion object : BirElementClass(BirFunction::class.java, 84, false)
 }

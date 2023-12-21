@@ -28,5 +28,5 @@ abstract class BirDelegatingConstructorCall : BirFunctionAccessExpression(), Bir
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirDelegatingConstructorCall::class.java, 30, true)
+    companion object : BirElementClass(BirDelegatingConstructorCall::class.java, 17, true)
 }

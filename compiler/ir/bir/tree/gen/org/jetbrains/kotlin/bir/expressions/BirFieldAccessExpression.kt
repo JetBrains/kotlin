@@ -25,5 +25,5 @@ abstract class BirFieldAccessExpression : BirDeclarationReference(), BirElement 
     abstract var receiver: BirExpression?
     abstract var origin: IrStatementOrigin?
 
-    companion object : BirElementClass(BirFieldAccessExpression::class.java, 46, false)
+    companion object : BirElementClass(BirFieldAccessExpression::class.java, 83, false)
 }
