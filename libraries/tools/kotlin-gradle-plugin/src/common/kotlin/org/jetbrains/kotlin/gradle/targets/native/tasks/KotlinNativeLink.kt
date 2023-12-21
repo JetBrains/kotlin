@@ -216,7 +216,7 @@ constructor(
     private val cacheSettings by lazy {
         CacheSettings(project.getKonanCacheOrchestration(), project.getKonanCacheKind(konanTarget),
                       project.isKonanIncrementalCompilationEnabled(), project.getKonanParallelThreads(),
-                      project.gradle.gradleUserHomeDir, project.buildDir)
+                      project.gradle.gradleUserHomeDir, project.layout.buildDirectory.get().asFile)
     }
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2NativeCompilerArguments> {
