@@ -71,7 +71,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("isExternal", boolean)
     }
     val symbolOwner: Element by element(Declaration) {
-        parent(type(Packages.symbols, "BirUntypedPossiblyElementSymbol"))
+        parent(type(Packages.declarations, "BirSymbolOwnerFacade"))
 
         +field("signature", type("org.jetbrains.kotlin.ir.util", "IdSignature"), nullable = true) {
             isOverride = true
