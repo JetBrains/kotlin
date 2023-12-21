@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.bir.generator.print
 
-import org.jetbrains.kotlin.bir.generator.BirTree
-import org.jetbrains.kotlin.bir.generator.Packages
+import org.jetbrains.kotlin.bir.generator.*
 import org.jetbrains.kotlin.bir.generator.TREE_GENERATOR_README
-import org.jetbrains.kotlin.bir.generator.elementVisitorType
 import org.jetbrains.kotlin.bir.generator.model.*
 import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.Model
@@ -80,7 +78,7 @@ private fun SmartPrinter.printElement(element: Element) {
             }
 
             println()
-            println("companion object")
+            println("companion object : ${elementClassType.render()}(${element.classId})")
         }
     }.toString()
 
@@ -93,7 +91,7 @@ private fun SmartPrinter.printElement(element: Element) {
 }
 
 fun printElements(generationPath: File, model: Model) = model.elements.asSequence()
-    .filterNot { it == model.rootElement || it.name == BirTree.symbolOwner.name }
+    .filterNot { it == model.rootElement }
     .map { element ->
         printGeneratedType(generationPath, TREE_GENERATOR_README, element.packageName, element.typeName) {
             printElement(element)
