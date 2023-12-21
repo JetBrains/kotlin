@@ -169,7 +169,7 @@ fun <T> KotlinTypeFacade.interpret(
             }
 
             is Interpreter.ReturnType -> {
-                val returnType = it.expression.coneTypeOrNull!!.returnType(session)
+                val returnType = it.expression.resolvedType.returnType(session)
                 Interpreter.Success(Marker(returnType))
             }
 
@@ -259,7 +259,7 @@ internal fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClass
 }
 
 private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAccessExpression): List<ColumnWithPathApproximation> {
-    return result.coneTypeOrNull!!.let {
+    return result.resolvedType.let {
         val column = when {
             it.classId == Names.DATA_COLUMN_CLASS_ID -> {
                 val arg = it.typeArguments.single() as ConeClassLikeType
@@ -324,7 +324,7 @@ private fun isDataFrame(it: FirPropertySymbol) =
 
 fun path(propertyAccessExpression: FirPropertyAccessExpression): List<String> {
     val colName = f(propertyAccessExpression)
-    val typeRef = propertyAccessExpression.dispatchReceiver?.coneTypeOrNull
+    val typeRef = propertyAccessExpression.dispatchReceiver?.resolvedType
     val joinDsl = ClassId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("JoinDsl"))
     if (typeRef?.classId?.equals(joinDsl) == true && colName == "right") {
         return emptyList()
@@ -378,11 +378,11 @@ internal fun FirFunctionCall.collectArgumentExpressions(): Arguments {
 internal val KotlinTypeFacade.getSchema: FirExpression.() -> ObjectWithSchema? get() = { getSchema(session) }
 
 internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
-    return coneTypeSafe<ConeClassLikeType>()?.toSymbol(session)?.let {
-        val (typeRef: ConeKotlinType?, symbol) = if (it is FirTypeAliasSymbol) {
+    return resolvedType.toSymbol(session)?.let {
+        val (typeRef: ConeKotlinType, symbol) = if (it is FirTypeAliasSymbol) {
             it.resolvedExpandedTypeRef.coneType to it.resolvedExpandedTypeRef.toClassLikeSymbol(session)!!
         } else {
-            coneTypeOrNull!! to it
+            resolvedType to it
         }
         symbol.annotations.firstNotNullOfOrNull {
             runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {

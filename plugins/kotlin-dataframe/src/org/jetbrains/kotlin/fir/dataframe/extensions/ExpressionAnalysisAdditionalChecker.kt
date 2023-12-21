@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.renderReadable
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
@@ -69,7 +70,7 @@ private class Checker : FirFunctionCallChecker() {
         if (calleeReference !is FirResolvedNamedReference || calleeReference.toResolvedCallableSymbol()?.callableId != CAST_ID) {
             return
         }
-        val coneType = expression.explicitReceiver?.coneTypeOrNull
+        val coneType = expression.explicitReceiver?.resolvedType
         if (coneType != null) {
             val sourceType = coneType.fullyExpandedType(session).typeArguments[0].type as? ConeClassLikeType
                 ?: return

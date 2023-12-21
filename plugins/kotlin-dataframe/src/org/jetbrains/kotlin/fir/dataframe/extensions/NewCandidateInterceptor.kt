@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
@@ -54,11 +52,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toClassSymbol
 import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
@@ -82,8 +82,7 @@ class NewCandidateInterceptor(
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     val Key = DataFramePlugin
 
-    @OptIn(SymbolInternals::class)
-    override fun intercept(callInfo: CallInfo, symbol: FirBasedSymbol<*>): FirBasedSymbol<*>? {
+    override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): FirResolvedTypeRef? {
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
         if (callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("DisableInterpretation")) == true }) {
             return null
@@ -91,7 +90,6 @@ class NewCandidateInterceptor(
         if (symbol.annotations.none { it.fqName(session)?.shortName()?.equals(Name.identifier("Refine")) == true }) {
             return null
         }
-        if (symbol !is FirNamedFunctionSymbol) return null
         val lookupTag = ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID)
         var hash = callInfo.name.hashCode() + callInfo.arguments.sumOf {
             when (it) {
@@ -105,7 +103,7 @@ class NewCandidateInterceptor(
         val newSymbol = FirNamedFunctionSymbol(generatedName)
 
         // possibly null if explicit receiver type is AnyFrame
-        val argument = (callInfo.explicitReceiver?.coneTypeOrNull)?.typeArguments?.singleOrNull()
+        val argument = (callInfo.explicitReceiver?.resolvedType)?.typeArguments?.singleOrNull()
         val suggestedName = if (argument == null) {
             "${callInfo.name.identifier.titleCase()}_$hash"
         } else {
@@ -155,24 +153,17 @@ class NewCandidateInterceptor(
                 isNullable = false
             )
         }
-
-        buildSimpleFunctionCopy(symbol.fir) {
-            name = generatedName.callableName
-            body = null
-            this.symbol = newSymbol
-            returnTypeRef = typeRef
-        }.also { newSymbol.bind(it) }
-        return newSymbol
+        return typeRef
     }
 
     @OptIn(SymbolInternals::class)
-    override fun transform(call: FirFunctionCall, symbol: FirBasedSymbol<*>): FirFunctionCall {
+    override fun transform(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall {
         val (token, dataFrameSchema) =
             analyzeRefinedCallShape(call, InterpretationErrorReporter.DEFAULT) ?: return call
 
         val explicitReceiver = call.explicitReceiver ?: return call
-        val receiverType = explicitReceiver.coneTypeOrNull ?: return call
-        val returnType = call.coneTypeOrNull ?: return call
+        val receiverType = explicitReceiver.resolvedType
+        val returnType = call.resolvedType
 
         val resolvedLet = findLet()
         val parameter = resolvedLet.valueParameterSymbols[0]
@@ -280,7 +271,7 @@ class NewCandidateInterceptor(
                 return if (element is FirResolvedNamedReference) {
                     buildResolvedNamedReference {
                         this.name = element.name
-                        resolvedSymbol = symbol as FirNamedFunctionSymbol
+                        resolvedSymbol = originalSymbol
                     } as E
                 } else {
                     element
@@ -368,7 +359,7 @@ class NewCandidateInterceptor(
         val newCall1 = buildFunctionCall {
             source = call.source
             this.coneTypeOrNull = ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(call.coneTypeOrNull?.classId!!),
+                ConeClassLikeLookupTagImpl(call.resolvedType.classId!!),
                 arrayOf(
                     ConeClassLikeTypeImpl(
                         ConeClassLookupTagWithFixedSymbol(tokenFir.symbol.classId, tokenFir.symbol),

@@ -105,24 +105,16 @@ class FirDataFrameExtensionRegistrar(
     override fun ExtensionRegistrarContext.configurePlugin() {
         // if input data schema for refinement is also generated schema, maybe it'll be possible to save names to a set
         val generator = Checker(GeneratedNames())
-//        val refinedToOriginal = mutableMapOf<Name, FirBasedSymbol<*>>()
         with(generator) {
             +::ExtensionsGenerator
-//            +{ it: FirSession -> ExpressionAnalysisAdditionalChecker(it) }
             +::ReturnTypeBasedReceiverInjector
             +{ it: FirSession ->
-                val flag = FlagContainer(shouldIntercept = true)
-                val templateCompiler = TemplateCompiler(flag)
-                templateCompiler.session = it
-//                CandidateInterceptor(it, ::nextFunction, callableState, refinedToOriginal, this::nextName, FirMetaContextImpl(it, templateCompiler), refinedToOriginal, flag)
                 NewCandidateInterceptor(it, ::nextFunction, this::nextName)
             }
             +::TokenGenerator
         }
     }
 }
-
-class FlagContainer(var shouldIntercept: Boolean)
 
 class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
 
