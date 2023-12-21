@@ -61,5 +61,5 @@ interface BirValueParameter : BirElement, BirDeclaration, BirValueDeclaration, B
         defaultValue?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirValueParameter::class.java, 97, true)
+    companion object : BirElementClass(BirValueParameter::class.java, 62, true)
 }

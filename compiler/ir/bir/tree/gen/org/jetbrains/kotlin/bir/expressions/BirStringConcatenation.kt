@@ -25,5 +25,5 @@ abstract class BirStringConcatenation : BirExpression(), BirElement {
         arguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirStringConcatenation::class.java, 84, true)
+    companion object : BirElementClass(BirStringConcatenation::class.java, 53, true)
 }

@@ -17,5 +17,5 @@ import org.jetbrains.kotlin.bir.BirElementClass
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.break]
  */
 abstract class BirBreak : BirBreakContinue(), BirElement {
-    companion object : BirElementClass(BirBreak::class.java, 7, true)
+    companion object : BirElementClass(BirBreak::class.java, 4, true)
 }
