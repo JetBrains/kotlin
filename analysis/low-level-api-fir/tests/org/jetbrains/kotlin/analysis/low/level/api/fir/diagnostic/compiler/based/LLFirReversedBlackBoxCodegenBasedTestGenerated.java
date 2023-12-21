@@ -51629,6 +51629,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         }
 
         @Test
+        @TestMetadata("localCaptureTestsK2.kt")
+        public void testLocalCaptureTestsK2() throws Exception {
+            runTest("compiler/testData/codegen/box/script/localCaptureTestsK2.kt");
+        }
+
+        @Test
         @TestMetadata("scripInstance.kt")
         public void testScripInstance() throws Exception {
             runTest("compiler/testData/codegen/box/script/scripInstance.kt");
@@ -51638,6 +51644,18 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         @TestMetadata("scriptNestedClassInstance.kt")
         public void testScriptNestedClassInstance() throws Exception {
             runTest("compiler/testData/codegen/box/script/scriptNestedClassInstance.kt");
+        }
+
+        @Test
+        @TestMetadata("scriptNestedClassInstanceK2.kt")
+        public void testScriptNestedClassInstanceK2() throws Exception {
+            runTest("compiler/testData/codegen/box/script/scriptNestedClassInstanceK2.kt");
+        }
+
+        @Test
+        @TestMetadata("scriptPropFromAnotherModuleK2.kt")
+        public void testScriptPropFromAnotherModuleK2() throws Exception {
+            runTest("compiler/testData/codegen/box/script/scriptPropFromAnotherModuleK2.kt");
         }
     }
 
