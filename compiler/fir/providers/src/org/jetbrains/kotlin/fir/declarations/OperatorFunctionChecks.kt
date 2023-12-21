@@ -104,11 +104,11 @@ object OperatorFunctionChecks {
                         return null
                     }
                     return buildString {
-                        append("must override ''equals()'' in Any")
+                        append("must override 'equals()' in Any")
                         if (customEqualsSupported && containingClassSymbol.isInline) {
                             val expectedParameterTypeRendered =
                                 containingClassSymbol.defaultType().replaceArgumentsWithStarProjections().renderReadable()
-                            append(" or define ''equals(other: ${expectedParameterTypeRendered}): Boolean''")
+                            append(" or define 'equals(other: ${expectedParameterTypeRendered}): Boolean'")
                         }
                     }
                 }
@@ -203,15 +203,15 @@ private object Checks {
     }
 
     object Returns {
-        val boolean = simple("must return Boolean") { it, session ->
+        val boolean = simple("must return 'Boolean'") { it, session ->
             it.returnTypeRef.coneType.fullyExpandedType(session).isBoolean
         }
 
-        val int = simple("must return Int") { it, session ->
+        val int = simple("must return 'Int'") { it, session ->
             it.returnTypeRef.coneType.fullyExpandedType(session).isInt
         }
 
-        val unit = simple("must return Unit") { it, session ->
+        val unit = simple("must return 'Unit'") { it, session ->
             it.returnTypeRef.coneType.fullyExpandedType(session).isUnit
         }
     }

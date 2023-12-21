@@ -904,7 +904,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice.")
         map.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum classes cannot extend classes.")
         map.put(SEALED_SUPERTYPE, "This type is sealed. It can only be extended by classes or objects in the same package.")
-        map.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "''{0}'' cannot extend a sealed {1}.", STRING, CLASS_KIND)
+        map.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "{0} cannot extend a sealed {1}.", STRING, CLASS_KIND)
         map.put(
             SEALED_INHERITOR_IN_DIFFERENT_PACKAGE,
             "A class can only extend a sealed class or interface declared in the same package."
@@ -1172,7 +1172,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INFIX_MODIFIER_REQUIRED, "''infix'' modifier is required on ''{0}''.", TO_STRING)
         map.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''.", TO_STRING, STRING)
         map.put(DEPRECATED_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is deprecated inside ''{1}''.", TO_STRING, STRING)
-        map.put(INAPPLICABLE_OPERATOR_MODIFIER, "''operator'' modifier is not applicable to function ''{0}''.", STRING)
+        map.put(INAPPLICABLE_OPERATOR_MODIFIER, "''operator'' modifier is not applicable to function: {0}.", STRING)
 
         // Classes and interfaces
         map.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, so it must be initialized here.")
@@ -1558,7 +1558,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, "Value classes cannot have context receivers.")
         map.put(
             ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET,
-            "Annotations on ''{0}'' of multi-field value class type are not supported.",
+            "Annotations on {0} of multi-field value class type are not supported.",
             STRING
         )
 
@@ -2232,7 +2232,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches when used as an expression.")
         map.put(
             NON_EXHAUSTIVE_WHEN_STATEMENT,
-            "Non-exhaustive ''when'' statements on ''{0}'' will be prohibited in 1.7. Add ''{1}''.",
+            "Non-exhaustive ''when'' statements on ''{0}'' will be prohibited in 1.7. Add {1}.",
             TO_STRING,
             WHEN_MISSING_CASES
         )
