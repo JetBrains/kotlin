@@ -83,6 +83,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
     }
 
     @Test
+    @TestMetadata("overrideProtectedClassReturnFromLibrary.kt")
+    public void testOverrideProtectedClassReturnFromLibrary() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/overrideProtectedClassReturnFromLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("resolutionErrors.kt")
     public void testResolutionErrors() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/resolutionErrors.kt");

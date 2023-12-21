@@ -1,0 +1,4 @@
+Diagnostics from elements:
+  for PSI element of type KtNamedFunction at (15,5-64)
+    EXPOSED_FUNCTION_RETURN_TYPE      text ranges: [(103,123)]
+      PSI: KtNamedFunction at (15,5-64)
