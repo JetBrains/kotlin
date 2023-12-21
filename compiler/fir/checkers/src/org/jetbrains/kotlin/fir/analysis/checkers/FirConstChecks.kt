@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
@@ -103,13 +104,20 @@ private class FirConstCheckVisitor(private val session: FirSession) : FirVisitor
 
         whenExpression.subject?.accept(this, data)?.ifNotValidConst { return it }
         for (branch in whenExpression.branches) {
-            branch.condition.accept(this, data).ifNotValidConst { return it }
+            when (branch.condition) {
+                is FirElseIfTrueCondition -> { /* skip */ }
+                else -> branch.condition.accept(this, data).ifNotValidConst { return it }
+            }
             branch.result.statements.forEach { stmt ->
                 if (stmt !is FirExpression) return ConstantArgumentKind.NOT_CONST
                 stmt.accept(this, data).ifNotValidConst { return it }
             }
         }
         return ConstantArgumentKind.VALID_CONST
+    }
+
+    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: Nothing?): ConstantArgumentKind {
+        return if (intrinsicConstEvaluation) ConstantArgumentKind.VALID_CONST else ConstantArgumentKind.NOT_CONST
     }
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Nothing?): ConstantArgumentKind {
