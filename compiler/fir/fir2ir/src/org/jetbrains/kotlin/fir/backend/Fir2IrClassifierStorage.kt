@@ -62,8 +62,6 @@ class Fir2IrClassifierStorage(
     fun forEachCachedDeclarationSymbol(block: (IrSymbol) -> Unit) {
         classCache.values.forEach { block(it.symbol) }
         typeAliasCache.values.forEach { block(it.symbol) }
-        typeParameterCache.values.forEach { block(it.symbol) }
-        typeParameterCacheForSetter.values.forEach { block(it.symbol) }
         enumEntryCache.values.forEach { block(it.symbol) }
         fieldsForContextReceivers.values.forEach { fields ->
             fields.forEach { block(it.symbol) }
