@@ -15,12 +15,13 @@ import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructu
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal val KotlinMetadataArtifact = KotlinTargetArtifact { target, apiElements, _ ->
     if (target !is KotlinMetadataTarget || !target.project.isKotlinGranularMetadataEnabled) return@KotlinTargetArtifact
 
-    apiElements.attributes.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
-    apiElements.attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+    apiElements.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+    apiElements.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
 
     val metadataJarTask = target.createArtifactsTask { jar ->
         jar.description = "Assembles a jar archive containing the metadata for all Kotlin source sets."

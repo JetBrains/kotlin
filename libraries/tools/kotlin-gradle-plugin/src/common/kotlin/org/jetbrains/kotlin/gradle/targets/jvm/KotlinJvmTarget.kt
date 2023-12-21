@@ -324,7 +324,7 @@ abstract class KotlinJvmTarget @Inject constructor(
         ).mapNotNull {
             project.configurations.findByName(it)
         }.forEach { configuration ->
-            copyAttributes(attributes, configuration.attributes)
+            copyAttributesTo(project, dest = configuration)
         }
     }
 

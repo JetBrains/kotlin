@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVaria
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal val KotlinLegacyCompatibilityMetadataArtifact = KotlinTargetArtifact { target, _, _ ->
     if (target !is KotlinMetadataTarget) return@KotlinTargetArtifact
@@ -39,8 +40,8 @@ internal val KotlinLegacyCompatibilityMetadataArtifact = KotlinTargetArtifact { 
     target.project.configurations.createConsumable(COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME).apply {
         usesPlatformOf(target)
 
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+        attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
 
         val commonMainApiConfiguration = target.project.configurations.sourceSetDependencyConfigurationByScope(
             target.project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME),

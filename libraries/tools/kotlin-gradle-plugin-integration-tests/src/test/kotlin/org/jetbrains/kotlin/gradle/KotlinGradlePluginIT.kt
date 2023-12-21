@@ -648,7 +648,7 @@ class KotlinGradleIT : KGPBaseTest() {
             subProject("projB").buildGradle.appendText("\nkotlin.target.attributes.attribute(targetAttribute, \"bar\")")
             buildAndFail(":projB:compileKotlin") {
                 when {
-                    gradleVersion < GradleVersion.version("6.8.4") -> {
+                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_6_8) -> {
                         assertOutputContains(
                             "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
                                     "compatible with Java 8, preferably in the form of class files, " +
@@ -659,14 +659,19 @@ class KotlinGradleIT : KGPBaseTest() {
                         )
                     }
                     else -> {
-                        assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find a library for use during compile-time, " +
-                                    "compatible with Java 8, preferably in the form of class files, " +
-                                    "preferably optimized for standard JVMs, and its dependencies declared externally, " +
-                                    "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
-                                    "attribute 'com.example.compilation' with value 'foo', " +
-                                    "attribute 'com.example.target' with value 'bar' but:"
-                        )
+                        // Attributes may come in random order
+                        val attributeMatchingString = output.lineSequence().find {
+                            it.trimStart().startsWith(
+                                "> No matching variant of project :projA was found. " +
+                                        "The consumer was configured to find a library for use during compile-time, " +
+                                        "compatible with Java 8, preferably in the form of class files, " +
+                                        "preferably optimized for standard JVMs, and its dependencies declared externally, "
+                            )
+                        }
+                        assertNotNull(attributeMatchingString, "Expected variant mismatch string is not found")
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.compilation' with value 'foo'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.target' with value 'bar'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm'"))
                     }
                 }
             }
@@ -681,7 +686,7 @@ class KotlinGradleIT : KGPBaseTest() {
             )
             buildAndFail(":projB:compileKotlin") {
                 when {
-                    gradleVersion < GradleVersion.version("6.8.4") -> {
+                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_6_8) -> {
                         assertOutputContains(
                             "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
                                     "compatible with Java 8, preferably in the form of class files, and its dependencies declared externally, " +
@@ -691,14 +696,19 @@ class KotlinGradleIT : KGPBaseTest() {
                         )
                     }
                     else -> {
-                        assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find a library for use during compile-time, " +
-                                    "compatible with Java 8, preferably in the form of class files, preferably optimized for standard JVMs, " +
-                                    "and its dependencies declared externally, " +
-                                    "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
-                                    "attribute 'com.example.compilation' with value 'bar', " +
-                                    "attribute 'com.example.target' with value 'foo' but:"
-                        )
+                        // Attributes may come in random order
+                        val attributeMatchingString = output.lineSequence().find {
+                            it.contains(
+                                "No matching variant of project :projA was found. " +
+                                        "The consumer was configured to find a library for use during compile-time, " +
+                                        "compatible with Java 8, preferably in the form of class files, " +
+                                        "preferably optimized for standard JVMs, and its dependencies declared externally, "
+                            )
+                        }
+                        assertNotNull(attributeMatchingString, "Expected variant mismatch string is not found")
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.compilation' with value 'bar'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.target' with value 'foo'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm'"))
                     }
                 }
             }

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal typealias KotlinCompileConfig = BaseKotlinCompileConfig<KotlinCompile>
 
@@ -71,7 +72,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 task.classpathSnapshotProperties.useClasspathSnapshot.value(useClasspathSnapshot).disallowChanges()
                 if (useClasspathSnapshot) {
                     val classpathEntrySnapshotFiles = classpathConfiguration!!.incoming.artifactView {
-                        it.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+                        it.attributes.setAttribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
                     }.files
                     task.classpathSnapshotProperties.classpathSnapshot.from(classpathEntrySnapshotFiles).disallowChanges()
                     task.classpathSnapshotProperties.classpathSnapshotDir.value(getClasspathSnapshotDir(task)).disallowChanges()
@@ -185,14 +186,14 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         val kgpVersion = project.getKotlinPluginVersion()
         val suppressVersionInconsistencyChecks = project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
         project.dependencies.registerTransform(BuildToolsApiClasspathEntrySnapshotTransform::class.java) {
-            it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, JAR_ARTIFACT_TYPE)
-            it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+            it.from.setAttribute(ARTIFACT_TYPE_ATTRIBUTE, JAR_ARTIFACT_TYPE)
+            it.to.setAttribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
             it.configureCommonParameters(kgpVersion, classLoadersCachingService, classpath, jvmToolchain, runKotlinCompilerViaBuildToolsApi, suppressVersionInconsistencyChecks)
             it.setupTransformActionToolingDiagnostics(project)
         }
         project.dependencies.registerTransform(BuildToolsApiClasspathEntrySnapshotTransform::class.java) {
-            it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_ARTIFACT_TYPE)
-            it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+            it.from.setAttribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_ARTIFACT_TYPE)
+            it.to.setAttribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
             it.configureCommonParameters(kgpVersion, classLoadersCachingService, classpath, jvmToolchain, runKotlinCompilerViaBuildToolsApi, suppressVersionInconsistencyChecks)
             it.setupTransformActionToolingDiagnostics(project)
         }

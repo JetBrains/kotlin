@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
@@ -113,7 +114,7 @@ private fun configureDiscoveryTransformation(
     discoveryResultsConfigurationName: String
 ) {
     project.configurations.maybeCreateResolvable(discoveryResultsConfigurationName).apply {
-        attributes.attribute(artifactType, scriptFilesExtensions)
+        attributes.setAttribute(artifactType, scriptFilesExtensions)
         extendsFrom(discoveryConfiguration)
     }
     val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
@@ -161,14 +162,14 @@ private fun DependencyHandler.registerDiscoverScriptExtensionsTransform(
         parameters.compilerClasspath.from(compilerClasspath)
     }
     registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
-        transformSpec.from.attribute(artifactType, "jar")
-        transformSpec.to.attribute(artifactType, scriptFilesExtensions)
+        transformSpec.from.setAttribute(artifactType, "jar")
+        transformSpec.to.setAttribute(artifactType, scriptFilesExtensions)
         transformSpec.configureCommonParameters()
     }
 
     registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
-        transformSpec.from.attribute(artifactType, "classes")
-        transformSpec.to.attribute(artifactType, scriptFilesExtensions)
+        transformSpec.from.setAttribute(artifactType, "classes")
+        transformSpec.to.setAttribute(artifactType, scriptFilesExtensions)
         transformSpec.configureCommonParameters()
     }
 }

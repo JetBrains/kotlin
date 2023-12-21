@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformL
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.toCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.createDependencyScope
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import java.io.File
@@ -101,7 +100,7 @@ internal open class KaptConfig<TASK : KaptTask>(
             // the attributes that are potentially needed to resolve dependencies on MPP modules, and the classpath configuration does.
             classStructureConfiguration.dependencies.add(project.dependencies.create(project.files(project.provider { taskProvider.get().classpath })))
             classStructureConfiguration.incoming.artifactView { viewConfig ->
-                viewConfig.attributes.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+                viewConfig.attributes.setAttribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }.files
         } else null
     }
@@ -114,13 +113,13 @@ internal open class KaptConfig<TASK : KaptTask>(
                 else
                     StructureTransformLegacyAction::class.java
             project.dependencies.registerTransform(transformActionClass) { transformSpec ->
-                transformSpec.from.attribute(artifactType, "jar")
-                transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+                transformSpec.from.setAttribute(artifactType, "jar")
+                transformSpec.to.setAttribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }
 
             project.dependencies.registerTransform(transformActionClass) { transformSpec ->
-                transformSpec.from.attribute(artifactType, "directory")
-                transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+                transformSpec.from.setAttribute(artifactType, "directory")
+                transformSpec.to.setAttribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }
 
             project.extensions.extraProperties["KaptStructureTransformAdded"] = true

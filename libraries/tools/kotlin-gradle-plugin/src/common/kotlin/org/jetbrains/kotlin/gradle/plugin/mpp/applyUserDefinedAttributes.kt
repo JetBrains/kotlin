@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvalu
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.utils.copyAttributes
+import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 import org.jetbrains.kotlin.gradle.utils.forAllTargets
 
 
@@ -25,22 +25,31 @@ internal val UserDefinedAttributesSetupAction = KotlinProjectSetupCoroutine {
     kotlinExtension.forAllTargets { target ->
         target.internal.kotlinComponents.flatMap { it.internal.usages }.forEach { usage ->
             val dependencyConfiguration = target.project.configurations.findByName(usage.dependencyConfigurationName) ?: return@forEach
-            copyAttributes(usage.compilation.attributes, dependencyConfiguration.attributes)
+            usage.compilation.copyAttributesTo(
+                this@KotlinProjectSetupCoroutine,
+                dest = dependencyConfiguration.attributes
+            )
         }
 
         target.compilations.all { compilation ->
-            val compilationAttributes = compilation.attributes
-
             compilation.allOwnedConfigurationsNames
                 .mapNotNull { configurationName -> project.configurations.findByName(configurationName) }
-                .forEach { configuration -> copyAttributes(compilationAttributes, configuration.attributes) }
+                .forEach { configuration ->
+                    compilation.copyAttributesTo(
+                        this@KotlinProjectSetupCoroutine,
+                        dest = configuration
+                    )
+                }
         }
 
         // Copy to host-specific metadata elements configurations
         if (target is KotlinNativeTarget) {
             val hostSpecificMetadataElements = project.configurations.findByName(target.hostSpecificMetadataElementsConfigurationName)
             if (hostSpecificMetadataElements != null) {
-                copyAttributes(from = target.attributes, to = hostSpecificMetadataElements.attributes)
+                target.copyAttributesTo(
+                    this@KotlinProjectSetupCoroutine,
+                    dest = hostSpecificMetadataElements
+                )
             }
         }
     }

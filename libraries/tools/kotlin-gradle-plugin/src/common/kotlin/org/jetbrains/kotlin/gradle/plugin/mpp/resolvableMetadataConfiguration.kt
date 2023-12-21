@@ -60,7 +60,10 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configurat
 
     /* Ensure consistent dependency resolution result within the whole module */
     configuration.shouldResolveConsistentlyWith(allCompileMetadataConfiguration)
-    copyAttributes(allCompileMetadataConfiguration.attributes, configuration.attributes)
+    allCompileMetadataConfiguration.copyAttributesTo(
+        project,
+        dest = configuration
+    )
 
     configureMetadataDependenciesConfigurations(configuration)
 
@@ -96,8 +99,8 @@ private val Project.allCompileMetadataConfiguration
     get(): Configuration = configurations.findResolvable("allSourceSetsCompileDependenciesMetadata")
         ?: configurations.createResolvable("allSourceSetsCompileDependenciesMetadata").also { configuration ->
             configuration.usesPlatformOf(multiplatformExtension.metadata())
-            configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-            configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            configuration.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
 
             kotlinExtension.sourceSets.all { sourceSet ->
                 configuration.extendsFrom(configurations.getByName(sourceSet.apiConfigurationName))

@@ -145,4 +145,6 @@ private fun Project.registerVariantImplementations() {
     factories[UnameExecutor.UnameExecutorVariantFactory::class] =
         UnameExecutorG74.UnameExecutorVariantFactoryG74()
     factories[ConfigurationCacheStartParameterAccessor.Factory::class] = ConfigurationCacheStartParameterAccessorG74.Factory()
+    factories[AttributesConfigurationHelper.AttributeConfigurationHelperVariantFactory::class] =
+        AttributeConfigurationHelperVariantFactoryG74()
 }

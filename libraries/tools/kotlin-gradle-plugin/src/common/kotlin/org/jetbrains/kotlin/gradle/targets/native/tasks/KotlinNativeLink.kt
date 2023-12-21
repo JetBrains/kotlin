@@ -194,8 +194,8 @@ constructor(
             val apiConfiguration = project.configurations.getByName(compilation.apiConfigurationName)
             dependencies.addAll(apiConfiguration.allDependencies)
             usesPlatformOf(compilation.target)
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(compilation.target))
-            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(compilation.target))
+            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         }.filterKlibsPassedToCompiler()
 
     @get:Optional

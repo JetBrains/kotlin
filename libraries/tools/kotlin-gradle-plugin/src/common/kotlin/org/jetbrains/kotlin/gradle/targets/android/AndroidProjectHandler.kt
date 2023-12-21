@@ -335,7 +335,10 @@ internal class AndroidProjectHandler(
 
         val buildTypeAttrValue = project.objects.named<BuildTypeAttr>(variant.buildType.name)
         listOf(compilation.compileDependencyConfigurationName, compilation.runtimeDependencyConfigurationName).forEach {
-            project.configurations.findByName(it)?.attributes?.attribute(Attribute.of(BuildTypeAttr::class.java), buildTypeAttrValue)
+            project.configurations.findByName(it)?.attributes?.setAttribute(
+                Attribute.of(BuildTypeAttr::class.java),
+                buildTypeAttrValue
+            )
         }
 
         // TODO this code depends on the convention that is present in the Android plugin as there's no public API
@@ -355,7 +358,7 @@ internal class AndroidProjectHandler(
         listOf(apiElementsConfigurationName, runtimeElementsConfigurationName).forEach { outputConfigurationName ->
             project.configurations.findByName(outputConfigurationName)?.let { configuration ->
                 configuration.usesPlatformOf(compilation.target)
-                configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             }
         }
     }

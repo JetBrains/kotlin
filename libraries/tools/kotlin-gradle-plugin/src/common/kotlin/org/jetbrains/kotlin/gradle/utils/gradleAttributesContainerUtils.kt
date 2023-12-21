@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.HasAttributes
+import org.jetbrains.kotlin.gradle.plugin.internal.attributesConfigurationHelper
 
 /**
  * KGP's internal analog of [org.gradle.api.internal.attributes.AttributeContainerInternal.asMap]
@@ -21,15 +24,47 @@ internal fun AttributeContainer.toMap(): Map<Attribute<*>, Any?> {
     return result
 }
 
+internal fun <T : Any> HasAttributes.setAttributeProvider(
+    project: Project,
+    key: Attribute<T>,
+    value: () -> T
+) {
+    project.attributesConfigurationHelper.setAttribute(this, key, value)
+}
 
-internal fun copyAttributes(from: AttributeContainer, to: AttributeContainer, keys: Iterable<Attribute<*>> = from.keySet()) {
-    // capture type argument T
-    fun <T : Any> copyOneAttribute(from: AttributeContainer, to: AttributeContainer, key: Attribute<T>) {
-        val value = checkNotNull(from.getAttribute(key))
-        to.attribute(key, value)
-    }
-    for (key in keys) {
-        copyOneAttribute(from, to, key)
+/**
+ * Should only be used to configure simple attributes values!
+ *
+ * When in doubt, prefer lazy method overload.
+ */
+internal fun <T : Any> HasAttributes.setAttribute(
+    key: Attribute<T>,
+    value: T
+) {
+    attributes.attribute(key, value)
+}
+
+internal fun <T : Any> HasAttributes.copyAttributeTo(
+    project: Project,
+    dest: HasAttributes,
+    key: Attribute<T>,
+) {
+    dest.setAttributeProvider(project, key) {
+        attributes.getAttribute(key)
+            ?: throw IllegalStateException("Failed to copy attribute. Source container is missing $key (named ${key.name}).")
     }
 }
 
+internal fun HasAttributes.copyAttributesTo(
+    project: Project,
+    dest: HasAttributes,
+    keys: Iterable<Attribute<*>> = attributes.keySet(),
+) {
+    for (key in keys) {
+        copyAttributeTo(project, dest, key)
+    }
+}
+
+internal inline fun <reified T> attributeOf(
+    name: String
+): Attribute<T> = Attribute.of(name, T::class.java)

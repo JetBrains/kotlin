@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.utils.copyAttributes
+import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { target, apiElements, _ ->
@@ -34,8 +35,14 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
         configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
 
         target.project.launchInStage(AfterFinaliseDsl) {
-            copyAttributes(from = apiElements.attributes, to = configuration.attributes)
-            configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            apiElements.copyAttributesTo(
+                target.project,
+                dest = configuration.attributes
+            )
+            configuration.setAttribute(
+                Usage.USAGE_ATTRIBUTE,
+                target.project.usageByName(KotlinUsages.KOTLIN_METADATA)
+            )
         }
     }
 

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Attribute
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
@@ -28,7 +27,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.type
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.utils.copyAttributes
+import org.jetbrains.kotlin.gradle.utils.setAttribute
+import org.jetbrains.kotlin.gradle.utils.setAttributeProvider
 import org.jetbrains.kotlin.gradle.utils.toMap
 
 /**
@@ -112,7 +112,10 @@ internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver
                         .map { attributes -> attributes.toMap().toList().toSet() }
                         .reduceOrNull { acc, next -> acc intersect next }
                         .orEmpty()
-                        .forEach { (key, value) -> @Suppress("UNCHECKED_CAST") attribute(key as Attribute<Any>, value as Any) }
+                        .forEach { (key, value) ->
+                            @Suppress("UNCHECKED_CAST")
+                            setAttributeProvider(sourceSet.project, key as Attribute<Any>) { value as Any }
+                        }
                 },
                 componentFilter = { id -> id is ProjectComponentIdentifier }
             )

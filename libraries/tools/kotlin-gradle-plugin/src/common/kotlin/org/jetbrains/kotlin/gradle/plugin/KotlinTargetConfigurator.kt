@@ -9,6 +9,9 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
+import org.gradle.api.attributes.java.TargetJvmEnvironment
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.runKotlinCompilationSideEffects
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
@@ -53,7 +56,7 @@ internal inline fun <reified T : Named> Project.attributeValueByName(attributeVa
     objects.named(T::class.java, attributeValueName)
 
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
-    attributes.attribute(KotlinPlatformType.attribute, target.platformType)
+    attributes.setAttribute(KotlinPlatformType.attribute, target.platformType)
 
     when (target.platformType) {
         KotlinPlatformType.jvm -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "standard-jvm")
@@ -72,33 +75,31 @@ fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
         else -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "non-jvm")
     }
 
-    val publishJsCompilerAttribute = PropertiesProvider(target.project).publishJsCompilerAttribute
+    val publishJsCompilerAttribute = target.project.kotlinPropertiesProvider.publishJsCompilerAttribute
 
     if (publishJsCompilerAttribute && target is KotlinJsIrTarget) {
         if (target.platformType == KotlinPlatformType.js) {
-            attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+            attributes.setAttribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
         } else {
-            attributes.attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, target.wasmTargetType!!.toAttribute())
+            attributes.setAttributeProvider<KotlinWasmTargetAttribute>(
+                target.project,
+                KotlinWasmTargetAttribute.wasmTargetAttribute,
+            ) { target.wasmTargetType!!.toAttribute() }
         }
     }
 
-    // TODO: Provide an universal way to copy attributes from the target.
     if (target is KotlinNativeTarget) {
-        attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)
+        attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)
     }
     return this
 }
 
 private fun Configuration.setJavaTargetEnvironmentAttributeIfSupported(project: Project, value: String) {
-    if (isGradleVersionAtLeast(7, 0)) {
-        @Suppress("UNCHECKED_CAST")
-        val attributeClass = Class.forName("org.gradle.api.attributes.java.TargetJvmEnvironment") as Class<out Named>
-
-        @Suppress("UNCHECKED_CAST")
-        val attributeKey = attributeClass.getField("TARGET_JVM_ENVIRONMENT_ATTRIBUTE").get(null) as Attribute<Named>
-
-        val attributeValue = project.objects.named(attributeClass, value)
-        attributes.attribute(attributeKey, attributeValue)
+    if (GradleVersion.current() >= GradleVersion.version("7.0")) {
+        attributes.setAttribute(
+            TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+            project.objects.named(value)
+        )
     }
 }
 

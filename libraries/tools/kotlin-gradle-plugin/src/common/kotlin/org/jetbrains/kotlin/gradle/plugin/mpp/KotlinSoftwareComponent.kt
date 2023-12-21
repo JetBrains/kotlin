@@ -208,13 +208,11 @@ class DefaultKotlinUsageContext(
          */
         val result = project.configurations.detachedResolvable().attributes
 
-        // Capture type parameter T:
-        fun <T> copyAttribute(attribute: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-            to.attribute<T>(attribute, from.getAttribute(attribute)!!)
-        }
-
-        filterOutNonPublishableAttributes(configurationAttributes.keySet())
-            .forEach { copyAttribute(it, configurationAttributes, result) }
+        configurationAttributes.copyAttributesTo(
+            project,
+            dest = result,
+            keys = filterOutNonPublishableAttributes(configurationAttributes.keySet())
+        )
 
         return result
     }

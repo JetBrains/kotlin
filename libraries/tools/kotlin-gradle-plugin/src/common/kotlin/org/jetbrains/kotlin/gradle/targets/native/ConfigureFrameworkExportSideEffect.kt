@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal val ConfigureFrameworkExportSideEffect = KotlinTargetSideEffect<KotlinNativeTarget> { target ->
     val project = target.project
@@ -23,9 +24,9 @@ internal val ConfigureFrameworkExportSideEffect = KotlinTargetSideEffect<KotlinN
             isVisible = false
             isTransitive = false
             usesPlatformOf(target)
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
-            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-            description = "Dependenceis to be exported in framework ${framework.name} for target ${target.targetName}"
+            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
+            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            description = "Dependencies to be exported in framework ${framework.name} for target ${target.targetName}"
         }
     }
 }

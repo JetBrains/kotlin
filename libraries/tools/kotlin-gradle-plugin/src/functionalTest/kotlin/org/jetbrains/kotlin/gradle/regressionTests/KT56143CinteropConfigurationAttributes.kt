@@ -33,13 +33,13 @@ class KT56143CinteropConfigurationAttributes {
     private val project = buildProjectWithMPP {
         kotlin {
             linuxX64("variantA") {
-                attributes.attribute(targetAttribute, "a")
-                compilations.main.attributes.attribute(compilationAttribute, "compilation:a")
+                attributes.attributeProvider(targetAttribute, provider { "a" })
+                compilations.main.attributes.attributeProvider(compilationAttribute, provider { "compilation:a" })
             }
 
             linuxX64("variantB") {
-                attributes.attribute(targetAttribute, "b")
-                compilations.main.attributes.attribute(compilationAttribute, "compilation:b")
+                attributes.attributeProvider(targetAttribute, provider { "b" })
+                compilations.main.attributes.attributeProvider(compilationAttribute, provider { "compilation:b" })
             }
         }
     }

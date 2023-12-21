@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -27,7 +26,8 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
 
     @JvmGradlePluginTests
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_3]
+        additionalVersions = [TestVersions.Gradle.G_7_3],
+        maxVersion = TestVersions.Gradle.G_8_3
     )
     @DisplayName("KGP/Jvm does not eagerly configure any tasks")
     @GradleTest

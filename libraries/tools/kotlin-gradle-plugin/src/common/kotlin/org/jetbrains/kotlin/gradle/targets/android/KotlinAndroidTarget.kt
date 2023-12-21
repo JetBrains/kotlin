@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.HasConfigurableCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.internal.attributesConfigurationHelper
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
@@ -299,7 +300,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
             description = "Source files of Android ${variantName}."
             isVisible = false
 
-            copyAttributes(apiElementsConfiguration.attributes, attributes)
+            apiElementsConfiguration.copyAttributesTo(project, dest = this)
             configureSourcesPublicationAttributes(this@KotlinAndroidTarget)
         }
     }

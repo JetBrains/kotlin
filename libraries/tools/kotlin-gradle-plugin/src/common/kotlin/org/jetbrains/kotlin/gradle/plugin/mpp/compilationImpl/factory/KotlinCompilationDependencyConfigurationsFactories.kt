@@ -138,7 +138,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     val compileOnlyConfiguration = target.project.configurations
         .maybeCreateDependencyScope(compileOnlyConfigurationName).apply {
             setupAsLocalTargetSpecificConfigurationIfSupported(target)
-            attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             isVisible = false
             description = "Compile only dependencies for $compilationCoordinates."
         }
@@ -153,9 +153,9 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             extendsFrom(compileOnlyConfiguration, implementationConfiguration)
             usesPlatformOf(target)
             isVisible = false
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
+            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
             if (target.platformType != KotlinPlatformType.androidJvm) {
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+                attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             }
             description = "Compile classpath for $compilationCoordinates."
         }
@@ -166,9 +166,9 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             deprecatedRuntimeConfiguration?.let { extendsFrom(it) }
             usesPlatformOf(target)
             isVisible = false
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
+            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
             if (target.platformType != KotlinPlatformType.androidJvm) {
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+                attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             }
             description = "Runtime classpath of $compilationCoordinates."
         } else null
@@ -178,10 +178,11 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             isVisible = false
             description = "Host-specific Metadata dependencies for $compilationCoordinates"
             extendsFrom(compileDependencyConfiguration)
-            copyAttributes(from = compileDependencyConfiguration.attributes, to = attributes)
-            attributes {
-                it.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
-            }
+            compileDependencyConfiguration.copyAttributesTo(
+                target.project,
+                dest = this
+            )
+            setAttribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
         } else null
 
     val pluginConfiguration = target.project.configurations.maybeCreateResolvable(pluginConfigurationName).apply {

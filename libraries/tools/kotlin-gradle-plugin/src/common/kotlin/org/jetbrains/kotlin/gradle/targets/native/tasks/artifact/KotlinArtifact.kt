@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
@@ -76,9 +78,9 @@ internal fun Project.registerLibsDependencies(target: KonanTarget, artifactName:
     configurations.maybeCreateResolvable(librariesConfigurationName).apply {
         isVisible = false
         isTransitive = true
-        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
+        attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.name)
+        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
     }
     deps.forEach { dependencies.add(librariesConfigurationName, it) }
     return librariesConfigurationName
@@ -89,9 +91,9 @@ internal fun Project.registerExportDependencies(target: KonanTarget, artifactNam
     configurations.maybeCreateResolvable(exportConfigurationName).apply {
         isVisible = false
         isTransitive = false
-        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
+        attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.name)
+        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
     }
     deps.forEach { dependencies.add(exportConfigurationName, it) }
     return exportConfigurationName

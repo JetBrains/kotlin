@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRunFa
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -40,7 +41,7 @@ abstract class KotlinNativeTarget @Inject constructor(
 ) {
 
     init {
-        attributes.attribute(konanTargetAttribute, konanTarget.name)
+        attributes.setAttribute(konanTargetAttribute, konanTarget.name)
     }
 
     private val hostSpecificMetadataJarTaskName get() = disambiguateName("MetadataJar")

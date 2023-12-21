@@ -10,7 +10,6 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAccessorG71
@@ -156,4 +155,5 @@ private fun Project.registerVariantImplementations() {
     factories[UnameExecutor.UnameExecutorVariantFactory::class] =
         UnameExecutorG71.UnameExecutorVariantFactoryG71()
     factories[ConfigurationCacheStartParameterAccessor.Factory::class] = ConfigurationCacheStartParameterAccessorG71.Factory()
+    factories[AttributesConfigurationHelper.AttributeConfigurationHelperVariantFactory::class] = AttributeConfigurationHelperVariantFactoryG71()
 }

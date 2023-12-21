@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.copyAttributes
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.findConsumable
 
@@ -57,10 +56,10 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
         /* Deferring attributes to wait for compilation.attributes to be configured  by user*/
         launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(compilation.target)
-            copyAttributes(compilation.attributes, attributes)
-            attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_CINTEROP))
-            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            compilation.copyAttributesTo(project, dest = attributes)
+            attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
+            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))
+            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             description = "CInterop dependencies for compilation '${compilation.name}')."
         }
     }
@@ -81,11 +80,11 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
         /* Deferring attributes to wait for target.attributes to be configured by user */
         launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(target)
-            copyAttributes(target.attributes, attributes)
-            attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_CINTEROP))
-            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-            attributes.attribute(artifactTypeAttribute, NativeArtifactFormat.KLIB)
+            target.copyAttributesTo(project, dest = attributes)
+            attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
+            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))
+            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            attributes.setAttribute(artifactTypeAttribute, NativeArtifactFormat.KLIB)
 
             /* Expose api dependencies */
             target.compilations.findByName(MAIN_COMPILATION_NAME)?.let { compilation ->

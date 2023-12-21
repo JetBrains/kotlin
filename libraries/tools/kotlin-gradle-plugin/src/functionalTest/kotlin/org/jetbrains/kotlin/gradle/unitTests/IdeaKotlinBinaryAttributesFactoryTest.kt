@@ -23,8 +23,14 @@ class IdeaKotlinBinaryAttributesFactoryTest {
 
         val dummyConfiguration = project.configurations.create("dummy")
         val container = dummyConfiguration.attributes
-        container.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_API))
-        container.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.DOCUMENTATION))
+        container.attributeProvider(
+            Usage.USAGE_ATTRIBUTE,
+            project.provider { project.objects.named(Usage.JAVA_API) }
+        )
+        container.attributeProvider(
+            Category.CATEGORY_ATTRIBUTE,
+            project.provider { project.objects.named(Category.DOCUMENTATION) }
+        )
 
         assertEquals(
             mapOf(

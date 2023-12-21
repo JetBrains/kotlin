@@ -34,7 +34,10 @@ class CInteropCommonizerArtifactTypeAttributeTest {
 
         /* Create consumable elements configuration */
         project.configurations.createConsumable("testElements").also { configuration ->
-            configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named("test"))
+            configuration.attributes.attributeProvider(
+                Usage.USAGE_ATTRIBUTE,
+                project.provider { project.objects.named("test") }
+            )
 
             /* Add klibCollectionDir as artifact */
             configuration.outgoing.artifact(klibCollectionDir) { artifact ->
@@ -45,9 +48,13 @@ class CInteropCommonizerArtifactTypeAttributeTest {
 
         /* Create resolvable configuration */
         val resolvable = project.configurations.createResolvable("testDependencies").also { configuration ->
-            configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named("test"))
-            configuration.attributes.attribute(
-                CInteropCommonizerArtifactTypeAttribute.attribute, CInteropCommonizerArtifactTypeAttribute.KLIB
+            configuration.attributes.attributeProvider(
+                Usage.USAGE_ATTRIBUTE,
+                project.provider { project.objects.named("test") }
+            )
+            configuration.attributes.attributeProvider(
+                CInteropCommonizerArtifactTypeAttribute.attribute,
+                project.provider { CInteropCommonizerArtifactTypeAttribute.KLIB }
             )
         }
 

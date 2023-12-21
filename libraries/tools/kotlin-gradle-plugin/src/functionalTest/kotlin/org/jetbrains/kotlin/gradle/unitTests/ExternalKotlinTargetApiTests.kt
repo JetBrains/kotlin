@@ -180,12 +180,12 @@ class ExternalKotlinTargetApiTests {
             defaults()
             sourcesElements.configure { target, configuration ->
                 assertEquals(target.sourcesElementsConfiguration, configuration)
-                configuration.attributes.attribute(testAttribute, "sourcesElements")
+                configuration.attributes.attributeProvider(testAttribute, provider { "sourcesElements" })
             }
 
             sourcesElementsPublished.configure { target, configuration ->
                 assertEquals(target.sourcesElementsPublishedConfiguration, configuration)
-                configuration.attributes.attribute(testAttribute, "sourcesElements-published")
+                configuration.attributes.attributeProvider(testAttribute, provider { "sourcesElements-published" })
             }
         }
         target.createCompilation<FakeCompilation> { defaults(kotlin) }
@@ -306,7 +306,7 @@ class ExternalKotlinTargetApiTests {
 
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
         target.createCompilation<FakeCompilation> { defaults(kotlin) }
-        target.attributes.attribute(userAttribute, "foo")
+        target.attributes.attributeProvider(userAttribute, target.project.provider { "foo" })
 
         project.evaluate()
 
