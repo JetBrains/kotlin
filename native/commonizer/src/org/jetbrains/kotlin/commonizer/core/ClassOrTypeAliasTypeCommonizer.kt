@@ -82,7 +82,8 @@ internal class ClassOrTypeAliasTypeCommonizer(
                 classId = classifierId,
                 outerType = outerType,
                 arguments = arguments,
-                isMarkedNullable = isMarkedNullable
+                isMarkedNullable = isMarkedNullable,
+                attachments = values.flatMap { (it as? CirClassType)?.attachments ?: emptyList() }
             )
 
             is CirProvided.TypeAlias -> return CirTypeAliasType.createInterned(
@@ -108,7 +109,8 @@ internal class ClassOrTypeAliasTypeCommonizer(
                 classId = classifierId,
                 outerType = outerType,
                 arguments = arguments,
-                isMarkedNullable = isMarkedNullable
+                isMarkedNullable = isMarkedNullable,
+                attachments = values.flatMap { (it as? CirClassType)?.attachments ?: emptyList() }
             )
 
             is CirTypeAlias -> CirTypeAliasType.createInterned(

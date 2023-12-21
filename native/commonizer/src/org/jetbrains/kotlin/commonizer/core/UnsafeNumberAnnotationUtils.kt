@@ -52,12 +52,6 @@ private fun shouldCreateAnnotation(
     if (!settings.getSetting(OptimisticNumberCommonizationEnabledKey))
         return false
 
-    val annotatedInputDeclarationPresent = inputDeclarations.any { declaration ->
-        declaration.annotations.any { annotation -> annotation is UnsafeNumberAnnotation }
-    }
-
-    if (annotatedInputDeclarationPresent)
-        return true
 
     var isMarkedTypeFound = false
 
