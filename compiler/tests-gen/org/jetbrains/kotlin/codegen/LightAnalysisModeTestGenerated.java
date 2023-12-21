@@ -16567,6 +16567,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/StackOverflowInAnnotationLoader.kt");
         }
 
+        @TestMetadata("starProjectionLambdaNullReturn.kt")
+        public void testStarProjectionLambdaNullReturn() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/starProjectionLambdaNullReturn.kt");
+        }
+
         @TestMetadata("staticImportFromEnum.kt")
         public void testStaticImportFromEnum() throws Exception {
             runTest("compiler/testData/codegen/box/fir/staticImportFromEnum.kt");

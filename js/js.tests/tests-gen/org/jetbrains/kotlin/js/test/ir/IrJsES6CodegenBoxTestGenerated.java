@@ -14738,6 +14738,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
+        @TestMetadata("starProjectionLambdaNullReturn.kt")
+        public void testStarProjectionLambdaNullReturn() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/starProjectionLambdaNullReturn.kt");
+        }
+
+        @Test
         @TestMetadata("suppressedInvisibleReferenceQualifier.kt")
         public void testSuppressedInvisibleReferenceQualifier() throws Exception {
             runTest("compiler/testData/codegen/box/fir/suppressedInvisibleReferenceQualifier.kt");

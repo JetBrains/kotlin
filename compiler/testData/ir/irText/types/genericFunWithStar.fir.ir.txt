@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/genericFunWithStar.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun bar (vararg serializers: <root>.I<*>): <root>.I<*> declared in <root>.Box'
           CALL 'public abstract fun foo <F> (tSerializer: <root>.I<F of <root>.Box.foo>): <root>.I<<root>.Box<F of <root>.Box.foo>> declared in <root>.Box' type=<root>.I<out <root>.Box<*>> origin=null
-            <F>: <root>.IFoo
+            <F>: <root>.IBase
             $this: GET_VAR '<this>: <root>.Box<T of <root>.Box> declared in <root>.Box.bar' type=<root>.Box<T of <root>.Box> origin=null
             tSerializer: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=<root>.I<*> origin=null
               $this: GET_VAR 'serializers: kotlin.Array<out <root>.I<*>> declared in <root>.Box.bar' type=kotlin.Array<out <root>.I<*>> origin=null
