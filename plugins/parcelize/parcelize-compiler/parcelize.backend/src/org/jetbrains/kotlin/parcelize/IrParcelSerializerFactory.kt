@@ -153,6 +153,9 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
                 return uintArraySerializer
             "kotlin.ULongArray" ->
                 return ulongArraySerializer
+            // Library types
+            "kotlin.time.Duration" ->
+                return wrapNullableSerializerIfNeeded(irType, durationSerializer)
         }
 
         // Generic container types
@@ -429,4 +432,11 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
     private val sizeFSerializer = IrSimpleParcelSerializer(symbols.parcelReadSizeF, symbols.parcelWriteSizeF)
     private val sparseBooleanArraySerializer =
         IrSimpleParcelSerializer(symbols.parcelReadSparseBooleanArray, symbols.parcelWriteSparseBooleanArray)
+
+    // library types serializers
+    private val durationSerializer = IrUnsafeCoerceWrappedSerializer(
+        longSerializer,
+        symbols.kotlinTimeDuration.defaultType,
+        irBuiltIns.longType
+    )
 }
