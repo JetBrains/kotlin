@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
-
     override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module, FirKotlinScopeProvider(::wrapScopeWithJvmMapped)) { context ->
             registerJavaComponents(JavaModuleResolver.getInstance(project))
@@ -75,6 +74,30 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
     override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
             registerJavaComponents(JavaModuleResolver.getInstance(project))
+            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+        }
+    }
+
+    override fun createCodeFragmentSession(module: KtCodeFragmentModule, contextSession: LLFirSession): LLFirSession {
+        return doCreateCodeFragmentSession(module, contextSession) {
+            registerJavaComponents(JavaModuleResolver.getInstance(project))
+
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, moduleData, project, firProvider.searchScope)
+            register(JavaSymbolProvider::class, javaSymbolProvider)
+
+            register(
+                FirSymbolProvider::class,
+                LLFirModuleWithDependenciesSymbolProvider(
+                    this,
+                    providers = listOfNotNull(
+                        firProvider.symbolProvider,
+                        syntheticFunctionInterfaceProvider,
+                        javaSymbolProvider
+                    ),
+                    dependencyProvider
+                )
+            )
+
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
         }
     }
