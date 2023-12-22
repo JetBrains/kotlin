@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.setValue]
  */
-abstract class BirSetValue : BirValueAccessExpression(), BirElement {
+abstract class BirSetValue(elementClass: BirElementClass) : BirValueAccessExpression(elementClass), BirElement {
     abstract var value: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

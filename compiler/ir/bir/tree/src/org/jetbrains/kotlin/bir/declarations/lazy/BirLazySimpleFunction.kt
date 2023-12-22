@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 class BirLazySimpleFunction(
     override val originalIrElement: IrSimpleFunction,
     converter: Ir2BirConverter,
-) : BirLazyElementBase(converter), BirSimpleFunction {
+) : BirLazyElementBase(BirSimpleFunction, converter), BirSimpleFunction {
     override val owner: BirSimpleFunction
         get() = this
     override var isExternal: Boolean

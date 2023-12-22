@@ -27,7 +27,7 @@ class BirCallImpl(
     contextReceiversCount: Int,
     symbol: BirSimpleFunctionSymbol,
     superQualifierSymbol: BirClassSymbol?,
-) : BirCall() {
+) : BirCall(BirCall) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

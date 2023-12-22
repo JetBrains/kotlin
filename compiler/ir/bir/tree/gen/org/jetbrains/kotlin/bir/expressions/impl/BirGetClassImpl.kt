@@ -21,7 +21,7 @@ class BirGetClassImpl(
     sourceSpan: SourceSpan,
     type: BirType,
     argument: BirExpression?,
-) : BirGetClass() {
+) : BirGetClass(BirGetClass) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

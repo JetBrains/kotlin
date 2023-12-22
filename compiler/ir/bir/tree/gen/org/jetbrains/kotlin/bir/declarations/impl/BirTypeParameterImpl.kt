@@ -26,7 +26,7 @@ class BirTypeParameterImpl(
     index: Int,
     isReified: Boolean,
     superTypes: List<BirType>,
-) : BirTypeParameter() {
+) : BirTypeParameter(BirTypeParameter) {
     override val owner: BirTypeParameterImpl
         get() = this
 

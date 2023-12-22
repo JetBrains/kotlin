@@ -20,7 +20,7 @@ class BirReturnableBlockImpl(
     type: BirType,
     origin: IrStatementOrigin?,
     signature: IdSignature?,
-) : BirReturnableBlock() {
+) : BirReturnableBlock(BirReturnableBlock) {
     override val owner: BirReturnableBlockImpl
         get() = this
 

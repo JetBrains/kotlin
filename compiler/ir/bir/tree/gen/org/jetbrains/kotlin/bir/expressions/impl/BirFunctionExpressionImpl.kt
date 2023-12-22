@@ -23,7 +23,7 @@ class BirFunctionExpressionImpl(
     type: BirType,
     origin: IrStatementOrigin,
     function: BirSimpleFunction?,
-) : BirFunctionExpression() {
+) : BirFunctionExpression(BirFunctionExpression) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

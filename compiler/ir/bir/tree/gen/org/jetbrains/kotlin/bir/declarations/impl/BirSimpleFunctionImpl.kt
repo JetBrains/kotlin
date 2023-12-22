@@ -46,7 +46,7 @@ class BirSimpleFunctionImpl(
     isInfix: Boolean,
     correspondingPropertySymbol: BirPropertySymbol?,
     overriddenSymbols: List<BirSimpleFunctionSymbol>,
-) : BirImplElementBase(), BirSimpleFunction {
+) : BirImplElementBase(BirSimpleFunction), BirSimpleFunction {
     override val owner: BirSimpleFunctionImpl
         get() = this
 

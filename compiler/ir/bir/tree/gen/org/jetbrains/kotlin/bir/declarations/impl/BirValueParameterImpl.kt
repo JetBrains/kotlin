@@ -30,7 +30,7 @@ class BirValueParameterImpl(
     isNoinline: Boolean,
     isHidden: Boolean,
     defaultValue: BirExpressionBody?,
-) : BirImplElementBase(), BirValueParameter {
+) : BirImplElementBase(BirValueParameter), BirValueParameter {
     override val owner: BirValueParameterImpl
         get() = this
 

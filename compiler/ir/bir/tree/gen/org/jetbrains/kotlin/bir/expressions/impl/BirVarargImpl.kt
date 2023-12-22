@@ -18,7 +18,7 @@ class BirVarargImpl(
     sourceSpan: SourceSpan,
     type: BirType,
     varargElementType: BirType,
-) : BirVararg() {
+) : BirVararg(BirVararg) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

@@ -35,7 +35,7 @@ class BirConstructorImpl(
     contextReceiverParametersCount: Int,
     body: BirBody?,
     isPrimary: Boolean,
-) : BirImplElementBase(), BirConstructor {
+) : BirImplElementBase(BirConstructor), BirConstructor {
     override val owner: BirConstructorImpl
         get() = this
 

@@ -31,7 +31,7 @@ class BirFieldImpl(
     isStatic: Boolean,
     initializer: BirExpressionBody?,
     correspondingPropertySymbol: BirPropertySymbol?,
-) : BirImplElementBase(), BirField {
+) : BirImplElementBase(BirField), BirField {
     override val owner: BirFieldImpl
         get() = this
 

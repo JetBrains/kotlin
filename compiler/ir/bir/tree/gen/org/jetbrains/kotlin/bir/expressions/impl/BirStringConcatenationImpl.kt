@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.bir.types.BirType
 class BirStringConcatenationImpl(
     sourceSpan: SourceSpan,
     type: BirType,
-) : BirStringConcatenation() {
+) : BirStringConcatenation(BirStringConcatenation) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

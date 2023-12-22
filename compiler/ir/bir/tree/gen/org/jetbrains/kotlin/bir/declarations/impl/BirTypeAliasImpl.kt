@@ -26,7 +26,7 @@ class BirTypeAliasImpl(
     visibility: DescriptorVisibility,
     isActual: Boolean,
     expandedType: BirType,
-) : BirImplElementBase(), BirTypeAlias {
+) : BirImplElementBase(BirTypeAlias), BirTypeAlias {
     override val owner: BirTypeAliasImpl
         get() = this
 

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.bir.*
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.errorCallExpression]
  */
-abstract class BirErrorCallExpression : BirErrorExpression(), BirElement {
+abstract class BirErrorCallExpression(elementClass: BirElementClass) : BirErrorExpression(elementClass), BirElement {
     abstract var explicitReceiver: BirExpression?
     abstract val arguments: BirChildElementList<BirExpression>
 

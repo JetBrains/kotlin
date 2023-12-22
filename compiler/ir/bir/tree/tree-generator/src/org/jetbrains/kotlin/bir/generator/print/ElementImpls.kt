@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.bir.generator.model.*
 import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.Model
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.ElementOrRef
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -38,7 +39,11 @@ private fun SmartPrinter.printElementImpl(element: Element) {
     val parentRefs = listOfNotNull(elementImplBaseType.takeIf { element.kind!!.isInterface }, element)
     print(
         parentRefs.joinToString(prefix = " : ") { parent ->
-            parent.render() + parent.inheritanceClauseParenthesis()
+            parent.render() + if ((parent is ElementOrRef<*> && parent.element.typeKind == TypeKind.Class) || parent == elementImplBaseType) {
+                "(${element.withArgs().render()})"
+            } else {
+                parent.inheritanceClauseParenthesis()
+            }
         }
     )
     print(element.params.multipleUpperBoundsList())

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.bir.types.BirType
 class BirConstantArrayImpl(
     sourceSpan: SourceSpan,
     type: BirType,
-) : BirConstantArray() {
+) : BirConstantArray(BirConstantArray) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

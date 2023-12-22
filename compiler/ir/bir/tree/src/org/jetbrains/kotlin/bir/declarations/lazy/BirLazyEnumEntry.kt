@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 class BirLazyEnumEntry(
     override val originalIrElement: IrEnumEntry,
     converter: Ir2BirConverter,
-) : BirLazyElementBase(converter), BirEnumEntry {
+) : BirLazyElementBase(BirEnumEntry, converter), BirEnumEntry {
     override val owner: BirEnumEntry
         get() = this
     override var name: Name

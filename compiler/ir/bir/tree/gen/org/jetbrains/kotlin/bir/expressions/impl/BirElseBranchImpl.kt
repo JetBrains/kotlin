@@ -19,7 +19,7 @@ class BirElseBranchImpl(
     sourceSpan: SourceSpan,
     condition: BirExpression?,
     result: BirExpression?,
-) : BirElseBranch() {
+) : BirElseBranch(BirElseBranch) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

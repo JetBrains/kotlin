@@ -19,7 +19,7 @@ class BirClassReferenceImpl(
     type: BirType,
     symbol: BirClassifierSymbol,
     classType: BirType,
-) : BirClassReference() {
+) : BirClassReference(BirClassReference) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

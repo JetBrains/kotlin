@@ -38,7 +38,7 @@ class BirClassImpl(
     superTypes: List<BirType>,
     thisReceiver: BirValueParameter?,
     valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?,
-) : BirImplElementBase(), BirClass {
+) : BirImplElementBase(BirClass), BirClass {
     override val owner: BirClassImpl
         get() = this
 

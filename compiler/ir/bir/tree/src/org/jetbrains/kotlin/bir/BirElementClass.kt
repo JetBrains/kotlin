@@ -7,19 +7,8 @@ package org.jetbrains.kotlin.bir
 
 import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
 
-abstract class BirElementClass(val javaClass: Class<*>, val id: Int, val hasImplementation: Boolean)
-
-internal object BirElementClassCache : ClassValue<BirElementClass>() {
-    override fun computeValue(type: Class<*>): BirElementClass {
-        var elementClass = type
-        if (elementClass.simpleName.endsWith("Impl") || elementClass.simpleName.startsWith("BirLazy")) {
-            elementClass = elementClass.superclass
-                .takeUnless { it == BirImplElementBase::class.java || it == BirLazyElementBase::class.java }
-                ?: elementClass.interfaces.single { it.simpleName.startsWith("Bir") }
-        }
-
-        return elementClass.declaredClasses
-            .find { it.simpleName == "Companion" }!!
-            .kotlin.objectInstance as BirElementClass
-    }
-}
+abstract class BirElementClass(
+    val javaClass: Class<*>,
+    val id: Int,
+    val hasImplementation: Boolean,
+)

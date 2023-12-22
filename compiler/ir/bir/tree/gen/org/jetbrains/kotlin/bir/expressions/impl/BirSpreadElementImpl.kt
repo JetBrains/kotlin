@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.expressions.BirSpreadElement
 class BirSpreadElementImpl(
     sourceSpan: SourceSpan,
     expression: BirExpression?,
-) : BirSpreadElement() {
+) : BirSpreadElement(BirSpreadElement) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

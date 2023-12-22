@@ -24,7 +24,7 @@ class BirTypeOperatorCallImpl(
     operator: IrTypeOperator,
     argument: BirExpression?,
     typeOperand: BirType,
-) : BirTypeOperatorCall() {
+) : BirTypeOperatorCall(BirTypeOperatorCall) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

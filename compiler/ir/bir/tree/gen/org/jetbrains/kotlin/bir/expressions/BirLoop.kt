@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.loop]
  */
-abstract class BirLoop : BirExpression(), BirElement {
+abstract class BirLoop(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
     abstract var origin: IrStatementOrigin?
     abstract var body: BirExpression?
     abstract var condition: BirExpression?

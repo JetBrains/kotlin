@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.memberAccessExpression]
  */
-abstract class BirMemberAccessExpression<S : BirSymbol> : BirDeclarationReference(), BirElement {
+abstract class BirMemberAccessExpression<S : BirSymbol>(elementClass: BirElementClass) : BirDeclarationReference(elementClass), BirElement {
     abstract var dispatchReceiver: BirExpression?
     abstract var extensionReceiver: BirExpression?
     abstract override val symbol: S

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.moduleFragment]
  */
-abstract class BirModuleFragment : BirImplElementBase(), BirElement {
+abstract class BirModuleFragment(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement {
     abstract val name: Name
     @ObsoleteDescriptorBasedAPI
     abstract val descriptor: ModuleDescriptor

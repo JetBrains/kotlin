@@ -28,7 +28,7 @@ class BirConstructorCallImpl(
     symbol: BirConstructorSymbol,
     source: SourceElement,
     constructorTypeArgumentsCount: Int,
-) : BirConstructorCall() {
+) : BirConstructorCall(BirConstructorCall) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

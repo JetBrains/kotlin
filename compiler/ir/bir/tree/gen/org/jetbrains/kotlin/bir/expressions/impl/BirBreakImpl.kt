@@ -19,7 +19,7 @@ class BirBreakImpl(
     type: BirType,
     loop: BirLoop,
     label: String?,
-) : BirBreak() {
+) : BirBreak(BirBreak) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

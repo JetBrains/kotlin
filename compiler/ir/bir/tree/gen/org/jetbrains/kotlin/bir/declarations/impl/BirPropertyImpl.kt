@@ -39,7 +39,7 @@ class BirPropertyImpl(
     getter: BirSimpleFunction?,
     setter: BirSimpleFunction?,
     overriddenSymbols: List<BirPropertySymbol>,
-) : BirImplElementBase(), BirProperty {
+) : BirImplElementBase(BirProperty), BirProperty {
     override val owner: BirPropertyImpl
         get() = this
 

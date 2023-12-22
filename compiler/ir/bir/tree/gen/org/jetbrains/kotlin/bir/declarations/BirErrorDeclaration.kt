@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.bir.symbols.BirSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.errorDeclaration]
  */
-abstract class BirErrorDeclaration : BirImplElementBase(), BirElement, BirDeclaration, BirSymbol {
+abstract class BirErrorDeclaration(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement, BirDeclaration, BirSymbol {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)
     }

@@ -16,6 +16,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.continue]
  */
-abstract class BirContinue : BirBreakContinue(), BirElement {
+abstract class BirContinue(elementClass: BirElementClass) : BirBreakContinue(elementClass), BirElement {
     companion object : BirElementClass(BirContinue::class.java, 16, true)
 }

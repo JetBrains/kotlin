@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.bir.declarations.BirVariable
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.suspensionPoint]
  */
-abstract class BirSuspensionPoint : BirExpression(), BirElement {
+abstract class BirSuspensionPoint(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
     abstract var suspensionPointIdParameter: BirVariable?
     abstract var result: BirExpression?
     abstract var resumeResult: BirExpression?

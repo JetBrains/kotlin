@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.syntheticBody]
  */
-abstract class BirSyntheticBody : BirBody(), BirElement {
+abstract class BirSyntheticBody(elementClass: BirElementClass) : BirBody(elementClass), BirElement {
     abstract var kind: IrSyntheticBodyKind
 
     companion object : BirElementClass(BirSyntheticBody::class.java, 56, true)

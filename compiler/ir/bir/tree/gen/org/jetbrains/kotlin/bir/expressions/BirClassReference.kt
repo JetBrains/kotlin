@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.types.BirType
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.classReference]
  */
-abstract class BirClassReference : BirDeclarationReference(), BirElement {
+abstract class BirClassReference(elementClass: BirElementClass) : BirDeclarationReference(elementClass), BirElement {
     abstract override var symbol: BirClassifierSymbol
     abstract var classType: BirType
 

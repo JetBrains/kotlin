@@ -16,6 +16,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.getValue]
  */
-abstract class BirGetValue : BirValueAccessExpression(), BirElement {
+abstract class BirGetValue(elementClass: BirElementClass) : BirValueAccessExpression(elementClass), BirElement {
     companion object : BirElementClass(BirGetValue::class.java, 37, true)
 }

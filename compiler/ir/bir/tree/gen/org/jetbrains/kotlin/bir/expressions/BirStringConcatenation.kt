@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.stringConcatenation]
  */
-abstract class BirStringConcatenation : BirExpression(), BirElement {
+abstract class BirStringConcatenation(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
     abstract val arguments: BirChildElementList<BirExpression>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

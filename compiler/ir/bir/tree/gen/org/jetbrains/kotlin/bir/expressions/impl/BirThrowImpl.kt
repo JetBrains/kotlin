@@ -21,7 +21,7 @@ class BirThrowImpl(
     sourceSpan: SourceSpan,
     type: BirType,
     value: BirExpression?,
-) : BirThrow() {
+) : BirThrow(BirThrow) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

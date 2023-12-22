@@ -21,7 +21,7 @@ class BirInlinedFunctionBlockImpl(
     origin: IrStatementOrigin?,
     inlineCall: BirFunctionAccessExpression,
     inlinedElement: BirElement,
-) : BirInlinedFunctionBlock() {
+) : BirInlinedFunctionBlock(BirInlinedFunctionBlock) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
