@@ -461,10 +461,14 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         }
     }
 
-    fun createCodeFragmentSession(module: KtCodeFragmentModule, contextSession: LLFirSession): LLFirSession {
-        val platform = module.platform
-        require(platform.has<JvmPlatform>())
+    abstract fun createCodeFragmentSession(module: KtCodeFragmentModule, contextSession: LLFirSession): LLFirSession
 
+    protected fun doCreateCodeFragmentSession(
+        module: KtCodeFragmentModule,
+        contextSession: LLFirSession,
+        additionalSessionConfiguration: context(CodeFragmentSessionCreationContext) LLFirCodeFragmentSession.() -> Unit,
+    ): LLFirSession {
+        val platform = module.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         val languageVersionSettings = wrapLanguageVersionSettings(contextSession.languageVersionSettings)
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
@@ -515,33 +519,32 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             extensionService.additionalCheckers.forEach(session.checkersComponent::register)
 
-            register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
-            register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
-
-            registerJavaComponents(JavaModuleResolver.getInstance(project))
-
-            val javaSymbolProvider = LLFirJavaSymbolProvider(this, moduleData, project, firProvider.searchScope)
-            register(JavaSymbolProvider::class, javaSymbolProvider)
+            //TODO: remove, replace with plugin loading
+            run {
+                register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
+                register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
+            }
 
             val syntheticFunctionInterfaceProvider = FirExtensionSyntheticFunctionInterfaceProvider
                 .createIfNeeded(this, moduleData, scopeProvider)
 
-            register(
-                FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
-                    this,
-                    providers = listOfNotNull(
-                        firProvider.symbolProvider,
-                        syntheticFunctionInterfaceProvider,
-                        javaSymbolProvider
-                    ),
-                    dependencyProvider
-                )
+            val context = CodeFragmentSessionCreationContext(
+                moduleData,
+                firProvider,
+                dependencyProvider,
+                syntheticFunctionInterfaceProvider
             )
 
-            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+            additionalSessionConfiguration(context, this)
         }
     }
+
+    protected class CodeFragmentSessionCreationContext(
+        val moduleData: LLFirModuleData,
+        val firProvider: LLFirProvider,
+        val dependencyProvider: LLFirDependenciesSymbolProvider,
+        val syntheticFunctionInterfaceProvider: FirExtensionSyntheticFunctionInterfaceProvider?
+    )
 
     private fun wrapLanguageVersionSettings(original: LanguageVersionSettings): LanguageVersionSettings {
         return object : LanguageVersionSettings by original {

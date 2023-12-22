@@ -86,6 +86,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
         }
 
         @Test
+        @TestMetadata("commonContext.kt")
+        public void testCommonContext() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonContext.kt");
+        }
+
+        @Test
         @TestMetadata("customName.kt")
         public void testCustomName() throws Exception {
             runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/customName.kt");

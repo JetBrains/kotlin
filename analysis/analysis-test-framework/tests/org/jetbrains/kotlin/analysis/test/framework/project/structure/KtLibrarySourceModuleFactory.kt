@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.platform.isMultiPlatform
+import org.junit.Assume
 import java.nio.file.Path
 
 /**
@@ -21,6 +23,8 @@ import java.nio.file.Path
  */
 object KtLibrarySourceModuleFactory : KtModuleFactory {
     override fun createModule(testModule: TestModule, testServices: TestServices, project: Project): KtModuleWithFiles {
+        Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform.isMultiPlatform())
+
         val (libraryJar, librarySourcesJar) = testServices.compiledLibraryProvider.compileToLibrary(testModule)
 
         require(librarySourcesJar != null)
