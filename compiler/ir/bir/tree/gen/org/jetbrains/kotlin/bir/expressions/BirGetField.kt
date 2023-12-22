@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.getField]
  */
-abstract class BirGetField : BirFieldAccessExpression(), BirElement {
+abstract class BirGetField(elementClass: BirElementClass) : BirFieldAccessExpression(elementClass), BirElement {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         receiver?.accept(data, visitor)
     }

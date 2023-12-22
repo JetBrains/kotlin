@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.bir.types.BirType
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.localDelegatedProperty]
  */
-abstract class BirLocalDelegatedProperty : BirImplElementBase(), BirElement, BirDeclaration, BirDeclarationWithName, BirSymbolOwner, BirMetadataSourceOwner, BirLocalDelegatedPropertySymbol {
+abstract class BirLocalDelegatedProperty(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement, BirDeclaration, BirDeclarationWithName, BirSymbolOwner, BirMetadataSourceOwner, BirLocalDelegatedPropertySymbol {
     abstract var type: BirType
     abstract var isVar: Boolean
     abstract var delegate: BirVariable?

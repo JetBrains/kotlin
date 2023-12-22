@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.return]
  */
-abstract class BirReturn : BirExpression(), BirElement {
+abstract class BirReturn(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
     abstract var value: BirExpression?
     abstract var returnTargetSymbol: BirReturnTargetSymbol
 

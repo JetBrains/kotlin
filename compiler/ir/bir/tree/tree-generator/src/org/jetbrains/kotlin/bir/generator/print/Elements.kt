@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.Model
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.ElementOrRef
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -27,12 +28,19 @@ private fun SmartPrinter.printElement(element: Element) {
     printKDoc(element.extendedKDoc("A ${if (element.isLeaf) "leaf" else "non-leaf"} IR tree element."))
     print(kind.title, " ", element.typeName)
     print(element.params.typeParameters())
+    if (element.kind == ImplementationKind.AbstractClass) {
+        print("(elementClass: ${elementClassType.render()})")
+    }
 
     val parentRefs = element.parentRefs
     if (parentRefs.isNotEmpty()) {
         print(
             parentRefs.sortedBy { it.typeKind }.joinToString(prefix = " : ") { parent ->
-                parent.render() + parent.inheritanceClauseParenthesis()
+                parent.render() + if ((parent is ElementOrRef<*> && parent.element.typeKind == TypeKind.Class) || parent == elementImplBaseType) {
+                    "(elementClass)"
+                } else {
+                    parent.inheritanceClauseParenthesis()
+                }
             }
         )
     }

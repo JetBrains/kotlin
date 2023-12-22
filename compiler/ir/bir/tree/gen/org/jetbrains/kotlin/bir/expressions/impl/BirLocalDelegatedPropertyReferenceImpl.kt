@@ -29,7 +29,7 @@ class BirLocalDelegatedPropertyReferenceImpl(
     delegate: BirVariableSymbol,
     getter: BirSimpleFunction,
     setter: BirSimpleFunction?,
-) : BirLocalDelegatedPropertyReference() {
+) : BirLocalDelegatedPropertyReference(BirLocalDelegatedPropertyReference) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

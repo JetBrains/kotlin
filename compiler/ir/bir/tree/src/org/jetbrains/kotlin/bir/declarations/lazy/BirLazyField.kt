@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 class BirLazyField(
     override val originalIrElement: IrField,
     converter: Ir2BirConverter,
-) : BirLazyElementBase(converter), BirField {
+) : BirLazyElementBase(BirField, converter), BirField {
     override val owner: BirField
         get() = this
     override var isFinal: Boolean

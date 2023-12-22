@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.call]
  */
-abstract class BirCall : BirFunctionAccessExpression(), BirElement {
+abstract class BirCall(elementClass: BirElementClass) : BirFunctionAccessExpression(elementClass), BirElement {
     abstract override var symbol: BirSimpleFunctionSymbol
     abstract var superQualifierSymbol: BirClassSymbol?
 

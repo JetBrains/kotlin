@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constructorCall]
  */
-abstract class BirConstructorCall : BirFunctionAccessExpression(), BirElement {
+abstract class BirConstructorCall(elementClass: BirElementClass) : BirFunctionAccessExpression(elementClass), BirElement {
     abstract override var symbol: BirConstructorSymbol
     abstract var source: SourceElement
     abstract var constructorTypeArgumentsCount: Int

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.dynamicMemberExpression]
  */
-abstract class BirDynamicMemberExpression : BirDynamicExpression(), BirElement {
+abstract class BirDynamicMemberExpression(elementClass: BirElementClass) : BirDynamicExpression(elementClass), BirElement {
     abstract var memberName: String
     abstract var receiver: BirExpression?
 

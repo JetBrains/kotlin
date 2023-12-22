@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 
 class BirBlockBodyImpl(
     sourceSpan: SourceSpan,
-) : BirBlockBody() {
+) : BirBlockBody(BirBlockBody) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,
