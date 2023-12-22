@@ -13,6 +13,7 @@ import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.io.File
 import kotlin.test.assertTrue
 
 
@@ -30,16 +31,17 @@ public class CommonizeNativeDistributionTest {
             konanHome = konanHome,
             outputTargets = setOf(linuxTarget1, linuxTarget2),
             outputDirectory = temporaryOutputDirectory.root,
-            logLevel = CommonizerLogLevel.Info
+            logLevel = CommonizerLogLevel.Info,
+            additionalSettings = commonizerSettings.commonizerArguments,
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, linuxTarget1).isDirectory,
+            CommonizerOutputFileLayout.resolveCommonizedDirectory(temporaryOutputDirectory.root, linuxTarget1).isDirectory,
             "Expected directory for $linuxTarget1"
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, linuxTarget2).isDirectory,
+            CommonizerOutputFileLayout.resolveCommonizedDirectory(temporaryOutputDirectory.root, linuxTarget2).isDirectory,
             "Expected directory for $linuxTarget2"
         )
     }
@@ -58,11 +60,12 @@ public class CommonizeNativeDistributionTest {
             konanHome = konanHome,
             outputTargets = setOf(unixTarget),
             outputDirectory = temporaryOutputDirectory.root,
-            logLevel = CommonizerLogLevel.Info
+            logLevel = CommonizerLogLevel.Info,
+            additionalSettings = commonizerSettings.commonizerArguments,
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, unixTarget).isDirectory,
+            CommonizerOutputFileLayout.resolveCommonizedDirectory(temporaryOutputDirectory.root, unixTarget).isDirectory,
             "Expected directory for $unixTarget"
         )
     }
@@ -79,26 +82,27 @@ public class CommonizeNativeDistributionTest {
             konanHome = konanHome,
             outputTargets = setOf(iosTarget, watchosTarget, macosTarget, appleTarget),
             outputDirectory = temporaryOutputDirectory.root,
-            logLevel = CommonizerLogLevel.Info
+            logLevel = CommonizerLogLevel.Info,
+            additionalSettings = commonizerSettings.commonizerArguments,
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, iosTarget).isDirectory,
+            CommonizerOutputFileLayout.resolveCommonizedDirectory(temporaryOutputDirectory.root, iosTarget).isDirectory,
             "Expected directory for $iosTarget"
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, watchosTarget).isDirectory,
+            CommonizerOutputFileLayout.resolveCommonizedDirectory(temporaryOutputDirectory.root, watchosTarget).isDirectory,
             "Expected directory for $watchosTarget"
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, macosTarget).isDirectory,
+            CommonizerOutputFileLayout.resolveCommonizedDirectory(temporaryOutputDirectory.root, macosTarget).isDirectory,
             "Expected directory for $macosTarget"
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, appleTarget).isDirectory,
+            CommonizerOutputFileLayout.resolveCommonizedDirectory(temporaryOutputDirectory.root, appleTarget).isDirectory,
             "Expected directory for $appleTarget"
         )
     }
@@ -111,11 +115,12 @@ public class CommonizeNativeDistributionTest {
             konanHome = konanHome,
             outputTargets = setOf(unixTarget, nativeTarget),
             outputDirectory = temporaryOutputDirectory.root,
-            logLevel = CommonizerLogLevel.Info
+            logLevel = CommonizerLogLevel.Info,
+            additionalSettings = commonizerSettings.commonizerArguments,
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, nativeTarget).isDirectory,
+            CommonizerOutputFileLayout.resolveCommonizedDirectory(temporaryOutputDirectory.root, nativeTarget).isDirectory,
             "Expected directory for $nativeTarget"
         )
     }
@@ -126,7 +131,8 @@ public class CommonizeNativeDistributionTest {
             konanHome = konanHome,
             outputTargets = emptySet(),
             outputDirectory = temporaryOutputDirectory.root,
-            logLevel = CommonizerLogLevel.Info
+            logLevel = CommonizerLogLevel.Info,
+            additionalSettings = commonizerSettings.commonizerArguments,
         )
     }
 
@@ -134,25 +140,31 @@ public class CommonizeNativeDistributionTest {
     public fun `commonize - with different cache affecting settings - produces distinct commonized outputs`() {
         val linuxTarget1 = CommonizerTarget(LINUX_X64, LINUX_ARM64)
 
-        fun commonize(additionalSettings: List<AdditionalCommonizerSetting<*>>) = CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
+        fun commonize(additionalSettings: CommonizationCacheAffectingSetting) = CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
             outputTargets = setOf(linuxTarget1),
             outputDirectory = temporaryOutputDirectory.root,
             logLevel = CommonizerLogLevel.Info,
-            additionalSettings = additionalSettings,
+            additionalSettings = additionalSettings.commonizerArguments,
         )
 
-        val withoutOptimisticIntegerCommonization = listOf(OptimisticNumberCommonizationEnabledKey setTo false)
-        val withOptimisticIntegerCommonization = listOf(OptimisticNumberCommonizationEnabledKey setTo true)
+        val withoutOptimisticIntegerCommonization = CommonizationCacheAffectingSetting(
+            isOptimisticNumberCommonizationEnabled = false,
+            isPlatformIntegerCommonizationEnabled = false
+        )
+        val withOptimisticIntegerCommonization = CommonizationCacheAffectingSetting(
+            isOptimisticNumberCommonizationEnabled = true,
+            isPlatformIntegerCommonizationEnabled = false
+        )
 
         commonize(withoutOptimisticIntegerCommonization)
         commonize(withOptimisticIntegerCommonization)
 
         val commonizedOutputWithoutOptimisticIntegerCommonization = resolveCommonizedDirectory(
-            temporaryOutputDirectory.root, linuxTarget1
+            temporaryOutputDirectory.root, linuxTarget1, withoutOptimisticIntegerCommonization
         )
         val commonizedOutputWithOptimisticIntegerCommonization = resolveCommonizedDirectory(
-            temporaryOutputDirectory.root, linuxTarget1
+            temporaryOutputDirectory.root, linuxTarget1, withOptimisticIntegerCommonization
         )
 
         assertTrue(
@@ -164,8 +176,18 @@ public class CommonizeNativeDistributionTest {
             "Expected directory for $linuxTarget1"
         )
         assertTrue(
-            commonizedOutputWithOptimisticIntegerCommonization == commonizedOutputWithoutOptimisticIntegerCommonization,
+            commonizedOutputWithOptimisticIntegerCommonization != commonizedOutputWithoutOptimisticIntegerCommonization,
             "Expected commonization output file with different settings to be distinct"
         )
     }
+
+    private val commonizerSettings = CommonizationCacheAffectingSetting(
+        isOptimisticNumberCommonizationEnabled = OptimisticNumberCommonizationEnabledKey.defaultValue,
+        isPlatformIntegerCommonizationEnabled = PlatformIntegerCommonizationEnabledKey.defaultValue,
+    )
+
+    private fun CommonizerOutputFileLayout.resolveCommonizedDirectory(
+        root: File,
+        target: CommonizerTarget,
+    ): File = resolveCommonizedDirectory(root, target, commonizerSettings)
 }

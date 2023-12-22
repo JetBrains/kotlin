@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.fileName
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.maxFileNameLength
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -37,7 +36,16 @@ public class CommonizerTargetFileNameTest {
     @Test
     public fun `small targets will use identityString`() {
         val target = parseCommonizerTarget("((a, b), c)")
-        assertEquals(target.identityString, target.fileName)
+        assertEquals(
+            CommonizerOutputFileLayout.commonizedDirectoryName(
+                target,
+                CommonizationCacheAffectingSetting(
+                    isOptimisticNumberCommonizationEnabled = false,
+                    isPlatformIntegerCommonizationEnabled = false,
+                )
+            ),
+            "(a, b, c)(optimistic-numbers=false, platform-integers=false)"
+        )
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -49,19 +57,31 @@ public class CommonizerTargetFileNameTest {
         )
 
         assertEquals(
-            longCommonizerTarget.fileName.length, maxFileNameLength,
+            CommonizerOutputFileLayout.commonizedDirectoryName(longCommonizerTarget).length, maxFileNameLength,
             "Expected test target's fileName to be exactly match the maximum"
         )
     }
 
     @Test
     public fun `longCommonizerTarget fileName can create new file`() {
-        val longCommonizerTargetFile = temporaryFolder.root.resolve(longCommonizerTarget.fileName)
+        val longCommonizerTargetFile = temporaryFolder.root.resolve(CommonizerOutputFileLayout.commonizedDirectoryName(longCommonizerTarget))
         assertTrue(longCommonizerTargetFile.createNewFile(), "Expected being able to create file $longCommonizerTargetFile")
         longCommonizerTargetFile.writeText(longCommonizerTarget.identityString)
         assertEquals(
             longCommonizerTarget, parseCommonizerTarget(longCommonizerTargetFile.readText()),
             "Expected being able to read and write to $longCommonizerTargetFile"
+        )
+    }
+
+    private fun CommonizerOutputFileLayout.commonizedDirectoryName(
+        target: CommonizerTarget,
+    ): String {
+        return commonizedDirectoryName(
+            target,
+            CommonizationCacheAffectingSetting(
+                isOptimisticNumberCommonizationEnabled = false,
+                isPlatformIntegerCommonizationEnabled = false,
+            )
         )
     }
 }

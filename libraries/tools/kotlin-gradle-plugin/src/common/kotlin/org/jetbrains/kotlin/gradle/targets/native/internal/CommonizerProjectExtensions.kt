@@ -19,8 +19,8 @@ internal val Project.commonizerLogLevel: CommonizerLogLevel
         return if (logger.isInfoEnabled) CommonizerLogLevel.Info else CommonizerLogLevel.Quiet
     }
 
-internal val Project.additionalCommonizerSettings: List<AdditionalCommonizerSetting<*>>
-    get() = listOf(
-        OptimisticNumberCommonizationEnabledKey setTo isOptimisticNumberCommonizationEnabled,
-        PlatformIntegerCommonizationEnabledKey setTo isPlatformIntegerCommonizationEnabled,
+internal val Project.additionalCommonizerSettings: CommonizationCacheAffectingSetting
+    get() = CommonizationCacheAffectingSetting(
+        isOptimisticNumberCommonizationEnabled,
+        isPlatformIntegerCommonizationEnabled,
     )

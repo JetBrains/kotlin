@@ -9,7 +9,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -24,7 +23,9 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.commonizer.CommonizationCacheAffectingSetting
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.commonizer.commonizerArguments
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
@@ -49,7 +50,6 @@ internal abstract class NativeDistributionCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
-    private val projectLayout: ProjectLayout,
 ) : DefaultTask(), UsesBuildMetricsService {
 
     private val konanHome = project.file(project.konanHome)
@@ -71,6 +71,11 @@ internal abstract class NativeDistributionCommonizerTask
         .listProperty<String>()
         .chainedFinalizeValueOnRead()
 
+    @get:Input
+    internal val additionalCommonizerSettings: Property<CommonizationCacheAffectingSetting> = objectFactory
+        .property<CommonizationCacheAffectingSetting>()
+        .chainedFinalizeValueOnRead()
+
     private val runnerSettings: Provider<KotlinNativeCommonizerToolRunner.Settings> = kotlinPluginVersion
         .zip(customJvmArgs) { pluginVersion, customJvmArgs ->
             KotlinNativeCommonizerToolRunner.Settings(
@@ -81,8 +86,6 @@ internal abstract class NativeDistributionCommonizerTask
         }
 
     private val logLevel = project.commonizerLogLevel
-
-    private val additionalSettings = project.additionalCommonizerSettings
 
     @get:Internal
     @Deprecated("Use lazy replacement", replaceWith = ReplaceWith("rootOutputDirectoryProperty.get().asFile"))
@@ -104,7 +107,8 @@ internal abstract class NativeDistributionCommonizerTask
             outputDirectory = rootOutputDirectoryProperty.get().asFile,
             konanHome = konanHome,
             logger = logger,
-            isCachingEnabled = isCachingEnabled
+            isCachingEnabled = isCachingEnabled,
+            additionalCommonizerSetting = additionalCommonizerSettings.get()
         )
 
     @get:Internal
@@ -126,7 +130,7 @@ internal abstract class NativeDistributionCommonizerTask
                 val commonizer = GradleCliCommonizer(commonizerRunner)
                 /* Invoke commonizer with only 'to do' targets */
                 commonizer.commonizeNativeDistribution(
-                    konanHome, rootOutputDirectory, todoOutputTargets, logLevel, additionalSettings
+                    konanHome, rootOutputDirectory, todoOutputTargets, logLevel, additionalCommonizerSettings.get().commonizerArguments
                 )
             }
         }

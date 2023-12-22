@@ -18,7 +18,8 @@ class NativeDistributionCommonizerCache(
     private val outputDirectory: File,
     private val konanHome: File,
     private val logger: Logger,
-    private val isCachingEnabled: Boolean
+    private val isCachingEnabled: Boolean,
+    private val additionalCommonizerSetting: CommonizationCacheAffectingSetting,
 ) : Serializable {
     fun isUpToDate(
         outputTargets: Set<SharedCommonizerTarget>
@@ -39,7 +40,7 @@ class NativeDistributionCommonizerCache(
         writeCacheAction(todoOutputTargets)
 
         todoOutputTargets
-            .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget) }
+            .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget, additionalCommonizerSetting) }
             .filter { commonizedDirectory -> commonizedDirectory.isDirectory }
             .forEach { commonizedDirectory -> commonizedDirectory.resolve(".success").createNewFile() }
     }
@@ -57,7 +58,7 @@ class NativeDistributionCommonizerCache(
         }
 
         val cachedOutputTargets = outputTargets
-            .filter { outputTarget -> isCached(resolveCommonizedDirectory(outputDirectory, outputTarget)) }
+            .filter { outputTarget -> isCached(resolveCommonizedDirectory(outputDirectory, outputTarget, additionalCommonizerSetting)) }
             .onEach { outputTarget -> logInfo("Cache hit: $outputTarget already commonized") }
             .toSet()
 

@@ -36,10 +36,15 @@ public class CommonizeLibcurlTest {
                         .toSet(),
             outputTargets = setOf(CommonizerTarget(LINUX_ARM64, LINUX_X64)),
             outputDirectory = temporaryOutputDirectory.root,
-            logLevel = CommonizerLogLevel.Info
+            logLevel = CommonizerLogLevel.Info,
+            additionalSettings = commonizerSettings.commonizerArguments,
         )
 
-        val commonOutputDirectory = temporaryOutputDirectory.root.resolve(CommonizerTarget(LINUX_X64, LINUX_ARM64).identityString)
+        val commonOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(
+            temporaryOutputDirectory.root,
+            CommonizerTarget(LINUX_X64, LINUX_ARM64),
+            commonizerSettings
+        )
 
         assertTrue(
             commonOutputDirectory.exists(),
@@ -78,11 +83,15 @@ public class CommonizeLibcurlTest {
                         .map { TargetedCommonizerDependency(LeafCommonizerTarget(LINUX_ARM64), it) }
                         .toSet(),
             outputTargets = setOf(CommonizerTarget(LINUX_ARM64, LINUX_X64, MACOS_X64)),
-            outputDirectory = temporaryOutputDirectory.root
+            outputDirectory = temporaryOutputDirectory.root,
+            additionalSettings = commonizerSettings.commonizerArguments,
         )
 
-        val commonOutputDirectory = temporaryOutputDirectory.root
-            .resolve(CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_X64).identityString)
+        val commonOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(
+            temporaryOutputDirectory.root,
+            CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_X64),
+            commonizerSettings
+        )
 
         assertContainsManifestWithContent(commonOutputDirectory, "native_targets=linux_arm64 linux_x64")
         assertContainsManifestWithContent(commonOutputDirectory, "commonizer_native_targets=linux_arm64 linux_x64 macos_x64")
@@ -90,6 +99,11 @@ public class CommonizeLibcurlTest {
             commonOutputDirectory, "commonizer_target=${CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_X64).identityString}"
         )
     }
+
+    private val commonizerSettings = CommonizationCacheAffectingSetting(
+        isOptimisticNumberCommonizationEnabled = OptimisticNumberCommonizationEnabledKey.defaultValue,
+        isPlatformIntegerCommonizationEnabled = PlatformIntegerCommonizationEnabledKey.defaultValue,
+    )
 }
 
 private fun assertContainsManifestWithContent(directory: File, content: String) {

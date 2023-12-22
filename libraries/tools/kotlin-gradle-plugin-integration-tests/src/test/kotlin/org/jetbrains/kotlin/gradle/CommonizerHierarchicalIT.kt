@@ -143,9 +143,7 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
             buildAndFail(":compileCommonMainKotlinMetadata", "-Pkotlin.mpp.enableOptimisticNumberCommonization=false") {
                 assertOutputContains("Unresolved reference 'unsafeProp'")
             }
-            buildAndFail(":compileCommonMainKotlinMetadata", "-Pkotlin.mpp.enableOptimisticNumberCommonization=true") {
-                assertOutputContains("Unresolved reference 'unsafeProp'")
-            }
+            build(":compileCommonMainKotlinMetadata", "-Pkotlin.mpp.enableOptimisticNumberCommonization=true")
         }
     }
 

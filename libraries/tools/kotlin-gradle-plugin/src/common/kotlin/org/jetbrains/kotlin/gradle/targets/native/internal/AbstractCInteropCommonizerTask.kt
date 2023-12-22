@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.commonizer.CommonizationCacheAffectingSetting
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.base64Hash
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.ensureMaxFileNameLength
@@ -23,6 +26,9 @@ import java.io.File
 internal abstract class AbstractCInteropCommonizerTask : DefaultTask(), UsesBuildMetricsService {
     @get:OutputDirectory
     abstract val outputDirectory: File
+
+    @get:Input
+    abstract val additionalCommonizerSettings: Property<CommonizationCacheAffectingSetting>
 }
 
 internal fun AbstractCInteropCommonizerTask.outputDirectory(group: CInteropCommonizerGroup): File {
@@ -48,5 +54,5 @@ internal fun AbstractCInteropCommonizerTask.commonizedOutputLibraries(dependent:
 internal suspend fun AbstractCInteropCommonizerTask.commonizedOutputDirectory(dependent: CInteropCommonizerDependent): File? {
     val group = project.findCInteropCommonizerGroup(dependent) ?: return null
     return CommonizerOutputFileLayout
-        .resolveCommonizedDirectory(outputDirectory(group), dependent.target)
+        .resolveCommonizedDirectory(outputDirectory(group), dependent.target, additionalCommonizerSettings.get())
 }

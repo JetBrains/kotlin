@@ -95,6 +95,7 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
                 kotlinPluginVersion.set(getKotlinPluginVersion())
                 commonizerClasspath.from(project.maybeCreateCommonizerClasspathConfiguration())
                 customJvmArgs.set(PropertiesProvider(project).commonizerJvmArgs)
+                additionalCommonizerSettings.set(project.additionalCommonizerSettings)
             }
         )
     }
@@ -120,6 +121,8 @@ internal suspend fun Project.copyCommonizeCInteropForIdeTask(): TaskProvider<Cop
                 group = "interop"
                 description = "Copies the output of $commonizeCInteropTaskName into " +
                         "the root projects .gradle folder for the IDE"
+
+                additionalCommonizerSettings.set(project.additionalCommonizerSettings)
             }
         )
     }
@@ -152,6 +155,7 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
                 kotlinPluginVersion.set(getKotlinPluginVersion())
                 commonizerClasspath.from(rootProject.maybeCreateCommonizerClasspathConfiguration())
                 customJvmArgs.set(PropertiesProvider(rootProject).commonizerJvmArgs)
+                additionalCommonizerSettings.set(project.additionalCommonizerSettings)
             }
         )
     }

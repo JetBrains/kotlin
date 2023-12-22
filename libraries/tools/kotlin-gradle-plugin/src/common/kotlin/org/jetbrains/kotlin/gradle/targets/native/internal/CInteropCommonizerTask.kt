@@ -115,7 +115,6 @@ internal abstract class CInteropCommonizerTask
 
     private val konanHome = project.file(project.konanHome)
     private val commonizerLogLevel = project.commonizerLogLevel
-    private val additionalCommonizerSettings = project.additionalCommonizerSettings
 
     data class CInteropCommonizerDependencies(
         val commonizerTarget: CommonizerTarget,
@@ -215,7 +214,7 @@ internal abstract class CInteropCommonizerTask
             dependencyLibraries = getCInteropCommonizerGroupDependencies(group),
             outputDirectory = outputDirectory,
             logLevel = commonizerLogLevel,
-            additionalSettings = additionalCommonizerSettings,
+            additionalSettings = additionalCommonizerSettings.get().commonizerArguments,
         )
     }
 

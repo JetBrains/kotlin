@@ -48,7 +48,11 @@ internal val CInteropCommonizedCInteropApiElementsConfigurationsSetupAction = Ko
         for (target in commonizerGroup.targets) {
             val configuration = locateOrCreateCommonizedCInteropApiElementsConfiguration(target)
             val commonizerTargetOutputDir = cinteropCommonizerTask.map { task ->
-                CommonizerOutputFileLayout.resolveCommonizedDirectory(task.outputDirectory(commonizerGroup), target)
+                CommonizerOutputFileLayout.resolveCommonizedDirectory(
+                    task.outputDirectory(commonizerGroup),
+                    target,
+                    task.additionalCommonizerSettings.get()
+                )
             }
 
             project.artifacts.add(configuration.name, commonizerTargetOutputDir) { artifact ->

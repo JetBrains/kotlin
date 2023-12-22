@@ -72,8 +72,8 @@ open class CommonizerIT : KGPBaseTest() {
                 assertNotNativeDistributionCommonizationCacheHit()
             }
             build(":commonizeNativeDistribution", "-Pkotlin.mpp.enableOptimisticNumberCommonization=true") {
-                assertTasksUpToDate(":commonizeNativeDistribution")
-                assertNativeDistributionCommonizationCacheHit()
+                assertTasksExecuted(":commonizeNativeDistribution")
+                assertNotNativeDistributionCommonizationCacheHit()
             }
         }
     }

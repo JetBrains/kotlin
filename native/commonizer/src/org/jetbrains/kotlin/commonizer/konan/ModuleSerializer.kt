@@ -20,6 +20,10 @@ internal class ModuleSerializer(
         val librariesDestination = CommonizerOutputFileLayout.resolveCommonizedDirectory(
             destination,
             target,
+            CommonizationCacheAffectingSetting(
+                isOptimisticNumberCommonizationEnabled = parameters.settings.getSetting(OptimisticNumberCommonizationEnabledKey),
+                isPlatformIntegerCommonizationEnabled = parameters.settings.getSetting(PlatformIntegerCommonizationEnabledKey),
+            )
         )
         writeLibrary(
             moduleResult.metadata,
