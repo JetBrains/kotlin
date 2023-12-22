@@ -21,7 +21,7 @@ class BirAnonymousInitializerImpl(
     origin: IrDeclarationOrigin,
     isStatic: Boolean,
     body: BirBlockBody?,
-) : BirAnonymousInitializer() {
+) : BirAnonymousInitializer(BirAnonymousInitializer) {
     override val owner: BirAnonymousInitializerImpl
         get() = this
 

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.bir.symbols.BirReturnableBlockSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.returnableBlock]
  */
-abstract class BirReturnableBlock : BirBlock(), BirElement, BirSymbolOwner, BirReturnTarget, BirReturnableBlockSymbol {
+abstract class BirReturnableBlock(elementClass: BirElementClass) : BirBlock(elementClass), BirElement, BirSymbolOwner, BirReturnTarget, BirReturnableBlockSymbol {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         statements.acceptChildren(visitor, data)
     }

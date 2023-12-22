@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.localDelegatedPropertyReference]
  */
-abstract class BirLocalDelegatedPropertyReference : BirCallableReference<BirLocalDelegatedPropertySymbol>(), BirElement {
+abstract class BirLocalDelegatedPropertyReference(elementClass: BirElementClass) : BirCallableReference<BirLocalDelegatedPropertySymbol>(elementClass), BirElement {
     abstract override var symbol: BirLocalDelegatedPropertySymbol
     abstract var delegate: BirVariableSymbol
     abstract var getter: BirSimpleFunction

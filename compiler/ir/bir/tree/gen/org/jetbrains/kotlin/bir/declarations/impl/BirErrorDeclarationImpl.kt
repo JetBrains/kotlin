@@ -18,7 +18,7 @@ class BirErrorDeclarationImpl(
     sourceSpan: SourceSpan,
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
-) : BirErrorDeclaration() {
+) : BirErrorDeclaration(BirErrorDeclaration) {
     override val owner: BirErrorDeclarationImpl
         get() = this
 

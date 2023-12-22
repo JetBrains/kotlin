@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.dynamicOperatorExpression]
  */
-abstract class BirDynamicOperatorExpression : BirDynamicExpression(), BirElement {
+abstract class BirDynamicOperatorExpression(elementClass: BirElementClass) : BirDynamicExpression(elementClass), BirElement {
     abstract var operator: IrDynamicOperator
     abstract var receiver: BirExpression?
     abstract val arguments: BirChildElementList<BirExpression>

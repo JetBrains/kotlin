@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 class BirSyntheticBodyImpl(
     sourceSpan: SourceSpan,
     kind: IrSyntheticBodyKind,
-) : BirSyntheticBody() {
+) : BirSyntheticBody(BirSyntheticBody) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

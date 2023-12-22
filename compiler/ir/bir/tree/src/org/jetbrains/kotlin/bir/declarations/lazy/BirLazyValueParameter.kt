@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 class BirLazyValueParameter(
     override val originalIrElement: IrValueParameter,
     converter: Ir2BirConverter,
-) : BirLazyElementBase(converter), BirValueParameter {
+) : BirLazyElementBase(BirValueParameter, converter), BirValueParameter {
     override val owner: BirValueParameter
         get() = this
 

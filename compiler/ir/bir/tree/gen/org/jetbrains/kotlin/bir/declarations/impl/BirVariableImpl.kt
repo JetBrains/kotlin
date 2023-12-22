@@ -28,7 +28,7 @@ class BirVariableImpl(
     isConst: Boolean,
     isLateinit: Boolean,
     initializer: BirExpression?,
-) : BirVariable() {
+) : BirVariable(BirVariable) {
     override val owner: BirVariableImpl
         get() = this
 

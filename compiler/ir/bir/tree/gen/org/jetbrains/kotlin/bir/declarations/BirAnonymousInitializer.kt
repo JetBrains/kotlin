@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.bir.symbols.BirAnonymousInitializerSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.anonymousInitializer]
  */
-abstract class BirAnonymousInitializer : BirImplElementBase(), BirElement, BirDeclaration, BirAnonymousInitializerSymbol {
+abstract class BirAnonymousInitializer(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement, BirDeclaration, BirAnonymousInitializerSymbol {
     abstract var isStatic: Boolean
     abstract var body: BirBlockBody?
 

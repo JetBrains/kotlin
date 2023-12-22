@@ -16,6 +16,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constantValue]
  */
-abstract class BirConstantValue : BirExpression(), BirElement {
+abstract class BirConstantValue(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
     companion object : BirElementClass(BirConstantValue::class.java, 72, false)
 }

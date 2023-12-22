@@ -25,7 +25,7 @@ class BirDelegatingConstructorCallImpl(
     typeArguments: List<BirType?>,
     contextReceiversCount: Int,
     symbol: BirConstructorSymbol,
-) : BirDelegatingConstructorCall() {
+) : BirDelegatingConstructorCall(BirDelegatingConstructorCall) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

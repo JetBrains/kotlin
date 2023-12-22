@@ -24,7 +24,7 @@ class BirEnumEntryImpl(
     name: Name,
     initializerExpression: BirExpressionBody?,
     correspondingClass: BirClass?,
-) : BirImplElementBase(), BirEnumEntry {
+) : BirImplElementBase(BirEnumEntry), BirEnumEntry {
     override val owner: BirEnumEntryImpl
         get() = this
 

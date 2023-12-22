@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 class BirLazyProperty(
     override val originalIrElement: IrProperty,
     converter: Ir2BirConverter,
-) : BirLazyElementBase(converter), BirProperty {
+) : BirLazyElementBase(BirProperty, converter), BirProperty {
     override val owner: BirProperty
         get() = this
     override var isExternal: Boolean

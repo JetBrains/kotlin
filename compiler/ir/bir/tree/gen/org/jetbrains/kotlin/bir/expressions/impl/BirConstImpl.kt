@@ -19,7 +19,7 @@ class BirConstImpl<T>(
     type: BirType,
     kind: IrConstKind<T>,
     value: T,
-) : BirConst<T>() {
+) : BirConst<T>(BirConst) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

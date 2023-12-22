@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeOperatorCall]
  */
-abstract class BirTypeOperatorCall : BirExpression(), BirElement {
+abstract class BirTypeOperatorCall(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
     abstract var operator: IrTypeOperator
     abstract var argument: BirExpression?
     abstract var typeOperand: BirType
