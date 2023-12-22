@@ -20,7 +20,7 @@ class BirExternalPackageFragmentImpl(
     signature: IdSignature?,
     packageFqName: FqName,
     containerSource: DeserializedContainerSource?,
-) : BirExternalPackageFragment() {
+) : BirExternalPackageFragment(BirExternalPackageFragment) {
     override val owner: BirExternalPackageFragmentImpl
         get() = this
 

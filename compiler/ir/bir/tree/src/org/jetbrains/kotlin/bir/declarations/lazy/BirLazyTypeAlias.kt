@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 class BirLazyTypeAlias(
     override val originalIrElement: IrTypeAlias,
     converter: Ir2BirConverter,
-) : BirLazyElementBase(converter), BirTypeAlias {
+) : BirLazyElementBase(BirTypeAlias, converter), BirTypeAlias {
     override val owner: BirTypeAlias
         get() = this
     override var isActual: Boolean

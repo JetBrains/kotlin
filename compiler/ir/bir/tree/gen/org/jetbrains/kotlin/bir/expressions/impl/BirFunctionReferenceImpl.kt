@@ -25,7 +25,7 @@ class BirFunctionReferenceImpl(
     typeArguments: List<BirType?>,
     symbol: BirFunctionSymbol,
     reflectionTarget: BirFunctionSymbol?,
-) : BirFunctionReference() {
+) : BirFunctionReference(BirFunctionReference) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

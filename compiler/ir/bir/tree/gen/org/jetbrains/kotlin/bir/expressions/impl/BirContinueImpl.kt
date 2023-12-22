@@ -19,7 +19,7 @@ class BirContinueImpl(
     type: BirType,
     loop: BirLoop,
     label: String?,
-) : BirContinue() {
+) : BirContinue(BirContinue) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

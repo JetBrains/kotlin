@@ -28,7 +28,7 @@ class BirLocalDelegatedPropertyImpl(
     delegate: BirVariable?,
     getter: BirSimpleFunction?,
     setter: BirSimpleFunction?,
-) : BirLocalDelegatedProperty() {
+) : BirLocalDelegatedProperty(BirLocalDelegatedProperty) {
     override val owner: BirLocalDelegatedPropertyImpl
         get() = this
 

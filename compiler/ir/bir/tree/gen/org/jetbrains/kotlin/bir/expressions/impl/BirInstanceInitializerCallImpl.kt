@@ -18,7 +18,7 @@ class BirInstanceInitializerCallImpl(
     sourceSpan: SourceSpan,
     type: BirType,
     classSymbol: BirClassSymbol,
-) : BirInstanceInitializerCall() {
+) : BirInstanceInitializerCall(BirInstanceInitializerCall) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

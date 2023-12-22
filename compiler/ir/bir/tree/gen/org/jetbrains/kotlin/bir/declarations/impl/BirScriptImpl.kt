@@ -36,7 +36,7 @@ class BirScriptImpl(
     earlierScripts: List<BirScriptSymbol>?,
     targetClass: BirClassSymbol?,
     constructor: BirConstructor?,
-) : BirScript() {
+) : BirScript(BirScript) {
     override val owner: BirScriptImpl
         get() = this
 

@@ -21,7 +21,7 @@ class BirFileImpl(
     signature: IdSignature?,
     packageFqName: FqName,
     fileEntry: IrFileEntry,
-) : BirFile() {
+) : BirFile(BirFile) {
     override val owner: BirFileImpl
         get() = this
 

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.const]
  */
-abstract class BirConst<T> : BirExpression(), BirElement {
+abstract class BirConst<T>(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
     abstract var kind: IrConstKind<T>
     abstract var value: T
 

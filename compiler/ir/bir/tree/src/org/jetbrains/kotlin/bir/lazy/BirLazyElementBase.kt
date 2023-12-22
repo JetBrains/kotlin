@@ -15,8 +15,9 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 
 abstract class BirLazyElementBase(
+    elementClass: BirElementClass,
     internal val converter: Ir2BirConverter,
-) : BirElementBase(), BirDeclaration {
+) : BirElementBase(elementClass), BirDeclaration {
     internal abstract val originalIrElement: IrDeclaration
 
     // This is the actual element parent of this element, in case

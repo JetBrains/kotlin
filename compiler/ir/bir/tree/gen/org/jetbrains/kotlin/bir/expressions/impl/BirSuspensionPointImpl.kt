@@ -24,7 +24,7 @@ class BirSuspensionPointImpl(
     suspensionPointIdParameter: BirVariable?,
     result: BirExpression?,
     resumeResult: BirExpression?,
-) : BirSuspensionPoint() {
+) : BirSuspensionPoint(BirSuspensionPoint) {
     private var _sourceSpan: SourceSpan = sourceSpan
     /**
      * The span of source code of the syntax node from which this BIR node was generated,

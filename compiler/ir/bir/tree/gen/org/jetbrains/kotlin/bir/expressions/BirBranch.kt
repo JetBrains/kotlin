@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.bir.*
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.branch]
  */
-abstract class BirBranch : BirImplElementBase(), BirElement {
+abstract class BirBranch(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement {
     abstract var condition: BirExpression?
     abstract var result: BirExpression?
 

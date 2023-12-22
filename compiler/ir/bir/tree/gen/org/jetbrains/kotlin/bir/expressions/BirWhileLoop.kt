@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.whileLoop]
  */
-abstract class BirWhileLoop : BirLoop(), BirElement {
+abstract class BirWhileLoop(elementClass: BirElementClass) : BirLoop(elementClass), BirElement {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         condition?.accept(data, visitor)
         body?.accept(data, visitor)

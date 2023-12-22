@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.functionExpression]
  */
-abstract class BirFunctionExpression : BirExpression(), BirElement {
+abstract class BirFunctionExpression(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
     abstract var origin: IrStatementOrigin
     abstract var function: BirSimpleFunction?
 

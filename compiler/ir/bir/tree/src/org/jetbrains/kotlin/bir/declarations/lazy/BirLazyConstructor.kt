@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 class BirLazyConstructor(
     override val originalIrElement: IrConstructor,
     converter: Ir2BirConverter,
-) : BirLazyElementBase(converter), BirConstructor {
+) : BirLazyElementBase(BirConstructor, converter), BirConstructor {
     override val owner: BirConstructor
         get() = this
 

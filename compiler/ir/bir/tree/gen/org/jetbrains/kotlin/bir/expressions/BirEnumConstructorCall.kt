@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.enumConstructorCall]
  */
-abstract class BirEnumConstructorCall : BirFunctionAccessExpression(), BirElement {
+abstract class BirEnumConstructorCall(elementClass: BirElementClass) : BirFunctionAccessExpression(elementClass), BirElement {
     abstract override var symbol: BirConstructorSymbol
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.expressionBody]
  */
-abstract class BirExpressionBody : BirBody(), BirElement {
+abstract class BirExpressionBody(elementClass: BirElementClass) : BirBody(elementClass), BirElement {
     abstract var expression: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
