@@ -192,15 +192,23 @@ internal object BirElementIndexClassifierFunctionGenerator {
         val endLabel = LabelNode()
         for (node in topLevelElementClassNodes) {
             val indexersByIndex = node.indexers.associateBy { it.index }
+            var lastFallthroughLabel: LabelNode? = null
             for (index in indexersIndexMin..node.indexers.maxOf { it.index }) {
-                val switchKey = node.elementClass.id * indexersIndicesSpan + (index - indexersIndexMin)
+                val indexer = indexersByIndex[index]
 
-                val caseLabel = LabelNode()
-                il.add(caseLabel)
+                val switchKey = node.elementClass.id * indexersIndicesSpan + (index - indexersIndexMin)
+                val caseLabel = if (indexer == null) {
+                    lastFallthroughLabel ?: LabelNode().also {
+                        il.add(it)
+                        lastFallthroughLabel = it
+                    }
+                } else {
+                    lastFallthroughLabel = null
+                    LabelNode().also { il.add(it) }
+                }
                 switchTableLabels += caseLabel
                 switchTableKeys += switchKey
 
-                val indexer = indexersByIndex[index]
                 if (indexer != null) {
                     generateIndexerCase(
                         il, indexer, capturedIndexerInstances[indexer], clazz,
