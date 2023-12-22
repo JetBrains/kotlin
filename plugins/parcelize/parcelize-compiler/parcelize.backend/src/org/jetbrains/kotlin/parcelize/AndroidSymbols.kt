@@ -47,6 +47,7 @@ class AndroidSymbols(
     private val kotlin: IrPackageFragment = createPackage("kotlin")
     private val kotlinJvm: IrPackageFragment = createPackage("kotlin.jvm")
     private val kotlinJvmInternalPackage: IrPackageFragment = createPackage("kotlin.jvm.internal")
+    private val kotlinTime: IrPackageFragment = createPackage("kotlin.time")
 
     private val androidOs: IrPackageFragment = createPackage("android.os")
     private val androidUtil: IrPackageFragment = createPackage("android.util")
@@ -184,6 +185,12 @@ class AndroidSymbols(
             addValueParameter("size", irBuiltIns.intType)
         }
     }.symbol
+
+    val kotlinTimeDuration: IrClassSymbol = createClass(
+        kotlinTime, "Duration", ClassKind.CLASS, Modality.FINAL, true
+    ).apply {
+        owner.valueClassRepresentation = InlineClassRepresentation(Name.identifier("rawValue"), irBuiltIns.longType as IrSimpleType)
+    }
 
     val kotlinKClassJava: IrPropertySymbol = irFactory.buildProperty {
         name = Name.identifier("java")

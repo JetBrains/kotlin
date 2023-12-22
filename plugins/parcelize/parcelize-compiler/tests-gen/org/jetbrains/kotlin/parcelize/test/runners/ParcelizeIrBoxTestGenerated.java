@@ -128,6 +128,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     }
 
     @Test
+    @TestMetadata("duration.kt")
+    public void testDuration() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/duration.kt");
+    }
+
+    @Test
     @TestMetadata("enumObject.kt")
     public void testEnumObject() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/enumObject.kt");

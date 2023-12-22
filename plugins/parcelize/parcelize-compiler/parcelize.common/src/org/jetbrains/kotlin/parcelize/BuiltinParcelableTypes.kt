@@ -86,6 +86,7 @@ object BuiltinParcelableTypes {
         "kotlin.ULongArray",
         "kotlin.UShort",
         "kotlin.UShortArray",
+        "kotlin.time.Duration",
     ) + PARCELABLE_SUPERTYPE_FQNAMES
 
     val PARCELABLE_CONTAINER_FQNAMES = setOf(
