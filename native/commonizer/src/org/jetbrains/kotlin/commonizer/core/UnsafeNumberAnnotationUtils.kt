@@ -19,7 +19,7 @@ fun createUnsafeNumberAnnotationIfNecessary(
     inputTypes: List<CirType>,
     commonizedType: CirType,
 ): CirAnnotation? {
-    if (!shouldCreateAnnotation(settings, commonizedType, inputDeclarations))
+    if (!shouldCreateAnnotation(settings, commonizedType))
         return null
 
     val actualPlatformTypes = mutableMapOf<String, RenderedType>()
@@ -47,11 +47,9 @@ fun createUnsafeNumberAnnotationIfNecessary(
 private fun shouldCreateAnnotation(
     settings: CommonizerSettings,
     commonizedType: CirType,
-    inputDeclarations: List<CirHasAnnotations>,
 ): Boolean {
     if (!settings.getSetting(OptimisticNumberCommonizationEnabledKey))
         return false
-
 
     var isMarkedTypeFound = false
 
