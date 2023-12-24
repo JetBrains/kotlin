@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 description = "Kotlin Mock Runtime for Tests"
 
 plugins {
@@ -20,15 +18,6 @@ val builtins by configurations.creating {
 dependencies {
     compileOnly(project(":kotlin-stdlib"))
     builtins(project(":core:builtins"))
-}
-
-sourceSets {
-    "main" {
-        java.apply {
-            srcDir(layout.buildDirectory.dir("src"))
-        }
-    }
-    "test" {}
 }
 
 val copySources by task<Sync> {
@@ -53,7 +42,12 @@ val copySources by task<Sync> {
     into(layout.buildDirectory.dir("src"))
 }
 
-
+sourceSets {
+    "main" {
+        java.srcDir(copySources)
+    }
+    "test" {}
+}
 
 tasks.compileKotlin {
     dependsOn(copySources)

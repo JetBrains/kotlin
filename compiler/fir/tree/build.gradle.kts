@@ -18,13 +18,6 @@ dependencies {
     compileOnly(intellijCore())
 }
 
-sourceSets {
-    "main" {
-        projectDefault()
-        generatedDir()
-    }
-}
-
 val generatorClasspath by configurations.creating
 
 dependencies {
@@ -51,8 +44,11 @@ val generateTree by tasks.registering(NoDebugJavaExec::class) {
     systemProperties["line.separator"] = "\n"
 }
 
-tasks.named("compileKotlin") {
-    dependsOn(generateTree)
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDir(generateTree)
+    }
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {

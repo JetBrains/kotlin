@@ -17,14 +17,6 @@ dependencies {
     compileOnly(intellijCore())
 }
 
-sourceSets {
-    "main" {
-        projectDefault()
-        generatedDir()
-    }
-    "test" { none() }
-}
-
 val generatorClasspath by configurations.creating
 
 dependencies {
@@ -59,9 +51,16 @@ val generateCheckersComponents by tasks.registering(NoDebugJavaExec::class) {
     systemProperties["line.separator"] = "\n"
 }
 
-val compileKotlin by tasks
-
-compileKotlin.dependsOn(generateCheckersComponents)
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDirs(generateCheckersComponents.map {
+            // This is required because that task is generating all the platforms too
+            generationRoot
+        })
+    }
+    "test" { none() }
+}
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     apply(plugin = "idea")

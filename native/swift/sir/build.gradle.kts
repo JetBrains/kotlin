@@ -19,14 +19,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-sourceSets {
-    "main" {
-        projectDefault()
-        generatedDir()
-    }
-    "test" { projectDefault() }
-}
-
 testsJar()
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
@@ -60,8 +52,12 @@ val generateTree by tasks.registering(NoDebugJavaExec::class) {
     systemProperties["line.separator"] = "\n"
 }
 
-tasks.named("compileKotlin") {
-    dependsOn(generateTree)
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDir(generateTree)
+    }
+    "test" { projectDefault() }
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {

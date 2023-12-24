@@ -4,16 +4,15 @@ plugins {
 
 val copyrightDirectory = project.layout.buildDirectory.dir("copyright")
 
-sourceSets {
-    "main" {
-        kotlin.srcDir("src")
-        resources.srcDir(copyrightDirectory)
-    }
-}
-
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion")
     api("org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion")
+}
+
+val copyCopyrightProfile by tasks.registering(Copy::class) {
+    from("$rootDir/.idea/copyright")
+    into(copyrightDirectory)
+    include("apache.xml")
 }
 
 tasks {
@@ -21,16 +20,6 @@ tasks {
         compilerOptions {
             freeCompilerArgs.addAll(listOf("-version", "-Xdont-warn-on-error-suppression"))
         }
-    }
-
-    val copyCopyrightProfile by registering(Copy::class) {
-        from("$rootDir/.idea/copyright")
-        into(copyrightDirectory)
-        include("apache.xml")
-    }
-
-    processResources {
-        dependsOn(copyCopyrightProfile)
     }
 
     register<JavaExec>("run") {
@@ -54,5 +43,12 @@ tasks {
         mainClass = "generators.unicode.GenerateUnicodeDataKt"
         classpath = sourceSets.main.get().runtimeClasspath
         args = listOf("$rootDir")
+    }
+}
+
+sourceSets {
+    "main" {
+        kotlin.srcDir("src")
+        resources.srcDir(copyCopyrightProfile)
     }
 }
