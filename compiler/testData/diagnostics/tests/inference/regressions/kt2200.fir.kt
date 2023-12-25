@@ -5,7 +5,7 @@ package n
 import checkSubtype
 
 fun main() {
-    val a = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>array<!>(array())
+    val a = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>array<!>(<!CANNOT_INFER_PARAMETER_TYPE!>array()<!>)
     val a0 : Array<Array<Int>> = array(array())
     val a1 = array(array<Int>())
     checkSubtype<Array<Array<Int>>>(a1)
@@ -15,4 +15,4 @@ fun main() {
 
 //from library
 @Suppress("UNCHECKED_CAST")
-fun <T> array(vararg t : <!CANNOT_INFER_PARAMETER_TYPE!>T<!>) : Array<T> = t as Array<T>
+fun <T> array(vararg t : T) : Array<T> = t as Array<T>

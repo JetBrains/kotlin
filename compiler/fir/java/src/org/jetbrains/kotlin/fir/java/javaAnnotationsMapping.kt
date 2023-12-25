@@ -222,9 +222,7 @@ private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(session: FirSess
             ConeAttributes.Empty
         )
         coneTypeOrNull = elementConeType
-        varargElementType = buildResolvedTypeRef {
-            type = elementConeType.createOutArrayType()
-        }
+        coneElementTypeOrNull = elementConeType.createOutArrayType()
     }
 }
 

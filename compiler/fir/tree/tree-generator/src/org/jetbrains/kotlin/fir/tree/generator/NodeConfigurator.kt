@@ -616,7 +616,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         varargArgumentsExpression.configure {
             +fieldList("arguments", expression)
-            +field("varargElementType", typeRef)
+            +field("coneElementTypeOrNull", coneKotlinTypeType, nullable = true)
         }
 
         samConversionExpression.configure {

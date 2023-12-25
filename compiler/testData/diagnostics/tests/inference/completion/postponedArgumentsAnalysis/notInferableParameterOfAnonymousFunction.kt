@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
+// COMPARE_WITH_LIGHT_TREE
 
 fun <T> select(vararg x: T) = x[0]
 fun <K> id(x: K) = x

@@ -540,7 +540,8 @@ class Fir2IrVisitor(
                 startOffset,
                 endOffset,
                 varargArgumentsExpression.resolvedType.toIrType(),
-                varargArgumentsExpression.varargElementType.toIrType(),
+                varargArgumentsExpression.coneElementTypeOrNull?.toIrType()
+                    ?: error("Vararg expression has incorrect type"),
                 varargArgumentsExpression.arguments.map { it.convertToIrVarargElement() }
             )
         }

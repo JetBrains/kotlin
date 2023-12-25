@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
@@ -30,19 +29,17 @@ internal class FirVarargArgumentsExpressionImpl(
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val arguments: MutableList<FirExpression>,
-    override var varargElementType: FirTypeRef,
+    override val coneElementTypeOrNull: ConeKotlinType?,
 ) : FirVarargArgumentsExpression() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         arguments.forEach { it.accept(visitor, data) }
-        varargElementType.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpressionImpl {
         transformAnnotations(transformer, data)
         arguments.transformInplace(transformer, data)
-        varargElementType = varargElementType.transform(transformer, data)
         return this
     }
 

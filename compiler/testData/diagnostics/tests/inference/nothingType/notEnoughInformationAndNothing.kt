@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // !CHECK_TYPE
+// COMPARE_WITH_LIGHT_TREE
 
 class Inv<I>
 fun <T> materialize(): Inv<T> = TODO()

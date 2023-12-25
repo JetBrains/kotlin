@@ -1600,7 +1600,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                             i += varargSize
                             source = argument.source
                             coneTypeOrNull = argument.resolvedType
-                            varargElementType = argument.varargElementType
+                            coneElementTypeOrNull = argument.coneElementTypeOrNull
                         }
                     } else {
                         indicesQualifiedAccessForGet[i++]

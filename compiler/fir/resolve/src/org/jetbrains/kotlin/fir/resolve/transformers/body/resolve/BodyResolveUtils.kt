@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copyWithNewSource
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -38,15 +39,13 @@ internal fun remapArgumentsWithVararg(
     // Create a FirVarargArgumentExpression for the vararg arguments.
     // The order of arguments in the mapping must be preserved for FIR2IR, hence we have to find where the vararg arguments end.
     // FIR2IR uses the mapping order to determine if arguments need to be reordered.
-    val varargParameterTypeRef = varargParameter.returnTypeRef
     val varargElementType = varargArrayType.arrayElementType()?.approximateIntegerLiteralType()
     val argumentList = argumentMapping.keys.toList()
     var indexAfterVarargs = argumentList.size
     val newArgumentMapping = linkedMapOf<FirExpression, FirValueParameter>()
     val varargArgument = buildVarargArgumentsExpression {
-        // TODO: ideally we should use here a source from the use-site and not from the declaration-site, KT-59682
-        this.varargElementType = varargParameterTypeRef.withReplacedConeType(varargElementType, KtFakeSourceElementKind.VarargArgument)
-        this.coneTypeOrNull = varargArrayType
+        coneElementTypeOrNull = varargElementType
+        coneTypeOrNull = varargArrayType
         var startOffset = Int.MAX_VALUE
         var endOffset = 0
         var firstVarargElementSource: KtSourceElement? = null

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirVarargArgumentsExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 @FirBuilderDsl
 class FirVarargArgumentsExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -28,7 +27,7 @@ class FirVarargArgumentsExpressionBuilder : FirAnnotationContainerBuilder, FirEx
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     val arguments: MutableList<FirExpression> = mutableListOf()
-    lateinit var varargElementType: FirTypeRef
+    var coneElementTypeOrNull: ConeKotlinType? = null
 
     override fun build(): FirVarargArgumentsExpression {
         return FirVarargArgumentsExpressionImpl(
@@ -36,14 +35,14 @@ class FirVarargArgumentsExpressionBuilder : FirAnnotationContainerBuilder, FirEx
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             arguments,
-            varargElementType,
+            coneElementTypeOrNull,
         )
     }
 
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildVarargArgumentsExpression(init: FirVarargArgumentsExpressionBuilder.() -> Unit): FirVarargArgumentsExpression {
+inline fun buildVarargArgumentsExpression(init: FirVarargArgumentsExpressionBuilder.() -> Unit = {}): FirVarargArgumentsExpression {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
