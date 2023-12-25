@@ -82,7 +82,7 @@ private val validateIrAfterLowering = makeCustomPhase(
 )
 
 private val validateJvmIrAfterLowering = makeCustomPhase<JvmBackendContext>(
-    { _, module -> validateJvmIr(module) },
+    { context, module -> validateJvmIr(context, module) },
     name = "ValidateJvmIrAfterLowering",
     description = "Validate that IR after lowering is correctly structured by Kotlin JVM rules"
 )

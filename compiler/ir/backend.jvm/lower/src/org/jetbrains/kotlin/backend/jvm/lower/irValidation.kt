@@ -27,7 +27,9 @@ private fun checkAllFileLevelDeclarationsAreClasses(module: IrModuleFragment) {
     })
 }
 
-fun validateJvmIr(module: IrModuleFragment) {
+fun validateJvmIr(context: JvmBackendContext, module: IrModuleFragment) {
+    if (!context.config.shouldValidateIr) return
+
     checkAllFileLevelDeclarationsAreClasses(module)
     val validator = object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
