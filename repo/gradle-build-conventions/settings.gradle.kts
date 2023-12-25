@@ -1,5 +1,3 @@
-import java.util.*
-
 pluginManagement {
     apply(from = "../scripts/cache-redirector.settings.gradle.kts")
     apply(from = "../scripts/kotlin-bootstrap.settings.gradle.kts")
@@ -31,4 +29,5 @@ dependencyResolutionManagement {
 
 include(":buildsrc-compat")
 include(":prepare-deps")
+include(":generators")
 include(":compiler-tests-convention")
