@@ -21,9 +21,7 @@ fun testVariableAssignment_throws(a: A) {
   { // BLOCK
     val tmp_0: A = a
     when {
-      EQEQ(arg0 = tmp_0, arg1 = A.V1) -> { // BLOCK
-        x = 11
-      }
+      EQEQ(arg0 = tmp_0, arg1 = A.V1) -> x = 11
       else -> noWhenBranchMatchedException()
     }
   }

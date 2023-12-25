@@ -1,0 +1,5 @@
+// CHECK:
+//   Mangled name: #topLevelMethod(){}
+//   Public signature: /topLevelMethod|3993481242130118189[0]
+//   Public signature debug description: topLevelMethod(){}
+fun topLevelMethod(): Unit

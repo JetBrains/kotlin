@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
+import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -862,7 +859,7 @@ class Fir2IrVisitor(
     override fun visitVariableAssignment(
         variableAssignment: FirVariableAssignment,
         data: Any?
-    ): IrElement = whileAnalysing(session, variableAssignment) {
+    ): IrExpression = whileAnalysing(session, variableAssignment) {
         val explicitReceiverExpression = variableAssignment.explicitReceiver?.let { receiverExpression ->
             convertToIrReceiverExpression(
                 receiverExpression, variableAssignment.unwrapLValue()!!
@@ -1096,6 +1093,12 @@ class Fir2IrVisitor(
         if (this.source?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
             tryConvertDynamicIncrementOrDecrementToIr()?.let {
                 return it
+            }
+        }
+        if (this is FirSingleExpressionBlock) {
+            when (val stmt = statement) {
+                is FirExpression -> return convertToIrExpression(stmt)
+                !is FirDeclaration -> return stmt.accept(this@Fir2IrVisitor, null) as IrExpression
             }
         }
         if (source?.kind is KtRealSourceElementKind) {

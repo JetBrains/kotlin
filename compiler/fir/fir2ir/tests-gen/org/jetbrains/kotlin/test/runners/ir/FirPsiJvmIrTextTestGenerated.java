@@ -1623,6 +1623,24 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("ifWithArrayOperation.kt")
+        public void testIfWithArrayOperation() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/ifWithArrayOperation.kt");
+        }
+
+        @Test
+        @TestMetadata("ifWithAssignment.kt")
+        public void testIfWithAssignment() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/ifWithAssignment.kt");
+        }
+
+        @Test
+        @TestMetadata("ifWithLoop.kt")
+        public void testIfWithLoop() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/ifWithLoop.kt");
+        }
+
+        @Test
         @TestMetadata("implicitCastInReturnFromConstructor.kt")
         public void testImplicitCastInReturnFromConstructor() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/implicitCastInReturnFromConstructor.kt");
