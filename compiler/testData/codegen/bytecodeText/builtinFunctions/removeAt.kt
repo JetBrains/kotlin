@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-63857
+
 abstract class A1<T> : MutableList<T> {
     override fun remove(x: T): Boolean = true
     override fun removeAt(index: Int): T = null!!

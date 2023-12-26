@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Kt45236Kt.class
+		PACKAGE METADATA
+			FUNCTION successOrThrow()V
+				Property: class.metadata.function.typeParameters
+					K1
+						<T#0 /* T */ : kotlin/Any>
+					K2
+						<T#1 /* T */ : kotlin/Any>

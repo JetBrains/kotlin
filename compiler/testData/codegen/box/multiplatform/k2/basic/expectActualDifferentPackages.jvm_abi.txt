@@ -1,0 +1,7 @@
+MODULE platform
+	CLASS p1/P1Kt.class
+		PACKAGE METADATA
+			K1
+				---
+			K2
+				f()Ljava/lang/String;

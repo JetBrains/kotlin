@@ -1,0 +1,85 @@
+MODULE main
+	CLASS TestKt.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				test.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 test.kt
+				TestKt
+				*L
+				1#1,44:1
+				23#1,9:45
+				*S KotlinDebug
+				*F
+				+ 1 test.kt
+				TestKt
+				*L
+				14#1:45,9
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				test.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 test.kt
+				TestKt
+				*L
+				1#1,44:1
+				23#1,18:45
+				*S KotlinDebug
+				*F
+				+ 1 test.kt
+				TestKt
+				*L
+				14#1:45,18
+				*E
+				 } )
+	CLASS BoxKt.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				box.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 box.kt
+				BoxKt
+				+ 2 test.kt
+				TestKt
+				*L
+				1#1,56:1
+				14#2,18:57
+				*S KotlinDebug
+				*F
+				+ 1 box.kt
+				BoxKt
+				*L
+				51#1:57,18
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				box.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 box.kt
+				BoxKt
+				+ 2 test.kt
+				TestKt
+				*L
+				1#1,56:1
+				14#2,27:57
+				*S KotlinDebug
+				*F
+				+ 1 box.kt
+				BoxKt
+				*L
+				51#1:57,27
+				*E
+				 } )

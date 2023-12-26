@@ -1,0 +1,147 @@
+MODULE main
+	Missing in K1
+		test/_1Kt$baz$1.class
+	Missing in K2
+		test/_1Kt$baz$2.class
+	CLASS test/A.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				test/A
+				+ 2 1.kt
+				test/_1Kt
+				+ 3 fake.kt
+				kotlin/jvm/internal/FakeKt
+				*L
+				1#1,33:1
+				19#1:34
+				22#1:42
+				26#2,5:35
+				31#2:41
+				26#2,5:43
+				31#2:49
+				1#3:40
+				1#3:48
+				*S KotlinDebug
+				*F
+				+ 1 1.kt
+				test/A
+				*L
+				13#1:34
+				13#1:42
+				13#1:35,5
+				13#1:41
+				19#1:43,5
+				19#1:49
+				13#1:40
+				19#1:48
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				test/A
+				+ 2 1.kt
+				test/_1Kt
+				+ 3 fake.kt
+				kotlin/jvm/internal/FakeKt
+				*L
+				1#1,33:1
+				19#1:34
+				22#1:38
+				30#2:35
+				31#2:37
+				30#2:39
+				31#2:41
+				1#3:36
+				1#3:40
+				*S KotlinDebug
+				*F
+				+ 1 1.kt
+				test/A
+				*L
+				13#1:34
+				13#1:38
+				13#1:35
+				13#1:37
+				19#1:39
+				19#1:41
+				13#1:36
+				19#1:40
+				*E
+				 } )
+	CLASS test/A$bar$$inlined$baz$1.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				test/_1Kt$baz$2
+				+ 2 1.kt
+				test/A
+				*L
+				1#1,33:1
+				20#2,2:34
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				test/_1Kt$baz$1
+				+ 2 1.kt
+				test/A
+				*L
+				1#1,33:1
+				20#2,2:34
+				*E
+				 } )
+	CLASS test/A$foo$$inlined$bar$1.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				test/_1Kt$baz$2
+				+ 2 1.kt
+				test/A
+				*L
+				1#1,33:1
+				20#2:34
+				14#2,8:35
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				test/_1Kt$baz$1
+				+ 2 1.kt
+				test/A
+				*L
+				1#1,33:1
+				20#2:34
+				14#2,8:35
+				*E
+				 } )

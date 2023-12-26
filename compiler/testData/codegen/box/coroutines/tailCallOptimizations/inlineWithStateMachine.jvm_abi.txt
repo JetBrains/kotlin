@@ -1,0 +1,9 @@
+MODULE main
+	CLASS helpers/TailCallOptimizationCheckerClass.class
+		CLASS METADATA
+			PROPERTY stackTrace
+				Property: class.metadata.property.returnType
+					K1
+						java/util/ArrayList<java/lang/StackTraceElement?> /* = kotlin/collections/ArrayList^<java/lang/StackTraceElement?> */
+					K2
+						java/util/ArrayList<java/lang/StackTraceElement?>

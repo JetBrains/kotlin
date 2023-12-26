@@ -1,0 +1,33 @@
+MODULE main
+	CLASS A3.class
+		CLASS METADATA
+			FUNCTION removeAt(I)Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open
+					K2
+						public open operator
+	CLASS A4.class
+		CLASS METADATA
+			FUNCTION removeAt(I)Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public abstract
+					K2
+						public abstract operator
+	CLASS A5.class
+		CLASS METADATA
+			FUNCTION removeAt(I)Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open
+					K2
+						public open operator
+	CLASS A6.class
+		CLASS METADATA
+			FUNCTION removeAt(I)Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public abstract
+					K2
+						public abstract operator

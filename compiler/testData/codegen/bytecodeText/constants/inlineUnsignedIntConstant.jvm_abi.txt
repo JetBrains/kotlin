@@ -1,0 +1,13 @@
+MODULE main
+	CLASS kotlin/UInt.class
+		METHOD constructor-impl(I)I
+			Annotation: method.visibleAnnotations
+				K1
+					---
+				K2
+					@Lkotlin/internal/IntrinsicConstEvaluation;
+			Annotation: method.invisibleAnnotations
+				K1
+					@Lkotlin/internal/IntrinsicConstEvaluation;
+				K2
+					---

@@ -1,0 +1,60 @@
+MODULE main
+	CLASS _2Kt$box$$inlined$call$2.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				test/_1Kt$call$1
+				+ 2 2.kt
+				_2Kt
+				+ 3 1.kt
+				test/_1Kt
+				+ 4 fake.kt
+				kotlin/jvm/internal/FakeKt
+				*L
+				1#1,11:1
+				21#2:12
+				7#3:13
+				1#4:14
+				*S KotlinDebug
+				*F
+				+ 1 2.kt
+				_2Kt
+				*L
+				21#1:13
+				21#1:14
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				test/_1Kt$call$1
+				+ 2 2.kt
+				_2Kt
+				+ 3 1.kt
+				test/_1Kt
+				+ 4 fake.kt
+				kotlin/jvm/internal/FakeKt
+				*L
+				1#1,11:1
+				21#2:12
+				23#2:15
+				7#3:13
+				1#4:14
+				*S KotlinDebug
+				*F
+				+ 1 2.kt
+				_2Kt
+				*L
+				21#1:13
+				21#1:14
+				*E
+				 } )

@@ -1,0 +1,77 @@
+MODULE main
+	CLASS PrivateProperties.class
+		CLASS METADATA
+			PROPERTY getX8()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String
+			PROPERTY x2
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String
+			PROPERTY x3
+				Property: class.metadata.property.setterModifiers
+					K1
+						private final /* non-default */
+					K2
+						private final
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						---
+			PROPERTY x4
+				Property: class.metadata.property.setterModifiers
+					K1
+						private final /* non-default */
+					K2
+						private final
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						---
+			PROPERTY y0
+				Property: class.metadata.property.getterModifiers
+					K1
+						private final
+					K2
+						private final /* non-default */
+			PROPERTY y1
+				Property: class.metadata.property.getterModifiers
+					K1
+						private final
+					K2
+						private final /* non-default */
+	CLASS EffetivelyPrivate.class
+		CLASS METADATA
+			PROPERTY getX0()I
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final
+					K2
+						public final /* non-default */
+			PROPERTY getX1()I
+				Property: class.metadata.property.getterModifiers
+					K1
+						protected final
+					K2
+						protected final /* non-default */
+			PROPERTY getX2$main()I
+				Property: class.metadata.property.getterModifiers
+					K1
+						internal final
+					K2
+						internal final /* non-default */
+	CLASS Statics$Companion.class
+		CLASS METADATA
+			PROPERTY getX2()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String

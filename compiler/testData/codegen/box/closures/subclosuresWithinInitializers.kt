@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-63868
+
 fun <R> run(block: () -> R) = block()
 inline fun <R> inlineRun(block: () -> R) = block()
 

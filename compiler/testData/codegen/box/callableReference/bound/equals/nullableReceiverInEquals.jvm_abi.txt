@@ -1,0 +1,9 @@
+MODULE main
+	CLASS NullableReceiverInEqualsKt.class
+		PACKAGE METADATA
+			PROPERTY getA_foo()Lkotlin/reflect/KFunction;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/reflect/KFunction1<A, kotlin/Unit>
+					K2
+						@kotlin/ExtensionFunctionType kotlin/reflect/KFunction1<A, kotlin/Unit>

@@ -1,0 +1,7 @@
+MODULE platform
+	CLASS CommonMainKt.class
+		PACKAGE METADATA
+			K1
+				---
+			K2
+				ret()Ljava/lang/String;

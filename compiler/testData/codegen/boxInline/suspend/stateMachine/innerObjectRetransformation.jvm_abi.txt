@@ -1,0 +1,33 @@
+MODULE main
+	CLASS BoxKt$check$$inlined$collect$1.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				inline.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 inline.kt
+				flow/InlineKt$collect$2
+				+ 2 box.kt
+				BoxKt
+				*L
+				1#1,48:1
+				66#2:49
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				inline.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 inline.kt
+				flow/InlineKt$collect$2
+				+ 2 box.kt
+				BoxKt
+				*L
+				1#1,48:1
+				67#2:49
+				*E
+				 } )

@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
+// JVM_ABI_K1_K2_DIFF: KT-62464
 
 open class A(val x: String) {
     inline fun f() = if (this is C) this else A("O")

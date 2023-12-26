@@ -1,0 +1,26 @@
+MODULE main
+	CLASS Kt17134Kt.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				kt17134.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 kt17134.kt
+				Kt17134Kt
+				+ 2 ArrayIntrinsics.kt
+				kotlin/ArrayIntrinsicsKt
+				*L
+				1#1,19:1
+				26#2:20
+				*S KotlinDebug
+				*F
+				+ 1 kt17134.kt
+				Kt17134Kt
+				*L
+				16#1:20
+				*E
+				 } )
+			K2
+				---

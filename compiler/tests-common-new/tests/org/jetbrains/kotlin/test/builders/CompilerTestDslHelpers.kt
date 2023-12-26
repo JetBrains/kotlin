@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.builders.CompilerStepsNames.DESERIALIZED_IR_HAN
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.FIR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JS_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
+import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.KLIB_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.RAW_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.WASM_ARTIFACTS_HANDLERS_STEP_NAME
@@ -43,6 +44,7 @@ object CompilerStepsNames {
     const val JS_ARTIFACTS_HANDLERS_STEP_NAME = "js artifacts handlers"
     const val WASM_ARTIFACTS_HANDLERS_STEP_NAME = "wasm artifacts handlers"
     const val KLIB_ARTIFACTS_HANDLERS_STEP_NAME = "klib artifacts handlers"
+    const val JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME = "jvm from K1 and K2 artifacts handlers"
 
 }
 
@@ -107,6 +109,12 @@ inline fun TestConfigurationBuilder.jvmArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.() -> Unit = {}
 ) {
     namedHandlersStep(JVM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Jvm, init)
+}
+
+inline fun TestConfigurationBuilder.jvmFromK1AndK2ArtifactsHandlersStep(
+    init: HandlersStepBuilder<BinaryArtifacts.JvmFromK1AndK2, ArtifactKinds.JvmFromK1AndK2>.() -> Unit = {},
+) {
+    namedHandlersStep(JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.JvmFromK1AndK2, init)
 }
 
 inline fun TestConfigurationBuilder.jsArtifactsHandlersStep(
@@ -174,4 +182,10 @@ inline fun TestConfigurationBuilder.configureKlibArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.KLib, ArtifactKinds.KLib>.() -> Unit = {}
 ) {
     configureNamedHandlersStep(KLIB_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.KLib, init)
+}
+
+inline fun TestConfigurationBuilder.configureJvmFromK1AndK2ArtifactHandlerStep(
+    init: HandlersStepBuilder<BinaryArtifacts.JvmFromK1AndK2, ArtifactKinds.JvmFromK1AndK2>.() -> Unit,
+) {
+    configureNamedHandlersStep(JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.JvmFromK1AndK2, init)
 }

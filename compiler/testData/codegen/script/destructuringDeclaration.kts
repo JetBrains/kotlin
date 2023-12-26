@@ -1,4 +1,5 @@
 // DUMP_IR
+// JVM_ABI_K1_K2_DIFF: KT-63960,, KT-63967
 
 val (abc, def) = A()
 

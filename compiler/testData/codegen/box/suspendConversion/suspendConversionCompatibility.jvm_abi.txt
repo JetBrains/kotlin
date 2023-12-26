@@ -1,0 +1,3 @@
+MODULE main
+	Missing in K1
+		Test1$Scope$test$1.class

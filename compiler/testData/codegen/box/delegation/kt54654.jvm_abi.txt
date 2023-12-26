@@ -1,0 +1,11 @@
+MODULE main
+	CLASS B.class
+		CLASS METADATA
+			K1
+				getProperty()Ljava/lang/String;
+			K2
+				---
+			K1
+				---
+			K2
+				property

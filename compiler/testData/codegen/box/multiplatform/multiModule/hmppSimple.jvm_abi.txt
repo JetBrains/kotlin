@@ -1,0 +1,11 @@
+MODULE jvm
+	CLASS CommonKt.class
+		PACKAGE METADATA
+			K1
+				---
+			K2
+				func()Ljava/lang/String;
+			K1
+				---
+			K2
+				prop

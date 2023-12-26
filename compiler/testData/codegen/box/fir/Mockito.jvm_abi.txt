@@ -1,0 +1,9 @@
+MODULE main
+	CLASS TestKt$inOrder$1.class
+		CLASS METADATA
+			FUNCTION verify(Ljava/lang/Object;)Ljava/lang/Object;
+				Property: class.metadata.function.typeParameters
+					K1
+						<T#0 /* T */>
+					K2
+						<T#0 /* T */ : kotlin/Any?>

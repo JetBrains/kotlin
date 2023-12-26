@@ -1,0 +1,60 @@
+MODULE main
+	CLASS ArrayDeque.class
+		CLASS METADATA
+			PROPERTY getSize()I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						value: kotlin/Int
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				arrayDequeRemoveAll.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 arrayDequeRemoveAll.kt
+				ArrayDeque
+				+ 2 ArraysJVM.kt
+				kotlin/collections/ArraysKt__ArraysJVMKt
+				+ 3 ArrayIntrinsics.kt
+				kotlin/ArrayIntrinsicsKt
+				*L
+				1#1,114:1
+				53#1,48:117
+				37#2,2:115
+				26#3:165
+				*S KotlinDebug
+				*F
+				+ 1 arrayDequeRemoveAll.kt
+				ArrayDeque
+				*L
+				50#1:117,48
+				13#1:115,2
+				104#1:165
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				arrayDequeRemoveAll.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 arrayDequeRemoveAll.kt
+				ArrayDeque
+				+ 2 ArraysJVM.kt
+				kotlin/collections/ArraysKt__ArraysJVMKt
+				*L
+				1#1,114:1
+				53#1,48:117
+				37#2,2:115
+				*S KotlinDebug
+				*F
+				+ 1 arrayDequeRemoveAll.kt
+				ArrayDeque
+				*L
+				50#1:117,48
+				13#1:115,2
+				*E
+				 } )

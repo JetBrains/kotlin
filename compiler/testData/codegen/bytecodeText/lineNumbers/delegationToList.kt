@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JVM
-
+// JVM_ABI_K1_K2_DIFF: KT-63828
 
 
 class DelegatedList : List<Int> by ArrayList()

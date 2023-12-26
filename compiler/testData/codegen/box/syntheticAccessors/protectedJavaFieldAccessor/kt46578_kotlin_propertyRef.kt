@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// JVM_ABI_K1_K2_DIFF: KT-62516
 
 // FILE: kt46578_kotlin_propertyRef.kt
 import p.*

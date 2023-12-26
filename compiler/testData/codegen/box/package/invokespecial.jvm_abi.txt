@@ -1,0 +1,35 @@
+MODULE main
+	CLASS B.class
+		CLASS METADATA
+			PROPERTY foo
+				Property: class.metadata.property.getterModifiers
+					K1
+						private final /* non-default */
+					K2
+						private final
+	CLASS C.class
+		CLASS METADATA
+			PROPERTY foo
+				Property: class.metadata.property.getterModifiers
+					K1
+						private final /* non-default */
+					K2
+						private final
+				Property: class.metadata.property.setterModifiers
+					K1
+						private final /* non-default */
+					K2
+						private final
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						---
+	CLASS D.class
+		CLASS METADATA
+			PROPERTY getFoo()I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						value: kotlin/Int

@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Cached.class
+		CLASS METADATA
+			PROPERTY getStore()Ljava/util/HashMap;
+				Property: class.metadata.property.returnType
+					K1
+						java/util/HashMap<T#0, T#1> /* = kotlin/collections/HashMap^<T#0, T#1> */
+					K2
+						java/util/HashMap<T#0, T#1>

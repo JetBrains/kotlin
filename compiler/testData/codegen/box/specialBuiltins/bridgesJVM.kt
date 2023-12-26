@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // TARGET_BACKEND: JVM_IR
 // KJS_WITH_FULL_RUNTIME
+// JVM_ABI_K1_K2_DIFF: KT-63864
 
 val list = ArrayList<String>()
 

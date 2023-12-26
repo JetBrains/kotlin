@@ -1,0 +1,9 @@
+MODULE m1
+	CLASS O.class
+		CLASS METADATA
+			PROPERTY getProp()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String

@@ -1,0 +1,9 @@
+MODULE main
+	CLASS SimpleKt.class
+		PACKAGE METADATA
+			TYPE ALIAS SF
+				Property: class.metadata.typeAlias.underlyingType
+					K1
+						kotlin/Function1<T#0, S^>
+					K2
+						kotlin/Function1<T#0, kotlin/String /* = S^ */>

@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-63861
+
 val MAX_LONG = "9223372036854775807"
 val PREFIX = "max = "
 

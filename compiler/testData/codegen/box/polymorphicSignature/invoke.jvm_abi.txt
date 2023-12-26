@@ -1,0 +1,9 @@
+MODULE main
+	CLASS InvokeKt$box$o$1.class
+		CLASS METADATA
+			PROPERTY getP()LInvokeKt$box$o$1$p$1;
+				Property: class.metadata.property.returnType
+					K1
+						.InvokeKt$box$o$1$p$1
+					K2
+						.InvokeKt$box$o$1.<no name provided>

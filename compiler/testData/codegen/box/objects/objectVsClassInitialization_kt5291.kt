@@ -1,4 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
+// JVM_ABI_K1_K2_DIFF: KT-63864
 public inline fun <T> T.with(f: T.() -> Unit): T {
     this.f()
     return this

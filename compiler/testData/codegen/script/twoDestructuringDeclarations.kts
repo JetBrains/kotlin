@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-63960, KT-63963, KT-63961
+
 val (a, b) = A()
 val (c, d) = B()
 

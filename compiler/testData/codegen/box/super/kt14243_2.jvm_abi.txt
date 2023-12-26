@@ -1,0 +1,6 @@
+MODULE main
+	CLASS ZImpl2.class
+		K1
+			---
+		K2
+			test(Ljava/lang/String;)Ljava/lang/String; [public]

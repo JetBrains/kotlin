@@ -1,0 +1,33 @@
+MODULE main
+	CLASS DestructuringDeclaration.class
+		CLASS METADATA
+			K1
+				<init>([Ljava/lang/String;)V
+			K2
+				---
+			K1
+				---
+			K2
+				abc
+			K1
+				---
+			K2
+				def
+			K1
+				getAbc()I
+			K2
+				---
+			K1
+				getDef()I
+			K2
+				---
+			Property: class.metadata.superTypes
+				K1
+					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
+				K2
+					[]
+			Property: class.metadata.contextReceiverTypes
+				K1
+					[]
+				K2
+					[kotlin/script/templates/standard/ScriptTemplateWithArgs]

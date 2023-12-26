@@ -1,0 +1,8 @@
+MODULE main
+	CLASS IssueState$FIXED$D.class
+		METHOD getK()Ljava/lang/String;
+			Annotation: method.invisibleAnnotations
+				K1
+					@Lorg/jetbrains/annotations/NotNull;
+				K2
+					---

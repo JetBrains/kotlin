@@ -1,0 +1,9 @@
+MODULE lib
+	CLASS lib/LibKt.class
+		PACKAGE METADATA
+			TYPE ALIAS Effect
+				Property: class.metadata.typeAlias.underlyingType
+					K1
+						kotlin/Function1<lib/Dispatch^<T#0>, kotlin/Unit>
+					K2
+						kotlin/Function1<kotlin/Function1<T#0, kotlin/Unit> /* = lib/Dispatch^<T#0> */, kotlin/Unit>

@@ -1,0 +1,9 @@
+MODULE main
+	CLASS DeprecatedLexicalScope.class
+		CLASS METADATA
+			FUNCTION getContributedDescriptors(Ljava/lang/String;)Ljava/lang/String;
+				Property: class.metadata.function.valueParameters
+					K1
+						(s: kotlin/String)
+					K2
+						(s: kotlin/String /* = ... */)

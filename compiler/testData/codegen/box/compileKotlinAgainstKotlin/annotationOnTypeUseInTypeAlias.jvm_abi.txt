@@ -1,0 +1,30 @@
+MODULE lib
+	CLASS AKt.class
+		PACKAGE METADATA
+			TYPE ALIAS MyCMaybeFoo
+				Property: class.metadata.typeAlias.underlyingType
+					K1
+						C<@Anno(value = "OK") MyMaybeFoo^>
+					K2
+						C<@Anno(value = "OK") Foo? /* = @Anno(value = "OK") MyMaybeFoo^ */>
+			TYPE ALIAS MyCMyFoo
+				Property: class.metadata.typeAlias.underlyingType
+					K1
+						C<@Anno(value = "OK") MyFoo^?>
+					K2
+						C<@Anno(value = "OK") Foo? /* = @Anno(value = "OK") MyFoo^? */>
+MODULE main
+	CLASS BKt.class
+		PACKAGE METADATA
+			FUNCTION testMyFoo(LC;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(myc: C<@Anno(value = "OK") Foo? /* = MyFoo^? */> /* = MyCMyFoo^ */)
+					K2
+						(myc: C<@Anno(value = "OK") Foo? /* = @Anno(value = "OK") MyFoo^? */> /* = MyCMyFoo^ */)
+			FUNCTION testMyMaybeFoo(LC;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(mycmyb: C<@Anno(value = "OK") Foo? /* = MyMaybeFoo^? */> /* = MyCMaybeFoo^ */)
+					K2
+						(mycmyb: C<@Anno(value = "OK") Foo? /* = @Anno(value = "OK") MyMaybeFoo^ */> /* = MyCMaybeFoo^ */)

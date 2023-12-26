@@ -1,0 +1,9 @@
+MODULE main
+	CLASS TypeAliasInAnonymousObjectTypeKt.class
+		PACKAGE METADATA
+			PROPERTY getTest()LFoo;
+				Property: class.metadata.property.returnType
+					K1
+						Foo<kotlin/String> /* = FooStr^ */
+					K2
+						Foo<kotlin/String>

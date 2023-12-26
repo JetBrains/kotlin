@@ -1,0 +1,15 @@
+MODULE main
+	CLASS SuspendingMutableMap.class
+		K1
+			---
+		K2
+			remove(Ljava/lang/Object;Ljava/lang/Object;)Z [public]
+	CLASS MapSuspendAbstractClearKt$box$1$map$1.class
+		K1
+			---
+		K2
+			getOrDefault(II)Ljava/lang/Integer; [public, bridge]
+		K1
+			---
+		K2
+			getOrDefault(Ljava/lang/Object;I)Ljava/lang/Integer; [public, final, bridge]

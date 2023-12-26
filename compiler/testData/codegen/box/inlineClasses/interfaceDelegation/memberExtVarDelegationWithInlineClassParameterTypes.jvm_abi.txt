@@ -1,0 +1,21 @@
+MODULE main
+	CLASS TestFoo.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				extVar
+			K1
+				getExtVar-gSa4wCw([Ljava/lang/String;)Ljava/lang/String;
+			K2
+				---
+	CLASS TestGFoo.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				extVar
+			K1
+				getExtVar-gSa4wCw([Ljava/lang/String;)Ljava/lang/String;
+			K2
+				---

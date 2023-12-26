@@ -1,0 +1,9 @@
+MODULE main
+	CLASS One.class
+		CLASS METADATA
+			PROPERTY getA1()[LOne$a1$1;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/Array<.One$a1$1>
+					K2
+						kotlin/Array<.One.<no name provided>>

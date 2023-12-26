@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-63858
+
 typealias Action<K> = (@UnsafeVariance K) -> Unit
 typealias Action2<K> = (@UnsafeVariance K) -> K
 

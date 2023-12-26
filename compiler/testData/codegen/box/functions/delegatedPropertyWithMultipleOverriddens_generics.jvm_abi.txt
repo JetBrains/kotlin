@@ -1,0 +1,11 @@
+MODULE main
+	CLASS MC.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				bar
+			K1
+				getBar()Ljava/lang/String;
+			K2
+				---

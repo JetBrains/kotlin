@@ -6,6 +6,8 @@
 // IGNORE_BACKEND: JS
 //  ^ Failed: kr is class Function1
 
+// JVM_ABI_K1_K2_DIFF: KT-63861
+
 // WITH_REFLECT
 
 import kotlin.reflect.KFunction

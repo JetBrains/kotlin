@@ -1,5 +1,6 @@
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
+// JVM_ABI_K1_K2_DIFF: different order of function annotations
 
 class Param
 class O {

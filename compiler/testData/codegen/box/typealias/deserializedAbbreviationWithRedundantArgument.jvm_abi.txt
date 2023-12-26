@@ -1,0 +1,9 @@
+MODULE b
+	CLASS BKt.class
+		PACKAGE METADATA
+			PROPERTY getBar()Ljava/util/List;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/collections/List<kotlin/String>? /* = Foo^<kotlin/Int>? */
+					K2
+						kotlin/collections/List<kotlin/String>?

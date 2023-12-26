@@ -1,0 +1,21 @@
+MODULE main
+	CLASS ImmutableCollection.class
+		CLASS METADATA
+			FUNCTION add(Ljava/lang/Object;)LImmutableCollection;
+				Property: class.metadata.function.valueParameters
+					K1
+						(element: T#0)
+					K2
+						(element: @kotlin/UnsafeVariance T#0)
+			FUNCTION addAll(Ljava/util/Collection;)LImmutableCollection;
+				Property: class.metadata.function.valueParameters
+					K1
+						(elements: kotlin/collections/Collection<T#0>)
+					K2
+						(elements: kotlin/collections/Collection<@kotlin/UnsafeVariance T#0>)
+			FUNCTION remove(Ljava/lang/Object;)LImmutableCollection;
+				Property: class.metadata.function.valueParameters
+					K1
+						(element: T#0)
+					K2
+						(element: @kotlin/UnsafeVariance T#0)

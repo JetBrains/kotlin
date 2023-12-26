@@ -1,0 +1,9 @@
+MODULE main
+	CLASS LabelHolder.class
+		CLASS METADATA
+			PROPERTY labels
+				Property: class.metadata.property.returnType
+					K1
+						java/util/HashMap<kotlin/String?, test/WeakReference<kotlin/String>> /* = kotlin/collections/HashMap^<kotlin/String?, test/WeakReference<kotlin/String>> */
+					K2
+						java/util/HashMap<kotlin/String?, test/WeakReference<kotlin/String>>

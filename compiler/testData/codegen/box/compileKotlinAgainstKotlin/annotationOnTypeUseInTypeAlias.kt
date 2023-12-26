@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+
+// JVM_ABI_K1_K2_DIFF: KT-63872
+
 // MODULE: lib
 // FILE: A.kt
 @Target(AnnotationTarget.TYPE)

@@ -1,0 +1,17 @@
+MODULE main
+	CLASS SimpleClass.class
+		CLASS METADATA
+			K1
+				<init>([Ljava/lang/String;)V
+			K2
+				---
+			Property: class.metadata.superTypes
+				K1
+					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
+				K2
+					[]
+			Property: class.metadata.contextReceiverTypes
+				K1
+					[]
+				K2
+					[kotlin/script/templates/standard/ScriptTemplateWithArgs]

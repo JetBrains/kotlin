@@ -1,0 +1,9 @@
+MODULE main
+	CLASS ForArrayListKt.class
+		PACKAGE METADATA
+			PROPERTY getAlist()Ljava/util/ArrayList;
+				Property: class.metadata.property.returnType
+					K1
+						java/util/ArrayList<kotlin/Int> /* = kotlin/collections/ArrayList^<kotlin/Int> */
+					K2
+						java/util/ArrayList<kotlin/Int>

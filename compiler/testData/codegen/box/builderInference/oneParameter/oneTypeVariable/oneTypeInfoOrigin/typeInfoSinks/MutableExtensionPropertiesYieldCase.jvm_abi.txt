@@ -1,0 +1,13 @@
+MODULE main
+	CLASS MutableExtensionPropertiesYieldCaseKt$testYield$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<LBuildee<Ljava/lang/Object;>;Lkotlin/Unit;>;
+			K2
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<LBuildee<LUserKlass;>;Lkotlin/Unit;>;
+		METHOD invoke(LBuildee;)V
+			Property: method.signature
+				K1
+					(LBuildee<Ljava/lang/Object;>;)V
+				K2
+					(LBuildee<LUserKlass;>;)V

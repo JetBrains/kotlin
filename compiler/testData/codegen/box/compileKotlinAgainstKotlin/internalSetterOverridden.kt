@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-63984
+
 // MODULE: lib
 // FILE: A.kt
 abstract class Base {

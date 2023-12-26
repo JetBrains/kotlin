@@ -1,5 +1,5 @@
 // FULL_JDK
-
+// JVM_ABI_K1_K2_DIFF: KT-63828
 class DStringIterator(d: Iterator<String>) : Iterator<String> by d
 
 class DStringListIterator(d: ListIterator<String>) : ListIterator<String> by d

@@ -5,6 +5,8 @@
 // TODO: investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
 
+// JVM_ABI_K1_K2_DIFF: KT-63859
+
 // See https://youtrack.jetbrains.com/issue/KT-14938
 // WITH_REFLECT
 

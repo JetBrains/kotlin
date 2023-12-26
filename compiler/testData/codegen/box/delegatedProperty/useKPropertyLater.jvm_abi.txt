@@ -1,0 +1,9 @@
+MODULE main
+	CLASS UseKPropertyLaterKt.class
+		PACKAGE METADATA
+			PROPERTY getProperties()Ljava/util/HashSet;
+				Property: class.metadata.property.returnType
+					K1
+						java/util/HashSet<kotlin/reflect/KProperty<*>> /* = kotlin/collections/HashSet^<kotlin/reflect/KProperty<*>> */
+					K2
+						java/util/HashSet<kotlin/reflect/KProperty<*>>

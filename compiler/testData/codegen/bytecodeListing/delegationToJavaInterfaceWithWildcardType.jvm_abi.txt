@@ -1,0 +1,9 @@
+MODULE main
+	CLASS C.class
+		CLASS METADATA
+			FUNCTION jg1(Ljava/util/Collection;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(c: kotlin/collections/MutableCollection<out kotlin/CharSequence!>..kotlin/collections/Collection<kotlin/CharSequence!>?)
+					K2
+						(c: kotlin/collections/MutableCollection<out kotlin/CharSequence!>..kotlin/collections/Collection<out kotlin/CharSequence!>?)

@@ -1,0 +1,9 @@
+MODULE main
+	CLASS _1Kt.class
+		PACKAGE METADATA
+			FUNCTION performWithFailFinally(Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+				Property: class.metadata.function.valueParameters
+					K1
+						(job: kotlin/Function1<T#0, T#1>, failJob: kotlin/Function2<@kotlin/ParameterName(name = "e") java/lang/RuntimeException /* = kotlin/RuntimeException^ */, T#0, T#1>, finally: kotlin/Function1<T#0, T#1>)
+					K2
+						(job: kotlin/Function1<T#0, T#1>, failJob: kotlin/Function2<@kotlin/ParameterName(name = "e") java/lang/RuntimeException /* = @kotlin/ParameterName(name = "e") kotlin/RuntimeException^ */, T#0, T#1>, finally: kotlin/Function1<T#0, T#1>)

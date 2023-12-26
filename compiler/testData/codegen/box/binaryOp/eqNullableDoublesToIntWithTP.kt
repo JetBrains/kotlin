@@ -4,6 +4,8 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 
+// JVM_ABI_K1_K2_DIFF: KT-63855
+
 fun <A: Double, B: Any> eq_double_any(a: A, b: B) = a == b
 
 fun <A: Double, B: Any?> eq_double_anyN(a: A, b: B) = a == b

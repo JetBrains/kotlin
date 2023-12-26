@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
+// JVM_ABI_K1_K2_DIFF: KT-63828
 
 import kotlin.reflect.KProperty
 

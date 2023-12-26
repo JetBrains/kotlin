@@ -1,0 +1,9 @@
+MODULE main
+	CLASS A.class
+		CLASS METADATA
+			FUNCTION foo(Ljava/util/List;Ljava/util/Map;)Ljava/lang/Long;
+				Property: class.metadata.function.valueParameters
+					K1
+						(p0: kotlin/collections/MutableList<kotlin/Long!>..kotlin/collections/List<kotlin/Long!>?, p1: kotlin/collections/MutableMap<kotlin/Long!, out kotlin/collections/MutableSet<kotlin/Long!>..kotlin/collections/Set<kotlin/Long!>?>..kotlin/collections/Map<kotlin/Long!, kotlin/collections/MutableSet<kotlin/Long!>..kotlin/collections/Set<kotlin/Long!>?>?)
+					K2
+						(p0: kotlin/collections/MutableList<kotlin/Long!>..kotlin/collections/List<kotlin/Long!>?, p1: kotlin/collections/MutableMap<kotlin/Long!, out kotlin/collections/MutableSet<kotlin/Long!>..kotlin/collections/Set<kotlin/Long!>?>..kotlin/collections/Map<kotlin/Long!, out kotlin/collections/MutableSet<kotlin/Long!>..kotlin/collections/Set<kotlin/Long!>?>?)

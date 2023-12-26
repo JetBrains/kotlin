@@ -1,0 +1,9 @@
+MODULE main
+	CLASS MyList.class
+		CLASS METADATA
+			PROPERTY getElements()Ljava/util/ArrayList;
+				Property: class.metadata.property.returnType
+					K1
+						java/util/ArrayList<T#0> /* = kotlin/collections/ArrayList^<T#0> */
+					K2
+						java/util/ArrayList<T#0>

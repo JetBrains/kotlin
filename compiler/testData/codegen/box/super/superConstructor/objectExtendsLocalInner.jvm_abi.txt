@@ -1,0 +1,9 @@
+MODULE main
+	CLASS ObjectExtendsLocalInnerKt$box$Local.class
+		CLASS METADATA
+			PROPERTY getObj()LObjectExtendsLocalInnerKt$box$Local$obj$1;
+				Property: class.metadata.property.returnType
+					K1
+						.ObjectExtendsLocalInnerKt$box$Local$obj$1
+					K2
+						.ObjectExtendsLocalInnerKt$box$Local.<no name provided>

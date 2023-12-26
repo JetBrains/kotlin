@@ -1,0 +1,11 @@
+MODULE main
+	CLASS A.class
+		CLASS METADATA
+			K1
+				getId(Ljava/lang/Object;)Ljava/lang/Object;
+			K2
+				---
+			K1
+				---
+			K2
+				id

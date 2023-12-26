@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Test.class
+		CLASS METADATA
+			FUNCTION removeAt(I)Ljava/lang/Integer;
+				Property: class.metadata.function.modifiers
+					K1
+						public open
+					K2
+						public open operator

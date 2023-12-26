@@ -1,0 +1,19 @@
+MODULE main
+	CLASS A$X.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				getAnonObject()LA$X$anonObject$1;
+			K1
+				getAnonObject()Ljava/lang/Object;
+			K2
+				---
+		K1
+			---
+		K2
+			getAnonObject()LA$X$anonObject$1; [public, final]
+		K1
+			getAnonObject()Ljava/lang/Object; [public, final]
+		K2
+			---

@@ -1,0 +1,9 @@
+MODULE main
+	CLASS IncorrectTypeOfTypealiasForSuspendFunctionalTypeKt.class
+		PACKAGE METADATA
+			FUNCTION foo(Lkotlin/jvm/functions/Function2;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(function: suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)
+					K2
+						(function: suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> /* = suspend kotlin/Function2<kotlin/String, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?> */)

@@ -1,0 +1,9 @@
+MODULE main
+	CLASS O.class
+		CLASS METADATA
+			PROPERTY getMmmap()Ljava/util/HashMap;
+				Property: class.metadata.property.returnType
+					K1
+						java/util/HashMap<kotlin/String, kotlin/Int> /* = kotlin/collections/HashMap^<kotlin/String, kotlin/Int> */
+					K2
+						java/util/HashMap<kotlin/String, kotlin/Int>

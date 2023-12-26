@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Foo.class
+		CLASS METADATA
+			PROPERTY getPublicVarPrivateSetter()Lkotlin/Unit;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Unit
+					K2
+						value: kotlin/Unit

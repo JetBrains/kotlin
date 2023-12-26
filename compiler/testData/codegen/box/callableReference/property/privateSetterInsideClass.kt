@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-63984
+
 import kotlin.reflect.KMutableProperty
 
 class Bar(name: String) {

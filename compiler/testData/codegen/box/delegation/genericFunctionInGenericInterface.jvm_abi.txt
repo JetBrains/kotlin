@@ -1,0 +1,9 @@
+MODULE main
+	CLASS GenericFunctionInGenericInterfaceKt$box$delegated$1.class
+		CLASS METADATA
+			FUNCTION fold(Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+				Property: class.metadata.function.typeParameters
+					K1
+						<T#0 /* R */>
+					K2
+						<T#0 /* R */ : kotlin/Any?>

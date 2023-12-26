@@ -1,7 +1,8 @@
 // TARGET_BACKEND: JVM
 // MODULE: lib
-// FILE: A.kt
+// JVM_ABI_K1_K2_DIFF: KT-63868
 
+// FILE: A.kt
 abstract class A {
     private val x = object {
         fun foo() = "OK"

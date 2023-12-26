@@ -1,0 +1,16 @@
+MODULE main
+	CLASS A$X.class
+		CLASS METADATA
+			PROPERTY getZ()LA$X$Inner;
+				Property: class.metadata.property.returnType
+					K1
+						A.X.Inner
+					K2
+						.A.X.Inner
+	CLASS A$X$Inner.class
+		METHOD foo()Ljava/lang/String;
+			Annotation: method.invisibleAnnotations
+				K1
+					@Lorg/jetbrains/annotations/NotNull;
+				K2
+					---

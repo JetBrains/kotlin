@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF: KT-63984
 open class Test {
     var publicProperty: String = ""
         private set

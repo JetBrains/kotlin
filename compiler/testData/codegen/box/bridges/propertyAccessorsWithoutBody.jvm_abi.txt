@@ -1,0 +1,22 @@
+MODULE main
+	CLASS A.class
+		CLASS METADATA
+			PROPERTY getX()Ljava/lang/Object;
+				Property: class.metadata.property.getterModifiers
+					K1
+						public open /* non-default */
+					K2
+						public open
+	CLASS B.class
+		CLASS METADATA
+			PROPERTY getX()Ljava/lang/String;
+				Property: class.metadata.property.setterModifiers
+					K1
+						public open /* non-default */
+					K2
+						public open
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						---

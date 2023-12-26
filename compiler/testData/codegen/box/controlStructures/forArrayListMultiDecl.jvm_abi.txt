@@ -1,0 +1,9 @@
+MODULE main
+	CLASS ForArrayListMultiDeclKt.class
+		PACKAGE METADATA
+			PROPERTY getAlist()Ljava/util/ArrayList;
+				Property: class.metadata.property.returnType
+					K1
+						java/util/ArrayList<kotlin/Pair<kotlin/Int, kotlin/Int>> /* = kotlin/collections/ArrayList^<kotlin/Pair<kotlin/Int, kotlin/Int>> */
+					K2
+						java/util/ArrayList<kotlin/Pair<kotlin/Int, kotlin/Int>>

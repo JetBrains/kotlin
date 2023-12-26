@@ -1,0 +1,15 @@
+MODULE main
+	CLASS Outer.class
+		CLASS METADATA
+			PROPERTY obj1
+				Property: class.metadata.property.returnType
+					K1
+						.Outer$obj1$1
+					K2
+						.Outer.<no name provided>
+			PROPERTY obj2
+				Property: class.metadata.property.returnType
+					K1
+						.Outer$obj2$1
+					K2
+						.Outer.<no name provided>

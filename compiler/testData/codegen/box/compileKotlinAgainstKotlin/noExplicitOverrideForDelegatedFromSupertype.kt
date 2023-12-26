@@ -1,4 +1,7 @@
 // TARGET_BACKEND: JVM
+
+// JVM_ABI_K1_K2_DIFF: KT-63828
+
 // MODULE: lib
 // FILE: A.kt
 package a

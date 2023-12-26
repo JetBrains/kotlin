@@ -1,0 +1,19 @@
+MODULE platform
+	CLASS Common1Kt.class
+		PACKAGE METADATA
+			K1
+				---
+			K2
+				f1()Ljava/lang/String;
+	CLASS Common0Kt.class
+		PACKAGE METADATA
+			K1
+				---
+			K2
+				f0()Z
+	CLASS Common2Kt.class
+		PACKAGE METADATA
+			K1
+				---
+			K2
+				f2()Ljava/lang/String;

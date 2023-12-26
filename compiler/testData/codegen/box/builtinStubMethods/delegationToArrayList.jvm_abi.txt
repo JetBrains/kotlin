@@ -1,0 +1,85 @@
+MODULE main
+	CLASS A.class
+		CLASS METADATA
+			K1
+				getSize()I
+			K2
+				---
+			K1
+				---
+			K2
+				size
+	CLASS B.class
+		CLASS METADATA
+			K1
+				getSize()I
+			K2
+				---
+			K1
+				---
+			K2
+				size
+	CLASS DelegationToArrayListKt$box$7.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+			K2
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/Object;>;
+		K1
+			invoke()V [public, final]
+		K2
+			---
+		METHOD invoke()Ljava/lang/Object;
+			Property: method.access
+				K1
+					1000001000001 [public, bridge, synthetic]
+				K2
+					10001 [public, final]
+	CLASS DelegationToArrayListKt$box$8.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+			K2
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/Object;>;
+		K1
+			invoke()V [public, final]
+		K2
+			---
+		METHOD invoke()Ljava/lang/Object;
+			Property: method.access
+				K1
+					1000001000001 [public, bridge, synthetic]
+				K2
+					10001 [public, final]
+	CLASS DelegationToArrayListKt$box$17.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+			K2
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/Object;>;
+		K1
+			invoke()V [public, final]
+		K2
+			---
+		METHOD invoke()Ljava/lang/Object;
+			Property: method.access
+				K1
+					1000001000001 [public, bridge, synthetic]
+				K2
+					10001 [public, final]
+	CLASS DelegationToArrayListKt$box$18.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+			K2
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/Object;>;
+		K1
+			invoke()V [public, final]
+		K2
+			---
+		METHOD invoke()Ljava/lang/Object;
+			Property: method.access
+				K1
+					1000001000001 [public, bridge, synthetic]
+				K2
+					10001 [public, final]

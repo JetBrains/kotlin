@@ -1,0 +1,15 @@
+MODULE main
+	CLASS a/A.class
+		CLASS METADATA
+			PROPERTY getVk()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String
+			PROPERTY getVo()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String

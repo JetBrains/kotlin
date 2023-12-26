@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Kt15112Kt.class
+		PACKAGE METADATA
+			PROPERTY getCompiledClasses()Ljava/util/ArrayList;
+				Property: class.metadata.property.returnType
+					K1
+						java/util/ArrayList<kotlin/String> /* = kotlin/collections/ArrayList^<kotlin/String> */
+					K2
+						java/util/ArrayList<kotlin/String>

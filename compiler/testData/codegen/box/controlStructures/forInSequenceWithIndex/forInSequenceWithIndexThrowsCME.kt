@@ -2,6 +2,8 @@
 // FULL_JDK
 // WITH_STDLIB
 
+// JVM_ABI_K1_K2_DIFF: KT-63864
+
 val xsl = arrayListOf("a", "b", "c", "d")
 val xs = xsl.asSequence()
 

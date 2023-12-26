@@ -1,0 +1,9 @@
+MODULE main
+	CLASS JImpl.class
+		CLASS METADATA
+			FUNCTION takeNotNull(Ljava/lang/String;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(x: kotlin/String)
+					K2
+						(x: @kotlin/jvm/internal/EnhancedNullability kotlin/String)

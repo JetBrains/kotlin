@@ -1,0 +1,9 @@
+MODULE main
+	CLASS ForInDownToStepReversedStepKt.class
+		PACKAGE METADATA
+			PROPERTY getLog()Ljava/lang/StringBuilder;
+				Property: class.metadata.property.returnType
+					K1
+						java/lang/StringBuilder /* = kotlin/text/StringBuilder^ */
+					K2
+						java/lang/StringBuilder

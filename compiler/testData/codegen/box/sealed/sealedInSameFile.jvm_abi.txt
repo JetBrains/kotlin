@@ -1,0 +1,9 @@
+MODULE main
+	CLASS A.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(I)V
+				Property: class.metadata.constructor.modifiers
+					K1
+						protected /* secondary */
+					K2
+						private /* secondary */

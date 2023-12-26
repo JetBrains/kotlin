@@ -1,0 +1,11 @@
+MODULE main
+	Missing in K1
+		Anno.class
+	CLASS Foo.class
+		CLASS METADATA
+			PROPERTY getX()I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						value: kotlin/Int

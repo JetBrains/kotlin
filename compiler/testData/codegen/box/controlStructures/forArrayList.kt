@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// JVM_ABI_K1_K2_DIFF: KT-63864
+
 val alist = arrayListOf(1, 2, 3) // : j.u.ArrayList<k.Int>
 
 fun box(): String {

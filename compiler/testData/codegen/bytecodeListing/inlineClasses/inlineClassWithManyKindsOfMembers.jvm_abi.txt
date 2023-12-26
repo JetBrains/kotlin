@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Z.class
+		CLASS METADATA
+			PROPERTY getX()I
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final
+					K2
+						public final /* non-default */

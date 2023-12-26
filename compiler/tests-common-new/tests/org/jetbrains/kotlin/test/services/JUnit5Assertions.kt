@@ -18,22 +18,39 @@ object JUnit5Assertions : AssertionsService() {
     val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
 
     override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
+        assertEqualsToFile(
+            expectedFile,
+            actual,
+            sanitizer,
+            differenceObtainedMessage = message,
+            fileNotFoundMessageTeamCity = { "Expected data file did not exist `$expectedFile`" },
+            fileNotFoundMessageLocal = { "Expected data file did not exist. Generating: $expectedFile" })
+    }
+
+    fun assertEqualsToFile(
+        expectedFile: File,
+        actual: String,
+        sanitizer: (String) -> String,
+        differenceObtainedMessage: () -> String,
+        fileNotFoundMessageTeamCity: (File) -> String,
+        fileNotFoundMessageLocal: (File) -> String,
+    ) {
         try {
             val actualText = actual.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
             if (!expectedFile.exists()) {
                 if (isTeamCityBuild) {
-                    org.junit.jupiter.api.fail("Expected data file did not exist `$expectedFile`")
+                    org.junit.jupiter.api.fail(fileNotFoundMessageTeamCity(expectedFile))
                 } else {
                     expectedFile.parentFile.mkdirs()
                     expectedFile.writeText(actualText)
-                    org.junit.jupiter.api.fail("Expected data file did not exist. Generating: $expectedFile")
+                    org.junit.jupiter.api.fail(fileNotFoundMessageLocal(expectedFile))
                 }
             }
             val expected = expectedFile.readText().convertLineSeparators()
             val expectedText = expected.trim { it <= ' ' }.trimTrailingWhitespacesAndAddNewlineAtEOF()
             if (sanitizer.invoke(expectedText) != sanitizer.invoke(actualText)) {
                 throw FileComparisonFailure(
-                    "${message()}: ${expectedFile.name}",
+                    "${differenceObtainedMessage()}: ${expectedFile.name}",
                     expected, actual, expectedFile.absolutePath
                 )
             }

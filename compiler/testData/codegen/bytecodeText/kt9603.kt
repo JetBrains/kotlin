@@ -1,5 +1,5 @@
 // LAMBDAS: CLASS
-
+// JVM_ABI_K1_K2_DIFF: KT-63984
 class A {
     public var prop = "O"
         private set

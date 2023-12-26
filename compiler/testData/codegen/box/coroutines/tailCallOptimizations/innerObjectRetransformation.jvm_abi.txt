@@ -1,0 +1,33 @@
+MODULE main
+	CLASS flow/InnerObjectRetransformationKt$check$$inlined$collect$1.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				innerObjectRetransformation.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 innerObjectRetransformation.kt
+				flow/InnerObjectRetransformationKt$collect$2
+				+ 2 innerObjectRetransformation.kt
+				flow/InnerObjectRetransformationKt
+				*L
+				1#1,64:1
+				54#2:65
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				innerObjectRetransformation.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 innerObjectRetransformation.kt
+				flow/InnerObjectRetransformationKt$collect$2
+				+ 2 innerObjectRetransformation.kt
+				flow/InnerObjectRetransformationKt
+				*L
+				1#1,64:1
+				55#2:65
+				*E
+				 } )

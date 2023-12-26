@@ -1,6 +1,7 @@
 // FULL_JDK
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
+// JVM_ABI_K1_K2_DIFF: KT-63864
 
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read

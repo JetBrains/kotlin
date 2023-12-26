@@ -1,0 +1,9 @@
+MODULE main
+	CLASS ObjectInLocalAnonymousObjectKt$box$foo$1.class
+		CLASS METADATA
+			PROPERTY getBar()LObjectInLocalAnonymousObjectKt$box$foo$1$bar$1;
+				Property: class.metadata.property.returnType
+					K1
+						.ObjectInLocalAnonymousObjectKt$box$foo$1$bar$1
+					K2
+						.ObjectInLocalAnonymousObjectKt$box$foo$1.<no name provided>

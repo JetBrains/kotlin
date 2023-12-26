@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // FULL_JDK
 
+// JVM_ABI_K1_K2_DIFF: KT-63858
+
 import java.util.*
 
 class ListSet<out E : Any> : List<E>, Set<E> {

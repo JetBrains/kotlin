@@ -1,0 +1,9 @@
+MODULE lib
+	CLASS lib/LibKt.class
+		PACKAGE METADATA
+			TYPE ALIAS DomainSingle
+				Property: class.metadata.typeAlias.underlyingType
+					K1
+						lib/Single<lib/DomainEither^<T#0>>
+					K2
+						lib/Single<lib/Either<T#0> /* = lib/DomainEither^<T#0> */>

@@ -1,0 +1,15 @@
+MODULE main
+	CLASS test/_1Kt.class
+		PACKAGE METADATA
+			FUNCTION doCall(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Ltest/Holder;I)I
+				Property: class.metadata.function.valueParameters
+					K1
+						(block: kotlin/Function0<kotlin/Int>, exception: kotlin/Function1<@kotlin/ParameterName(name = "e") java/lang/Exception /* = kotlin/Exception^ */, kotlin/Unit>, finallyBlock: kotlin/Function0<kotlin/Int>, h: test/Holder, res: kotlin/Int /* = ... */)
+					K2
+						(block: kotlin/Function0<kotlin/Int>, exception: kotlin/Function1<@kotlin/ParameterName(name = "e") java/lang/Exception /* = @kotlin/ParameterName(name = "e") kotlin/Exception^ */, kotlin/Unit>, finallyBlock: kotlin/Function0<kotlin/Int>, h: test/Holder, res: kotlin/Int /* = ... */)
+			FUNCTION doCall2(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Ljava/lang/Object;Ltest/Holder;)Ljava/lang/Object;
+				Property: class.metadata.function.valueParameters
+					K1
+						(block: kotlin/Function0<T#0>, exception: kotlin/Function1<@kotlin/ParameterName(name = "e") java/lang/Exception /* = kotlin/Exception^ */, kotlin/Unit>, finallyBlock: kotlin/Function0<T#0>, res: T#0, h: test/Holder)
+					K2
+						(block: kotlin/Function0<T#0>, exception: kotlin/Function1<@kotlin/ParameterName(name = "e") java/lang/Exception /* = @kotlin/ParameterName(name = "e") kotlin/Exception^ */, kotlin/Unit>, finallyBlock: kotlin/Function0<T#0>, res: T#0, h: test/Holder)

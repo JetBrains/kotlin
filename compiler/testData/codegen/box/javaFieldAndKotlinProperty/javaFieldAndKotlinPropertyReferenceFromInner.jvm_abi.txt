@@ -1,0 +1,11 @@
+MODULE main
+	CLASS TestKt$box$x$1$S$foo$1.class
+		Property: class.superClassInternalName
+			K1
+				kotlin/jvm/internal/MutablePropertyReference0Impl
+			K2
+				kotlin/jvm/internal/PropertyReference0Impl
+		K1
+			set(Ljava/lang/Object;)V [public]
+		K2
+			---

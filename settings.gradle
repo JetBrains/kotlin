@@ -274,6 +274,8 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":repo:codebase-tests",
         ":repo:artifacts-tests"
 
+include ":libraries:tools:abi-comparator"
+
 include ":kotlin-atomicfu-compiler-plugin",
         ":kotlin-atomicfu-compiler-plugin-embeddable",
         ":kotlinx-atomicfu-runtime",

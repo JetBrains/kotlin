@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// JVM_ABI_K1_K2_DIFF: KT-63864
 
 interface IFooList {
     fun foo(): List<String>

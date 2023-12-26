@@ -1,0 +1,15 @@
+MODULE main
+	CLASS EqNullableDoublesWithTPKt.class
+		PACKAGE METADATA
+			FUNCTION eq_doubleN_anyN(Ljava/lang/Double;Ljava/lang/Object;)Z
+				Property: class.metadata.function.typeParameters
+					K1
+						<T#0 /* A */ : kotlin/Double?, T#1 /* B */>
+					K2
+						<T#0 /* A */ : kotlin/Double?, T#1 /* B */ : kotlin/Any?>
+			FUNCTION eq_double_anyN(DLjava/lang/Object;)Z
+				Property: class.metadata.function.typeParameters
+					K1
+						<T#0 /* A */ : kotlin/Double, T#1 /* B */>
+					K2
+						<T#0 /* A */ : kotlin/Double, T#1 /* B */ : kotlin/Any?>

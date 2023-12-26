@@ -1,6 +1,8 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FULL_JDK
+// JVM_ABI_K1_K2_DIFF: KT-62465
+
 // FILE: test.kt
 
 @JvmOverloads

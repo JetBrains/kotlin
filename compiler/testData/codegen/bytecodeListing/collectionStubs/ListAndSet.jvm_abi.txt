@@ -1,0 +1,27 @@
+MODULE main
+	CLASS ListSet.class
+		CLASS METADATA
+			FUNCTION contains(Ljava/lang/Object;)Z
+				Property: class.metadata.function.valueParameters
+					K1
+						(element: T#0)
+					K2
+						(element: @kotlin/UnsafeVariance T#0)
+			FUNCTION containsAll(Ljava/util/Collection;)Z
+				Property: class.metadata.function.valueParameters
+					K1
+						(elements: kotlin/collections/Collection<T#0>)
+					K2
+						(elements: kotlin/collections/Collection<@kotlin/UnsafeVariance T#0>)
+			FUNCTION indexOf(Ljava/lang/Object;)I
+				Property: class.metadata.function.valueParameters
+					K1
+						(element: T#0)
+					K2
+						(element: @kotlin/UnsafeVariance T#0)
+			FUNCTION lastIndexOf(Ljava/lang/Object;)I
+				Property: class.metadata.function.valueParameters
+					K1
+						(element: T#0)
+					K2
+						(element: @kotlin/UnsafeVariance T#0)

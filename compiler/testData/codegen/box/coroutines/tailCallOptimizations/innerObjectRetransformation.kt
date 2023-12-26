@@ -3,6 +3,7 @@
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
 // FIR_IDENTICAL
+// JVM_ABI_K1_K2_DIFF: KT-62464
 
 // In this test the following transformation are occuring:
 //   flow$1 -> flowWith$$inlined$flow$1

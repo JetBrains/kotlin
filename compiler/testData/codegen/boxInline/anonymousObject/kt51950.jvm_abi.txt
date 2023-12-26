@@ -1,0 +1,65 @@
+MODULE main
+	CLASS _1Kt$transformMessage$$inlined$decorate$1.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				_1Kt$decorate$1
+				+ 2 1.kt
+				_1Kt
+				*L
+				1#1,19:1
+				13#2:20
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				_1Kt$decorate$1
+				+ 2 1.kt
+				_1Kt
+				*L
+				1#1,19:1
+				13#2,4:20
+				*E
+				 } )
+	CLASS _2Kt$append$$inlined$transformMessage$1.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				_1Kt$decorate$1
+				+ 2 1.kt
+				_1Kt
+				*L
+				1#1,19:1
+				13#2:20
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				_1Kt$decorate$1
+				+ 2 1.kt
+				_1Kt
+				*L
+				1#1,19:1
+				13#2,4:20
+				*E
+				 } )

@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-63655
+
 var log = ""
 
 class A(p: String) {

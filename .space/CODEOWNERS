@@ -286,6 +286,7 @@
 /libraries/stdlib/wasm/internal/ "Kotlin Wasm"
 /libraries/stdlib/wasm/src/generated/wasm/internal/ "Kotlin Wasm"
 
+/libraries/tools/abi-comparator "Kotlin JVM"
 /libraries/tools/atomicfu/ "Kotlin Libraries"
 /libraries/tools/binary-compatibility-validator/ "Kotlin Libraries"
 /libraries/tools/dukat/ "Kotlin JS"

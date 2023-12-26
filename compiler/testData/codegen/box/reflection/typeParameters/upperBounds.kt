@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
-
 // WITH_REFLECT
+// JVM_ABI_K1_K2_DIFF: KT-63855
+
 
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance

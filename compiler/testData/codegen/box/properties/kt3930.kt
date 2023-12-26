@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF: KT-63984
 public abstract class Foo {
     var isOpen = true
         private set

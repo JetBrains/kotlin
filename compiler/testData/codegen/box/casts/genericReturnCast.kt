@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF: KT-63855
 fun <T : Any?> someFunc(a: T, arg: T? = null): T = arg ?: a
 
 fun box(): String {

@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JVM
 
+// JVM_ABI_K1_K2_DIFF: KT-62464
+
 import kotlin.coroutines.*
 
 interface Flow<out T> {

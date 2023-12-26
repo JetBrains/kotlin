@@ -2,6 +2,8 @@
 // WITH_STDLIB
 // MODULE: lib
 
+// JVM_ABI_K1_K2_DIFF: KT-63870
+
 // FILE: JavaInterface.java
 public interface JavaInterface {
     <K extends Comparable<K>> K foo();

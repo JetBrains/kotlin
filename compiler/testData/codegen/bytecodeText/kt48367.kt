@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-62464
+
 fun foo(block: () -> String): String = block()
 inline fun bar(crossinline f: () -> String) = foo { f() }
 

@@ -1,0 +1,11 @@
+MODULE main
+	CLASS JKDeclaration.class
+		CLASS METADATA
+			K1
+				getPsi()Ljava/lang/String;
+			K2
+				---
+			K1
+				---
+			K2
+				psi

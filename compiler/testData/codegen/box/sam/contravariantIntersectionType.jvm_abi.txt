@@ -1,0 +1,3 @@
+MODULE main
+	Missing in K2
+		TestKt$example$2.class

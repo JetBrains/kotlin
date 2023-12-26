@@ -1,0 +1,9 @@
+MODULE main
+	CLASS CompoundAssignmentToPropertyWithQualifierKt$box$c$1.class
+		CLASS METADATA
+			PROPERTY getB()LCompoundAssignmentToPropertyWithQualifierKt$box$c$1$b$1;
+				Property: class.metadata.property.returnType
+					K1
+						.CompoundAssignmentToPropertyWithQualifierKt$box$c$1$b$1
+					K2
+						.CompoundAssignmentToPropertyWithQualifierKt$box$c$1.<no name provided>

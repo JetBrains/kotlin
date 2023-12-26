@@ -1,0 +1,17 @@
+MODULE lib
+	CLASS lib/Anno.class
+		CLASS METADATA
+			PROPERTY uglyJvmName()Ljava/lang/String;
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final
+					K2
+						public final /* non-default */
+	CLASS lib/AKt.class
+		PACKAGE METADATA
+			PROPERTY vget()I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						value: kotlin/Int

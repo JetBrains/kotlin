@@ -1,0 +1,41 @@
+MODULE main
+	CLASS B.class
+		CLASS METADATA
+			FUNCTION removeAt(I)Ljava/lang/Integer;
+				Property: class.metadata.function.modifiers
+					K1
+						public open
+					K2
+						public open operator
+		K1
+			contains(I)Z [public, bridge]
+		K2
+			---
+		K1
+			---
+		K2
+			contains(Ljava/lang/Integer;)Z [public, bridge]
+		K1
+			indexOf(I)I [public, bridge]
+		K2
+			---
+		K1
+			---
+		K2
+			indexOf(Ljava/lang/Integer;)I [public, bridge]
+		K1
+			lastIndexOf(I)I [public, bridge]
+		K2
+			---
+		K1
+			---
+		K2
+			lastIndexOf(Ljava/lang/Integer;)I [public, bridge]
+	CLASS D.class
+		CLASS METADATA
+			FUNCTION removeAt(I)Ljava/lang/Integer;
+				Property: class.metadata.function.modifiers
+					K1
+						public open
+					K2
+						public open operator

@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// JVM_ABI_K1_K2_DIFF: KT-63878
+
 var x: String
     get() = throw Exception("x's getter shouldn't be called")
     set(_) { throw Exception("x's setter shouldn't be called") }

@@ -1,5 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-57963
+// JVM_ABI_K1_K2_DIFF: KT-63984
 
 // MODULE: common
 // TARGET_PLATFORM: Common

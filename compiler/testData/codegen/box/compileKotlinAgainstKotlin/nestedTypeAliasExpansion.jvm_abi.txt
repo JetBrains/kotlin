@@ -1,0 +1,9 @@
+MODULE lib
+	CLASS lib/LibKt.class
+		PACKAGE METADATA
+			TYPE ALIAS B
+				Property: class.metadata.typeAlias.underlyingType
+					K1
+						lib/Inv<lib/A^<T#0>>
+					K2
+						lib/Inv<lib/Inv<T#0> /* = lib/A^<T#0> */>

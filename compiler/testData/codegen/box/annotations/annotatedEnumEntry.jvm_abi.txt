@@ -1,0 +1,7 @@
+MODULE main
+	CLASS E$E1.class
+		Annotation: class.visibleAnnotations
+			K1
+				@LFirst;
+			K2
+				---

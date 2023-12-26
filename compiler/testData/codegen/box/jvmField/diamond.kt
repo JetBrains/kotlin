@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+
 // FILE: A.java
 public interface A { public String ok = "OK"; }
 // FILE: B.java

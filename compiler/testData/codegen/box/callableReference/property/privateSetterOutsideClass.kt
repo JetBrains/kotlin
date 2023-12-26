@@ -1,4 +1,5 @@
 // See KT-12337 Reference to property with invisible setter should not be a KMutableProperty
+// JVM_ABI_K1_K2_DIFF: KT-63984
 
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KMutableProperty

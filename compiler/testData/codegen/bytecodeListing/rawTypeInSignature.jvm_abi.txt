@@ -1,0 +1,9 @@
+MODULE main
+	CLASS KRaw.class
+		CLASS METADATA
+			FUNCTION takesRawGenericIn(LGenericIn;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(g: /* raw */ GenericIn<kotlin/Number>../* raw */ GenericIn<kotlin/Nothing>?)
+					K2
+						(g: /* raw */ GenericIn<kotlin/Number>../* raw */ GenericIn<*>?)

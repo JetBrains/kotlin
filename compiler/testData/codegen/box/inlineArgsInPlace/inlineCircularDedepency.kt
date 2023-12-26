@@ -1,5 +1,6 @@
 // FULL_JDK
 // WITH_STDLIB
+// JVM_ABI_K1_K2_DIFF: KT-63864
 
 val z = ArrayList<String>()
 

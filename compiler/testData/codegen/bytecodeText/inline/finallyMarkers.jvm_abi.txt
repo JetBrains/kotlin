@@ -1,0 +1,65 @@
+MODULE main
+	CLASS FinallyMarkersKt$box$$inlined$test$1.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				finallyMarkers.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 finallyMarkers.kt
+				FinallyMarkersKt$test$1
+				+ 2 finallyMarkers.kt
+				FinallyMarkersKt
+				*L
+				1#1,28:1
+				17#2,3:29
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				finallyMarkers.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 finallyMarkers.kt
+				FinallyMarkersKt$test$1
+				+ 2 finallyMarkers.kt
+				FinallyMarkersKt
+				*L
+				1#1,28:1
+				17#2,4:29
+				*E
+				 } )
+	CLASS FinallyMarkersKt$box$$inlined$test$2.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				finallyMarkers.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 finallyMarkers.kt
+				FinallyMarkersKt$test$3
+				+ 2 finallyMarkers.kt
+				FinallyMarkersKt
+				*L
+				1#1,28:1
+				17#2,3:29
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				finallyMarkers.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 finallyMarkers.kt
+				FinallyMarkersKt$test$3
+				+ 2 finallyMarkers.kt
+				FinallyMarkersKt
+				*L
+				1#1,28:1
+				17#2,4:29
+				*E
+				 } )

@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_ABI_K1_K2_DIFF: KT-62550, KT-63828
 
 import java.util.ArrayList
 

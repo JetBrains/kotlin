@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Controller.class
+		CLASS METADATA
+			PROPERTY getPostponedActions()Ljava/util/ArrayList;
+				Property: class.metadata.property.returnType
+					K1
+						java/util/ArrayList<kotlin/Function0<kotlin/Unit>> /* = kotlin/collections/ArrayList^<kotlin/Function0<kotlin/Unit>> */
+					K2
+						java/util/ArrayList<kotlin/Function0<kotlin/Unit>>

@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Kla1.class
+		CLASS METADATA
+			LOCAL DELEGATED PROPERTY prop
+				Property: class.metadata.property.typeParameters
+					K1
+						<T#0 /* T */ : kotlin/Int>
+					K2
+						<>

@@ -3,6 +3,7 @@
 //KT-3190 Compiler crash if function called 'invoke' calls a closure
 // IGNORE_BACKEND: JS
 // JS backend does not allow to implement Function{N} interfaces
+// JVM_ABI_K1_K2_DIFF: KT-63864
 
 fun box(): String {
     val test = Cached<Int,Int>({ it + 2 })

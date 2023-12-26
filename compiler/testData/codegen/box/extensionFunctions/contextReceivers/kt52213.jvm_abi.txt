@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Kt52213Kt.class
+		PACKAGE METADATA
+			FUNCTION execute(Lkotlin/jvm/functions/Function4;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(block: @kotlin/ExtensionFunctionType @kotlin/ContextFunctionTypeParams(count = 1) suspend kotlin/Function4<Context, Receiver, Action, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)
+					K2
+						(block: @kotlin/ContextFunctionTypeParams(count = 1) @kotlin/ExtensionFunctionType suspend kotlin/Function4<Context, Receiver, Action, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)

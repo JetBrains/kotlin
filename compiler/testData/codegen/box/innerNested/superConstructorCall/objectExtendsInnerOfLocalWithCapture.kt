@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF: KT-63655
 fun box(): String {
     class Local {
         open inner class Inner(val s: String) {

@@ -3,6 +3,8 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_TAIL_CALL_OPTIMIZATION
+// JVM_ABI_K1_K2_DIFF: KT-63864
+
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

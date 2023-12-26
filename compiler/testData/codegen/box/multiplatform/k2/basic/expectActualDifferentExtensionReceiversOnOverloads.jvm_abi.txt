@@ -1,0 +1,11 @@
+MODULE platform
+	CLASS CommonKt.class
+		PACKAGE METADATA
+			K1
+				---
+			K2
+				getChecked
+			K1
+				---
+			K2
+				getChecked([ZI)Z

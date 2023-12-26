@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-62775
+
 enum class X {
     B {
         val value2 = "K"

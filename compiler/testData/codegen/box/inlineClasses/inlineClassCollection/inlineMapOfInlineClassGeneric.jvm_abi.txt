@@ -1,0 +1,10 @@
+MODULE main
+	CLASS ZArrayMap.class
+		K1
+			---
+		K2
+			getOrDefault-SjU93Dg([III)I [public, static]
+		K1
+			---
+		K2
+			remove(Ljava/lang/Object;Ljava/lang/Object;)Z [public]

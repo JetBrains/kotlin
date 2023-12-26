@@ -2,6 +2,7 @@
 // TARGET_BACKEND: NATIVE
 // TARGET_BACKEND: WASM
 // TARGET_BACKEND: JVM_IR
+// JVM_ABI_K1_K2_DIFF: KT-62931
 
 // Stdlib is needed only for JVM_IR to resolve `kotlin.OptionalExpectation
 // WITH_STDLIB

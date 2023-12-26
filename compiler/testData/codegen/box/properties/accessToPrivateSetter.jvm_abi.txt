@@ -1,0 +1,9 @@
+MODULE main
+	CLASS D.class
+		CLASS METADATA
+			PROPERTY getFoo()I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						value: kotlin/Int

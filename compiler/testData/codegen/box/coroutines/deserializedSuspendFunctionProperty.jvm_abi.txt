@@ -1,0 +1,15 @@
+MODULE m1
+	CLASS GivenDSLHandler.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Lkotlin/jvm/functions/Function2;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(lambda: @kotlin/ExtensionFunctionType suspend kotlin/Function2<GivenDSL<*>, kotlin/coroutines/Continuation<kotlin/Any?>, kotlin/Any?> /* = ... */)
+					K2
+						(lambda: @kotlin/ExtensionFunctionType suspend kotlin/Function2<GivenDSL<*>, kotlin/coroutines/Continuation<*>, kotlin/Any?> /* = @kotlin/ExtensionFunctionType suspend kotlin/Function2<GivenDSL<*>, kotlin/coroutines/Continuation<*>, kotlin/Any?> */ /* = ... */)
+			PROPERTY getLambda()Lkotlin/jvm/functions/Function2;
+				Property: class.metadata.property.returnType
+					K1
+						@kotlin/ExtensionFunctionType suspend kotlin/Function2<GivenDSL<*>, kotlin/coroutines/Continuation<kotlin/Any?>, kotlin/Any?>
+					K2
+						@kotlin/ExtensionFunctionType suspend kotlin/Function2<GivenDSL<*>, kotlin/coroutines/Continuation<*>, kotlin/Any?> /* = @kotlin/ExtensionFunctionType suspend kotlin/Function2<GivenDSL<*>, kotlin/coroutines/Continuation<*>, kotlin/Any?> */

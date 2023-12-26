@@ -1,0 +1,9 @@
+MODULE lib
+	CLASS A.class
+		CLASS METADATA
+			FUNCTION foo()Ljava/lang/Comparable;
+				Property: class.metadata.function.typeParameters
+					K1
+						<T#0 /* K */ : kotlin/Comparable<T#0!>!>
+					K2
+						<T#0 /* K */ : kotlin/Comparable<T#0 & Any..T#0?>!>

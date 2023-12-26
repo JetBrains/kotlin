@@ -1,5 +1,6 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // WITH_STDLIB
+// JVM_ABI_K1_K2_DIFF: KT-61909
 
 // FILE: main.kt
 import kotlin.experimental.ExperimentalTypeInference

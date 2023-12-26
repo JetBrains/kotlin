@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // KJS_WITH_FULL_RUNTIME
+// JVM_ABI_K1_K2_DIFF: KT-63861
+
 // FILE: 1.kt
 
 class My(val value: Int)

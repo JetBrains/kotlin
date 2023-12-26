@@ -1,0 +1,15 @@
+MODULE main
+	CLASS EntityContext.class
+		CLASS METADATA
+			PROPERTY getD()[D
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/DoubleArray
+					K2
+						value: kotlin/DoubleArray
+			PROPERTY getSize()I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						value: kotlin/Int

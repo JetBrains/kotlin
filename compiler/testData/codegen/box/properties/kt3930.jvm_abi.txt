@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Foo.class
+		CLASS METADATA
+			PROPERTY isOpen()Z
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Boolean
+					K2
+						value: kotlin/Boolean
