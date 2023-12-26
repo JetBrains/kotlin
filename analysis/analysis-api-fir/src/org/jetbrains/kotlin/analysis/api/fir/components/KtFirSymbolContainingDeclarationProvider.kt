@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfD
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
+import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
@@ -51,12 +53,20 @@ internal class KtFirSymbolContainingDeclarationProvider(
 
         val firSymbol = symbol.firSymbol
         val symbolFirSession = firSymbol.llFirSession
+        val symbolModule = symbolFirSession.ktModule
 
         if (firSymbol is FirErrorPropertySymbol && firSymbol.diagnostic is ConeDestructuringDeclarationsOnTopLevel) {
             return null
         }
 
         getContainingDeclarationForDependentDeclaration(symbol)?.let { return it }
+
+        if (symbolModule is KtDanglingFileModule && symbolModule.resolutionMode == DanglingFileResolutionMode.IGNORE_SELF) {
+            if (hasParentPsi(symbol)) {
+                // getSymbol(ClassId) returns a symbol from the original file, so here we avoid using it
+                return getContainingDeclarationByPsi(symbol)
+            }
+        }
 
         when (symbol) {
             is KtLocalVariableSymbol,
@@ -222,6 +232,14 @@ internal class KtFirSymbolContainingDeclarationProvider(
         errorWithAttachment("Unsupported declaration origin ${symbol.origin} ${psi::class}") {
             withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
         }
+    }
+
+    private fun hasParentPsi(symbol: KtSymbol): Boolean {
+        val source = symbol.firSymbol.source?.takeIf { it.psi is KtElement } ?: return false
+
+        return getContainingPsiForFakeSource(source) != null
+                || isSyntheticSymbolWithParentSource(symbol)
+                || isOrdinarySymbolWithSource(symbol)
     }
 
     private fun isSyntheticSymbolWithParentSource(symbol: KtSymbol): Boolean {
