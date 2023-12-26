@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.utils
 
 internal typealias DeprecatedAndroidSourceSet = com.android.build.gradle.api.AndroidSourceSet
 internal typealias DeprecatedAndroidBaseVariant = com.android.build.gradle.api.BaseVariant
+internal typealias DeprecatedAndroidApplicationVariant = com.android.build.gradle.api.ApplicationVariant
 internal typealias DeprecatedAndroidLibraryVariant = com.android.build.gradle.api.LibraryVariant
 internal typealias DeprecatedAndroidTestVariant = com.android.build.gradle.api.TestVariant
 internal typealias DeprecatedAndroidUnitTestVariant = com.android.build.gradle.api.UnitTestVariant
