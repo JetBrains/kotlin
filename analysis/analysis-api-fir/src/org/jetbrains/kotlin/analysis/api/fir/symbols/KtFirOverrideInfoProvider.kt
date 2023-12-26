@@ -64,10 +64,9 @@ internal class KtFirOverrideInfoProvider(
 
     override fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol? {
         require(symbol is KtFirSymbol<*>)
-        val firDeclaration = symbol.firSymbol.fir as FirCallableDeclaration
-        val containingClass =
-            unwrapFakeOverrides(firDeclaration).containingClassLookupTag()?.toSymbol(rootModuleSession) ?: return null
-        return analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(containingClass.fir.symbol) as? KtClassOrObjectSymbol
+        val unwrappedFirSymbol = unwrapFakeOverrides(symbol.firSymbol.fir as FirCallableDeclaration)
+        val unwrappedKtSymbol = analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(unwrappedFirSymbol.symbol)
+        return with(analysisSession) { unwrappedKtSymbol.getContainingSymbol() as? KtClassOrObjectSymbol }
     }
 
     override fun unwrapFakeOverrides(symbol: KtCallableSymbol): KtCallableSymbol {
