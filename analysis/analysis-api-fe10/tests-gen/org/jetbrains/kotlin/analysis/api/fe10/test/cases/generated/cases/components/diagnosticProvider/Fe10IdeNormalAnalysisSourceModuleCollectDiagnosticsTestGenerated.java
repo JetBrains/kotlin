@@ -59,6 +59,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
     }
 
     @Test
+    @TestMetadata("delegationToLibraryInterface.kt")
+    public void testDelegationToLibraryInterface() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/delegationToLibraryInterface.kt");
+    }
+
+    @Test
     @TestMetadata("duplicatedCallableWithImplicitType.kt")
     public void testDuplicatedCallableWithImplicitType() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/duplicatedCallableWithImplicitType.kt");
