@@ -4,12 +4,21 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.project
+import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
+import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 private enum class TestProperty(shortName: String) {
     // Use a separate Gradle property to pass Kotlin/Native home to tests: "kotlin.internal.native.test.nativeHome".
     // Don't use "kotlin.native.home" and similar properties for this purpose, as these properties may have undesired
     // effect on other Gradle tasks (ex: :kotlin-native:dist) that might be executed along with test task.
+    // An exceptional usecase might be:
+    //   continuous integration on TeamCity, not building full bundle for testing.
+    //   "kotlin.native.home" should be set to same path as "kotlin.internal.native.test.nativeHome".
+    //   This allows to build dependencies(cross runtime libs and needed platform libs) and install them into a distribution under test.
     KOTLIN_NATIVE_HOME("nativeHome"),
     COMPILER_CLASSPATH("compilerClasspath"),
     COMPILER_PLUGINS("compilerPlugins"),
@@ -45,9 +54,10 @@ private sealed class ComputedTestProperty {
 private class ComputedTestProperties(private val task: Test) {
     private val computedProperties = arrayListOf<ComputedTestProperty>()
 
-    fun Project.compute(property: TestProperty, defaultValue: () -> String? = { null }) {
-        val gradleValue = readFromGradle(property)
-        computedProperties += ComputedTestProperty.Normal(property.fullName, gradleValue ?: defaultValue())
+    fun Project.compute(property: TestProperty, defaultValue: () -> String? = { null }): String? {
+        val value = readFromGradle(property) ?: defaultValue()
+        computedProperties += ComputedTestProperty.Normal(property.fullName, value)
+        return value
     }
 
     fun Project.computeLazy(property: TestProperty, defaultLazyValue: () -> Lazy<String?>) {
@@ -132,17 +142,9 @@ fun Project.nativeTest(
         // Compute test properties in advance. Make sure that the necessary dependencies are settled.
         // But do not resolve any configurations until the execution phase.
         val computedTestProperties = ComputedTestProperties {
-            compute(KOTLIN_NATIVE_HOME) {
-                val testTarget = readFromGradle(TEST_TARGET)
-                if (testTarget != null) {
-                    dependsOn(":kotlin-native:${testTarget}CrossDist")
-                    if (requirePlatformLibs) dependsOn(":kotlin-native:${testTarget}PlatformLibs")
-                } else {
-                    dependsOn(":kotlin-native:dist")
-                    if (requirePlatformLibs) dependsOn(":kotlin-native:distPlatformLibs")
-                }
+            val kotlinNativeHome = compute(KOTLIN_NATIVE_HOME) {
                 project(":kotlin-native").projectDir.resolve("dist").absolutePath
-            }
+            }!!
 
             computeLazy(COMPILER_CLASSPATH) {
                 val customNativeHome = readFromGradle(KOTLIN_NATIVE_HOME)
@@ -184,7 +186,7 @@ fun Project.nativeTest(
             }
 
             // Pass Gradle properties as JVM properties so test process can read them.
-            compute(TEST_TARGET)
+            val testTarget = compute(TEST_TARGET)
             compute(TEST_MODE)
             compute(COMPILE_ONLY)
             compute(OPTIMIZATION_MODE)
@@ -192,12 +194,24 @@ fun Project.nativeTest(
             compute(GC_TYPE)
             compute(GC_SCHEDULER)
             compute(ALLOCATOR)
-            compute(CACHE_MODE)
+            val cacheMode = compute(CACHE_MODE)
             compute(EXECUTION_TIMEOUT)
             compute(SANITIZER)
 
             // Pass whether tests are running at TeamCity.
             computePrivate(TEAMCITY) { kotlinBuildProperties.isTeamcityBuild.toString() }
+
+            if (testTarget != null) {
+                dependsOn(":kotlin-native:${testTarget}CrossDist")
+                if (requirePlatformLibs) {
+                    val konanTarget = KonanTarget.predefinedTargets[testTarget]
+                    check (konanTarget != null) { "Unknown target: $testTarget" }
+                    platformLibsForTesting(kotlinNativeHome, konanTarget, cacheMode).forEach { dependsOn(it) }
+                }
+            } else {
+                dependsOn(":kotlin-native:dist")
+                if (requirePlatformLibs) platformLibsForTesting(kotlinNativeHome, HostManager.host, cacheMode).forEach { dependsOn(it) }
+            }
         }
 
         // Pass the current Gradle task name so test can use it in logging.
@@ -233,4 +247,34 @@ fun Project.nativeTest(
             )
         }
     body()
+}
+
+private fun Project.platformLibsForTesting(kotlinNativeHome: String, target: KonanTarget, cacheMode: String?): List<String> {
+    val cacheableTargets: Set<KonanTarget> = Distribution(kotlinNativeHome).properties
+        .resolvablePropertyList("cacheableTargets", HostManager.hostName)
+        .map { KonanTarget.predefinedTargets.getValue(it) }
+        .toSet()
+
+    val targetIsCacheable = target in cacheableTargets
+    val isCacheModeEverywhere = cacheMode == "STATIC_EVERYWHERE" || cacheMode == "STATIC_PER_FILE_EVERYWHERE"
+    val dependsOnTaskSuffix = if (isCacheModeEverywhere && targetIsCacheable) "Cache" else ""
+    if (isCacheModeEverywhere && !targetIsCacheable) {
+        logger.warn("No cache support for test target $target at host target ${HostManager.host}")
+    }
+    // TODO: maybe detect needed platforms by scanning import in test sources, like old testinfra does.
+    val commonPlatformLibs = listOfNotNull(
+        "posix",
+        "zlib",
+        "iconv".takeIf { target == HostManager.host },
+    )
+    val applePlatformLibs = listOfNotNull(
+        "objc",
+        "darwin",
+        "Foundation",
+        "CoreGraphics",
+        "AppKit".takeIf { target.family == Family.OSX }, // for tests interop_kt55653 and interop_objc_kt56402
+        "UIKit".takeIf { target.family != Family.OSX }, // for test interop_kt40426
+    ).takeIf { target.family.isAppleFamily }.orEmpty()
+
+    return (commonPlatformLibs + applePlatformLibs).map { ":kotlin-native:platformLibs:${target.name}-$it$dependsOnTaskSuffix" }
 }
