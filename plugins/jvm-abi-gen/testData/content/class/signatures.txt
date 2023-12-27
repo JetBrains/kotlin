@@ -11,12 +11,12 @@ public class test/BaseClass {
     public final static @org.jetbrains.annotations.NotNull field Companion: test.BaseClass$Companion
     public final static field basePublicConst: int
     public method <init>(): void
-    public method getBaseClassPublicVal(): int
+    public final method baseClassInternalFun$main(): int
+    protected final method baseClassProtectedFun(): int
     public method baseClassPublicFun(): int
     public final method getBaseClassInternalVal$main(): int
-    public final method baseClassInternalFun$main(): int
     protected final method getBaseClassProtectedVal(): int
-    protected final method baseClassProtectedFun(): int
+    public method getBaseClassPublicVal(): int
 }
 @kotlin.Metadata
 public final class test/Class$NestedInnerClass$NestedNestedInnerClass {

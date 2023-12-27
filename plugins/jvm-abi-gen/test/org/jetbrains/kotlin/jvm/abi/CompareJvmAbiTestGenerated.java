@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.jvm.abi;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -88,6 +88,16 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
     @TestMetadata("declarationOrderPrivateInline")
     public void testDeclarationOrderPrivateInline() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderPrivateInline/");
+    }
+
+    @TestMetadata("fieldOrder")
+    public void testFieldOrder() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/fieldOrder/");
+    }
+
+    @TestMetadata("funOrder")
+    public void testFunOrder() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/funOrder/");
     }
 
     @TestMetadata("functionBody")

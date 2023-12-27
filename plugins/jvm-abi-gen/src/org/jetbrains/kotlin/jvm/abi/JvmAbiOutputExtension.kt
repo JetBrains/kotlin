@@ -18,6 +18,8 @@ import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.ClassRemapper
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.commons.Remapper
+import org.jetbrains.org.objectweb.asm.tree.FieldNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.File
 
 class JvmAbiOutputExtension(
@@ -76,7 +78,6 @@ class JvmAbiOutputExtension(
 
                     else -> /* abiInfo is AbiClassInfo.Stripped */ {
                         val methodInfo = (abiInfo as AbiClassInfo.Stripped).methodInfo
-                        val innerClassInfos = mutableMapOf<String, InnerClassInfo>()
                         val innerClassesToKeep = mutableSetOf<String>()
                         val writer = ClassWriter(0)
                         val remapper = ClassRemapper(writer, object : Remapper() {
@@ -84,6 +85,10 @@ class JvmAbiOutputExtension(
                                 internalName.also { innerClassesToKeep.add(it) }
                         })
                         ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION, remapper) {
+                            private val keptFields = mutableListOf<FieldNode>()
+                            private val keptMethods = mutableListOf<MethodNode>()
+                            private val innerClassInfos = mutableMapOf<String, InnerClassInfo>()
+
                             // Strip private fields.
                             override fun visitField(
                                 access: Int,
@@ -94,7 +99,9 @@ class JvmAbiOutputExtension(
                             ): FieldVisitor? {
                                 if (access and Opcodes.ACC_PRIVATE != 0)
                                     return null
-                                return super.visitField(access, name, descriptor, signature, value)
+                                return FieldNode(access, name, descriptor, signature, value).also {
+                                    keptFields += it
+                                }
                             }
 
                             override fun visitMethod(
@@ -104,15 +111,17 @@ class JvmAbiOutputExtension(
                                 signature: String?,
                                 exceptions: Array<out String>?
                             ): MethodVisitor? {
-                                val info = methodInfo[Method(name, descriptor)]
-                                    ?: return null
+                                val info = methodInfo[Method(name, descriptor)] ?: return null
 
-                                val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
-                                if (info == AbiMethodInfo.KEEP || access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) != 0) {
-                                    return if (removeDebugInfo) DebugInfoRemovingMethodVisitor(visitor) else visitor
+                                val node = MethodNode(access, name, descriptor, signature, exceptions).also {
+                                    keptMethods += it
                                 }
 
-                                return BodyStrippingMethodVisitor(visitor)
+                                if (info == AbiMethodInfo.KEEP || access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) != 0) {
+                                    return if (removeDebugInfo) DebugInfoRemovingMethodVisitor(node) else node
+                                }
+
+                                return BodyStrippingMethodVisitor(node)
                             }
 
                             override fun visitSource(source: String?, debug: String?) {
@@ -145,19 +154,22 @@ class JvmAbiOutputExtension(
                                 return abiMetadataProcessor(delegate)
                             }
 
-                            override fun visitEnd() {}
+                            override fun visitEnd() {
+                                // Output class members in sorted order so that changes in original ordering don't affect the ABI JAR.
+
+                                keptFields.sortedWith(compareBy(FieldNode::name, FieldNode::desc)).forEach { it.accept(cv) }
+                                keptMethods.sortedWith(compareBy(MethodNode::name, MethodNode::desc)).forEach { it.accept(cv) }
+
+                                innerClassesToKeep.addInnerClasses(innerClassInfos, internalName)
+                                innerClassesToKeep.addOuterClasses(innerClassInfos)
+
+                                for (name in innerClassesToKeep.sorted()) {
+                                    innerClassInfos[name]?.let { cv.visitInnerClass(it.name, it.outerName, it.innerName, it.access) }
+                                }
+
+                                super.visitEnd()
+                            }
                         }, 0)
-
-                        innerClassesToKeep.addInnerClasses(innerClassInfos, internalName)
-                        innerClassesToKeep.addOuterClasses(innerClassInfos)
-
-                        // Output classes in sorted order so that changes in original ordering due to method bodies, etc.
-                        // don't affect the ABI JAR.
-                        for (name in innerClassesToKeep.sorted()) {
-                            innerClassInfos[name]?.let { writer.visitInnerClass(it.name, it.outerName, it.innerName, it.access) }
-                        }
-
-                        writer.visitEnd()
 
                         SimpleOutputBinaryFile(outputFile.sourceFiles, outputFile.relativePath, writer.toByteArray())
                     }
