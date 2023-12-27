@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
+import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import javax.inject.Inject
 
@@ -326,9 +327,7 @@ abstract class KotlinCompile @Inject constructor(
                 usePreciseJavaTracking = usePreciseJavaTracking,
                 disableMultiModuleIC = disableMultiModuleIC,
                 multiModuleICSettings = multiModuleICSettings,
-                withAbiSnapshot = useKotlinAbiSnapshot.get(),
-                preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
-                keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),
+                icFeatures = makeIncrementalCompilationFeatures(),
             )
         } else null
 
@@ -464,6 +463,13 @@ abstract class KotlinCompile @Inject constructor(
         javaSourceFiles.from(*sources)
         scriptSourceFiles.from(*sources)
         super.setSource(*sources)
+    }
+
+    // override incremental compilation features, while withAbiSnapshot is JVM-only
+    override fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
+        return super.makeIncrementalCompilationFeatures().copy(
+            withAbiSnapshot = useKotlinAbiSnapshot.get(),
+        )
     }
 
     private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges = when {

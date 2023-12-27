@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import java.io.File
 import java.io.Serializable
@@ -76,9 +77,7 @@ class IncrementalCompilationOptions(
     val buildDir: File?,
 
     kotlinScriptExtensions: Array<String>? = null,
-    val withAbiSnapshot: Boolean = false,
-    val preciseCompilationResultsBackup: Boolean = false,
-    val keepIncrementalCompilationCachesInMemory: Boolean = false,
+    val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
 ) : CompilationOptions(
     compilerMode,
     targetPlatform,
@@ -88,7 +87,7 @@ class IncrementalCompilationOptions(
     kotlinScriptExtensions
 ) {
     companion object {
-        const val serialVersionUID: Long = 3
+        const val serialVersionUID: Long = 4
     }
 
     override fun toString(): String {
@@ -101,6 +100,7 @@ class IncrementalCompilationOptions(
                 "workingDir=$workingDir, " +
                 "multiModuleICSettings=$multiModuleICSettings, " +
                 "usePreciseJavaTracking=$usePreciseJavaTracking, " +
+                "icFeatures=$icFeatures, " +
                 "outputFiles=$outputFiles" +
                 ")"
     }

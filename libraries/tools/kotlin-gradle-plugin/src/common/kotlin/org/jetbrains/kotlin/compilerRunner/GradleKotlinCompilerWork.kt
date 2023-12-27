@@ -132,7 +132,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
     private fun collectStatTags(): Set<StatTag> {
         val statTags = HashSet<StatTag>()
-        config.incrementalCompilationEnvironment?.withAbiSnapshot?.ifTrue { statTags.add(StatTag.ABI_SNAPSHOT) }
+        config.incrementalCompilationEnvironment?.icFeatures?.withAbiSnapshot?.ifTrue { statTags.add(StatTag.ABI_SNAPSHOT) }
         if (config.incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
             statTags.add(StatTag.ARTIFACT_TRANSFORM)
         }
@@ -320,9 +320,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             rootProjectDir = icEnv.rootProjectDir,
             buildDir = icEnv.buildDir,
             kotlinScriptExtensions = config.kotlinScriptExtensions,
-            withAbiSnapshot = icEnv.withAbiSnapshot,
-            preciseCompilationResultsBackup = icEnv.preciseCompilationResultsBackup,
-            keepIncrementalCompilationCachesInMemory = icEnv.keepIncrementalCompilationCachesInMemory
+            icFeatures = icEnv.icFeatures,
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")

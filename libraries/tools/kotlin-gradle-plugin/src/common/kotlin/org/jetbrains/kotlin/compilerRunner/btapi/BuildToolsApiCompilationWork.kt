@@ -86,12 +86,14 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             val icEnv = workArguments.incrementalCompilationEnvironment
             val classpathChanges = icEnv?.classpathChanges
             if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+                // important detail: by using primitive-type single-field setters,
+                // we maintain compatibility of this KGP code with future BuildToolsApi implementations
                 val classpathSnapshotsConfig = jvmCompilationConfig.makeClasspathSnapshotBasedIncrementalCompilationConfiguration()
                     .setRootProjectDir(icEnv.rootProjectDir)
                     .setBuildDir(icEnv.buildDir)
                     .usePreciseJavaTracking(icEnv.usePreciseJavaTracking)
-                    .usePreciseCompilationResultsBackup(icEnv.preciseCompilationResultsBackup)
-                    .keepIncrementalCompilationCachesInMemory(icEnv.keepIncrementalCompilationCachesInMemory)
+                    .usePreciseCompilationResultsBackup(icEnv.icFeatures.preciseCompilationResultsBackup)
+                    .keepIncrementalCompilationCachesInMemory(icEnv.icFeatures.keepIncrementalCompilationCachesInMemory)
                     .useOutputDirs(workArguments.outputFiles)
                     .forceNonIncrementalMode(classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun)
                 val classpathSnapshotsParameters = ClasspathSnapshotBasedIncrementalCompilationApproachParameters(

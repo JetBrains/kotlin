@@ -32,7 +32,9 @@ class IncrementalJvmCompilerTestRunner(
     modulesApiHistory,
     kotlinSourceFilesExtensions,
     classpathChanges,
-    withAbiSnapshot
+    icFeatures = IncrementalCompilationFeatures(
+        withAbiSnapshot = withAbiSnapshot
+    ),
 ) {
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments): IncrementalJvmCachesManager =
         object : IncrementalJvmCachesManager(

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.file.*
-import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.UsesBuildIdProviderService
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
@@ -293,6 +293,17 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             libraries,
             commonSourceSet
         )
+
+    /**
+     * Entry point for getting IC feature toggles in Gradle. Child classes should override it
+     * if they have a platform-specific Input.
+     */
+    protected open fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
+        return IncrementalCompilationFeatures(
+            preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
+            keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),
+        )
+    }
 
     private fun executeImpl(
         inputChanges: InputChanges,

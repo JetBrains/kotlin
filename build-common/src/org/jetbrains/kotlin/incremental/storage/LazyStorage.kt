@@ -153,7 +153,7 @@ fun <KEY, VALUE> createPersistentStorage(
     icContext: IncrementalCompilationContext,
 ): PersistentStorage<KEY, VALUE> {
     return LazyStorage(storageFile, keyDescriptor, valueExternalizer).let { storage ->
-        if (icContext.keepIncrementalCompilationCachesInMemory) {
+        if (icContext.icFeatures.keepIncrementalCompilationCachesInMemory) {
             InMemoryStorage(storage).also {
                 icContext.transaction.registerInMemoryStorageWrapper(it)
             }
@@ -170,7 +170,7 @@ fun <KEY, E> createAppendablePersistentStorage(
     icContext: IncrementalCompilationContext,
 ): AppendablePersistentStorage<KEY, E> {
     return AppendableLazyStorage(storageFile, keyDescriptor, elementExternalizer).let { storage ->
-        if (icContext.keepIncrementalCompilationCachesInMemory) {
+        if (icContext.icFeatures.keepIncrementalCompilationCachesInMemory) {
             AppendableInMemoryStorage(storage).also {
                 icContext.transaction.registerInMemoryStorageWrapper(it)
             }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
+import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.incremental.runWithin
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.junit.jupiter.api.Assertions.*
@@ -126,7 +127,9 @@ class InMemoryStorageTest {
         val fileToPathConverter = RelativeFileToPathConverter(storageFile)
         val icContext = IncrementalCompilationContext(
             pathConverterForSourceFiles = fileToPathConverter,
-            keepIncrementalCompilationCachesInMemory = useInMemoryWrapper
+            icFeatures = IncrementalCompilationFeatures(
+                keepIncrementalCompilationCachesInMemory = useInMemoryWrapper,
+            ),
         )
         icContext.transaction.runWithin { transaction ->
             val lookupMap = LookupMap(storageFile, icContext)

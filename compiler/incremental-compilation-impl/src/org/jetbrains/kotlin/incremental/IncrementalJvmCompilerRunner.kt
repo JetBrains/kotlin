@@ -68,24 +68,20 @@ open class IncrementalJvmCompilerRunner(
     private val modulesApiHistory: ModulesApiHistory,
     override val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     private val classpathChanges: ClasspathChanges,
-    withAbiSnapshot: Boolean = false,
-    preciseCompilationResultsBackup: Boolean = false,
-    keepIncrementalCompilationCachesInMemory: Boolean = false,
+    icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
     reporter,
     buildHistoryFile = buildHistoryFile,
     outputDirs = outputDirs,
-    withAbiSnapshot = withAbiSnapshot,
-    preciseCompilationResultsBackup = preciseCompilationResultsBackup,
-    keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory,
+    icFeatures = icFeatures,
 ) {
     override val shouldTrackChangesInLookupCache
         get() = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
 
     override val shouldStoreFullFqNamesInLookupCache
-        get() = withAbiSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
+        get() = icFeatures.withAbiSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
         IncrementalJvmCachesManager(icContext, args.destination?.let { File(it) }, cacheDirectory)
@@ -133,7 +129,7 @@ open class IncrementalJvmCompilerRunner(
         classpathAbiSnapshots: Map<String, AbiSnapshot>
     ): CompilationMode {
         return try {
-            calculateSourcesToCompileImpl(caches, changedFiles, args, messageCollector, classpathAbiSnapshots, withAbiSnapshot)
+            calculateSourcesToCompileImpl(caches, changedFiles, args, messageCollector, classpathAbiSnapshots, icFeatures.withAbiSnapshot)
         } finally {
             this.messageCollector.flush(messageCollector)
             this.messageCollector.clear()

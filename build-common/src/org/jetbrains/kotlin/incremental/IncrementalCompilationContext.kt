@@ -23,12 +23,7 @@ class IncrementalCompilationContext(
      * Controls whether changes in lookup cache should be tracked. Required for the classpath snapshots based IC approach
      */
     val trackChangesInLookupCache: Boolean = false,
-    /**
-     * Controls whether any changes should be propagated to FS until we decide that the compilation is successful or not
-     *
-     * Required for optimizing Gradle side outputs backup
-     */
-    val keepIncrementalCompilationCachesInMemory: Boolean = false,
+    val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
 ) {
     @Deprecated("This constructor is scheduled to be removed. KSP is using it")
     constructor(
@@ -45,7 +40,9 @@ class IncrementalCompilationContext(
         transaction,
         reporter,
         trackChangesInLookupCache,
-        keepIncrementalCompilationCachesInMemory
+        IncrementalCompilationFeatures.DEFAULT_CONFIGURATION.copy(
+            keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory
+        ),
     )
 
     val fileDescriptorForSourceFiles: KeyDescriptor<File> = pathConverterForSourceFiles.getFileDescriptor()

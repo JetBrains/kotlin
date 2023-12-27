@@ -53,9 +53,7 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
                     rootProjectDir = options.rootProjectDir,
                     buildDir = options.buildDir,
                     kotlinScriptExtensions = ktsExtensionsAsArray,
-                    withAbiSnapshot = false,
-                    preciseCompilationResultsBackup = options.preciseCompilationResultsBackupEnabled,
-                    keepIncrementalCompilationCachesInMemory = options.incrementalCompilationCachesKeptInMemory,
+                    icFeatures = options.extractIncrementalCompilationFeatures(),
                 )
             }
             else -> CompilationOptions(

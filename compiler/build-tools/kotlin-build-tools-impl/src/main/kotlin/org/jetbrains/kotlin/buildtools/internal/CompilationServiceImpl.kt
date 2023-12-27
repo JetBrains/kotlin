@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacade
 import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
+import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.extractKotlinSourcesFromFreeCompilerArguments
@@ -153,9 +154,7 @@ internal object CompilationServiceImpl : CompilationService {
                     outputDirs = options.outputDirs,
                     kotlinSourceFilesExtensions = kotlinFilenameExtensions,
                     classpathChanges = classpathChanges,
-                    withAbiSnapshot = false,
-                    preciseCompilationResultsBackup = options.preciseCompilationResultsBackupEnabled,
-                    keepIncrementalCompilationCachesInMemory = options.incrementalCompilationCachesKeptInMemory
+                    icFeatures = options.extractIncrementalCompilationFeatures(),
                 )
                 val rootProjectDir = options.rootProjectDir
                 val buildDir = options.buildDir

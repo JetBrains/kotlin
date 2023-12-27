@@ -89,24 +89,20 @@ class IncrementalJsCompilerRunner(
     buildHistoryFile: File?,
     private val modulesApiHistory: ModulesApiHistory,
     private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
-    withAbiSnapshot: Boolean = false,
-    preciseCompilationResultsBackup: Boolean = false,
-    keepIncrementalCompilationCachesInMemory: Boolean = false,
+    icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
 ) : IncrementalCompilerRunner<K2JSCompilerArguments, IncrementalJsCachesManager>(
     workingDir,
     "caches-js",
     reporter,
     buildHistoryFile = buildHistoryFile,
     outputDirs = null,
-    withAbiSnapshot = withAbiSnapshot,
-    preciseCompilationResultsBackup = preciseCompilationResultsBackup,
-    keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory,
+    icFeatures = icFeatures,
 ) {
     override val shouldTrackChangesInLookupCache
         get() = false
 
     override val shouldStoreFullFqNamesInLookupCache
-        get() = withAbiSnapshot
+        get() = icFeatures.withAbiSnapshot
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JSCompilerArguments) =
         IncrementalJsCachesManager(icContext, if (!args.isIrBackendEnabled()) JsSerializerProtocol else KlibMetadataSerializerProtocol, cacheDirectory)
@@ -128,7 +124,7 @@ class IncrementalJsCompilerRunner(
         if (buildHistoryFile == null) {
             error("The build is configured to use the build-history based IC approach, but doesn't specify the buildHistoryFile")
         }
-        if (!withAbiSnapshot && !buildHistoryFile.isFile) {
+        if (!icFeatures.withAbiSnapshot && !buildHistoryFile.isFile) {
             return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
         }
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)

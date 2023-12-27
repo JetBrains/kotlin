@@ -72,9 +72,11 @@ abstract class IncrementalCompilerRunner<
      */
     private val outputDirs: Collection<File>?,
 
-    protected val withAbiSnapshot: Boolean = false,
-    private val preciseCompilationResultsBackup: Boolean = false,
-    private val keepIncrementalCompilationCachesInMemory: Boolean = false,
+    /**
+     * Various options. Boolean flags, both stable and experimental, should be added there.
+     * Non-trivial configuration should NOT be added there.
+     */
+    protected val icFeatures: IncrementalCompilationFeatures,
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
@@ -96,7 +98,7 @@ abstract class IncrementalCompilerRunner<
         reporter = reporter,
         trackChangesInLookupCache = shouldTrackChangesInLookupCache,
         storeFullFqNamesInLookupCache = shouldStoreFullFqNamesInLookupCache,
-        keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory,
+        icFeatures = icFeatures,
     )
 
     protected abstract val shouldTrackChangesInLookupCache: Boolean
@@ -201,7 +203,7 @@ abstract class IncrementalCompilerRunner<
                     return ICResult.Failed(IC_FAILED_TO_GET_CHANGED_FILES, e)
                 }
 
-                val classpathAbiSnapshot = if (withAbiSnapshot) getClasspathAbiSnapshot(args) else null
+                val classpathAbiSnapshot = if (icFeatures.withAbiSnapshot) getClasspathAbiSnapshot(args) else null
 
                 // Step 2: Compute files to recompile
                 val compilationMode = try {
@@ -216,7 +218,7 @@ abstract class IncrementalCompilerRunner<
                     return ICResult.RequiresRebuild(compilationMode.reason)
                 }
 
-                val abiSnapshotData = if (withAbiSnapshot) {
+                val abiSnapshotData = if (icFeatures.withAbiSnapshot) {
                     if (!abiSnapshotFile.exists()) {
                         reporter.debug { "Jar snapshot file does not exist: ${abiSnapshotFile.path}" }
                         return ICResult.RequiresRebuild(NO_ABI_SNAPSHOT)
@@ -276,7 +278,7 @@ abstract class IncrementalCompilerRunner<
             if (trackChangedFiles) {
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
             }
-            val abiSnapshotData = if (withAbiSnapshot) {
+            val abiSnapshotData = if (icFeatures.withAbiSnapshot) {
                 AbiSnapshotData(snapshot = AbiSnapshotImpl(mutableMapOf()), classpathAbiSnapshot = getClasspathAbiSnapshot(args))
             } else null
 
@@ -405,7 +407,7 @@ abstract class IncrementalCompilerRunner<
         return exitCode
     }
 
-    private fun createTransaction() = if (preciseCompilationResultsBackup) {
+    private fun createTransaction() = if (icFeatures.preciseCompilationResultsBackup) {
         RecoverableCompilationTransaction(reporter, Files.createTempDirectory("kotlin-backups"))
     } else {
         NonRecoverableCompilationTransaction()
@@ -519,7 +521,7 @@ abstract class IncrementalCompilerRunner<
                 updateCaches(services, caches, generatedFiles, changesCollector)
             }
             if (compilationMode is CompilationMode.Rebuild) {
-                if (withAbiSnapshot) {
+                if (icFeatures.withAbiSnapshot) {
                     abiSnapshotData!!.snapshot.protos.putAll(changesCollector.protoDataChanges())
                 }
                 break
@@ -552,7 +554,7 @@ abstract class IncrementalCompilerRunner<
             buildDirtyFqNames.addAll(dirtyClassFqNames)
 
             //update
-            if (withAbiSnapshot) {
+            if (icFeatures.withAbiSnapshot) {
                 //TODO(valtman) check method/ kts class remove
                 changesCollector.protoDataRemoved().forEach { abiSnapshotData!!.snapshot.protos.remove(it) }
                 abiSnapshotData!!.snapshot.protos.putAll(changesCollector.protoDataChanges())
@@ -564,7 +566,7 @@ abstract class IncrementalCompilerRunner<
                 BuildInfo.write(icContext, currentBuildInfo, lastBuildInfoFile)
 
                 //write abi snapshot
-                if (withAbiSnapshot) {
+                if (icFeatures.withAbiSnapshot) {
                     //TODO(valtman) check method/class remove
                     AbiSnapshotImpl.write(icContext, abiSnapshotData!!.snapshot, abiSnapshotFile)
                 }
