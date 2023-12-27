@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-
+// FIR_IDENTICAL
 import kotlin.test.*
 
 fun main(args: Array<String>) {

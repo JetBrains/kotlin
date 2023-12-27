@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ENTRY_POINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_A
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -320,8 +323,11 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, locatio
     return entryPoint
 }
 
-internal fun parseLLDBSpec(testDataFile: File): LLDBSessionSpec {
-    val specFileLocation = testDataFile.absolutePath.removeSuffix(testDataFile.extension) + "txt"
+internal fun parseLLDBSpec(testDataFile: File, registeredDirectives: RegisteredDirectives, settings: Settings): LLDBSessionSpec {
+    val firIdentical = FIR_IDENTICAL in registeredDirectives
+    val firSpecificExt = if (settings.get<PipelineType>() == PipelineType.K2 && !firIdentical) "fir." else ""
+    val specFilePathWithoutExtension = testDataFile.absolutePath.removeSuffix(testDataFile.extension)
+    val specFileLocation = "$specFilePathWithoutExtension${firSpecificExt}txt"
     val specFile = File(specFileLocation)
     return try {
         LLDBSessionSpec.parse(specFile.readText())

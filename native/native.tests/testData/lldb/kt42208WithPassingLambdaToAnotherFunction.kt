@@ -1,5 +1,8 @@
 // KIND: STANDALONE_LLDB
 // FREE_COMPILER_ARGS: -XXLanguage:+UnitConversionsOnArbitraryExpressions
+// IGNORE_BACKEND_K2: NATIVE
+// FIR_IDENTICAL
+// Not really `FIR_IDENTICAL`, because we ignore thois test for FIR, but with this directive presented we don't need to create separate `fir.txt` file for dump.
 
 // FILE: kt42208-1.kt
 fun main() {
