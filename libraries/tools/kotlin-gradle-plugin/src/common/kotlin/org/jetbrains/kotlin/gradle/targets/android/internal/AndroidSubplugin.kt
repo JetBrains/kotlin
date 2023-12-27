@@ -7,9 +7,6 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.variant.TestVariantData
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -21,6 +18,7 @@ import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.*
 import org.w3c.dom.Document
 import java.io.File
 import java.util.concurrent.Callable
@@ -82,17 +80,23 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
         val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)
 
         if (androidExtensionsExtension.isExperimental) {
+            @Suppress("UNCHECKED_CAST")
             return applyExperimental(
-                kotlinCompilation.compileKotlinTaskProvider, androidExtension, androidExtensionsExtension,
-                project, kotlinCompilation.androidVariant
+                kotlinCompilation.compileTaskProvider as TaskProvider<KotlinCompile>,
+                androidExtension,
+                androidExtensionsExtension,
+                project,
+                kotlinCompilation.androidVariant
             )
         }
 
         val sourceSets = androidExtension.sourceSets
 
         val pluginOptions = arrayListOf<SubpluginOption>()
-        pluginOptions += SubpluginOption("features",
-                                         AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName })
+        pluginOptions += SubpluginOption(
+            "features",
+            AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName }
+        )
 
         val mainSourceSet = sourceSets.getByName("main")
         val manifestFile = mainSourceSet.manifest.srcFile
@@ -104,7 +108,7 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
         }
         pluginOptions += SubpluginOption("package", applicationPackage)
 
-        fun addVariant(sourceSet: AndroidSourceSet) {
+        fun addVariant(@Suppress("TYPEALIAS_EXPANSION_DEPRECATION") sourceSet: DeprecatedAndroidSourceSet) {
             val optionValue = lazy {
                 sourceSet.name + ';' + sourceSet.res.srcDirs.joinToString(";") { it.absolutePath }
             }
@@ -115,7 +119,8 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
                     FilesSubpluginOption("resDirs", project.files(Callable { sourceSet.res.srcDirs }))
                 )
             )
-            kotlinCompilation.compileKotlinTaskProvider.configure {
+            @Suppress("UNCHECKED_CAST")
+            (kotlinCompilation.compileTaskProvider as TaskProvider<KotlinCompile>).configure {
                 it.androidLayoutResourceFiles.from(
                     sourceSet.res.getSourceDirectoryTrees().layoutDirectories
                 )
@@ -212,16 +217,21 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
         return project.provider { wrapPluginOptions(pluginOptions, "configuration") }
     }
 
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
     private fun getVariantComponentNames(flavorData: Any?): VariantComponentNames? = when (flavorData) {
         is TestVariantData -> getVariantComponentNames(flavorData.testedVariantData)
-        is TestVariant -> getVariantComponentNames(flavorData.testedVariant)
-        is BaseVariant -> VariantComponentNames(flavorData.name, flavorData.flavorName, flavorData.buildType.name)
+        is DeprecatedAndroidTestVariant -> getVariantComponentNames(flavorData.testedVariant)
+        is DeprecatedAndroidBaseVariant -> VariantComponentNames(flavorData.name, flavorData.flavorName, flavorData.buildType.name)
         else -> null
     }
 
     private data class VariantComponentNames(val variantName: String, val flavorName: String, val buildTypeName: String)
 
-    private fun getApplicationPackage(androidExtension: BaseExtension, project: Project, mainSourceSet: AndroidSourceSet): String {
+    private fun getApplicationPackage(
+        androidExtension: BaseExtension,
+        project: Project,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") mainSourceSet: DeprecatedAndroidSourceSet
+    ): String {
         val manifestFile = mainSourceSet.manifest.srcFile
         val applicationPackage = getApplicationPackage(androidExtension, manifestFile)
 
@@ -265,10 +275,10 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
 
         // Didn't find the namespace getter, or it was not set. Try parsing the
         // manifest to find the "package" attribute from there.
-        try {
-            return manifestFile.parseXml().documentElement.getAttribute("package")
+        return try {
+            manifestFile.parseXml().documentElement.getAttribute("package")
         } catch (e: Exception) {
-            return null
+            null
         }
     }
 
