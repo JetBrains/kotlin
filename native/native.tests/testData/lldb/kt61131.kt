@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: kt61131.txt
+
 // FILE: kt61131-1.kt
 class FooImpl : Foo {
     override fun bar() = "zzz"

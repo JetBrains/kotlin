@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.KIND
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.LLDB_TRACE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_REGEX
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_ARGS
@@ -134,12 +133,6 @@ internal object TestDirectives : SimpleDirectivesContainer() {
 
     val FREE_CINTEROP_ARGS by stringDirective(
         description = "Specify free CInterop tool arguments"
-    )
-
-    val LLDB_TRACE by stringDirective(
-        description = """
-            Specify a filename containing the LLDB commands and the patterns that
-             the output should match""".trimIndent(),
     )
 
     // TODO "MUTED_WHEN" directive should be supported not only in AbstractNativeSimpleTest, but also in other hierarchies
@@ -327,13 +320,13 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, locatio
     return entryPoint
 }
 
-internal fun parseLLDBSpec(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): LLDBSessionSpec {
-    val specFile = parseFileBasedDirective(baseDir, LLDB_TRACE, registeredDirectives, location)
-        ?: fail { "$location: An LLDB session specification must be provided" }
+internal fun parseLLDBSpec(testDataFile: File): LLDBSessionSpec {
+    val specFileLocation = testDataFile.absolutePath.removeSuffix(testDataFile.extension) + "txt"
+    val specFile = File(specFileLocation)
     return try {
         LLDBSessionSpec.parse(specFile.readText())
     } catch (e: Exception) {
-        Assertions.fail<Nothing>("$location: Cannot parse LLDB session specification: " + e.message, e)
+        Assertions.fail<Nothing>("${testDataFile.absolutePath}: Cannot parse LLDB session specification: " + e.message, e)
     }
 }
 
