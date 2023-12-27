@@ -2098,6 +2098,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
             }
 
             @Test
+            @TestMetadata("simpleMultiModule.kt")
+            public void testSimpleMultiModule() throws Exception {
+                runTest("native/native.tests/testData/codegen/initializers/files/simpleMultiModule.kt");
+            }
+
+            @Test
             @TestMetadata("workers1.kt")
             public void testWorkers1() throws Exception {
                 runTest("native/native.tests/testData/codegen/initializers/files/workers1.kt");
@@ -2143,6 +2149,43 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
                 @TestMetadata("threadLocal2.kt")
                 public void testThreadLocal2() throws Exception {
                     runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/threadLocal2.kt");
+                }
+
+                @Nested
+                @TestMetadata("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule")
+                @TestDataPath("$PROJECT_ROOT")
+                @Tag("frontend-fir")
+                @FirPipeline()
+                @UseExtTestCaseGroupProvider()
+                public class MultiModule {
+                    @Test
+                    public void testAllFilesPresentInMultiModule() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                    }
+
+                    @Test
+                    @TestMetadata("global1.kt")
+                    public void testGlobal1() throws Exception {
+                        runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule/global1.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("global2.kt")
+                    public void testGlobal2() throws Exception {
+                        runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule/global2.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("threadLocal1.kt")
+                    public void testThreadLocal1() throws Exception {
+                        runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule/threadLocal1.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("threadLocal2.kt")
+                    public void testThreadLocal2() throws Exception {
+                        runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule/threadLocal2.kt");
+                    }
                 }
             }
         }
