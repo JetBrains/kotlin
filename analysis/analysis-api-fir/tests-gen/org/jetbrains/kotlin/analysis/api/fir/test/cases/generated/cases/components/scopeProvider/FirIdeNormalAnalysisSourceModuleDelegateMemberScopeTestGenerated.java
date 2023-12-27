@@ -59,6 +59,12 @@ public class FirIdeNormalAnalysisSourceModuleDelegateMemberScopeTestGenerated ex
     }
 
     @Test
+    @TestMetadata("simpleLibrary.kt")
+    public void testSimpleLibrary() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/simpleLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("withImplicitType.kt")
     public void testWithImplicitType() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/delegatedMemberScope/withImplicitType.kt");

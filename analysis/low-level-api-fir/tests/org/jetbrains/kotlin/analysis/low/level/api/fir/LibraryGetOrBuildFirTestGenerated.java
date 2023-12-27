@@ -25,6 +25,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     }
 
     @Test
+    @TestMetadata("delegate.kt")
+    public void testDelegate() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/delegate.kt");
+    }
+
+    @Test
     @TestMetadata("enumEntry.kt")
     public void testEnumEntry() throws Exception {
         runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/enumEntry.kt");

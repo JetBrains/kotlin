@@ -53,6 +53,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
     }
 
     @Test
+    @TestMetadata("delegateInterface.kt")
+    public void testDelegateInterface() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/delegateInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("delegateInterfaceLibrary.kt")
+    public void testDelegateInterfaceLibrary() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/delegateInterfaceLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("enumClass.kt")
     public void testEnumClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/enumClass.kt");

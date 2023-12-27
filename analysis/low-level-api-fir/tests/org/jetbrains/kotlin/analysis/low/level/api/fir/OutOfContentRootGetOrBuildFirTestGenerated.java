@@ -1248,6 +1248,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("delegate.kt")
+        public void testDelegate() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/delegate.kt");
+        }
+
+        @Test
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/enum.kt");

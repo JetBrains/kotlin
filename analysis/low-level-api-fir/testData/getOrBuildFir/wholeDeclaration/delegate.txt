@@ -1,0 +1,50 @@
+KT element: KtClass
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /I.$$delegate_0}] class I : R|A| {
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/I.p] p: R|A|): R|I| {
+        super<R|kotlin/Any|>()
+    }
+
+    private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|A| = R|<local>/p|
+
+    private final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val p: R|A| = R|<local>/p|
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] get(): R|A|
+
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] delegate.kt
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /I.$$delegate_0}] class I : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/I.p] p: R|A|): R|I| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|A| = R|<local>/p|
+
+        private final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val p: R|A| = R|<local>/p|
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] get(): R|A|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] var R|kotlin/Int|.zoo: R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] set([ResolvedTo(STATUS)] value: R|kotlin/Unit|): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(STATUS)] fun R|kotlin/Int|.smth(): R|kotlin/Short|
+
+        public abstract [ResolvedTo(STATUS)] val foo: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public abstract [ResolvedTo(STATUS)] var bar: R|kotlin/Long|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Long|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] set([ResolvedTo(STATUS)] value: R|kotlin/Long|): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(STATUS)] val R|kotlin/Int|.doo: R|kotlin/String|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/String|
+
+    }
