@@ -322,3 +322,6 @@
 -keepclassmembers class com.intellij.lang.jvm.JvmParameter {
     com.intellij.lang.jvm.types.JvmType getType();
 }
+
+-dontwarn kotlinx.serialization.**
+
