@@ -15,7 +15,10 @@ import org.jetbrains.org.objectweb.asm.Opcodes
  * Wrap the visitor for a Kotlin Metadata annotation to strip out private and local
  * functions, properties, and type aliases as well as local delegated properties.
  */
-fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisitor =
+fun abiMetadataProcessor(
+    annotationVisitor: AnnotationVisitor,
+    removeDataClassCopyIfConstructorIsPrivate: Boolean,
+): AnnotationVisitor =
     kotlinClassHeaderVisitor { header ->
         // kotlinx-metadata only supports writing Kotlin metadata of version >= 1.4, so we need to
         // update the metadata version if we encounter older metadata annotations.
@@ -29,7 +32,7 @@ fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisito
             KotlinClassMetadata.transform(header) { metadata ->
                 when (metadata) {
                     is KotlinClassMetadata.Class -> {
-                        metadata.kmClass.removePrivateDeclarations()
+                        metadata.kmClass.removePrivateDeclarations(removeDataClassCopyIfConstructorIsPrivate)
                     }
                     is KotlinClassMetadata.FileFacade -> {
                         metadata.kmPackage.removePrivateDeclarations()
@@ -146,21 +149,23 @@ private fun AnnotationVisitor.visitKotlinMetadata(header: Metadata) {
     visitEnd()
 }
 
-private fun KmClass.removePrivateDeclarations() {
+private fun KmClass.removePrivateDeclarations(removeCopyAlongWithConstructor: Boolean) {
     constructors.removeIf { it.visibility.isPrivate }
-    (this as KmDeclarationContainer).removePrivateDeclarations()
+    (this as KmDeclarationContainer).removePrivateDeclarations(
+        copyFunShouldBeDeleted(removeCopyAlongWithConstructor)
+    )
     localDelegatedProperties.clear()
     // TODO: do not serialize private type aliases once KT-17229 is fixed.
 }
 
 private fun KmPackage.removePrivateDeclarations() {
-    (this as KmDeclarationContainer).removePrivateDeclarations()
+    (this as KmDeclarationContainer).removePrivateDeclarations(false)
     localDelegatedProperties.clear()
     // TODO: do not serialize private type aliases once KT-17229 is fixed.
 }
 
-private fun KmDeclarationContainer.removePrivateDeclarations() {
-    functions.removeIf { it.visibility.isPrivate }
+private fun KmDeclarationContainer.removePrivateDeclarations(copyFunShouldBeDeleted: Boolean) {
+    functions.removeIf { it.visibility.isPrivate || (copyFunShouldBeDeleted && it.name == "copy") }
     properties.removeIf { it.visibility.isPrivate }
 
     functions.sortWith(compareBy(KmFunction::name, { it.signature.toString() }))
@@ -173,6 +178,9 @@ private fun KmDeclarationContainer.removePrivateDeclarations() {
         }
     }
 }
+
+private fun KmClass.copyFunShouldBeDeleted(removeDataClassCopy: Boolean): Boolean =
+    removeDataClassCopy && isData && constructors.none { !it.isSecondary }
 
 private val Visibility.isPrivate: Boolean
     get() = this == Visibility.PRIVATE || this == Visibility.PRIVATE_TO_THIS || this == Visibility.LOCAL
