@@ -12,4 +12,6 @@ object JvmAbiConfigurationKeys {
         CompilerConfigurationKey.create(JvmAbiCommandLineProcessor.OUTPUT_PATH_OPTION.description)
     val REMOVE_DEBUG_INFO: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create(JvmAbiCommandLineProcessor.REMOVE_DEBUG_INFO_OPTION.description)
+    val REMOVE_COPY_ALONG_WITH_CONSTRUCTOR: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create(JvmAbiCommandLineProcessor.REMOVE_COPY_ALONG_WITH_CONSTRUCTOR_OPTION.description)
 }

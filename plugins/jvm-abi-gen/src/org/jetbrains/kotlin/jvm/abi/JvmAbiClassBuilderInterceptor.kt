@@ -5,25 +5,16 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGenerator
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.ClassBuilderFactory
-import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
-import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -64,7 +55,9 @@ sealed class AbiClassInfo {
  * be stripped. However, if `f` is not callable directly, we only generate a
  * single inline method `f` which should be kept.
  */
-class JvmAbiClassBuilderInterceptor : ClassGeneratorExtension {
+class JvmAbiClassBuilderInterceptor(
+    private val removeCopyAlongWithConstructor: Boolean,
+) : ClassGeneratorExtension {
     val abiClassInfo: MutableMap<String, AbiClassInfo> = mutableMapOf()
 
     override fun generateClass(generator: ClassGenerator, declaration: IrClass?): ClassGenerator =
@@ -75,6 +68,15 @@ class JvmAbiClassBuilderInterceptor : ClassGeneratorExtension {
         irClass: IrClass?,
     ) : ClassGenerator by delegate {
         private val isPrivateClass = irClass != null && DescriptorVisibilities.isPrivate(irClass.visibility)
+        private val isDataClass = irClass?.isData == true
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        private val primaryConstructorIsNotInAbi = irClass
+            ?.primaryConstructor
+            ?.visibility
+            ?.let(DescriptorVisibilities::isPrivate)
+            ?: false
+
         lateinit var internalName: String
         var localOrAnonymousClass = false
         var publicAbi = false
@@ -124,6 +126,12 @@ class JvmAbiClassBuilderInterceptor : ClassGeneratorExtension {
                 || name == "<clinit>" || name.startsWith("access\$") && access and Opcodes.ACC_SYNTHETIC != 0
             ) {
                 return delegate.newMethod(declaration, access, name, desc, signature, exceptions)
+            }
+
+            if (removeCopyAlongWithConstructor && isDataClass && (name == "copy" || name == "copy\$default")) {
+                if (primaryConstructorIsNotInAbi) {
+                    return delegate.newMethod(declaration, access, name, desc, signature, exceptions)
+                }
             }
 
             // Copy inline functions verbatim

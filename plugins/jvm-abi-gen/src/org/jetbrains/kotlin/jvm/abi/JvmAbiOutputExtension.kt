@@ -25,11 +25,12 @@ class JvmAbiOutputExtension(
     private val abiClassInfos: Map<String, AbiClassInfo>,
     private val messageCollector: MessageCollector,
     private val removeDebugInfo: Boolean,
+    private val removeCopyAlongWithConstructor: Boolean,
 ) : ClassFileFactoryFinalizerExtension {
     override fun finalizeClassFactory(factory: ClassFileFactory) {
         // We need to wait until the end to produce any output in order to strip classes
         // from the InnerClasses attributes.
-        val outputFiles = AbiOutputFiles(abiClassInfos, factory, removeDebugInfo)
+        val outputFiles = AbiOutputFiles(abiClassInfos, factory, removeDebugInfo, removeCopyAlongWithConstructor)
         if (outputPath.extension == "jar") {
             // We don't include the runtime or main class in interface jars and always reset time stamps.
             CompileEnvironmentUtil.writeToJar(
@@ -52,6 +53,7 @@ class JvmAbiOutputExtension(
         val abiClassInfos: Map<String, AbiClassInfo>,
         val outputFiles: OutputFileCollection,
         val removeDebugInfo: Boolean,
+        val removeCopyAlongWithConstructor: Boolean
     ) : OutputFileCollection {
         override fun get(relativePath: String): OutputFile? {
             error("AbiOutputFiles does not implement `get`.")
@@ -168,7 +170,7 @@ class JvmAbiOutputExtension(
                                 if (descriptor != JvmAnnotationNames.METADATA_DESC)
                                     return delegate
                                 // Strip private declarations from the Kotlin Metadata annotation.
-                                return abiMetadataProcessor(delegate)
+                                return abiMetadataProcessor(delegate, removeCopyAlongWithConstructor)
                             }
 
                             override fun visitEnd() {}

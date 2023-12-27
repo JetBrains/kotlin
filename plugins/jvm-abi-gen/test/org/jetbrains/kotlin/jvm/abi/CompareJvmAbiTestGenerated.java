@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.jvm.abi;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -53,6 +53,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
     @TestMetadata("constant")
     public void testConstant() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/constant/");
+    }
+
+    @TestMetadata("dataClassWithPrivateConstructor")
+    public void testDataClassWithPrivateConstructor() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/dataClassWithPrivateConstructor/");
     }
 
     @TestMetadata("debugInfoLineNumberTable")
