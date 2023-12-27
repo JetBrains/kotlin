@@ -1908,54 +1908,6 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
-        @TestMetadata("correctOrder3.kt")
-        public void testCorrectOrder3() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/correctOrder3.kt");
-        }
-
-        @Test
-        @TestMetadata("eagerInitializationGlobal1.kt")
-        public void testEagerInitializationGlobal1() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/eagerInitializationGlobal1.kt");
-        }
-
-        @Test
-        @TestMetadata("eagerInitializationGlobal2.kt")
-        public void testEagerInitializationGlobal2() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/eagerInitializationGlobal2.kt");
-        }
-
-        @Test
-        @TestMetadata("eagerInitializationThreadLocal1.kt")
-        public void testEagerInitializationThreadLocal1() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/eagerInitializationThreadLocal1.kt");
-        }
-
-        @Test
-        @TestMetadata("eagerInitializationThreadLocal2.kt")
-        public void testEagerInitializationThreadLocal2() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/eagerInitializationThreadLocal2.kt");
-        }
-
-        @Test
-        @TestMetadata("globalInitedAfterAccessingFile.kt")
-        public void testGlobalInitedAfterAccessingFile() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/globalInitedAfterAccessingFile.kt");
-        }
-
-        @Test
-        @TestMetadata("globalInitedBeforeThreadLocal.kt")
-        public void testGlobalInitedBeforeThreadLocal() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/globalInitedBeforeThreadLocal.kt");
-        }
-
-        @Test
-        @TestMetadata("globalNotInitedAfterAccessingClassInternals.kt")
-        public void testGlobalNotInitedAfterAccessingClassInternals() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/globalNotInitedAfterAccessingClassInternals.kt");
-        }
-
-        @Test
         @TestMetadata("object.kt")
         public void testObject() throws Exception {
             runTest("native/native.tests/testData/codegen/initializers/object.kt");
@@ -2063,16 +2015,86 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
             runTest("native/native.tests/testData/codegen/initializers/while3.kt");
         }
 
-        @Test
-        @TestMetadata("workers1.kt")
-        public void testWorkers1() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/workers1.kt");
-        }
+        @Nested
+        @TestMetadata("native/native.tests/testData/codegen/initializers/files")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        public class Files {
+            @Test
+            public void testAllFilesPresentInFiles() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/initializers/files"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
 
-        @Test
-        @TestMetadata("workers2.kt")
-        public void testWorkers2() throws Exception {
-            runTest("native/native.tests/testData/codegen/initializers/workers2.kt");
+            @Test
+            @TestMetadata("globalInitedAfterAccessingFile.kt")
+            public void testGlobalInitedAfterAccessingFile() throws Exception {
+                runTest("native/native.tests/testData/codegen/initializers/files/globalInitedAfterAccessingFile.kt");
+            }
+
+            @Test
+            @TestMetadata("globalInitedBeforeThreadLocal.kt")
+            public void testGlobalInitedBeforeThreadLocal() throws Exception {
+                runTest("native/native.tests/testData/codegen/initializers/files/globalInitedBeforeThreadLocal.kt");
+            }
+
+            @Test
+            @TestMetadata("globalNotInitedAfterAccessingClassInternals.kt")
+            public void testGlobalNotInitedAfterAccessingClassInternals() throws Exception {
+                runTest("native/native.tests/testData/codegen/initializers/files/globalNotInitedAfterAccessingClassInternals.kt");
+            }
+
+            @Test
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("native/native.tests/testData/codegen/initializers/files/simple.kt");
+            }
+
+            @Test
+            @TestMetadata("workers1.kt")
+            public void testWorkers1() throws Exception {
+                runTest("native/native.tests/testData/codegen/initializers/files/workers1.kt");
+            }
+
+            @Test
+            @TestMetadata("workers2.kt")
+            public void testWorkers2() throws Exception {
+                runTest("native/native.tests/testData/codegen/initializers/files/workers2.kt");
+            }
+
+            @Nested
+            @TestMetadata("native/native.tests/testData/codegen/initializers/files/eagerInitialization")
+            @TestDataPath("$PROJECT_ROOT")
+            @UseExtTestCaseGroupProvider()
+            public class EagerInitialization {
+                @Test
+                public void testAllFilesPresentInEagerInitialization() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/initializers/files/eagerInitialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("global1.kt")
+                public void testGlobal1() throws Exception {
+                    runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/global1.kt");
+                }
+
+                @Test
+                @TestMetadata("global2.kt")
+                public void testGlobal2() throws Exception {
+                    runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/global2.kt");
+                }
+
+                @Test
+                @TestMetadata("threadLocal1.kt")
+                public void testThreadLocal1() throws Exception {
+                    runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/threadLocal1.kt");
+                }
+
+                @Test
+                @TestMetadata("threadLocal2.kt")
+                public void testThreadLocal2() throws Exception {
+                    runTest("native/native.tests/testData/codegen/initializers/files/eagerInitialization/threadLocal2.kt");
+                }
+            }
         }
     }
 
