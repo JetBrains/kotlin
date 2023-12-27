@@ -43,7 +43,7 @@ class BirDatabase : BirElementParent() {
 
     private fun attachElement(element: BirElementBase) {
         element._containingDatabase = this
-        indexElement(element)
+        indexElement(element, true)
     }
 
     fun attachRootElement(element: BirElementBase) {
@@ -172,11 +172,11 @@ class BirDatabase : BirElementParent() {
     }
 
 
-    private fun indexElement(element: BirElementBase) {
+    private fun indexElement(element: BirElementBase, includeBackReferences: Boolean) {
         val classifier = elementClassifier ?: return
         if (element._containingDatabase !== this) return
 
-        val backReferenceRecorder = BackReferenceRecorder()
+        val backReferenceRecorder = if (includeBackReferences) BackReferenceRecorder() else null
 
         assert(mutableElementCurrentlyBeingClassified == null)
         if (element is BirImplElementBase) {
@@ -196,8 +196,15 @@ class BirDatabase : BirElementParent() {
             removeElementFromIndex(element)
         }
 
-        val recordedRef = backReferenceRecorder.recordedRef
+        val recordedRef = backReferenceRecorder?.recordedRef
         recordedRef?.registerBackReference(element)
+
+        element.setFlag(BirElementBase.FLAG_INVALIDATED, false)
+    }
+
+    internal fun indexElementAndDependent(element: BirElementBase) {
+        indexElement(element, true)
+        (element as? BirImplElementBase)?.indexInvalidatedDependentElements()
     }
 
     internal class BackReferenceRecorder() : BirElementBackReferenceRecorderScope {
@@ -249,20 +256,15 @@ class BirDatabase : BirElementParent() {
         val buffer = invalidatedElementsBuffer
         for (i in 0..<invalidatedElementsBufferSize) {
             val element = buffer[i]!!
-            // Element may have already been
+            // Element may have already been indexed, e.g., by another element which depends on it.
             if (element.hasFlag(BirElementBase.FLAG_INVALIDATED)) {
-                indexInvalidatedElement(element)
+                indexElementAndDependent(element)
             }
             buffer[i] = null
         }
         invalidatedElementsBufferSize = 0
     }
 
-    internal fun indexInvalidatedElement(element: BirElementBase) {
-        indexElement(element)
-        (element as? BirImplElementBase)?.indexInvalidatedDependentElements()
-        element.setFlag(BirElementBase.FLAG_INVALIDATED, false)
-    }
 
     fun registerElementIndexingKey(key: BirElementsIndexKey<*>) {
         registeredIndexers += key
@@ -310,7 +312,7 @@ class BirDatabase : BirElementParent() {
         val roots = collectCurrentRootElements()
         for (root in roots) {
             root.acceptLite { element ->
-                indexElement(element)
+                indexElement(element, true)
                 element.walkIntoChildren()
             }
         }
@@ -469,7 +471,7 @@ class BirDatabase : BirElementParent() {
                     // Element classification stops at the first successful match.
                     // Now that the element has matched this particular index, we always
                     // have to check whether it will also match some proceeding one.
-                    invalidateElement(element)
+                    indexElement(element, false)
 
                     element.lastReturnedInQueryOfIndexSlot = slotIndex
                     mainListIdx++
@@ -488,7 +490,7 @@ class BirDatabase : BirElementParent() {
             for (i in maxOf(0, mainListIdx - 1)..<slot.size) {
                 val element = array[i]!!
                 array[i] = null
-                invalidateElement(element)
+                indexElement(element, false)
             }
 
             slot.size = 0

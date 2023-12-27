@@ -25,7 +25,7 @@ fun interface BirElementIndexMatcher : BirElementGeneralIndexer {
 }
 
 internal fun interface BirElementIndexClassifier {
-    fun classify(element: BirElementBase, minimumIndex: Int, backReferenceRecorder: BirDatabase.BackReferenceRecorder): Int
+    fun classify(element: BirElementBase, minimumIndex: Int, backReferenceRecorder: BirDatabase.BackReferenceRecorder?): Int
 }
 
 
@@ -239,10 +239,16 @@ internal object BirElementIndexClassifierFunctionGenerator {
     ) {
         val matcherLabel = LabelNode()
 
-        if (indexer.kind == BirElementGeneralIndexer.Kind.IndexMatcher) {
-            // skip if already got a result
-            il.add(VarInsnNode(Opcodes.ILOAD, resultVarIdx))
-            il.add(JumpInsnNode(Opcodes.IFNE, matcherLabel))
+        when (indexer.kind) {
+            BirElementGeneralIndexer.Kind.IndexMatcher -> {
+                // skip if already got a result
+                il.add(VarInsnNode(Opcodes.ILOAD, resultVarIdx))
+                il.add(JumpInsnNode(Opcodes.IFNE, matcherLabel))
+            }
+            BirElementGeneralIndexer.Kind.BackReferenceRecorder -> {
+                il.add(VarInsnNode(Opcodes.ALOAD, referenceRecorderVarIdx))
+                il.add(JumpInsnNode(Opcodes.IFNULL, matcherLabel))
+            }
         }
 
         if (indexerField != null) {
