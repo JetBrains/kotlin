@@ -301,6 +301,7 @@ internal class DokkaSymbolVisitor(
                 generics = generics,
                 documentation = documentation,
                 companion = companionObject,
+                modifier = namedClassOrObjectSymbol.getDokkaModality().toSourceSetDependent(),
                 sourceSets = setOf(sourceSet),
                 isExpectActual = (isExpect || isActual),
                 extra = PropertyContainer.withAll(
@@ -518,7 +519,7 @@ internal class DokkaSymbolVisitor(
                 setter = propertySymbol.setter?.let { visitPropertyAccessor(it, propertySymbol, dri) },
                 visibility = propertySymbol.visibility.toDokkaVisibility().toSourceSetDependent(),
                 documentation = getDocumentation(propertySymbol)?.toSourceSetDependent() ?: emptyMap(), // TODO
-                modifier = propertySymbol.modality.toDokkaModifier().toSourceSetDependent(),
+                modifier = propertySymbol.getDokkaModality().toSourceSetDependent(),
                 type = toBoundFrom(propertySymbol.returnType),
                 expectPresentInSet = sourceSet.takeIf { isExpect },
                 sourceSets = setOf(sourceSet),
@@ -567,7 +568,7 @@ internal class DokkaSymbolVisitor(
                 setter = null,
                 visibility = javaFieldSymbol.getDokkaVisibility().toSourceSetDependent(),
                 documentation = getDocumentation(javaFieldSymbol)?.toSourceSetDependent() ?: emptyMap(), // TODO
-                modifier = javaFieldSymbol.modality.toDokkaModifier().toSourceSetDependent(),
+                modifier = javaFieldSymbol.getDokkaModality().toSourceSetDependent(),
                 type = toBoundFrom(javaFieldSymbol.returnType),
                 expectPresentInSet = sourceSet.takeIf { isExpect },
                 sourceSets = setOf(sourceSet),
@@ -633,7 +634,7 @@ internal class DokkaSymbolVisitor(
             visibility = propertyAccessorSymbol.visibility.toDokkaVisibility().toSourceSetDependent(),
             generics = generics,
             documentation = getDocumentation(propertyAccessorSymbol)?.toSourceSetDependent() ?: emptyMap(),
-            modifier = propertyAccessorSymbol.modality.toDokkaModifier().toSourceSetDependent(),
+            modifier = propertyAccessorSymbol.getDokkaModality().toSourceSetDependent(),
             type = toBoundFrom(propertyAccessorSymbol.returnType),
             sourceSets = setOf(sourceSet),
             isExpectActual = (isExpect || isActual),
@@ -886,7 +887,25 @@ internal class DokkaSymbolVisitor(
 
 
     // ----------- Translators of modifiers ----------------------------------------------------------------------------
-    private fun KtSymbolWithModality.getDokkaModality() = modality.toDokkaModifier()
+    private fun KtSymbolWithModality.getDokkaModality(): KotlinModifier {
+        val isInterface = this is KtClassOrObjectSymbol && classKind == KtClassKind.INTERFACE
+        return if (isInterface) {
+            // only two modalities are possible for interfaces:
+            //  - `SEALED` - when it's declared as `sealed interface`
+            //  - `ABSTRACT` - when it's declared as `interface` or `abstract interface` (`abstract` is redundant but possible here)
+            when (modality) {
+                Modality.SEALED -> KotlinModifier.Sealed
+                else -> KotlinModifier.Empty
+            }
+        } else {
+            when (modality) {
+                Modality.FINAL -> KotlinModifier.Final
+                Modality.SEALED -> KotlinModifier.Sealed
+                Modality.OPEN -> KotlinModifier.Open
+                Modality.ABSTRACT -> KotlinModifier.Abstract
+            }
+        }
+    }
     private fun KtSymbolWithVisibility.getDokkaVisibility() = visibility.toDokkaVisibility()
     private fun KtValueParameterSymbol.additionalExtras() = listOfNotNull(
         ExtraModifiers.KotlinOnlyModifiers.NoInline.takeIf { isNoinline },
@@ -932,14 +951,6 @@ internal class DokkaSymbolVisitor(
         ExtraModifiers.KotlinOnlyModifiers.Data.takeIf { isData },
         ExtraModifiers.KotlinOnlyModifiers.Fun.takeIf { isFun },
     ).toSet().takeUnless { it.isEmpty() }
-
-    private fun Modality.toDokkaModifier() = when (this) {
-        Modality.FINAL -> KotlinModifier.Final
-        Modality.SEALED -> KotlinModifier.Sealed
-        Modality.OPEN -> KotlinModifier.Open
-        Modality.ABSTRACT -> KotlinModifier.Abstract
-    }
-
 
     private fun org.jetbrains.kotlin.descriptors.Visibility.toDokkaVisibility(): Visibility = when (this) {
         Visibilities.Public -> KotlinVisibility.Public
