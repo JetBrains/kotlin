@@ -189,7 +189,18 @@ abstract class AbstractKotlinTarget(
     )
     override var preset: KotlinTargetPreset<out KotlinTarget>? = null
         internal set
+
+
+    internal val composeResourceDirectories: MutableList<ComposeResources> = mutableListOf()
+    override fun composeCopyResources(resourceDirectoryName: String, resourceIdentity: String) {
+        composeResourceDirectories.add(ComposeResources(resourceDirectoryName, resourceIdentity))
+    }
 }
+
+internal data class ComposeResources(
+    val resourceDirectoryName: String,
+    val resourceIdentity: String,
+)
 
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
     lowerCamelCaseName(targetName, simpleName)

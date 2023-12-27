@@ -110,6 +110,8 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, AddBuildListenerForXCodeSetupAction)
             register(project, CreateFatFrameworksSetupAction)
             register(project, KotlinRegisterCompilationArchiveTasksExtension)
+            register(project, KotlinAndroidCopyResourcesForComposeAction)
+            register(project, KotlinJvmCopyResourcesForComposeAction)
         }
     }
 

@@ -49,6 +49,10 @@ internal class ExternalKotlinTargetImpl internal constructor(
     override val extras: MutableExtras = mutableExtrasOf()
 
     override val preset: Nothing? = null
+    override fun composeCopyResources(resourceDirectoryName: String, resourceIdentity: String) {
+        // FIXME: ???
+        TODO("Not yet implemented")
+    }
 
     internal val logger: Logger = Logging.getLogger("${ExternalKotlinTargetImpl::class.qualifiedName}: $name")
 
