@@ -14,6 +14,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -48,12 +49,18 @@ internal class ExternalKotlinTargetImpl internal constructor(
 
     override val extras: MutableExtras = mutableExtrasOf()
 
+    @Deprecated(
+        PRESETS_API_IS_DEPRECATED_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     override val preset: Nothing? = null
 
     internal val logger: Logger = Logging.getLogger("${ExternalKotlinTargetImpl::class.qualifiedName}: $name")
 
+    @Deprecated("Scheduled for removal with Kotlin 2.2")
     override val useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true
 
+    @Deprecated("Scheduled for removal with Kotlin 2.2")
     override val overrideDisambiguationClassifierOnIdeImport: String? = null
 
     val artifactsTask: TaskProvider<out Task> by lazy {
