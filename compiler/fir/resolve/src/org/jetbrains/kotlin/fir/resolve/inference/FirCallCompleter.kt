@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirCallCompleter(
     private val transformer: FirAbstractBodyResolveTransformerDispatcher,
-    private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
+    private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
 ) {
     private val session = components.session
     private val inferenceSession
@@ -198,7 +198,7 @@ class FirCallCompleter(
 
     fun prepareLambdaAtomForFactoryPattern(
         atom: ResolvedLambdaAtom,
-        candidate: Candidate
+        candidate: Candidate,
     ) {
         val returnVariable = ConeTypeVariableForLambdaReturnType(atom.atom, "_R")
         val csBuilder = candidate.system.getBuilder()
@@ -219,7 +219,7 @@ class FirCallCompleter(
 
     fun createCompletionResultsWriter(
         substitutor: ConeSubstitutor,
-        mode: FirCallCompletionResultsWriterTransformer.Mode = FirCallCompletionResultsWriterTransformer.Mode.Normal
+        mode: FirCallCompletionResultsWriterTransformer.Mode = FirCallCompletionResultsWriterTransformer.Mode.Normal,
     ): FirCallCompletionResultsWriterTransformer {
         return FirCallCompletionResultsWriterTransformer(
             session, components.scopeSession, substitutor, components.returnTypeCalculator,
