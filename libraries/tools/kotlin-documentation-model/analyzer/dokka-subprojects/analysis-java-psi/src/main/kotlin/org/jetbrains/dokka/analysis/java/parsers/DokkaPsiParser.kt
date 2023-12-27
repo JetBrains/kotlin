@@ -232,7 +232,6 @@ internal class DokkaPsiParser(
                     JavaClassKindTypes.INTERFACE
                 )
             }).toSourceSetDependent()
-            val modifiers = getModifier().toSourceSetDependent()
             val implementedInterfacesExtra =
                 ImplementedInterfaces(ancestry.allImplementedInterfaces().toSourceSetDependent())
 
@@ -326,6 +325,7 @@ internal class DokkaPsiParser(
                     companion = null,
                     generics = mapTypeParameters(dri),
                     supertypes = ancestors,
+                    modifier = getModifier().toSourceSetDependent(),
                     sourceSets = setOf(sourceSetData),
                     isExpectActual = false,
                     extra = PropertyContainer.withAll(
@@ -349,7 +349,7 @@ internal class DokkaPsiParser(
                     supertypes = ancestors,
                     documentation = documentation,
                     expectPresentInSet = null,
-                    modifier = modifiers,
+                    modifier = getModifier().toSourceSetDependent(),
                     sourceSets = setOf(sourceSetData),
                     isExpectActual = false,
                     extra = PropertyContainer.withAll(
@@ -598,10 +598,17 @@ internal class DokkaPsiParser(
         else -> getBound(type)
     }
 
-    private fun PsiModifierListOwner.getModifier() = when {
-        hasModifier(JvmModifier.ABSTRACT) -> JavaModifier.Abstract
-        hasModifier(JvmModifier.FINAL) -> JavaModifier.Final
-        else -> JavaModifier.Empty
+    private fun PsiModifierListOwner.getModifier(): JavaModifier {
+        val isInterface = this is PsiClass && this.isInterface
+
+        return if (isInterface) {
+            // Java interface can't have modality modifiers except for "sealed", which is not supported yet in Dokka
+            JavaModifier.Empty
+        } else when {
+            hasModifier(JvmModifier.ABSTRACT) -> JavaModifier.Abstract
+            hasModifier(JvmModifier.FINAL) -> JavaModifier.Final
+            else -> JavaModifier.Empty
+        }
     }
 
     private fun PsiTypeParameterListOwner.mapTypeParameters(dri: DRI): List<DTypeParameter> {
