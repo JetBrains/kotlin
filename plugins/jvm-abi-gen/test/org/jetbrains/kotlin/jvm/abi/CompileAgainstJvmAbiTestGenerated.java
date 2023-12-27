@@ -45,6 +45,11 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
         runTest("plugins/jvm-abi-gen/testData/compile/clinit/");
     }
 
+    @TestMetadata("conflictingClasses")
+    public void testConflictingClasses() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/conflictingClasses/");
+    }
+
     @TestMetadata("inlineAnnotationInstantiation")
     public void testInlineAnnotationInstantiation() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/inlineAnnotationInstantiation/");
@@ -100,6 +105,26 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
         runTest("plugins/jvm-abi-gen/testData/compile/kt-40340/");
     }
 
+    @TestMetadata("multifileClass")
+    public void testMultifileClass() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/multifileClass/");
+    }
+
+    @TestMetadata("multifileClassOptimized")
+    public void testMultifileClassOptimized() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/multifileClassOptimized/");
+    }
+
+    @TestMetadata("multifileClassOptimizedWithRemovePrivateOption")
+    public void testMultifileClassOptimizedWithRemovePrivateOption() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/multifileClassOptimizedWithRemovePrivateOption/");
+    }
+
+    @TestMetadata("multifileClassWithRemovePrivateOption")
+    public void testMultifileClassWithRemovePrivateOption() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/multifileClassWithRemovePrivateOption/");
+    }
+
     @TestMetadata("privateAnnotationsFromJavaApp")
     public void testPrivateAnnotationsFromJavaApp() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaApp/");
@@ -118,6 +143,11 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
     @TestMetadata("privateClassesFromJavaLib")
     public void testPrivateClassesFromJavaLib() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/privateClassesFromJavaLib/");
+    }
+
+    @TestMetadata("privateInterfaceImplementedByPublicClass")
+    public void testPrivateInterfaceImplementedByPublicClass() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/privateInterfaceImplementedByPublicClass/");
     }
 
     @TestMetadata("privateOnlyConstructors")

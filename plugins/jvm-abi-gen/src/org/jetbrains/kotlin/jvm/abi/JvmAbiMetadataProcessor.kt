@@ -19,6 +19,8 @@ fun abiMetadataProcessor(
     annotationVisitor: AnnotationVisitor,
     removeDataClassCopyIfConstructorIsPrivate: Boolean,
     preserveDeclarationOrder: Boolean,
+    classesToBeDeleted: Set<String>,
+    pruneClass: Boolean,
 ): AnnotationVisitor =
     kotlinClassHeaderVisitor { header ->
         // kotlinx-metadata only supports writing Kotlin metadata of version >= 1.4, so we need to
@@ -33,13 +35,18 @@ fun abiMetadataProcessor(
             KotlinClassMetadata.transform(header) { metadata ->
                 when (metadata) {
                     is KotlinClassMetadata.Class -> {
-                        metadata.kmClass.removePrivateDeclarations(removeDataClassCopyIfConstructorIsPrivate, preserveDeclarationOrder)
+                        metadata.kmClass.removePrivateDeclarations(
+                            removeDataClassCopyIfConstructorIsPrivate,
+                            preserveDeclarationOrder,
+                            classesToBeDeleted,
+                            pruneClass
+                        )
                     }
                     is KotlinClassMetadata.FileFacade -> {
-                        metadata.kmPackage.removePrivateDeclarations(preserveDeclarationOrder)
+                        metadata.kmPackage.removePrivateDeclarations(preserveDeclarationOrder, pruneClass)
                     }
                     is KotlinClassMetadata.MultiFileClassPart -> {
-                        metadata.kmPackage.removePrivateDeclarations(preserveDeclarationOrder)
+                        metadata.kmPackage.removePrivateDeclarations(preserveDeclarationOrder, pruneClass)
                     }
                     else -> Unit
                 }
@@ -150,22 +157,37 @@ private fun AnnotationVisitor.visitKotlinMetadata(header: Metadata) {
     visitEnd()
 }
 
-private fun KmClass.removePrivateDeclarations(removeCopyAlongWithConstructor: Boolean, preserveDeclarationOrder: Boolean) {
-    constructors.removeIf { it.visibility.isPrivate }
-    (this as KmDeclarationContainer).removePrivateDeclarations(copyFunShouldBeDeleted(removeCopyAlongWithConstructor), preserveDeclarationOrder)
+private fun KmClass.removePrivateDeclarations(
+    removeCopyAlongWithConstructor: Boolean,
+    preserveDeclarationOrder: Boolean,
+    classesToBeDeleted: Set<String>,
+    pruneClass: Boolean,
+) {
+    constructors.removeIf { pruneClass || it.visibility.isPrivate }
+    (this as KmDeclarationContainer).removePrivateDeclarations(
+        copyFunShouldBeDeleted(removeCopyAlongWithConstructor),
+        preserveDeclarationOrder,
+        pruneClass,
+    )
+    nestedClasses.removeIf { "$name\$$it" in classesToBeDeleted }
+    companionObject = companionObject.takeUnless { "$name\$$it" in classesToBeDeleted }
     localDelegatedProperties.clear()
     // TODO: do not serialize private type aliases once KT-17229 is fixed.
 }
 
-private fun KmPackage.removePrivateDeclarations(preserveDeclarationOrder: Boolean) {
-    (this as KmDeclarationContainer).removePrivateDeclarations(false, preserveDeclarationOrder)
+private fun KmPackage.removePrivateDeclarations(preserveDeclarationOrder: Boolean, pruneClass: Boolean) {
+    (this as KmDeclarationContainer).removePrivateDeclarations(false, preserveDeclarationOrder, pruneClass)
     localDelegatedProperties.clear()
     // TODO: do not serialize private type aliases once KT-17229 is fixed.
 }
 
-private fun KmDeclarationContainer.removePrivateDeclarations(copyFunShouldBeDeleted: Boolean, preserveDeclarationOrder: Boolean) {
-    functions.removeIf { it.visibility.isPrivate || (copyFunShouldBeDeleted && it.name == "copy") }
-    properties.removeIf { it.visibility.isPrivate }
+private fun KmDeclarationContainer.removePrivateDeclarations(
+    copyFunShouldBeDeleted: Boolean,
+    preserveDeclarationOrder: Boolean,
+    pruneClass: Boolean,
+) {
+    functions.removeIf { pruneClass || it.visibility.isPrivate || (copyFunShouldBeDeleted && it.name == "copy") }
+    properties.removeIf { pruneClass || it.visibility.isPrivate }
 
     if (!preserveDeclarationOrder) {
         functions.sortWith(compareBy(KmFunction::name, { it.signature.toString() }))

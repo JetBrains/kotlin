@@ -88,12 +88,18 @@ abstract class BaseJvmAbiTest : TestCase() {
                 abiOption(JvmAbiCommandLineProcessor.PRESERVE_DECLARATION_ORDER_OPTION.optionName, true.toString()).takeIf {
                     InTextDirectivesUtils.findStringWithPrefixes(directives, "// PRESERVE_DECLARATION_ORDER") != null
                 },
+                abiOption(JvmAbiCommandLineProcessor.REMOVE_PRIVATE_CLASSES_OPTION.optionName, true.toString()).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_PRIVATE_CLASSES") != null
+                },
             ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
             noSourceDebugExtension = InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
 
             if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// USE_K2") != null) {
                 useK2 = true
+            }
+            if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// INHERIT_MULTIFILE_PARTS") != null) {
+                inheritMultifileParts = true
             }
         }
         val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
