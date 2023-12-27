@@ -20,8 +20,8 @@ class BirDatabase : BirElementParent() {
     internal var mutableElementCurrentlyBeingClassified: BirImplElementBase? = null
         private set
 
-    private val elementsWithInvalidatedIndexBuffer = arrayOfNulls<BirElementBase>(64)
-    private var elementsWithInvalidatedIndexBufferSize = 0
+    private val invalidatedElementsBuffer = arrayOfNulls<BirElementBase>(64)
+    private var invalidatedElementsBufferSize = 0
 
     private val movedElementBuffer = arrayOfNulls<BirElementBase>(64)
     private var movedElementBufferSize = 0
@@ -228,39 +228,40 @@ class BirDatabase : BirElementParent() {
     internal val isInsideElementClassification: Boolean
         get() = mutableElementCurrentlyBeingClassified != null
 
-    internal fun elementIndexInvalidated(element: BirElementBase) {
-        if (!element.hasFlag(BirElementBase.FLAG_IN_INVALIDATE_INDEX_BUFFER)) {
-            var size = elementsWithInvalidatedIndexBufferSize
-            val buffer = elementsWithInvalidatedIndexBuffer
+    internal fun invalidateElement(element: BirElementBase) {
+        if (!element.hasFlag(BirElementBase.FLAG_INVALIDATED)) {
+            var size = invalidatedElementsBufferSize
+            val buffer = invalidatedElementsBuffer
             if (size == buffer.size) {
-                flushElementsWithInvalidatedIndexBuffer()
-                size = elementsWithInvalidatedIndexBufferSize
+                flushInvalidatedElementBuffer()
+                size = invalidatedElementsBufferSize
             }
 
             buffer[size] = element
-            elementsWithInvalidatedIndexBufferSize = size + 1
-            element.setFlag(BirElementBase.FLAG_IN_INVALIDATE_INDEX_BUFFER, true)
+            invalidatedElementsBufferSize = size + 1
+            element.setFlag(BirElementBase.FLAG_INVALIDATED, true)
         }
     }
 
-    internal fun flushElementsWithInvalidatedIndexBuffer() {
+    internal fun flushInvalidatedElementBuffer() {
         realizeTreeMovements()
 
-        val buffer = elementsWithInvalidatedIndexBuffer
-        for (i in 0..<elementsWithInvalidatedIndexBufferSize) {
+        val buffer = invalidatedElementsBuffer
+        for (i in 0..<invalidatedElementsBufferSize) {
             val element = buffer[i]!!
-            if (element.hasFlag(BirElementBase.FLAG_IN_INVALIDATE_INDEX_BUFFER)) {
-                invalidateElement(element)
+            // Element may have already been
+            if (element.hasFlag(BirElementBase.FLAG_INVALIDATED)) {
+                indexInvalidatedElement(element)
             }
             buffer[i] = null
         }
-        elementsWithInvalidatedIndexBufferSize = 0
+        invalidatedElementsBufferSize = 0
     }
 
-    internal fun invalidateElement(element: BirElementBase) {
+    internal fun indexInvalidatedElement(element: BirElementBase) {
         indexElement(element)
-        (element as? BirImplElementBase)?.invalidateDependentElements()
-        element.setFlag(BirElementBase.FLAG_IN_INVALIDATE_INDEX_BUFFER, false)
+        (element as? BirImplElementBase)?.indexInvalidatedDependentElements()
+        element.setFlag(BirElementBase.FLAG_INVALIDATED, false)
     }
 
     fun registerElementIndexingKey(key: BirElementsIndexKey<*>) {
@@ -332,7 +333,7 @@ class BirDatabase : BirElementParent() {
         val cacheSlotIndex = indexerIndexes.getValue(key)
         require(cacheSlotIndex > currentIndexSlot)
 
-        flushElementsWithInvalidatedIndexBuffer()
+        flushInvalidatedElementBuffer()
 
         currentElementsIndexSlotIterator?.let { iterator ->
             cancelElementsIndexSlotIterator(iterator)
@@ -432,7 +433,7 @@ class BirDatabase : BirElementParent() {
 
             // An operation after last computeNext might have invalidated
             // some element which we are about to yield here, so check for that.
-            flushElementsWithInvalidatedIndexBuffer()
+            flushInvalidatedElementBuffer()
 
             val slotIndex = slotIndex
             while (true) {
@@ -468,7 +469,7 @@ class BirDatabase : BirElementParent() {
                     // Element classification stops at the first successful match.
                     // Now that the element has matched this particular index, we always
                     // have to check whether it will also match some proceeding one.
-                    elementIndexInvalidated(element)
+                    invalidateElement(element)
 
                     element.lastReturnedInQueryOfIndexSlot = slotIndex
                     mainListIdx++
@@ -487,7 +488,7 @@ class BirDatabase : BirElementParent() {
             for (i in maxOf(0, mainListIdx - 1)..<slot.size) {
                 val element = array[i]!!
                 array[i] = null
-                elementIndexInvalidated(element)
+                invalidateElement(element)
             }
 
             slot.size = 0
