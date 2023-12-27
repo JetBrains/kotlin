@@ -186,17 +186,15 @@ internal object BirElementIndexClassifierFunctionGenerator {
         val switchInstPlaceholder = InsnNode(Opcodes.NOP)
         il.add(switchInstPlaceholder)
 
-        val topLevelElementClassNodes = buildClassMatchingStructure(indexers)
-        val switchTableLabels = mutableListOf<LabelNode>()
-        val switchTableKeys = mutableListOf<Int>()
+        val elementSwitchNodes = buildClassMatchingStructure(indexers)
+        val switchCases = mutableListOf<Pair<LabelNode, Int>>()
         val endLabel = LabelNode()
-        for (node in topLevelElementClassNodes) {
+        for (node in elementSwitchNodes) {
             val indexersByIndex = node.indexers.associateBy { it.index }
             var lastFallthroughLabel: LabelNode? = null
             for (index in indexersIndexMin..node.indexers.maxOf { it.index }) {
                 val indexer = indexersByIndex[index]
 
-                val switchKey = node.elementClass.id * indexersIndicesSpan + (index - indexersIndexMin)
                 val caseLabel = if (indexer == null) {
                     lastFallthroughLabel ?: LabelNode().also {
                         il.add(it)
@@ -206,8 +204,11 @@ internal object BirElementIndexClassifierFunctionGenerator {
                     lastFallthroughLabel = null
                     LabelNode().also { il.add(it) }
                 }
-                switchTableLabels += caseLabel
-                switchTableKeys += switchKey
+
+                for (elementClass in node.elementClasses) {
+                    val switchKey = elementClass.id * indexersIndicesSpan + (index - indexersIndexMin)
+                    switchCases += caseLabel to switchKey
+                }
 
                 if (indexer != null) {
                     generateIndexerCase(
@@ -220,7 +221,8 @@ internal object BirElementIndexClassifierFunctionGenerator {
             il.add(JumpInsnNode(Opcodes.GOTO, endLabel))
         }
 
-        il.set(switchInstPlaceholder, LookupSwitchInsnNode(endLabel, switchTableKeys.toIntArray(), switchTableLabels.toTypedArray()))
+        switchCases.sortBy { it.second }
+        il.set(switchInstPlaceholder, LookupSwitchInsnNode(endLabel, switchCases.map { it.second }.toIntArray(), switchCases.map { it.first }.toTypedArray()))
 
         il.add(endLabel)
         il.add(VarInsnNode(Opcodes.ILOAD, resultVarIdx))
@@ -292,8 +294,8 @@ internal object BirElementIndexClassifierFunctionGenerator {
         il.add(matcherLabel)
     }
 
-    private fun buildClassMatchingStructure(indexers: List<Indexer>): List<ElementClassBucket> {
-        val elementClassNodes = BirMetadata.allElements.associate { it.javaClass to ElementClassBucket(it) }
+    private fun buildClassMatchingStructure(indexers: List<Indexer>): List<ElementSwitchNode> {
+        val elementClassNodes = BirMetadata.allElements.associate { it.javaClass to ElementClassInfo(it) }
 
         elementClassNodes.values.forEach { element ->
             val clazz = element.elementClass.javaClass
@@ -321,17 +323,26 @@ internal object BirElementIndexClassifierFunctionGenerator {
         return elementClassNodes.values
             .filter { it.indexers.isNotEmpty() }
             .sortedBy { it.elementClass.id }
+            .groupBy { it.indexers }
+            .map { group ->
+                ElementSwitchNode(group.value.map { it.elementClass }, group.key)
+            }
     }
 
-    private class ElementClassBucket(
+    private class ElementClassInfo(
         val elementClass: BirElementClass,
     ) {
-        var superClasses: Set<ElementClassBucket> = emptySet()
-        val subClasses = mutableSetOf<ElementClassBucket>()
+        var superClasses: Set<ElementClassInfo> = emptySet()
+        val subClasses = mutableSetOf<ElementClassInfo>()
         val indexers = mutableListOf<Indexer>()
 
         fun descendantClasses() = DFS.topologicalOrder(listOf(this)) { it.subClasses }
     }
+
+    private class ElementSwitchNode(
+        val elementClasses: List<BirElementClass>,
+        val indexers: List<Indexer>,
+    )
 
     private class IndexBucket(
         val indexer: Indexer,
