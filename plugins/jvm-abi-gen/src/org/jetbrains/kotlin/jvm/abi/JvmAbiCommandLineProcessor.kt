@@ -51,6 +51,15 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
                         " to keep working. Flipping this to true reduces stability of the ABI.",
                 false,
             )
+
+        val REMOVE_PRIVATE_CLASSES_OPTION: CliOption =
+            CliOption(
+                "removePrivateClasses",
+                "true/false",
+                "Remove private classes from ABI. False by default due to backwards compatibility. If enabled, " +
+                        "private top-level classes will no longer be available from Java classes in the same package.",
+                false,
+            )
     }
 
     override val pluginId: String
@@ -62,6 +71,7 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
             REMOVE_DEBUG_INFO_OPTION,
             REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION,
             PRESERVE_DECLARATION_ORDER_OPTION,
+            REMOVE_PRIVATE_CLASSES_OPTION,
         )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
@@ -73,6 +83,10 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
                 value == "true"
             )
             PRESERVE_DECLARATION_ORDER_OPTION -> configuration.put(JvmAbiConfigurationKeys.PRESERVE_DECLARATION_ORDER, value == "true")
+            REMOVE_PRIVATE_CLASSES_OPTION -> configuration.put(
+                JvmAbiConfigurationKeys.REMOVE_PRIVATE_CLASSES,
+                value == "true"
+            )
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }
