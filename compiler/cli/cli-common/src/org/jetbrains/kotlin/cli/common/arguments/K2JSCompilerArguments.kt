@@ -643,6 +643,16 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
             field = value
         }
 
+    @Argument(
+        value = "-Xwasm-generate-original-locations-inside-wat",
+        description = "Generate original file, line and column numbers for instructions inside .wat-file."
+    )
+    var wasmGenerateOriginalLocationsInsideWat = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xwasm-target", description = "Set up the Wasm target (wasm-js or wasm-wasi).")
     var wasmTarget: String? = null
         set(value) {

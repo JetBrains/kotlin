@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
-import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
@@ -113,7 +112,9 @@ fun compileWasm(
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()
     val wat = if (generateWat) {
-        val watGenerator = WasmIrToText()
+        val watGenerator = WasmIrToText(
+            backendContext.configuration.getBoolean(JSConfigurationKeys.WASM_GENERATE_ORIGINAL_LOCATIONS_IN_WAT)
+        )
         watGenerator.appendWasmModule(linkedModule)
         watGenerator.toString()
     } else {

@@ -101,6 +101,11 @@ class WasmBackendFacade(
             propertyLazyInitialization = true,
         )
         val generateWat = debugMode >= DebugMode.DEBUG
+
+        if (debugMode >= DebugMode.DEBUG) {
+            configuration.put(JSConfigurationKeys.WASM_GENERATE_ORIGINAL_LOCATIONS_IN_WAT, true)
+        }
+
         val baseFileName = "index"
 
         val compilerResult = compileWasm(

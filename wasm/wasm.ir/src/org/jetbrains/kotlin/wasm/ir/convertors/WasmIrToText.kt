@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.ir.convertors
 
 import org.jetbrains.kotlin.wasm.ir.*
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 open class SExpressionBuilder {
     protected val stringBuilder = StringBuilder()
@@ -45,7 +46,7 @@ open class SExpressionBuilder {
 }
 
 
-class WasmIrToText : SExpressionBuilder() {
+class WasmIrToText(private val withOffsets: Boolean) : SExpressionBuilder() {
     fun appendOffset(value: UInt) {
         if (value != 0u)
             appendElement("offset=$value")
@@ -106,6 +107,10 @@ class WasmIrToText : SExpressionBuilder() {
         wasmInstr.immediates.forEach {
             appendImmediate(it)
         }
+
+        (wasmInstr.location as? SourceLocation.Location)
+            ?.takeIf { withOffsets }
+            ?.apply { stringBuilder.append(" ;; ${file}:${line + 1}:${column + 1}") }
     }
 
     private fun appendImmediate(x: WasmImmediate) {

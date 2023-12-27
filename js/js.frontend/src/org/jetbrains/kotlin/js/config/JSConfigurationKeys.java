@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +126,9 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_GENERATE_WAT =
             CompilerConfigurationKey.create("generate wat file");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_GENERATE_ORIGINAL_LOCATIONS_IN_WAT =
+            CompilerConfigurationKey.create("generate original file, line number and column number near each instruction inside the wat file");
 
     public static final CompilerConfigurationKey<WasmTarget> WASM_TARGET =
             CompilerConfigurationKey.create("wasm target");
