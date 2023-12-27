@@ -181,20 +181,32 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
                 elements[0] = elementsOrSingle
                 elements[1] = backReference
                 backReferences = elements
+
+                backReference.setFlag(FLAG_HAS_BEEN_STORED_IN_BACK_REF_ARRAY, true)
             }
             else -> {
                 @Suppress("UNCHECKED_CAST")
                 elementsOrSingle as Array<BirElementBase?>
 
                 var newIndex = 0
-                while (newIndex < elementsOrSingle.size) {
-                    val e = elementsOrSingle[newIndex]
-                    if (e == null) {
-                        break
-                    } else if (e === backReference) {
-                        return
+                if (backReference.hasFlag(FLAG_HAS_BEEN_STORED_IN_BACK_REF_ARRAY)) {
+                    while (newIndex < elementsOrSingle.size) {
+                        val e = elementsOrSingle[newIndex]
+                        if (e == null) {
+                            break
+                        } else if (e === backReference) {
+                            return
+                        }
+                        newIndex++
                     }
-                    newIndex++
+                } else {
+                    // Optimization: this element certainly isn't in the array.
+                    for (i in elementsOrSingle.lastIndex downTo 0) {
+                        if (elementsOrSingle[i] != null) {
+                            newIndex = i + 1
+                            break
+                        }
+                    }
                 }
 
                 if (newIndex == elementsOrSingle.size) {
@@ -202,6 +214,8 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
                     backReferences = elementsOrSingle
                 }
                 elementsOrSingle[newIndex] = backReference
+
+                backReference.setFlag(FLAG_HAS_BEEN_STORED_IN_BACK_REF_ARRAY, true)
             }
         }
     }
@@ -250,9 +264,10 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
 
 
     companion object {
-        const val FLAG_INVALIDATED: Byte = (1 shl 0).toByte()
-        const val FLAG_IS_IN_MOVED_ELEMENTS_BUFFER: Byte = (1 shl 1).toByte()
+        internal const val FLAG_INVALIDATED: Byte = (1 shl 0).toByte()
+        internal const val FLAG_IS_IN_MOVED_ELEMENTS_BUFFER: Byte = (1 shl 1).toByte()
+        private const val FLAG_HAS_BEEN_STORED_IN_BACK_REF_ARRAY: Byte = (1 shl 2).toByte()
 
-        const val CONTAINING_LIST_ID_BITS = 3
+        private const val CONTAINING_LIST_ID_BITS = 3
     }
 }
