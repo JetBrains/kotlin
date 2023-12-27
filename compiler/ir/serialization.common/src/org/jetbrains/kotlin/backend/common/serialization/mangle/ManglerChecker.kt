@@ -17,12 +17,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 class ManglerChecker(
     vararg _manglers: KotlinMangler<IrDeclaration>,
-    private val needsChecking: (IrDeclarationBase) -> Boolean = hasDescriptor
 ) : IrElementVisitorVoid {
-
-    companion object {
-        val hasDescriptor: (IrDeclarationBase) -> Boolean = { it.symbol.hasDescriptor }
-    }
 
     private val manglers = _manglers.toList()
 
@@ -36,8 +31,6 @@ class ManglerChecker(
         }
 
         override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): Boolean {
-            if (!needsChecking(declaration)) return true
-
             if (declaration.parent is IrPackageFragment) {
                 val vis = declaration as IrDeclarationWithVisibility
                 return DescriptorVisibilities.isPrivate(vis.visibility)
