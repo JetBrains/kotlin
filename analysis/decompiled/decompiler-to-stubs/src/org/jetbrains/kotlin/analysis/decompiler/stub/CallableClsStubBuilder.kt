@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -6,8 +9,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
-import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.kotlin.*
@@ -28,9 +31,9 @@ import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 const val COMPILED_DEFAULT_INITIALIZER = "COMPILED_CODE"
 
@@ -85,7 +88,7 @@ fun createConstructorStub(
 
 private fun shouldSkip(flags: Int, name: Name): Boolean {
     return when (Flags.MEMBER_KIND.get(flags)) {
-        MemberKind.FAKE_OVERRIDE, MemberKind.DELEGATION -> true
+        MemberKind.FAKE_OVERRIDE -> true
         //TODO: fix decompiler to use sane criteria
         MemberKind.SYNTHESIZED -> !DataClassResolver.isComponentLike(name) && name !in listOf(
             OperatorNameConventions.EQUALS,

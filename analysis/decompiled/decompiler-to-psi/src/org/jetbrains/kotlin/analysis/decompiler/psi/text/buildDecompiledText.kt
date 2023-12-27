@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
-import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
-import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -46,11 +44,8 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
 
 internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolean {
     return when (kind) {
-        CallableMemberDescriptor.Kind.DECLARATION -> false
-
-        CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
-        CallableMemberDescriptor.Kind.DELEGATION -> true
-
+        CallableMemberDescriptor.Kind.DECLARATION, CallableMemberDescriptor.Kind.DELEGATION -> false
+        CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> true
         CallableMemberDescriptor.Kind.SYNTHESIZED -> {
             // Of all synthesized functions, only `component*` functions are rendered (for historical reasons)
             !DataClassDescriptorResolver.isComponentLike(name) && name !in listOf(

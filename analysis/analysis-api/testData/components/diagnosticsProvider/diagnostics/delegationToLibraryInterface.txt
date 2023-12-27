@@ -1,4 +1,1 @@
 Diagnostics from elements:
-  for PSI element of type KtClass at (13,1) - (15,96)
-    ABSTRACT_MEMBER_NOT_IMPLEMENTED      text ranges: [(51,71)]
-      PSI: KtClass at (13,1) - (15,96)

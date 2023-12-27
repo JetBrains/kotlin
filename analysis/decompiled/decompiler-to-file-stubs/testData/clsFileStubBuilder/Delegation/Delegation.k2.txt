@@ -37,14 +37,6 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=Delegation.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
-        MODIFIER_LIST[open public]
-        VALUE_PARAMETER_LIST
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Unit]
       FUN[fqName=Delegation.ff, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ff]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -53,3 +45,11 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+      FUN[fqName=Delegation.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+        MODIFIER_LIST[open public]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]
