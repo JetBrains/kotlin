@@ -29,6 +29,11 @@ kotlinx-html = "0.9.1"
 
 ## Markdown
 jetbrains-markdown = "0.5.2"
+# This version SHOULD be compatible with both used in `koltin-compiler` and in `jetbrains-markdown`
+# version used in `kotlin-compiler` is located in https://github.com/JetBrains/kotlin/blob/c9ad09f4dcaae7792cdf27fbdc8c718443d0ad51/gradle/versions.properties#L14
+# verison used in `jetbrains-markdown` is located in https://github.com/JetBrains/markdown/blob/0f10d90f8f75a6c261e6f5a4f23d29c6cf088a92/build.gradle.kts#L92
+# In most cases using the latest version should work (be careful during MAJOR or MINOR version changes)
+fastutil = "8.5.12"
 
 ## JSON
 jackson = "2.12.7" # jackson 2.13.X does not support kotlin language version 1.4, check before updating
@@ -112,6 +117,7 @@ korlibs-template = { module = "com.soywiz.korlibs.korte:korte-jvm", version.ref 
 
 #### Markdown ####
 jetbrains-markdown = { module = "org.jetbrains:markdown", version.ref = "jetbrains-markdown" }
+fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 
 #### Jackson ####
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
