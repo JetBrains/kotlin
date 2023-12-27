@@ -11395,6 +11395,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("javaDeprecatedOnStaticMethod.kt")
+            public void testJavaDeprecatedOnStaticMethod() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/javaDeprecatedOnStaticMethod.kt");
+            }
+
+            @Test
             @TestMetadata("javaDocDeprecated.kt")
             public void testJavaDocDeprecated() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/javaDocDeprecated.kt");
