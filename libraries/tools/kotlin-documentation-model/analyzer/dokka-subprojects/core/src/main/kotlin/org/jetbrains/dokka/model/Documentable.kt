@@ -244,10 +244,11 @@ public data class DInterface(
     override val companion: DObject?,
     override val generics: List<DTypeParameter>,
     override val supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
+    override val modifier: SourceSetDependent<Modifier>,
     override val sourceSets: Set<DokkaSourceSet>,
     override val isExpectActual: Boolean,
     override val extra: PropertyContainer<DInterface> = PropertyContainer.empty()
-) : DClasslike(), WithCompanion, WithGenerics, WithSupertypes, WithExtraProperties<DInterface> {
+) : DClasslike(), WithAbstraction, WithCompanion, WithGenerics, WithSupertypes, WithExtraProperties<DInterface> {
     override val children: List<Documentable>
         get() = (functions + properties + classlikes)
 
