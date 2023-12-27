@@ -89,6 +89,18 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
     }
 
     @Test
+    @TestMetadata("inferTypeFromGetValueDelegate.kt")
+    public void testInferTypeFromGetValueDelegate() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/inferTypeFromGetValueDelegate.kt");
+    }
+
+    @Test
+    @TestMetadata("inferTypeFromGetValueDelegateLibrary.kt")
+    public void testInferTypeFromGetValueDelegateLibrary() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/inferTypeFromGetValueDelegateLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("overrideProtectedClassReturnFromLibrary.kt")
     public void testOverrideProtectedClassReturnFromLibrary() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/overrideProtectedClassReturnFromLibrary.kt");
