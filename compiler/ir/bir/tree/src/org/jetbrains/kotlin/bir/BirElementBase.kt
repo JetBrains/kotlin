@@ -207,7 +207,7 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
     }
 
     internal fun <R : BirElement> getBackReferences(key: BirElementBackReferencesKey<*, R>): List<BirElementBase> {
-        _containingDatabase?.flushElementsWithInvalidatedIndexBuffer()
+        _containingDatabase?.flushInvalidatedElementBuffer()
         require(attachedToDatabase) { "Element must be attached to tree" }
 
         val array: Array<BirElementBase?>
@@ -250,7 +250,7 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
 
 
     companion object {
-        const val FLAG_IN_INVALIDATE_INDEX_BUFFER: Byte = (1 shl 0).toByte()
+        const val FLAG_INVALIDATED: Byte = (1 shl 0).toByte()
         const val FLAG_IS_IN_MOVED_ELEMENTS_BUFFER: Byte = (1 shl 1).toByte()
 
         const val CONTAINING_LIST_ID_BITS = 3

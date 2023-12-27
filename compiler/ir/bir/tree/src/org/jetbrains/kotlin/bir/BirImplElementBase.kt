@@ -161,7 +161,7 @@ abstract class BirImplElementBase(elementClass: BirElementClass) : BirElementBas
 
 
     internal fun invalidate() {
-        _containingDatabase?.elementIndexInvalidated(this)
+        _containingDatabase?.invalidateElement(this)
     }
 
     internal fun invalidate(propertyId: Int) {
@@ -223,12 +223,12 @@ abstract class BirImplElementBase(elementClass: BirElementClass) : BirElementBas
         }
     }
 
-    internal fun invalidateDependentElements() {
+    internal fun indexInvalidatedDependentElements() {
         when (val elementsOrSingle = dependentIndexedElements) {
             null -> {}
             is BirImplElementBase -> {
                 dependentIndexedElements = null
-                _containingDatabase?.invalidateElement(elementsOrSingle)
+                _containingDatabase?.indexInvalidatedElement(elementsOrSingle)
             }
             else -> {
                 @Suppress("UNCHECKED_CAST")
@@ -240,7 +240,7 @@ abstract class BirImplElementBase(elementClass: BirElementClass) : BirElementBas
                     val arrayIsFull = array[arraySize - 1] != null
 
                     array[i] = null
-                    _containingDatabase?.invalidateElement(e)
+                    _containingDatabase?.indexInvalidatedElement(e)
 
                     if (arrayIsFull && array !== dependentIndexedElements) {
                         @Suppress("UNCHECKED_CAST")
