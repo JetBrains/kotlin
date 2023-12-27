@@ -90,6 +90,16 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderPrivateInline/");
     }
 
+    @TestMetadata("fieldOrder")
+    public void testFieldOrder() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/fieldOrder/");
+    }
+
+    @TestMetadata("funOrder")
+    public void testFunOrder() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/funOrder/");
+    }
+
     @TestMetadata("functionBody")
     public void testFunctionBody() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/functionBody/");

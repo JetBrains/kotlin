@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.jvm.abi
 
 import kotlinx.metadata.*
-import kotlinx.metadata.jvm.JvmMetadataVersion
-import kotlinx.metadata.jvm.KotlinClassMetadata
-import kotlinx.metadata.jvm.Metadata
-import kotlinx.metadata.jvm.localDelegatedProperties
+import kotlinx.metadata.jvm.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -165,6 +162,9 @@ private fun KmPackage.removePrivateDeclarations() {
 private fun KmDeclarationContainer.removePrivateDeclarations() {
     functions.removeIf { it.visibility.isPrivate }
     properties.removeIf { it.visibility.isPrivate }
+
+    functions.sortWith(compareBy(KmFunction::name, { it.signature.toString() }))
+    properties.sortWith(compareBy(KmProperty::name, { it.getterSignature.toString() }))
 
     for (property in properties) {
         // Whether or not the *non-const* property is initialized by a compile-time constant is not a part of the ABI.
