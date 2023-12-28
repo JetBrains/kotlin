@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.bir
 
+import org.jetbrains.kotlin.bir.symbols.BirSymbol
+import org.jetbrains.kotlin.bir.symbols.ownerIfBound
 import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
 
+@Suppress("EqualsOrHashCode")
 abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(), BirElement {
     /**
      * Database reference may be stale.
@@ -262,6 +265,10 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
         return results
     }
 
+    final override fun equals(other: Any?): Boolean {
+        return other === this ||
+                (other is BirSymbol && other.ownerIfBound === this)
+    }
 
     companion object {
         internal const val FLAG_INVALIDATED: Byte = (1 shl 0).toByte()
