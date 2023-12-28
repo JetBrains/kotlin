@@ -44,12 +44,7 @@ abstract class BirChildElementList<E : BirElement?>(
             return -1
         }
 
-        for (index in 0..<_size) {
-            if (this[index] === element) {
-                return index
-            }
-        }
-        return -1
+        return indexOfInternal(element, false)
     }
 
     override fun lastIndexOf(element: E): Int {
@@ -57,11 +52,37 @@ abstract class BirChildElementList<E : BirElement?>(
             return -1
         }
 
-        for (index in _size - 1 downTo 0) {
-            if (this[index] === element) {
-                return index
+        return indexOfInternal(element, true)
+    }
+
+    protected fun indexOfInternal(element: E, searchBackward: Boolean): Int {
+        val size = size
+        when (val elementArray = elementArray) {
+            is Array<*> -> {
+                @Suppress("UNCHECKED_CAST")
+                elementArray as Array<BirElementBase?>
+
+                if (searchBackward) {
+                    for (index in size - 1 downTo 0) {
+                        if (elementArray[index] === element) {
+                            return index
+                        }
+                    }
+                } else {
+                    for (index in 0..<size) {
+                        if (elementArray[index] === element) {
+                            return index
+                        }
+                    }
+                }
+            }
+            else -> {
+                if (elementArray === element) {
+                    return 0
+                }
             }
         }
+
         return -1
     }
 
