@@ -59,7 +59,7 @@ static void checkSignalChaining() {
    clang_toggleCrashRecovery(0);
 }
 
-__attribute__((constructor))
+//__attribute__((constructor))
 static void initSignalChaining() {
   void** base = 0;
   Dl_info info;
