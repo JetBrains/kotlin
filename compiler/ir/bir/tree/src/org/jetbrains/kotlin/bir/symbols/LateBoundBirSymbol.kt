@@ -23,6 +23,16 @@ abstract class LateBoundBirSymbol<E : BirSymbolOwner>(
         _owner = element
     }
 
+    final override fun hashCode(): Int {
+        return _owner?.hashCode() ?: super.hashCode()
+    }
+
+    final override fun equals(other: Any?): Boolean {
+        // The owner of this symbol may be an BirSymbol itself
+        return other === this || (other != null && other === _owner)
+    }
+
+
     class FileSymbol(signature: IdSignature?) :
         LateBoundBirSymbol<BirFile>(signature), BirFileSymbol
 
