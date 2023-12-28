@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.wasm.ir.*
+import java.util.LinkedList
 
 enum class LoopLabelType { BREAK, CONTINUE }
 enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, TABLE_SWITCH_SELECTOR }
@@ -33,6 +35,7 @@ class WasmFunctionCodegenContext(
     private val wasmSyntheticLocals = LinkedHashMap<SyntheticLocalType, WasmLocal>()
     private val loopLevels = LinkedHashMap<Pair<IrLoop, LoopLabelType>, Int>()
     private val nonLocalReturnLevels = LinkedHashMap<IrReturnableBlockSymbol, Int>()
+    private val inlinedFunctionStack = LinkedList<IrFunction>()
 
     fun defineLocal(irValueDeclaration: IrValueSymbol) {
         assert(irValueDeclaration !in wasmLocals) { "Redefinition of local" }
@@ -91,5 +94,16 @@ class WasmFunctionCodegenContext(
 
     fun referenceLoopLevel(irLoop: IrLoop, labelType: LoopLabelType): Int {
         return loopLevels.getValue(Pair(irLoop, labelType))
+    }
+
+    val currentFunction: IrFunction
+        get() = inlinedFunctionStack.lastOrNull() ?: irFunction
+
+    fun stepIntoInlinedFunction(inlineFunction: IrFunction) {
+        inlinedFunctionStack.push(inlineFunction)
+    }
+
+    fun stepOutLastInlinedFunction() {
+        inlinedFunctionStack.pop()
     }
 }

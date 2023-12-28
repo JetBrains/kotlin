@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 fun box() {
     val n = 3
@@ -38,3 +38,12 @@ fun foo(n :Int ) : Int {
 // test.kt:12 foo
 // test.kt:12 foo
 // test.kt:6 box
+
+// EXPECTATIONS WASM
+// test.kt:1 $box
+// test.kt:4 $box
+// test.kt:5 $box (16, 12, 4)
+// test.kt:9 $foo (8, 13, 8, 18, 23, 18, 8, 13, 8, 18, 23, 18, 8, 13, 8)
+// test.kt:12 $foo (15, 17, 15, 11, 15, 17, 15, 11, 22, 11, 4, 22, 11, 4)
+// test.kt:10 $foo (15, 8)
+// test.kt:6 $box

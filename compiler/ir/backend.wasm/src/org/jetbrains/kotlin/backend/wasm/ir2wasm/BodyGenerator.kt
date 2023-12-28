@@ -68,7 +68,7 @@ class BodyGenerator(
     }
 
     private fun generateStatement(statement: IrStatement) {
-        when(statement) {
+        when (statement) {
             is IrExpression -> generateAsStatement(statement)
             is IrVariable -> statement.acceptVoid(this)
             else -> error("Unsupported node type: ${statement::class.simpleName}")
@@ -518,7 +518,7 @@ class BodyGenerator(
     // Assumes call arguments are already on the stack
     private fun tryToGenerateIntrinsicCall(
         call: IrFunctionAccessExpression,
-        function: IrFunction
+        function: IrFunction,
     ): Boolean {
         if (tryToGenerateWasmOpIntrinsicCall(call, function)) {
             return true
@@ -655,6 +655,14 @@ class BodyGenerator(
 
     override fun visitBlockBody(body: IrBlockBody) {
         body.statements.forEach(::generateStatement)
+        this.body.buildNop(body.getSourceEndLocation())
+    }
+
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+        body.buildNop(inlinedBlock.inlineCall.getSourceLocation())
+        functionContext.stepIntoInlinedFunction(inlinedBlock.inlineCall.symbol.owner)
+        super.visitInlinedFunctionBlock(inlinedBlock)
+        functionContext.stepOutLastInlinedFunction()
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression) {
@@ -985,5 +993,6 @@ class BodyGenerator(
         return false
     }
 
-    private fun IrElement.getSourceLocation() = getSourceLocation(functionContext.irFunction.fileOrNull?.fileEntry)
+    private fun IrElement.getSourceLocation() = getSourceLocation(functionContext.currentFunction.fileOrNull?.fileEntry)
+    private fun IrElement.getSourceEndLocation() = getSourceLocation(functionContext.currentFunction.fileOrNull?.fileEntry, type = LocationType.END)
 }

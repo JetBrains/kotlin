@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
-import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
@@ -122,7 +121,7 @@ fun compileWasm(
 
     val os = ByteArrayOutputStream()
 
-    val sourceMapFileName = "$baseFileName.map".takeIf { generateSourceMaps }
+    val sourceMapFileName = "$baseFileName.wasm.map".takeIf { generateSourceMaps }
     val sourceLocationMappings =
         if (generateSourceMaps) mutableListOf<SourceLocationMapping>() else null
 
@@ -175,19 +174,19 @@ private fun generateSourceMap(
     val pathResolver =
         SourceFilePathResolver.create(sourceMapsInfo.sourceRoots, sourceMapsInfo.sourceMapPrefix, sourceMapsInfo.outputDir)
 
-    var prev: SourceLocation? = null
+    var prev: SourceLocation.Location? = null
 
     for (mapping in sourceLocationMappings) {
-        val location = mapping.sourceLocation as? SourceLocation.Location ?: continue
-
-        if (location == prev) continue
-
-        prev = location
-
-        location.apply {
-            // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
-            val relativePath = pathResolver.getPathRelativeToSourceRoots(File(file)).substring(3)
-            sourceMapBuilder.addMapping(relativePath, null, { null }, line, column, null, mapping.offset)
+        when (val location = mapping.sourceLocation.takeIf { it != prev } ?: continue) {
+            is SourceLocation.NoLocation -> sourceMapBuilder.addEmptyMapping(mapping.offset)
+            is SourceLocation.Location -> {
+                location.apply {
+                    // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
+                    val relativePath = pathResolver.getPathRelativeToSourceRoots(File(file)).replace(Regex("^\\.\\./"), "")
+                    sourceMapBuilder.addMapping(relativePath, null, { null }, line, column, null, mapping.offset)
+                    prev = this
+                }
+            }
         }
     }
 
@@ -372,6 +371,6 @@ fun writeCompilationResult(
     File(dir, "$fileNameBase.mjs").writeText(result.jsWrapper)
 
     if (result.sourceMap != null) {
-        File(dir, "$fileNameBase.map").writeText(result.sourceMap)
+        File(dir, "$fileNameBase.wasm.map").writeText(result.sourceMap)
     }
 }

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // WITH_STDLIB
 // TODO: Enable the test on JS BE, but now it is too flaky there.
 // TARGET_BACKEND: JVM
@@ -55,3 +55,5 @@ fun box() {
 // Continuation.kt:71 resumeWith
 // test.kt:13 builder
 // test.kt:24 box
+
+// EXPECTATIONS WASM

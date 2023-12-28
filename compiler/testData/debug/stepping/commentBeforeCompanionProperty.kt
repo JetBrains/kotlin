@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 class AWithCompanion {
@@ -25,3 +25,8 @@ fun box() {
 // test.kt:7 <init>
 // test.kt:5 <init>
 // test.kt:13 box
+
+// EXPECTATIONS WASM
+// test.kt:1 $box
+// test.kt:12 $box
+// test.kt:13 $box

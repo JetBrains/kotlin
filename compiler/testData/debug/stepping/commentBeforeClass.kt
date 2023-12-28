@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 fun box() {
@@ -20,3 +20,9 @@ class A {
 // test.kt:5 box
 // test.kt:9 <init>
 // test.kt:6 box
+
+// EXPECTATIONS WASM
+// test.kt:1 $box
+// test.kt:5 $box (4, 4, 4)
+// test.kt:11 $A.<init>
+// test.kt:6 $box

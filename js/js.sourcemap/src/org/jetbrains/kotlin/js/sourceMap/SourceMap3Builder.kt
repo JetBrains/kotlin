@@ -176,6 +176,13 @@ class SourceMap3Builder(
         }
     }
 
+    fun addEmptyMapping(outputColumn: Int) {
+        if (!currentMappingIsEmpty) {
+            startMapping(outputColumn)
+            currentMappingIsEmpty = true
+        }
+    }
+
     private fun startMapping(column: Int) {
         val newGroupStarted = previousGeneratedColumn == -1
         if (newGroupStarted) {

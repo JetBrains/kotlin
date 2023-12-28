@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // IGNORE_INLINER: IR
 // FILE: test.kt
 
@@ -26,3 +26,12 @@ inline fun foo() = {
 // test.kt:7 box
 // test1.kt:9 box$lambda
 // test.kt:8 box
+
+// EXPECTATIONS WASM
+// test.kt:1 $box
+// test.kt:6 $box
+// test1.kt:11 $box (19, 19)
+// test1.kt:12 $box
+// test.kt:7 $box
+// test.kt:9 $box$lambda.invoke
+// test.kt:8 $box

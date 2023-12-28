@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 
 // FILE: test.kt
 fun box(): Int {
@@ -29,3 +29,12 @@ inline fun getB(): Int {
 // test.kt:5 box
 // test.kt:12 getA
 // test.kt:9 box
+
+// EXPECTATIONS WASM
+// test.kt:1 $box
+// test.kt:6 $box (8, 8)
+// test.kt:15 $box (11, 4, 11, 4)
+// test.kt:7 $box
+// test.kt:12 $getA (13, 14)
+// test.kt:9 $box (11, 4)
+// test.kt:8 $box

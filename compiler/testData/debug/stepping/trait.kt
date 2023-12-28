@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 interface A {
@@ -57,3 +57,13 @@ fun box() {
 // test.kt:8 bar
 // test.kt:5 foo
 // test.kt:17 box
+
+// EXPECTATIONS WASM
+// test.kt:1 $box
+// test.kt:15 $box (5, 5, 20)
+// test.kt:15 $<no name provided>.<init>
+// test.kt:8 $A.bar (15, 8, 15, 8)
+// test.kt:5 $A.foo (16, 18, 16, 18)
+// test.kt:16 $box (4, 4, 8)
+// test.kt:12 $B.<init>
+// test.kt:17 $box

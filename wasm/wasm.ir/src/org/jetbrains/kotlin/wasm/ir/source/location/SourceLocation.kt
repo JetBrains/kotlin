@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.wasm.ir.source.location
 
 sealed class SourceLocation {
-    private object NoLocation : SourceLocation()
+    object NoLocation : SourceLocation()
 
     data class Location(val file: String, val line: Int, val column: Int) : SourceLocation()
 

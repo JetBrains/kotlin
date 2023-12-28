@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: foo.kt
 import bar
 fun foo(x: Int): Int {
@@ -45,3 +45,14 @@ fun bar(x: Int) =
 // foo.kt:6 foo
 // test.kt:22 bar
 // test.kt:15 box
+
+// EXPECTATIONS WASM
+// test.kt:1 $box
+// test.kt:14 $box (8, 4, 4)
+// foo.kt:5 $foo (8, 13, 8, 8, 13, 8)
+// foo.kt:8 $foo (15, 11, 4)
+// test.kt:18 $bar (8, 12, 8)
+// test.kt:19 $bar (12, 8)
+// foo.kt:6 $foo (15, 8)
+// test.kt:22 $bar
+// test.kt:15 $box

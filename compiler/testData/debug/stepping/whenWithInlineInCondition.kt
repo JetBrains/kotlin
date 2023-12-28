@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 fun box() {
     val x = value()
@@ -78,3 +78,22 @@ fun nop() {}
 // test.kt:15 box
 // test.kt:29 nop
 // test.kt:18 box
+
+// EXPECTATIONS WASM
+// test.kt:1 $box
+// test.kt:4 $box
+// test.kt:20 $value (19, 20)
+// test.kt:5 $box
+// test.kt:6 $box (8, 8)
+// test.kt:21 $box (23, 24, 23, 24, 23, 24)
+// test.kt:7 $box (8, 8)
+// test.kt:22 $box (23, 24, 23, 24, 23, 24)
+// test.kt:8 $box (8, 8, 16)
+// test.kt:23 $box (23, 24)
+// test.kt:29 $nop (12, 12)
+// test.kt:13 $box (10, 17, 10)
+// test.kt:14 $box (8, 13, 8, 8)
+// test.kt:27 $box (28, 32)
+// test.kt:15 $box (8, 11, 8, 20)
+// test.kt:26 $box (29, 30)
+// test.kt:18 $box

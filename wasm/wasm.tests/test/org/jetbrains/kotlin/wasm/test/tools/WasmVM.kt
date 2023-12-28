@@ -81,7 +81,8 @@ internal sealed class WasmVM(val shortName: String) {
 internal class ExternalTool(val path: String) {
     fun run(vararg arguments: String, workingDirectory: File? = null): String {
         val command = arrayOf(path, *arguments)
-        val processBuilder = ProcessBuilder(*command).redirectErrorStream(true)
+        val processBuilder = ProcessBuilder(*command)
+            .redirectErrorStream(true)
 
         if (workingDirectory != null) {
             processBuilder.directory(workingDirectory)

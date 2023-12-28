@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // FILE: test.kt
 
 // Single line comment
@@ -53,3 +53,12 @@ class A {
 // test.kt:7 box
 // test.kt:32 bar
 // test.kt:8 box
+
+// EXPECTATIONS WASM
+// test.kt:1 $box
+// test.kt:6 $box (4, 4, 8)
+// test.kt:33 $A.<init> (1, 1)
+// test.kt:25 $A.foo
+// test.kt:7 $box (4, 4, 8)
+// test.kt:32 $A.bar
+// test.kt:8 $box

@@ -7,18 +7,32 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilder
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
-fun IrElement.getSourceLocation(fileEntry: IrFileEntry?): SourceLocation {
+enum class LocationType {
+    START {
+        override fun getLineAndColumnNumberFor(irElement: IrElement, fileEntry: IrFileEntry) =
+            fileEntry.getLineAndColumnNumbers(irElement.startOffset)
+    },
+    END {
+        override fun getLineAndColumnNumberFor(irElement: IrElement, fileEntry: IrFileEntry) =
+            fileEntry.getLineAndColumnNumbers(irElement.endOffset)
+    };
+
+    abstract fun getLineAndColumnNumberFor(irElement: IrElement, fileEntry: IrFileEntry): LineAndColumn
+}
+
+fun IrElement.getSourceLocation(fileEntry: IrFileEntry?, type: LocationType = LocationType.START): SourceLocation {
     if (fileEntry == null) return SourceLocation.NoLocation("fileEntry is null")
 
     val path = fileEntry.name
-    val (startLine, startColumn) = fileEntry.getLineAndColumnNumbers(startOffset)
+    val (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)
 
-    if (startLine < 0 || startColumn < 0) return SourceLocation.NoLocation("startLine or startColumn < 0")
+    if (line < 0 || column < 0) return SourceLocation.NoLocation("startLine or startColumn < 0")
 
-    return SourceLocation.Location(path, startLine, startColumn)
+    return SourceLocation.Location(path, line, column)
 }
 
 fun WasmExpressionBuilder.buildUnreachableForVerifier() {

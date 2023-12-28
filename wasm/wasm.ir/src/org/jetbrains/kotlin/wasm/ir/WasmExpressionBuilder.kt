@@ -218,6 +218,10 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.DROP, location)
     }
 
+    fun buildNop(location: SourceLocation) {
+        buildInstr(WasmOp.NOP, location)
+    }
+
     inline fun commentPreviousInstr(text: () -> String) {
         buildInstr(WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR, SourceLocation.NoLocation("Pseudo-instruction"), WasmImmediate.ConstString(text()))
     }

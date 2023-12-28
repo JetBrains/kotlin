@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+
 // WITH_STDLIB
 
 // FILE: test.kt
@@ -31,3 +31,5 @@ suspend fun box() {
 // test.kt:6 foo
 // test.kt:11 doResume
 // test.kt:13 doResume
+
+// EXPECTATIONS WASM
