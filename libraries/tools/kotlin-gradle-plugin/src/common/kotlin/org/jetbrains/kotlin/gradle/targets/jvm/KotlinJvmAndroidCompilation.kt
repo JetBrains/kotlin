@@ -6,7 +6,6 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
@@ -17,12 +16,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.utils.*
 import javax.inject.Inject
 
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 open class KotlinJvmAndroidCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
-    val androidVariant: BaseVariant
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation) {
+    val androidVariant: DeprecatedAndroidBaseVariant
+) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation) {
 
     override val target: KotlinAndroidTarget = compilation.target as KotlinAndroidTarget
 

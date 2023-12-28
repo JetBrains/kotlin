@@ -25,3 +25,5 @@ internal constructor(compilation: KotlinCompilationImpl) : AbstractKotlinCompila
             compilation.runtimeDependencyFiles = value
         }
 }
+
+internal typealias DeprecatedAbstractKotlinCompilationToRunnableFiles<T> = AbstractKotlinCompilationToRunnableFiles<T>
