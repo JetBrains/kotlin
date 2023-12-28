@@ -98,7 +98,7 @@ fun testIntSumOfIterableIntInParam(param: Iterable<Int>): Int {
     return param.sumOf { it }
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals(55, testIntSumOfIntRange())
     assertEquals(55, testIntSumOfIntRangeAsReturnableBlock())

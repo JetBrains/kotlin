@@ -4,13 +4,13 @@
 package codegen.stringConcatenationTypeNarrowing.kt53119_append_manual
 import kotlin.test.*
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendMaybeAny(kotlin.Any?)
-// CHECK-OPT: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendMaybeAny(kotlin.Any?)
+// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-OPT-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
+// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun appendMaybeAny(maybeAny: Any?): String {
     val sb = kotlin.text.StringBuilder()
@@ -18,14 +18,14 @@ fun appendMaybeAny(maybeAny: Any?): String {
     return sb.toString()
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendAny(kotlin.Any)
-// CHECK-OPT: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendAny(kotlin.Any)
+// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
-// CHECK: ret %struct.ObjHeader*
+// CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
+// CHECK: ret ptr
 
 fun appendAny(any: Any): String {
     val sb = kotlin.text.StringBuilder()
@@ -33,13 +33,13 @@ fun appendAny(any: Any): String {
     return sb.toString()
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendMaybeString(kotlin.String?)
-// CHECK-OPT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-OPT-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendMaybeString(kotlin.String?)
+// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
 
-// CHECK-OPT-NOT: %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String
+// CHECK-OPT-NOT: ptr @"kfun:kotlin.String#toString(){}kotlin.String
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun appendMaybeString(maybeStr: String?): String {
     val sb = kotlin.text.StringBuilder()
@@ -47,13 +47,13 @@ fun appendMaybeString(maybeStr: String?): String {
     return sb.toString()
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendString(kotlin.String)
-// CHECK-OPT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-OPT-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendString(kotlin.String)
+// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
 
-// CHECK-OPT-NOT: %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String
+// CHECK-OPT-NOT: ptr @"kfun:kotlin.String#toString(){}kotlin.String
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun appendString(str: String): String {
     val sb = kotlin.text.StringBuilder()
@@ -63,14 +63,14 @@ fun appendString(str: String): String {
 
 data class Foo(val bar: Int)
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendFoo(codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo)
-// CHECK-OPT: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendFoo(codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo)
+// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
-// CHECK: ret %struct.ObjHeader*
+// CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
+// CHECK: ret ptr
 
 fun appendFoo(foo: Foo): String {
     val sb = kotlin.text.StringBuilder()

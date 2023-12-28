@@ -452,6 +452,12 @@ The default value is 1."""
     @Argument(value = "-Xkonan-data-dir", description = "Custom path to the location of konan distributions.")
     var konanDataDir: String? = null
 
+    @Argument(value = "-Xllvm-module-passes", description = "Custom set of LLVM passes to run as the ModuleOptimizationPipeline.")
+    var llvmModulePasses: String? = null
+
+    @Argument(value = "-Xllvm-lto-passes", description = "Custom set of LLVM passes to run as the LTOOptimizationPipeline.")
+    var llvmLTOPasses: String? = null
+
     @Argument(
         value = "-Xmanifest-native-targets",
         description = "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded."

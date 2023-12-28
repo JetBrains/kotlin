@@ -17,7 +17,7 @@ fun testUIntForWithIndex(): Int {
 }
 
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals(2740, testUIntForWithIndex())
     return "OK"

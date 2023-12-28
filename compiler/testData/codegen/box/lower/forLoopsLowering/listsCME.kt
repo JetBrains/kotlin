@@ -7,7 +7,7 @@
 // FILECHECK_STAGE: CStubs
 import kotlin.test.*
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#testMutableListCME(){}kotlin.String
+// CHECK-LABEL: define ptr @"kfun:#testMutableListCME(){}kotlin.String
 // Lists must not be handled by ForLoopsLowering, since its possible modification-in-loop must throw ConcurrentModificationException from its `iterator.next()`
 // CHECK: iterator
 // CHECK-LABEL: epilogue:
@@ -27,7 +27,7 @@ fun testMutableListCME(): String {
     return sb.toString()
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals("a", testMutableListCME())
     return "OK"

@@ -53,7 +53,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val flexiblePhaseConfig = configuration.get(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG)!!
 
     // See https://youtrack.jetbrains.com/issue/KT-67692.
-    val useLlvmOpaquePointers = false
+    val useLlvmOpaquePointers = true
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
     val debug: Boolean get() = configuration.getBoolean(KonanConfigKeys.DEBUG)
@@ -282,6 +282,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val bridgesPolicy: BridgesPolicy by lazy {
         if (genericSafeCasts) BridgesPolicy.BOX_UNBOX_CASTS else BridgesPolicy.BOX_UNBOX_ONLY
+    }
+
+    val llvmModulePasses: String? by lazy {
+        configuration.get(KonanConfigKeys.LLVM_MODULE_PASSES)
+    }
+
+    val llvmLTOPasses: String? by lazy {
+        configuration.get(KonanConfigKeys.LLVM_LTO_PASSES)
     }
 
     init {
