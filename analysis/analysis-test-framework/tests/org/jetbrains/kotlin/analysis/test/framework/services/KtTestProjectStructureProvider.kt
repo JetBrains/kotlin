@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
@@ -22,7 +21,7 @@ class KtTestProjectStructureProvider(
     private val builtinsModule: KtBuiltinsModule,
     private val projectStructure: KtModuleProjectStructure,
 ) : KtStaticProjectStructureProvider() {
-    override fun getNotUnderContentRootModule(project: Project, file: PsiFile?): KtNotUnderContentRootModule {
+    override fun getNotUnderContentRootModule(project: Project): KtNotUnderContentRootModule {
         error("Not-under content root modules most be initialized explicitly in tests")
     }
 

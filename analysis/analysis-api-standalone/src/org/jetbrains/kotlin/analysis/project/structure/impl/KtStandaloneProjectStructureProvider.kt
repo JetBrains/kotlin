@@ -7,16 +7,13 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory.findJvmRootsForJavaFiles
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
@@ -33,25 +30,12 @@ internal class KtStandaloneProjectStructureProvider(
         )
     }
 
-    private val notUnderContentRootModuleCache = ContainerUtil.createConcurrentWeakMap<PsiFile, KtNotUnderContentRootModule>()
-
     private val builtinsModule: KtBuiltinsModule by lazy {
         LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform).ktModule as KtBuiltinsModule
     }
 
-    override fun getNotUnderContentRootModule(project: Project, file: PsiFile?): KtNotUnderContentRootModule {
-        if (file == null) {
-            return ktNotUnderContentRootModuleWithoutPsiFile
-        }
-
-        return notUnderContentRootModuleCache.getOrPut(file) {
-            KtNotUnderContentRootModuleImpl(
-                name = file.name,
-                moduleDescription = "Standalone-not-under-content-root-module-for-$file",
-                file = file,
-                project = project,
-            )
-        }
+    override fun getNotUnderContentRootModule(project: Project): KtNotUnderContentRootModule {
+        return ktNotUnderContentRootModuleWithoutPsiFile
     }
 
     @OptIn(KtModuleStructureInternals::class)

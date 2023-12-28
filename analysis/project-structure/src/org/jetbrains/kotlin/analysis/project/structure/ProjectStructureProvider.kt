@@ -42,7 +42,7 @@ public abstract class ProjectStructureProvider {
      */
     public abstract fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule
 
-    protected abstract fun getNotUnderContentRootModule(project: Project, file: PsiFile?): KtNotUnderContentRootModule
+    protected abstract fun getNotUnderContentRootModule(project: Project): KtNotUnderContentRootModule
 
     @OptIn(KtModuleStructureInternals::class)
     protected fun computeSpecialModule(file: PsiFile): KtModule? {
@@ -81,7 +81,7 @@ public abstract class ProjectStructureProvider {
             return getModule(contextElement, contextualModule = null)
         }
 
-        return getNotUnderContentRootModule(file.project, file = null)
+        return getNotUnderContentRootModule(file.project)
     }
 
     /**
