@@ -194,31 +194,31 @@ fun booleanGlobal_compareAndExchangeField() = ::booleanGlobal.compareAndExchange
 val intArr = IntArray(2)
 
 // CHECK-LABEL: define i32 @"kfun:#intArr_atomicGet(){}kotlin.Int"()
-// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: load atomic i32, i32* %{{[0-9]+}} seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun intArr_atomicGet() = intArr.atomicGet(0)
 
 // CHECK-LABEL: define void @"kfun:#intArr_atomicSet(){}"()
-// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: store atomic i32 1, i32* %{{[0-9]+}} seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun intArr_atomicSet() = intArr.atomicSet(0, 1)
 
 // CHECK-LABEL: define i32 @"kfun:#intArr_getAndSet(){}kotlin.Int"()
-// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: atomicrmw xchg i32* %{{[0-9]+}}, i32 1 seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun intArr_getAndSet() = intArr.getAndSet(0, 1)
 
 // CHECK-LABEL: define i32 @"kfun:#intArr_getAndAdd(){}kotlin.Int"()
-// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: atomicrmw add i32* %{{[0-9]+}}, i32 1 seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun intArr_getAndAdd() = intArr.getAndAdd(0, 1)
 
 // CHECK-LABEL: define i32 @"kfun:#intArr_compareAndExchange(){}kotlin.Int"()
-// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: cmpxchg i32* %{{[0-9]+}}, i32 1, i32 2 seq_cst seq_cst
 // CHECK: extractvalue { i32, i1 } %{{[0-9]+}}, 0
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
@@ -227,7 +227,7 @@ fun intArr_compareAndExchange() = intArr.compareAndExchange(0, 1, 2)
 // CHECK-AAPCS-LABEL: define i1 @"kfun:#intArr_compareAndSet(){}kotlin.Boolean"()
 // CHECK-DEFAULTABI-LABEL: define zeroext i1 @"kfun:#intArr_compareAndSet(){}kotlin.Boolean"()
 // CHECK-WINDOWSX64-LABEL: define zeroext i1 @"kfun:#intArr_compareAndSet(){}kotlin.Boolean"()
-// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i32* @Kotlin_intArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: cmpxchg i32* %{{[0-9]+}}, i32 1, i32 2 seq_cst seq_cst
 // CHECK: extractvalue { i32, i1 } %{{[0-9]+}}, 1
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
@@ -237,31 +237,31 @@ fun intArr_compareAndSet() = intArr.compareAndSet(0, 1, 2)
 val longArr = LongArray(2)
 
 // CHECK-LABEL: define i64 @"kfun:#longArr_atomicGet(){}kotlin.Long"()
-// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: load atomic i64, i64* %{{[0-9]+}} seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun longArr_atomicGet() = longArr.atomicGet(0)
 
 // CHECK-LABEL: define void @"kfun:#longArr_atomicSet(){}"()
-// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: store atomic i64 1, i64* %{{[0-9]+}} seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun longArr_atomicSet() = longArr.atomicSet(0, 1L)
 
 // CHECK-LABEL: define i64 @"kfun:#longArr_getAndSet(){}kotlin.Long"()
-// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: atomicrmw xchg i64* %{{[0-9]+}}, i64 1 seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun longArr_getAndSet() = longArr.getAndSet(0, 1L)
 
 // CHECK-LABEL: define i64 @"kfun:#longArr_getAndAdd(){}kotlin.Long"()
-// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: atomicrmw add i64* %{{[0-9]+}}, i64 1 seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun longArr_getAndAdd() = longArr.getAndAdd(0, 1L)
 
 // CHECK-LABEL: define i64 @"kfun:#longArr_compareAndExchange(){}kotlin.Long"()
-// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: cmpxchg i64* %{{[0-9]+}}, i64 1, i64 2 seq_cst seq_cst
 // CHECK: extractvalue { i64, i1 } %{{[0-9]+}}, 0
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
@@ -270,7 +270,7 @@ fun longArr_compareAndExchange() = longArr.compareAndExchange(0, 1L, 2L)
 // CHECK-AAPCS-LABEL: define i1 @"kfun:#longArr_compareAndSet(){}kotlin.Boolean"()
 // CHECK-DEFAULTABI-LABEL: define zeroext i1 @"kfun:#longArr_compareAndSet(){}kotlin.Boolean"()
 // CHECK-WINDOWSX64-LABEL: define zeroext i1 @"kfun:#longArr_compareAndSet(){}kotlin.Boolean"()
-// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call i64* @Kotlin_longArrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: cmpxchg i64* %{{[0-9]+}}, i64 1, i64 2 seq_cst seq_cst
 // CHECK: extractvalue { i64, i1 } %{{[0-9]+}}, 1
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
@@ -280,35 +280,35 @@ fun longArr_compareAndSet() = longArr.compareAndSet(0, 1L, 2L)
 val refArr = arrayOfNulls<String?>(2)
 
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:#refArr_atomicGet(){}kotlin.String?"
-// CHECK: call %struct.ObjHeader** @Kotlin_arrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call %struct.ObjHeader** @Kotlin_arrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: load atomic %struct.ObjHeader*, %struct.ObjHeader** %{{[0-9]+}} seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_atomicGet() = refArr.atomicGet(0)
 
 // CHECK-LABEL: define void @"kfun:#refArr_atomicSet(){}"()
-// CHECK: call %struct.ObjHeader** @Kotlin_arrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
-// CHECK: call void @UpdateVolatileHeapRef(%struct.ObjHeader** %{{[0-9]+}}, %struct.ObjHeader* null)
+// CHECK: call %struct.ObjHeader** @Kotlin_arrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
+// CHECK: call void @UpdateVolatileHeapRef(%struct.ObjHeader** noundef %{{[0-9]+}}, %struct.ObjHeader* noundef null)
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_atomicSet() = refArr.atomicSet(0, null)
 
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:#refArr_getAndSet(){}kotlin.String?"
-// CHECK: call %struct.ObjHeader** @Kotlin_arrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
-// CHECK: call %struct.ObjHeader* @GetAndSetVolatileHeapRef(%struct.ObjHeader** %{{[0-9]+}}, %struct.ObjHeader* null, %struct.ObjHeader** %{{[0-9]+}})
+// CHECK: call %struct.ObjHeader** @Kotlin_arrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
+// CHECK: call %struct.ObjHeader* @GetAndSetVolatileHeapRef(%struct.ObjHeader** noundef %{{[0-9]+}}, %struct.ObjHeader* noundef null, %struct.ObjHeader** noundef %{{[0-9]+}})
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_getAndSet() = refArr.getAndSet(0, null)
 
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:#refArr_compareAndExchange(){}kotlin.String?"
-// CHECK: call %struct.ObjHeader** @Kotlin_arrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
-// CHECK: call %struct.ObjHeader* @CompareAndSwapVolatileHeapRef(%struct.ObjHeader** %{{[0-9]+}}, %struct.ObjHeader* null, %struct.ObjHeader* null, %struct.ObjHeader** %{{[0-9]+}})
+// CHECK: call %struct.ObjHeader** @Kotlin_arrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
+// CHECK: call %struct.ObjHeader* @CompareAndSwapVolatileHeapRef(%struct.ObjHeader** noundef %{{[0-9]+}}, %struct.ObjHeader* noundef null, %struct.ObjHeader* noundef null, %struct.ObjHeader** noundef %{{[0-9]+}})
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_compareAndExchange() = refArr.compareAndExchange(0, null, null)
 
 // CHECK-AAPCS-LABEL: define i1 @"kfun:#refArr_compareAndSet(){}kotlin.Boolean"()
 // CHECK-DEFAULTABI-LABEL: define zeroext i1 @"kfun:#refArr_compareAndSet(){}kotlin.Boolean"()
 // CHECK-WINDOWSX64-LABEL: define zeroext i1 @"kfun:#refArr_compareAndSet(){}kotlin.Boolean"()
-// CHECK: call %struct.ObjHeader** @Kotlin_arrayGetElementAddress(%struct.ObjHeader* %{{[0-9]+}}, i32 0)
+// CHECK: call %struct.ObjHeader** @Kotlin_arrayGetElementAddress(%struct.ObjHeader* noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK-AAPCS: call i1 @CompareAndSetVolatileHeapRef(%struct.ObjHeader** %{{[0-9]+}}, %struct.ObjHeader* null, %struct.ObjHeader* null)
-// CHECK-DEFAULTABI: call zeroext i1 @CompareAndSetVolatileHeapRef(%struct.ObjHeader** %{{[0-9]+}}, %struct.ObjHeader* null, %struct.ObjHeader* null)
+// CHECK-DEFAULTABI: call zeroext i1 @CompareAndSetVolatileHeapRef(%struct.ObjHeader** noundef %{{[0-9]+}}, %struct.ObjHeader* noundef null, %struct.ObjHeader* noundef null)
 // CHECK-WINDOWSX64: call zeroext i1 @CompareAndSetVolatileHeapRef(%struct.ObjHeader** %{{[0-9]+}}, %struct.ObjHeader* null, %struct.ObjHeader* null)
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_compareAndSet() = refArr.compareAndSet(0, null, null)
