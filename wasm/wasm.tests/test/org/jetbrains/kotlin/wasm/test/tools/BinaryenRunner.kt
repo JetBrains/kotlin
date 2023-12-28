@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.wasm.test.tools
 
 import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.test.fail
 
@@ -28,24 +27,31 @@ sealed interface WasmOptimizer {
         }
 
         private fun exec(command: Array<String>, input: ByteArray): ByteArray {
-            val timestamp = System.currentTimeMillis()
-            val savedInput = File
-                .createTempFile("binaryen_input_$timestamp", ".wasm")
-                .apply { writeBytes(input) }
-            val savedOutput = File
-                .createTempFile("binaryen_output_$timestamp", ".wasm")
+            var savedInput: File? = null
+            var savedOutput: File? = null
+            try {
+                val timestamp = System.currentTimeMillis()
 
-            val processBuilder = ProcessBuilder(*(command + listOf("-o", savedOutput.absolutePath, savedInput.absolutePath)))
-                .redirectErrorStream(true)
+                savedInput = File
+                    .createTempFile("binaryen_input_$timestamp", ".wasm")
+                    .apply { writeBytes(input) }
 
-            val exitValue = processBuilder.start().waitFor()
+                savedOutput = File.createTempFile("binaryen_output_$timestamp", ".wasm")
 
-            if (exitValue != 0) {
-                val commandString = command.joinToString(" ") { escapeShellArgument(it) }
-                fail("Command \"$commandString\" terminated with exit code $exitValue")
+                val processBuilder = ProcessBuilder(*(command + listOf("-o", savedOutput.absolutePath, savedInput.absolutePath)))
+                    .redirectErrorStream(true)
+                val exitValue = processBuilder.start().waitFor()
+
+                if (exitValue != 0) {
+                    val commandString = command.joinToString(" ") { escapeShellArgument(it) }
+                    fail("Command \"$commandString\" terminated with exit code $exitValue")
+                }
+
+                return savedOutput.readBytes()
+            } finally {
+                savedInput?.delete()
+                savedOutput?.delete()
             }
-
-            return savedOutput.readBytes()
         }
     }
 }
