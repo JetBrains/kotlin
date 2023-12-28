@@ -120,7 +120,6 @@ internal class KtFirPsiTypeProvider(
             type = javaType
         }
 
-
         val javaTypeParameterStack = MutableJavaTypeParameterStack()
 
         var psiClass = PsiTreeUtil.getContextOfType(useSitePosition, PsiClass::class.java, false)
@@ -169,7 +168,11 @@ internal class KtFirPsiTypeProvider(
 private fun ConeKotlinType.simplifyType(
     session: FirSession,
     useSitePosition: PsiElement,
+    visited: MutableSet<ConeKotlinType> = mutableSetOf()
 ): ConeKotlinType {
+    // E.g., Wrapper<T> : Comparable<Wrapper<T>>
+    if (!visited.add(this)) return this
+
     val substitutor = AnonymousTypesSubstitutor(session)
     val visibilityForApproximation = useSitePosition.visibilityForApproximation
     // TODO: See if the given [useSitePosition] is an `inline` method
@@ -192,7 +195,11 @@ private fun ConeKotlinType.simplifyType(
 
     } while (oldType !== currentType)
     if (typeArguments.isNotEmpty()) {
-        currentType = currentType.withArguments { it.replaceType(it.type?.simplifyType(session, useSitePosition)) }
+        currentType = currentType.withArguments { typeProjection ->
+            typeProjection.replaceType(
+                typeProjection.type?.simplifyType(session, useSitePosition, visited)
+            )
+        }
     }
     return currentType
 }
@@ -342,13 +349,12 @@ private class AnonymousTypesSubstitutor(
         visited: MutableSet<ConeKotlinType> = mutableSetOf()
     ): Boolean {
         if (typeArguments.isEmpty()) return false
-        visited.add(this)
+        if (!visited.add(this)) return true
         for (projection in typeArguments) {
             // E.g., Test : Comparable<Test>
             val type = (projection as? ConeKotlinTypeProjection)?.type ?: continue
             // E.g., Comparable<Test>
             val newType = substituteOrNull(type) ?: continue
-            if (newType in visited) return true
             // Visit new type: e.g., Test, as a type argument, is substituted with Comparable<Test>, again.
             if (newType.hasRecursiveTypeArgument(visited)) return true
         }

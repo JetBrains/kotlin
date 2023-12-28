@@ -77,9 +77,15 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiExpressionPsiTypeProvide
     }
 
     @Test
-    @TestMetadata("recursiveTypeParameter.kt")
-    public void testRecursiveTypeParameter() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter.kt");
+    @TestMetadata("recursiveTypeParameter_localSimple.kt")
+    public void testRecursiveTypeParameter_localSimple() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter_localSimple.kt");
+    }
+
+    @Test
+    @TestMetadata("recursiveTypeParameter_localWithTypeParameter.kt")
+    public void testRecursiveTypeParameter_localWithTypeParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/recursiveTypeParameter_localWithTypeParameter.kt");
     }
 
     @Test
