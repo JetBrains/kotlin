@@ -2,7 +2,6 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
-// JVM_ABI_K1_K2_DIFF: KT-62464
 
 import kotlin.contracts.*
 

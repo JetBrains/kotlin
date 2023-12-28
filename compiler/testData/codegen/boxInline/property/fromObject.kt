@@ -1,6 +1,4 @@
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: KT-62465
-
 // FILE: 1.kt
 package test
 

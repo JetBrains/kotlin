@@ -1,3 +1,0 @@
-MODULE main
-	Missing in K2
-		AnnInCommon.class

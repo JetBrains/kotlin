@@ -10,14 +10,12 @@ import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.io.FileInputStream
 
-internal fun File.readKotlinClassHeader(): Metadata? = ClassReader(FileInputStream(this)).readKotlinClassHeader()
-
-fun ClassReader.readKotlinClassHeader(): Metadata? {
+internal fun File.readKotlinClassHeader(): Metadata? {
     var header: Metadata? = null
 
     try {
         val metadataDesc = Type.getDescriptor(Metadata::class.java)
-        accept(object : ClassVisitor(Opcodes.API_VERSION) {
+        ClassReader(FileInputStream(this)).accept(object : ClassVisitor(Opcodes.API_VERSION) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =
                 if (desc == metadataDesc) readMetadataVisitor { header = it }
                 else null

@@ -1,6 +1,4 @@
 // WITH_SIGNATURES
-// JVM_ABI_K1_K2_DIFF: KT-63957
-
 // FILE: rawTypeInSignature.kt
 
 class GenericInv<T : Number>

@@ -1,9 +1,0 @@
-MODULE main
-	CLASS A.class
-		CLASS METADATA
-			PROPERTY b
-				Property: class.metadata.property.returnType
-					K1
-						.A$b$1
-					K2
-						.A.<no name provided>

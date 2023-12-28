@@ -1,5 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-62464
-
 // FILE: 1.kt
 interface Service {
     fun send(message: String): String

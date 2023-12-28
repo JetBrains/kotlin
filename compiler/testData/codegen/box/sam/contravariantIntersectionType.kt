@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// JVM_ABI_K1_K2_DIFF: KT-62865
 
 // TODO support different bytecode text templates for FIR?
 // --CHECK_BYTECODE_TEXT

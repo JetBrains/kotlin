@@ -1,5 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63850, KT-63854
-
 class A {
     private var foo = 1
         get() {

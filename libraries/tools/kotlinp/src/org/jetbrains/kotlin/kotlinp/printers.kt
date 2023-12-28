@@ -13,10 +13,6 @@ private object SpecialCharacters {
     const val TYPE_ALIAS_MARKER = '^'
 }
 
-fun printFunction(function: KmFunction, settings: KotlinpSettings): String {
-    return StringBuilder().also { visitFunction(function, settings, it) }.toString()
-}
-
 @OptIn(ExperimentalContextReceivers::class, ExperimentalContracts::class)
 private fun visitFunction(
     function: KmFunction,
@@ -157,7 +153,7 @@ private fun visitTypeAlias(
     sb.appendLine()
 }
 
-fun printType(type: KmType): String {
+private fun printType(type: KmType): String {
     val classifier = when (val cls = type.classifier) {
         is KmClassifier.Class -> cls.name
         is KmClassifier.TypeParameter -> "T#${cls.id}"
@@ -225,7 +221,7 @@ fun printType(type: KmType): String {
     }
 }
 
-fun printTypeParameter(
+private fun printTypeParameter(
     typeParameter: KmTypeParameter,
     settings: KotlinpSettings
 ): String = buildString {
@@ -245,7 +241,7 @@ fun printTypeParameter(
     }
 }
 
-fun printValueParameter(
+private fun printValueParameter(
     valueParameter: KmValueParameter
 ): String {
     val type = printType(valueParameter.type)
@@ -263,7 +259,7 @@ fun printValueParameter(
     }
 }
 
-fun renderAnnotation(annotation: KmAnnotation): String =
+private fun renderAnnotation(annotation: KmAnnotation): String =
     annotation.className + if (annotation.arguments.isEmpty()) "" else
         annotation.arguments.entries.joinToString(prefix = "(", postfix = ")") { (name, argument) ->
             "$name = ${renderAnnotationArgument(argument)}"
@@ -317,7 +313,7 @@ private fun String.sanitize(quote: Char): String =
         }
     }
 
-fun printVersionRequirement(versionRequirement: KmVersionRequirement): String {
+private fun printVersionRequirement(versionRequirement: KmVersionRequirement): String {
     val version = with(versionRequirement.version) { "$major.$minor.$patch" }
 
     return buildString {
@@ -367,7 +363,7 @@ private fun <T, R : Comparable<R>> Iterable<T>.sortIfNeededBy(settings: KotlinpS
 }
 
 @ExperimentalContracts
-fun printContract(kmContract: KmContract): String = buildString {
+private fun printContract(kmContract: KmContract): String = buildString {
     appendLine("contract {")
     kmContract.effects.map(::printEffect).forEach { effect ->
         appendLine("      $effect")
@@ -750,7 +746,7 @@ private fun StringBuilder.appendClassModifiers(kmClass: KmClass) {
     append(CLASS_KIND_MAP[kmClass.kind])
 }
 
-fun printConstructorModifiers(kmConstructor: KmConstructor) = buildString {
+private fun StringBuilder.appendConstructorModifiers(kmConstructor: KmConstructor) {
     append(VISIBILITY_MAP[kmConstructor.visibility])
     appendFlags(
         kmConstructor.isSecondary to "/* secondary */",
@@ -758,11 +754,7 @@ fun printConstructorModifiers(kmConstructor: KmConstructor) = buildString {
     )
 }
 
-private fun StringBuilder.appendConstructorModifiers(kmConstructor: KmConstructor) {
-    append(printConstructorModifiers(kmConstructor))
-}
-
-fun printFunctionModifiers(kmFunction: KmFunction) = buildString {
+private fun StringBuilder.appendFunctionModifiers(kmFunction: KmFunction) {
     append(VISIBILITY_MAP[kmFunction.visibility])
     append(MODALITY_MAP[kmFunction.modality])
     append(MEMBER_KIND_MAP[kmFunction.kind])
@@ -778,11 +770,7 @@ fun printFunctionModifiers(kmFunction: KmFunction) = buildString {
     )
 }
 
-private fun StringBuilder.appendFunctionModifiers(kmFunction: KmFunction) {
-    append(printFunctionModifiers(kmFunction))
-}
-
-fun printPropertyModifiers(kmProperty: KmProperty) = buildString {
+private fun StringBuilder.appendPropertyModifiers(kmProperty: KmProperty) {
     append(VISIBILITY_MAP[kmProperty.visibility])
     append(MODALITY_MAP[kmProperty.modality])
     append(MEMBER_KIND_MAP[kmProperty.kind])
@@ -795,11 +783,7 @@ fun printPropertyModifiers(kmProperty: KmProperty) = buildString {
     )
 }
 
-private fun StringBuilder.appendPropertyModifiers(kmProperty: KmProperty) {
-    append(printPropertyModifiers(kmProperty))
-}
-
-fun printPropertyAccessorModifiers(accessorAttributes: KmPropertyAccessorAttributes) = buildString {
+private fun StringBuilder.appendPropertyAccessorModifiers(accessorAttributes: KmPropertyAccessorAttributes) {
     append(VISIBILITY_MAP[accessorAttributes.visibility])
     append(MODALITY_MAP[accessorAttributes.modality])
     appendFlags(
@@ -807,10 +791,6 @@ fun printPropertyAccessorModifiers(accessorAttributes: KmPropertyAccessorAttribu
         accessorAttributes.isExternal to "external",
         accessorAttributes.isInline to "inline"
     )
-}
-
-private fun StringBuilder.appendPropertyAccessorModifiers(accessorAttributes: KmPropertyAccessorAttributes) {
-    append(printPropertyAccessorModifiers(accessorAttributes))
 }
 
 private fun StringBuilder.appendValueParameterModifiers(valueParameter: KmValueParameter) = appendFlags(

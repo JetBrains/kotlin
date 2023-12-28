@@ -1,9 +1,0 @@
-MODULE main
-	CLASS C.class
-		CLASS METADATA
-			PROPERTY localObject
-				Property: class.metadata.property.returnType
-					K1
-						.C$localObject$1
-					K2
-						.C.<no name provided>

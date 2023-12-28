@@ -3,7 +3,6 @@
 // FULL_JDK
 // SKIP_JDK6
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: KT-63655
 
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
