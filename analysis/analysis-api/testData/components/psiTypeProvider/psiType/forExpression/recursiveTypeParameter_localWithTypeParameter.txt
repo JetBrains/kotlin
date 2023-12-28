@@ -1,0 +1,2 @@
+KtType: kotlin.collections.List<Wrapper>
+PsiType: PsiType:List<? extends Comparable<? super Wrapper<T>>>
