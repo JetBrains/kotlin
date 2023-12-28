@@ -152,7 +152,7 @@ abstract class AbstractKotlinNativeCompile<
     abstract val baseName: String
 
     @get:Input
-    internal abstract val produceUnpackedKlib: Property<Boolean>
+    internal val produceUnpackedKlib: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
     @get:Input
     @get:Optional
