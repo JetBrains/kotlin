@@ -246,7 +246,7 @@ def clone_llvm_repository(repo, branch, llvm_repo_destination, dry_run):
     Downloads a single commit from the given repository.
     """
     if host_is_darwin():
-        default_repo, default_branch = "https://github.com/apple/llvm-project", "apple/stable/20200714"
+        default_repo, default_branch = "https://github.com/apple/llvm-project", "stable/20220421"
     else:
         default_repo, default_branch = "https://github.com/llvm/llvm-project", "release/14.x"
     repo = default_repo if repo is None else repo
