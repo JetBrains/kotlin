@@ -1,7 +1,7 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
 
-// CHECK: declare void @ThrowException(%struct.ObjHeader*) #[[THROW_EXCEPTION_DECLARATION_ATTRIBUTES:[0-9]+]]
+// CHECK: declare void @ThrowException(%struct.ObjHeader* noundef) #[[THROW_EXCEPTION_DECLARATION_ATTRIBUTES:[0-9]+]]
 
 // CHECK: void @"kfun:#flameThrower(){}kotlin.Nothing"() #[[FLAME_THROWER_DECLARATION_ATTRIBUTES:[0-9]+]]
 fun flameThrower(): Nothing {
