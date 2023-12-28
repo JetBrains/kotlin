@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/reflectFindAnnotationOnDefaultMethodParameter.kt
               <T>: kotlin.String
               $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.String>
       VAR name:parameter type:@[FlexibleNullability] java.lang.reflect.Parameter? [val]
-        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=@[FlexibleNullability] java.lang.reflect.Parameter? origin=null
+        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=@[FlexibleNullability] java.lang.reflect.Parameter? origin=GET_ARRAY_ELEMENT
           $this: CALL 'public open fun getParameters (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Parameter?>? declared in java.lang.reflect.Method' type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Parameter?>? origin=GET_PROPERTY
             $this: GET_VAR 'val method: @[FlexibleNullability] java.lang.reflect.Method? declared in <root>.box' type=@[FlexibleNullability] java.lang.reflect.Method? origin=null
           index: CONST Int type=kotlin.Int value=0

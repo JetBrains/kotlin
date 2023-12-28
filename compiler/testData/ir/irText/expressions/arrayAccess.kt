@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 val p = 0
 fun foo() = 1
 

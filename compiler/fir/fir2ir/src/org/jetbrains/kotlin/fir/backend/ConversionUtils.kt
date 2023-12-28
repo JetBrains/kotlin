@@ -561,6 +561,11 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
             source?.kind is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign ->
                 augmentedArrayAssignSourceKindToIrStatementOrigin[source?.kind]
 
+            source?.kind is KtFakeSourceElementKind.ArrayAccessNameReference -> when (name) {
+                OperatorNameConventions.GET -> IrStatementOrigin.GET_ARRAY_ELEMENT
+                else -> null
+            }
+
             else ->
                 null
         }
