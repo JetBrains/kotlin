@@ -53,7 +53,7 @@ class BirSuspensionPointImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(4)
             }
@@ -79,7 +79,7 @@ class BirSuspensionPointImpl(
             return _suspensionPointIdParameter
         }
         set(value) {
-            if (_suspensionPointIdParameter != value) {
+            if (_suspensionPointIdParameter !== value) {
                 childReplaced(_suspensionPointIdParameter, value)
                 _suspensionPointIdParameter = value
                 invalidate(1)
@@ -93,7 +93,7 @@ class BirSuspensionPointImpl(
             return _result
         }
         set(value) {
-            if (_result != value) {
+            if (_result !== value) {
                 childReplaced(_result, value)
                 _result = value
                 invalidate(2)
@@ -107,7 +107,7 @@ class BirSuspensionPointImpl(
             return _resumeResult
         }
         set(value) {
-            if (_resumeResult != value) {
+            if (_resumeResult !== value) {
                 childReplaced(_resumeResult, value)
                 _resumeResult = value
                 invalidate(3)
