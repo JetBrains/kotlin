@@ -232,6 +232,7 @@ dependencies {
     fatJarContents(libs.guava) { isTransitive = false }
     //Gson is needed for kotlin-build-statistics. Build statistics could be enabled for JPS and Gradle builds. Gson will come from inteliij or KGP.
     proguardLibraries(commonDependency("com.google.code.gson:gson")) { isTransitive = false}
+    fatJarContents(libs.kotlinx.serialization.json)
 
     fatJarContentsStripServices(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
     fatJarContents(commonDependency("org.codehaus.woodstox:stax2-api")) { isTransitive = false }
