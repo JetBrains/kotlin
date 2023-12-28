@@ -3,7 +3,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
 // LANGUAGE: +ValueClasses
-// JVM_ABI_K1_K2_DIFF: KT-63984
 
 // MODULE: dependency
 // FILE: dependency.kt

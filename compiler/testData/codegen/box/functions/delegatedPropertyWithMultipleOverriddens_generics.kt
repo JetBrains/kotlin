@@ -2,8 +2,6 @@
 // DUMP_IR
 // IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: extra overridden symbols for declarations in MyMutableList.
 //   ^ This is most likely not a problem, and IR dump can be changed once IR fake override generation is enabled by default.
-// JVM_ABI_K1_K2_DIFF: KT-63828
-
 
 interface MyCollection<out E1> {
     fun foo(): E1

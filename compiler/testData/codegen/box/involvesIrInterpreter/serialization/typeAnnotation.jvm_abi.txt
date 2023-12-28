@@ -1,9 +1,0 @@
-MODULE lib
-	CLASS LibKt.class
-		PACKAGE METADATA
-			FUNCTION withVararg([B)V
-				Property: class.metadata.function.valueParameters
-					K1
-						(vararg args: @TypeAnnotation(str = "ByteAnno") kotlin/Byte /* kotlin/ByteArray */)
-					K2
-						(vararg args: kotlin/Byte /* kotlin/ByteArray */)

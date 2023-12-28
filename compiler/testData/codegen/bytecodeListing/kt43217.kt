@@ -1,6 +1,4 @@
 // JVM_TARGET: 1.8
-// JVM_ABI_K1_K2_DIFF: KT-63655
-
 // FILE: kt43217.kt
 class A {
     private val b =

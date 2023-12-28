@@ -2,7 +2,6 @@
 
 // In light analysis mode, anonymous object type is approximated to the supertype, so `fy` is unresolved.
 // IGNORE_LIGHT_ANALYSIS
-// JVM_ABI_K1_K2_DIFF: KT-63655
 
 private class One {
     val a1 = arrayOf(

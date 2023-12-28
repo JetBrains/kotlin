@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_STATE_MACHINE
-// JVM_ABI_K1_K2_DIFF: KT-62464
 
 // In this test the following transformation are occuring:
 //   flow$1 -> flowWith$$inlined$flow$1

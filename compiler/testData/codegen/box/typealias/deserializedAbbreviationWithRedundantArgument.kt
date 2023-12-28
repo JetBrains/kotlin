@@ -1,6 +1,4 @@
 // FIR_DUMP
-// JVM_ABI_K1_K2_DIFF: KT-63864
-
 // MODULE: a
 // FILE: a.kt
 typealias Foo<T> = List<String>
