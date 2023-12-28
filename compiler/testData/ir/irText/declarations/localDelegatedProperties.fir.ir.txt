@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
             CALL 'local final fun <get-x> (): kotlin.Int declared in <root>.test2' type=kotlin.Int origin=GET_LOCAL_PROPERTY
           CALL 'local final fun <set-x> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=POSTFIX_INCR
-            <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
           GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
       CALL 'local final fun <set-x> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=PLUSEQ

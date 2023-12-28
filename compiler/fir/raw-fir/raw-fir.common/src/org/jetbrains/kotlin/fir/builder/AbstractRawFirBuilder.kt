@@ -660,11 +660,17 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         convert: T.() -> FirExpression,
     ): FirExpression {
         val array = receiver.arrayExpression
+        val isInc = when (callName) {
+            OperatorNameConventions.INC -> true
+            OperatorNameConventions.DEC -> false
+            else -> error("Unexpected operator: $callName")
+        }
+        val sourceKind = sourceKindForIncOrDec(callName, prefix)
         return buildBlockPossiblyUnderSafeCall(
             array, convert, receiver.toFirSourceElement(),
         ) { arrayReceiver ->
             val baseSource = wholeExpression?.toFirSourceElement()
-            val desugaredSource = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
+            val desugaredSource = baseSource?.fakeElement(sourceKind)
             source = desugaredSource
 
             val indices = receiver.indexExpressions
@@ -686,11 +692,12 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 ).also { statements += it }
             }
 
-            fun buildGetCall(referenceSourceKind: KtFakeSourceElementKind = KtFakeSourceElementKind.ArrayAccessNameReference) =
+            fun buildGetCall(sourceKind: KtFakeSourceElementKind) =
                 buildFunctionCall {
-                    source = desugaredSource
+                    val fakeSource = receiver?.toFirSourceElement(sourceKind)
+                    source = fakeSource
                     calleeReference = buildSimpleNamedReference {
-                        source = receiver?.toFirSourceElement(referenceSourceKind)
+                        source = fakeSource
                         name = OperatorNameConventions.GET
                     }
                     explicitReceiver = generateResolvedAccessExpression(arrayVariable.source, arrayVariable)
@@ -702,10 +709,10 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     origin = FirFunctionCallOrigin.Operator
                 }
 
-            fun buildSetCall(argumentExpression: FirExpression) = buildFunctionCall {
+            fun buildSetCall(argumentExpression: FirExpression, sourceElementKind: KtFakeSourceElementKind) = buildFunctionCall {
                 source = desugaredSource
                 calleeReference = buildSimpleNamedReference {
-                    source = receiver.toFirSourceElement()
+                    source = receiver.toFirSourceElement(sourceElementKind)
                     name = OperatorNameConventions.SET
                 }
                 explicitReceiver = generateResolvedAccessExpression(arrayVariable.source, arrayVariable)
@@ -731,29 +738,36 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             if (prefix) {
                 statements += buildSetCall(
                     buildIncDecCall(
-                        KtFakeSourceElementKind.DesugaredPrefixNameReference,
-                        buildGetCall()
-                    )
+                        sourceKind,
+                        buildGetCall(sourceKind),
+                    ),
+                    sourceKind
                 )
-
-                statements += buildGetCall(KtFakeSourceElementKind.DesugaredPrefixSecondGetReference)
+                statements += buildGetCall(
+                    if (isInc) {
+                        KtFakeSourceElementKind.DesugaredPrefixIncSecondGetReference
+                    } else {
+                        KtFakeSourceElementKind.DesugaredPrefixDecSecondGetReference
+                    }
+                )
             } else {
                 val initialValueVar = generateTemporaryVariable(
                     baseModuleData,
                     desugaredSource,
                     SpecialNames.UNARY,
-                    buildGetCall()
+                    buildGetCall(sourceKind)
                 )
 
                 statements += initialValueVar
 
                 statements += buildSetCall(
                     buildIncDecCall(
-                        KtFakeSourceElementKind.DesugaredPostfixNameReference,
-                        generateResolvedAccessExpression(desugaredSource, initialValueVar)
-                    )
+                        sourceKind,
+                        generateResolvedAccessExpression(null, initialValueVar)
+                    ),
+                    sourceKind
                 )
-                statements += generateResolvedAccessExpression(desugaredSource, initialValueVar)
+                statements += generateResolvedAccessExpression(null, initialValueVar)
             }
         }
     }
@@ -890,10 +904,10 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         val assignmentLValue = unwrappedLhs.convert()
         return buildVariableAssignment {
             source = baseSource
-            lValue = if (baseSource?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+            lValue = if (baseSource?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
                 buildDesugaredAssignmentValueReferenceExpression {
                     expressionRef = FirExpressionRef<FirExpression>().apply { bind(assignmentLValue) }
-                    source = assignmentLValue.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
+                    source = assignmentLValue.source?.fakeElement(baseSource.kind as KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
                 }
             } else {
                 assignmentLValue

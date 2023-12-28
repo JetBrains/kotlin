@@ -908,6 +908,7 @@ class Fir2IrVisitor(
                     is KtFakeSourceElementKind.DesugaredForLoop -> IrStatementOrigin.FOR_LOOP
                     is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign ->
                         augmentedArrayAssignSourceKindToIrStatementOrigin[expression.source?.kind]
+                    is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> incOrDeclSourceKindToIrStatementOrigin[expression.source?.kind]
                     else -> null
                 }
                 expression.convertToIrExpressionOrBlock(origin)
@@ -1091,7 +1092,7 @@ class Fir2IrVisitor(
     }
 
     private fun FirBlock.convertToIrExpressionOrBlock(origin: IrStatementOrigin? = null): IrExpression {
-        if (this.source?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+        if (this.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
             tryConvertDynamicIncrementOrDecrementToIr()?.let {
                 return it
             }

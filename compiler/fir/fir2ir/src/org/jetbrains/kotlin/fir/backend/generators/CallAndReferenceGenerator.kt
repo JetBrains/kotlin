@@ -319,17 +319,10 @@ class CallAndReferenceGenerator(
                 else -> error("Unexpected name")
             }
 
-            is KtFakeSourceElementKind.DesugaredPrefixNameReference -> when (calleeReference.resolved?.name) {
-                OperatorNameConventions.INC -> IrDynamicOperator.PREFIX_INCREMENT
-                OperatorNameConventions.DEC -> IrDynamicOperator.PREFIX_DECREMENT
-                else -> error("Unexpected name")
-            }
-
-            is KtFakeSourceElementKind.DesugaredPostfixNameReference -> when (calleeReference.resolved?.name) {
-                OperatorNameConventions.INC -> IrDynamicOperator.POSTFIX_INCREMENT
-                OperatorNameConventions.DEC -> IrDynamicOperator.POSTFIX_DECREMENT
-                else -> error("Unexpected name")
-            }
+            is KtFakeSourceElementKind.DesugaredPrefixInc -> IrDynamicOperator.PREFIX_INCREMENT
+            is KtFakeSourceElementKind.DesugaredPrefixDec -> IrDynamicOperator.PREFIX_DECREMENT
+            is KtFakeSourceElementKind.DesugaredPostfixInc -> IrDynamicOperator.POSTFIX_INCREMENT
+            is KtFakeSourceElementKind.DesugaredPostfixDec -> IrDynamicOperator.POSTFIX_DECREMENT
 
             is KtFakeSourceElementKind.DesugaredArrayAugmentedAssign -> when (calleeReference.resolved?.name) {
                 OperatorNameConventions.SET -> IrDynamicOperator.EQ
@@ -519,7 +512,8 @@ class CallAndReferenceGenerator(
                                     getterSymbol,
                                     typeArgumentsCount = property.typeParameters.size,
                                     valueArgumentsCount = property.contextReceivers.size,
-                                    origin = IrStatementOrigin.GET_PROPERTY,
+                                    origin = incOrDeclSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind]
+                                        ?: IrStatementOrigin.GET_PROPERTY,
                                     superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
                                 )
                             }
@@ -549,7 +543,7 @@ class CallAndReferenceGenerator(
                             variable.irTypeForPotentiallyComponentCall(predefinedType = irType),
                             symbol,
                             origin = if (variableAsFunctionMode) IrStatementOrigin.VARIABLE_AS_FUNCTION
-                            else calleeReference.statementOrigin()
+                            else incOrDeclSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind] ?: calleeReference.statementOrigin()
                         )
                     }
 

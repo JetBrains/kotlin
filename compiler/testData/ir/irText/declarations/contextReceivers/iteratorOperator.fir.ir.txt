@@ -231,16 +231,16 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.CounterIterator
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun next (): kotlin.Int declared in <root>.CounterIterator'
-          BLOCK type=kotlin.Int origin=null
+          BLOCK type=kotlin.Int origin=POSTFIX_INCR
             VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.Counter [val]
               CALL 'private final fun <get-counter> (): <root>.Counter declared in <root>.CounterIterator' type=<root>.Counter origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.CounterIterator declared in <root>.CounterIterator.next' type=<root>.CounterIterator origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
-              CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Counter' type=kotlin.Int origin=GET_PROPERTY
+              CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Counter' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'val tmp_2: <root>.Counter declared in <root>.CounterIterator.next' type=<root>.Counter origin=null
-            CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Counter' type=kotlin.Unit origin=EQ
+            CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Counter' type=kotlin.Unit origin=POSTFIX_INCR
               $this: GET_VAR 'val tmp_2: <root>.Counter declared in <root>.CounterIterator.next' type=<root>.Counter origin=null
-              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.CounterIterator.next' type=kotlin.Int origin=null
             GET_VAR 'val tmp_3: kotlin.Int declared in <root>.CounterIterator.next' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

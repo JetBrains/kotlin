@@ -96,8 +96,7 @@ fun generateExplicitReceiverTemporaryVariable(
                 }
             ).also { property ->
                 // Change the expression from x.a to <receiver>.a
-                val newReceiverAccess =
-                    property.toQualifiedAccess(fakeSource = receiver.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement))
+                val newReceiverAccess = property.toQualifiedAccess(fakeSource = receiver.source)
 
                 if (expression.explicitReceiver == expression.dispatchReceiver) {
                     expression.replaceDispatchReceiver(newReceiverAccess)

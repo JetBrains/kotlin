@@ -1,9 +1,9 @@
 KT element: KtArrayAccessExpression
-FIR element: FirResolvedNamedReferenceImpl
-FIR source kind: KtRealSourceElementKind
+FIR element: FirFunctionCallImpl
+FIR source kind: DesugaredPostfixInc
 
 FIR element rendered:
-R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|
+R|<local>/<array>|.R|SubstitutionOverride</MyMap.get: R|A|>|(R|<local>/<index_0>|)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] incWithArrayAccessConvention_set.kt

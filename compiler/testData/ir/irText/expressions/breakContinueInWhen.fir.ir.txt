@@ -117,11 +117,11 @@ FILE fqName:<root> fileName:/breakContinueInWhen.kt
         DO_WHILE label=null origin=DO_WHILE_LOOP
           body: COMPOSITE type=kotlin.Unit origin=null
             TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              BLOCK type=kotlin.Int origin=null
+              BLOCK type=kotlin.Int origin=PREFIX_INCR
                 SET_VAR 'var k: kotlin.Int declared in <root>.testContinueDoWhile' type=kotlin.Unit origin=PREFIX_INCR
-                  CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                    $this: GET_VAR 'var k: kotlin.Int declared in <root>.testContinueDoWhile' type=kotlin.Int origin=null
-                GET_VAR 'var k: kotlin.Int declared in <root>.testContinueDoWhile' type=kotlin.Int origin=null
+                  CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+                    $this: GET_VAR 'var k: kotlin.Int declared in <root>.testContinueDoWhile' type=kotlin.Int origin=PREFIX_INCR
+                GET_VAR 'var k: kotlin.Int declared in <root>.testContinueDoWhile' type=kotlin.Int origin=PREFIX_INCR
             WHEN type=kotlin.Unit origin=WHEN
               BRANCH
                 if: CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT

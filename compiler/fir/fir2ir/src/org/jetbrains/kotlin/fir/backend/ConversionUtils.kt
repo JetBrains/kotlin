@@ -537,6 +537,12 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
             source?.kind == KtFakeSourceElementKind.DesugaredForLoop && symbol.callableId.isIterator() ->
                 IrStatementOrigin.FOR_LOOP_ITERATOR
 
+            source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement ->
+                incOrDeclSourceKindToIrStatementOrigin[source?.kind]
+
+            source?.kind is KtFakeSourceElementKind.DesugaredPrefixSecondGetReference ->
+                incOrDeclSourceKindToIrStatementOrigin[source?.kind]
+
             source?.elementType == KtNodeTypes.OPERATION_REFERENCE ->
                 nameToOperationConventionOrigin[symbol.callableId.callableName]
 
@@ -750,12 +756,13 @@ private val PREFIX_POSTFIX_ORIGIN_MAP: Map<NameWithElementType, IrStatementOrigi
 )
 
 fun FirVariableAssignment.getIrAssignmentOrigin(): IrStatementOrigin {
+    incOrDeclSourceKindToIrStatementOrigin[source?.kind]?.let { return it }
     val callableName = getCallableNameFromIntClassIfAny() ?: return IrStatementOrigin.EQ
     PREFIX_POSTFIX_ORIGIN_MAP[callableName to source?.elementType]?.let { return it }
 
     val rValue = rValue as FirFunctionCall
     val kind = rValue.source?.kind
-    if (kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement || kind == KtFakeSourceElementKind.DesugaredCompoundAssignment) {
+    if (kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement || kind == KtFakeSourceElementKind.DesugaredCompoundAssignment) {
         if (callableName == OperatorNameConventions.PLUS) {
             return IrStatementOrigin.PLUSEQ
         } else if (callableName == OperatorNameConventions.MINUS) {
@@ -900,4 +907,13 @@ val augmentedArrayAssignSourceKindToIrStatementOrigin = mapOf(
     KtFakeSourceElementKind.DesugaredArrayTimesAssign to IrStatementOrigin.MULTEQ,
     KtFakeSourceElementKind.DesugaredArrayDivAssign to IrStatementOrigin.DIVEQ,
     KtFakeSourceElementKind.DesugaredArrayRemAssign to IrStatementOrigin.PERCEQ
+)
+
+val incOrDeclSourceKindToIrStatementOrigin = mapOf(
+    KtFakeSourceElementKind.DesugaredPrefixInc to IrStatementOrigin.PREFIX_INCR,
+    KtFakeSourceElementKind.DesugaredPostfixInc to IrStatementOrigin.POSTFIX_INCR,
+    KtFakeSourceElementKind.DesugaredPrefixDec to IrStatementOrigin.PREFIX_DECR,
+    KtFakeSourceElementKind.DesugaredPostfixDec to IrStatementOrigin.POSTFIX_DECR,
+    KtFakeSourceElementKind.DesugaredPrefixIncSecondGetReference to IrStatementOrigin.PREFIX_INCR,
+    KtFakeSourceElementKind.DesugaredPrefixDecSecondGetReference to IrStatementOrigin.PREFIX_DECR
 )

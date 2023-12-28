@@ -1,9 +1,9 @@
 KT element: KtArrayAccessExpression
-FIR element: FirResolvedNamedReferenceImpl
-FIR source kind: KtRealSourceElementKind
+FIR element: FirFunctionCallImpl
+FIR source kind: DesugaredPostfixInc
 
 FIR element rendered:
-R|test/B.set|
+R|<local>/<array>|.R|test/B.get|(R|<local>/<index_0>|)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] setOperator.kt

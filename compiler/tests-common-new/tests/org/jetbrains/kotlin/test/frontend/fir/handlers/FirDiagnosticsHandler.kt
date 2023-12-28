@@ -437,13 +437,15 @@ private class DebugDiagnosticConsumer(
             KtFakeSourceElementKind.DelegatingConstructorCall,
             KtFakeSourceElementKind.ArrayAccessNameReference,
             KtFakeSourceElementKind.ArrayIndexExpressionReference,
-            KtFakeSourceElementKind.DesugaredPrefixNameReference,
-            KtFakeSourceElementKind.DesugaredPostfixNameReference,
             KtFakeSourceElementKind.DesugaredArrayPlusAssign,
             KtFakeSourceElementKind.DesugaredArrayMinusAssign,
             KtFakeSourceElementKind.DesugaredArrayTimesAssign,
             KtFakeSourceElementKind.DesugaredArrayDivAssign,
-            KtFakeSourceElementKind.DesugaredArrayRemAssign
+            KtFakeSourceElementKind.DesugaredArrayRemAssign,
+            KtFakeSourceElementKind.DesugaredPrefixDec,
+            KtFakeSourceElementKind.DesugaredPrefixInc,
+            KtFakeSourceElementKind.DesugaredPostfixDec,
+            KtFakeSourceElementKind.DesugaredPostfixInc
         )
     }
 

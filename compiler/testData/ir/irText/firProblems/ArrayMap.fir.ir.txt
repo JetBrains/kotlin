@@ -464,16 +464,15 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                 index: GET_VAR 'index: kotlin.Int declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
               arg1: CONST Null type=kotlin.Nothing? value=null
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              BLOCK type=kotlin.Int origin=null
-                BLOCK type=kotlin.Int origin=null
-                  VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-                    CALL 'public open fun <get-size> (): kotlin.Int declared in <root>.ArrayMapImpl' type=kotlin.Int origin=GET_PROPERTY
-                      $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.set' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                  CALL 'private open fun <set-size> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=EQ
+              BLOCK type=kotlin.Int origin=POSTFIX_INCR
+                VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+                  CALL 'public open fun <get-size> (): kotlin.Int declared in <root>.ArrayMapImpl' type=kotlin.Int origin=POSTFIX_INCR
                     $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.set' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                    <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                      $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
-                  GET_VAR 'val tmp_0: kotlin.Int declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
+                CALL 'private open fun <set-size> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=POSTFIX_INCR
+                  $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.set' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
+                  <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                    $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
+                GET_VAR 'val tmp_0: kotlin.Int declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
         CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=null
           $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.set' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
@@ -548,11 +547,11 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                           BLOCK type=kotlin.Int origin=POSTFIX_INCR
                             VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
-                              CALL 'private final fun <get-index> (): kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Int origin=GET_PROPERTY
+                              CALL 'private final fun <get-index> (): kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Int origin=POSTFIX_INCR
                                 $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
                             CALL 'private final fun <set-index> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Unit origin=POSTFIX_INCR
                               $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
-                              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                                 $this: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
                             GET_VAR 'val tmp_1: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
                       condition: WHEN type=kotlin.Boolean origin=ANDAND
@@ -640,16 +639,15 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                   index: GET_VAR 'index: kotlin.Int declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              BLOCK type=kotlin.Int origin=null
-                BLOCK type=kotlin.Int origin=null
-                  VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
-                    CALL 'public open fun <get-size> (): kotlin.Int declared in <root>.ArrayMapImpl' type=kotlin.Int origin=GET_PROPERTY
-                      $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.remove' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                  CALL 'private open fun <set-size> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=EQ
+              BLOCK type=kotlin.Int origin=POSTFIX_DECR
+                VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
+                  CALL 'public open fun <get-size> (): kotlin.Int declared in <root>.ArrayMapImpl' type=kotlin.Int origin=POSTFIX_DECR
                     $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.remove' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                    <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                      $this: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
-                  GET_VAR 'val tmp_2: kotlin.Int declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
+                CALL 'private open fun <set-size> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=POSTFIX_DECR
+                  $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.remove' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
+                  <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+                    $this: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
+                GET_VAR 'val tmp_2: kotlin.Int declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
         CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=null
           $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.remove' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null

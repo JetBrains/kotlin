@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/dynamicMemberIncrementDecrement.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: BLOCK type=dynamic origin=null
+              then: BLOCK type=dynamic origin=PREFIX_INCR
                 VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:dynamic [val]
                   GET_VAR 'val tmp_0: dynamic declared in <root>.testSafeMemberIncrementDecrement' type=dynamic origin=null
                 DYN_OP operator=EQ type=kotlin.Unit
@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/dynamicMemberIncrementDecrement.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: BLOCK type=dynamic origin=null
+              then: BLOCK type=dynamic origin=PREFIX_DECR
                 VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:dynamic [val]
                   GET_VAR 'val tmp_2: dynamic declared in <root>.testSafeMemberIncrementDecrement' type=dynamic origin=null
                 DYN_OP operator=EQ type=kotlin.Unit

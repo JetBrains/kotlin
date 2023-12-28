@@ -182,11 +182,11 @@ FILE fqName:<root> fileName:/arrayAccessCompositeOperators.kt
                 $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                 other: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.MyContainer' type=<root>.MyContainer origin=null
                   i: CALL 'public final fun get ($context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                    $receiver: BLOCK type=<root>.MyContainer origin=null
+                    $receiver: BLOCK type=<root>.MyContainer origin=POSTFIX_INCR
                       VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.MyContainer [val]
-                        GET_VAR 'var myContainer: <root>.MyContainer declared in <root>.box' type=<root>.MyContainer origin=null
-                      SET_VAR 'var myContainer: <root>.MyContainer declared in <root>.box' type=kotlin.Unit origin=EQ
-                        CALL 'public final fun inc ($context_receiver_0: kotlin.Int): <root>.MyContainer declared in <root>' type=<root>.MyContainer origin=null
+                        GET_VAR 'var myContainer: <root>.MyContainer declared in <root>.box' type=<root>.MyContainer origin=POSTFIX_INCR
+                      SET_VAR 'var myContainer: <root>.MyContainer declared in <root>.box' type=kotlin.Unit origin=POSTFIX_INCR
+                        CALL 'public final fun inc ($context_receiver_0: kotlin.Int): <root>.MyContainer declared in <root>' type=<root>.MyContainer origin=POSTFIX_INCR
                           $receiver: GET_VAR 'val tmp_1: <root>.MyContainer declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null
                           $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                       GET_VAR 'val tmp_1: <root>.MyContainer declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null

@@ -43,7 +43,7 @@ class PreliminaryLoopVisitor {
         }
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: FirStatement?) {
-            if (variableAssignment.source?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement) return
+            if (variableAssignment.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) return
 
             // Only care about local variable assignments, which never have explicit receivers. If this is a `var`
             // property assignment, the smart cast will be unstable anyway.

@@ -196,11 +196,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     <this>.ensureCapacity(index = index)
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null) -> { // BLOCK
-        { // BLOCK
-          val tmp_0: Int = <this>.<get-size>()
-          <this>.<set-size>(<set-?> = tmp_0.inc())
-          tmp_0
-        }
+        val tmp_0: Int = <this>.<get-size>()
+        <this>.<set-size>(<set-?> = tmp_0.inc())
+        tmp_0
       } /*~> Unit */
     }
     <this>.<get-data>().set(index = index, value = value)
@@ -260,11 +258,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   fun remove(index: Int) {
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null).not() -> { // BLOCK
-        { // BLOCK
-          val tmp_2: Int = <this>.<get-size>()
-          <this>.<set-size>(<set-?> = tmp_2.dec())
-          tmp_2
-        }
+        val tmp_2: Int = <this>.<get-size>()
+        <this>.<set-size>(<set-?> = tmp_2.dec())
+        tmp_2
       } /*~> Unit */
     }
     <this>.<get-data>().set(index = index, value = null)

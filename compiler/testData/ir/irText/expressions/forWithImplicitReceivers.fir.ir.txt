@@ -80,13 +80,13 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
       $receiver: VALUE_PARAMETER name:<this> type:<root>.IntCell
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun next (): kotlin.Int declared in <root>.IReceiver'
-          BLOCK type=kotlin.Int origin=null
+          BLOCK type=kotlin.Int origin=POSTFIX_DECR
             VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-              CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IntCell' type=kotlin.Int origin=GET_PROPERTY
+              CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IntCell' type=kotlin.Int origin=POSTFIX_DECR
                 $this: GET_VAR '<this>: <root>.IntCell declared in <root>.IReceiver.next' type=<root>.IntCell origin=null
-            CALL 'public final fun <set-value> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IntCell' type=kotlin.Unit origin=EQ
+            CALL 'public final fun <set-value> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IntCell' type=kotlin.Unit origin=POSTFIX_DECR
               $this: GET_VAR '<this>: <root>.IntCell declared in <root>.IReceiver.next' type=<root>.IntCell origin=null
-              <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
                 $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.IReceiver.next' type=kotlin.Int origin=null
             GET_VAR 'val tmp_0: kotlin.Int declared in <root>.IReceiver.next' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

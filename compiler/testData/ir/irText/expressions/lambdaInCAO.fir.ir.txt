@@ -56,13 +56,13 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3'
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
-        CALL 'public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+        CALL 'public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
           $receiver: GET_VAR 'val tmp_2: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
           index: GET_VAR 'val tmp_3: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
-      CALL 'public final fun set (index: kotlin.Function0<kotlin.Unit>, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun set (index: kotlin.Function0<kotlin.Unit>, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
         $receiver: GET_VAR 'val tmp_2: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
         index: GET_VAR 'val tmp_3: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
-        value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+        value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
           $this: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         GET_VAR 'val tmp_4: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null

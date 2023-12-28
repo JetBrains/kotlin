@@ -1,5 +1,6 @@
 //!LANGUAGE: +DefinitelyNonNullableTypes
 // SKIP_KT_DUMP
+// FIR_IDENTICAL
 
 class In<in I>
 

@@ -125,8 +125,6 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                         // For secondary constructors without explicit delegated constructor call, the PSI tree always create an empty
                         // KtConstructorDelegationCall. In this case, the source in FIR has this fake source kind.
                         it.kind == KtFakeSourceElementKind.ImplicitConstructor ||
-                        it.kind == KtFakeSourceElementKind.DesugaredPrefixNameReference ||
-                        it.kind == KtFakeSourceElementKind.DesugaredPostfixNameReference ||
                         it.kind == KtFakeSourceElementKind.SmartCastExpression ||
                         it.kind == KtFakeSourceElementKind.DanglingModifierList ||
                         it.isSourceForArrayAugmentedAssign(element) ||
@@ -147,7 +145,9 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     private fun KtSourceElement.isSourceForCompoundAccess(fir: FirElement): Boolean {
         val psi = psi
         val parentPsi = psi?.parent
-        if (kind != KtFakeSourceElementKind.DesugaredCompoundAssignment && kind != KtFakeSourceElementKind.DesugaredIncrementOrDecrement) return false
+        if (kind != KtFakeSourceElementKind.DesugaredCompoundAssignment && kind !is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+            return false
+        }
         return when {
             psi is KtBinaryExpression || psi is KtUnaryExpression -> fir.isWriteInCompoundCall()
             parentPsi is KtBinaryExpression && psi == parentPsi.left -> fir.isReadInCompoundCall()
