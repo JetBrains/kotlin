@@ -1,5 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63901
-
 class A {
     var a: String = "Fail"
 

@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// JVM_ABI_K1_K2_DIFF: KT-57268
 
 // FILE: J.java
 

@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// JVM_ABI_K1_K2_DIFF: KT-62908
-
 // MODULE: common
 // FILE: commonMain.kt
 internal annotation class AnnInCommon

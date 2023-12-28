@@ -1,5 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-57268
-
 class A : Map<String, String> {
     override val size: Int get() = 56
 

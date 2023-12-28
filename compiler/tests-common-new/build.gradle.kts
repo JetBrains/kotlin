@@ -25,7 +25,6 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(project(":libraries:tools:abi-comparator"))
 
     /*
      * Actually those dependencies are needed only at runtime, but they

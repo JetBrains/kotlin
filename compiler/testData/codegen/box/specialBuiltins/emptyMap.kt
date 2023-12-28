@@ -1,5 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-57268
-
 private object EmptyMap : Map<Any, Nothing> {
     override val size: Int get() = 0
     override fun isEmpty(): Boolean = true

@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.BinaryKind
+import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import java.io.File
 
@@ -49,14 +52,11 @@ class TestModuleStructureImpl(
     }
 
     companion object {
-        fun TargetPlatform.toArtifactKind(frontendKind: FrontendKind<out ResultingArtifact.FrontendOutput<*>>): BinaryKind<*> {
-            if (frontendKind == FrontendKinds.ClassicAndFIR && this in JvmPlatforms.allJvmPlatforms) return ArtifactKinds.JvmFromK1AndK2
-            return when (this) {
-                in JvmPlatforms.allJvmPlatforms -> ArtifactKinds.Jvm
-                in JsPlatforms.allJsPlatforms -> ArtifactKinds.Js
-                in NativePlatforms.allNativePlatforms -> ArtifactKinds.Native
-                else -> BinaryKind.NoArtifact
-            }
+        fun TargetPlatform.toArtifactKind(): BinaryKind<*> = when (this) {
+            in JvmPlatforms.allJvmPlatforms -> ArtifactKinds.Jvm
+            in JsPlatforms.allJsPlatforms -> ArtifactKinds.Js
+            in NativePlatforms.allNativePlatforms -> ArtifactKinds.Native
+            else -> BinaryKind.NoArtifact
         }
     }
 }

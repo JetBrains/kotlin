@@ -1,6 +1,4 @@
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: KT-63864
-
 // FILE: messages/foo.kt
 
 package messages

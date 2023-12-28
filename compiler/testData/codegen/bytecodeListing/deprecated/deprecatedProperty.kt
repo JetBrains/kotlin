@@ -1,5 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63850, KT-63854
-
 @Deprecated("")
 val testVal = 1
 

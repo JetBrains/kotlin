@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.ModulePath
@@ -85,11 +86,7 @@ internal class MultiplatformSeparateAnalysisConfiguration(
             if (dependencies.isEmpty()) return
             for (dependency in dependencies) {
                 val dependencyModule = dependencyProvider.getTestModule(dependency.moduleName)
-                val artifact = if (module.frontendKind == FrontendKinds.ClassicAndFIR) {
-                    dependencyProvider.getArtifact(dependencyModule, FrontendKinds.ClassicAndFIR).k1Artifact
-                } else {
-                    dependencyProvider.getArtifact(dependencyModule, FrontendKinds.ClassicFrontend)
-                }
+                val artifact = dependencyProvider.getArtifact(dependencyModule, FrontendKinds.ClassicFrontend)
                 /*
                 We need create KtFiles again with new project because otherwise we can access to some caches using
                 old project as key which may leads to missing services in core environment

@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 
 object CodegenTestDirectives : SimpleDirectivesContainer() {
     val IGNORE_BACKEND by enumDirective<TargetBackend>(
@@ -257,17 +255,12 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
             Suppresses test if $ENABLE_IR_FAKE_OVERRIDE_GENERATION directive enabled
         """.trimIndent()
     )
-
-    val JVM_ABI_K1_K2_DIFF by stringDirective(
-        description = "Expect difference in JVM ABI between K1 and K2",
-        applicability = Global
-    )
 }
 
 fun extractIgnoredDirectiveForTargetBackend(
     module: TestModule,
     targetBackend: TargetBackend,
-    customIgnoreDirective: ValueDirective<TargetBackend>? = null,
+    customIgnoreDirective: ValueDirective<TargetBackend>? = null
 ): ValueDirective<TargetBackend>? =
     when (module.frontendKind) {
         FrontendKinds.ClassicFrontend -> CodegenTestDirectives.IGNORE_BACKEND_K1
@@ -287,12 +280,3 @@ fun extractIgnoredDirectiveForTargetBackend(
             }
         }
     }
-
-fun TestServices.tryRetrieveIgnoredInliner(directive: ValueDirective<TargetInliner>): TargetInliner? {
-    val directiveName = directive.name
-    val ignoreDirectives = moduleStructure.allDirectives[directive]
-    if (ignoreDirectives.size > 1) {
-        throw IllegalArgumentException("Directive $directiveName should contains only one value")
-    }
-    return ignoreDirectives.singleOrNull()
-}
