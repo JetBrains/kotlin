@@ -6,7 +6,6 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import com.android.build.gradle.api.BaseVariant
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier.Property
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.sourceSetTreeClassifier
@@ -17,10 +16,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinComp
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJvmCompilerOptionsFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.type
+import org.jetbrains.kotlin.gradle.utils.*
 
 class KotlinJvmAndroidCompilationFactory internal constructor(
     override val target: KotlinAndroidTarget,
-    private val variant: BaseVariant,
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") private val variant: DeprecatedAndroidBaseVariant,
 ) : KotlinCompilationFactory<KotlinJvmAndroidCompilation> {
 
     override val itemClass: Class<KotlinJvmAndroidCompilation>
