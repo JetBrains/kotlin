@@ -92,7 +92,7 @@ class BirAnonymousInitializerImpl(
             return _body
         }
         set(value) {
-            if (_body != value) {
+            if (_body !== value) {
                 childReplaced(_body, value)
                 _body = value
                 invalidate(2)

@@ -219,7 +219,7 @@ class BirValueParameterImpl(
             return _defaultValue
         }
         set(value) {
-            if (_defaultValue != value) {
+            if (_defaultValue !== value) {
                 childReplaced(_defaultValue, value)
                 _defaultValue = value
                 invalidate(2)

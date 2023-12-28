@@ -107,7 +107,7 @@ class BirScriptImpl(
             return _thisReceiver
         }
         set(value) {
-            if (_thisReceiver != value) {
+            if (_thisReceiver !== value) {
                 childReplaced(_thisReceiver, value)
                 _thisReceiver = value
                 invalidate(6)
@@ -160,7 +160,7 @@ class BirScriptImpl(
             return _earlierScriptsParameter
         }
         set(value) {
-            if (_earlierScriptsParameter != value) {
+            if (_earlierScriptsParameter !== value) {
                 childReplaced(_earlierScriptsParameter, value)
                 _earlierScriptsParameter = value
                 invalidate(7)
@@ -213,7 +213,7 @@ class BirScriptImpl(
             return _constructor
         }
         set(value) {
-            if (_constructor != value) {
+            if (_constructor !== value) {
                 _constructor = value
                 invalidate(8)
             }

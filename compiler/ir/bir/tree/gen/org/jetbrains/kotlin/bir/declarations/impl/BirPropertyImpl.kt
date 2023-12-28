@@ -149,7 +149,7 @@ class BirPropertyImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(5)
             }
@@ -240,7 +240,7 @@ class BirPropertyImpl(
             return _backingField
         }
         set(value) {
-            if (_backingField != value) {
+            if (_backingField !== value) {
                 childReplaced(_backingField, value)
                 _backingField = value
                 invalidate(2)
@@ -254,7 +254,7 @@ class BirPropertyImpl(
             return _getter
         }
         set(value) {
-            if (_getter != value) {
+            if (_getter !== value) {
                 childReplaced(_getter, value)
                 _getter = value
                 invalidate(3)
@@ -268,7 +268,7 @@ class BirPropertyImpl(
             return _setter
         }
         set(value) {
-            if (_setter != value) {
+            if (_setter !== value) {
                 childReplaced(_setter, value)
                 _setter = value
                 invalidate(4)

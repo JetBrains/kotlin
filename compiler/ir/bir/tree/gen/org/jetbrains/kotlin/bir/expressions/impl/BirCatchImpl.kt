@@ -49,7 +49,7 @@ class BirCatchImpl(
             return _catchParameter
         }
         set(value) {
-            if (_catchParameter != value) {
+            if (_catchParameter !== value) {
                 childReplaced(_catchParameter, value)
                 _catchParameter = value
                 invalidate(1)
@@ -63,7 +63,7 @@ class BirCatchImpl(
             return _result
         }
         set(value) {
-            if (_result != value) {
+            if (_result !== value) {
                 childReplaced(_result, value)
                 _result = value
                 invalidate(2)

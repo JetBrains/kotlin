@@ -49,7 +49,7 @@ class BirDynamicOperatorExpressionImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(3)
             }
@@ -88,7 +88,7 @@ class BirDynamicOperatorExpressionImpl(
             return _receiver
         }
         set(value) {
-            if (_receiver != value) {
+            if (_receiver !== value) {
                 childReplaced(_receiver, value)
                 _receiver = value
                 invalidate(2)

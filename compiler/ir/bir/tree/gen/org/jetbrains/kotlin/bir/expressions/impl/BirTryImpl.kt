@@ -49,7 +49,7 @@ class BirTryImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(4)
             }
@@ -75,7 +75,7 @@ class BirTryImpl(
             return _tryResult
         }
         set(value) {
-            if (_tryResult != value) {
+            if (_tryResult !== value) {
                 childReplaced(_tryResult, value)
                 _tryResult = value
                 invalidate(2)
@@ -89,7 +89,7 @@ class BirTryImpl(
             return _finallyExpression
         }
         set(value) {
-            if (_finallyExpression != value) {
+            if (_finallyExpression !== value) {
                 childReplaced(_finallyExpression, value)
                 _finallyExpression = value
                 invalidate(3)

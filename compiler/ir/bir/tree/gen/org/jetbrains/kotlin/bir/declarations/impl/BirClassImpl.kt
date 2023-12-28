@@ -135,7 +135,7 @@ class BirClassImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(5)
             }
@@ -286,7 +286,7 @@ class BirClassImpl(
             return _thisReceiver
         }
         set(value) {
-            if (_thisReceiver != value) {
+            if (_thisReceiver !== value) {
                 childReplaced(_thisReceiver, value)
                 _thisReceiver = value
                 invalidate(4)

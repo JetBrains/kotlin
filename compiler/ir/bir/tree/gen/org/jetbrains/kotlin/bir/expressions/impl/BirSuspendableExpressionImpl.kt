@@ -51,7 +51,7 @@ class BirSuspendableExpressionImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(3)
             }
@@ -77,7 +77,7 @@ class BirSuspendableExpressionImpl(
             return _suspensionPointId
         }
         set(value) {
-            if (_suspensionPointId != value) {
+            if (_suspensionPointId !== value) {
                 childReplaced(_suspensionPointId, value)
                 _suspensionPointId = value
                 invalidate(1)
@@ -91,7 +91,7 @@ class BirSuspendableExpressionImpl(
             return _result
         }
         set(value) {
-            if (_result != value) {
+            if (_result !== value) {
                 childReplaced(_result, value)
                 _result = value
                 invalidate(2)

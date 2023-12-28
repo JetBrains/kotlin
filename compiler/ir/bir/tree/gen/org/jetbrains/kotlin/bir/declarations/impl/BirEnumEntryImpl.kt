@@ -95,7 +95,7 @@ class BirEnumEntryImpl(
             return _initializerExpression
         }
         set(value) {
-            if (_initializerExpression != value) {
+            if (_initializerExpression !== value) {
                 childReplaced(_initializerExpression, value)
                 _initializerExpression = value
                 invalidate(2)
@@ -109,7 +109,7 @@ class BirEnumEntryImpl(
             return _correspondingClass
         }
         set(value) {
-            if (_correspondingClass != value) {
+            if (_correspondingClass !== value) {
                 childReplaced(_correspondingClass, value)
                 _correspondingClass = value
                 invalidate(3)

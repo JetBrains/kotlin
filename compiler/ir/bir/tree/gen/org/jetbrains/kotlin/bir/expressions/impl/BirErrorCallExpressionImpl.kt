@@ -48,7 +48,7 @@ class BirErrorCallExpressionImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(3)
             }
@@ -87,7 +87,7 @@ class BirErrorCallExpressionImpl(
             return _explicitReceiver
         }
         set(value) {
-            if (_explicitReceiver != value) {
+            if (_explicitReceiver !== value) {
                 childReplaced(_explicitReceiver, value)
                 _explicitReceiver = value
                 invalidate(2)

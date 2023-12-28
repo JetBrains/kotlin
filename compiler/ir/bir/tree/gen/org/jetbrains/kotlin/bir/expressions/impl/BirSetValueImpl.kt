@@ -54,7 +54,7 @@ class BirSetValueImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(2)
             }
@@ -80,7 +80,7 @@ class BirSetValueImpl(
             return _symbol
         }
         set(value) {
-            if (_symbol != value) {
+            if (_symbol !== value) {
                 _symbol = value
                 invalidate(3)
             }
@@ -106,7 +106,7 @@ class BirSetValueImpl(
             return _value
         }
         set(value) {
-            if (_value != value) {
+            if (_value !== value) {
                 childReplaced(_value, value)
                 _value = value
                 invalidate(1)

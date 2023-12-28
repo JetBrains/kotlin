@@ -164,7 +164,7 @@ class BirVariableImpl(
             return _initializer
         }
         set(value) {
-            if (_initializer != value) {
+            if (_initializer !== value) {
                 childReplaced(_initializer, value)
                 _initializer = value
                 invalidate(2)

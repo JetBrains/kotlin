@@ -57,7 +57,7 @@ class BirConstructorCallImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(4)
             }
@@ -83,7 +83,7 @@ class BirConstructorCallImpl(
             return _dispatchReceiver
         }
         set(value) {
-            if (_dispatchReceiver != value) {
+            if (_dispatchReceiver !== value) {
                 childReplaced(_dispatchReceiver, value)
                 _dispatchReceiver = value
                 invalidate(2)
@@ -97,7 +97,7 @@ class BirConstructorCallImpl(
             return _extensionReceiver
         }
         set(value) {
-            if (_extensionReceiver != value) {
+            if (_extensionReceiver !== value) {
                 childReplaced(_extensionReceiver, value)
                 _extensionReceiver = value
                 invalidate(3)

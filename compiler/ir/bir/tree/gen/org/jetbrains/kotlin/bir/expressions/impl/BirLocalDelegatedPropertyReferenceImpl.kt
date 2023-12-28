@@ -58,7 +58,7 @@ class BirLocalDelegatedPropertyReferenceImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(4)
             }
@@ -84,7 +84,7 @@ class BirLocalDelegatedPropertyReferenceImpl(
             return _dispatchReceiver
         }
         set(value) {
-            if (_dispatchReceiver != value) {
+            if (_dispatchReceiver !== value) {
                 childReplaced(_dispatchReceiver, value)
                 _dispatchReceiver = value
                 invalidate(2)
@@ -98,7 +98,7 @@ class BirLocalDelegatedPropertyReferenceImpl(
             return _extensionReceiver
         }
         set(value) {
-            if (_extensionReceiver != value) {
+            if (_extensionReceiver !== value) {
                 childReplaced(_extensionReceiver, value)
                 _extensionReceiver = value
                 invalidate(3)
@@ -164,7 +164,7 @@ class BirLocalDelegatedPropertyReferenceImpl(
             return _getter
         }
         set(value) {
-            if (_getter != value) {
+            if (_getter !== value) {
                 _getter = value
                 invalidate(5)
             }
@@ -177,7 +177,7 @@ class BirLocalDelegatedPropertyReferenceImpl(
             return _setter
         }
         set(value) {
-            if (_setter != value) {
+            if (_setter !== value) {
                 _setter = value
                 invalidate(6)
             }

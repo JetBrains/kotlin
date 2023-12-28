@@ -48,7 +48,7 @@ class BirBreakImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(1)
             }
@@ -74,7 +74,7 @@ class BirBreakImpl(
             return _loop
         }
         set(value) {
-            if (_loop != value) {
+            if (_loop !== value) {
                 _loop = value
                 invalidate(2)
             }

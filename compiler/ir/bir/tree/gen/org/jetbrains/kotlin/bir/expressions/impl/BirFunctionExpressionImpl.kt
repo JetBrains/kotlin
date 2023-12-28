@@ -52,7 +52,7 @@ class BirFunctionExpressionImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(2)
             }
@@ -91,7 +91,7 @@ class BirFunctionExpressionImpl(
             return _function
         }
         set(value) {
-            if (_function != value) {
+            if (_function !== value) {
                 childReplaced(_function, value)
                 _function = value
                 invalidate(1)

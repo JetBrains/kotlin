@@ -94,7 +94,7 @@ private fun SmartPrinter.printElementImpl(element: Element) {
                         }
                         print("set(value)")
                         printBlock {
-                            print("if (${field.backingFieldName} != value)")
+                            print("if (${field.backingFieldName} ${if (field.typeRef is ElementOrRef<*>) "!==" else "!="} value)")
                             printBlock {
                                 if (field.isChild) {
                                     println("childReplaced(${field.backingFieldName}, value)")

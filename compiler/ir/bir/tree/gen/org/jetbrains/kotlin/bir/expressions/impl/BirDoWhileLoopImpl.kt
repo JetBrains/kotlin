@@ -54,7 +54,7 @@ class BirDoWhileLoopImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(3)
             }
@@ -93,7 +93,7 @@ class BirDoWhileLoopImpl(
             return _body
         }
         set(value) {
-            if (_body != value) {
+            if (_body !== value) {
                 childReplaced(_body, value)
                 _body = value
                 invalidate(1)
@@ -107,7 +107,7 @@ class BirDoWhileLoopImpl(
             return _condition
         }
         set(value) {
-            if (_condition != value) {
+            if (_condition !== value) {
                 childReplaced(_condition, value)
                 _condition = value
                 invalidate(2)

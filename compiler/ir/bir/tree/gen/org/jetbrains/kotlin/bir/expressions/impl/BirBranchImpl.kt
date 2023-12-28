@@ -48,7 +48,7 @@ class BirBranchImpl(
             return _condition
         }
         set(value) {
-            if (_condition != value) {
+            if (_condition !== value) {
                 childReplaced(_condition, value)
                 _condition = value
                 invalidate(1)
@@ -62,7 +62,7 @@ class BirBranchImpl(
             return _result
         }
         set(value) {
-            if (_result != value) {
+            if (_result !== value) {
                 childReplaced(_result, value)
                 _result = value
                 invalidate(2)
