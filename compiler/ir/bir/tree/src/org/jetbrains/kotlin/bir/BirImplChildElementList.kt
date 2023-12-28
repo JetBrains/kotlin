@@ -278,7 +278,7 @@ class BirImplChildElementList<E : BirElement?>(
 
     internal fun removeInternal(element: BirElementBase): Boolean {
         @Suppress("UNCHECKED_CAST")
-        val index = indexOf(element as E)
+        val index = indexOfInternal(element as E, false)
         if (index != -1) {
             removeAtInternal(index)
             return true
@@ -302,7 +302,7 @@ class BirImplChildElementList<E : BirElement?>(
 
     internal fun replaceInternal(old: BirElementBase, new: BirElementBase?): Boolean {
         @Suppress("UNCHECKED_CAST")
-        val index = indexOf(old as E)
+        val index = indexOfInternal(old as E, false)
         if (index == -1) {
             return false
         }
