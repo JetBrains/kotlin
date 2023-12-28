@@ -3,6 +3,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.environment
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
@@ -242,5 +243,7 @@ fun Project.nativeTest(
                 """.trimIndent()
             )
         }
+
+    environment("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
     body()
 }
