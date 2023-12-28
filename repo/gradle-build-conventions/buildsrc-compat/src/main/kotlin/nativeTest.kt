@@ -3,6 +3,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.environment
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
@@ -242,5 +243,15 @@ fun Project.nativeTest(
                 """.trimIndent()
             )
         }
+
+    // This environment variable is here for two reasons:
+    // 1. It is also used for the cinterop tool itself. So it is good to have it here as well,
+    //    just to make the tests match the production as closely as possible.
+    // 2. It disables a certain machinery in libclang that is known to cause troubles.
+    //    (see e.g. https://youtrack.jetbrains.com/issue/KT-61299 for more details).
+    //    Strictly speaking, it is not necessary since we beat them by other means,
+    //    but it is still nice to have it as a failsafe.
+    environment("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
+
     body()
 }
