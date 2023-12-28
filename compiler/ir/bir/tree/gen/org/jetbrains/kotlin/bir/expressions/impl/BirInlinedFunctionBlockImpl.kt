@@ -50,7 +50,7 @@ class BirInlinedFunctionBlockImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(2)
             }
@@ -89,7 +89,7 @@ class BirInlinedFunctionBlockImpl(
             return _inlineCall
         }
         set(value) {
-            if (_inlineCall != value) {
+            if (_inlineCall !== value) {
                 _inlineCall = value
                 invalidate(3)
             }
@@ -102,7 +102,7 @@ class BirInlinedFunctionBlockImpl(
             return _inlinedElement
         }
         set(value) {
-            if (_inlinedElement != value) {
+            if (_inlinedElement !== value) {
                 _inlinedElement = value
                 invalidate(4)
             }

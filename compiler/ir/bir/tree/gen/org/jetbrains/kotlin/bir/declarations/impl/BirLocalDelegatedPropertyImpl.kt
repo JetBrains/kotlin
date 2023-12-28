@@ -125,7 +125,7 @@ class BirLocalDelegatedPropertyImpl(
             return _delegate
         }
         set(value) {
-            if (_delegate != value) {
+            if (_delegate !== value) {
                 childReplaced(_delegate, value)
                 _delegate = value
                 invalidate(2)
@@ -139,7 +139,7 @@ class BirLocalDelegatedPropertyImpl(
             return _getter
         }
         set(value) {
-            if (_getter != value) {
+            if (_getter !== value) {
                 childReplaced(_getter, value)
                 _getter = value
                 invalidate(3)
@@ -153,7 +153,7 @@ class BirLocalDelegatedPropertyImpl(
             return _setter
         }
         set(value) {
-            if (_setter != value) {
+            if (_setter !== value) {
                 childReplaced(_setter, value)
                 _setter = value
                 invalidate(4)

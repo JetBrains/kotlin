@@ -47,7 +47,7 @@ class BirExpressionBodyImpl(
             return _expression
         }
         set(value) {
-            if (_expression != value) {
+            if (_expression !== value) {
                 childReplaced(_expression, value)
                 _expression = value
                 invalidate(1)
