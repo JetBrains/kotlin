@@ -52,7 +52,7 @@ class BirReturnImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(2)
             }
@@ -78,7 +78,7 @@ class BirReturnImpl(
             return _value
         }
         set(value) {
-            if (_value != value) {
+            if (_value !== value) {
                 childReplaced(_value, value)
                 _value = value
                 invalidate(1)

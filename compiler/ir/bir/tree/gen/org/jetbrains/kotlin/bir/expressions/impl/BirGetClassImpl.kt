@@ -50,7 +50,7 @@ class BirGetClassImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(2)
             }
@@ -76,7 +76,7 @@ class BirGetClassImpl(
             return _argument
         }
         set(value) {
-            if (_argument != value) {
+            if (_argument !== value) {
                 childReplaced(_argument, value)
                 _argument = value
                 invalidate(1)

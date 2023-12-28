@@ -182,7 +182,7 @@ class BirSimpleFunctionImpl(
             return _dispatchReceiverParameter
         }
         set(value) {
-            if (_dispatchReceiverParameter != value) {
+            if (_dispatchReceiverParameter !== value) {
                 childReplaced(_dispatchReceiverParameter, value)
                 _dispatchReceiverParameter = value
                 invalidate(4)
@@ -196,7 +196,7 @@ class BirSimpleFunctionImpl(
             return _extensionReceiverParameter
         }
         set(value) {
-            if (_extensionReceiverParameter != value) {
+            if (_extensionReceiverParameter !== value) {
                 childReplaced(_extensionReceiverParameter, value)
                 _extensionReceiverParameter = value
                 invalidate(5)
@@ -223,7 +223,7 @@ class BirSimpleFunctionImpl(
             return _body
         }
         set(value) {
-            if (_body != value) {
+            if (_body !== value) {
                 childReplaced(_body, value)
                 _body = value
                 invalidate(6)
@@ -250,7 +250,7 @@ class BirSimpleFunctionImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(7)
             }

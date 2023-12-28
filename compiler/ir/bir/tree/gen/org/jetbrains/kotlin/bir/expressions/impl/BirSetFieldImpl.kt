@@ -57,7 +57,7 @@ class BirSetFieldImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(3)
             }
@@ -109,7 +109,7 @@ class BirSetFieldImpl(
             return _receiver
         }
         set(value) {
-            if (_receiver != value) {
+            if (_receiver !== value) {
                 childReplaced(_receiver, value)
                 _receiver = value
                 invalidate(1)
@@ -136,7 +136,7 @@ class BirSetFieldImpl(
             return _value
         }
         set(value) {
-            if (_value != value) {
+            if (_value !== value) {
                 childReplaced(_value, value)
                 _value = value
                 invalidate(2)

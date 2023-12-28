@@ -171,7 +171,7 @@ class BirConstructorImpl(
             return _dispatchReceiverParameter
         }
         set(value) {
-            if (_dispatchReceiverParameter != value) {
+            if (_dispatchReceiverParameter !== value) {
                 childReplaced(_dispatchReceiverParameter, value)
                 _dispatchReceiverParameter = value
                 invalidate(4)
@@ -185,7 +185,7 @@ class BirConstructorImpl(
             return _extensionReceiverParameter
         }
         set(value) {
-            if (_extensionReceiverParameter != value) {
+            if (_extensionReceiverParameter !== value) {
                 childReplaced(_extensionReceiverParameter, value)
                 _extensionReceiverParameter = value
                 invalidate(5)
@@ -212,7 +212,7 @@ class BirConstructorImpl(
             return _body
         }
         set(value) {
-            if (_body != value) {
+            if (_body !== value) {
                 childReplaced(_body, value)
                 _body = value
                 invalidate(6)

@@ -49,7 +49,7 @@ class BirGetValueImpl(
             return _attributeOwnerId
         }
         set(value) {
-            if (_attributeOwnerId != value) {
+            if (_attributeOwnerId !== value) {
                 _attributeOwnerId = value
                 invalidate(1)
             }
@@ -75,7 +75,7 @@ class BirGetValueImpl(
             return _symbol
         }
         set(value) {
-            if (_symbol != value) {
+            if (_symbol !== value) {
                 _symbol = value
                 invalidate(2)
             }
