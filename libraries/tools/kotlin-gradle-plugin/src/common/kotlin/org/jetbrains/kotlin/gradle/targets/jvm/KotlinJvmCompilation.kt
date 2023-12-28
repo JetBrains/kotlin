@@ -25,10 +25,11 @@ import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.lenient
 import javax.inject.Inject
 
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 open class KotlinJvmCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation),
-    KotlinCompilationWithResources<KotlinJvmOptions> {
+) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation),
+    DeprecatedKotlinCompilationWithResources<KotlinJvmOptions> {
 
     final override val target: KotlinJvmTarget = compilation.target as KotlinJvmTarget
 

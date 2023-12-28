@@ -195,3 +195,6 @@ val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyCo
 interface KotlinCompilationWithResources<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     val processResourcesTaskName: String
 }
+
+@Suppress("Deprecation")
+typealias DeprecatedKotlinCompilationWithResources<T> = KotlinCompilationWithResources<T>
