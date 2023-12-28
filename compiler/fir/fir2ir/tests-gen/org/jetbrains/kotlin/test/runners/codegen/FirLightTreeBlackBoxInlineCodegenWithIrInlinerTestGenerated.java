@@ -1155,6 +1155,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         }
 
         @Test
+        @TestMetadata("kt64428.kt")
+        public void testKt64428() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/callableReference/kt64428.kt");
+        }
+
+        @Test
         @TestMetadata("propertyIntrinsic.kt")
         public void testPropertyIntrinsic() throws Exception {
             runTest("compiler/testData/codegen/boxInline/callableReference/propertyIntrinsic.kt");
