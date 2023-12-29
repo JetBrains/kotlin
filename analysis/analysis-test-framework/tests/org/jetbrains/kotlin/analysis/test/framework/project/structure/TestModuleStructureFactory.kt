@@ -121,17 +121,15 @@ object TestModuleStructureFactory {
 
         val jsLibraryRootPaths = compilerConfiguration[JSConfigurationKeys.LIBRARIES].orEmpty()
 
-        if (jsLibraryRootPaths.isNotEmpty()) {
-            for (libraryRootPath in jsLibraryRootPaths) {
-                val libraryRoot = Paths.get(libraryRootPath)
-                check(libraryRoot.extension == KLIB_FILE_EXTENSION)
+        for (libraryRootPath in jsLibraryRootPaths) {
+            val libraryRoot = Paths.get(libraryRootPath)
+            check(libraryRoot.extension == KLIB_FILE_EXTENSION)
 
-                val libraryModule = libraryCache(setOf(libraryRoot)) {
-                    createLibraryModule(project, libraryRoot, JsPlatforms.defaultJsPlatform, testServices)
-                }
-
-                ktModule.directRegularDependencies.add(libraryModule)
+            val libraryModule = libraryCache(setOf(libraryRoot)) {
+                createLibraryModule(project, libraryRoot, JsPlatforms.defaultJsPlatform, testServices)
             }
+
+            ktModule.directRegularDependencies.add(libraryModule)
         }
     }
 
