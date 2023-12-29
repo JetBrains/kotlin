@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirWrappedDelegateExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -26,14 +27,14 @@ class FirWrappedDelegateExpressionBuilder : FirAnnotationContainerBuilder, FirEx
     override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var expression: FirExpression
-    lateinit var delegateProvider: FirExpression
+    lateinit var provideDelegateCall: FirFunctionCall
 
     override fun build(): FirWrappedDelegateExpression {
         return FirWrappedDelegateExpressionImpl(
             source,
             annotations.toMutableOrEmpty(),
             expression,
-            delegateProvider,
+            provideDelegateCall,
         )
     }
 
