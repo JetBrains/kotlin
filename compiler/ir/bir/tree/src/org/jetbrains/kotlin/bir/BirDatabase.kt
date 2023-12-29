@@ -172,7 +172,7 @@ class BirDatabase : BirElementParent() {
     }
 
 
-    private fun indexElement(element: BirElementBase, includeBackReferences: Boolean) {
+    internal fun indexElement(element: BirElementBase, includeBackReferences: Boolean) {
         val classifier = elementClassifier ?: return
         if (element._containingDatabase !== this) return
 
