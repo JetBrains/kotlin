@@ -1,5 +1,3 @@
-// COPY_RESOLUTION_MODE: IGNORE_SELF
-
 class Outer {
     val foo: String = "foo"
 

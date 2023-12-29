@@ -26,7 +26,22 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResolveTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
-        builder.useDirectives(Directives)
+
+        builder.apply {
+            useDirectives(Directives)
+            forTestsMatching("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/*") {
+                defaultDirectives {
+                    COPY_RESOLUTION_MODE.with(DanglingFileResolutionMode.IGNORE_SELF)
+                }
+            }
+
+            forTestsMatching("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/*") {
+                defaultDirectives {
+                    COPY_RESOLUTION_MODE.with(DanglingFileResolutionMode.PREFER_SELF)
+                }
+            }
+        }
+
     }
 
     override fun KtAnalysisSession.getAdditionalSymbolInfo(symbol: KtSymbol): String? {

@@ -1,5 +1,3 @@
-// COPY_RESOLUTION_MODE: IGNORE_SELF
-
 fun <Value> foo() {
     call<V<caret>alue>()
 }

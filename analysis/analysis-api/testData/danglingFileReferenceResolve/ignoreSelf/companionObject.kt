@@ -1,5 +1,3 @@
-// COPY_RESOLUTION_MODE: IGNORE_SELF
-
 class Foo {
     companion object
 }
