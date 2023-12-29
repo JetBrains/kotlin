@@ -1,0 +1,96 @@
+KtKotlinPropertySymbol:
+  annotationsList: [
+    one/Anno()
+      psi: null
+  ]
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(one/SimpleClass.memberPropertyWithAnnotations)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Short
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.SimpleClass
+    getContainingModule: KtLibraryModule "Library lib"
+    deprecationStatus: null
+  callableIdIfNonLocal: one/SimpleClass.memberPropertyWithAnnotations
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: [
+      one/Anno()
+        psi: null
+    ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Short
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getDispatchReceiver(): KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: one/SimpleClass
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.SimpleClass
+    getContainingModule: KtLibraryModule "Library lib"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: memberPropertyWithAnnotations
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Short
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: one/SimpleClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: one.SimpleClass
+  getContainingModule: KtLibraryModule "Library lib"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getMemberPropertyWithAnnotations
+  javaSetterName: null
+  setterDeprecationStatus: null

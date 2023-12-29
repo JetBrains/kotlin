@@ -1,0 +1,170 @@
+KtKotlinPropertySymbol:
+  annotationsList: [
+    one/Anno()
+      psi: null
+  ]
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(one/topLevelVariableWithAnnotations)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Long
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.LibKt
+    getContainingModule: KtLibraryModule "Library lib"
+    deprecationStatus: null
+  callableIdIfNonLocal: one/topLevelVariableWithAnnotations
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: [
+      one/Anno()
+        psi: null
+    ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Long
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.LibKt
+    getContainingModule: KtLibraryModule "Library lib"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  modality: FINAL
+  name: topLevelVariableWithAnnotations
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Long
+  setter: KtPropertySetterSymbol:
+    annotationsList: [
+      one/Anno()
+        psi: null
+    ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: LIBRARY
+    parameter: KtValueParameterSymbol:
+      annotationsList: [
+        one/Anno()
+          psi: null
+      ]
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Long
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingFileSymbol: null
+      getContainingJvmClassName: null
+      getContainingModule: KtLibraryModule "Library lib"
+      deprecationStatus: null
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Unit
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: [
+      KtValueParameterSymbol:
+        annotationsList: [
+          one/Anno()
+            psi: null
+        ]
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isCrossinline: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVararg: false
+        name: value
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Long
+        symbolKind: LOCAL
+        typeParameters: []
+        getContainingFileSymbol: null
+        getContainingJvmClassName: null
+        getContainingModule: KtLibraryModule "Library lib"
+        deprecationStatus: null
+    ]
+    visibility: Public
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.LibKt
+    getContainingModule: KtLibraryModule "Library lib"
+    deprecationStatus: null
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: one.LibKt
+  getContainingModule: KtLibraryModule "Library lib"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getTopLevelVariableWithAnnotations
+  javaSetterName: setTopLevelVariableWithAnnotations
+  setterDeprecationStatus: null

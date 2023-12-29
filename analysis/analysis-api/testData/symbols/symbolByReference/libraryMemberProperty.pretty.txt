@@ -1,0 +1,1 @@
+val memberProperty: kotlin.String

@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -32,12 +33,13 @@ import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.test.fail
 
-abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
+abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     open val defaultRenderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
 
     open val defaultRendererOption: PrettyRendererOption? = null
@@ -51,7 +53,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
 
     abstract fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData
 
-    override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
+    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val lastModule = moduleStructure.modules.last()
+        val firstKtFileFile = testServices.ktModuleProvider.getModuleFiles(lastModule).firstNotNullOf { it as? KtFile }
+        doTestByFileStructure(firstKtFileFile, lastModule, testServices)
+    }
+
+    open fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val directives = module.directives
         val directiveToIgnoreSymbolRestore = directives.doNotCheckSymbolRestoreDirective()
         val directiveToIgnoreNonPsiSymbolRestore = directives.doNotCheckNonPsiSymbolRestoreDirective()

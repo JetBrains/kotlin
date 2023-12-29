@@ -167,6 +167,78 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
     }
 
     @Test
+    @TestMetadata("libraryConstructorProperty.kt")
+    public void testLibraryConstructorProperty() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryConstructorProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryConstructorPropertyWithAnnotations.kt")
+    public void testLibraryConstructorPropertyWithAnnotations() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryConstructorPropertyWithAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryConstructorVariable.kt")
+    public void testLibraryConstructorVariable() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryConstructorVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryConstructorVariableWithAnnotations.kt")
+    public void testLibraryConstructorVariableWithAnnotations() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryConstructorVariableWithAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryMemberProperty.kt")
+    public void testLibraryMemberProperty() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryMemberProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryMemberPropertyWithAnnotations.kt")
+    public void testLibraryMemberPropertyWithAnnotations() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryMemberPropertyWithAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryMemberVariable.kt")
+    public void testLibraryMemberVariable() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryMemberVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryMemberVariableWithAnnotations.kt")
+    public void testLibraryMemberVariableWithAnnotations() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryMemberVariableWithAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryProperty.kt")
+    public void testLibraryProperty() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryPropertyWithAnnotations.kt")
+    public void testLibraryPropertyWithAnnotations() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryPropertyWithAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryVariable.kt")
+    public void testLibraryVariable() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("libraryVariableWithAnnotations.kt")
+    public void testLibraryVariableWithAnnotations() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryVariableWithAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("primaryConstructorValueParameter.kt")
     public void testPrimaryConstructorValueParameter() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/primaryConstructorValueParameter.kt");
