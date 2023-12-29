@@ -10,7 +10,6 @@ import kotlin.experimental.or
 abstract class BirImplElementBase(elementClass: BirElementClass) : BirElementBase(elementClass) {
     // bits reservation: 0 - parent, 1-n - child element lists, n-14 - all other properties, 15 - dynamic properties
     private var observedPropertiesBitSet: Short = 0
-    private var dependentIndexedElements: Any? = null // null | BirImplElementBase | Array<BirImplElementBase?>
 
     final override val parent: BirElementBase?
         get() {
@@ -181,76 +180,33 @@ abstract class BirImplElementBase(elementClass: BirElementClass) : BirElementBas
     }
 
     private fun registerDependentElement(dependentElement: BirImplElementBase) {
-        val RESIZE_GRADUALITY = 4
-        var elementsOrSingle = dependentIndexedElements
-        when (elementsOrSingle) {
-            null -> {
-                dependentIndexedElements = dependentElement
-            }
-            is BirImplElementBase -> {
-                if (elementsOrSingle === dependentElement) {
-                    return
-                }
-
-                val newSize = 2 // 2 elements is a very common case.
-                val elements = arrayOfNulls<BirImplElementBase>(newSize)
-                elements[0] = elementsOrSingle
-                elements[1] = dependentElement
-                dependentIndexedElements = elements
-            }
-            else -> {
-                @Suppress("UNCHECKED_CAST")
-                elementsOrSingle as Array<BirImplElementBase?>
-
-                var newIndex = 0
-                while (newIndex < elementsOrSingle.size) {
-                    val e = elementsOrSingle[newIndex]
-                    if (e == null) {
-                        break
-                    } else if (e === dependentElement) {
-                        return
-                    }
-                    newIndex++
-                }
-
-                if (newIndex == elementsOrSingle.size) {
-                    val newSize = elementsOrSingle.size.coerceAtLeast(RESIZE_GRADUALITY) + RESIZE_GRADUALITY
-                    elementsOrSingle = elementsOrSingle.copyOf(newSize)
-                    dependentIndexedElements = elementsOrSingle
-                }
-                elementsOrSingle[newIndex] = dependentElement
-            }
-        }
+        addRelatedElement(dependentElement, false)
     }
 
     internal fun indexInvalidatedDependentElements() {
-        when (val elementsOrSingle = dependentIndexedElements) {
-            null -> {}
-            is BirImplElementBase -> {
-                dependentIndexedElements = null
-                _containingDatabase?.indexElementAndDependent(elementsOrSingle)
-            }
+        val database = _containingDatabase ?: return
+
+        val array: Array<BirElementBase?>
+        var storageIsArray = false
+        when (val elementsOrSingle = relatedElements) {
+            null -> return
+            is BirElementBase -> array = arrayOf(elementsOrSingle)
             else -> {
                 @Suppress("UNCHECKED_CAST")
-                var array = elementsOrSingle as Array<BirImplElementBase?>
-                var arraySize = array.size
-                var i = 0
-                while (i < arraySize) {
-                    val e = array[i] ?: break
-                    val arrayIsFull = array[arraySize - 1] != null
-
-                    array[i] = null
-                    _containingDatabase?.indexElementAndDependent(e)
-
-                    if (arrayIsFull && array !== dependentIndexedElements) {
-                        @Suppress("UNCHECKED_CAST")
-                        array = dependentIndexedElements as Array<BirImplElementBase?>
-                        arraySize = array.size
-                    }
-
-                    i++
-                }
+                array = elementsOrSingle as Array<BirElementBase?>
+                storageIsArray = true
             }
+        }
+
+        for (i in array.indices) {
+            val element = array[i] ?: break
+
+            if (storageIsArray && !element.hasFlag(FLAG_HAS_BEEN_STORED_IN_DEPENDENT_ELEMENTS_ARRAY)) {
+                // This element is certainly not a back reference, so is safe to delete.
+                removeRelatedElementFromArray(i)
+            }
+
+            database.indexElement(element, true)
         }
     }
 
