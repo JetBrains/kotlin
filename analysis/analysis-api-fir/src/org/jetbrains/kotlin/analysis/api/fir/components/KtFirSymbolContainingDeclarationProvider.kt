@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -207,9 +208,15 @@ internal class KtFirSymbolContainingDeclarationProvider(
         getContainingPsiForFakeSource(source)?.let { return it }
 
         val psi = source.psi
-            ?: errorWithAttachment("errorWithAttachment FirSourceElement: kind=${source.kind} element=${source.psi!!::class.simpleName}") {
+            ?: errorWithAttachment("PSI not found for source kind '${source.kind}'") {
                 withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
             }
+
+        if (source.kind != KtRealSourceElementKind) {
+            errorWithAttachment("Cannot compute containing PSI for unknown source kind '${source.kind}' (${psi::class.simpleName})") {
+                withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
+            }
+        }
 
         if (isSyntheticSymbolWithParentSource(symbol)) {
             return psi as KtDeclaration
