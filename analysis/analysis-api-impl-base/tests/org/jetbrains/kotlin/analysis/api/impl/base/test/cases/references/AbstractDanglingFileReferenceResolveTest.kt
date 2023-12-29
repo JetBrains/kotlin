@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -50,7 +51,7 @@ abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResol
     }
 
     override fun <R> analyzeReferenceElement(element: KtElement, mainModule: TestModule, action: KtAnalysisSession.() -> R): R {
-        val resolutionMode = mainModule.directives[COPY_RESOLUTION_MODE].firstOrNull()
+        val resolutionMode = mainModule.directives.singleOrZeroValue(COPY_RESOLUTION_MODE)
         return if (resolutionMode != null) {
             analyzeCopy(element, resolutionMode) { action() }
         } else {
