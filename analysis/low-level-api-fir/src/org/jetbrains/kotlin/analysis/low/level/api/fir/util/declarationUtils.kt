@@ -264,7 +264,3 @@ internal fun <T : PsiElement> T.unwrapCopy(containingFile: PsiFile = this.contai
         null
     }
 }
-
-internal fun <T : PsiElement> T.unwrapCopyOrSelf(containingFile: PsiFile = this.containingFile): T {
-    return unwrapCopy(containingFile) ?: this
-}
