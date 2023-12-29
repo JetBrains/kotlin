@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.ResolutionParameters
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.SingleCandidateResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.SingleCandidateResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -93,7 +94,7 @@ internal class KtFirCompletionCandidateChecker(
         val fakeFirFile = fakeFile.getOrBuildFirFile(firResolveSession)
 
         val sessionHolder = run {
-            val firSession = firResolveSession.useSiteFirSession
+            val firSession = fakeFirFile.llFirSession
             val scopeSession = firResolveSession.getScopeSessionFor(firSession)
             SessionHolderImpl(firSession, scopeSession)
         }
