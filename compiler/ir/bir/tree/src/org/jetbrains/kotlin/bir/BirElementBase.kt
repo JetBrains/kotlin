@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.bir
 
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 import org.jetbrains.kotlin.bir.symbols.ownerIfBound
+import org.jetbrains.kotlin.bir.util.SmallFixedPointFraction
 import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
@@ -30,12 +31,20 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
      */
     internal var _containingDatabase: BirDatabase? = null
     internal var _parent: BirElementParent? = null
+
     internal val elementClassId = elementClass.id.toUByte()
     private var flags: Byte = 0
+
     internal var indexSlot: UByte = 0u
     internal var lastReturnedInQueryOfIndexSlot: UByte = 0u
-    private var backReferences: Any? = null // null | BirElementBase | Array<BirElementBase?>
+
+    // Contains both back references and dependent elements
+    protected var relatedElements: Any? = null // null | BirElementBase | Array<BirElementBase?>
+        private set
+    private var relatedElementFullness = SmallFixedPointFraction.ZERO
+
     internal var dynamicProperties: Array<Any?>? = null
+
 
     abstract override val parent: BirElementBase?
 
@@ -168,59 +177,104 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
     }
 
 
-    internal fun registerBackReference(backReference: BirElementBase) {
-        val RESIZE_GRADUALITY = 4
-        var elementsOrSingle = backReferences
+    protected fun addRelatedElement(relatedElement: BirElementBase, isBackReference: Boolean) {
+        val hasBeenStoredInArrayFlag = if (isBackReference) FLAG_HAS_BEEN_STORED_IN_BACK_REFERENCES_ARRAY
+        else FLAG_HAS_BEEN_STORED_IN_DEPENDENT_ELEMENTS_ARRAY
+
+        var elementsOrSingle = relatedElements
         when (elementsOrSingle) {
             null -> {
-                backReferences = backReference
+                relatedElements = relatedElement
+                relatedElementFullness = SmallFixedPointFraction.ZERO
             }
             is BirElementBase -> {
-                if (elementsOrSingle === backReference) {
+                if (elementsOrSingle === relatedElement) {
                     return
                 }
 
-                val elements = arrayOfNulls<BirElementBase>(RESIZE_GRADUALITY)
+                // 2 elements in array is a very common case.
+                val elements = arrayOfNulls<BirElementBase>(2)
                 elements[0] = elementsOrSingle
-                elements[1] = backReference
-                backReferences = elements
+                elements[1] = relatedElement
+                relatedElements = elements
 
-                backReference.setFlag(FLAG_HAS_BEEN_STORED_IN_BACK_REF_ARRAY, true)
+                val newSize = 2
+                relatedElementFullness = SmallFixedPointFraction(newSize, elements.size)
+
+                elementsOrSingle.setFlag(hasBeenStoredInArrayFlag, true)
+                relatedElement.setFlag(hasBeenStoredInArrayFlag, true)
             }
             else -> {
                 @Suppress("UNCHECKED_CAST")
                 elementsOrSingle as Array<BirElementBase?>
 
-                var newIndex = 0
-                if (backReference.hasFlag(FLAG_HAS_BEEN_STORED_IN_BACK_REF_ARRAY)) {
-                    while (newIndex < elementsOrSingle.size) {
-                        val e = elementsOrSingle[newIndex]
-                        if (e == null) {
+                var currentCount = 0
+                if (relatedElement.hasFlag(FLAG_HAS_BEEN_STORED_IN_BACK_REFERENCES_ARRAY or FLAG_HAS_BEEN_STORED_IN_DEPENDENT_ELEMENTS_ARRAY)) {
+                    while (currentCount < elementsOrSingle.size) {
+                        val element = elementsOrSingle[currentCount]
+                        if (element == null) {
                             break
-                        } else if (e === backReference) {
+                        } else if (element === relatedElement) {
+                            relatedElement.setFlag(hasBeenStoredInArrayFlag, true)
                             return
                         }
-                        newIndex++
+                        currentCount++
                     }
                 } else {
-                    // Optimization: this element certainly isn't in the array.
-                    for (i in elementsOrSingle.lastIndex downTo 0) {
-                        if (elementsOrSingle[i] != null) {
-                            newIndex = i + 1
-                            break
-                        }
-                    }
+                    // Optimization: this element certainly isn't in the array. Just find a free spot.
+                    currentCount = findRelatedElementsArrayCount(elementsOrSingle)
                 }
 
-                if (newIndex == elementsOrSingle.size) {
-                    elementsOrSingle = elementsOrSingle.copyOf(elementsOrSingle.size + RESIZE_GRADUALITY)
-                    backReferences = elementsOrSingle
-                }
-                elementsOrSingle[newIndex] = backReference
+                if (currentCount == elementsOrSingle.size) {
+                    // This formula gives a nice progression: 2, 3, 4, 6, 9, 13...
+                    val newArraySize = elementsOrSingle.size * 3 / 2
 
-                backReference.setFlag(FLAG_HAS_BEEN_STORED_IN_BACK_REF_ARRAY, true)
+                    elementsOrSingle = elementsOrSingle.copyOf(newArraySize)
+                    relatedElements = elementsOrSingle
+                }
+                elementsOrSingle[currentCount] = relatedElement
+
+                currentCount++
+                relatedElementFullness = SmallFixedPointFraction(currentCount, elementsOrSingle.size)
+
+                relatedElement.setFlag(hasBeenStoredInArrayFlag, true)
             }
         }
+    }
+
+    protected fun removeRelatedElementFromArray(index: Int) {
+        @Suppress("UNCHECKED_CAST")
+        val array = relatedElements as Array<BirElementBase?>
+        val count = findRelatedElementsArrayCount(array)
+        require(index < count)
+
+        val lastIndex = count - 1
+        if (index != lastIndex) {
+            array[index] = array[lastIndex]
+        }
+        array[lastIndex] = null
+
+        relatedElementFullness = SmallFixedPointFraction(lastIndex, array.size)
+    }
+
+    private fun findRelatedElementsArrayCount(array: Array<BirElementBase?>): Int {
+        val minSize = relatedElementFullness * array.size
+        if (minSize == array.size) {
+            assert(minSize == 0 || array[minSize - 1] == null)
+            return minSize
+        }
+
+        for (i in minSize..<array.size) {
+            if (array[i] == null) {
+                assert(i == 0 || array[i - 1] == null)
+                return i
+            }
+        }
+        error("Should not reach here")
+    }
+
+    internal fun registerBackReference(backReference: BirElementBase) {
+        addRelatedElement(backReference, true)
     }
 
     internal fun <R : BirElement> getBackReferences(key: BirElementBackReferencesKey<*, R>): List<BirElementBase> {
@@ -228,52 +282,59 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
         require(attachedToDatabase) { "Element must be attached to tree" }
 
         val array: Array<BirElementBase?>
-        when (val elementsOrSingle = backReferences) {
+        var storageIsArray = false
+        when (val elementsOrSingle = relatedElements) {
             null -> return emptyList<BirElementBase>()
             is BirElementBase -> array = arrayOf(elementsOrSingle)
             else -> {
                 @Suppress("UNCHECKED_CAST")
                 array = elementsOrSingle as Array<BirElementBase?>
+                storageIsArray = true
             }
         }
 
         val results = ArrayList<BirElementBase>(array.size)
         val backReferenceRecorder = BirDatabase.BackReferenceRecorder()
 
-        var j = 0
         for (i in array.indices) {
             val backRef = array[i] ?: break
 
-            with(backReferenceRecorder) {
-                key.recorder.recordBackReferences(backRef)
+            var isValidBackRef = false
+            if (!(storageIsArray && !backRef.hasFlag(FLAG_HAS_BEEN_STORED_IN_BACK_REFERENCES_ARRAY))) {
+                with(backReferenceRecorder) {
+                    key.recorder.recordBackReferences(backRef)
+                }
+                val recordedRef = backReferenceRecorder.recordedRef
+                backReferenceRecorder.recordedRef = null
+
+                if (recordedRef === this) {
+                    isValidBackRef = true
+                }
             }
 
-            val recordedRef = backReferenceRecorder.recordedRef
-            backReferenceRecorder.recordedRef = null
-            if (recordedRef != null && recordedRef.attachedToDatabase) {
-                if (recordedRef === this) {
-                    results += backRef
-                }
-
-                if (i != j) {
-                    array[j] = backRef
-                }
-                j++
+            if (isValidBackRef) {
+                results += backRef
+            } else if (storageIsArray && !backRef.hasFlag(FLAG_HAS_BEEN_STORED_IN_DEPENDENT_ELEMENTS_ARRAY)) {
+                // This element is certainly not a dependent element, so it is safe to remove.
+                removeRelatedElementFromArray(i)
             }
         }
 
         return results
     }
 
+
     final override fun equals(other: Any?): Boolean {
         return other === this ||
                 (other is BirSymbol && other.ownerIfBound === this)
     }
 
+
     companion object {
         internal const val FLAG_INVALIDATED: Byte = (1 shl 0).toByte()
         internal const val FLAG_IS_IN_MOVED_ELEMENTS_BUFFER: Byte = (1 shl 1).toByte()
-        private const val FLAG_HAS_BEEN_STORED_IN_BACK_REF_ARRAY: Byte = (1 shl 2).toByte()
+        internal const val FLAG_HAS_BEEN_STORED_IN_BACK_REFERENCES_ARRAY: Byte = (1 shl 2).toByte()
+        internal const val FLAG_HAS_BEEN_STORED_IN_DEPENDENT_ELEMENTS_ARRAY: Byte = (1 shl 3).toByte()
 
         private const val CONTAINING_LIST_ID_BITS = 3
     }
