@@ -23,7 +23,7 @@ abstract class FirWrappedDelegateExpression : FirWrappedExpression() {
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract override val expression: FirExpression
-    abstract val delegateProvider: FirExpression
+    abstract val provideDelegateCall: FirFunctionCall
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitWrappedDelegateExpression(this, data)
