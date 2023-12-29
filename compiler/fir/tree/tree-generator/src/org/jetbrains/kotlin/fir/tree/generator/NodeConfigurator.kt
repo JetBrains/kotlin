@@ -665,7 +665,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         wrappedDelegateExpression.configure {
-            +field("delegateProvider", expression)
+            +field("provideDelegateCall", functionCall)
         }
 
         enumEntryDeserializedAccessExpression.configure {

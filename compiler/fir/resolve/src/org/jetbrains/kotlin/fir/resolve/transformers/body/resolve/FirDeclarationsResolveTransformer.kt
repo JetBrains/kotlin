@@ -404,7 +404,7 @@ open class FirDeclarationsResolveTransformer(
         val delegateExpression = wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent.Delegate)
             .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
 
-        val provideDelegateCall = wrappedDelegateExpression.delegateProvider as FirFunctionCall
+        val provideDelegateCall = wrappedDelegateExpression.provideDelegateCall
         provideDelegateCall.replaceExplicitReceiver(delegateExpression)
 
         // Resolve call for provideDelegate, without completion
