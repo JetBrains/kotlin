@@ -260,7 +260,7 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
     private fun findRelatedElementsArrayCount(array: Array<BirElementBase?>): Int {
         val minSize = relatedElementFullness * array.size
         if (minSize == array.size) {
-            assert(minSize == 0 || array[minSize - 1] == null)
+            assert(minSize == 0 || array[minSize - 1] != null)
             return minSize
         }
 
