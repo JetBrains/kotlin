@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
@@ -243,16 +242,7 @@ private fun rebindDelegate(newTarget: FirProperty, oldTarget: FirProperty) {
         withFirEntry("delegate", delegate)
     }
 
-    val delegateProvider = delegate.delegateProvider
-    requireWithAttachment(
-        delegateProvider is FirFunctionCall,
-        { "Unexpected delegate provider type: ${delegateProvider::class.simpleName}" },
-    ) {
-        withFirEntry("newTarget", newTarget)
-        withFirEntry("oldTarget", oldTarget)
-        withFirEntry("expression", delegateProvider)
-    }
-
+    val delegateProvider = delegate.provideDelegateCall
     rebindArgumentList(
         delegateProvider.argumentList,
         newTarget = newTarget.symbol,
