@@ -50,6 +50,8 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -584,7 +586,11 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             is KtSourceModule -> llFirSessionCache.getSession(dependency)
 
             is KtDanglingFileModule -> {
-                require(dependency.isStable) { "Unstable dangling modules cannot be used as a dependency" }
+                requireWithAttachment(dependency.isStable, message = { "Unstable dangling modules cannot be used as a dependency" }) {
+                    withKtModuleEntry("module", module)
+                    withKtModuleEntry("dependency", dependency)
+                    withPsiEntry("dependencyFile", dependency.file)
+                }
                 llFirSessionCache.getSession(dependency)
             }
 
