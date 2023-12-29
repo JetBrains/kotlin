@@ -184,11 +184,16 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
 
         val inBlockModificationOwner = nonLocalDeclarationForLocalChange(element) ?: return ChangeType.OutOfBlock
 
+        if (inBlockModificationOwner is KtCodeFragment) {
+            // All code fragment content is local
+            return ChangeType.InBlock(inBlockModificationOwner, project)
+        }
+
         val isOutOfBlockChange = element.isNewDirectChildOf(inBlockModificationOwner, modificationType)
                 || modificationType.isContractRemoval()
 
         return when {
-            inBlockModificationOwner is KtCodeFragment || !isOutOfBlockChange -> ChangeType.InBlock(inBlockModificationOwner, project)
+            !isOutOfBlockChange -> ChangeType.InBlock(inBlockModificationOwner, project)
             else -> ChangeType.OutOfBlock
         }
     }
