@@ -245,7 +245,6 @@ internal class KtFirSymbolContainingDeclarationProvider(
     private fun isSyntheticSymbolWithParentSource(symbol: KtSymbol): Boolean {
         return when (symbol.origin) {
             KtSymbolOrigin.SOURCE_MEMBER_GENERATED -> true
-            KtSymbolOrigin.SUBSTITUTION_OVERRIDE -> true
             else -> false
         }
     }
