@@ -586,7 +586,7 @@ private fun calculateLazyBodiesForField(designation: FirDesignation) {
     require(field.initializer is FirLazyExpression)
 
     // 'designation.path.last()' cannot be used here, as for dangling files designation target may be in a different file
-    val psi = designation.target.psi?.getStrictParentOfType<KtClassOrObject>()
+    val psi = field.psi?.getStrictParentOfType<KtClassOrObject>()
 
     val newField = revive<FirField>(designation, psi)
     field.replaceInitializer(newField.initializer)
