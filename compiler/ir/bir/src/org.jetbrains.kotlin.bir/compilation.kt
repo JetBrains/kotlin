@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.util.Bir2IrConverter
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
-import org.jetbrains.kotlin.bir.util.collectAllElementsInTree
 import org.jetbrains.kotlin.bir.util.countAllElementsInTree
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
@@ -321,8 +320,8 @@ class BirCompilation() {
             val externalBir = input.backendContext.externalModulesBir
 
             invokePhaseMeasuringTime("BIR", "applyNewRegisteredIndices") {
-                compiledBir.applyNewRegisteredIndices()
-                externalBir.applyNewRegisteredIndices()
+                compiledBir.activateNewRegisteredIndices()
+                externalBir.activateNewRegisteredIndices()
             }
             repeat(1) {
                 invokePhaseMeasuringTime("BIR", "baseline tree traversal") {
