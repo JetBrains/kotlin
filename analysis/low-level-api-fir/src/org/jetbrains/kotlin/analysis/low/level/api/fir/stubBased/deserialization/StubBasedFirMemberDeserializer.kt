@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,12 +12,16 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
@@ -324,7 +328,11 @@ internal class StubBasedFirMemberDeserializer(
             dispatchReceiverType = c.dispatchReceiver
             isLocal = false
             val visibility = property.visibility
-            status = FirResolvedDeclarationStatusImpl(visibility, propertyModality, visibility.toEffectiveVisibility(classSymbol)).apply {
+            val resolvedStatus = FirResolvedDeclarationStatusImpl(
+                visibility,
+                propertyModality,
+                visibility.toEffectiveVisibility(classSymbol)
+            ).apply {
                 isExpect = property.hasExpectModifier()
                 isActual = false
                 isOverride = false
@@ -332,6 +340,8 @@ internal class StubBasedFirMemberDeserializer(
                 isLateInit = property.hasModifier(KtTokens.LATEINIT_KEYWORD)
                 isExternal = property.hasModifier(KtTokens.EXTERNAL_KEYWORD)
             }
+
+            status = resolvedStatus
 
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
@@ -344,29 +354,48 @@ internal class StubBasedFirMemberDeserializer(
                 initialOrigin,
                 source = property.toKtPsiSourceElement(KtFakeSourceElementKind.DefaultAccessor),
                 backingFieldAnnotations.toMutableList(),
-                returnTypeRef,
+                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 isVar,
                 symbol,
                 status,
             )
 
-            if (getter != null) {
-                this.getter = loadPropertyGetter(
+            this.getter = getter?.let {
+                loadPropertyGetter(
                     getter,
                     classSymbol,
                     returnTypeRef,
                     symbol
                 )
-            }
+            } ?: FirDefaultPropertyGetter(
+                source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                moduleData = moduleData,
+                origin = origin,
+                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                propertySymbol = symbol,
+                visibility = resolvedStatus.visibility,
+                effectiveVisibility = resolvedStatus.effectiveVisibility,
+                modality = resolvedStatus.modality,
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
+            )
+
             val setter = property.setter
-            if (setter != null) {
-                this.setter = loadPropertySetter(
-                    setter,
-                    classSymbol,
-                    symbol,
-                    local
+            this.setter = when {
+                setter != null -> loadPropertySetter(setter, classSymbol, symbol, local)
+                isVar -> FirDefaultPropertySetter(
+                    source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                    moduleData = moduleData,
+                    origin = origin,
+                    propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                    propertySymbol = symbol,
+                    visibility = resolvedStatus.visibility,
+                    effectiveVisibility = resolvedStatus.effectiveVisibility,
+                    modality = resolvedStatus.modality,
+                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
                 )
+                else -> null
             }
+
             this.containerSource = c.containerSource
             this.initializer = c.annotationDeserializer.loadConstant(property, symbol.callableId)
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)

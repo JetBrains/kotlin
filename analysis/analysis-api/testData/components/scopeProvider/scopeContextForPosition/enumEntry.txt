@@ -358,9 +358,29 @@ scopes:
           typeParameters: []
         callableIdIfNonLocal: kotlin/Enum.name
         contextReceivers: []
-        getter: null
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: true
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: FINAL
+          origin: LIBRARY
+          receiverParameter: null
+          returnType: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/String
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
         hasBackingField: true
-        hasGetter: false
+        hasGetter: true
         hasSetter: false
         initializer: null
         isActual: false
@@ -404,9 +424,29 @@ scopes:
           typeParameters: []
         callableIdIfNonLocal: kotlin/Enum.ordinal
         contextReceivers: []
-        getter: null
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: true
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: FINAL
+          origin: LIBRARY
+          receiverParameter: null
+          returnType: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Int
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
         hasBackingField: true
-        hasGetter: false
+        hasGetter: true
         hasSetter: false
         initializer: null
         isActual: false

@@ -6,3 +6,4 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 @R|kotlin/PublishedApi|() internal final [ResolvedTo(BODY_RESOLVE)] [LazyPublishedApiEffectiveVisibilityKey=public] val published: R|kotlin/String|
+    internal [ResolvedTo(BODY_RESOLVE)] [LazyPublishedApiEffectiveVisibilityKey=public] get(): R|kotlin/String|

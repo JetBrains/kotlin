@@ -330,9 +330,28 @@ KtKotlinPropertySymbol:
     typeParameters: []
   callableIdIfNonLocal: kotlin/Pair.first
   contextReceivers: []
-  getter: null
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KtTypeParameterType:
+      annotationsList: []
+      type: A
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
-  hasGetter: false
+  hasGetter: true
   hasSetter: false
   initializer: null
   isActual: false
@@ -374,9 +393,28 @@ KtKotlinPropertySymbol:
     typeParameters: []
   callableIdIfNonLocal: kotlin/Pair.second
   contextReceivers: []
-  getter: null
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KtTypeParameterType:
+      annotationsList: []
+      type: B
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
-  hasGetter: false
+  hasGetter: true
   hasSetter: false
   initializer: null
   isActual: false
@@ -400,3 +438,4 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+

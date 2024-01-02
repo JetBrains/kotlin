@@ -1,7 +1,1 @@
 Diagnostics from elements:
-  for PSI element of type KtNameReferenceExpression at (18,29-48)
-    INAPPLICABLE_CANDIDATE      text ranges: [(188,207)]
-      PSI: KtNameReferenceExpression at (18,29-48)
-  for PSI element of type KtNameReferenceExpression at (19,29-43)
-    INAPPLICABLE_CANDIDATE      text ranges: [(237,251)]
-      PSI: KtNameReferenceExpression at (19,29-43)

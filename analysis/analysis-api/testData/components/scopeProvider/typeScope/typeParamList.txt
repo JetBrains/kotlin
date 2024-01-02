@@ -643,9 +643,29 @@ KtKotlinPropertySymbol:
     typeParameters: []
   callableIdIfNonLocal: kotlin/collections/List.size
   contextReceivers: []
-  getter: null
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: ABSTRACT
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: false
-  hasGetter: false
+  hasGetter: true
   hasSetter: false
   initializer: null
   isActual: false
@@ -778,3 +798,4 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+
