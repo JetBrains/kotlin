@@ -42,7 +42,7 @@ fun processAndWriteCompilerArgumentsFile(originalFile: File, generatedFile: File
 
     val updatedContent = originalFile.readLines()
         .removeAnnotations()
-        .fixNaming(originalFile.name, generatedFile.name)
+        .fixNaming()
         .fixPackage("package org.jetbrains.kotlin.cli.common.arguments", "package org.jetbrains.kotlin.arguments.wsm")
         .removeFreezable()
         .removeTransient()
@@ -106,7 +106,7 @@ private fun List<String>.addImports(fileName: String): List<String> {
     return updatedLines
 }
 
-private fun List<String>.fixNaming(originalFileName: String, generatedFileName: String): List<String> {
+private fun List<String>.fixNaming(): List<String> {
     val updatedLines: MutableList<String> = mutableListOf()
     for (line: String in this) {
         var updatedLine = line
