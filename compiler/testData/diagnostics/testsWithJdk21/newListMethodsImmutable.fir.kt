@@ -2,8 +2,8 @@
 // WITH_STDLIB
 
 fun bar(x: List<String>) {
-    x.addFirst("")
-    x.addLast("")
-    x.removeFirst()
-    x.removeLast()
+    x.<!UNRESOLVED_REFERENCE!>addFirst<!>("")
+    x.<!UNRESOLVED_REFERENCE!>addLast<!>("")
+    x.<!UNRESOLVED_REFERENCE!>removeFirst<!>()
+    x.<!UNRESOLVED_REFERENCE!>removeLast<!>()
 }

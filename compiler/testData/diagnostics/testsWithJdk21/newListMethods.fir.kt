@@ -57,3 +57,6 @@ fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
     z.<!DEBUG_INFO_CALL("fqName: A.removeLast; typeCall: function")!>removeLast()<!>
     z.<!DEBUG_INFO_CALL("fqName: kotlin.collections.reversed; typeCall: extension function")!>reversed()<!>
 }
+
+// DIAGNOSTICS: -JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE
+// accidentally reported (K1 only) on x.addFirst/addLast/removeFirst/removeLast (no such diagnostics on y and z)
