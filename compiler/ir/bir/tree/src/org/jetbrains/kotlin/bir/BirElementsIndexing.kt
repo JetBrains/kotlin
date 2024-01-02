@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.bir
 
+import org.jetbrains.kotlin.bir.util.BackReferenceRecorder
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.ClassWriter
@@ -25,7 +26,7 @@ fun interface BirElementIndexMatcher : BirElementGeneralIndexer {
 }
 
 internal fun interface BirElementIndexClassifier {
-    fun classify(element: BirElementBase, minimumIndex: Int, backReferenceRecorder: BirDatabase.BackReferenceRecorder?): Int
+    fun classify(element: BirElementBase, minimumIndex: Int, backReferenceRecorder: BackReferenceRecorder?): Int
 }
 
 
@@ -127,7 +128,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
                 Type.INT_TYPE,
                 Type.getType(BirElementBase::class.java),
                 Type.INT_TYPE,
-                Type.getType(BirDatabase.BackReferenceRecorder::class.java)
+                Type.getType(BackReferenceRecorder::class.java)
             )
         }
 
