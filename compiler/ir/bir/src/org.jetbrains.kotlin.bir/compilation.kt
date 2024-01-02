@@ -337,6 +337,10 @@ class BirCompilation() {
                 //Thread.sleep(100)
             }
 
+            invokePhaseMeasuringTime("BIR", "trigger all lazy IR computation") {
+                externalBir.getRootElements().forEach { it.countAllElementsInTree() }
+            }
+
             dumpBirPhase(context, input, null, "Initial")
             for (phase in input.backendContext.loweringPhases) {
                 val phaseName = phase.javaClass.simpleName
