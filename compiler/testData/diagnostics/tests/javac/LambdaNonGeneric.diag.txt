@@ -1,12 +1,6 @@
 // -- Module: <m1> --
 
 // -- Module: <m2> --
-/m2.kt:14:9: warning: parameter 'f' is never used
-fun foo(f: (Some, String) -> Unit) {}
-        ^
-/m2.kt:15:9: warning: parameter 'f' is never used
-fun bar(f: (Some) -> Unit) {}
-        ^
 
 // -- Module: <m3> --
 /m3.kt:24:17: error: unresolved reference: Some

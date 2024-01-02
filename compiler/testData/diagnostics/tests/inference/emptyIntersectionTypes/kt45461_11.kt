@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// RENDER_DIAGNOSTICS_FULL_TEXT
 class Foo<T>
 
 class Bar<T> {

@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.diagnostics.GenericDiagnostics
+import org.jetbrains.kotlin.diagnostics.UnboundDiagnostic
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.diagnosticsService
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
@@ -50,7 +53,11 @@ class DiagnosticMessagesTextHandler(
             )
 
         AnalyzerWithCompilerReport.reportDiagnostics(
-            info.analysisResult.bindingContext.diagnostics,
+            object : GenericDiagnostics<UnboundDiagnostic> {
+                override fun all() = info.analysisResult.bindingContext.diagnostics.filter {
+                    testServices.diagnosticsService.shouldRenderDiagnostic(module, it.factoryName, it.severity)
+                }
+            },
             diagnosticsFullTextCollector,
             renderInternalDiagnosticName = false
         )
