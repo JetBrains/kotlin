@@ -252,6 +252,7 @@ internal class TestCompilationFactory {
                             freeCompilerArgs = freeCompilerArgs,
                             defFile = defFile,
                             sources = cSourceFiles,
+                            dependencies = dependencies.forKlib(),
                             expectedArtifact = klibArtifact
                         ) to false // CInterop klib cannot be compiled into per-file cache
                     }

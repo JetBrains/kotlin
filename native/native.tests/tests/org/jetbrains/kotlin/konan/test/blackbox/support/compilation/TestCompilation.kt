@@ -323,11 +323,16 @@ internal class CInteropCompilation(
     freeCompilerArgs: TestCompilerArgs,
     defFile: File,
     sources: List<File> = emptyList(),
+    dependencies: Iterable<CompiledDependency<KLIB>>,
     expectedArtifact: KLIB
 ) : TestCompilation<KLIB>() {
 
     override val result: TestCompilationResult<out KLIB> by lazy {
         val extraArgsArray = buildList {
+            dependencies.forEach {
+                add("-l")
+                add(it.artifact.path)
+            }
             addAll(freeCompilerArgs.cinteropArgs)
             sources.forEach {
                 add("-Xcompile-source")
