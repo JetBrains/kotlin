@@ -55,9 +55,6 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
 
     internal abstract fun setParentWithInvalidation(new: BirElementParent?)
 
-    val attachedToDatabase
-        get() = _containingDatabase != null
-
     fun getContainingDatabase(): BirDatabase? {
         // perf: it should be possible to realize movements only for this element
         _containingDatabase?.realizeTreeMovements()
@@ -282,7 +279,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
 
     internal fun <R : BirElement> getBackReferences(key: BirElementBackReferencesKey<*, R>): List<BirElementBase> {
         _containingDatabase?.flushInvalidatedElementBuffer()
-        require(attachedToDatabase) { "Element must be attached to tree" }
+        require(_containingDatabase != null) { "Element must be attached to some BirDatabase" }
 
         val array: Array<BirElementBase?>
         var storageIsArray = false
@@ -297,21 +294,25 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         }
 
         val results = ArrayList<BirElementBase>(array.size)
-        val forwardReferenceRecorder = ForwardReferenceRecorder()
 
         for (i in array.indices) {
             val backRef = array[i] ?: break
 
             var isValidBackRef = false
             if (!(storageIsArray && !backRef.hasFlag(FLAG_HAS_BEEN_STORED_IN_BACK_REFERENCES_ARRAY))) {
+                val forwardReferenceRecorder = ForwardReferenceRecorder()
                 with(forwardReferenceRecorder) {
                     key.recorder.recordBackReferences(backRef)
                 }
+
                 val recordedRef = forwardReferenceRecorder.recordedRef
-                forwardReferenceRecorder.recordedRef = null
+                forwardReferenceRecorder.reset()
 
                 if (recordedRef === this) {
-                    isValidBackRef = true
+                    backRef._containingDatabase?.realizeTreeMovements()
+                    if (backRef._containingDatabase != null) {
+                        isValidBackRef = true
+                    }
                 }
             }
 
