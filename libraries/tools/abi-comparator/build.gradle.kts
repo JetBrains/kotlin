@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    implementation("org.apache.commons:commons-text:1.10.0")
+    implementation(commonDependency("org.apache.commons:commons-text"))
 
     implementation(project(":tools:kotlinp"))
     implementation(project(":kotlinx-metadata-jvm"))
