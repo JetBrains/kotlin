@@ -214,13 +214,6 @@ enum class KaptCliOption(
         "Keep KDoc comments in stubs"
     ),
 
-    USE_JVM_IR(
-        "useJvmIr",
-        "true | false",
-        "Use JVM IR backend",
-        cliToolOption = CliToolOption("-Kapt-use-jvm-ir", FLAG)
-    ),
-
     USE_K2(
         "useK2",
         "true | false",

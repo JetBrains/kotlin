@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -246,19 +245,15 @@ abstract class AbstractKapt3Extension(
             type = "java-production"
         )
 
-        val isIrBackend = options.flags[KaptFlag.USE_JVM_IR]
         val generationState = GenerationState.Builder(project, builderFactory, module, bindingContext, configuration)
             .targetId(targetId)
-            .isIrBackend(isIrBackend)
             .build()
 
         val (classFilesCompilationTime) = measureTimeMillis {
             KotlinCodegenFacade.compileCorrectFiles(
                 files,
                 generationState,
-                if (isIrBackend)
-                    JvmIrCodegenFactory(configuration, configuration[CLIConfigurationKeys.PHASE_CONFIG])
-                else DefaultCodegenFactory
+                JvmIrCodegenFactory(configuration, configuration[CLIConfigurationKeys.PHASE_CONFIG])
             )
         }
 

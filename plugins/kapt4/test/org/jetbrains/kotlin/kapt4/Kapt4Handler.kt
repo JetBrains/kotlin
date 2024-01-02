@@ -160,19 +160,11 @@ internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4C
 fun Assertions.checkTxt(module: TestModule, actual: String) {
     val testDataFile = module.files.first().originalFile
     val firFile = testDataFile.withExtension("fir.txt")
-    val irFile = testDataFile.withExtension("ir.txt")
     val txtFile = testDataFile.withExtension("txt")
-    val expectedFile = sequenceOf(firFile, irFile, txtFile)
-        .firstOrNull { it.exists() } ?: firFile
+    val expectedFile = if (firFile.exists()) firFile else txtFile
 
     assertEqualsToFile(expectedFile, actual)
-    if (firFile.exists()) {
-        if (irFile.exists()) {
-            if (irFile.readText() == firFile.readText()) {
-                fail { ".fir.txt and .ir.txt golden files are identical. Remove $firFile." }
-            }
-        } else if (txtFile.exists() && txtFile.readText() == firFile.readText()) {
-            fail { ".fir.txt and .txt golden files are identical. Remove $firFile." }
-        }
+    if (firFile.exists() && txtFile.exists() && txtFile.readText() == firFile.readText()) {
+        fail { ".fir.txt and .txt golden files are identical. Remove $firFile." }
     }
 }

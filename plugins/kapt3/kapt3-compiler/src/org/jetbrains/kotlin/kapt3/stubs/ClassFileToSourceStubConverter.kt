@@ -123,8 +123,6 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private val mutableBindings = mutableMapOf<String, KaptJavaFileObject>()
 
-    private val isIrBackend = kaptContext.generationState.isIrBackend
-
     val bindings: Map<String, KaptJavaFileObject>
         get() = mutableBindings
 
@@ -684,15 +682,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val origin = kaptContext.origins[field]
         val descriptor = origin?.descriptor
 
-        val fieldAnnotations = when {
-            !isIrBackend && descriptor is PropertyDescriptor -> descriptor.backingField?.annotations
-            else -> descriptor?.annotations
-        } ?: Annotations.EMPTY
-
         val modifiers = convertModifiers(
             containingClass,
             field.access, ElementKind.FIELD, packageFqName,
-            field.visibleAnnotations, field.invisibleAnnotations, fieldAnnotations
+            field.visibleAnnotations, field.invisibleAnnotations,
+            descriptor?.annotations ?: Annotations.EMPTY,
         )
 
         val name = field.name

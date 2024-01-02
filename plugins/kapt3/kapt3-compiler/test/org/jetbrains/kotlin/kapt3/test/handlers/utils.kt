@@ -14,23 +14,11 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.utils.withExtension
-import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 
 fun Assertions.checkTxtAccordingToBackend(module: TestModule, actual: String, fileSuffix: String = "") {
     val testDataFile = module.files.first().originalFile
-    val txtFile = testDataFile.withExtension("$fileSuffix.txt")
-    val irTxtFile = testDataFile.withSuffixAndExtension("$fileSuffix.ir", ".txt")
-    val isIr = module.targetBackend?.isIR == true
-    val expectedFile = if (isIr && irTxtFile.exists()) {
-        irTxtFile
-    } else {
-        txtFile
-    }
+    val expectedFile = testDataFile.withExtension("$fileSuffix.txt")
     assertEqualsToFile(expectedFile, actual)
-
-    if (isIr && txtFile.exists() && irTxtFile.exists() && txtFile.readText() == irTxtFile.readText()) {
-        fail { "JVM and JVM_IR golden files are identical. Remove $irTxtFile." }
-    }
 }
 
 private val KOTLIN_METADATA_REGEX = "@kotlin\\.Metadata\\(.*\\)".toRegex()
