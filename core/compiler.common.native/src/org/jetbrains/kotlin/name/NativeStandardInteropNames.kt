@@ -21,6 +21,7 @@ object NativeStandardInteropNames {
     val objCFactoryClassId = ClassId(cInteropPackage, Name.identifier("ObjCFactory"))
     val objCConstructorClassId = ClassId(cInteropPackage, Name.identifier("ObjCConstructor"))
     val externalObjCClassClassId = ClassId(cInteropPackage, Name.identifier("ExternalObjCClass"))
+    val objCActionClassId = ClassId(cInteropPackage, Name.identifier("ObjCAction"))
 
 
     object ForwardDeclarations {

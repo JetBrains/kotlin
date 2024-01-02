@@ -22,13 +22,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 
 object FirNativeObjCActionChecker : FirClassChecker() {
-    // Copy/pasted from InteropFqNames.objCAction, since module `kotlin-native:backend.native` cannot be imported here for now.
-    val objCActionFqName = FqName("kotlinx.cinterop.ObjCAction")
-
     @OptIn(UnexpandedTypeCheck::class)
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
@@ -39,7 +35,7 @@ object FirNativeObjCActionChecker : FirClassChecker() {
         }
 
         fun checkCanGenerateActionImp(function: FirSimpleFunction) {
-            val action = "@$objCActionFqName"
+            val action = "@${objCActionClassId.asFqNameString()}"
 
             function.receiverParameter?.let {
                 reporter.reportOn(it.source, MUST_NOT_HAVE_EXTENSION_RECEIVER, "$action method", context)
@@ -60,7 +56,7 @@ object FirNativeObjCActionChecker : FirClassChecker() {
 
         fun checkKotlinObjCClass(firClass: FirClass) {
             for (decl in firClass.declarations) {
-                if (decl is FirSimpleFunction && decl.annotations.hasAnnotation(ClassId.topLevel(objCActionFqName), session))
+                if (decl is FirSimpleFunction && decl.annotations.hasAnnotation(objCActionClassId, session))
                     checkCanGenerateActionImp(decl)
             }
         }

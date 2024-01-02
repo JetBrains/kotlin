@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
@@ -150,7 +151,7 @@ private class BackendChecker(
                     }
 
     private fun checkCanGenerateActionImp(function: IrSimpleFunction) {
-        val action = "@${InteropFqNames.objCAction}"
+        val action = "@${objCActionClassId.asFqNameString()}"
 
         function.extensionReceiverParameter?.let {
             reportError(it, "$action method must not have extension receiver")
@@ -207,7 +208,7 @@ private class BackendChecker(
 
     private fun checkKotlinObjCClass(irClass: IrClass) {
         for (declaration in irClass.declarations) {
-            if (declaration is IrSimpleFunction && declaration.annotations.hasAnnotation(InteropFqNames.objCAction))
+            if (declaration is IrSimpleFunction && declaration.annotations.hasAnnotation(objCActionClassId.asSingleFqName()))
                 checkCanGenerateActionImp(declaration)
             if (declaration is IrProperty && declaration.annotations.hasAnnotation(InteropFqNames.objCOutlet))
                 checkCanGenerateOutletSetterImp(declaration)

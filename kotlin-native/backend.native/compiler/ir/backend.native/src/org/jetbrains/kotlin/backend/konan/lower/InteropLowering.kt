@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
 internal class InteropLowering(generationState: NativeGenerationState) : FileLoweringPass {
@@ -212,7 +213,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
 
         irClass.declarations.toList().mapNotNull {
             when {
-                it is IrSimpleFunction && it.annotations.hasAnnotation(InteropFqNames.objCAction) ->
+                it is IrSimpleFunction && it.annotations.hasAnnotation(objCActionClassId.asSingleFqName()) ->
                         generateActionImp(it)
 
                 it is IrProperty && it.annotations.hasAnnotation(InteropFqNames.objCOutlet) ->

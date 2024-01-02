@@ -19,7 +19,6 @@ object InteropFqNames {
 
     const val objCObjectBaseName = "ObjCObjectBase"
     const val objCOverrideInitName = "OverrideInit"
-    const val objCActionName = "ObjCAction"
     const val objCOutletName = "ObjCOutlet"
     const val objCMethodImpName = "ObjCMethodImp"
     const val exportObjCClassName = "ExportObjCClass"
@@ -77,7 +76,6 @@ object InteropFqNames {
 
     val objCObjectBase = packageName.child(objCObjectBaseName)
     val objCOverrideInit = objCObjectBase.child(objCOverrideInitName)
-    val objCAction = packageName.child(objCActionName)
     val objCOutlet = packageName.child(objCOutletName)
     val objCMethodImp = packageName.child(objCMethodImpName)
     val exportObjCClass = packageName.child(exportObjCClassName)
