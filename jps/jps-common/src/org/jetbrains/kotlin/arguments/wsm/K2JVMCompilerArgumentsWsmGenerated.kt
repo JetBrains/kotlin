@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 
 //@Serializable
-class K2JVMCompilerArgumentsWsmWsm : CommonCompilerArgumentsWsm() {
+class K2JVMCompilerArgumentsWsmGeneratedWsmGenerated : CommonCompilerArgumentsWsmGenerated() {
     companion object {
         @JvmStatic
         private val serialVersionUID = 0L

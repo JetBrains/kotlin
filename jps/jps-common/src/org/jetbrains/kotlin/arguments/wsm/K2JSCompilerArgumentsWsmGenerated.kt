@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 
 //@Serializable
-class K2JSCompilerArgumentsWsm : CommonCompilerArgumentsWsm() {
+class K2JSCompilerArgumentsWsmGenerated : CommonCompilerArgumentsWsmGenerated() {
     companion object {
         @JvmStatic private val serialVersionUID = 0L
     }
@@ -479,8 +479,8 @@ class K2JSCompilerArgumentsWsm : CommonCompilerArgumentsWsm() {
 
 }
 
-fun K2JSCompilerArgumentsWsm.isPreIrBackendDisabled(): Boolean =
+fun K2JSCompilerArgumentsWsmGenerated.isPreIrBackendDisabled(): Boolean =
     irOnly || irProduceJs || irProduceKlibFile || irBuildCache || useK2
 
-fun K2JSCompilerArgumentsWsm.isIrBackendEnabled(): Boolean =
+fun K2JSCompilerArgumentsWsmGenerated.isIrBackendEnabled(): Boolean =
     irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm || irBuildCache || useK2

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 
 @SuppressWarnings("WeakerAccess")
 //@Serializable
-abstract class CommonCompilerArgumentsWsm : CommonToolArgumentsWsm() {
+abstract class CommonCompilerArgumentsWsmGenerated : CommonToolArgumentsWsmGenerated() {
     companion object {
         @JvmStatic
         private val serialVersionUID = 0L
@@ -808,7 +808,7 @@ abstract class CommonCompilerArgumentsWsm : CommonToolArgumentsWsm() {
 
     // Used only for serialize and deserialize settings. Don't use in other places!
 //    @Serializable
-    class DummyImpl : CommonCompilerArgumentsWsm() {
+    class DummyImpl : CommonCompilerArgumentsWsmGenerated() {
 
     }
 }

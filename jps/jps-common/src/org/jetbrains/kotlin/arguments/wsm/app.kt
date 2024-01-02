@@ -14,8 +14,8 @@ fun main() {
     if(rootPath.isNullOrEmpty()) error("Fail to determine project root")
     for (fileName in COMPILER_ARGUMENTS_FILES) {
         println("Processing $fileName")
-        val originalCompilerArgumentsFile = rootPath + "/compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments/" + fileName + ".kt"
-        val processedCompilerArgumentsFile = rootPath + "/jps/jps-common/src/org/jetbrains/kotlin/arguments/wsm/" + fileName + "WsmGenerated.kt"
+        val originalCompilerArgumentsFile = "$rootPath/compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments/$fileName.kt"
+        val processedCompilerArgumentsFile = "$rootPath/jps/jps-common/src/org/jetbrains/kotlin/arguments/wsm/$fileName$wsmSuffix.kt"
         processAndWriteCompilerArgumentsFile(File(originalCompilerArgumentsFile), File(processedCompilerArgumentsFile))
     }
 }
@@ -31,6 +31,8 @@ val COMPILER_ARGUMENTS_FILES = listOf(
     "K2MetadataCompilerArguments",
     "K2NativeCompilerArguments",
 )
+
+const val wsmSuffix = "WsmGenerated"
 
 
 
@@ -92,7 +94,7 @@ private fun List<String>.fixNaming(originalFileName: String, generatedFileName: 
     for (line: String in this) {
         var updatedLine = line
         COMPILER_ARGUMENTS_FILES.forEach { fileName ->
-            updatedLine = updatedLine.replace(fileName, "${fileName}Wsm")
+            updatedLine = updatedLine.replace(fileName, "${fileName}$wsmSuffix")
         }
         updatedLines.add(updatedLine)
     }

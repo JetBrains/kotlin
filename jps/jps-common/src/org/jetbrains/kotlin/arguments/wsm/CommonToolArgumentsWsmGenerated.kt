@@ -23,7 +23,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.javaField
 
 //@kotlinx.serialization.Serializable
-abstract class CommonToolArgumentsWsm :  Serializable {
+abstract class CommonToolArgumentsWsmGenerated :  Serializable {
     companion object {
         @JvmStatic
         private val serialVersionUID = 0L
@@ -90,7 +90,7 @@ abstract class CommonToolArgumentsWsm :  Serializable {
 /**
  * An argument which should be passed to Kotlin compiler to enable [this] compiler option
  */
-val KProperty1<out CommonCompilerArgumentsWsm, *>.cliArgument: String
+val KProperty1<out CommonCompilerArgumentsWsmGenerated, *>.cliArgument: String
     get() {
         val javaField = javaField
             ?: error("Java field should be present for $this")

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 
 //@Serializable
-class K2NativeCompilerArgumentsWsm : CommonCompilerArgumentsWsm() {
+class K2NativeCompilerArgumentsWsmGenerated : CommonCompilerArgumentsWsmGenerated() {
     // First go the options interesting to the general public.
     // Prepend them with a single dash.
     // Keep the list lexically sorted.
@@ -150,7 +150,7 @@ class K2NativeCompilerArgumentsWsm : CommonCompilerArgumentsWsm() {
     var friendModules: String? = null
 
     /**
-     * @see K2MetadataCompilerArgumentsWsm.refinesPaths
+     * @see K2MetadataCompilerArgumentsWsmGenerated.refinesPaths
      */
     var refinesPaths: Array<String>? = null
 
