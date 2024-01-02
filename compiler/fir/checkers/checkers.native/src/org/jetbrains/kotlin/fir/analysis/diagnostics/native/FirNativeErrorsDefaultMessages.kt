@@ -126,7 +126,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             MUST_BE_UNIT_TYPE,
-            "Unexpected {0}: ''{1}''\nOnly \"Unit\" is supported here.",
+            "Unexpected {0}: ''{1}''\nOnly ''Unit'' is supported here.",
             TO_STRING,
             FirDiagnosticRenderers.RENDER_TYPE
         )

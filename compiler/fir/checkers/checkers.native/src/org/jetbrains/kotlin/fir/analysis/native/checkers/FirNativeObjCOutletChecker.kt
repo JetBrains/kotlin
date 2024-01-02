@@ -18,13 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCOutletClassId
 
 object FirNativeObjCOutletChecker : FirClassChecker() {
-    // Copy/pasted from InteropFqNames.objCOutlet, since module `kotlin-native:backend.native` cannot be imported here for now.
-    val objCOutletFqName = FqName("kotlinx.cinterop.ObjCOutlet")
-
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
 
@@ -35,12 +31,12 @@ object FirNativeObjCOutletChecker : FirClassChecker() {
 
         fun checkCanGenerateOutletSetterImp(property: FirProperty) {
             if (!property.isVar) {
-                reporter.reportOn(property.source, FirNativeErrors.PROPERTY_MUST_BE_VAR, objCOutletFqName, context)
+                reporter.reportOn(property.source, FirNativeErrors.PROPERTY_MUST_BE_VAR, objCOutletClassId.asSingleFqName(), context)
                 return
             }
 
             property.receiverParameter?.let {
-                reporter.reportOn(it.source, FirNativeErrors.MUST_NOT_HAVE_EXTENSION_RECEIVER, "@$objCOutletFqName", context)
+                reporter.reportOn(it.source, FirNativeErrors.MUST_NOT_HAVE_EXTENSION_RECEIVER, "@${objCOutletClassId.asFqNameString()}", context)
             }
 
             val type = property.returnTypeRef
@@ -48,7 +44,7 @@ object FirNativeObjCOutletChecker : FirClassChecker() {
                 reporter.reportOn(
                     property.returnTypeRef.source,
                     FirNativeErrors.MUST_BE_OBJC_OBJECT_TYPE,
-                    "@$objCOutletFqName type",
+                    "@${objCOutletClassId.asSingleFqName()} type",
                     type.coneType,
                     context
                 )
@@ -58,7 +54,7 @@ object FirNativeObjCOutletChecker : FirClassChecker() {
 
         fun checkKotlinObjCClass(firClass: FirClass) {
             for (decl in firClass.declarations) {
-                if (decl is FirProperty && decl.annotations.hasAnnotation(ClassId.topLevel(objCOutletFqName), session))
+                if (decl is FirProperty && decl.annotations.hasAnnotation(objCOutletClassId, session))
                     checkCanGenerateOutletSetterImp(decl)
             }
         }

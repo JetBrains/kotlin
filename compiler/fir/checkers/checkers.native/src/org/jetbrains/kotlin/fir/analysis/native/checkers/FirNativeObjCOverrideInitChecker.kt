@@ -28,13 +28,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCOverrideInitClassId
 
 object FirNativeObjCOverrideInitChecker : FirClassChecker() {
-    val objCOverrideInitClassId = ClassId(FqName("kotlinx.cinterop"), Name.identifier("ObjCObjectBase.OverrideInit"))
-
     @OptIn(SymbolInternals::class)
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
