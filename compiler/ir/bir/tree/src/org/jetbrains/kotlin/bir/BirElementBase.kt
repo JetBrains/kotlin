@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.bir
 
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 import org.jetbrains.kotlin.bir.symbols.ownerIfBound
+import org.jetbrains.kotlin.bir.util.BackReferenceRecorder
 import org.jetbrains.kotlin.bir.util.SmallFixedPointFraction
 import kotlin.experimental.and
 import kotlin.experimental.inv
@@ -296,7 +297,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         }
 
         val results = ArrayList<BirElementBase>(array.size)
-        val backReferenceRecorder = BirDatabase.BackReferenceRecorder()
+        val backReferenceRecorder = BackReferenceRecorder()
 
         for (i in array.indices) {
             val backRef = array[i] ?: break
