@@ -44,6 +44,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         private set
     private var relatedElementFullness = SmallFixedPointFraction.ZERO
 
+    // Array of form [key, value, key, value, ...]
     internal var dynamicProperties: Array<Any?>? = null
 
 
