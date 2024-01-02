@@ -25,5 +25,5 @@ abstract class BirThrow(elementClass: BirElementClass) : BirExpression(elementCl
         value?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirThrow::class.java, 57, true)
+    companion object : BirElementClass(BirThrow::class.java, 58, true)
 }

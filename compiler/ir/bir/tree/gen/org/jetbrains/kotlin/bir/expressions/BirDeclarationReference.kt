@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.bir.symbols.BirSymbol
 abstract class BirDeclarationReference(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
     abstract val symbol: BirSymbol
 
-    companion object : BirElementClass(BirDeclarationReference::class.java, 77, false)
+    companion object : BirElementClass(BirDeclarationReference::class.java, 78, false)
 }

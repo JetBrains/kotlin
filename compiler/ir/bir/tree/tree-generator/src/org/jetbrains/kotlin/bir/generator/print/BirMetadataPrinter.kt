@@ -25,7 +25,7 @@ fun printBirMetadata(generationPath: File, model: Model): GeneratedFile {
         printBlock {
             println("val allElements = listOf<${type(Packages.tree, "BirElementClass").render()}>(")
             withIndent {
-                model.elements.filterNot { it == model.rootElement }
+                model.elements
                     .forEach { element ->
                         print(element.copy(emptyMap()).render())
                         println(",")

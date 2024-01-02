@@ -27,5 +27,5 @@ abstract class BirVararg(elementClass: BirElementClass) : BirExpression(elementC
         elements.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirVararg::class.java, 63, true)
+    companion object : BirElementClass(BirVararg::class.java, 64, true)
 }

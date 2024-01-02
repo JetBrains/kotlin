@@ -33,5 +33,5 @@ abstract class BirLocalDelegatedPropertyReference(elementClass: BirElementClass)
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirLocalDelegatedPropertyReference::class.java, 41, true)
+    companion object : BirElementClass(BirLocalDelegatedPropertyReference::class.java, 42, true)
 }

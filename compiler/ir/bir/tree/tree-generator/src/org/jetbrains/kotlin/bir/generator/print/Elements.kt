@@ -104,7 +104,6 @@ private fun SmartPrinter.printElement(element: Element) {
 }
 
 fun printElements(generationPath: File, model: Model) = model.elements.asSequence()
-    .filterNot { it == model.rootElement }
     .map { element ->
         printGeneratedType(generationPath, TREE_GENERATOR_README, element.packageName, element.typeName) {
             printElement(element)

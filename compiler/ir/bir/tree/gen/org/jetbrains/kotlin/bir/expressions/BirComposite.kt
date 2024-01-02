@@ -22,5 +22,5 @@ abstract class BirComposite(elementClass: BirElementClass) : BirContainerExpress
         statements.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirComposite::class.java, 9, true)
+    companion object : BirElementClass(BirComposite::class.java, 10, true)
 }

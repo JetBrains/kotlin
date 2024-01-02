@@ -28,5 +28,5 @@ abstract class BirModuleFragment(elementClass: BirElementClass) : BirImplElement
         files.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirModuleFragment::class.java, 42, true)
+    companion object : BirElementClass(BirModuleFragment::class.java, 43, true)
 }

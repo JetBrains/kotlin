@@ -18,5 +18,5 @@ import org.jetbrains.kotlin.bir.BirImplElementBase
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.body]
  */
 abstract class BirBody(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement {
-    companion object : BirElementClass(BirBody::class.java, 69, false)
+    companion object : BirElementClass(BirBody::class.java, 70, false)
 }

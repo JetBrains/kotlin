@@ -21,5 +21,5 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 interface BirDeclaration : BirElement, BirStatement, BirSymbolOwner, BirAnnotationContainerElement {
     var origin: IrDeclarationOrigin
 
-    companion object : BirElementClass(BirDeclaration::class.java, 74, false)
+    companion object : BirElementClass(BirDeclaration::class.java, 75, false)
 }

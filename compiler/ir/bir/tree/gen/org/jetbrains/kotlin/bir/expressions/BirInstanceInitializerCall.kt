@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 abstract class BirInstanceInitializerCall(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
     abstract var classSymbol: BirClassSymbol
 
-    companion object : BirElementClass(BirInstanceInitializerCall::class.java, 39, true)
+    companion object : BirElementClass(BirInstanceInitializerCall::class.java, 40, true)
 }

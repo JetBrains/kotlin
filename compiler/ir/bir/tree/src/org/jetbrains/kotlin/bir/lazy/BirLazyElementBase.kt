@@ -71,13 +71,13 @@ abstract class BirLazyElementBase(
     ) = BirLazyChildElementList<E>(this, id, false, retrieveUpstreamList as BirLazyElementBase.() -> List<IrElement>)
 
 
-    override val sourceSpan: SourceSpan
+    override var sourceSpan: SourceSpan
         get() = SourceSpan(originalIrElement.startOffset, originalIrElement.endOffset)
+        set(value) = mutationNotSupported()
 
     override var signature: IdSignature?
         get() = originalIrElement.symbol.signature
         set(value) = mutationNotSupported()
-
 
     override var origin: IrDeclarationOrigin
         get() = originalIrElement.origin
