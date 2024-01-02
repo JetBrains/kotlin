@@ -37,6 +37,12 @@ public class FirLightTreeJdk21DiagnosticTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("newListMethodsImmutable.kt")
+    public void testNewListMethodsImmutable() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJdk21/newListMethodsImmutable.kt");
+    }
+
+    @Test
     @TestMetadata("noFalsePositiveAbstractToArray.kt")
     public void testNoFalsePositiveAbstractToArray() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJdk21/noFalsePositiveAbstractToArray.kt");
