@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class BirElementsIndexKey<E : BirElement>(
     val condition: BirElementIndexMatcher?,
-    val elementClass: Class<*>,
+    val elementClass: Class<E>,
 ) : BirElementGeneralIndexerKey
 
 fun interface BirElementIndexMatcher : BirElementGeneralIndexer {
@@ -31,7 +31,7 @@ internal fun interface BirElementIndexClassifier {
 
 class BirElementBackReferencesKey<E : BirElement, R : BirElement>(
     val recorder: BirElementBackReferenceRecorder<R>,
-    val elementClass: Class<*>,
+    val elementClass: Class<E>,
 ) : BirElementGeneralIndexerKey
 
 fun interface BirElementBackReferenceRecorder<R : BirElement> : BirElementGeneralIndexer {
@@ -62,7 +62,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
     class Indexer(
         val kind: BirElementGeneralIndexer.Kind,
         val indexerFunction: BirElementGeneralIndexer?,
-        val elementClass: Class<*>,
+        val elementClass: Class<out BirElement>,
         val index: Int,
     )
 
@@ -336,7 +336,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
     }
 
     private class ElementClassInfo(
-        val elementClass: BirElementClass,
+        val elementClass: BirElementClass<*>,
     ) {
         var superClasses: Set<ElementClassInfo> = emptySet()
         val subClasses = mutableSetOf<ElementClassInfo>()
@@ -346,7 +346,7 @@ internal object BirElementIndexClassifierFunctionGenerator {
     }
 
     private class ElementSwitchNode(
-        val elementClasses: List<BirElementClass>,
+        val elementClasses: List<BirElementClass<*>>,
         val indexers: List<Indexer>,
     )
 

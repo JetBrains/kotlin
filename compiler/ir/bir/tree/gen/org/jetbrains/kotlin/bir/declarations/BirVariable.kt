@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.variable]
  */
-abstract class BirVariable(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement, BirDeclaration, BirValueDeclaration, BirVariableSymbol {
+abstract class BirVariable(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement, BirDeclaration, BirValueDeclaration, BirVariableSymbol {
     abstract var isVar: Boolean
     abstract var isConst: Boolean
     abstract var isLateinit: Boolean
@@ -28,5 +28,5 @@ abstract class BirVariable(elementClass: BirElementClass) : BirImplElementBase(e
         initializer?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirVariable::class.java, 65, true)
+    companion object : BirElementClass<BirVariable>(BirVariable::class.java, 65, true)
 }

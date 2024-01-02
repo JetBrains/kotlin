@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.name.FqName
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.packageFragment]
  */
-abstract class BirPackageFragment(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement, BirDeclarationContainer, BirSymbolOwner, BirPackageFragmentSymbol {
+abstract class BirPackageFragment(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement, BirDeclarationContainer, BirSymbolOwner, BirPackageFragmentSymbol {
     abstract var packageFqName: FqName
 
-    companion object : BirElementClass(BirPackageFragment::class.java, 93, false)
+    companion object : BirElementClass<BirPackageFragment>(BirPackageFragment::class.java, 93, false)
 }

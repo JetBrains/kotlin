@@ -24,5 +24,5 @@ interface BirElement : BirElementFacade {
      */
     var sourceSpan: SourceSpan
 
-    companion object : BirElementClass(BirElement::class.java, 0, false)
+    companion object : BirElementClass<BirElement>(BirElement::class.java, 0, false)
 }

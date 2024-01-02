@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.containerExpression]
  */
-abstract class BirContainerExpression(elementClass: BirElementClass) : BirExpression(elementClass), BirElement, BirStatementContainer {
+abstract class BirContainerExpression(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement, BirStatementContainer {
     abstract var origin: IrStatementOrigin?
     abstract override val statements: BirChildElementList<BirStatement>
 
-    companion object : BirElementClass(BirContainerExpression::class.java, 74, false)
+    companion object : BirElementClass<BirContainerExpression>(BirContainerExpression::class.java, 74, false)
 }

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeOperatorCall]
  */
-abstract class BirTypeOperatorCall(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
+abstract class BirTypeOperatorCall(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var operator: IrTypeOperator
     abstract var argument: BirExpression?
     abstract var typeOperand: BirType
@@ -29,5 +29,5 @@ abstract class BirTypeOperatorCall(elementClass: BirElementClass) : BirExpressio
         argument?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirTypeOperatorCall::class.java, 61, true)
+    companion object : BirElementClass<BirTypeOperatorCall>(BirTypeOperatorCall::class.java, 61, true)
 }

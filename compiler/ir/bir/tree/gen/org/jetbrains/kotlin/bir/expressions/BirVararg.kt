@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.bir.types.BirType
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.vararg]
  */
-abstract class BirVararg(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
+abstract class BirVararg(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var varargElementType: BirType
     abstract val elements: BirChildElementList<BirVarargElement>
 
@@ -27,5 +27,5 @@ abstract class BirVararg(elementClass: BirElementClass) : BirExpression(elementC
         elements.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirVararg::class.java, 64, true)
+    companion object : BirElementClass<BirVararg>(BirVararg::class.java, 64, true)
 }

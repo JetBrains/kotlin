@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.bir
 
 import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
 
-abstract class BirElementClass(
-    val javaClass: Class<*>,
+abstract class BirElementClass<T : BirElement>(
+    val javaClass: Class<T>,
     val id: Int,
     val hasImplementation: Boolean,
 ) {

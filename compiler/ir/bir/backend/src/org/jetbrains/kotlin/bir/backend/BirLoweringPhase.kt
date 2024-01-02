@@ -23,7 +23,7 @@ abstract class BirLoweringPhase {
     protected fun <E : BirElement> registerIndexKey(
         includeExternalModules: Boolean,
         condition: BirElementIndexMatcher?,
-        elementClass: Class<*>,
+        elementClass: Class<E>,
     ): BirElementsIndexKey<E> {
         val key = BirElementsIndexKey<E>(condition, elementClass)
         compiledBir.registerElementIndexingKey(key)
@@ -36,7 +36,7 @@ abstract class BirLoweringPhase {
 
     protected fun <E : BirElement, R : BirElement> registerBackReferencesKey(
         block: BirElementBackReferenceRecorder<R>,
-        elementClass: Class<*>,
+        elementClass: Class<E>,
     ): BirElementBackReferencesKey<E, R> {
         val key = BirElementBackReferencesKey<E, R>(block, elementClass)
         compiledBir.registerElementBackReferencesKey(key)

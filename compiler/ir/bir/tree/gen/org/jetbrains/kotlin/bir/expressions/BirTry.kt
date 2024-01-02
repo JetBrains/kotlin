@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.bir.*
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.try]
  */
-abstract class BirTry(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
+abstract class BirTry(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var tryResult: BirExpression?
     abstract val catches: BirChildElementList<BirCatch>
     abstract var finallyExpression: BirExpression?
@@ -26,5 +26,5 @@ abstract class BirTry(elementClass: BirElementClass) : BirExpression(elementClas
         finallyExpression?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirTry::class.java, 59, true)
+    companion object : BirElementClass<BirTry>(BirTry::class.java, 59, true)
 }
