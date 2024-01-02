@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.bir
 
-import org.jetbrains.kotlin.bir.util.BackReferenceRecorder
+import org.jetbrains.kotlin.bir.util.ForwardReferenceRecorder
 import java.lang.AutoCloseable
 
 class BirDatabase : BirElementParent() {
@@ -177,13 +177,13 @@ class BirDatabase : BirElementParent() {
         val classifier = elementClassifier ?: return
         if (element._containingDatabase !== this) return
 
-        val backReferenceRecorder = if (includeBackReferences) BackReferenceRecorder() else null
+        val forwardReferenceRecorder = if (updateBackReferences) ForwardReferenceRecorder() else null
 
         assert(mutableElementCurrentlyBeingClassified == null)
         if (element is BirImplElementBase) {
             mutableElementCurrentlyBeingClassified = element
         }
-        val indexSlot = classifier.classify(element, currentIndexSlot + 1, backReferenceRecorder)
+        val indexSlot = classifier.classify(element, currentIndexSlot + 1, forwardReferenceRecorder)
         mutableElementCurrentlyBeingClassified = null
 
         if (indexSlot != 0) {
@@ -197,7 +197,7 @@ class BirDatabase : BirElementParent() {
             removeElementFromIndex(element)
         }
 
-        val recordedRef = backReferenceRecorder?.recordedRef
+        val recordedRef = forwardReferenceRecorder?.recordedRef
         recordedRef?.registerBackReference(element)
 
         element.setFlag(BirElementBase.FLAG_INVALIDATED, false)

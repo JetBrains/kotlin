@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.bir
 
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 import org.jetbrains.kotlin.bir.symbols.ownerIfBound
-import org.jetbrains.kotlin.bir.util.BackReferenceRecorder
+import org.jetbrains.kotlin.bir.util.ForwardReferenceRecorder
 import org.jetbrains.kotlin.bir.util.SmallFixedPointFraction
 import kotlin.experimental.and
 import kotlin.experimental.inv
@@ -297,18 +297,18 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         }
 
         val results = ArrayList<BirElementBase>(array.size)
-        val backReferenceRecorder = BackReferenceRecorder()
+        val forwardReferenceRecorder = ForwardReferenceRecorder()
 
         for (i in array.indices) {
             val backRef = array[i] ?: break
 
             var isValidBackRef = false
             if (!(storageIsArray && !backRef.hasFlag(FLAG_HAS_BEEN_STORED_IN_BACK_REFERENCES_ARRAY))) {
-                with(backReferenceRecorder) {
+                with(forwardReferenceRecorder) {
                     key.recorder.recordBackReferences(backRef)
                 }
-                val recordedRef = backReferenceRecorder.recordedRef
-                backReferenceRecorder.recordedRef = null
+                val recordedRef = forwardReferenceRecorder.recordedRef
+                forwardReferenceRecorder.recordedRef = null
 
                 if (recordedRef === this) {
                     isValidBackRef = true

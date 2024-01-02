@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementBackReferenceRecorderScope
 import org.jetbrains.kotlin.bir.BirElementBase
 
-internal class BackReferenceRecorder : BirElementBackReferenceRecorderScope {
+internal class ForwardReferenceRecorder : BirElementBackReferenceRecorderScope {
     var recordedRef: BirElementBase? = null
 
     override fun recordReference(forwardRef: BirElement?) {
@@ -21,5 +21,9 @@ internal class BackReferenceRecorder : BirElementBackReferenceRecorderScope {
             if (recordedRef !== forwardRef)
                 TODO("multiple forward refs for element")
         }
+    }
+
+    fun reset() {
+        recordedRef = null
     }
 }
