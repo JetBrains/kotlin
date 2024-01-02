@@ -27,5 +27,5 @@ abstract class BirWhen(elementClass: BirElementClass) : BirExpression(elementCla
         branches.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirWhen::class.java, 65, true)
+    companion object : BirElementClass(BirWhen::class.java, 66, true)
 }

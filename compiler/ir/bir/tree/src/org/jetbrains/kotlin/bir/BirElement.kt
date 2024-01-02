@@ -15,8 +15,7 @@ sealed interface BirElementOrChildList {
     fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D)
 }
 
-interface BirElement : BirElementOrChildList {
-    val sourceSpan: SourceSpan
+sealed interface BirElementFacade : BirElementOrChildList {
     val parent: BirElementBase?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
@@ -24,7 +23,6 @@ interface BirElement : BirElementOrChildList {
 
     fun replaceWith(new: BirElement?)
 }
-
 
 operator fun <E : BirElement, T> E.get(token: BirElementDynamicPropertyToken<E, T>): T? {
     return (this as BirElementBase).getDynamicProperty(token)

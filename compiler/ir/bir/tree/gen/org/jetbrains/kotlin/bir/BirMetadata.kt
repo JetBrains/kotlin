@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.bir.expressions.*
 
 object BirMetadata {
     val allElements = listOf<BirElementClass>(
+        BirElement,
         BirStatement,
         BirDeclaration,
         BirDeclarationParent,

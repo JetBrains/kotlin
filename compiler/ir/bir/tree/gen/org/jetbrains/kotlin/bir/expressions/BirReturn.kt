@@ -27,5 +27,5 @@ abstract class BirReturn(elementClass: BirElementClass) : BirExpression(elementC
         value?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirReturn::class.java, 46, true)
+    companion object : BirElementClass(BirReturn::class.java, 47, true)
 }

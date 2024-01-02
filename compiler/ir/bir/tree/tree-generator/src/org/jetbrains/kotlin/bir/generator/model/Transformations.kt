@@ -16,7 +16,7 @@ fun transformModel(model: Model) {
     addPureAbstractElement(model.elements, elementImplBaseType)
     adjustSymbolOwners(model.elements)
     markLeaves(model.elements)
-    setClassIds(model.elements)
+    setClassIds(model)
     processFieldOverrides(model.elements)
     computeFieldProperties(model.elements)
     computeFieldFakeOverrides(model.elements)
@@ -59,10 +59,11 @@ private fun adjustSymbolOwners(elements: List<Element>) {
     }
 }
 
-private fun setClassIds(elements: List<Element>) {
+private fun setClassIds(model: Model) {
     var id = 0
-    elements.sortedBy { it.name }
+    model.elements.sortedBy { it.name }
         .sortedByDescending { it.isLeaf } // Optimization for dispatching by class
+        .sortedByDescending { it == model.rootElement }
         .forEach { element ->
             element.classId = id++
         }
