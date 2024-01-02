@@ -72,7 +72,8 @@ class LocalDeclarationsLowering(
     val suggestUniqueNames: Boolean = true, // When `true` appends a `$#index` suffix to lifted declaration names
     val compatibilityModeForInlinedLocalDelegatedPropertyAccessors: Boolean = false, // Keep old names because of KT-49030
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
-    private val postLocalDeclarationLoweringCallback: ((IntermediateDatastructures) -> Unit)? = null
+    private val postLocalDeclarationLoweringCallback: ((IntermediateDatastructures) -> Unit)? = null,
+    private val getConstructorsThatCouldCaptureParamsWithoutFieldCreating: IrClass.() -> Iterable<IrConstructor> = { listOfNotNull(primaryConstructor) }
 ) :
     BodyLoweringPass {
 
@@ -338,6 +339,16 @@ class LocalDeclarationsLowering(
                     visitMember(declaration) ?: super.visitFunction(declaration)
                 }
 
+            override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement =
+                visitWithTheSingleConstructorContext(declaration)
+                    ?: visitMember(declaration)
+                    ?: super.visitAnonymousInitializer(declaration)
+
+            override fun visitField(declaration: IrField): IrStatement =
+                visitWithTheSingleConstructorContext(declaration)
+                    ?: visitMember(declaration)
+                    ?: super.visitField(declaration)
+
             private fun visitMember(declaration: IrDeclaration): IrStatement? =
                 if (localContext is LocalClassContext && declaration.parent == localContext.declaration) {
                     val classMemberLocalContext = LocalClassMemberContext(declaration, localContext)
@@ -345,6 +356,15 @@ class LocalDeclarationsLowering(
                 } else {
                     null
                 }
+
+            private fun visitWithTheSingleConstructorContext(declaration: IrDeclaration): IrStatement? {
+                return if (localContext is LocalClassContext && declaration.parent == localContext.declaration) {
+                    val constructorContext = localContext.constructorContext ?: return null
+                    declaration.apply { transformChildrenVoid(FunctionBodiesRewriter(constructorContext)) }
+                } else {
+                    null
+                }
+            }
 
             override fun visitConstructor(declaration: IrConstructor): IrStatement {
                 // Body is transformed separately. See loop over constructors in rewriteDeclarations().
@@ -1057,8 +1077,10 @@ class LocalDeclarationsLowering(
                     // TODO: this should ideally run after initializers are added to constructors, but that'd place
                     //   other restrictions on IR (e.g. after the initializers are moved you can no longer create fields
                     //   with initializers) which makes that hard to implement.
-                    val constructorContext = declaration.constructors.mapNotNull { localClassConstructors[it] }
-                        .singleOrNull { it.declaration.delegationKind(context.irBuiltIns) == ConstructorDelegationKind.CALLS_SUPER }
+                    val constructorContext = declaration.getConstructorsThatCouldCaptureParamsWithoutFieldCreating()
+                        .mapNotNull { localClassConstructors[it] }
+                        .singleOrNull()
+
                     localClasses[declaration] = LocalClassContext(declaration, data.inInlineFunctionScope, constructorContext)
                 }
 

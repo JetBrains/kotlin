@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 private var patchParentPhases = 0
 
@@ -154,6 +155,9 @@ internal val localDeclarationsPhase = makeIrFilePhase(
             JvmVisibilityPolicy(),
             compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true,
             forceFieldsForInlineCaptures = true,
+            getConstructorsThatCouldCaptureParamsWithoutFieldCreating = {
+                declarations.filterIsInstanceAnd<IrConstructor> { it.delegationKind(context.irBuiltIns) == ConstructorDelegationKind.CALLS_SUPER }
+            },
             postLocalDeclarationLoweringCallback = context.localDeclarationsLoweringData?.let {
                 { data ->
                     data.localFunctions.forEach { (localFunction, localContext) ->

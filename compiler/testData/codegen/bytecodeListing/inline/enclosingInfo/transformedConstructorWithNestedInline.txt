@@ -40,7 +40,6 @@ public interface test/Z {
 public final class test/_1Kt$test$1 {
     // source: '1.kt'
     enclosing method test/_1Kt.test(Lkotlin/jvm/functions/Function0;)Ltest/Z;
-    synthetic final field $z: kotlin.jvm.functions.Function0
     private final field p: java.lang.String
     inner (anonymous) class test/_1Kt$test$1
     public method <init>(p0: kotlin.jvm.functions.Function0): void
