@@ -1,0 +1,45 @@
+fun testMemberIncrementDecrement(d: dynamic) {
+  val t1: dynamic = ++d
+  val t2: dynamic = --d
+  val t3: dynamic = d.postfixIncr++
+  val t4: dynamic = d.postfixDecr--
+}
+
+fun testSafeMemberIncrementDecrement(d: dynamic) {
+  val t1: dynamic = { // BLOCK
+    val tmp_0: dynamic = d
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> { // BLOCK
+        val tmp_1: dynamic = tmp_0
+        tmp_1.prefixIncr = ++tmp_1.prefixIncr
+        tmp_1.prefixIncr
+      }
+    }
+  }
+  val t2: dynamic = { // BLOCK
+    val tmp_2: dynamic = d
+    when {
+      EQEQ(arg0 = tmp_2, arg1 = null) -> null
+      else -> { // BLOCK
+        val tmp_3: dynamic = tmp_2
+        tmp_3.prefixDecr = --tmp_3.prefixDecr
+        tmp_3.prefixDecr
+      }
+    }
+  }
+  val t3: dynamic = { // BLOCK
+    val tmp_4: dynamic = d
+    when {
+      EQEQ(arg0 = tmp_4, arg1 = null) -> null
+      else -> tmp_4.postfixIncr++
+    }
+  }
+  val t4: dynamic = { // BLOCK
+    val tmp_5: dynamic = d
+    when {
+      EQEQ(arg0 = tmp_5, arg1 = null) -> null
+      else -> tmp_5.postfixDecr--
+    }
+  }
+}

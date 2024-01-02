@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
+// ISSUE: KT-64652
 // EXPECTED_REACHABLE_NODES: 1323
 fun <T> checkThrown(x: T, block: (T) -> Any?): Unit? {
     return try {

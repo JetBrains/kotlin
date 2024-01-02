@@ -1,0 +1,16 @@
+fun testArrayIncrementDecrement(d: dynamic) {
+  val t1: dynamic = { // BLOCK
+    val tmp_0: dynamic = d
+    val tmp_1: String = "prefixIncr"
+    tmp_0.set(tmp_1, ++tmp_0[tmp_1]) /*~> Unit */
+    tmp_0.get(tmp_1)
+  }
+  val t2: dynamic = { // BLOCK
+    val tmp_2: dynamic = d
+    val tmp_3: String = "prefixDecr"
+    tmp_2.set(tmp_3, --tmp_2[tmp_3]) /*~> Unit */
+    tmp_2.get(tmp_3)
+  }
+  val t3: dynamic = d["postfixIncr"]++
+  val t4: dynamic = d["postfixDecr"]--
+}

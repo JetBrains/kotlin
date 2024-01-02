@@ -1,7 +1,4 @@
 // TARGET_BACKEND: JS_IR
-// IGNORE_BACKEND_K2: JS_IR
-
-// FIR_IDENTICAL
 
 fun testMemberIncrementDecrement(d: dynamic) {
     val t1 = ++d.prefixIncr

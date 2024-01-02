@@ -1,6 +1,5 @@
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
 // WITH_STDLIB
 
 class A(val ok: String)
