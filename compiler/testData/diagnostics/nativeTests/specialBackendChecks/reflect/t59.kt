@@ -2,7 +2,7 @@
 import kotlin.reflect.*
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)
-fun <T : Comparable<T>> foo() {
+inline fun <T : Comparable<T>> foo(block: () -> T) {
     typeOf<List<T>>()
 }
 
