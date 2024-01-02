@@ -33,9 +33,6 @@ class Kapt4IT : Kapt3IT() {
     @Disabled("Doesn't make sense in Kapt 4")
     override fun useK2KaptProperty(gradleVersion: GradleVersion) {}
 
-    @Disabled("Doesn't make sense in Kapt 4")
-    override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {}
-
     @DisplayName("KT-61879: K2 KAPT works with proguarded compiler jars and enum class")
     @GradleTest
     fun testEnumClass(gradleVersion: GradleVersion) {
@@ -68,9 +65,6 @@ class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
 
     @Disabled("Doesn't make sense in Kapt 4")
     override fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {}
-
-    @Disabled("Doesn't make sense in Kapt 4")
-    override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't work in 2.0. Neither with Kapt 3 nor with Kapt 4")
     override fun testMPPKaptPresence(gradleVersion: GradleVersion) {}

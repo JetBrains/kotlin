@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.KaptEnvironmentConfigurator
 import org.jetbrains.kotlin.kapt3.test.KaptRegularExtensionForTestConfigurator
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
-import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.USE_JVM_IR
 import org.jetbrains.kotlin.kapt3.test.handlers.ClassFileToSourceKaptStubHandler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
@@ -24,9 +23,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
-abstract class AbstractClassFileToSourceStubConverterTestBase(
-    targetBackend: TargetBackend
-) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
+open class AbstractIrClassFileToSourceStubConverterTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     init {
         doOpenInternalPackagesIfRequired()
     }
@@ -56,30 +53,5 @@ abstract class AbstractClassFileToSourceStubConverterTestBase(
         }
 
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
-    }
-}
-
-open class AbstractClassFileToSourceStubConverterTest : AbstractClassFileToSourceStubConverterTestBase(TargetBackend.JVM) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.apply {
-            globalDefaults {
-                targetBackend = TargetBackend.JVM
-            }
-        }
-    }
-}
-
-open class AbstractIrClassFileToSourceStubConverterTest : AbstractClassFileToSourceStubConverterTestBase(TargetBackend.JVM_IR) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.apply {
-            globalDefaults {
-                targetBackend = TargetBackend.JVM_IR
-            }
-            defaultDirectives {
-                +USE_JVM_IR
-            }
-        }
     }
 }

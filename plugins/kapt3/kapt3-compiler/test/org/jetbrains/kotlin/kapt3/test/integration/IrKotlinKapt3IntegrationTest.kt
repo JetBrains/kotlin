@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotNull
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
 import org.junit.jupiter.api.fail
@@ -28,11 +27,7 @@ import javax.lang.model.element.VariableElement
 import javax.lang.model.util.ElementFilter
 import javax.tools.Diagnostic
 
-class KotlinKapt3IntegrationTest(testInfo: TestInfo) : AbstractKotlinKapt3IntegrationTestBase(testInfo, TargetBackend.JVM)
-
-class IrKotlinKapt3IntegrationTest(testInfo: TestInfo) : AbstractKotlinKapt3IntegrationTestBase(testInfo, TargetBackend.JVM_IR)
-
-abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: TestInfo, private val targetBackend: TargetBackend) {
+class IrKotlinKapt3IntegrationTest(private val testInfo: TestInfo) {
     private companion object {
         val TEST_DATA_DIR = File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner")
     }
@@ -47,7 +42,6 @@ abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: Test
     ) {
         val file = File(TEST_DATA_DIR, "$name.kt")
         AbstractKotlinKapt3IntegrationTestRunner(
-            targetBackend,
             options,
             supportedAnnotations.toList(),
             additionalPluginExtension,

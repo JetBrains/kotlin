@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirLoadK2CompiledWithPlug
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPsiPluginDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
-import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.PURE_KOTLIN
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.WITH_JAVA
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.incrementalJvmTestData
@@ -36,10 +35,8 @@ import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKapt4ToolIntegrationTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
-import org.jetbrains.kotlin.kapt3.test.runners.AbstractClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrKotlinKaptContextTest
-import org.jetbrains.kotlin.kapt3.test.runners.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt4.AbstractKotlinKapt4ContextTest
 import org.jetbrains.kotlin.lombok.*
 import org.jetbrains.kotlin.noarg.*
@@ -48,7 +45,6 @@ import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
-import org.junit.jupiter.api.Tag
 
 
 private class ExcludePattern {
@@ -387,17 +383,8 @@ fun main(args: Array<String>) {
         }
 
         testGroup("plugins/kapt3/kapt3-compiler/tests-gen", "plugins/kapt3/kapt3-compiler/testData") {
-            val annotations = listOf(annotation(Tag::class.java, "IgnoreJDK11"))
-            testClass<AbstractKotlinKaptContextTest>(annotations = annotations) {
-                model("kotlinRunner")
-            }
-
             testClass<AbstractIrKotlinKaptContextTest> {
                 model("kotlinRunner")
-            }
-
-            testClass<AbstractClassFileToSourceStubConverterTest> {
-                model("converter")
             }
 
             testClass<AbstractIrClassFileToSourceStubConverterTest> {

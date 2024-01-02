@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.kapt3.test.runners
 
 import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
-import org.jetbrains.kotlin.kapt3.test.*
+import org.jetbrains.kotlin.kapt3.test.JvmCompilerWithKaptFacade
+import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
+import org.jetbrains.kotlin.kapt3.test.KaptEnvironmentConfigurator
+import org.jetbrains.kotlin.kapt3.test.KaptRegularExtensionForTestConfigurator
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
 import org.jetbrains.kotlin.kapt3.test.handlers.KaptContextHandler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -18,9 +21,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
-abstract class AbstractKotlinKaptContextTestBase(
-    targetBackend: TargetBackend
-) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
+open class AbstractIrKotlinKaptContextTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     init {
         doOpenInternalPackagesIfRequired()
     }
@@ -46,31 +47,6 @@ abstract class AbstractKotlinKaptContextTestBase(
         facadeStep(::JvmCompilerWithKaptFacade)
         handlersStep(KaptContextBinaryArtifact.Kind) {
             useHandlers(::KaptContextHandler)
-        }
-    }
-}
-
-open class AbstractKotlinKaptContextTest : AbstractKotlinKaptContextTestBase(TargetBackend.JVM) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.apply {
-            globalDefaults {
-                targetBackend = TargetBackend.JVM
-            }
-        }
-    }
-}
-
-open class AbstractIrKotlinKaptContextTest : AbstractKotlinKaptContextTestBase(TargetBackend.JVM_IR) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.apply {
-            globalDefaults {
-                targetBackend = TargetBackend.JVM_IR
-            }
-            defaultDirectives {
-                +KaptTestDirectives.USE_JVM_IR
-            }
         }
     }
 }

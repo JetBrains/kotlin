@@ -141,10 +141,6 @@ open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     }
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
     override fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
     }
 
@@ -1199,17 +1195,6 @@ open class Kapt3IT : Kapt3BaseIT() {
     @GradleTest
     open fun testRepeatableAnnotations(gradleVersion: GradleVersion) {
         project("repeatableAnnotations".withPrefix, gradleVersion) {
-            build("build") {
-                assertKaptSuccessful()
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
-            }
-        }
-    }
-
-    @DisplayName("KT-53135: check that JVM IR backend is disabled if kapt.use.jvm.ir=false is specified in gradle.properties")
-    @GradleTest
-    open fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {
-        project("repeatableAnnotationsWithOldJvmBackend".withPrefix, gradleVersion) {
             build("build") {
                 assertKaptSuccessful()
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
