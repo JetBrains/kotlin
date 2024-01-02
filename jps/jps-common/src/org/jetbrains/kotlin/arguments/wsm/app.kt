@@ -76,10 +76,10 @@ private fun List<String>.addImports(fileName: String): List<String> {
     for (line: String in this) {
         updatedLines.add(line)
         if(line.contains("package ")) {
+            updatedLines.add("import org.jetbrains.kotlin.cli.common.arguments.Argument")
             if (fileName.contains("K2JVMCompilerArguments")) updatedLines.add("import org.jetbrains.kotlin.cli.common.arguments.JavaTypeEnhancementStateParser")
             if (fileName.contains("CommonToolArguments")) {
                 updatedLines.add("import org.jetbrains.kotlin.cli.common.arguments.InternalArgument")
-                updatedLines.add("import org.jetbrains.kotlin.cli.common.arguments.Argument")
             }
             if (fileName.contains("CommonCompilerArguments")) {
                 updatedLines.add("import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting")
@@ -115,7 +115,7 @@ fun List<String>.removeAnnotations(): List<String> {
     val updatedLines = mutableListOf<String>()
 
     for (line: String in this) {
-        if (line.trimStart().startsWith("@GradleOption") || line.trimStart().startsWith("@Argument") || line.trimStart().startsWith("@GradleDeprecatedOption")) {
+        if (line.trimStart().startsWith("@GradleOption") || line.trimStart().startsWith("@GradleDeprecatedOption")) {
             insideAnnotation = true
         }
 

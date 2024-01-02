@@ -15,8 +15,8 @@
  */
 
 package org.jetbrains.kotlin.arguments.wsm
-import org.jetbrains.kotlin.cli.common.arguments.InternalArgument
 import org.jetbrains.kotlin.cli.common.arguments.Argument
+import org.jetbrains.kotlin.cli.common.arguments.InternalArgument
 
 import java.io.Serializable
 import kotlin.reflect.KProperty1
@@ -39,36 +39,42 @@ abstract class CommonToolArgumentsWsmGenerated :  Serializable {
 //    @kotlinx.serialization.Transient
     
 
+    @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options.")
     var help = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-X", description = "Print a synopsis of advanced options.")
     var extraHelp = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-version", description = "Display the compiler version.")
     var version = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-verbose", description = "Enable verbose logging output.")
     var verbose = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-nowarn", description = "Don't generate any warnings.")
     var suppressWarnings = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-Werror", description = "Report an error if there are any warnings.")
     var allWarningsAsErrors = false
         set(value) {
             

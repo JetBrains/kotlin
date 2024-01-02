@@ -15,6 +15,7 @@
  */
 
 package org.jetbrains.kotlin.arguments.wsm
+import org.jetbrains.kotlin.cli.common.arguments.Argument
 
 //import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -29,36 +30,58 @@ class K2MetadataCompilerArgumentsWsmGenerated : CommonCompilerArgumentsWsmGenera
         @JvmStatic private val serialVersionUID = 0L
     }
 
+    @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated .kotlin_metadata files.")
     var destination: String? = null
         set(value) {
             
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-classpath",
+        shortName = "-cp",
+        valueDescription = "<path>",
+        description = "List of directories and JAR/ZIP archives to search for user .kotlin_metadata files."
+    )
     var classpath: String? = null
         set(value) {
             
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(value = "-module-name", valueDescription = "<name>", description = "Name of the generated .kotlin_module file.")
     var moduleName: String? = null
         set(value) {
             
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-Xjps",
+        description = "Enable in JPS."
+    )
     var enabledInJps = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xfriend-paths",
+        valueDescription = "<path>",
+        description = "Paths to output directories for friend modules (modules whose internals should be visible)."
+    )
     var friendPaths: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xrefines-paths",
+        valueDescription = "<path>",
+        description = "Paths to output directories for refined modules (modules whose expects this module can actualize)."
+    )
     var refinesPaths: Array<String>? = null
         set(value) {
             

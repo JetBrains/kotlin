@@ -4,6 +4,7 @@
  */
 
 package org.jetbrains.kotlin.arguments.wsm
+import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 
 import com.intellij.util.xmlb.annotations.Transient
@@ -38,6 +39,11 @@ abstract class CommonCompilerArgumentsWsmGenerated : CommonToolArgumentsWsmGener
             field = value
         }
 
+    @Argument(
+        value = "-language-version",
+        valueDescription = "<version>",
+        description = "Provide source compatibility with the specified version of Kotlin."
+    )
     var languageVersion: String? = null
         set(value) {
             
@@ -51,30 +57,56 @@ abstract class CommonCompilerArgumentsWsmGenerated : CommonToolArgumentsWsmGener
             field = value
         }
 
+    @Argument(
+        value = "-api-version",
+        valueDescription = "<version>",
+        description = "Allow using declarations from only the specified version of bundled libraries."
+    )
     var apiVersion: String? = null
         set(value) {
             
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-kotlin-home",
+        valueDescription = "<path>",
+        description = "Path to the Kotlin compiler home directory used for the discovery of runtime libraries."
+    )
     var kotlinHome: String? = null
         set(value) {
             
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-progressive",
+        deprecatedName = "-Xprogressive",
+        description = """Enable progressive compiler mode.
+In this mode, deprecations and bug fixes for unstable code take effect immediately
+instead of going through a graceful migration cycle.
+Code written in progressive mode is backward compatible; however, code written without
+progressive mode enabled may cause compilation errors in progressive mode."""
+    )
     var progressiveMode = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-script", description = "Evaluate the given Kotlin script (*.kts) file.")
     var script = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-opt-in",
+        deprecatedName = "-Xopt-in",
+        valueDescription = "<fq.name>",
+        description = "Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name."
+    )
     var optIn: Array<String>? = null
         set(value) {
             
@@ -83,96 +115,142 @@ abstract class CommonCompilerArgumentsWsmGenerated : CommonToolArgumentsWsmGener
 
     // Advanced options
 
+    @Argument(value = "-Xno-inline", description = "Disable method inlining.")
     var noInline = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xskip-metadata-version-check",
+        description = "Allow loading classes with bad metadata versions and pre-release classes."
+    )
     var skipMetadataVersionCheck = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-Xskip-prerelease-check", description = "Allow loading pre-release classes.")
     var skipPrereleaseCheck = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xallow-kotlin-package",
+        description = "Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'."
+    )
     var allowKotlinPackage = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-Xreport-output-files", description = "Report the source-to-output file mapping.")
     var reportOutputFiles = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-Xplugin", valueDescription = "<path>", description = "Load plugins from the given classpath.")
     var pluginClasspaths: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin.")
     var pluginOptions: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xcompiler-plugin",
+        valueDescription = "<path1>,<path2>:<optionName>=<value>,<optionName>=<value>",
+        description = "Register a compiler plugin.",
+        delimiter = Argument.Delimiters.none
+    )
     var pluginConfigurations: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-Xmulti-platform", description = "Enable language support for multiplatform projects.")
     var multiPlatform = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-Xno-check-actual", description = "Do not check for the presence of the 'actual' modifier in multiplatform projects.")
     var noCheckActual = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xintellij-plugin-root",
+        valueDescription = "<path>",
+        description = "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found."
+    )
     var intellijPluginRoot: String? = null
         set(value) {
             
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-Xnew-inference",
+        description = "Enable the new experimental generic type inference algorithm."
+    )
     var newInference = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xinline-classes",
+        description = "Enable experimental inline classes."
+    )
     var inlineClasses = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xlegacy-smart-cast-after-try",
+        description = "Allow 'var' smart casts even in the presence of assignments in 'try' blocks."
+    )
     var legacySmartCastAfterTry = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xeffect-system",
+        description = "Enable experimental language feature: effect system."
+    )
     var effectSystem = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xread-deserialized-contracts",
+        description = "Enable reading contracts from metadata."
+    )
     var readDeserializedContracts = false
         set(value) {
             
@@ -199,296 +277,494 @@ abstract class CommonCompilerArgumentsWsmGenerated : CommonToolArgumentsWsmGener
             field = value
         }
 
+    @Argument(
+        value = "-Xproper-ieee754-comparisons",
+        description = "Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types."
+    )
     var properIeee754Comparisons = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics.")
     var reportPerf = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xdump-perf",
+        valueDescription = "<path>",
+        description = "Dump detailed performance statistics to the specified file."
+    )
     var dumpPerf: String? = null
         set(value) {
             
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-Xmetadata-version",
+        description = "Change the metadata version of the generated binary files."
+    )
     var metadataVersion: String? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xcommon-sources",
+        valueDescription = "<path>",
+        description = """Sources of the common module that need to be compiled together with this module in multiplatform mode.
+They should be a subset of sources passed as free arguments."""
+    )
     var commonSources: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xallow-result-return-type",
+        description = "Allow compiling code when 'kotlin.Result' is used as a return type."
+    )
     var allowResultReturnType = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xlist-phases",
+        description = "List backend phases."
+    )
     var listPhases = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xdisable-phases",
+        description = "Disable backend phases."
+    )
     var disablePhases: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xverbose-phases",
+        description = "Be verbose while performing the given backend phases."
+    )
     var verbosePhases: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xphases-to-dump-before",
+        description = "Dump the backend's state before these phases."
+    )
     var phasesToDumpBefore: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xphases-to-dump-after",
+        description = "Dump the backend's state after these phases."
+    )
     var phasesToDumpAfter: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xphases-to-dump",
+        description = "Dump the backend's state both before and after these phases."
+    )
     var phasesToDump: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xdump-directory",
+        description = "Dump the backend state into this directory."
+    )
     var dumpDirectory: String? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xdump-fqname",
+        description = "Dump the declaration with the given FqName."
+    )
     var dumpOnlyFqName: String? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xphases-to-validate-before",
+        description = "Validate the backend's state before these phases."
+    )
     var phasesToValidateBefore: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xphases-to-validate-after",
+        description = "Validate the backend's state after these phases."
+    )
     var phasesToValidateAfter: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xphases-to-validate",
+        description = "Validate the backend's state both before and after these phases."
+    )
     var phasesToValidate: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xprofile-phases",
+        description = "Profile backend phases."
+    )
     var profilePhases = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xcheck-phase-conditions",
+        description = "Check pre- and postconditions of IR lowering phases."
+    )
     var checkPhaseConditions = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xcheck-sticky-phase-conditions",
+        description = "Run sticky condition checks on subsequent phases. Implicitly enables '-Xcheck-phase-conditions'."
+    )
     var checkStickyPhaseConditions = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xuse-k2",
+        deprecatedName = "-Xuse-fir",
+        description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet."
+    )
     var useK2 = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xuse-fir-extended-checkers",
+        description = "Use extended analysis mode based on the frontend IR.\nWarning: This feature is not yet production-ready."
+    )
     var useFirExtendedCheckers = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xuse-fir-ic",
+        description = "Compile using frontend IR internal incremental compilation.\nWarning: This feature is not yet production-ready."
+    )
     var useFirIC = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xuse-fir-lt",
+        description = "Compile using the LightTree parser with the frontend IR."
+    )
     var useFirLT = true
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xuse-ir-fake-override-builder",
+        description = "Generate fake overrides via IR. See KT-61514"
+    )
     var useIrFakeOverrideBuilder = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xdisable-ultra-light-classes",
+        description = "Don't use ultra-light classes."
+    )
     var disableUltraLightClasses = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xuse-mixed-named-arguments",
+        description = "Allow mixing named and unnamed arguments when the arguments appear in their default order."
+    )
     var useMixedNamedArguments = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xmetadata-klib",
+        description = "Produce a klib that only contains the metadata of declarations.",
+        deprecatedName = "-Xexpect-actual-linker"
+    )
     var metadataKlib: Boolean = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-Xdisable-default-scripting-plugin", description = "Don't enable the scripting plugin by default.")
     var disableDefaultScriptingPlugin = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xexplicit-api",
+        valueDescription = "{strict|warning|disable}",
+        description = """Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
+Use the 'warning' level to issue warnings instead of errors."""
+    )
     var explicitApi: String = ExplicitApiMode.DISABLED.state
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xinference-compatibility",
+        description = "Enable compatibility changes for the generic type inference algorithm."
+    )
     var inferenceCompatibility = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xsuppress-version-warnings",
+        description = "Suppress warnings about outdated, inconsistent, or experimental language or API versions."
+    )
     var suppressVersionWarnings = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xextended-compiler-checks",
+        description = """Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
+Warning: This mode is not backward compatible and might cause compilation errors in previously compiled code."""
+    )
     var extendedCompilerChecks = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xbuiltins-from-sources",
+        description = "Compile built-ins from sources."
+    )
     var builtInsFromSources = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xexpect-actual-classes",
+        description = """'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
+Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning."""
+    )
     var expectActualClasses = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xunrestricted-builder-inference",
+        description = "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls."
+    )
     var unrestrictedBuilderInference = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xenable-builder-inference",
+        description = """Use builder inference by default for all calls with lambdas that can't be resolved without it.
+The corresponding calls' declarations may not be marked with @BuilderInference."""
+    )
     var enableBuilderInference = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xself-upper-bound-inference",
+        description = "Support inferring type arguments from the self-type upper bounds of the corresponding type parameters."
+    )
     var selfUpperBoundInference = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xcontext-receivers",
+        description = "Enable experimental context receivers."
+    )
     var contextReceivers = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xklib-relative-path-base",
+        description = "Provide a base path to compute the source's relative paths in klib (default is empty)."
+    )
     var relativePathBases: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xklib-normalize-absolute-path",
+        description = "Normalize absolute paths in klibs."
+    )
     var normalizeAbsolutePath = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xklib-enable-signature-clash-checks",
+        description = "Enable signature uniqueness checks."
+    )
     var enableSignatureClashChecks = true
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-Xenable-incremental-compilation", description = "Enable incremental compilation.")
     var incrementalCompilation: Boolean? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-Xrender-internal-diagnostic-names", description = "Render the internal names of warnings and errors.")
     var renderInternalDiagnosticNames = false
         set(value) {
             
             field = value
         }
 
+    @Argument(value = "-Xallow-any-scripts-in-source-roots", description = "Allow compiling scripts along with regular Kotlin sources.")
     var allowAnyScriptsInSourceRoots = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xfragments",
+        valueDescription = "<fragment name>",
+        description = "Declare all known fragments of a multiplatform compilation."
+    )
     var fragments: Array<String>? = null
 
+    @Argument(
+        value = "-Xfragment-sources",
+        valueDescription = "<fragment name>:<path>",
+        description = "Add sources to a specific fragment of a multiplatform compilation.",
+    )
     var fragmentSources: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xfragment-refines",
+        valueDescription = "<fromModuleName>:<onModuleName>",
+        description = "Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.",
+    )
     var fragmentRefines: Array<String>? = null
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xignore-const-optimization-errors",
+        description = "Ignore all compilation exceptions while optimizing some constant expressions."
+    )
     var ignoreConstOptimizationErrors = false
         set(value) {
             
             field = value
         }
 
+    @Argument(
+        value = "-Xdont-warn-on-error-suppression",
+        description = "Don't report warnings when errors are suppressed. This only affects K2."
+    )
     var dontWarnOnErrorSuppression = false
         set(value) {
             
