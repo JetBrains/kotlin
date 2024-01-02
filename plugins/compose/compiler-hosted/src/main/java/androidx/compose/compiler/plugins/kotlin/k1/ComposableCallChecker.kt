@@ -190,8 +190,6 @@ open class ComposableCallChecker :
                     }
                     val containingComposable = (containingScope as? LexicalScope)?.ownerDescriptor
 
-                    // if containing composable is null, we want to add error on the call
-                    // and the containing element, so continue the loop
                     if (containingComposable != null) {
                         // TODO(lmr): in future, we should check for CALLS_IN_PLACE contract
                         val isInlined = checkInlineUsage(
@@ -210,6 +208,19 @@ open class ComposableCallChecker :
                                 descriptor,
                                 true
                             )
+                        }
+                    } else {
+                        // if we didn't find a containing composable, the call is invalid. Stop
+                        // iteration when lambda is not inlined, as the lambda itself should be
+                        // composable to resolve compilation error here.
+                        val isInlined = isInlinedArgument(
+                            node.functionLiteral,
+                            bindingContext,
+                            true
+                        )
+                        if (!isInlined) {
+                            illegalCall(context, reportOn)
+                            return
                         }
                     }
                 }
