@@ -333,6 +333,9 @@ internal class FirLocalVariableAssignmentAnalyzer {
             override fun visitLoop(loop: FirLoop, data: MiniCfgData) {
                 val entry = data.flow
                 val assignedInside = visitElementWithLexicalScope(loop, data)
+                // Now that the inner variables have been discarded, the rest can be propagated to prevent smartcasts
+                // in declarations that came before this loop.
+                entry.recordAssignments(assignedInside)
                 // All forks in the loop should have the same set of variables assigned later, equal to the set
                 // at the start of the loop.
                 data.flow.recordAssignments(assignedInside)

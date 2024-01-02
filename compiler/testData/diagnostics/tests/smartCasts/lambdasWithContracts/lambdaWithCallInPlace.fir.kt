@@ -468,7 +468,7 @@ fun test48() {
     var x: Any = materialize()
     runWithoutContract {
         while (x is String) {
-            x.length
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
             x = 10
         }
     }
@@ -536,7 +536,7 @@ fun test55() {
     runWithoutContract {
         for (i in 1..3) {
             require(x is String)
-            x.length
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
             x = 10
         }
     }
@@ -618,5 +618,38 @@ fun test63() {
     exactlyOnce {
         x?.length ?: -1
         x = null
+    }
+}
+
+fun test64() {
+    var x: Any = materialize()
+    require(x is String)
+    runWithoutContract {
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+    }
+    for (i in 1..3) {
+        x = 10
+    }
+}
+
+fun test65() {
+    var x: Any = materialize()
+    require(x is String)
+    atLeastOnce {
+        x.length
+    }
+    for (i in 1..3) {
+        x = 10
+    }
+}
+
+fun test66() {
+    var x: Any = materialize()
+    require(x is String)
+    exactlyOnce {
+        x.length
+    }
+    for (i in 1..3) {
+        x = 10
     }
 }

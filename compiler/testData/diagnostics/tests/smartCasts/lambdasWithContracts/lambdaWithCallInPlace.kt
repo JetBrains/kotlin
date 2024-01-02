@@ -620,3 +620,36 @@ fun test63() {
         x = null
     }
 }
+
+fun test64() {
+    var x: Any = materialize()
+    require(x is String)
+    runWithoutContract {
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+    }
+    for (i in 1..3) {
+        x = 10
+    }
+}
+
+fun test65() {
+    var x: Any = materialize()
+    require(x is String)
+    atLeastOnce {
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+    }
+    for (i in 1..3) {
+        x = 10
+    }
+}
+
+fun test66() {
+    var x: Any = materialize()
+    require(x is String)
+    exactlyOnce {
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+    }
+    for (i in 1..3) {
+        x = 10
+    }
+}
