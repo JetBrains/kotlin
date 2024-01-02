@@ -211,7 +211,7 @@ public fun Path.copyToRecursively(
     visitFileTree(followLinks = followLinks) {
         onPreVisitDirectory { directory, attributes ->
             if (stack.isNotEmpty()) {
-                // Check only for directories inside a directory
+                // Check entries other than the starting path of traversal
                 directory.checkFileName()
                 directory.checkNotSameAs(stack.last())
             }
@@ -221,7 +221,7 @@ public fun Path.copyToRecursively(
         }
         onVisitFile { file, attributes ->
             if (stack.isNotEmpty()) {
-                // Check only for files inside a directory
+                // Check entries other than the starting path of traversal
                 file.checkFileName()
             }
             copy(file, attributes)
@@ -379,7 +379,7 @@ private fun SecureDirectoryStream<Path>.handleEntry(name: Path, parent: Path?, c
 
     collectIfThrows(collector) {
         if (parent != null) {
-            // Check only for entries inside a directory
+            // Check entries other than the starting path of traversal
             val entry = collector.path!!
             entry.checkFileName()
             entry.checkNotSameAs(parent)
@@ -425,7 +425,7 @@ private fun SecureDirectoryStream<Path>.isDirectory(entryName: Path, vararg opti
 private fun insecureHandleEntry(entry: Path, parent: Path?, collector: ExceptionsCollector) {
     collectIfThrows(collector) {
         if (parent != null) {
-            // Check only for entries inside a directory
+            // Check entries other than the starting path of traversal
             entry.checkFileName()
             entry.checkNotSameAs(parent)
         }
@@ -460,9 +460,18 @@ private fun insecureEnterDirectory(path: Path, collector: ExceptionsCollector) {
 // illegal file name
 
 /**
- * Checks whether this file has a legal name.
- * Some names are illegal because they cause traversal to cycle.
- * See KT-63103.
+ * Checks whether the name of this file is legal for traversal to prevent cycles.
+ *
+ * Some names are considered illegal as they may cause traversal cycles.
+ * This function is intended for use with entries whose parent directories have already been traversed.
+ * The file being checked is not the starting point of traversal.
+ *
+ * For instance, "/a/b/.." is a valid starting path for traversal. However, if traversal begins from "/a"
+ * and reaches "a/b/..", it will result in a cycle.
+ *
+ * @throws IllegalFileNameException if the file name is "..", "../", ".", or "./" since these may lead to traversal cycles.
+ *
+ * See KT-63103 for more details on the issue.
  */
 internal fun Path.checkFileName() {
     if (name == ".." || name == "../" ||
@@ -470,14 +479,23 @@ internal fun Path.checkFileName() {
 }
 
 /**
- * Checks that this entry is not the same as [parent].
- * When entries of a directory is read, sometimes the directory itself is returned as well.
- * This happens when a zip entry name is '/'.
- * Having a directory itself in list of its entries causes traversal to cycle.
- * Unfortunately, [Files.walkFileTree], which is used in [copyToRecursively],
- * does not detect such a cycle when links are not followed.
- * [deleteRecursively] doesn't have cycle detection capability because it always doesn't follow links.
- * See KT-63103.
+ * Checks that this entry is not the same as the specified [parent] path to prevent traversal cycles.
+ *
+ * When reading entries of a directory, there are cases where the directory itself is returned,
+ * such as when a zip entry name is '/'. Including the directory itself in the list of its entries can lead to traversal cycles.
+ *
+ * Unfortunately, [Files.walkFileTree], utilized in [copyToRecursively], may not detect such cycles when links are not followed.
+ * Similarly, [deleteRecursively] lacks cycle detection capabilities as it never follows links.
+ *
+ * This function is intended for use with entries whose parent directories have already been traversed.
+ * The file being checked is not the starting point of traversal.
+ *
+ * For instance, "/a/b/.." is a valid starting path for traversal. However, if traversal begins from "/a"
+ * and reaches "a/b/..", it will result in a cycle.
+ *
+ * @throws FileSystemLoopException if this entry is the same as the [parent] path, indicating a potential traversal cycle.
+ *
+ * See KT-63103 for more details on the issue.
  */
 private fun Path.checkNotSameAs(parent: Path) {
     // Symlinks are skipped:

@@ -44,7 +44,7 @@ internal class PathTreeWalk(
     ) {
         val path = node.path
         if (node.parent != null) {
-            // Check only for entries inside a directory
+            // Check entries other than the starting path of traversal
             path.checkFileName()
         }
         if (path.isDirectory(*linkOptions)) {
