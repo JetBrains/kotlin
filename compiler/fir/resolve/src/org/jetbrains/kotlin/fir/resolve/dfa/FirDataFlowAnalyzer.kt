@@ -165,7 +165,7 @@ abstract class FirDataFlowAnalyzer(
         }
         localFunctionNode?.mergeIncomingFlow()
         functionEnterNode.mergeIncomingFlow { _, flow ->
-            if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() == true) {
+            if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() != false) {
                 enterRepeatableStatement(flow, function)
             }
         }
@@ -176,7 +176,7 @@ abstract class FirDataFlowAnalyzer(
         if (function is FirDefaultPropertyAccessor) return null
 
         context.variableAssignmentAnalyzer.exitFunction()
-        if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() == true) {
+        if (function is FirAnonymousFunction && function.invocationKind?.canBeRevisited() != false) {
             exitRepeatableStatement(function)
         }
 

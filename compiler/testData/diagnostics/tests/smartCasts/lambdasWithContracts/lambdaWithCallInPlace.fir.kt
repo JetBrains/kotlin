@@ -27,7 +27,7 @@ fun test1() {
     var x: Any? = materialize()
     require(x is String)
     runWithoutContract {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
         x = 10
     }
 }
@@ -81,9 +81,9 @@ fun test7() {
     var x: Any? = materialize()
     require(x is String)
     runWithoutContract {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
         runWithoutContract {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
         }
         x = 10
     }
@@ -498,7 +498,7 @@ fun test51() {
     var x: Any = materialize()
     while (x is String) {
         runWithoutContract {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
             x = 10
         }
     }
@@ -569,7 +569,7 @@ fun test58() {
     for (i in 1..3) {
         require(x is String)
         runWithoutContract {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
             x = 10
         }
     }

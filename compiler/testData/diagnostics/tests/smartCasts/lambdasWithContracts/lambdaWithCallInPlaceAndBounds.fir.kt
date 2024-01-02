@@ -370,7 +370,7 @@ fun test33() {
     var y = x
     runWithoutContract {
         while (x is String) {
-            y.length
+            y.<!UNRESOLVED_REFERENCE!>length<!>
             <!SMARTCAST_IMPOSSIBLE!>x<!>.length
         }
         x = 10
