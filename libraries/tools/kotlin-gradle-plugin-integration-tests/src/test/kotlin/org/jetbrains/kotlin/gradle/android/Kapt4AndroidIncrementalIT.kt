@@ -20,11 +20,11 @@ class Kapt4AndroidIncrementalIT : Kapt3AndroidIncrementalIT() {
         forceKapt4()
     }
 
-    @Disabled("IC doesn't work in Kapt 4")
+    @Disabled("KT-63102 IC doesn't work in Kapt 4")
     override fun testAndroidDaggerIC(gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk) {
     }
 
-    @Disabled("IC doesn't work in Kapt 4")
+    @Disabled("KT-63102 IC doesn't work in Kapt 4")
     override fun testInterProjectIC(gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk) {
     }
 }
@@ -37,11 +37,11 @@ class Kapt4AndroidIncrementalWithoutPreciseBackupIT : Kapt3AndroidIncrementalWit
         forceKapt4()
     }
 
-    @Disabled("IC doesn't work in Kapt 4")
+    @Disabled("KT-63102 IC doesn't work in Kapt 4")
     override fun testAndroidDaggerIC(gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk) {
     }
 
-    @Disabled("IC doesn't work in Kapt 4")
+    @Disabled("KT-63102 IC doesn't work in Kapt 4")
     override fun testInterProjectIC(gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk) {
     }
 }
