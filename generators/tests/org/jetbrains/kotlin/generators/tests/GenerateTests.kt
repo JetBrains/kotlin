@@ -250,6 +250,10 @@ fun main(args: Array<String>) {
                 model("codegen")
             }
 
+            testClass<AbstractFirParcelizeBytecodeListingTest> {
+                model("codegen")
+            }
+
             testClass<AbstractParcelizeDiagnosticTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
