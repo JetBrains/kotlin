@@ -39,7 +39,7 @@ object FirNotNullAssertionChecker : FirCheckNotNullCallChecker() {
 
         val type = argument.resolvedType.fullyExpandedType(context.session)
 
-        if (!type.canBeNull && context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+        if (!type.canBeNull(context.session) && context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
             reporter.reportOn(expression.source, FirErrors.UNNECESSARY_NOT_NULL_ASSERTION, type, context)
         }
     }

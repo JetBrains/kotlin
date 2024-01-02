@@ -6,15 +6,13 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -235,7 +233,7 @@ class Fir2IrImplicitCastInserter(
                     this
                 }
             }
-            typeCanBeEnhancedOrFlexibleNullable(expandedValueType) && !expandedExpectedType.acceptsNullValues() -> {
+            typeCanBeEnhancedOrFlexibleNullable(expandedValueType, session) && !expandedExpectedType.acceptsNullValues() -> {
                 insertImplicitNotNullCastIfNeeded(expression)
             }
             // TODO: coerceIntToAnotherIntegerType
@@ -258,7 +256,7 @@ class Fir2IrImplicitCastInserter(
     }
 
     private fun ConeKotlinType.acceptsNullValues(): Boolean {
-        return canBeNull || hasEnhancedNullability
+        return canBeNull(session) || hasEnhancedNullability
     }
 
     private fun IrExpression.insertImplicitNotNullCastIfNeeded(expression: FirExpression): IrExpression {
@@ -432,10 +430,10 @@ class Fir2IrImplicitCastInserter(
             )
         }
 
-        internal fun typeCanBeEnhancedOrFlexibleNullable(type: ConeKotlinType): Boolean {
+        internal fun typeCanBeEnhancedOrFlexibleNullable(type: ConeKotlinType, session: FirSession): Boolean {
             return when {
                 type.hasEnhancedNullability -> true
-                type.hasFlexibleNullability && type.canBeNull -> true
+                type.hasFlexibleNullability && type.canBeNull(session) -> true
                 else -> false
             }
         }

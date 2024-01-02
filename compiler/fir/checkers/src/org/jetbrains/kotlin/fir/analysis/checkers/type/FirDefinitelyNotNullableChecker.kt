@@ -19,7 +19,7 @@ object FirDefinitelyNotNullableChecker : FirTypeRefChecker() {
             reporter.reportOn(intersection.source, FirErrors.NULLABLE_ON_DEFINITELY_NOT_NULLABLE, context)
         }
 
-        if (!intersection.isLeftValidForDefinitelyNotNullable) {
+        if (!intersection.isLeftValidForDefinitelyNotNullable(context.session)) {
             reporter.reportOn(intersection.leftType.source, FirErrors.INCORRECT_LEFT_COMPONENT_OF_INTERSECTION, context)
         }
 

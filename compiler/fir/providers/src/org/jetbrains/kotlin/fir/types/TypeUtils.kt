@@ -780,3 +780,24 @@ fun ConeKotlinType.convertToNonRawVersion(): ConeKotlinType {
 
     return withAttributes(attributes.remove(CompilerConeAttributes.RawType))
 }
+
+fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
+    if (isMarkedNullable) {
+        return true
+    }
+    return when (this) {
+        is ConeFlexibleType -> upperBound.canBeNull(session)
+        is ConeDefinitelyNotNullType -> false
+        is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.resolvedBounds.all {
+            // Upper bounds can resolve to typealiases that can expand to nullable types.
+            it.coneType.fullyExpandedType(session).canBeNull(session)
+        }
+        is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session) }
+        else -> fullyExpandedType(session).isNullable
+    }
+}
+
+fun FirIntersectionTypeRef.isLeftValidForDefinitelyNotNullable(session: FirSession) =
+    leftType.coneType.let { it is ConeTypeParameterType && it.canBeNull(session) && !it.isMarkedNullable }
+
+val FirIntersectionTypeRef.isRightValidForDefinitelyNotNullable get() = rightType.coneType.isAny

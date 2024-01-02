@@ -35180,6 +35180,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("kt64645.kt")
+                public void testKt64645() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/castchecks/kt64645.kt");
+                }
+
+                @Test
                 @TestMetadata("smartCastOfNullableExpressionWithExpectedType.kt")
                 public void testSmartCastOfNullableExpressionWithExpectedType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/castchecks/smartCastOfNullableExpressionWithExpectedType.kt");

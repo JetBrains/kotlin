@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.canBeNull
@@ -45,7 +46,7 @@ fun LogicSystem.approveContractStatement(
                     substitutedType.isNullableNothing -> it.processEqNull(isType)
                     else -> {
                         // x is (T & Any) || x !is T? => x != null
-                        val fromNullability = if ((isType && !type.canBeNull) || (!isType && type.isMarkedNullable))
+                        val fromNullability = if ((isType && !type.canBeNull(session)) || (!isType && type.isMarkedNullable))
                             it.processEqNull(false)
                         else
                             mapOf()

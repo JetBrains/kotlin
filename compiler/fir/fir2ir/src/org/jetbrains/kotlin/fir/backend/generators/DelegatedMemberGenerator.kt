@@ -303,7 +303,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
 
                 val substitutor = substitutorByMap(substitution, session)
                 val substitutedType = substitutor.substituteOrSelf(originalFirDeclaration.returnTypeRef.coneType)
-                callTypeCanBeNullable = Fir2IrImplicitCastInserter.typeCanBeEnhancedOrFlexibleNullable(substitutedType)
+                callTypeCanBeNullable = Fir2IrImplicitCastInserter.typeCanBeEnhancedOrFlexibleNullable(substitutedType, session)
                 substitutedType.toIrType(typeOrigin)
             }
             true -> {

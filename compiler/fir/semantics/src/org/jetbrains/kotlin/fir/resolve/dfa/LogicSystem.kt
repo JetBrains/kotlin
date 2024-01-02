@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import kotlinx.collections.immutable.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import java.util.*
 import kotlin.math.max
 
 abstract class LogicSystem(private val context: ConeInferenceContext) {
-    private val nullableNothingType = context.session.builtinTypes.nullableNothingType.type
-    private val anyType = context.session.builtinTypes.anyType.type
+    val session: FirSession get() = context.session
+    private val nullableNothingType = session.builtinTypes.nullableNothingType.type
+    private val anyType = session.builtinTypes.anyType.type
 
     abstract val variableStorage: VariableStorageImpl
 
@@ -340,7 +342,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val result = when {
             unified.isNullableAny -> return null
             unified.isAcceptableForSmartcast() -> unified
-            unified.canBeNull -> return null
+            unified.canBeNull(context.session) -> return null
             else -> context.anyType()
         }
         return PersistentTypeStatement(variable, persistentSetOf(result))

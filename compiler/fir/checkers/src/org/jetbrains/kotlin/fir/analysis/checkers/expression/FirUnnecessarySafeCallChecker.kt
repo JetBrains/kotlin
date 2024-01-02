@@ -24,7 +24,7 @@ object FirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker() {
             reporter.reportOn(expression.source, FirErrors.UNEXPECTED_SAFE_CALL, context)
             return
         }
-        if (!receiverType.canBeNull) {
+        if (!receiverType.canBeNull(context.session)) {
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
                 reporter.reportOn(expression.source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType, context)
             }

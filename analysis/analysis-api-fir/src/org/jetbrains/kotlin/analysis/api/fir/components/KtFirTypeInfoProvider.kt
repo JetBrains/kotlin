@@ -35,7 +35,7 @@ internal class KtFirTypeInfoProvider(
         return (type as KtFirType).coneType.functionTypeKind(analysisSession.useSiteSession)
     }
 
-    override fun canBeNull(type: KtType): Boolean = (type as KtFirType).coneType.canBeNull
+    override fun canBeNull(type: KtType): Boolean = (type as KtFirType).coneType.canBeNull(analysisSession.useSiteSession)
 
     override fun isDenotable(type: KtType): Boolean {
         val coneType = (type as KtFirType).coneType

@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getClassAndItsOuterClassesWhenLocal
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -58,8 +55,8 @@ fun checkCasting(
         return if (result) CastingType.Possible else CastingType.Impossible
     }
 
-    val lhsNullable = lhsLowerType.canBeNull
-    val rhsNullable = rhsLowerType.canBeNull
+    val lhsNullable = lhsLowerType.canBeNull(session)
+    val rhsNullable = rhsLowerType.canBeNull(session)
     if (lhsLowerType.isNothing) return CastingType.Possible
     if (lhsLowerType.isNullableNothing && !rhsNullable) {
         return if (isSafeCase) CastingType.Always else CastingType.Impossible
@@ -150,7 +147,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     // here we want to restrict cases such as `x is T` for x = T?, when T might have nullable upper bound
     if (isNonReifiedTypeParameter && !isUpcast) {
         // hack to save previous behavior in case when `x is T`, where T is not nullable, see IsErasedNullableTasT.kt
-        val nullableToDefinitelyNotNull = !subtype.canBeNull && supertype.withNullability(ConeNullability.NOT_NULL, typeContext) == subtype
+        val nullableToDefinitelyNotNull = !subtype.canBeNull(context.session) && supertype.withNullability(ConeNullability.NOT_NULL, typeContext) == subtype
         if (!nullableToDefinitelyNotNull) {
             return true
         }

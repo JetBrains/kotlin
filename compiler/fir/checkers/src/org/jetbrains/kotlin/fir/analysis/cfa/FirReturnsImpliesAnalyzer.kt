@@ -151,7 +151,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     private fun Operation.canBeTrueFor(session: FirSession, type: ConeKotlinType): Boolean = when (this) {
         Operation.EqTrue, Operation.EqFalse ->
             AbstractTypeChecker.isSubtypeOf(session.typeContext, session.builtinTypes.booleanType.type, type)
-        Operation.EqNull -> type.canBeNull
+        Operation.EqNull -> type.canBeNull(session)
         Operation.NotEqNull -> !type.isNullableNothing
     }
 

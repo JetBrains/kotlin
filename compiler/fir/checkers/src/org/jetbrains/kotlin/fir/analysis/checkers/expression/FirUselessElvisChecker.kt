@@ -25,7 +25,7 @@ object FirUselessElvisChecker : FirElvisExpressionChecker() {
 
         val lhsType = expression.lhs.resolvedType
         if (lhsType is ConeErrorType) return
-        if (!lhsType.canBeNull) {
+        if (!lhsType.canBeNull(context.session)) {
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
                 reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS, lhsType, context)
             }
