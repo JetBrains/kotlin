@@ -30,8 +30,11 @@ const val pathForConfigurationImitation = ""
 val uiComparatorStyleForCompiler = UIComparatorStyle(
     title = "K1/K2 UI Comparator",
     initialSource = """
+        // WITH_STDLIB
+        // FULL_JDK
+
         fun main() {
-            println("Done")
+            happiness
         }
     """.trimIndent(),
     leftViewerTitle = "K1",
