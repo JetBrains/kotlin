@@ -4,6 +4,7 @@
  */
 
 package org.jetbrains.kotlin.bir.backend
+
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 
@@ -11,19 +12,25 @@ context(BirBackendContext)
 abstract class BirLoweringPhase {
     abstract fun lower(module: BirModuleFragment)
 
-    protected inline fun <reified E : BirElement> registerIndexKey(
+    protected fun <E : BirElement> registerIndexKey(
+        elementClass: BirElementClass<E>,
+        includeExternalModules: Boolean,
+    ): BirElementsIndexKey<E> = registerIndexKey(elementClass, null, includeExternalModules)
+
+    protected inline fun <E : BirElement> registerIndexKey(
+        elementClass: BirElementClass<E>,
         includeExternalModules: Boolean,
         crossinline condition: (E) -> Boolean,
-    ): BirElementsIndexKey<E> =
-        registerIndexKey<E>(includeExternalModules, { element -> condition(element as E) }, E::class.java)
+    ): BirElementsIndexKey<E> = registerIndexKey(elementClass, { element ->
+        @Suppress("UNCHECKED_CAST")
+        condition(element as E)
+    }, includeExternalModules)
 
-    protected inline fun <reified E : BirElement> registerIndexKey(includeExternalModules: Boolean): BirElementsIndexKey<E> =
-        registerIndexKey<E>(includeExternalModules, null, E::class.java)
-
-    protected fun <E : BirElement> registerIndexKey(
-        includeExternalModules: Boolean,
+    @PublishedApi
+    internal fun <E : BirElement> registerIndexKey(
+        elementClass: BirElementClass<E>,
         condition: BirElementIndexMatcher?,
-        elementClass: Class<E>,
+        includeExternalModules: Boolean,
     ): BirElementsIndexKey<E> {
         val key = BirElementsIndexKey<E>(condition, elementClass)
         compiledBir.registerElementIndexingKey(key)
@@ -35,35 +42,37 @@ abstract class BirLoweringPhase {
     }
 
     protected fun <E : BirElement, R : BirElement> registerBackReferencesKey(
-        block: BirElementBackReferenceRecorder<R>,
-        elementClass: Class<E>,
+        elementClass: BirElementClass<E>,
+        getBackReference: BirElementBackReferenceRecorder<R>,
     ): BirElementBackReferencesKey<E, R> {
-        val key = BirElementBackReferencesKey<E, R>(block, elementClass)
+        val key = BirElementBackReferencesKey<E, R>(getBackReference, elementClass)
         compiledBir.registerElementBackReferencesKey(key)
         return key
     }
 
-    protected inline fun <reified E : BirElement, R : BirElement> registerMultipleBackReferencesKey(
-        crossinline block: context(BirElementBackReferenceRecorderScope) (E) -> Unit,
-    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(object : BirElementBackReferenceRecorder<R> {
-        context(BirElementBackReferenceRecorderScope)
-        override fun recordBackReferences(element: BirElementBase) {
-            if (element is E) {
-                block(this@BirElementBackReferenceRecorderScope, element)
-            }
-        }
-    }, E::class.java)
-
     protected inline fun <reified E : BirElement, R : BirElement> registerBackReferencesKey(
+        elementClass: BirElementClass<E>,
         crossinline block: (E) -> R?,
-    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(object : BirElementBackReferenceRecorder<R> {
+    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(elementClass, object : BirElementBackReferenceRecorder<R> {
         context(BirElementBackReferenceRecorderScope)
         override fun recordBackReferences(element: BirElementBase) {
             if (element is E) {
                 recordReference(block(element))
             }
         }
-    }, E::class.java)
+    })
+
+    protected inline fun <reified E : BirElement, R : BirElement> registerMultipleBackReferencesKey(
+        elementClass: BirElementClass<E>,
+        crossinline getBackReferences: context(BirElementBackReferenceRecorderScope) (E) -> Unit,
+    ): BirElementBackReferencesKey<E, R> = registerBackReferencesKey<E, R>(elementClass, object : BirElementBackReferenceRecorder<R> {
+        context(BirElementBackReferenceRecorderScope)
+        override fun recordBackReferences(element: BirElementBase) {
+            if (element is E) {
+                getBackReferences(this@BirElementBackReferenceRecorderScope, element)
+            }
+        }
+    })
 
     protected fun <E : BirElement> getAllElementsWithIndex(key: BirElementsIndexKey<E>): Sequence<E> {
         var elements = compiledBir.getElementsWithIndex(key)

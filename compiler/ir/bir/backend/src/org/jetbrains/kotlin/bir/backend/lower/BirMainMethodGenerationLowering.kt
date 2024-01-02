@@ -45,7 +45,7 @@ context(JvmBirBackendContext)
 class BirMainMethodGenerationLowering : BirLoweringPhase() {
     private val jvmNameKey = acquireProperty(BirJvmNameLowering.JvmName)
 
-    private val mainishFunctions = registerIndexKey<BirSimpleFunction>(false) { function ->
+    private val mainishFunctions = registerIndexKey(BirSimpleFunction, false) { function ->
         function.extensionReceiverParameter == null
                 && function.valueParameters.size <= 1
                 && function.typeParameters.isEmpty()

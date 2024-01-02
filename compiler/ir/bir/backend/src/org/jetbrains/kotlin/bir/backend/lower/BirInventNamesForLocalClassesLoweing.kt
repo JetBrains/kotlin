@@ -29,11 +29,11 @@ abstract class BirInventNamesForLocalClassesLowering(
     private val allowTopLevelCallables: Boolean,
     private val generateNamesForRegeneratedObjects: Boolean = false,
 ) : BirLoweringPhase() {
-    private val classes = registerIndexKey<BirClass>(false)
-    private val functionExpressions = registerIndexKey<BirFunctionExpression>(false)
-    private val functionReferences = registerIndexKey<BirFunctionReference>(false)
-    private val propertyReferences = registerIndexKey<BirPropertyReference>(false)
-    private val functionsToName = registerIndexKey<BirSimpleFunction>(false) { function ->
+    private val classes = registerIndexKey(BirClass, false)
+    private val functionExpressions = registerIndexKey(BirFunctionExpression, false)
+    private val functionReferences = registerIndexKey(BirFunctionReference, false)
+    private val propertyReferences = registerIndexKey(BirPropertyReference, false)
+    private val functionsToName = registerIndexKey(BirSimpleFunction, false) { function ->
         // Suspend functions have a continuation, which is essentially a local class
         function.isSuspend && function.correspondingPropertySymbol == null && function.body != null && function.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
     }

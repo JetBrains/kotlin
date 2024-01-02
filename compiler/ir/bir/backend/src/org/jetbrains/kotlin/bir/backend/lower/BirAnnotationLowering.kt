@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 
 context(JvmBirBackendContext)
 class BirAnnotationLowering : BirLoweringPhase() {
-    private val annotationClasses = registerIndexKey<BirClass>(false) { it.kind == ClassKind.ANNOTATION_CLASS }
+    private val annotationClasses = registerIndexKey(BirClass,false) { it.kind == ClassKind.ANNOTATION_CLASS }
 
     override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(annotationClasses).forEach { annotationClass ->

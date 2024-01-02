@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 context(JvmBirBackendContext)
 class BirVarargLowering : BirLoweringPhase() {
-    private val functionAccessesWithMissingArgument = registerIndexKey<BirFunctionAccessExpression>(false) { expression ->
+    private val functionAccessesWithMissingArgument = registerIndexKey(BirFunctionAccessExpression, false) { expression ->
         expression.valueArguments.any { it == null }
     }
 
-    private val varargs = registerIndexKey<BirVararg>(false)
+    private val varargs = registerIndexKey(BirVararg, false)
 
     override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(functionAccessesWithMissingArgument).forEach { expression ->
