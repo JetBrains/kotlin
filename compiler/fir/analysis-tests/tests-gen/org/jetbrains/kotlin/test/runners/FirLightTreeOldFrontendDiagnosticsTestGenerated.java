@@ -36993,6 +36993,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("numberReceiverNotValid.kt")
+            public void testNumberReceiverNotValid() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/numberReceiverNotValid.kt");
+            }
+
+            @Test
             @TestMetadata("overloadResolutionOfBasicOperations.kt")
             public void testOverloadResolutionOfBasicOperations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/unsignedTypes/overloadResolutionOfBasicOperations.kt");

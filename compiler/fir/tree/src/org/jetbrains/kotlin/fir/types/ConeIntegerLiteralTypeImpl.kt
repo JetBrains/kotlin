@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class ConeIntegerLiteralConstantTypeImpl(
     value: Long,
@@ -139,10 +140,17 @@ fun ConeKotlinType.approximateIntegerLiteralType(expectedType: ConeKotlinType? =
 
 private object ConeIntegerLiteralTypeExtensions {
     fun createSupertypeList(type: ConeIntegerLiteralType): List<ConeClassLikeType> {
-        return listOf(
-            createClassLikeType(StandardClassIds.Number),
+        val comparableSuperType =
             ConeClassLikeTypeImpl(StandardClassIds.Comparable.toLookupTag(), arrayOf(ConeKotlinTypeProjectionIn(type)), false)
-        )
+
+        return if (type.possibleTypes.none { it.isUnsignedTypeOrNullableUnsignedType }) {
+            listOf(
+                createClassLikeType(StandardClassIds.Number),
+                comparableSuperType,
+            )
+        } else {
+            listOf(comparableSuperType)
+        }
     }
 
     fun createClassLikeType(classId: ClassId): ConeClassLikeType {
