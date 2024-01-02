@@ -17,7 +17,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: null
     getContainingJvmClassName: one.LibKt
-    getContainingModule: KtLibraryModule "Library library"
+    getContainingModule: KtLibraryModule "Library lib"
     deprecationStatus: null
   callableIdIfNonLocal: one/topLevelVariable
   contextReceivers: []
@@ -44,7 +44,7 @@ KtKotlinPropertySymbol:
     visibility: Public
     getContainingFileSymbol: null
     getContainingJvmClassName: one.LibKt
-    getContainingModule: KtLibraryModule "Library library"
+    getContainingModule: KtLibraryModule "Library lib"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -102,7 +102,7 @@ KtKotlinPropertySymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: null
-      getContainingModule: KtLibraryModule "Library library"
+      getContainingModule: KtLibraryModule "Library lib"
       deprecationStatus: null
     receiverParameter: null
     returnType: KtUsualClassType:
@@ -134,20 +134,20 @@ KtKotlinPropertySymbol:
         typeParameters: []
         getContainingFileSymbol: null
         getContainingJvmClassName: null
-        getContainingModule: KtLibraryModule "Library library"
+        getContainingModule: KtLibraryModule "Library lib"
         deprecationStatus: null
     ]
     visibility: Public
     getContainingFileSymbol: null
     getContainingJvmClassName: one.LibKt
-    getContainingModule: KtLibraryModule "Library library"
+    getContainingModule: KtLibraryModule "Library lib"
     deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: one.LibKt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KtLibraryModule "Library lib"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getTopLevelVariable

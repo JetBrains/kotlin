@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,9 +15,15 @@ import java.nio.file.Path
 import kotlin.io.path.*
 
 internal object CompilerExecutor {
-    fun compileLibrary(compilerKind: CompilerKind, sourcesPath: Path, options: List<String>, compilationErrorExpected: Boolean): Path {
+    fun compileLibrary(
+        compilerKind: CompilerKind,
+        sourcesPath: Path,
+        options: List<String>,
+        compilationErrorExpected: Boolean,
+        libraryName: String,
+    ): Path {
         val library = try {
-            compile(compilerKind, sourcesPath, options)
+            compile(compilerKind, sourcesPath, options, libraryName)
         } catch (e: Throwable) {
             if (!compilationErrorExpected) {
                 throw IllegalStateException("Unexpected compilation error while compiling library", e)
@@ -34,12 +40,13 @@ internal object CompilerExecutor {
         return library
     }
 
-    private fun compile(compilerKind: CompilerKind, sourcesPath: Path, options: List<String>): Path {
+    private fun compile(compilerKind: CompilerKind, sourcesPath: Path, options: List<String>, libraryName: String): Path {
         val sourceFiles = sourcesPath.toFile().walkBottomUp()
         val library = when (compilerKind) {
-            CompilerKind.JVM -> sourcesPath / "library.jar"
-            CompilerKind.JS -> sourcesPath / "library.klib"
+            CompilerKind.JVM -> sourcesPath / "$libraryName.jar"
+            CompilerKind.JS -> sourcesPath / "$libraryName.klib"
         }
+
         when (compilerKind) {
             CompilerKind.JVM -> {
                 val commands = buildList {
@@ -53,7 +60,7 @@ internal object CompilerExecutor {
             CompilerKind.JS -> {
                 val commands = buildList {
                     add(K2JSCompilerArguments::metaInfo.cliArgument)
-                    add(K2JSCompilerArguments::moduleName.cliArgument); add("library")
+                    add(K2JSCompilerArguments::moduleName.cliArgument); add(libraryName)
                     add(K2JSCompilerArguments::outputDir.cliArgument); add(library.parent.absolutePathString())
                     add(K2JSCompilerArguments::irProduceKlibFile.cliArgument)
                     sourceFiles.mapTo(this) { it.absolutePath }

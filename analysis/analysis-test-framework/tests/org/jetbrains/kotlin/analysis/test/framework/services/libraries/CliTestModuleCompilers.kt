@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,12 +37,13 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         compilerKind,
         tmpDir,
         buildCompilerOptions(module, testServices),
-        compilationErrorExpected = Directives.COMPILATION_ERRORS in module.directives
+        compilationErrorExpected = Directives.COMPILATION_ERRORS in module.directives,
+        libraryName = module.name,
     )
 
     override fun compileTestModuleToLibrarySources(module: TestModule, testServices: TestServices): Path {
         val tmpDir = KtTestUtil.tmpDir("testSourcesToCompile").toPath()
-        val librarySourcesPath = tmpDir / "library-sources.jar"
+        val librarySourcesPath = tmpDir / "${module.name}-sources.jar"
         val manifest = Manifest().apply { mainAttributes[Attributes.Name.MANIFEST_VERSION] = "1.0" }
         JarOutputStream(librarySourcesPath.outputStream(), manifest).use { jarOutputStream ->
             for (testFile in module.files) {
@@ -50,6 +51,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
                 addFileToJar(testFile.relativePath, text, jarOutputStream)
             }
         }
+
         return librarySourcesPath
     }
 
