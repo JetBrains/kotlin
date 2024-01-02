@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.bir
 
 class BirElementDynamicPropertyManager {
-    private val elementClasses = ElementClassDataMap()
+    private val elementClasses = arrayOfNulls<ElementClassData>(BirMetadata.allElements.maxOf { it.id } + 1)
     private var totalTokenRegistrations = 0
 
     fun <E : BirElement, T> acquireProperty(key: BirElementDynamicPropertyKey<E, T>): BirElementDynamicPropertyToken<E, T> {
-        val classData = getElementClassData(key.elementClass)
+        val classData = getElementClassData(key.elementClass.id)
 
         refreshKeysFromAncestors(classData)
         classData.keys += key
@@ -23,32 +23,42 @@ class BirElementDynamicPropertyManager {
         return BirElementDynamicPropertyToken(this, key)
     }
 
-    private fun getElementClassData(elementClass: Class<*>): ElementClassData {
-        val data = elementClasses[elementClass]
-        if (data.ancestorElements != null) {
+    private fun getElementClassData(elementClassId: Int): ElementClassData {
+        val data = elementClasses[elementClassId]
+        if (data?.ancestorElements != null) {
             return data
         }
 
-        val ancestorElements = mutableSetOf<ElementClassData>()
-        fun visitParents(clazz: Class<*>) {
-            if (clazz !== elementClass) {
-                if (!BirElement::class.java.isAssignableFrom(clazz)) {
-                    return
-                }
+        return computeElementClassData(elementClassId, data)
+    }
 
-                if (!ancestorElements.add(getElementClassData(clazz))) {
+    private fun computeElementClassData(elementClassId: Int, currentData: ElementClassData?): ElementClassData {
+        var data = currentData
+
+        val elementClass = BirMetadata.allElementsById[elementClassId]!!
+        if (data == null) {
+            data = ElementClassData(elementClass)
+            elementClasses[elementClassId] = data
+        }
+
+        val ancestorElements = mutableSetOf<ElementClassData>()
+        fun visitParents(javaClass: Class<*>) {
+            if (javaClass != elementClass.javaClass) {
+                val clazz = BirMetadata.allElementsByJavaClass[javaClass] ?: return
+                val elementClassData = getElementClassData(clazz.id)
+                if (!ancestorElements.add(elementClassData)) {
                     return
                 }
             }
 
-            clazz.superclass?.let {
+            javaClass.superclass?.let {
                 visitParents(it)
             }
-            clazz.interfaces.forEach {
+            javaClass.interfaces.forEach {
                 visitParents(it)
             }
         }
-        visitParents(elementClass)
+        visitParents(elementClass.javaClass)
 
         data.ancestorElements = ancestorElements.toList()
         return data
@@ -64,37 +74,34 @@ class BirElementDynamicPropertyManager {
         }
     }
 
-    internal fun getInitialDynamicPropertyArraySize(elementClass: Class<*>): Int {
-        val data = getElementClassData(elementClass)
+    internal fun getInitialDynamicPropertyArraySize(elementClassId: Int): Int {
+        val data = getElementClassData(elementClassId)
         refreshKeysFromAncestors(data)
         return data.keyCount
     }
 
     private class ElementClassData(
-        val elementClass: Class<*>,
+        val elementClass: BirElementClass,
     ) {
         var ancestorElements: List<ElementClassData>? = null
         val keys = mutableSetOf<BirElementDynamicPropertyKey<*, *>>()
         var keyCount = 0
         var lastSeenTotalTokenRegistrations = 0
 
-        override fun toString() = elementClass.simpleName
-    }
-
-    private class ElementClassDataMap : ClassValue<ElementClassData>() {
-        override fun computeValue(type: Class<*>): ElementClassData {
-            return ElementClassData(type)
-        }
+        override fun toString() = elementClass.toString()
     }
 }
 
 class BirElementDynamicPropertyKey<E : BirElement, T>(
-    internal val elementClass: Class<E>,
+    internal val elementClass: BirElementClass,
 ) {
     internal var index = -1
 }
 
-inline fun <reified E : BirElement, T> BirElementDynamicPropertyKey() = BirElementDynamicPropertyKey<E, T>(E::class.java)
+inline fun <reified E : BirElement, T> BirElementDynamicPropertyKey(): BirElementDynamicPropertyKey<E, T> {
+    val elementClass = BirMetadata.allElementsByJavaClass.getValue(E::class.java)
+    return BirElementDynamicPropertyKey<E, T>(elementClass)
+}
 
 class BirElementDynamicPropertyToken<E : BirElement, T> internal constructor(
     internal val manager: BirElementDynamicPropertyManager,
