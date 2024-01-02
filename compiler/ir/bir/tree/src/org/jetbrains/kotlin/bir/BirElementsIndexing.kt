@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class BirElementsIndexKey<E : BirElement>(
     val condition: BirElementIndexMatcher?,
-    val elementClass: Class<E>,
+    val elementClass: BirElementClass<E>,
 ) : BirElementGeneralIndexerKey
 
 fun interface BirElementIndexMatcher : BirElementGeneralIndexer {
@@ -31,7 +31,7 @@ internal fun interface BirElementIndexClassifier {
 
 class BirElementBackReferencesKey<E : BirElement, R : BirElement>(
     val recorder: BirElementBackReferenceRecorder<R>,
-    val elementClass: Class<E>,
+    val elementClass: BirElementClass<E>,
 ) : BirElementGeneralIndexerKey
 
 fun interface BirElementBackReferenceRecorder<R : BirElement> : BirElementGeneralIndexer {
@@ -57,12 +57,12 @@ internal object BirElementIndexClassifierFunctionGenerator {
     private val generatedFunctionClassLoader by lazy { ByteArrayFunctionClassLoader(BirElement::class.java.classLoader) }
     private val classifierFunctionClassCache = ConcurrentHashMap<Set<IndexerCacheKey>, Class<*>>()
 
-    private data class IndexerCacheKey(val conditionClass: Class<*>?, val elementClass: Class<*>, val index: Int)
+    private data class IndexerCacheKey(val conditionClass: Class<*>?, val elementClass: BirElementClass<*>, val index: Int)
 
     class Indexer(
         val kind: BirElementGeneralIndexer.Kind,
         val indexerFunction: BirElementGeneralIndexer?,
-        val elementClass: Class<out BirElement>,
+        val elementClass: BirElementClass<*>,
         val index: Int,
     )
 
@@ -301,11 +301,12 @@ internal object BirElementIndexClassifierFunctionGenerator {
     }
 
     private fun buildClassMatchingStructure(indexers: List<Indexer>): List<ElementSwitchNode> {
-        val elementClassNodes = BirMetadata.allElements.associate { it.javaClass to ElementClassInfo(it) }
+        val elementClassNodes = BirMetadata.allElements.associateWith { ElementClassInfo(it) }
 
         elementClassNodes.values.forEach { element ->
             val clazz = element.elementClass.javaClass
             val superElementClasses = (listOf(clazz.superclass) + clazz.interfaces)
+                .mapNotNull { BirMetadata.allElementsByJavaClass[it] }
                 .mapNotNull { elementClassNodes[it] }
             element.superClasses = superElementClasses.toSet()
             superElementClasses.forEach {

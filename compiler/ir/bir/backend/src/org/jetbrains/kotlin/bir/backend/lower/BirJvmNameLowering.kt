@@ -26,7 +26,7 @@ class BirJvmNameLowering : BirLoweringPhase() {
     private val JvmNameAnnotation by lz { birBuiltIns.findClass(DescriptorUtils.JVM_NAME) }
 
     private val jvmNameKey = acquireProperty(JvmName)
-    private val jvmNameAnnotations = registerIndexKey<BirConstructorCall>(false) {
+    private val jvmNameAnnotations = registerIndexKey(BirConstructorCall, false) {
         it.constructedClass == JvmNameAnnotation
     }
 

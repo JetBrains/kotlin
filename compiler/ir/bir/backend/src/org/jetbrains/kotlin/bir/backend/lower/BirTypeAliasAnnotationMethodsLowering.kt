@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 
 context(JvmBirBackendContext)
 class BirTypeAliasAnnotationMethodsLowering : BirLoweringPhase() {
-    private val annotatedTypeAliases = registerIndexKey<BirTypeAlias>(false) { it.annotations.isNotEmpty() }
+    private val annotatedTypeAliases = registerIndexKey<BirTypeAlias>(BirTypeAlias, false) { it.annotations.isNotEmpty() }
 
     override fun lower(module: BirModuleFragment) {
         getAllElementsWithIndex(annotatedTypeAliases).forEach { alias ->
