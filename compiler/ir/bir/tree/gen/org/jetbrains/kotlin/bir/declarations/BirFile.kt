@@ -27,5 +27,5 @@ abstract class BirFile(elementClass: BirElementClass) : BirPackageFragment(eleme
         annotations.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirFile::class.java, 30, true)
+    companion object : BirElementClass(BirFile::class.java, 31, true)
 }

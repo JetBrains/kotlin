@@ -19,5 +19,5 @@ import org.jetbrains.kotlin.bir.BirElementClass
 abstract class BirErrorExpression(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
     abstract var description: String
 
-    companion object : BirElementClass(BirErrorExpression::class.java, 26, true)
+    companion object : BirElementClass(BirErrorExpression::class.java, 27, true)
 }

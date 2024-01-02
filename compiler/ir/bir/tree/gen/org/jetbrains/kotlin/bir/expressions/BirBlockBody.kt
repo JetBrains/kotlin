@@ -22,5 +22,5 @@ abstract class BirBlockBody(elementClass: BirElementClass) : BirBody(elementClas
         statements.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirBlockBody::class.java, 2, true)
+    companion object : BirElementClass(BirBlockBody::class.java, 3, true)
 }

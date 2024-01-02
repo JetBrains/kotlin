@@ -26,5 +26,5 @@ abstract class BirAnonymousInitializer(elementClass: BirElementClass) : BirImplE
         body?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirAnonymousInitializer::class.java, 0, true)
+    companion object : BirElementClass(BirAnonymousInitializer::class.java, 1, true)
 }
