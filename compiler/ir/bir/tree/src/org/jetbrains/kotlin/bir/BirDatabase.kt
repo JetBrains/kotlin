@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.bir
 
+import org.jetbrains.kotlin.bir.util.BackReferenceRecorder
 import java.lang.AutoCloseable
 
 class BirDatabase : BirElementParent() {
@@ -205,21 +206,6 @@ class BirDatabase : BirElementParent() {
     internal fun indexElementAndDependent(element: BirElementBase) {
         indexElement(element, true)
         (element as? BirImplElementBase)?.indexInvalidatedDependentElements()
-    }
-
-    internal class BackReferenceRecorder() : BirElementBackReferenceRecorderScope {
-        var recordedRef: BirElementBase? = null
-
-        override fun recordReference(forwardRef: BirElement?) {
-            if (forwardRef == null) return
-
-            if (recordedRef == null) {
-                recordedRef = forwardRef as BirElementBase
-            } else {
-                if (recordedRef !== forwardRef)
-                    TODO("multiple forward refs for element")
-            }
-        }
     }
 
     private fun removeElementFromIndex(element: BirElementBase) {
