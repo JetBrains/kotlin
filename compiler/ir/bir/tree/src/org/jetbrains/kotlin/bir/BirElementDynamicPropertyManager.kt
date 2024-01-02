@@ -81,7 +81,7 @@ class BirElementDynamicPropertyManager {
     }
 
     private class ElementClassData(
-        val elementClass: BirElementClass,
+        val elementClass: BirElementClass<*>,
     ) {
         var ancestorElements: List<ElementClassData>? = null
         val keys = mutableSetOf<BirElementDynamicPropertyKey<*, *>>()
@@ -93,14 +93,15 @@ class BirElementDynamicPropertyManager {
 }
 
 class BirElementDynamicPropertyKey<E : BirElement, T>(
-    internal val elementClass: BirElementClass,
+    internal val elementClass: BirElementClass<E>,
 ) {
     internal var index = -1
 }
 
 inline fun <reified E : BirElement, T> BirElementDynamicPropertyKey(): BirElementDynamicPropertyKey<E, T> {
     val elementClass = BirMetadata.allElementsByJavaClass.getValue(E::class.java)
-    return BirElementDynamicPropertyKey<E, T>(elementClass)
+    @Suppress("UNCHECKED_CAST")
+    return BirElementDynamicPropertyKey<E, T>(elementClass as BirElementClass<E>)
 }
 
 class BirElementDynamicPropertyToken<E : BirElement, T> internal constructor(

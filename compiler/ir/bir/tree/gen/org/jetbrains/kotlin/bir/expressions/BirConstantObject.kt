@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.bir.types.BirType
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constantObject]
  */
-abstract class BirConstantObject(elementClass: BirElementClass) : BirConstantValue(elementClass), BirElement {
+abstract class BirConstantObject(elementClass: BirElementClass<*>) : BirConstantValue(elementClass), BirElement {
     abstract var constructor: BirConstructorSymbol
     abstract val valueArguments: BirChildElementList<BirConstantValue>
     abstract var typeArguments: List<BirType>
@@ -29,5 +29,5 @@ abstract class BirConstantObject(elementClass: BirElementClass) : BirConstantVal
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirConstantObject::class.java, 13, true)
+    companion object : BirElementClass<BirConstantObject>(BirConstantObject::class.java, 13, true)
 }

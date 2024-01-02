@@ -21,5 +21,5 @@ interface BirOverridableDeclaration<S : BirSymbol> : BirElement, BirOverridableM
     var isFakeOverride: Boolean
     var overriddenSymbols: List<S>
 
-    companion object : BirElementClass(BirOverridableDeclaration::class.java, 91, false)
+    companion object : BirElementClass<BirOverridableDeclaration<*>>(BirOverridableDeclaration::class.java, 91, false)
 }

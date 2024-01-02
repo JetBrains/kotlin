@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.types.Variance
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeParameter]
  */
-abstract class BirTypeParameter(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement, BirDeclaration, BirDeclarationWithName, BirTypeParameterSymbol {
+abstract class BirTypeParameter(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement, BirDeclaration, BirDeclarationWithName, BirTypeParameterSymbol {
     abstract var variance: Variance
     abstract var index: Int
     abstract var isReified: Boolean
@@ -31,5 +31,5 @@ abstract class BirTypeParameter(elementClass: BirElementClass) : BirImplElementB
         annotations.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirTypeParameter::class.java, 62, true)
+    companion object : BirElementClass<BirTypeParameter>(BirTypeParameter::class.java, 62, true)
 }

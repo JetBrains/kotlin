@@ -24,7 +24,7 @@ import kotlin.experimental.inv
 import kotlin.experimental.or
 
 @Suppress("EqualsOrHashCode")
-abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(), BirElement {
+abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementParent(), BirElement {
     /**
      * Database reference may be stale.
      * To actualize it for all elements in a database, call [BirDatabase.realizeTreeMovements]

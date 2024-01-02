@@ -16,6 +16,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.dynamicExpression]
  */
-abstract class BirDynamicExpression(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
-    companion object : BirElementClass(BirDynamicExpression::class.java, 81, false)
+abstract class BirDynamicExpression(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
+    companion object : BirElementClass<BirDynamicExpression>(BirDynamicExpression::class.java, 81, false)
 }

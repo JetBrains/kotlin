@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.bir.declarations.BirVariable
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.catch]
  */
-abstract class BirCatch(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement {
+abstract class BirCatch(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement {
     abstract var catchParameter: BirVariable?
     abstract var result: BirExpression?
 
@@ -25,5 +25,5 @@ abstract class BirCatch(elementClass: BirElementClass) : BirImplElementBase(elem
         result?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirCatch::class.java, 7, true)
+    companion object : BirElementClass<BirCatch>(BirCatch::class.java, 7, true)
 }
