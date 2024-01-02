@@ -126,7 +126,7 @@ public class A {
 
 // FILE: main.kt
 fun main(a: A, b: A.B, c: A.C) {
-    a.foo("", null)?.length
+    a.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.foo("", null).length
     a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
 
@@ -136,7 +136,7 @@ fun main(a: A, b: A.B, c: A.C) {
     a.bar().length
     a.bar()!!.length
 
-    a.field?.length
+    a.field<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.field.length
 
     a.baz()<!UNSAFE_CALL!>.<!>get(0)
@@ -149,7 +149,7 @@ fun main(a: A, b: A.B, c: A.C) {
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo(null, "")<!>.length
 
     b.foobar(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
-    b.foobar("", null)?.length
+    b.foobar("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.bar()<!>.length
     b.bar()!!.length
@@ -162,7 +162,7 @@ fun main(a: A, b: A.B, c: A.C) {
     b.baz()!!.get(0)?.get(0)
 
     // c
-    c.foo("", null)?.length
+    c.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     c.foo("", null).length
     c.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
 

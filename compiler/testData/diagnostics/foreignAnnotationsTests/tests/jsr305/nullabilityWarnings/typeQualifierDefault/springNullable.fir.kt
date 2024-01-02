@@ -63,7 +63,7 @@ public class A {
 
 // FILE: main.kt
 fun main(a: A) {
-    a.foo("", null)?.length
+    a.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.foo("", null).length
     a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
 

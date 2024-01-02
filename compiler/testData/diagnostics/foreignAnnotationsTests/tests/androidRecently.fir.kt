@@ -43,10 +43,10 @@ fun main(a: A<String>, a1: A<String?>) {
     a1.baz(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)!!.length
 
     a.baz2("").length
-    a.baz2("")?.length
+    a.baz2("")<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.baz2("")!!.length
 
     a.baz2(null).length
-    a.baz2(null)?.length
+    a.baz2(null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.baz2(null)!!.length
 }

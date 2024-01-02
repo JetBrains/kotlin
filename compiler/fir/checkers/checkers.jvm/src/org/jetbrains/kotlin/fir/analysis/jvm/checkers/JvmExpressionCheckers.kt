@@ -72,4 +72,9 @@ object JvmExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirAssignmentJavaNullabilityWarningChecker,
         )
+
+    override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker>
+        get() = setOf(
+            FirJavaUnnecessarySafeCallChecker,
+        )
 }

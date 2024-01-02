@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // MODULE: javaModule
 // FILE: one/two/FirstModuleClass.java
 package one.two;
