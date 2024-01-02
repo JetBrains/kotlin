@@ -29,13 +29,13 @@ context(JvmBirBackendContext)
 class BirJvmStaticInObjectLowering : BirLoweringPhase() {
     private val JvmStaticAnnotation by lz { birBuiltIns.findClass(JVM_STATIC_ANNOTATION_FQ_NAME) }
 
-    private val functionsWithStaticAnnotationKey = registerIndexKey<BirSimpleFunction>(false) {
+    private val functionsWithStaticAnnotationKey = registerIndexKey(BirSimpleFunction, false) {
         it.isJvmStaticDeclaration()
     }
-    private val callsToJvmStaticObjects = registerIndexKey<BirMemberAccessExpression<*>>(false) { call ->
+    private val callsToJvmStaticObjects = registerIndexKey(BirMemberAccessExpression, false) { call ->
         (call.symbol as? BirDeclaration)?.isJvmStaticDeclaration() == true
     }
-    private val valueReads = registerBackReferencesKey<BirGetValue, _> { it.symbol.owner }
+    private val valueReads = registerBackReferencesKey(BirGetValue) { it.symbol.owner }
 
     private val fieldForObjectInstanceToken = acquireProperty(JvmCachedDeclarations.FieldForObjectInstance)
     private val interfaceCompanionFieldDeclaration = acquireProperty(JvmCachedDeclarations.InterfaceCompanionFieldDeclaration)

@@ -366,7 +366,7 @@ class BirDatabase : BirElementParent() {
     private inner class ElementsIndexSlot(
         val index: Int,
         val condition: BirElementIndexMatcher?,
-        val elementClass: Class<*>,
+        val elementClass: BirElementClass<*>,
     ) {
         var array = emptyArray<BirElementBase?>()
             private set

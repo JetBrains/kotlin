@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 context(JvmBirBackendContext)
 class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
-    private val functionExpressions = registerIndexKey<BirFunctionExpression>(false)
+    private val functionExpressions = registerIndexKey(BirFunctionExpression, false)
     private val originalBeforeInlineToken = acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
