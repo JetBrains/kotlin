@@ -115,34 +115,34 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Cannot refer to forward declaration ''{0}'' from class literal.",
             FirDiagnosticRenderers.RENDER_TYPE
         )
-        map.put(TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE, "Only 0, 1 or 2 parameters are supported here")
-        map.put(PROPERTY_MUST_BE_VAR, "@{0} property must be var", TO_STRING)
-        map.put(MUST_NOT_HAVE_EXTENSION_RECEIVER, "{0} must not have extension receiver", TO_STRING)
+        map.put(TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE, "Only 0, 1 or 2 parameters are supported here.")
+        map.put(PROPERTY_MUST_BE_VAR, "''@{0}'' property must be var.", TO_STRING)
+        map.put(MUST_NOT_HAVE_EXTENSION_RECEIVER, "''{0}'' must not have extension receiver.", TO_STRING)
         map.put(
             MUST_BE_OBJC_OBJECT_TYPE,
-            "Unexpected {0}: {1}\nOnly Objective-C object types are supported here",
+            "Unexpected {0}: ''{1}''\nOnly Objective-C object types are supported here.",
             TO_STRING,
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(
             MUST_BE_UNIT_TYPE,
-            "Unexpected {0}: {1}\nOnly \"Unit\" is supported here",
+            "Unexpected {0}: ''{1}''\nOnly \"Unit\" is supported here.",
             TO_STRING,
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(
             CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER,
-            "Constructor with @{0} overrides initializer that is already overridden explicitly",
+            "Constructor with ''@{0}'' overrides initializer that is already overridden explicitly.",
             TO_STRING
         )
         map.put(
             CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR,
-            "Constructor with @{0} doesn''t override any super class constructor.\nIt must completely match by parameter names and types.",
+            "Constructor with ''@{0}'' doesn''t override any super class constructor.\nIt must completely match by parameter names and types.",
             TO_STRING
         )
         map.put(
             CONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS,
-            "Constructor with @{0} matches more than one of super constructors",
+            "Constructor with ''@{0}'' matches more than one of super constructors.",
             TO_STRING
         )
     }
