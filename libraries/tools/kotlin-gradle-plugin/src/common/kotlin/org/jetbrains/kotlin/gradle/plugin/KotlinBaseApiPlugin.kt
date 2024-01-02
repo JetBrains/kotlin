@@ -48,7 +48,6 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
             .configureExperimentalTryNext(myProject)
     }
 
-    @Suppress("DEPRECATION")
     @Deprecated("Replaced by compilerJvmOptions", replaceWith = ReplaceWith("createCompilerJvmOptions()"))
     override fun createKotlinJvmOptions(): KotlinJvmOptions {
         return object : KotlinJvmOptions {
@@ -87,7 +86,9 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
             KotlinCompileConfig(myProject, kotlinExtension)
         )
         registeredKotlinJvmCompileTask.configure {
+            @Suppress("DEPRECATION")
             it.ownModuleName.set(compilerOptions.moduleName)
+            @Suppress("DEPRECATION")
             it.moduleName.set(compilerOptions.moduleName)
         }
         return registeredKotlinJvmCompileTask
