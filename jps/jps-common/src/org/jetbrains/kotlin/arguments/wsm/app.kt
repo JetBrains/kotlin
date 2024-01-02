@@ -8,18 +8,6 @@ package org.jetbrains.kotlin.arguments.wsm
 import org.jetbrains.kotlin.cli.common.arguments.Freezable
 import java.io.File
 
-val COMPILER_ARGUMENTS_FILES = listOf(
-    "K2JVMCompilerArguments",
-    "CommonCompilerArguments",
-    "CommonToolArguments",
-//    "Freezable",
-    "K2JSCompilerArguments",
-    "K2JSDceArguments",
-    "K2JVMCompilerArguments",
-    "K2MetadataCompilerArguments",
-    "K2NativeCompilerArguments",
-)
-
 fun main() {
     val rootPath = System.getProperty("user.dir")
     println("Root dir is: $rootPath")
@@ -32,6 +20,20 @@ fun main() {
     }
 }
 
+val COMPILER_ARGUMENTS_FILES = listOf(
+    "K2JVMCompilerArguments",
+    "CommonCompilerArguments",
+    "CommonToolArguments",
+//    "Freezable",
+    "K2JSCompilerArguments",
+    "K2JSDceArguments",
+    "K2JVMCompilerArguments",
+    "K2MetadataCompilerArguments",
+    "K2NativeCompilerArguments",
+)
+
+
+
 fun processAndWriteCompilerArgumentsFile(originalFile: File, generatedFile: File) {
     println("Generating compiler arguments from $originalFile to $generatedFile")
     if (!originalFile.exists()) error("File does not exist: ${originalFile.path}")
@@ -41,6 +43,8 @@ fun processAndWriteCompilerArgumentsFile(originalFile: File, generatedFile: File
         .fixNaming(originalFile.name, generatedFile.name)
         .fixPackage("package org.jetbrains.kotlin.cli.common.arguments", "package org.jetbrains.kotlin.arguments.wsm")
         .removeFreezable()
+        .removeTransient()
+        .addImports(originalFile.name)
         .joinToString("\n")
 
     generatedFile.writeText(updatedContent)
@@ -49,7 +53,36 @@ fun processAndWriteCompilerArgumentsFile(originalFile: File, generatedFile: File
 private fun List<String>.removeFreezable(): List<String> {
     val updatedLines: MutableList<String> = mutableListOf()
     for (line: String in this) {
-        updatedLines.add(line.replace("Freezable(),", ""))
+        updatedLines.add(
+            line.replace("Freezable(),", "")
+                .replace("checkFrozen()", "")
+                .takeIf { !it.contains("copyOf") } ?: "")
+    }
+    return updatedLines
+}
+
+private fun List<String>.removeTransient(): List<String> {
+    val updatedLines: MutableList<String> = mutableListOf()
+    for (line: String in this) {
+        updatedLines.add(line.replace("@Transient", "").replace("var errors: ArgumentParseErrors? = null", ""))
+    }
+    return updatedLines
+}
+
+private fun List<String>.addImports(fileName: String): List<String> {
+    val updatedLines: MutableList<String> = mutableListOf()
+    for (line: String in this) {
+        updatedLines.add(line)
+        if(line.contains("package ")) {
+            if (fileName.contains("K2JVMCompilerArguments")) updatedLines.add("import org.jetbrains.kotlin.cli.common.arguments.JavaTypeEnhancementStateParser")
+            if (fileName.contains("CommonToolArguments")) {
+                updatedLines.add("import org.jetbrains.kotlin.cli.common.arguments.InternalArgument")
+                updatedLines.add("import org.jetbrains.kotlin.cli.common.arguments.Argument")
+            }
+            if (fileName.contains("CommonCompilerArguments")) {
+                updatedLines.add("import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting")
+            }
+        }
     }
     return updatedLines
 }
@@ -57,7 +90,11 @@ private fun List<String>.removeFreezable(): List<String> {
 private fun List<String>.fixNaming(originalFileName: String, generatedFileName: String): List<String> {
     val updatedLines: MutableList<String> = mutableListOf()
     for (line: String in this) {
-        updatedLines.add(line.replace(originalFileName.substringBefore(".kt"), generatedFileName.substringBefore(".kt")))
+        var updatedLine = line
+        COMPILER_ARGUMENTS_FILES.forEach { fileName ->
+            updatedLine = updatedLine.replace(fileName, "${fileName}Wsm")
+        }
+        updatedLines.add(updatedLine)
     }
     return updatedLines
 }
@@ -76,7 +113,7 @@ fun List<String>.removeAnnotations(): List<String> {
     val updatedLines = mutableListOf<String>()
 
     for (line: String in this) {
-        if (line.trimStart().startsWith("@GradleOption") || line.trimStart().startsWith("@Argument")) {
+        if (line.trimStart().startsWith("@GradleOption") || line.trimStart().startsWith("@Argument") || line.trimStart().startsWith("@GradleDeprecatedOption")) {
             insideAnnotation = true
         }
 

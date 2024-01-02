@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    kotlin("plugin.serialization")
 }
 
 dependencies {
@@ -33,6 +34,8 @@ dependencies {
     testImplementation(jpsModelSerialization())
     testImplementation(libs.junit4)
     testImplementation(kotlin("test-junit"))
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0") { isTransitive = true }
+
 }
 
 sourceSets {
@@ -46,6 +49,8 @@ sourceSets {
 runtimeJar()
 
 tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-    compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
+//    compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
+//    compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
 }
+
+optInToExperimentalCompilerApi()
