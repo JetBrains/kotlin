@@ -8,6 +8,37 @@ package org.jetbrains.kotlin.bir
 import org.jetbrains.kotlin.bir.util.ForwardReferenceRecorder
 import java.lang.AutoCloseable
 
+/**
+ * A collection of [BirElement] trees.
+ *
+ * After adding an element to [BirDatabase], it enables usages of additional features,
+ * such as fast retrieval of elements matching a given, predefined condition (indexing).
+ *
+ * ### Adding and removing elements from [BirDatabase]
+ * [BirElement] may be added to [BirDatabase] either as a root of a new tree, by calling [attachRootElement],
+ * or by attaching it as a child property to some other element, already present in the database.
+ * The whole subtree represented by an element being added, i.e., it and all its child elements, recursively,
+ * will be implicitly added to the database as well. However, in the case of lazy [BirElement]s only
+ * already initialized child elements are added, so that the operation does not trigger any creation of new elements.
+ *
+ * The same way, [BirElement] may be removed from the database either by calling [BirElement.remove],
+ * or by nulling-out property / removing from a list of child elements of its current parent element.
+ *
+ * Any given [BirElement] instance may be present in at most one [BirDatabase], and it may not move between databases.
+ * This means that if an [BirElement] is attached to some [BirDatabase], even after being detached later on,
+ * it may not be attached to any but the same [BirDatabase] instance.
+ *
+ * This limitation may be relaxed in future, however it should not be a problem w.r.t. the .
+ *
+ * ### Intended usage
+ * It is expected that a [BirDatabase] instance is created for a whole Koltin module, or a group of modules,
+ * e.g., one instance for a module being compiled, and another one for all the library modules it depends on.
+ * However, it may also be used to support other use cases, such as a seperate [BirDatabase] for a script,
+ * or a code fragment in a debugger.
+ *
+ * ### Thread safety
+ * This class is _not_ thread-safe.
+ */
 class BirDatabase : BirElementParent() {
     private val possiblyRootElements = mutableListOf<BirElementBase>()
 
@@ -47,6 +78,13 @@ class BirDatabase : BirElementParent() {
         indexElement(element, true)
     }
 
+    /**
+     * Adds a tree of elements (an [element] and all its child elements, recursively)
+     * to this database.
+     * If [element] has a parent element, it is first detached from it (see [BirElement.remove]).
+     *
+     * @param element The root of an element tree to attach.
+     */
     fun attachRootElement(element: BirElementBase) {
         val oldParent = element._parent
         if (oldParent != null) {
@@ -104,6 +142,11 @@ class BirDatabase : BirElementParent() {
         }
     }
 
+
+    /**
+     * Makes sure the internal state of [BirElementBase] and the indices are up-to-date,
+     * after some elements are attached, detached, or moved within the database.
+     */
     internal fun realizeTreeMovements() {
         val buffer = movedElementBuffer
         for (i in 0..<movedElementBufferSize) {
@@ -160,7 +203,8 @@ class BirDatabase : BirElementParent() {
         return possiblyRootElements
     }
 
-    fun getRootElements(): List<BirElement> = ArrayList<BirElement>(collectCurrentRootElements())
+    fun getRootElements(): List<BirElement> =
+        ArrayList<BirElement>(collectCurrentRootElements())
 
     private fun handleElementFromOtherDatabase(): Nothing {
         // Once an element is attached to some database, trying to
@@ -173,7 +217,20 @@ class BirDatabase : BirElementParent() {
     }
 
 
-    internal fun indexElement(element: BirElementBase, includeBackReferences: Boolean) {
+    /**
+     * Updates the indices the given element belongs to, based on its current state.
+     * If an element is already contained in a correct index, this function does nothing.
+     *
+     * It also updates the listing of references between elements, used for tracking back-references.
+     *
+     * This function should be called for all [BirElement]s added to the database, or changed later on,
+     * in such a way that could affect any of the former.
+     *
+     * @param element The element to be indexed.
+     * @param updateBackReferences Whether to update the list of other elements' back references,
+     * based on forward references of this element. Otherwise, just update the index.
+     */
+    internal fun indexElement(element: BirElementBase, updateBackReferences: Boolean) {
         val classifier = elementClassifier ?: return
         if (element._containingDatabase !== this) return
 
@@ -252,15 +309,27 @@ class BirDatabase : BirElementParent() {
     }
 
 
+    /**
+     * Note: For the index to be used, also call [activateNewRegisteredIndices].
+     */
     fun registerElementIndexingKey(key: BirElementsIndexKey<*>) {
         registeredIndexers += key
     }
 
+    /**
+     * Note: For the index to be used, also call [activateNewRegisteredIndices].
+     */
     fun registerElementBackReferencesKey(key: BirElementBackReferencesKey<*, *>) {
         registeredIndexers += key
     }
 
-    fun applyNewRegisteredIndices() {
+    /**
+     * Activates index keys added with [registerElementIndexingKey] and [registerElementBackReferencesKey] functions
+     * for elements added and changed from now on.
+     *
+     * To apply those for all currently stored elements as well, call [reindexAllElements].
+     */
+    fun activateNewRegisteredIndices() {
         if (registeredIndexers.size != elementIndexSlotCount) {
             val indexers = registeredIndexers.mapIndexed { i, indexerKey ->
                 val index = i + 1
@@ -292,6 +361,12 @@ class BirDatabase : BirElementParent() {
         }
     }
 
+    /**
+     * Updates the indices of all elements stored in this [BirDatabase].
+     *
+     * It is only useful after registering new indices and calling [activateNewRegisteredIndices],
+     * otherwise all indices should already be up-to-date.
+     */
     fun reindexAllElements() {
         realizeTreeMovements()
 
