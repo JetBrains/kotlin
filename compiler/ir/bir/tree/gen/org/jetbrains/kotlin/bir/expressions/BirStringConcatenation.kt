@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.stringConcatenation]
  */
-abstract class BirStringConcatenation(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
+abstract class BirStringConcatenation(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract val arguments: BirChildElementList<BirExpression>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         arguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirStringConcatenation::class.java, 54, true)
+    companion object : BirElementClass<BirStringConcatenation>(BirStringConcatenation::class.java, 54, true)
 }

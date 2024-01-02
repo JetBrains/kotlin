@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.block]
  */
-abstract class BirBlock(elementClass: BirElementClass) : BirContainerExpression(elementClass), BirElement {
+abstract class BirBlock(elementClass: BirElementClass<*>) : BirContainerExpression(elementClass), BirElement {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         statements.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirBlock::class.java, 2, true)
+    companion object : BirElementClass<BirBlock>(BirBlock::class.java, 2, true)
 }

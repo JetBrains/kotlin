@@ -17,5 +17,5 @@ import org.jetbrains.kotlin.bir.BirElementClass
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.varargElement]
  */
 interface BirVarargElement : BirElement {
-    companion object : BirElementClass(BirVarargElement::class.java, 102, false)
+    companion object : BirElementClass<BirVarargElement>(BirVarargElement::class.java, 102, false)
 }

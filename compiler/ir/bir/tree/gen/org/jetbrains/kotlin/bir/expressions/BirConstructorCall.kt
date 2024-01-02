@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constructorCall]
  */
-abstract class BirConstructorCall(elementClass: BirElementClass) : BirFunctionAccessExpression(elementClass), BirElement {
+abstract class BirConstructorCall(elementClass: BirElementClass<*>) : BirFunctionAccessExpression(elementClass), BirElement {
     abstract override var symbol: BirConstructorSymbol
     abstract var source: SourceElement
     abstract var constructorTypeArgumentsCount: Int
@@ -31,5 +31,5 @@ abstract class BirConstructorCall(elementClass: BirElementClass) : BirFunctionAc
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirConstructorCall::class.java, 16, true)
+    companion object : BirElementClass<BirConstructorCall>(BirConstructorCall::class.java, 16, true)
 }

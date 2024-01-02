@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.rawFunctionReference]
  */
-abstract class BirRawFunctionReference(elementClass: BirElementClass) : BirDeclarationReference(elementClass), BirElement {
+abstract class BirRawFunctionReference(elementClass: BirElementClass<*>) : BirDeclarationReference(elementClass), BirElement {
     abstract override var symbol: BirFunctionSymbol
 
-    companion object : BirElementClass(BirRawFunctionReference::class.java, 46, true)
+    companion object : BirElementClass<BirRawFunctionReference>(BirRawFunctionReference::class.java, 46, true)
 }

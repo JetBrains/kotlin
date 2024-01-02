@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constantArray]
  */
-abstract class BirConstantArray(elementClass: BirElementClass) : BirConstantValue(elementClass), BirElement {
+abstract class BirConstantArray(elementClass: BirElementClass<*>) : BirConstantValue(elementClass), BirElement {
     abstract val elements: BirChildElementList<BirConstantValue>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         elements.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirConstantArray::class.java, 12, true)
+    companion object : BirElementClass<BirConstantArray>(BirConstantArray::class.java, 12, true)
 }

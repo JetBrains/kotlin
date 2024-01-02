@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.fieldAccessExpression]
  */
-abstract class BirFieldAccessExpression(elementClass: BirElementClass) : BirDeclarationReference(elementClass), BirElement {
+abstract class BirFieldAccessExpression(elementClass: BirElementClass<*>) : BirDeclarationReference(elementClass), BirElement {
     abstract override var symbol: BirFieldSymbol
     abstract var superQualifierSymbol: BirClassSymbol?
     abstract var receiver: BirExpression?
     abstract var origin: IrStatementOrigin?
 
-    companion object : BirElementClass(BirFieldAccessExpression::class.java, 83, false)
+    companion object : BirElementClass<BirFieldAccessExpression>(BirFieldAccessExpression::class.java, 83, false)
 }

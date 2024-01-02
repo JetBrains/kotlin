@@ -16,6 +16,6 @@ import org.jetbrains.kotlin.bir.BirElementClass
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.getSingletonValue]
  */
-abstract class BirGetSingletonValue(elementClass: BirElementClass) : BirDeclarationReference(elementClass), BirElement {
-    companion object : BirElementClass(BirGetSingletonValue::class.java, 86, false)
+abstract class BirGetSingletonValue(elementClass: BirElementClass<*>) : BirDeclarationReference(elementClass), BirElement {
+    companion object : BirElementClass<BirGetSingletonValue>(BirGetSingletonValue::class.java, 86, false)
 }

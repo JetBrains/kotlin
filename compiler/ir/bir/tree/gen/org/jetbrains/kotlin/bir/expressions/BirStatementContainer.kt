@@ -21,5 +21,5 @@ import org.jetbrains.kotlin.bir.BirStatement
 interface BirStatementContainer : BirElement {
     val statements: BirChildElementList<BirStatement>
 
-    companion object : BirElementClass(BirStatementContainer::class.java, 97, false)
+    companion object : BirElementClass<BirStatementContainer>(BirStatementContainer::class.java, 97, false)
 }

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.bir.*
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.branch]
  */
-abstract class BirBranch(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement {
+abstract class BirBranch(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement {
     abstract var condition: BirExpression?
     abstract var result: BirExpression?
 
@@ -24,5 +24,5 @@ abstract class BirBranch(elementClass: BirElementClass) : BirImplElementBase(ele
         result?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirBranch::class.java, 4, true)
+    companion object : BirElementClass<BirBranch>(BirBranch::class.java, 4, true)
 }

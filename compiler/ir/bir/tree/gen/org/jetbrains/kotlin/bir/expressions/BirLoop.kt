@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.loop]
  */
-abstract class BirLoop(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
+abstract class BirLoop(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var origin: IrStatementOrigin?
     abstract var body: BirExpression?
     abstract var condition: BirExpression?
     abstract var label: String?
 
-    companion object : BirElementClass(BirLoop::class.java, 87, false)
+    companion object : BirElementClass<BirLoop>(BirLoop::class.java, 87, false)
 }

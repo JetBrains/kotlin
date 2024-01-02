@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.functionAccessExpression]
  */
-abstract class BirFunctionAccessExpression(elementClass: BirElementClass) : BirMemberAccessExpression<BirFunctionSymbol>(elementClass), BirElement {
+abstract class BirFunctionAccessExpression(elementClass: BirElementClass<*>) : BirMemberAccessExpression<BirFunctionSymbol>(elementClass), BirElement {
     abstract var contextReceiversCount: Int
 
-    companion object : BirElementClass(BirFunctionAccessExpression::class.java, 85, false)
+    companion object : BirElementClass<BirFunctionAccessExpression>(BirFunctionAccessExpression::class.java, 85, false)
 }

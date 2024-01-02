@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.inlinedFunctionBlock]
  */
-abstract class BirInlinedFunctionBlock(elementClass: BirElementClass) : BirBlock(elementClass), BirElement {
+abstract class BirInlinedFunctionBlock(elementClass: BirElementClass<*>) : BirBlock(elementClass), BirElement {
     abstract var inlineCall: BirFunctionAccessExpression
     abstract var inlinedElement: BirElement
 
@@ -25,5 +25,5 @@ abstract class BirInlinedFunctionBlock(elementClass: BirElementClass) : BirBlock
         statements.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirInlinedFunctionBlock::class.java, 39, true)
+    companion object : BirElementClass<BirInlinedFunctionBlock>(BirInlinedFunctionBlock::class.java, 39, true)
 }

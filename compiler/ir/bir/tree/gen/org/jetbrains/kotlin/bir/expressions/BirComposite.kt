@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.composite]
  */
-abstract class BirComposite(elementClass: BirElementClass) : BirContainerExpression(elementClass), BirElement {
+abstract class BirComposite(elementClass: BirElementClass<*>) : BirContainerExpression(elementClass), BirElement {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         statements.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirComposite::class.java, 10, true)
+    companion object : BirElementClass<BirComposite>(BirComposite::class.java, 10, true)
 }

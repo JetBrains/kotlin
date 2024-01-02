@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.delegatingConstructorCall]
  */
-abstract class BirDelegatingConstructorCall(elementClass: BirElementClass) : BirFunctionAccessExpression(elementClass), BirElement {
+abstract class BirDelegatingConstructorCall(elementClass: BirElementClass<*>) : BirFunctionAccessExpression(elementClass), BirElement {
     abstract override var symbol: BirConstructorSymbol
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
@@ -28,5 +28,5 @@ abstract class BirDelegatingConstructorCall(elementClass: BirElementClass) : Bir
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirDelegatingConstructorCall::class.java, 18, true)
+    companion object : BirElementClass<BirDelegatingConstructorCall>(BirDelegatingConstructorCall::class.java, 18, true)
 }

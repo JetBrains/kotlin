@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.suspendableExpression]
  */
-abstract class BirSuspendableExpression(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
+abstract class BirSuspendableExpression(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var suspensionPointId: BirExpression?
     abstract var result: BirExpression?
 
@@ -27,5 +27,5 @@ abstract class BirSuspendableExpression(elementClass: BirElementClass) : BirExpr
         result?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirSuspendableExpression::class.java, 55, true)
+    companion object : BirElementClass<BirSuspendableExpression>(BirSuspendableExpression::class.java, 55, true)
 }

@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.valueAccessExpression]
  */
-abstract class BirValueAccessExpression(elementClass: BirElementClass) : BirDeclarationReference(elementClass), BirElement {
+abstract class BirValueAccessExpression(elementClass: BirElementClass<*>) : BirDeclarationReference(elementClass), BirElement {
     abstract override var symbol: BirValueDeclaration
     abstract var origin: IrStatementOrigin?
 
-    companion object : BirElementClass(BirValueAccessExpression::class.java, 100, false)
+    companion object : BirElementClass<BirValueAccessExpression>(BirValueAccessExpression::class.java, 100, false)
 }

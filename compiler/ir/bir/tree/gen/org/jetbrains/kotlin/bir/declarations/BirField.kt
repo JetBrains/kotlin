@@ -34,5 +34,5 @@ interface BirField : BirElement, BirDeclaration, BirPossiblyExternalDeclaration,
         initializer?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirField::class.java, 30, true)
+    companion object : BirElementClass<BirField>(BirField::class.java, 30, true)
 }

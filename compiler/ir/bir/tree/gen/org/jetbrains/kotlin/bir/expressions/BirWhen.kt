@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.when]
  */
-abstract class BirWhen(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
+abstract class BirWhen(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var origin: IrStatementOrigin?
     abstract val branches: BirChildElementList<BirBranch>
 
@@ -27,5 +27,5 @@ abstract class BirWhen(elementClass: BirElementClass) : BirExpression(elementCla
         branches.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirWhen::class.java, 66, true)
+    companion object : BirElementClass<BirWhen>(BirWhen::class.java, 66, true)
 }

@@ -31,5 +31,5 @@ interface BirConstructor : BirElement, BirFunction, BirConstructorSymbol {
         body?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirConstructor::class.java, 15, true)
+    companion object : BirElementClass<BirConstructor>(BirConstructor::class.java, 15, true)
 }

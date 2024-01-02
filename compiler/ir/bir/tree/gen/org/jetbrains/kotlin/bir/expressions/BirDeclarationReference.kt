@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.bir.symbols.BirSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.declarationReference]
  */
-abstract class BirDeclarationReference(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
+abstract class BirDeclarationReference(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract val symbol: BirSymbol
 
-    companion object : BirElementClass(BirDeclarationReference::class.java, 78, false)
+    companion object : BirElementClass<BirDeclarationReference>(BirDeclarationReference::class.java, 78, false)
 }
