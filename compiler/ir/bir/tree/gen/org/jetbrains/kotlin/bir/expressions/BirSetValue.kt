@@ -25,5 +25,5 @@ abstract class BirSetValue(elementClass: BirElementClass) : BirValueAccessExpres
         value?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirSetValue::class.java, 50, true)
+    companion object : BirElementClass(BirSetValue::class.java, 51, true)
 }

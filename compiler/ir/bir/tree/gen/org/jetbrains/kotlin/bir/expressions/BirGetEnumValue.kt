@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.bir.symbols.BirEnumEntrySymbol
 abstract class BirGetEnumValue(elementClass: BirElementClass) : BirGetSingletonValue(elementClass), BirElement {
     abstract override var symbol: BirEnumEntrySymbol
 
-    companion object : BirElementClass(BirGetEnumValue::class.java, 34, true)
+    companion object : BirElementClass(BirGetEnumValue::class.java, 35, true)
 }

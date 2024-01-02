@@ -25,5 +25,5 @@ abstract class BirCatch(elementClass: BirElementClass) : BirImplElementBase(elem
         result?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirCatch::class.java, 6, true)
+    companion object : BirElementClass(BirCatch::class.java, 7, true)
 }

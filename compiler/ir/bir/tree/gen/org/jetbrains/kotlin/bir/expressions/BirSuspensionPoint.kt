@@ -30,5 +30,5 @@ abstract class BirSuspensionPoint(elementClass: BirElementClass) : BirExpression
         resumeResult?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirSuspensionPoint::class.java, 55, true)
+    companion object : BirElementClass(BirSuspensionPoint::class.java, 56, true)
 }

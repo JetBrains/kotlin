@@ -26,5 +26,5 @@ abstract class BirDynamicOperatorExpression(elementClass: BirElementClass) : Bir
         arguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirDynamicOperatorExpression::class.java, 20, true)
+    companion object : BirElementClass(BirDynamicOperatorExpression::class.java, 21, true)
 }

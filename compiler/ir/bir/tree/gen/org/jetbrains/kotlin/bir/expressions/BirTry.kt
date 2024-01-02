@@ -26,5 +26,5 @@ abstract class BirTry(elementClass: BirElementClass) : BirExpression(elementClas
         finallyExpression?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirTry::class.java, 58, true)
+    companion object : BirElementClass(BirTry::class.java, 59, true)
 }

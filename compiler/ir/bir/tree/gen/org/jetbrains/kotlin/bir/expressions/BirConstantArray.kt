@@ -25,5 +25,5 @@ abstract class BirConstantArray(elementClass: BirElementClass) : BirConstantValu
         elements.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirConstantArray::class.java, 11, true)
+    companion object : BirElementClass(BirConstantArray::class.java, 12, true)
 }

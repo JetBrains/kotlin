@@ -29,5 +29,5 @@ abstract class BirTypeOperatorCall(elementClass: BirElementClass) : BirExpressio
         argument?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirTypeOperatorCall::class.java, 60, true)
+    companion object : BirElementClass(BirTypeOperatorCall::class.java, 61, true)
 }

@@ -31,5 +31,5 @@ abstract class BirConstructorCall(elementClass: BirElementClass) : BirFunctionAc
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirConstructorCall::class.java, 15, true)
+    companion object : BirElementClass(BirConstructorCall::class.java, 16, true)
 }

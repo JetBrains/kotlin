@@ -31,5 +31,5 @@ abstract class BirTypeParameter(elementClass: BirElementClass) : BirImplElementB
         annotations.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirTypeParameter::class.java, 61, true)
+    companion object : BirElementClass(BirTypeParameter::class.java, 62, true)
 }

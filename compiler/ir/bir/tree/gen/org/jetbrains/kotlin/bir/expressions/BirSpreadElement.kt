@@ -22,5 +22,5 @@ abstract class BirSpreadElement(elementClass: BirElementClass) : BirImplElementB
         expression?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirSpreadElement::class.java, 52, true)
+    companion object : BirElementClass(BirSpreadElement::class.java, 53, true)
 }

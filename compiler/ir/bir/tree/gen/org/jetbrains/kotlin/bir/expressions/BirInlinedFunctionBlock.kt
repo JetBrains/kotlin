@@ -25,5 +25,5 @@ abstract class BirInlinedFunctionBlock(elementClass: BirElementClass) : BirBlock
         statements.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirInlinedFunctionBlock::class.java, 38, true)
+    companion object : BirElementClass(BirInlinedFunctionBlock::class.java, 39, true)
 }

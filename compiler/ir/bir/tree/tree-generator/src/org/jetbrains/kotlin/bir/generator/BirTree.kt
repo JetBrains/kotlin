@@ -32,6 +32,8 @@ object BirTree : AbstractTreeBuilder() {
         field("symbol", type, mutable = mutable, isChild = false)
 
     override val rootElement: Element by element(Other, name = "Element") {
+        parent(type(Packages.tree, "BirElementFacade"))
+
         +field("sourceSpan", type(Packages.tree, "SourceSpan")) {
             kDoc = """
             The span of source code of the syntax node from which this BIR node was generated,
