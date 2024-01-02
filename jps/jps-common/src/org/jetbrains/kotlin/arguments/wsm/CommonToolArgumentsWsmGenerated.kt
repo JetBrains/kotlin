@@ -23,6 +23,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.javaField
 
 //@kotlinx.serialization.Serializable
+@kotlinx.serialization.Serializable
 abstract class CommonToolArgumentsWsmGenerated :  Serializable {
     companion object {
         @JvmStatic

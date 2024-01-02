@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 
 //@Serializable
+@kotlinx.serialization.Serializable
 class K2NativeCompilerArgumentsWsmGenerated : CommonCompilerArgumentsWsmGenerated() {
     // First go the options interesting to the general public.
     // Prepend them with a single dash.

@@ -47,6 +47,7 @@ fun processAndWriteCompilerArgumentsFile(originalFile: File, generatedFile: File
         .removeFreezable()
         .removeTransient()
         .addImports(originalFile.name)
+        .addKotlinxSerialization()
         .joinToString("\n")
 
     generatedFile.writeText(updatedContent)
@@ -59,6 +60,22 @@ private fun List<String>.removeFreezable(): List<String> {
             line.replace("Freezable(),", "")
                 .replace("checkFrozen()", "")
                 .takeIf { !it.contains("copyOf") } ?: "")
+    }
+    return updatedLines
+}
+
+private fun List<String>.addKotlinxSerialization(): List<String> {
+    val updatedLines: MutableList<String> = mutableListOf()
+    for (line: String in this) {
+        if(line.contains("class")) {
+            for (fileName in COMPILER_ARGUMENTS_FILES) {
+                if (line.contains(fileName)) {
+                    updatedLines.add("@kotlinx.serialization.Serializable")
+                    break
+                }
+            }
+        }
+        updatedLines.add(line)
     }
     return updatedLines
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 
 //@Serializable
+@kotlinx.serialization.Serializable
 class K2JVMCompilerArgumentsWsmGeneratedWsmGenerated : CommonCompilerArgumentsWsmGenerated() {
     companion object {
         @JvmStatic

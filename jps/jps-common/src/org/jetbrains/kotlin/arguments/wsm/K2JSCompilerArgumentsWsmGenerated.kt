@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 
 //@Serializable
+@kotlinx.serialization.Serializable
 class K2JSCompilerArgumentsWsmGenerated : CommonCompilerArgumentsWsmGenerated() {
     companion object {
         @JvmStatic private val serialVersionUID = 0L

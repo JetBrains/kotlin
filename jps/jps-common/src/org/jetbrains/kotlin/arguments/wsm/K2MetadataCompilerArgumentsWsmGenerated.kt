@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 
 //@Serializable
+@kotlinx.serialization.Serializable
 class K2MetadataCompilerArgumentsWsmGenerated : CommonCompilerArgumentsWsmGenerated() {
     companion object {
         @JvmStatic private val serialVersionUID = 0L

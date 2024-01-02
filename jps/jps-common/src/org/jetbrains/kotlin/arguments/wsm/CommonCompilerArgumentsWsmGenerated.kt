@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 
 @SuppressWarnings("WeakerAccess")
 //@Serializable
+@kotlinx.serialization.Serializable
 abstract class CommonCompilerArgumentsWsmGenerated : CommonToolArgumentsWsmGenerated() {
     companion object {
         @JvmStatic
@@ -1084,6 +1085,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     // Used only for serialize and deserialize settings. Don't use in other places!
 //    @Serializable
+@kotlinx.serialization.Serializable
     class DummyImpl : CommonCompilerArgumentsWsmGenerated() {
 
     }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies.AL
 import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies.OLDER
 
 //@Serializable
+@kotlinx.serialization.Serializable
 class K2JSDceArgumentsWsmGenerated : CommonToolArgumentsWsmGenerated() {
     companion object {
         @JvmStatic private val serialVersionUID = 0L
