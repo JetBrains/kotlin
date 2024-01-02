@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.bir.symbols.BirSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.callableReference]
  */
-abstract class BirCallableReference<S : BirSymbol>(elementClass: BirElementClass) : BirMemberAccessExpression<S>(elementClass), BirElement {
+abstract class BirCallableReference<S : BirSymbol>(elementClass: BirElementClass<*>) : BirMemberAccessExpression<S>(elementClass), BirElement {
     abstract override var symbol: S
 
-    companion object : BirElementClass(BirCallableReference::class.java, 72, false)
+    companion object : BirElementClass<BirCallableReference<*>>(BirCallableReference::class.java, 72, false)
 }

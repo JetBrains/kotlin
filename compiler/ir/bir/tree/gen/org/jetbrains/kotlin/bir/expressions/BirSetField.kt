@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.setField]
  */
-abstract class BirSetField(elementClass: BirElementClass) : BirFieldAccessExpression(elementClass), BirElement {
+abstract class BirSetField(elementClass: BirElementClass<*>) : BirFieldAccessExpression(elementClass), BirElement {
     abstract var value: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
@@ -26,5 +26,5 @@ abstract class BirSetField(elementClass: BirElementClass) : BirFieldAccessExpres
         value?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirSetField::class.java, 50, true)
+    companion object : BirElementClass<BirSetField>(BirSetField::class.java, 50, true)
 }

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.moduleFragment]
  */
-abstract class BirModuleFragment(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement {
+abstract class BirModuleFragment(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement {
     abstract val name: Name
     @ObsoleteDescriptorBasedAPI
     abstract val descriptor: ModuleDescriptor
@@ -28,5 +28,5 @@ abstract class BirModuleFragment(elementClass: BirElementClass) : BirImplElement
         files.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirModuleFragment::class.java, 43, true)
+    companion object : BirElementClass<BirModuleFragment>(BirModuleFragment::class.java, 43, true)
 }

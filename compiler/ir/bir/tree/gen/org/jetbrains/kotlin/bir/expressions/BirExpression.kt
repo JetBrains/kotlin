@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.bir.types.BirType
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.expression]
  */
-abstract class BirExpression(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement, BirStatement, BirVarargElement, BirAttributeContainer {
+abstract class BirExpression(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement, BirStatement, BirVarargElement, BirAttributeContainer {
     abstract var type: BirType
 
-    companion object : BirElementClass(BirExpression::class.java, 82, false)
+    companion object : BirElementClass<BirExpression>(BirExpression::class.java, 82, false)
 }

@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constantPrimitive]
  */
-abstract class BirConstantPrimitive(elementClass: BirElementClass) : BirConstantValue(elementClass), BirElement {
+abstract class BirConstantPrimitive(elementClass: BirElementClass<*>) : BirConstantValue(elementClass), BirElement {
     abstract var value: BirConst<*>?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         value?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirConstantPrimitive::class.java, 14, true)
+    companion object : BirElementClass<BirConstantPrimitive>(BirConstantPrimitive::class.java, 14, true)
 }

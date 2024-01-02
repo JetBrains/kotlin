@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.bir.declarations.BirVariable
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.suspensionPoint]
  */
-abstract class BirSuspensionPoint(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
+abstract class BirSuspensionPoint(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var suspensionPointIdParameter: BirVariable?
     abstract var result: BirExpression?
     abstract var resumeResult: BirExpression?
@@ -30,5 +30,5 @@ abstract class BirSuspensionPoint(elementClass: BirElementClass) : BirExpression
         resumeResult?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirSuspensionPoint::class.java, 56, true)
+    companion object : BirElementClass<BirSuspensionPoint>(BirSuspensionPoint::class.java, 56, true)
 }

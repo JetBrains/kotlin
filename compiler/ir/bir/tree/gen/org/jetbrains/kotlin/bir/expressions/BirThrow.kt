@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.throw]
  */
-abstract class BirThrow(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
+abstract class BirThrow(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var value: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         value?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirThrow::class.java, 58, true)
+    companion object : BirElementClass<BirThrow>(BirThrow::class.java, 58, true)
 }

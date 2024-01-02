@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.bir.BirElementClass
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.breakContinue]
  */
-abstract class BirBreakContinue(elementClass: BirElementClass) : BirExpression(elementClass), BirElement {
+abstract class BirBreakContinue(elementClass: BirElementClass<*>) : BirExpression(elementClass), BirElement {
     abstract var loop: BirLoop
     abstract var label: String?
 
-    companion object : BirElementClass(BirBreakContinue::class.java, 71, false)
+    companion object : BirElementClass<BirBreakContinue>(BirBreakContinue::class.java, 71, false)
 }

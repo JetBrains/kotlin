@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.doWhileLoop]
  */
-abstract class BirDoWhileLoop(elementClass: BirElementClass) : BirLoop(elementClass), BirElement {
+abstract class BirDoWhileLoop(elementClass: BirElementClass<*>) : BirLoop(elementClass), BirElement {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         body?.accept(data, visitor)
         condition?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirDoWhileLoop::class.java, 19, true)
+    companion object : BirElementClass<BirDoWhileLoop>(BirDoWhileLoop::class.java, 19, true)
 }

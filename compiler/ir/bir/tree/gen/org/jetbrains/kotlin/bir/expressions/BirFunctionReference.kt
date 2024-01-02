@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.functionReference]
  */
-abstract class BirFunctionReference(elementClass: BirElementClass) : BirCallableReference<BirFunctionSymbol>(elementClass), BirElement {
+abstract class BirFunctionReference(elementClass: BirElementClass<*>) : BirCallableReference<BirFunctionSymbol>(elementClass), BirElement {
     abstract override var symbol: BirFunctionSymbol
     abstract var reflectionTarget: BirFunctionSymbol?
 
@@ -29,5 +29,5 @@ abstract class BirFunctionReference(elementClass: BirElementClass) : BirCallable
         valueArguments.acceptChildren(visitor, data)
     }
 
-    companion object : BirElementClass(BirFunctionReference::class.java, 33, true)
+    companion object : BirElementClass<BirFunctionReference>(BirFunctionReference::class.java, 33, true)
 }

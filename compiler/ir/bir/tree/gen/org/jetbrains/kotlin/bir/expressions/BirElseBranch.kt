@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.elseBranch]
  */
-abstract class BirElseBranch(elementClass: BirElementClass) : BirBranch(elementClass), BirElement {
+abstract class BirElseBranch(elementClass: BirElementClass<*>) : BirBranch(elementClass), BirElement {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         condition?.accept(data, visitor)
         result?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirElseBranch::class.java, 22, true)
+    companion object : BirElementClass<BirElseBranch>(BirElseBranch::class.java, 22, true)
 }

@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 interface BirDeclarationWithVisibility : BirElement, BirDeclaration {
     var visibility: DescriptorVisibility
 
-    companion object : BirElementClass(BirDeclarationWithVisibility::class.java, 80, false)
+    companion object : BirElementClass<BirDeclarationWithVisibility>(BirDeclarationWithVisibility::class.java, 80, false)
 }

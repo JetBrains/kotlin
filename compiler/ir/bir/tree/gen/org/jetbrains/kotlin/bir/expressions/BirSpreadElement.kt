@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.bir.*
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.spreadElement]
  */
-abstract class BirSpreadElement(elementClass: BirElementClass) : BirImplElementBase(elementClass), BirElement, BirVarargElement {
+abstract class BirSpreadElement(elementClass: BirElementClass<*>) : BirImplElementBase(elementClass), BirElement, BirVarargElement {
     abstract var expression: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         expression?.accept(data, visitor)
     }
 
-    companion object : BirElementClass(BirSpreadElement::class.java, 53, true)
+    companion object : BirElementClass<BirSpreadElement>(BirSpreadElement::class.java, 53, true)
 }

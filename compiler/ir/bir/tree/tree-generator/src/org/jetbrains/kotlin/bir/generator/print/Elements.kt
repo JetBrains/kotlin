@@ -29,7 +29,7 @@ private fun SmartPrinter.printElement(element: Element) {
     print(kind.title, " ", element.typeName)
     print(element.params.typeParameters())
     if (element.kind == ImplementationKind.AbstractClass) {
-        print("(elementClass: ${elementClassType.render()})")
+        print("(elementClass: ${elementClassType.withArgs(TypeRef.Star).render()})")
     }
 
     val parentRefs = element.parentRefs
@@ -87,7 +87,8 @@ private fun SmartPrinter.printElement(element: Element) {
             }
 
             println()
-            print("companion object : ${elementClassType.render()}(")
+            print("companion object : ${elementClassType.render()}")
+            print("<${element.withStarArgs().render()}>(")
             print("${element.withArgs().render()}::class.java")
             print(", ${element.classId}")
             print(", ${element.isLeaf}")
