@@ -60,7 +60,6 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-test-js-runner",
         "libraries/tools/kotlin-tooling-core",
         "libraries/tools/kotlin-tooling-metadata",
-        "libraries/tools/kotlinp",
         "libraries/tools/maven-archetypes",
         "libraries/tools/mutability-annotations-compat",
         "libraries/tools/script-runtime",
