@@ -6,27 +6,26 @@
 package org.jetbrains.kotlin.gradle.plugin.statistics.old
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.statistics.AbstractKotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsBeanService
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import javax.management.ObjectName
 
-internal class Pre232IdeaKotlinBuildStatsService internal constructor(
+internal class Pre232IdeaKotlinBuildStatsBeanService internal constructor(
     project: Project,
     beanName: ObjectName
-) : AbstractKotlinBuildStatsService(project, beanName),
+) : KotlinBuildStatsBeanService(project, beanName),
     Pre232IdeaKotlinBuildStatsMXBean {
 
     override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?): Boolean =
-        KotlinBuildStatHandler().report(sessionLogger, metric, value, subprojectName, weight)
+        report(kotlinBuildLogger.sessionLogger, metric, value, subprojectName, weight)
 
     override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?, weight: Long?): Boolean =
-        KotlinBuildStatHandler().report(sessionLogger, metric, value, subprojectName, weight)
+        report(kotlinBuildLogger.sessionLogger, metric, value, subprojectName, weight)
 
     override fun report(metric: StringMetrics, value: String, subprojectName: String?, weight: Long?): Boolean =
-        KotlinBuildStatHandler().report(sessionLogger, metric, value, subprojectName, weight)
+        report(kotlinBuildLogger.sessionLogger, metric, value, subprojectName, weight)
 
     override fun reportBoolean(name: String, value: Boolean, subprojectName: String?, weight: Long?): Boolean =
         report(BooleanMetrics.valueOf(name), value, subprojectName, weight)

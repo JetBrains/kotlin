@@ -61,16 +61,11 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
         val buildFusServiceProperty: Property<BuildFusService>
 
         @get:Input
-        val action: Property<String?>
-
-        @get:Input
         val buildFailed: Property<Boolean>
 
     }
 
     override fun execute(parameters: Parameters) {
-        parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
-            parameters.action.orNull, parameters.buildFailed.get()
-        )
+        parameters.buildFusServiceProperty.orNull?.recordBuildFinished(parameters.buildFailed.get())
     }
 }

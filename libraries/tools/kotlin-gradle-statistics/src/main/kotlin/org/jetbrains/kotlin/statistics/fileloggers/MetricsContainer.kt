@@ -150,6 +150,7 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : Sta
             allMetrics.putAll(booleanMetrics)
             allMetrics.putAll(stringMetrics)
         }
+        writer.appendLine()
         for (entry in allMetrics.entries) {
             val suffix = if (entry.key.projectHash == null) "" else ".${entry.key.projectHash}"
             writer.appendLine("${entry.key.name}$suffix=${entry.value.toStringRepresentation()}")

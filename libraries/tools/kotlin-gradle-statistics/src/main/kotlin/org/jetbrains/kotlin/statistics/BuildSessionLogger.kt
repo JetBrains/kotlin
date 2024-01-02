@@ -46,14 +46,15 @@ class BuildSessionLogger(
     private val metricsContainer = MetricsContainer(forceValuesValidation)
 
     @Synchronized
-    fun startBuildSession(buildSinceDaemonStart: Long, buildStartedTime: Long?) {
-        buildSession = BuildSession(buildStartedTime)
-        report(NumericalMetrics.GRADLE_BUILD_NUMBER_IN_CURRENT_DAEMON, buildSinceDaemonStart)
-
+    fun startBuildSession(buildUid: String) {
+        buildSession = BuildSession(buildUid)
     }
 
     @Synchronized
     fun isBuildSessionStarted() = buildSession != null
+
+    @Synchronized
+    fun getActiveBuildId() = buildSession?.buildUid
 
     /**
      * Initializes a new build report file
@@ -94,28 +95,12 @@ class BuildSessionLogger(
 
 
     @Synchronized
-    fun finishBuildSession(
-        @Suppress("UNUSED_PARAMETER") action: String?,
-        buildFailed: Boolean,
-        buildId: String,
-    ) {
-        try {
-            // nanotime could not be used as build start time in nanotime is unknown. As result, the measured duration
-            // could be affected by system clock correction
-            val finishTime = System.currentTimeMillis()
-            buildSession?.also {
-                if (it.buildStartedTime != null) {
-                    report(NumericalMetrics.GRADLE_BUILD_DURATION, finishTime - it.buildStartedTime)
-                }
-                report(NumericalMetrics.GRADLE_EXECUTION_DURATION, finishTime - it.projectEvaluatedTime)
-                report(NumericalMetrics.BUILD_FINISH_TIME, finishTime)
-                report(BooleanMetrics.BUILD_FAILED, buildFailed)
-            }
-        } finally {
-            buildSession = null
-            storeMetricsIntoFile(buildId)
-            clearOldFiles()
+    fun finishBuildSession() {
+        buildSession?.also {
+            storeMetricsIntoFile(it.buildUid)
         }
+        buildSession = null
+        clearOldFiles()
     }
 
     override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?) =

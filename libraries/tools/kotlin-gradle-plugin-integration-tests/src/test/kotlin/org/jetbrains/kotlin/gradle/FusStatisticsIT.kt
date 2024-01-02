@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.deleteIfExists
 import kotlin.streams.toList
+import kotlin.test.assertTrue
 
 @DisplayName("FUS statistic")
 //Tests for FUS statistics have to create new instance of KotlinBuildStatsService
@@ -95,9 +97,10 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("for project with buildSrc")
     @GradleTest
     @GradleTestVersions(
-        maxVersion = TestVersions.Gradle.G_7_6
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0]
     )
     fun testProjectWithBuildSrcForGradleVersion7(gradleVersion: GradleVersion) {
+        //KT-64022 there are a different build instances in buildSrc and rest project:
         project(
             "instantExecutionWithBuildSrc",
             gradleVersion,
@@ -112,26 +115,6 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
-    @DisplayName("for project with buildSrc")
-    @GradleTest
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_0
-    )
-    fun testProjectWithBuildSrc(gradleVersion: GradleVersion) {
-        project(
-            "instantExecutionWithBuildSrc",
-            gradleVersion,
-        ) {
-            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
-                assertFileContains(
-                    fusStatisticsPath,
-                    *expectedMetrics,
-                    "BUILD_SRC_EXISTS=true"
-                )
-            }
-        }
-    }
-
     @DisplayName("for project with included build")
     @GradleTest
     @GradleTestVersions(
@@ -139,24 +122,27 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         maxVersion = TestVersions.Gradle.G_8_0
     )
     fun testProjectWithIncludedBuild(gradleVersion: GradleVersion) {
+        //KT-64022
+        //there are a different build instances in buildSrc and rest project
+
         project(
             "instantExecutionWithIncludedBuildPlugin",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(configurationCache = true)
         ) {
             build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
-                val fusStatisticsPath = fusStatisticsPath
-                assertFileContains(
-                    fusStatisticsPath,
-                    *expectedMetrics,
-                )
+                Files.list(projectPath.resolve("kotlin-profile")).forEach {
+                    assertFileContains(it, *expectedMetrics)
+                }
             }
+            Files.list(projectPath.resolve("kotlin-profile")).forEach {
+                assertTrue(it.deleteIfExists())
+            }
+
             build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
-                val fusStatisticsPath = fusStatisticsPath
-                assertFileContains(
-                    fusStatisticsPath,
-                    *expectedMetrics,
-                )
+                Files.list(projectPath.resolve("kotlin-profile")).forEach {
+                    assertFileContains(it, *expectedMetrics)
+                }
             }
         }
     }
@@ -255,6 +241,9 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
                     "COMPILATIONS_COUNT=1"
                 )
             }
+
+            assertTrue(fusStatisticsPath.deleteIfExists())
+            build("clean", buildOptions = buildOptions)
 
             build(
                 "compileKotlin",
