@@ -46,6 +46,10 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
     internal var dynamicProperties: Array<Any?>? = null
 
 
+    internal val elementClass
+        get() = BirMetadata.allElementsById.getOrNull(elementClassId.toInt())
+
+
     abstract override val parent: BirElementBase?
 
     internal abstract fun setParentWithInvalidation(new: BirElementParent?)
@@ -156,7 +160,7 @@ abstract class BirElementBase(elementClass: BirElementClass) : BirElementParent(
     }
 
     protected fun <T> initializeDynamicProperties(token: BirElementDynamicPropertyToken<*, T>, value: T?) {
-        val size = token.manager.getInitialDynamicPropertyArraySize(javaClass)
+        val size = token.manager.getInitialDynamicPropertyArraySize(elementClassId.toInt())
         require(size != 0) { "This element is not supposed to store any dynamic properties" }
 
         val arrayMap = arrayOfNulls<Any?>(size * 2)
