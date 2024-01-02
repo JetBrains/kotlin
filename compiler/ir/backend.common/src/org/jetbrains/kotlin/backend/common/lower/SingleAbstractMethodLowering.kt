@@ -79,6 +79,8 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
     open val inInlineFunctionScope get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
 
+    protected open fun postprocessCreatedObjectProxy(klass: IrClass) {}
+
     override fun lower(irFile: IrFile) {
         cachedImplementations.clear()
         inlineCachedImplementations.clear()
@@ -247,6 +249,8 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             // Later lowerings will fix it and replace function with one overriding transformedSuperMethod.
             ignoredParentSymbols = listOf(transformedSuperMethod.symbol)
         )
+
+        postprocessCreatedObjectProxy(subclass)
 
         return subclass
     }

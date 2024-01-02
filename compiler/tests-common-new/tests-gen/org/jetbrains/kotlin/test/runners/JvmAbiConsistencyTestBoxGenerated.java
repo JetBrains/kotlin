@@ -49660,6 +49660,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
         }
 
         @Test
+        @TestMetadata("kt64116.kt")
+        public void testKt64116() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt64116.kt");
+        }
+
+        @Test
         @TestMetadata("noConversionFromSamToSam.kt")
         public void testNoConversionFromSamToSam() throws Exception {
             runTest("compiler/testData/codegen/box/sam/noConversionFromSamToSam.kt");

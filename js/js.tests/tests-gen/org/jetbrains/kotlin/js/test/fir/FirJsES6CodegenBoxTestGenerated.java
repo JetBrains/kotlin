@@ -35217,6 +35217,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
             runTest("compiler/testData/codegen/box/sam/kt63564.kt");
         }
 
+        @Test
+        @TestMetadata("kt64116.kt")
+        public void testKt64116() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt64116.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/sam/adapters")
         @TestDataPath("$PROJECT_ROOT")

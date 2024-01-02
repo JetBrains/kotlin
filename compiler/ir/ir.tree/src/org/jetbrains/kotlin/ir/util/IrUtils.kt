@@ -1311,12 +1311,11 @@ fun IrClass.addFakeOverrides(
     implementedMembers: List<IrOverridableMember> = emptyList(),
     ignoredParentSymbols: List<IrSymbol> = emptyList()
 ) {
-    IrFakeOverrideBuilder(typeSystem, BindToNewEmptySymbols, emptyList())
-        .buildFakeOverridesForClassUsingOverriddenSymbols(this,
-                                                          implementedMembers = implementedMembers,
-                                                          compatibilityMode = false,
-                                                          ignoredParentSymbols = ignoredParentSymbols)
-        .forEach { addChild(it) }
+    val fakeOverrides = IrFakeOverrideBuilder(typeSystem, BindToNewEmptySymbols, emptyList())
+        .buildFakeOverridesForClassUsingOverriddenSymbols(this, implementedMembers, compatibilityMode = false, ignoredParentSymbols)
+    for (fakeOverride in fakeOverrides) {
+        addChild(fakeOverride)
+    }
 }
 
 fun IrFactory.createStaticFunctionWithReceivers(
