@@ -802,4 +802,20 @@ public class LLFirBlackBoxModernJdkCodegenBasedTestGenerated extends AbstractLLF
             }
         }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava21")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TestsWithJava21 {
+        @Test
+        @TestMetadata("addRemoveOnMutableList.kt")
+        public void testAddRemoveOnMutableList() throws Exception {
+            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/addRemoveOnMutableList.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInTestsWithJava21() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+    }
 }

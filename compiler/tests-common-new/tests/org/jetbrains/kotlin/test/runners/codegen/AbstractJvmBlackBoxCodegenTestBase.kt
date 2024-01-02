@@ -110,4 +110,8 @@ fun TestConfigurationBuilder.configureModernJavaWhenNeeded() {
     forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithJava17/*") {
         configureModernJavaTest(TestJdkKind.FULL_JDK_17, JvmTarget.JVM_17)
     }
+
+    forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithJava21/*") {
+        configureModernJavaTest(TestJdkKind.FULL_JDK_21, JvmTarget.JVM_21)
+    }
 }

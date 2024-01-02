@@ -767,4 +767,14 @@ public class BlackBoxModernJdkCodegenTestGenerated extends AbstractBlackBoxCodeg
             }
         }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava21")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TestsWithJava21 {
+        @Test
+        public void testAllFilesPresentInTestsWithJava21() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+    }
 }

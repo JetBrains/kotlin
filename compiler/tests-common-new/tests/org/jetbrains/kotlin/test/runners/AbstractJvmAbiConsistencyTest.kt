@@ -64,6 +64,13 @@ open class AbstractJvmAbiConsistencyTest :
             }
         }
 
+        forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithJava21/*") {
+            defaultDirectives {
+                JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK_21
+                JvmEnvironmentConfigurationDirectives.JVM_TARGET with JvmTarget.JVM_21
+            }
+        }
+
         forTestsMatching("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests/*") {
             defaultDirectives {
                 ForeignAnnotationsDirectives.ANNOTATIONS_PATH with JavaForeignAnnotationType.Annotations
