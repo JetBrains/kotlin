@@ -18,16 +18,16 @@ import org.jetbrains.kotlin.bir.util.resolveFakeOverride
 
 context(JvmBirBackendContext)
 class BirJvmLateinitLowering : BirLoweringPhase() {
-    private val lateinitProperties = registerIndexKey<BirProperty>(false) {
+    private val lateinitProperties = registerIndexKey(BirProperty, false) {
         it.isLateinit && !it.isFakeOverride
     }
-    private val lateinitVariables = registerIndexKey<BirVariable>(false) {
+    private val lateinitVariables = registerIndexKey(BirVariable, false) {
         it.isLateinit
     }
-    private val lateinitInitializerCalls = registerIndexKey<BirCall>(false) {
+    private val lateinitInitializerCalls = registerIndexKey(BirCall, false) {
         birBuiltIns.lateinitIsInitialized != null && it.symbol == birBuiltIns.lateinitIsInitialized
     }
-    private val variableReads = registerBackReferencesKey<BirGetValue, _> { it.symbol }
+    private val variableReads = registerBackReferencesKey(BirGetValue) { it.symbol }
 
     override fun lower(module: BirModuleFragment) {
         transformLateinitProperties()

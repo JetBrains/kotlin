@@ -31,7 +31,7 @@ context(JvmBirBackendContext)
 class BirJvmOverloadsAnnotationLowering : BirLoweringPhase() {
     private val JvmOverloadsAnnotation by lz { birBuiltIns.findClass(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME) }
 
-    private val overloadsAnnotations = registerIndexKey<BirConstructorCall>(false) {
+    private val overloadsAnnotations = registerIndexKey(BirConstructorCall, false) {
         it.constructedClass == JvmOverloadsAnnotation
     }
 

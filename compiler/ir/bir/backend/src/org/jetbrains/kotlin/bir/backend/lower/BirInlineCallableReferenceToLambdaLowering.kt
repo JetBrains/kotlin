@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.name.Name
 
 context(JvmBirBackendContext)
 class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
-    private val inlineFunctions = registerIndexKey<BirFunction>(true) { it.isInlineFunctionCall() }
-    private val functionAccesses = registerBackReferencesKey<BirFunctionAccessExpression, _> { it.symbol.owner }
+    private val inlineFunctions = registerIndexKey(BirFunction, true) { it.isInlineFunctionCall() }
+    private val functionAccesses = registerBackReferencesKey(BirFunctionAccessExpression) { it.symbol.owner }
     private val originalBeforeInlineToken = acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
 
     override fun lower(module: BirModuleFragment) {

@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 context(JvmBirBackendContext)
 class BirDirectInvokeLowering : BirLoweringPhase() {
-    private val valueAccesses = registerBackReferencesKey<BirValueAccessExpression, _> { it.symbol.owner }
-    private val returnTargets = registerBackReferencesKey<BirReturn, _> { it.returnTargetSymbol.owner }
-    private val invokeCalls = registerIndexKey<BirCall>(false) {
+    private val valueAccesses = registerBackReferencesKey(BirValueAccessExpression) { it.symbol.owner }
+    private val returnTargets = registerBackReferencesKey(BirReturn) { it.returnTargetSymbol.owner }
+    private val invokeCalls = registerIndexKey(BirCall, false) {
         it.dispatchReceiver != null && it.symbol.owner.name == OperatorNameConventions.INVOKE
     }
 
