@@ -36,7 +36,7 @@ abstract class Base {
 }
 
 class Derived : Base() {
-    @<!PLUGIN_ANNOTATION_AMBIGUITY!>Target<!>(<!ARGUMENT_TYPE_MISMATCH!>AnnotationTarget.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>TYPE<!><!>)
+    @<!COMPILER_REQUIRED_ANNOTATION_AMBIGUITY!>Target<!>(<!ARGUMENT_TYPE_MISMATCH!>AnnotationTarget.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>TYPE<!><!>)
     annotation class Ann
 
     fun foo(x: <!WRONG_ANNOTATION_TARGET!>@Ann<!> String) {}

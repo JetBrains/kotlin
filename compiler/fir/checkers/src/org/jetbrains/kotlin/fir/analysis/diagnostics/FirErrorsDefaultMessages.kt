@@ -500,7 +500,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_CANNOT_BE_IMPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_ANNOTATION_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRE_RELEASE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED
@@ -1110,8 +1110,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Type parameter annotations are prohibited inside 'where' clauses. You should probably move the annotations to the type parameter declaration.",
         )
         map.put(
-            PLUGIN_ANNOTATION_AMBIGUITY,
-            "Resolution of the annotation type is ambiguous between ''{1}'' and the plugin annotation ''{0}''. Please specify a fully qualified annotation name.",
+            COMPILER_REQUIRED_ANNOTATION_AMBIGUITY,
+            "Resolution of the annotation type is ambiguous between ''{1}'' and the compiler-required annotation ''{0}''. Please specify a fully qualified annotation name.",
             RENDER_TYPE,
             RENDER_TYPE
         )

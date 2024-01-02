@@ -385,7 +385,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val WRONG_EXTENSION_FUNCTION_TYPE_WARNING by warning<KtAnnotationEntry>()
         val ANNOTATION_IN_WHERE_CLAUSE_ERROR by error<KtAnnotationEntry>()
 
-        val PLUGIN_ANNOTATION_AMBIGUITY by error<PsiElement> {
+        val COMPILER_REQUIRED_ANNOTATION_AMBIGUITY by error<PsiElement> {
             parameter<ConeKotlinType>("typeFromCompilerPhase")
             parameter<ConeKotlinType>("typeFromTypesPhase")
         }

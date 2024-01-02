@@ -839,8 +839,8 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AnnotationInWhereClauseError::class
     }
 
-    interface PluginAnnotationAmbiguity : KtFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = PluginAnnotationAmbiguity::class
+    interface CompilerRequiredAnnotationAmbiguity : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = CompilerRequiredAnnotationAmbiguity::class
         val typeFromCompilerPhase: KtType
         val typeFromTypesPhase: KtType
     }

@@ -1004,12 +1004,12 @@ internal class AnnotationInWhereClauseErrorImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KtFirDiagnostic.AnnotationInWhereClauseError
 
-internal class PluginAnnotationAmbiguityImpl(
+internal class CompilerRequiredAnnotationAmbiguityImpl(
     override val typeFromCompilerPhase: KtType,
     override val typeFromTypesPhase: KtType,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.PluginAnnotationAmbiguity
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.CompilerRequiredAnnotationAmbiguity
 
 internal class AmbiguousAnnotationArgumentImpl(
     override val symbols: List<KtSymbol>,

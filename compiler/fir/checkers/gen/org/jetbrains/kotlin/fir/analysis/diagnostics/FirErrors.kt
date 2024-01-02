@@ -303,7 +303,7 @@ object FirErrors {
     val WRONG_EXTENSION_FUNCTION_TYPE: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
     val WRONG_EXTENSION_FUNCTION_TYPE_WARNING: KtDiagnosticFactory0 by warning0<KtAnnotationEntry>()
     val ANNOTATION_IN_WHERE_CLAUSE_ERROR: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
-    val PLUGIN_ANNOTATION_AMBIGUITY: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val COMPILER_REQUIRED_ANNOTATION_AMBIGUITY: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val AMBIGUOUS_ANNOTATION_ARGUMENT: KtDiagnosticFactory1<List<FirBasedSymbol<*>>> by error1<PsiElement, List<FirBasedSymbol<*>>>()
     val VOLATILE_ON_VALUE: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
     val VOLATILE_ON_DELEGATE: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
