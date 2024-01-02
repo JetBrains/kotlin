@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import kotlinx.serialization.Serializable
+//import kotlinx.serialization.Serializable
 
-@Serializable
+//@Serializable
 abstract class Freezable {
     protected fun checkFrozen() {
         if (frozen) throw IllegalStateException("Instance of ${this::class} is frozen")

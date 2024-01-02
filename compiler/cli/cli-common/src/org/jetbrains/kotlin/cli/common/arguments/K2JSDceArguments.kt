@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import kotlinx.serialization.Serializable
+//import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies.ALL
 import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies.OLDER
 
-@Serializable
+//@Serializable
 class K2JSDceArguments : CommonToolArguments() {
     companion object {
         @JvmStatic private val serialVersionUID = 0L

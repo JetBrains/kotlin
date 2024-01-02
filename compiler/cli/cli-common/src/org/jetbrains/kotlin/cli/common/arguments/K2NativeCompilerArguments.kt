@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import kotlinx.serialization.Serializable
+//import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 
-@Serializable
+//@Serializable
 class K2NativeCompilerArguments : CommonCompilerArguments() {
     // First go the options interesting to the general public.
     // Prepend them with a single dash.

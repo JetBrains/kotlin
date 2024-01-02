@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
-import kotlinx.serialization.Serializable
+//import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.utils.IDEAPlatforms
 import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 
 @SuppressWarnings("WeakerAccess")
-@Serializable
+//@Serializable
 abstract class CommonCompilerArguments : CommonToolArguments() {
     companion object {
         @JvmStatic
@@ -1109,7 +1109,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             }
 
     // Used only for serialize and deserialize settings. Don't use in other places!
-    @Serializable
+//    @Serializable
     class DummyImpl : CommonCompilerArguments() {
         override fun copyOf(): Freezable = copyCommonCompilerArguments(this, DummyImpl())
     }

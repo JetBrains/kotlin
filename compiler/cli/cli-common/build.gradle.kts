@@ -16,7 +16,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.guava)
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    implementation(libs.kotlinx.serialization.json)
+//    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0") { isTransitive = true }
 }
 
 sourceSets {
