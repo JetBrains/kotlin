@@ -1,0 +1,57 @@
+public final class User$Companion : java/lang/Object {
+    private void <init>()
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+
+    private static void getTest$annotations()
+}
+
+public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final User createFromParcel(android.os.Parcel parcel)
+
+    public java.lang.Object createFromParcel(android.os.Parcel source)
+
+    public final User[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+}
+
+public final class User : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    public final static User$Companion Companion
+
+    private final java.lang.String firstName
+
+    private final static java.lang.StringBuilder test
+
+    static void <clinit>() {
+          NEW (User$Companion)
+          DUP
+          ACONST_NULL
+          INVOKESPECIAL (User$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          PUTSTATIC (User, Companion, LUser$Companion;)
+          NEW (User$Creator)
+          DUP
+          INVOKESPECIAL (User$Creator, <init>, ()V)
+          CHECKCAST (android/os/Parcelable$Creator)
+          PUTSTATIC (User, CREATOR, Landroid/os/Parcelable$Creator;)
+        LABEL (L0)
+        LINENUMBER (12)
+          NEW (java/lang/StringBuilder)
+          DUP
+          INVOKESPECIAL (java/lang/StringBuilder, <init>, ()V)
+          PUTSTATIC (User, test, Ljava/lang/StringBuilder;)
+          RETURN
+    }
+
+    public void <init>(java.lang.String firstName)
+
+    public final int describeContents()
+
+    public final java.lang.String getFirstName()
+
+    public final void writeToParcel(android.os.Parcel dest, int flags)
+}
