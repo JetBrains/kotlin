@@ -484,6 +484,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("inapplicableTargetPropertyImmutableInPrimaryConstructor.kt")
+        public void testInapplicableTargetPropertyImmutableInPrimaryConstructor() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inapplicableTargetPropertyImmutableInPrimaryConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("IncDec.kt")
         public void testIncDec() throws Exception {
             runTest("compiler/testData/diagnostics/tests/IncDec.kt");
