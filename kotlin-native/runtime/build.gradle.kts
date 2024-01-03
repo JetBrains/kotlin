@@ -502,7 +502,9 @@ val hostAssemble by tasks.registering {
 }
 
 tasks.named("clean") {
-    delete(layout.buildDirectory)
+    doLast {
+        delete(layout.buildDirectory)
+    }
 }
 
 // region: Stdlib
