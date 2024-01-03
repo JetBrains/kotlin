@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
@@ -290,6 +292,21 @@ class FirElementSerializer private constructor(
 
         typeTable.serialize()?.let { builder.typeTable = it }
         versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
+
+        if (klass is FirRegularClass) {
+            @OptIn(FirExtensionApiInternals::class)
+            for (plugin in session.extensionService.metadataSerializerPlugins) {
+                val protoRegistrar = object : FirMetadataSerializerPlugin.ProtoRegistrar {
+                    override fun <Type> setExtension(
+                        extension: GeneratedMessageLite.GeneratedExtension<ProtoBuf.Class, Type>,
+                        value: Type,
+                    ) {
+                        builder.setExtension(extension, value)
+                    }
+                }
+                plugin.registerProtoExtensions(klass.symbol, stringTable, protoRegistrar)
+            }
+        }
 
         return builder
     }

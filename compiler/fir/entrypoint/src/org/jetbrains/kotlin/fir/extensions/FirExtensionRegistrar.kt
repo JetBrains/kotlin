@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 import org.jetbrains.kotlin.fir.backend.Fir2IrScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
+import org.jetbrains.kotlin.fir.serialization.FirMetadataSerializerPlugin
 import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
@@ -34,6 +35,8 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirScriptConfiguratorExtension::class,
             Fir2IrScriptConfiguratorExtension::class,
             FirFunctionTypeKindExtension::class,
+            @OptIn(FirExtensionApiInternals::class)
+            FirMetadataSerializerPlugin::class,
         )
 
         internal val ALLOWED_EXTENSIONS_FOR_LIBRARY_SESSION = listOf(
@@ -107,6 +110,12 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             registerExtension(FirFunctionTypeKindExtension::class, this)
         }
 
+        @FirExtensionApiInternals
+        @JvmName("plusMetadataSerializerPlugin")
+        operator fun (FirMetadataSerializerPlugin.Factory).unaryPlus() {
+            registerExtension(FirMetadataSerializerPlugin::class, this)
+        }
+
         // ------------------ reference methods ------------------
 
         @JvmName("plusStatusTransformerExtension")
@@ -167,6 +176,12 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusFunctionTypeKindExtension")
         operator fun ((FirSession) -> FirFunctionTypeKindExtension).unaryPlus() {
             FirFunctionTypeKindExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @FirExtensionApiInternals
+        @JvmName("plusMetadataSerializerPlugin")
+        operator fun ((FirSession) -> FirMetadataSerializerPlugin).unaryPlus() {
+            FirMetadataSerializerPlugin.Factory { this.invoke(it) }.unaryPlus()
         }
 
         // ------------------ utilities ------------------
