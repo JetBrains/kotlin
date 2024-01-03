@@ -25,8 +25,3 @@ internal actual fun formatToExactDecimals(value: Double, decimals: Int): String 
         createFormatForDecimals(decimals)
     return format.format(value)
 }
-
-internal actual fun formatUpToDecimals(value: Double, decimals: Int): String =
-    createFormatForDecimals(0)
-        .apply { maximumFractionDigits = decimals }
-        .format(value)

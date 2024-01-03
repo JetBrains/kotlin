@@ -1491,4 +1491,3 @@ private fun durationOfMillisNormalized(millis: Long) =
 internal expect val durationAssertionsEnabled: Boolean
 
 internal expect fun formatToExactDecimals(value: Double, decimals: Int): String
-internal expect fun formatUpToDecimals(value: Double, decimals: Int): String

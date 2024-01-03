@@ -14,6 +14,4 @@ internal actual fun formatToExactDecimals(value: Double, decimals: Int): String 
     return (round / pow).toString()
 }
 
-internal actual fun formatUpToDecimals(value: Double, decimals: Int): String = TODO("Wasi Implement")
-
 internal actual inline val durationAssertionsEnabled: Boolean get() = true
