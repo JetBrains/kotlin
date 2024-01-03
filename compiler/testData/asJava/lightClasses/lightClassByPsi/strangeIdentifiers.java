@@ -2,14 +2,14 @@ public final class !A@ /* !A@*/ {
   public  !A@();//  .ctor()
 }
 
-public static final class (^_^) /* Test.(^_^)*/ {
-  public  (^_^)();//  .ctor()
-}
-
 public final class A B /* A B*/ {
   public  A B();//  .ctor()
 
   class C ...
+}
+
+public static final class C /* A B.C*/ {
+  public  C();//  .ctor()
 }
 
 public final class A()B() /* A()B()*/ {
@@ -25,14 +25,14 @@ public abstract @interface Anno /* Anno*/ {
   public abstract java.lang.String name();//  name()
 }
 
-public static final class C /* A B.C*/ {
-  public  C();//  .ctor()
-}
-
 public enum StrangeEnum /* StrangeEnum*/ {
   InvalidFieldName;
 
+  @org.jetbrains.annotations.NotNull()
   private final java.lang.String size;
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getSize();//  getSize()
 
   @org.jetbrains.annotations.NotNull()
   public static StrangeEnum valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
@@ -40,9 +40,10 @@ public enum StrangeEnum /* StrangeEnum*/ {
   @org.jetbrains.annotations.NotNull()
   public static StrangeEnum[] values();//  values()
 
-  private  StrangeEnum(java.lang.String);//  .ctor(java.lang.String)
+  @org.jetbrains.annotations.NotNull()
+  public static kotlin.enums.EnumEntries<StrangeEnum> getEntries();//  getEntries()
 
-  public final java.lang.String getSize();//  getSize()
+  private  StrangeEnum(java.lang.String);//  .ctor(java.lang.String)
 }
 
 public final class Test /* Test*/ {
@@ -82,4 +83,8 @@ public final class Test /* Test*/ {
   public final void strangeFun5(@org.jetbrains.annotations.NotNull() AB.C);//  strangeFun5(AB.C)
 
   class (^_^) ...
+}
+
+public static final class (^_^) /* Test.(^_^)*/ {
+  public  (^_^)();//  .ctor()
 }

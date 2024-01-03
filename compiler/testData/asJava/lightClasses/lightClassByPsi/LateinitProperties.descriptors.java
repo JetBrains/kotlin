@@ -23,7 +23,7 @@ public abstract class AbstractKotlinClass /* AbstractKotlinClass*/ {
   class Companion ...
 }
 
-public static final class Companion /* KotlinClass.Companion*/ {
+public static final class Companion /* AbstractKotlinClass.Companion*/ {
   @org.jetbrains.annotations.NotNull()
   public final Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
 
@@ -37,7 +37,7 @@ public static final class Companion /* KotlinClass.Companion*/ {
   public final void setCompanionLateinitVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitVariable(Custom)
 }
 
-public static final class Companion /* AbstractKotlinClass.Companion*/ {
+public static final class Companion /* KotlinClass.Companion*/ {
   @org.jetbrains.annotations.NotNull()
   public final Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
 

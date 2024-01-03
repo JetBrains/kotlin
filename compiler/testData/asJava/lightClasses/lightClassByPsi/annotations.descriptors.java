@@ -7,7 +7,7 @@ public abstract @interface Ann /* Ann*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno /* Anno*/ {
-  public abstract Anno[] x() default {Anno(p = "a"), Anno(p = "b")};//  x()
+  public abstract Anno[] x() default {@Anno(p = "a"), @Anno(p = "b")};//  x()
 
   public abstract java.lang.String p() default "";//  p()
 }
@@ -45,7 +45,7 @@ public abstract @interface Anno6 /* Anno6*/ {
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoWithCompanion /* AnnoWithCompanion*/ {
   @kotlin.jvm.JvmField()
-  public static final int x = 42 /* initializer type: int */;
+  public static final int x;
 
   @org.jetbrains.annotations.NotNull()
   public static final AnnoWithCompanion.Companion Companion;
@@ -121,7 +121,7 @@ public final class Example /* Example*/ {
 @Anno()
 public final class F /* F*/ implements java.lang.Runnable {
   @org.jetbrains.annotations.NotNull()
-  private java.lang.String prop = "x" /* initializer type: java.lang.String */;
+  private java.lang.String prop;
 
   @Anno(p = "f")
   public final void f(@Anno() @org.jetbrains.annotations.NotNull() java.lang.String);//  f(java.lang.String)
@@ -146,10 +146,10 @@ public abstract @interface Fancy /* Fancy*/ {
 
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.Nullable()
-  private java.lang.String x = null /* initializer type: null */;
+  private java.lang.String x;
 
   @Anno()
-  public  Foo(@org.jetbrains.annotations.NotNull() MyDependency);//  .ctor(MyDependency)
+  public  Foo(error.NonExistentClass);//  .ctor(error.NonExistentClass)
 
   @Anno()
   public final void f4(@org.jetbrains.annotations.NotNull() java.lang.String);//  f4(java.lang.String)
@@ -161,7 +161,7 @@ public final class Foo /* Foo*/ {
   public final java.lang.String getX();//  getX()
 }
 
-@Ann(arg1 = java.lang.String.class, arg2 = int.class)
+@Ann(arg1 = kotlin.String.class, arg2 = kotlin.Int.class)
 public final class MyClass /* MyClass*/ {
   public  MyClass();//  .ctor()
 }

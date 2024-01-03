@@ -7,7 +7,7 @@ public final class MyRec /* pkg.MyRec*/ {
   public final java.lang.String component1();//  component1()
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getName();//  getName()
+  public final java.lang.String name();//  name()
 
   @org.jetbrains.annotations.NotNull()
   public final pkg.MyRec copy(@org.jetbrains.annotations.NotNull() java.lang.String);//  copy(java.lang.String)
@@ -20,5 +20,4 @@ public final class MyRec /* pkg.MyRec*/ {
   public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
 
   public int hashCode();//  hashCode()
-
 }

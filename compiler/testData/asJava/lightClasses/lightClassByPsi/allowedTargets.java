@@ -26,7 +26,23 @@ public final class MyClass /* MyClass*/ {
 
   private final int x7;
 
-  public  MyClass(@AnotherUniversalAnnotation() @FieldAnnotation() @ParameterAnnotation() @PropertyAnnotation() @UniversalAnnotation() int, @PropertyOrFieldAnnotation() int, @PropertyOrParameterAnnotation() int, @ParameterOrFieldAnnotation() int, int, @AnotherUniversalAnnotation() int, @UniversalAnnotation() int);//  .ctor(int, int, int, int, int, int, int)
+  @AnotherUniversalAnnotation()
+  @java.lang.Deprecated()
+  public static void getX7$annotations();//  getX7$annotations()
+
+  @PropertyAnnotation()
+  @java.lang.Deprecated()
+  public static void getX1$annotations();//  getX1$annotations()
+
+  @PropertyOrFieldAnnotation()
+  @java.lang.Deprecated()
+  public static void getX2$annotations();//  getX2$annotations()
+
+  @UniversalAnnotation()
+  @java.lang.Deprecated()
+  public static void getX5$annotations();//  getX5$annotations()
+
+  public  MyClass(@AnotherUniversalAnnotation() @ParameterAnnotation() @UniversalAnnotation() int, int, @PropertyOrParameterAnnotation() int, @ParameterOrFieldAnnotation() int, int, @AnotherUniversalAnnotation() int, @UniversalAnnotation() int);//  .ctor(int, int, int, int, int, int, int)
 
   public final int getX1();//  getX1()
 

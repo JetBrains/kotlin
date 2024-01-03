@@ -1,30 +1,15 @@
-public final class Container /* Container*/ {
-  @org.jetbrains.annotations.NotNull()
-  public static final Container.Companion Companion;
-
-  public  Container();//  .ctor()
-
-  class Base ...
-
-  class Companion ...
-
-  class Delegate ...
-
-  class Derived ...
-}
-
 public static abstract class Base /* Container.Base*/ {
   @org.jetbrains.annotations.NotNull()
-  private final Container.Delegate<java.lang.String> a$delegate;
+  private final Container.Delegate a$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private final Container.Delegate<java.lang.String> b$delegate;
+  private final Container.Delegate b$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private final Container.Delegate<java.lang.String> mutable$delegate;
+  private final Container.Delegate mutable$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.String c = "" /* initializer type: java.lang.String */;
+  private final java.lang.String c;
 
   @org.jetbrains.annotations.NotNull()
   public abstract java.lang.String getD();//  getD()
@@ -53,6 +38,21 @@ public static final class Companion /* Container.Companion*/ {
   private  Companion();//  .ctor()
 }
 
+public final class Container /* Container*/ {
+  @org.jetbrains.annotations.NotNull()
+  public static final Container.Companion Companion;
+
+  public  Container();//  .ctor()
+
+  class Base ...
+
+  class Companion ...
+
+  class Delegate ...
+
+  class Derived ...
+}
+
 public static abstract interface Delegate /* Container.Delegate*/<R>  {
   public abstract R getValue(@org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);//  getValue(java.lang.Object, kotlin.reflect.KProperty<?>)
 
@@ -63,23 +63,20 @@ public static abstract interface Delegate /* Container.Delegate*/<R>  {
 
 public static final class Derived /* Container.Derived*/ extends Container.Base {
   @org.jetbrains.annotations.NotNull()
-  private final Container.Delegate<java.lang.String> b$delegate;
+  private final Container.Delegate b$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private final Container.Delegate<java.lang.String> c$delegate;
+  private final Container.Delegate c$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private final Container.Delegate<java.lang.String> d$delegate;
+  private final Container.Delegate d$delegate;
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.lang.String getB();//  getB()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.lang.String getC();//  getC()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.lang.String getD();//  getD()
 

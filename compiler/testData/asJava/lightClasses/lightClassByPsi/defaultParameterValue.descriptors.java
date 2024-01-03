@@ -16,52 +16,52 @@ public enum Em /* Em*/ {
 
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
-  private final Em em = Em.BAR /* initializer type: Em */;
+  private final Em em;
 
   @org.jetbrains.annotations.NotNull()
-  private final Em[] emarr = {Em.FOO, Em.BAR} /* initializer type: null */;
+  private final Em[] emarr;
 
   @org.jetbrains.annotations.NotNull()
-  private final double[] darr = {7.3} /* initializer type: null */;
+  private final double[] darr;
 
   @org.jetbrains.annotations.NotNull()
-  private final int[] iarr = {1, 2, 3} /* initializer type: null */;
+  private final int[] iarr;
 
   @org.jetbrains.annotations.NotNull()
   private final java.lang.Class<?> cl;
 
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.Class<?>[] clarr = {} /* initializer type: null */;
+  private final java.lang.Class<?>[] clarr;
 
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.String s = "foo" /* initializer type: java.lang.String */;
+  private final java.lang.String s;
 
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.String[] empty = {} /* initializer type: null */;
+  private final java.lang.String[] empty;
 
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.String[] sarr = {"a", "bc"} /* initializer type: null */;
+  private final java.lang.String[] sarr;
 
   @org.jetbrains.annotations.NotNull()
-  private final long[] larr = {-1L, 0L, 1L} /* initializer type: null */;
+  private final long[] larr;
 
-  private final boolean z = true /* initializer type: boolean */;
+  private final boolean z;
 
-  private final byte b = 1 /* initializer type: int */;
+  private final byte b;
 
-  private final char c = 'c' /* initializer type: char */;
+  private final char c2;
 
-  private final char c2 = '\n' /* initializer type: char */;
+  private final char c;
 
-  private final double d = -1.0 /* initializer type: double */;
+  private final double d;
 
-  private final float f = 1.0f /* initializer type: float */;
+  private final float f;
 
-  private final int i = 10 /* initializer type: int */;
+  private final int i;
 
-  private final long l = -10L /* initializer type: long */;
+  private final long l;
 
-  private final short sh = 10 /* initializer type: int */;
+  private final short sh;
 
   @org.jetbrains.annotations.NotNull()
   public final Em getEm();//  getEm()

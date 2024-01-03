@@ -21,6 +21,10 @@ public final class A /* A*/ {
   class Companion ...
 }
 
+public static final class Companion /* A.Companion*/ {
+  private  Companion();//  .ctor()
+}
+
 public abstract interface B /* B*/ {
   @kotlin.jvm.JvmField()
   @org.jetbrains.annotations.NotNull()
@@ -30,6 +34,10 @@ public abstract interface B /* B*/ {
   public static final B.Companion Companion;
 
   class Companion ...
+}
+
+public static final class Companion /* B.Companion*/ {
+  private  Companion();//  .ctor()
 }
 
 public final class C /* C*/ {
@@ -43,12 +51,4 @@ public final class C /* C*/ {
   public  C();//  .ctor()
 
   public  C(@org.jetbrains.annotations.NotNull() java.util.Collection<?>, int);//  .ctor(java.util.Collection<?>, int)
-}
-
-public static final class Companion /* A.Companion*/ {
-  private  Companion();//  .ctor()
-}
-
-public static final class Companion /* B.Companion*/ {
-  private  Companion();//  .ctor()
 }

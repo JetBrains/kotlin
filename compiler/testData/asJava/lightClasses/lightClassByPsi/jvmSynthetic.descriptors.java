@@ -1,7 +1,5 @@
 public final class A /* A*/ {
-  private int z = 1 /* initializer type: int */;
-
-  public A f;
+  private int z;
 
   public  A();//  .ctor()
 

@@ -26,13 +26,13 @@ public final class C /* C*/ {
   private final A x2;
 
   @org.jetbrains.annotations.NotNull()
+  private final A x4;
+
+  @org.jetbrains.annotations.NotNull()
   private final B x3;
 
   @org.jetbrains.annotations.NotNull()
   private final java.lang.Object x1;
-
-  @org.jetbrains.annotations.NotNull()
-  private final java.lang.Object x4;
 
   public  C();//  .ctor()
 }

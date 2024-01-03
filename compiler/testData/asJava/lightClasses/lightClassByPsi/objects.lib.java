@@ -28,6 +28,33 @@ public final class C /* C*/ {
   class Companion ...
 }
 
+public static final class Companion /* C.Companion*/ {
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getC(@org.jetbrains.annotations.NotNull() I);//  getC(I)
+
+  @kotlin.jvm.JvmStatic()
+  public final void foo();//  foo()
+
+  @kotlin.jvm.JvmStatic()
+  public final void setC(@org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(I, java.lang.String)
+
+  @kotlin.jvm.JvmStatic()
+  public final void setC1(@org.jetbrains.annotations.NotNull() java.lang.String);//  setC1(java.lang.String)
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getC1();//  getC1()
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getX();//  getX()
+
+  private  Companion();//  .ctor()
+
+  public final void bar();//  bar()
+
+  public final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
+}
+
 public final class C1 /* C1*/ {
   @org.jetbrains.annotations.NotNull()
   private static final C1.Companion Companion;
@@ -37,6 +64,10 @@ public final class C1 /* C1*/ {
   class Companion ...
 }
 
+private static final class Companion /* C1.Companion*/ {
+  private  Companion();//  .ctor()
+}
+
 public final class C2 /* C2*/ {
   @org.jetbrains.annotations.NotNull()
   public static final C2.Companion Companion;
@@ -44,6 +75,10 @@ public final class C2 /* C2*/ {
   public  C2();//  .ctor()
 
   class Companion ...
+}
+
+public static final class Companion /* C2.Companion*/ {
+  private  Companion();//  .ctor()
 }
 
 public final class ClassWithConstContainer /* ClassWithConstContainer*/ {
@@ -70,47 +105,8 @@ public final class ClassWithConstContainer /* ClassWithConstContainer*/ {
   class Companion ...
 }
 
-private static final class Companion /* C1.Companion*/ {
-  private  Companion();//  .ctor()
-}
-
-public static final class Companion /* C2.Companion*/ {
-  private  Companion();//  .ctor()
-}
-
-public static final class Companion /* I.Companion*/ {
-  private  Companion();//  .ctor()
-}
-
 public static final class Companion /* ClassWithConstContainer.Companion*/ {
   private  Companion();//  .ctor()
-}
-
-public static final class Companion /* C.Companion*/ {
-  @kotlin.jvm.JvmStatic()
-  @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getC(@org.jetbrains.annotations.NotNull() I);//  getC(I)
-
-  @kotlin.jvm.JvmStatic()
-  public final void foo();//  foo()
-
-  @kotlin.jvm.JvmStatic()
-  public final void setC(@org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(I, java.lang.String)
-
-  @kotlin.jvm.JvmStatic()
-  public final void setC1(@org.jetbrains.annotations.NotNull() java.lang.String);//  setC1(java.lang.String)
-
-  @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getC1();//  getC1()
-
-  @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getX();//  getX()
-
-  private  Companion();//  .ctor()
-
-  public final void bar();//  bar()
-
-  public final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
 }
 
 public final class ConstContainer /* ConstContainer*/ {
@@ -140,6 +136,10 @@ public abstract interface I /* I*/ {
   public static final I.Companion Companion;
 
   class Companion ...
+}
+
+public static final class Companion /* I.Companion*/ {
+  private  Companion();//  .ctor()
 }
 
 public final class Obj /* Obj*/ implements java.lang.Runnable {

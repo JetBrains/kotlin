@@ -1,43 +1,3 @@
-final class null /* null*/ {
-  private  ();//  .ctor()
-}
-
-final class null /* null*/ {
-  @java.lang.Override()
-  @org.jetbrains.annotations.NotNull()
-  public java.lang.String toString();//  toString()
-
-  private  ();//  .ctor()
-}
-
-final class null /* null*/ implements java.lang.Runnable {
-  @java.lang.Override()
-  public void run();//  run()
-
-  private  ();//  .ctor()
-}
-
-final class null /* null*/ implements java.lang.Runnable {
-  @java.lang.Override()
-  public void run();//  run()
-
-  private  ();//  .ctor()
-}
-
-final class null /* null*/ implements I, java.lang.Runnable {
-  @java.lang.Override()
-  public void run();//  run()
-
-  private  ();//  .ctor()
-}
-
-final class null /* null*/ implements I, java.lang.Runnable {
-  @java.lang.Override()
-  public void run();//  run()
-
-  private  ();//  .ctor()
-}
-
 final class C /* C*/ {
   @org.jetbrains.annotations.NotNull()
   private final kotlin.jvm.functions.Function0<java.lang.Object> initChild;
@@ -86,4 +46,44 @@ public final class ValidPublicSupertype /* ValidPublicSupertype*/ {
   public final java.lang.Runnable getX();//  getX()
 
   public  ValidPublicSupertype();//  .ctor()
+}
+
+final class null /* null*/ {
+  private  ();//  .ctor()
+}
+
+final class null /* null*/ {
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.String toString();//  toString()
+
+  private  ();//  .ctor()
+}
+
+final class null /* null*/ implements java.lang.Runnable {
+  @java.lang.Override()
+  public void run();//  run()
+
+  private  ();//  .ctor()
+}
+
+final class null /* null*/ implements java.lang.Runnable {
+  @java.lang.Override()
+  public void run();//  run()
+
+  private  ();//  .ctor()
+}
+
+final class null /* null*/ implements I, java.lang.Runnable {
+  @java.lang.Override()
+  public void run();//  run()
+
+  private  ();//  .ctor()
+}
+
+final class null /* null*/ implements I, java.lang.Runnable {
+  @java.lang.Override()
+  public void run();//  run()
+
+  private  ();//  .ctor()
 }

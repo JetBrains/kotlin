@@ -6,18 +6,6 @@ public abstract interface A /* A*/ {
   public abstract void setInt2(int);//  setInt2(int)
 }
 
-public static final class Companion /* Foo.Companion*/ {
-  private  Companion();//  .ctor()
-
-  public final int getF1();//  getF1()
-
-  public final int getProp3();//  getProp3()
-
-  public final int getProp7();//  getProp7()
-
-  public final void setProp7(int);//  setProp7(int)
-}
-
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   private final Foo b;
@@ -216,6 +204,18 @@ D'E"F\G$H */;
   public final void setSubject(@org.jetbrains.annotations.NotNull() Unresolved);//  setSubject(Unresolved)
 
   class Companion ...
+}
+
+public static final class Companion /* Foo.Companion*/ {
+  private  Companion();//  .ctor()
+
+  public final int getF1();//  getF1()
+
+  public final int getProp3();//  getProp3()
+
+  public final int getProp7();//  getProp7()
+
+  public final void setProp7(int);//  setProp7(int)
 }
 
 public final class Foo2 /* Foo2*/ {

@@ -7,7 +7,7 @@ public abstract @interface Ann /* Ann*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno /* Anno*/ {
-  public abstract Anno[] x() default {@Anno(p = "a"), @Anno(p = "b")};//  x()
+  public abstract Anno[] x() default {Anno(p = "a"), Anno(p = "b")};//  x()
 
   public abstract java.lang.String p() default "";//  p()
 }
@@ -45,7 +45,7 @@ public abstract @interface Anno6 /* Anno6*/ {
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoWithCompanion /* AnnoWithCompanion*/ {
   @kotlin.jvm.JvmField()
-  public static final int x;
+  public static final int x = 42 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
   public static final AnnoWithCompanion.Companion Companion;
@@ -53,16 +53,16 @@ public abstract @interface AnnoWithCompanion /* AnnoWithCompanion*/ {
   class Companion ...
 }
 
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface AnnotatedAttribute /* AnnotatedAttribute*/ {
-  @Anno()
-  public abstract java.lang.String x();//  x()
-}
-
 public static final class Companion /* AnnoWithCompanion.Companion*/ {
   private  Companion();//  .ctor()
 
   public final void foo();//  foo()
+}
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface AnnotatedAttribute /* AnnotatedAttribute*/ {
+  @Anno()
+  public abstract java.lang.String x();//  x()
 }
 
 public final class CtorAnnotations /* CtorAnnotations*/ {
@@ -121,7 +121,7 @@ public final class Example /* Example*/ {
 @Anno()
 public final class F /* F*/ implements java.lang.Runnable {
   @org.jetbrains.annotations.NotNull()
-  private java.lang.String prop;
+  private java.lang.String prop = "x" /* initializer type: java.lang.String */;
 
   @Anno(p = "f")
   public final void f(@Anno() @org.jetbrains.annotations.NotNull() java.lang.String);//  f(java.lang.String)
@@ -146,10 +146,10 @@ public abstract @interface Fancy /* Fancy*/ {
 
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.Nullable()
-  private java.lang.String x;
+  private java.lang.String x = null /* initializer type: null */;
 
   @Anno()
-  public  Foo(error.NonExistentClass);//  .ctor(error.NonExistentClass)
+  public  Foo(@org.jetbrains.annotations.NotNull() MyDependency);//  .ctor(MyDependency)
 
   @Anno()
   public final void f4(@org.jetbrains.annotations.NotNull() java.lang.String);//  f4(java.lang.String)
@@ -161,7 +161,7 @@ public final class Foo /* Foo*/ {
   public final java.lang.String getX();//  getX()
 }
 
-@Ann(arg1 = kotlin.String.class, arg2 = kotlin.Int.class)
+@Ann(arg1 = java.lang.String.class, arg2 = int.class)
 public final class MyClass /* MyClass*/ {
   public  MyClass();//  .ctor()
 }

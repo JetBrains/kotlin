@@ -7,9 +7,9 @@ public final class C /* C*/ {
   @org.jetbrains.annotations.NotNull()
   public static final C.Companion Companion;
 
-  private static final int x;
+  private static final int x = 1 /* initializer type: int */;
 
-  private static final int y;
+  private static final int y = 2 /* initializer type: int */;
 
   public  C();//  .ctor()
 
@@ -19,6 +19,15 @@ public final class C /* C*/ {
 }
 
 public static final class Companion /* C.Companion*/ {
+  @Anno(p = "x")
+  @java.lang.Deprecated()
+  public static void getX$annotations();//  getX$annotations()
+
+  @Anno(p = "y")
+  @java.lang.Deprecated()
+  @kotlin.jvm.JvmStatic()
+  public static void getY$annotations();//  getY$annotations()
+
   private  Companion();//  .ctor()
 
   public final int getX();//  getX()
@@ -27,7 +36,15 @@ public static final class Companion /* C.Companion*/ {
 }
 
 public class O /* O*/ {
-  private final int protectedProperty;
+  private final int protectedProperty = 1 /* initializer type: int */;
+
+  @Anno(p = "private")
+  @java.lang.Deprecated()
+  private static void getPrivateProperty$annotations();//  getPrivateProperty$annotations()
+
+  @Anno(p = "protected")
+  @java.lang.Deprecated()
+  protected static void getProtectedProperty$annotations();//  getProtectedProperty$annotations()
 
   private final int getPrivateProperty();//  getPrivateProperty()
 
@@ -39,15 +56,39 @@ public class O /* O*/ {
 public final class PropertyAnnotationsKt /* PropertyAnnotationsKt*/ {
   @kotlin.jvm.Transient()
   @kotlin.jvm.Volatile()
-  private static transient volatile int jvmFlags;
+  private static transient volatile int jvmFlags = 0 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
-  private static final java.lang.String nonNullable;
+  private static final java.lang.String nonNullable = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.Nullable()
-  private static final java.lang.String nullable;
+  private static final java.lang.String nullable = null /* initializer type: null */;
 
-  private static final int deprecated;
+  private static final int deprecated = 0 /* initializer type: int */;
+
+  @Anno(p = "nonNullable")
+  @java.lang.Deprecated()
+  public static void getNonNullable$annotations();//  getNonNullable$annotations()
+
+  @Anno(p = "nullable")
+  @java.lang.Deprecated()
+  public static void getNullable$annotations();//  getNullable$annotations()
+
+  @Anno(p = "property")
+  @java.lang.Deprecated()
+  public static void getExtensionProperty1$annotations(java.lang.Object);//  getExtensionProperty1$annotations(java.lang.Object)
+
+  @Anno(p = "property")
+  @java.lang.Deprecated()
+  public static void getExtensionProperty2$annotations(java.util.List);//  getExtensionProperty2$annotations(java.util.List)
+
+  @Anno(p = "property")
+  @java.lang.Deprecated()
+  public static void getExtensionProperty3$annotations(java.util.Map);//  getExtensionProperty3$annotations(java.util.Map)
+
+  @java.lang.Deprecated()
+  @kotlin.Deprecated(message = "deprecated")
+  public static void getDeprecated$annotations();//  getDeprecated$annotations()
 
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String getNonNullable();//  getNonNullable()

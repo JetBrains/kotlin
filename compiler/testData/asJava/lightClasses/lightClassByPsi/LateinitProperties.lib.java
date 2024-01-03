@@ -37,20 +37,6 @@ public static final class Companion /* AbstractKotlinClass.Companion*/ {
   public final void setCompanionLateinitVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitVariable(Custom)
 }
 
-public static final class Companion /* KotlinClass.Companion*/ {
-  @org.jetbrains.annotations.NotNull()
-  public final Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
-
-  @org.jetbrains.annotations.NotNull()
-  public final Custom getCompanionLateinitVariable();//  getCompanionLateinitVariable()
-
-  private  Companion();//  .ctor()
-
-  public final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(Custom)
-
-  public final void setCompanionLateinitVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitVariable(Custom)
-}
-
 public final class Custom /* Custom*/ {
   public  Custom();//  .ctor()
 }
@@ -78,6 +64,20 @@ public final class KotlinClass /* KotlinClass*/ {
   public static final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(Custom)
 
   class Companion ...
+}
+
+public static final class Companion /* KotlinClass.Companion*/ {
+  @org.jetbrains.annotations.NotNull()
+  public final Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
+
+  @org.jetbrains.annotations.NotNull()
+  public final Custom getCompanionLateinitVariable();//  getCompanionLateinitVariable()
+
+  private  Companion();//  .ctor()
+
+  public final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(Custom)
+
+  public final void setCompanionLateinitVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitVariable(Custom)
 }
 
 public final class LateinitPropertiesKt /* LateinitPropertiesKt*/ {

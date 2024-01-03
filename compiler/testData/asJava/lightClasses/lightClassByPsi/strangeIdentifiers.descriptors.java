@@ -32,11 +32,7 @@ public static final class C /* A B.C*/ {
 public enum StrangeEnum /* StrangeEnum*/ {
   InvalidFieldName;
 
-  @org.jetbrains.annotations.NotNull()
   private final java.lang.String size;
-
-  @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getSize();//  getSize()
 
   @org.jetbrains.annotations.NotNull()
   public static StrangeEnum valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
@@ -48,6 +44,8 @@ public enum StrangeEnum /* StrangeEnum*/ {
   public static kotlin.enums.EnumEntries<StrangeEnum> getEntries();//  getEntries()
 
   private  StrangeEnum(java.lang.String);//  .ctor(java.lang.String)
+
+  public final java.lang.String getSize();//  getSize()
 }
 
 public final class Test /* Test*/ {

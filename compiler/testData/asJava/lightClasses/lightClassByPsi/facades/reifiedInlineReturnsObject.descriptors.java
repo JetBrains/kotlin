@@ -1,5 +1,4 @@
 final class null /* null*/ extends PaginatedTableModel<R> {
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.util.List<R> getRows();//  getRows()
 

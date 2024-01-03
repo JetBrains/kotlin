@@ -1,10 +1,10 @@
 public final class FunsPropsAndFields /* FunsPropsAndFields*/ extends kotlin.script.templates.standard.ScriptTemplateWithArgs {
   @kotlin.jvm.JvmField()
-  public final int testField;
+  public final int testField = 42 /* initializer type: int */;
 
-  private final int testPropVal;
+  private final int testPropVal = 42 /* initializer type: int */;
 
-  private int testPropVar;
+  private int testPropVar = 42 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String testFun(int);//  testFun(int)

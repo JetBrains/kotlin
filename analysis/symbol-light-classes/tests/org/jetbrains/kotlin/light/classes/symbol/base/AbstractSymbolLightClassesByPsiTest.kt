@@ -54,8 +54,9 @@ abstract class AbstractSymbolLightClassesByPsiTest(
             val lcViaFinder = finder.findClass(lc.qualifiedName!!, scope)
             TestCase.assertEquals(lc, lcViaFinder)
         }
+
         return withExtendedTypeRenderer(testDataFile) {
-            lightClasses.sortedBy { it.name }.joinToString("\n\n") { it.renderClass() }
+            lightClasses.sortedBy { it.qualifiedName ?: it.name.toString() }.joinToString("\n\n") { it.renderClass() }
         }
     }
 }

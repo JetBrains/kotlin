@@ -1,6 +1,6 @@
 public final class C /* C*/ {
   @org.jetbrains.annotations.Nullable()
-  private final Direction enumConst = Direction.EAST /* initializer type: Direction */;
+  private final Direction enumConst;
 
   @org.jetbrains.annotations.Nullable()
   public final Direction getEnumConst();//  getEnumConst()
@@ -13,7 +13,7 @@ public enum Color /* Color*/ {
   GREEN,
   BLUE;
 
-  private final int rgb = 5 /* initializer type: int */;
+  private final int rgb;
 
   @org.jetbrains.annotations.NotNull()
   public static Color valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
@@ -24,9 +24,9 @@ public enum Color /* Color*/ {
   @org.jetbrains.annotations.NotNull()
   public static kotlin.enums.EnumEntries<Color> getEntries();//  getEntries()
 
-  private  Color(int);//  .ctor(int)
+  private  Color(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
-  private  Color(java.lang.String);//  .ctor(java.lang.String)
+  private  Color(int);//  .ctor(int)
 
   public final int getRgb();//  getRgb()
 }
@@ -53,20 +53,15 @@ public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.fun
   PLUS {
    PLUS();//  .ctor()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.lang.Integer apply(int, int);//  apply(int, int)
   },
   TIMES {
    TIMES();//  .ctor()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.lang.Integer apply(int, int);//  apply(int, int)
   };
-
-  @java.lang.Override()
-  public int applyAsInt(int, int);//  applyAsInt(int, int)
 
   @org.jetbrains.annotations.NotNull()
   public static IntArithmetics valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
@@ -78,12 +73,17 @@ public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.fun
   public static kotlin.enums.EnumEntries<IntArithmetics> getEntries();//  getEntries()
 
   private  IntArithmetics();//  .ctor()
+
+  public int applyAsInt(int, int);//  applyAsInt(int, int)
+
+  class PLUS ...
+
+  class TIMES ...
 }
 
-static final class PLUS /* IntArithmetics.PLUS*/ extends IntArithmetics {
+public static final class PLUS /* IntArithmetics.PLUS*/ extends IntArithmetics {
    PLUS();//  .ctor()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.lang.Integer apply(int, int);//  apply(int, int)
 }
@@ -92,14 +92,12 @@ public abstract enum ProtocolState /* ProtocolState*/ {
   WAITING {
    WAITING();//  .ctor()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public ProtocolState signal();//  signal()
   },
   TALKING {
    TALKING();//  .ctor()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public ProtocolState signal();//  signal()
   };
@@ -117,32 +115,33 @@ public abstract enum ProtocolState /* ProtocolState*/ {
   public static kotlin.enums.EnumEntries<ProtocolState> getEntries();//  getEntries()
 
   private  ProtocolState();//  .ctor()
+
+  class TALKING ...
+
+  class WAITING ...
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Some /* Some*/ {
 }
 
-static final class TALKING /* ProtocolState.TALKING*/ extends ProtocolState {
+public static final class TALKING /* ProtocolState.TALKING*/ extends ProtocolState {
    TALKING();//  .ctor()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public ProtocolState signal();//  signal()
 }
 
-static final class TIMES /* IntArithmetics.TIMES*/ extends IntArithmetics {
+public static final class TIMES /* IntArithmetics.TIMES*/ extends IntArithmetics {
    TIMES();//  .ctor()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.lang.Integer apply(int, int);//  apply(int, int)
 }
 
-static final class WAITING /* ProtocolState.WAITING*/ extends ProtocolState {
+public static final class WAITING /* ProtocolState.WAITING*/ extends ProtocolState {
    WAITING();//  .ctor()
 
-  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public ProtocolState signal();//  signal()
 }
