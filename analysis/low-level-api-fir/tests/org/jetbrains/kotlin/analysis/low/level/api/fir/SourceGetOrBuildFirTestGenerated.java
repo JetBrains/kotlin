@@ -1100,6 +1100,18 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("nestedClassFromJava.kt")
+        public void testNestedClassFromJava() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/nestedClassFromJava.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedClassFromKotlin.kt")
+        public void testNestedClassFromKotlin() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/nestedClassFromKotlin.kt");
+        }
+
+        @Test
         @TestMetadata("nestedClassType.kt")
         public void testNestedClassType() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/nestedClassType.kt");
