@@ -3,12 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.exceptions.throw_from_catch
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
+fun box(): String {
     assertFailsWith<IllegalStateException>("My another error") {
         try {
             error("My error")
@@ -16,4 +13,5 @@ fun runTest() {
             error("My another error")
         }
     }
+    return "OK"
 }

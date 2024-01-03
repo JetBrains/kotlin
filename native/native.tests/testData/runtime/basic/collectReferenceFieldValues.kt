@@ -7,6 +7,11 @@
 // As soon the issue would be fixed, please remove `&& cacheMode=NO` from next line.
 // IGNORE_NATIVE: gcType=NOOP && cacheMode=NO
 
+// Ideally, this test must fail with gcType=NOOP with any cache mode.
+// KT-63944: unfortunately, GC flavours are silently not switched in presence of caches.
+// As soon the issue would be fixed, please remove `&& cacheMode=NO` from next line.
+// IGNORE_NATIVE: gcType=NOOP && cacheMode=NO
+
 import kotlin.native.internal.*
 import kotlin.test.*
 

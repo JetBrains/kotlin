@@ -2,21 +2,21 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
-package runtime.basic.initializers1
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 class TestClass {
     companion object {
         init {
-            println("Init Test")
+            sb.append("OK")
         }
     }
 }
 
-@Test fun runTest() {
+fun box(): String {
     val t1 = TestClass()
     val t2 = TestClass()
-    println("Done")
+
+    return sb.toString()
 }

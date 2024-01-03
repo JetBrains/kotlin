@@ -2,9 +2,6 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
-package runtime.basic.initializers7
-
 import kotlin.test.*
 
 object A {
@@ -53,8 +50,10 @@ fun assertCUninitialized() {
     assertEquals(0, C.c4)
 }
 
-@Test fun runTest() {
+fun box(): String {
     assertEquals(A.a1, C.c2)
     assertEquals(A.a2, C.c3)
     assertEquals(C.c1, C.c4)
+
+    return "OK"
 }

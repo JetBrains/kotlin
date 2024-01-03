@@ -3,16 +3,16 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.basic.statements0
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 fun simple() {
     var a = 238
     a++
-    println(a)
+    sb.appendLine(a)
     --a
-    println(a)
+    sb.appendLine(a)
 }
 
 class Foo() {
@@ -31,12 +31,15 @@ class Foo() {
 fun fields() {
     val foo = Foo()
     foo.more()
-    println(foo.i)
+    sb.appendLine(foo.i)
     foo.less()
-    println(foo.i)
+    sb.appendLine(foo.i)
 }
 
-@Test fun runTest() {
+fun box(): String {
     simple()
     fields()
+
+    assertEquals("239\n238\n30\n29\n", sb.toString())
+    return "OK"
 }

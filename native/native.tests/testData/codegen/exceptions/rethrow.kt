@@ -3,12 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.exceptions.rethtow
-
 import kotlin.test.*
 
-@Test
-fun runTest() {
+fun box(): String {
     assertFailsWith<IllegalStateException>("My error") {
         try {
             error("My error")
@@ -16,4 +13,5 @@ fun runTest() {
             throw e
         }
     }
+    return "OK"
 }

@@ -3,16 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.exceptions.extend0
-
 import kotlin.test.*
 
 class C : Exception("OK")
 
-@Test fun runTest() {
+fun box(): String {
     try {
         throw C()
     } catch (e: Throwable) {
-        println(e.message!!)
+        return e.message!!
     }
+    return "FAIL"
 }

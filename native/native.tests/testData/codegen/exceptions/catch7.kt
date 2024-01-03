@@ -3,21 +3,23 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.exceptions.catch7
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     try {
         foo()
     } catch (e: Throwable) {
         val message = e.message
         if (message != null) {
-            println(message)
+            sb.append(message)
         }
     }
+
+    return sb.toString()
 }
 
 fun foo() {
-    throw Error("Error happens")
+    throw Error("OK")
 }

@@ -3,23 +3,31 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.exceptions.catch1
-
 import kotlin.test.*
 
-@Test fun runTest() {
+val sb = StringBuilder()
+
+fun box(): String {
     try {
-        println("Before")
+        sb.appendLine("Before")
         foo()
-        println("After")
+        sb.appendLine("After")
     } catch (e: Throwable) {
-        println("Caught Throwable")
+        sb.appendLine("Caught Throwable")
     }
 
-    println("Done")
+    sb.appendLine("Done")
+
+    assertEquals("""
+        Before
+        Caught Throwable
+        Done
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }
 
 fun foo() {
     throw Error("Error happens")
-    println("After in foo()")
+    sb.appendLine("After in foo()")
 }

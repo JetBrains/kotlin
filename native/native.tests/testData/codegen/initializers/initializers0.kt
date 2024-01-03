@@ -3,51 +3,66 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.basic.initializers0
-
 import kotlin.test.*
+
+val sb = StringBuilder()
 
 class A {
     init{
-        println ("A::init")
+        sb.appendLine ("A::init")
     }
 
     val a = 1
 
     companion object :B(1) {
         init {
-            println ("A::companion")
+            sb.appendLine ("A::companion")
         }
 
         fun foo() {
-            println("A::companion::foo")
+            sb.appendLine("A::companion::foo")
         }
     }
 
     object AObj : B(){
         init {
-            println("A::Obj")
+            sb.appendLine("A::Obj")
         }
         fun foo() {
-            println("A::AObj::foo")
+            sb.appendLine("A::AObj::foo")
         }
     }
 }
 
-@Test fun runTest() {
-    println("main")
+fun box(): String {
+    sb.appendLine("main")
     A.foo()
     A.foo()
     A.AObj.foo()
     A.AObj.foo()
+
+    assertEquals("""
+        main
+        B::constructor(1)
+        A::companion
+        A::companion::foo
+        A::companion::foo
+        B::constructor(0)
+        B::constructor()
+        A::Obj
+        A::AObj::foo
+        A::AObj::foo
+
+    """.trimIndent(), sb.toString())
+    return "OK"
 }
 
 open class B(val a:Int, val b:Int) {
     constructor(a:Int):this (a, 0) {
-        println("B::constructor(" + a.toString()+ ")")
+        sb.appendLine("B::constructor(" + a.toString()+ ")")
     }
     constructor():this(0) {
-        println("B::constructor()")
+        sb.appendLine("B::constructor()")
     }
 }
 
