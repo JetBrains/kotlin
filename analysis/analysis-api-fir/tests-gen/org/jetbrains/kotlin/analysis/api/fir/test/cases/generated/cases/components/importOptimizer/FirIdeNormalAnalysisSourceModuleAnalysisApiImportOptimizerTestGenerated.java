@@ -233,6 +233,18 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     }
 
     @Test
+    @TestMetadata("usedNestedSamInterface_constructorCall.kt")
+    public void testUsedNestedSamInterface_constructorCall() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedNestedSamInterface_constructorCall.kt");
+    }
+
+    @Test
+    @TestMetadata("usedNestedSamInterface_constructorReference.kt")
+    public void testUsedNestedSamInterface_constructorReference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedNestedSamInterface_constructorReference.kt");
+    }
+
+    @Test
     @TestMetadata("usedObject_invokeOperator.kt")
     public void testUsedObject_invokeOperator() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedObject_invokeOperator.kt");

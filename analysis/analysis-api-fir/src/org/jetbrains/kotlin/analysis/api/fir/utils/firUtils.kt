@@ -57,6 +57,9 @@ internal fun KtTypeNullability.toConeNullability() = when (this) {
 internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSession): FqName? {
     if (callableId.isLocal) return null
 
+    // SAM constructors are synthetic, but can be imported
+    if (origin is FirDeclarationOrigin.SamConstructor) return callableId.asSingleFqName()
+
     // if classId == null, callable is topLevel
     val containingClassId = callableId.classId
         ?: return callableId.asSingleFqName()
