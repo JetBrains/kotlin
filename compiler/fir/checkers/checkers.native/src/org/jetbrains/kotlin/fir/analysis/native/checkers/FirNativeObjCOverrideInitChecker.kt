@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
@@ -19,14 +18,13 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCOverrideInitClassId
 
@@ -93,15 +91,6 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker() {
             checkKotlinObjCClass(declaration)
         }
     }
-}
-
-// Copy-pasted from plugins/noarg/noarg.k2/src/org/jetbrains/kotlin/noarg/fir/FirNoArgDeclarationChecker.kt
-private fun FirRegularClassSymbol.getSuperClassSymbolOrAny(session: FirSession): FirRegularClassSymbol {
-    for (superType in resolvedSuperTypes) {
-        val symbol = superType.fullyExpandedType(session).toRegularClassSymbol(session) ?: continue
-        if (symbol.classKind == ClassKind.CLASS) return symbol
-    }
-    return session.builtinTypes.anyType.type.toRegularClassSymbol(session) ?: error("Symbol for Any not found")
 }
 
 // copy-pasted from org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker

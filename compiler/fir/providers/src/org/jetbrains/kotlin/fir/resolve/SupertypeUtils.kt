@@ -309,3 +309,11 @@ fun createSubstitutionForSupertype(superType: ConeLookupTagBasedType, session: F
     val mapping = klass.typeParameters.map { it.symbol }.zip(arguments).toMap()
     return ConeSubstitutorByMap(mapping, session)
 }
+
+fun FirRegularClassSymbol.getSuperClassSymbolOrAny(session: FirSession): FirRegularClassSymbol {
+    for (superType in resolvedSuperTypes) {
+        val symbol = superType.fullyExpandedType(session).toRegularClassSymbol(session) ?: continue
+        if (symbol.classKind == ClassKind.CLASS) return symbol
+    }
+    return session.builtinTypes.anyType.type.toRegularClassSymbol(session) ?: error("Symbol for Any not found")
+}
