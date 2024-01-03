@@ -9,21 +9,16 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getOverriddenSymbols
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.backend.native.interop.getObjCInitMethod
 import org.jetbrains.kotlin.fir.backend.native.interop.isKotlinObjCClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCOverrideInitClassId
@@ -91,15 +86,4 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker() {
             checkKotlinObjCClass(declaration)
         }
     }
-}
-
-// copy-pasted from org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
-private fun FirCallableDeclaration.getOverriddenSymbols(context: CheckerContext): List<FirCallableSymbol<out FirCallableDeclaration>> {
-    if (!this.isOverride) return emptyList()
-    val classSymbol = this.containingClassLookupTag()?.toSymbol(context.session) as? FirClassSymbol<*> ?: return emptyList()
-    val scope = classSymbol.unsubstitutedScope(context)
-    //this call is needed because AbstractFirUseSiteMemberScope collect overrides in it only,
-    //and not in processDirectOverriddenFunctionsWithBaseScope
-    scope.processFunctionsByName(this.symbol.name) { }
-    return scope.getDirectOverriddenMembers(this.symbol, true)
 }

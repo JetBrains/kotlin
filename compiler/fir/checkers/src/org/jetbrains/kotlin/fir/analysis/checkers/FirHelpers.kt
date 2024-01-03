@@ -734,6 +734,16 @@ fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlin
     return toRegularClassSymbol(session)!!.primaryConstructorSymbol(session)!!.valueParameterSymbols[0].resolvedReturnTypeRef.coneType
 }
 
+fun FirCallableDeclaration.getOverriddenSymbols(context: CheckerContext): List<FirCallableSymbol<out FirCallableDeclaration>> {
+    if (!this.isOverride) return emptyList()
+    val classSymbol = this.containingClassLookupTag()?.toSymbol(context.session) as? FirClassSymbol<*> ?: return emptyList()
+    val scope = classSymbol.unsubstitutedScope(context)
+    //this call is needed because AbstractFirUseSiteMemberScope collect overrides in it only,
+    //and not in processDirectOverriddenFunctionsWithBaseScope
+    scope.processFunctionsByName(this.symbol.name) { }
+    return scope.getDirectOverriddenMembers(this.symbol, true)
+}
+
 fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {
     val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
     val scope = classSymbol.unsubstitutedScope(
