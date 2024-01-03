@@ -1,0 +1,4 @@
+Diagnostics from elements:
+  for PSI element of type KtParameter at (11,25-61)
+    UNUSED_PARAMETER      text ranges: [(64,73)]
+      PSI: KtParameter at (11,25-61)

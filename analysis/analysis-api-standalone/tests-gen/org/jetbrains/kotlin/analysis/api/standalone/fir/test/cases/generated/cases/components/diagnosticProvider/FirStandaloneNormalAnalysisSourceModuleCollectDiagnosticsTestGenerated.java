@@ -101,6 +101,42 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
     }
 
     @Test
+    @TestMetadata("javaInnerClass.kt")
+    public void testJavaInnerClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaInnerClass.kt");
+    }
+
+    @Test
+    @TestMetadata("javaInnerClassFromAnotherModule.kt")
+    public void testJavaInnerClassFromAnotherModule() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaInnerClassFromAnotherModule.kt");
+    }
+
+    @Test
+    @TestMetadata("javaInnerClassFromLibrary.kt")
+    public void testJavaInnerClassFromLibrary() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaInnerClassFromLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("javaNestedClass.kt")
+    public void testJavaNestedClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaNestedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("javaNestedClassFromAnotherModule.kt")
+    public void testJavaNestedClassFromAnotherModule() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaNestedClassFromAnotherModule.kt");
+    }
+
+    @Test
+    @TestMetadata("javaNestedClassFromLibrary.kt")
+    public void testJavaNestedClassFromLibrary() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/javaNestedClassFromLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("overrideProtectedClassReturnFromLibrary.kt")
     public void testOverrideProtectedClassReturnFromLibrary() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/overrideProtectedClassReturnFromLibrary.kt");
