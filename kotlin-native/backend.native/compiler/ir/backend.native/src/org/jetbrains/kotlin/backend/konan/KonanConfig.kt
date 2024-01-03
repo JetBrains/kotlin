@@ -249,7 +249,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (it && !target.supportsSignposts) {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Signposts are not available on $target. The setting will have no effect.")
         }
-    } ?: false
+    } ?: target.supportsSignposts
 
     init {
         if (!platformManager.isEnabled(target)) {
