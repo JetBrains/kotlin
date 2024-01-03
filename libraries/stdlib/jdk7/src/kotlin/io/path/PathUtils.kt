@@ -1055,6 +1055,12 @@ public inline fun URI.toPath(): Path =
  *
  * If the file located by this path does not exist, an empty sequence is returned.
  * if the file located by this path is not a directory, a sequence containing only this path is returned.
+ *
+ * When iterating the returned sequence the following exceptions could be thrown:
+ *   * [FileSystemException] if the traversal reaches an entry with an illegal name such as "." or "..".
+ *   * [FileSystemLoopException] if the traversal reaches a cycle.
+ *   * [SecurityException] if a security manager is installed and the traversal reaches an entry whose access is not permitted.
+ *   * [IOException] if any errors arise while opening a directory.
  */
 @ExperimentalPathApi
 @SinceKotlin("1.7")

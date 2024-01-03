@@ -62,6 +62,10 @@ import java.nio.file.attribute.BasicFileAttributes
  *   This exception is passed to [onError] for handling.
  * @throws IOException if any errors occur while copying.
  *   This exception is passed to [onError] for handling.
+ * @throws FileSystemException if the source subtree contains an entry with an illegal name such as "." or "..".
+ *   This exception is passed to [onError] for handling.
+ * @throws FileSystemLoopException if the recursive copy reaches a cycle.
+ *   This exception is passed to [onError] for handling.
  * @throws SecurityException if a security manager is installed and access is not permitted to an entry in the source or target subtree.
  *   This exception is passed to [onError] for handling.
  */
@@ -142,6 +146,10 @@ public fun Path.copyToRecursively(
  * @throws NoSuchFileException if the entry located by this path does not exist.
  * @throws FileSystemException if [target] is an entry inside the source subtree.
  * @throws IOException if any errors occur while copying.
+ *   This exception is passed to [onError] for handling.
+ * @throws FileSystemException if the source subtree contains an entry with an illegal name such as "." or "..".
+ *   This exception is passed to [onError] for handling.
+ * @throws FileSystemLoopException if the recursive copy reaches a cycle.
  *   This exception is passed to [onError] for handling.
  * @throws SecurityException if a security manager is installed and access is not permitted to an entry in the source or target subtree.
  *   This exception is passed to [onError] for handling.
