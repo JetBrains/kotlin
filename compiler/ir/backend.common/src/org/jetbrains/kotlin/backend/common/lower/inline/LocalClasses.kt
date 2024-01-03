@@ -68,6 +68,8 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
                         }
 
                         override fun visitClass(declaration: IrClass) {
+                            declaration.transformChildren(transformer, declaration)
+
                             localClasses.add(declaration)
                         }
 
