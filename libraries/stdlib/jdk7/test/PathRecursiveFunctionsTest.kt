@@ -1361,6 +1361,28 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
     }
 
     @Test
+    fun copyIllegalFileNameExceptionPassedToOnError() {
+        withZip("Archive1.zip", listOf("normal", "..")) { root, zipRoot ->
+            val target = root.resolve("UnzipArchive1")
+            var failed = false
+            zipRoot.copyToRecursively(target, followLinks = false, onError = { _, _, exception ->
+                failed = true
+                assertIs<IllegalFileNameException>(exception)
+                OnErrorResult.SKIP_SUBTREE
+            })
+            assertTrue(failed)
+        }
+        withZip("Archive2.zip", listOf("normal", "/")) { root, zipRoot ->
+            val target = root.resolve("UnzipArchive2")
+            // FileSystemLoopException in jvm8-10, no exception in jvm11
+            zipRoot.copyToRecursively(target, followLinks = false, onError = { _, _, exception ->
+                assertIs<FileSystemLoopException>(exception)
+                OnErrorResult.SKIP_SUBTREE
+            })
+        }
+    }
+
+    @Test
     // TODO: Should recursive functions normalize the Path at the beginning ?
     fun legalDirectorySymbols() {
         createTestFiles().cleanupRecursively().let { root ->

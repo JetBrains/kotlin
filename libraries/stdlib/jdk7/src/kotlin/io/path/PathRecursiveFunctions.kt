@@ -197,35 +197,29 @@ public fun Path.copyToRecursively(
         return onError(source, destination(source), exception).toFileVisitResult()
     }
 
+    val stack = arrayListOf<Path>()
+
     @Suppress("UNUSED_PARAMETER")
     fun copy(source: Path, attributes: BasicFileAttributes): FileVisitResult {
         return try {
+            if (stack.isNotEmpty()) {
+                // Check entries other than the starting path of traversal
+                source.checkFileName()
+                source.checkNotSameAs(stack.last())
+            }
             DefaultCopyActionContext.copyAction(source, destination(source)).toFileVisitResult()
         } catch (exception: Exception) {
             error(source, exception)
         }
     }
 
-    val stack = arrayListOf<Path>()
-
     visitFileTree(followLinks = followLinks) {
         onPreVisitDirectory { directory, attributes ->
-            if (stack.isNotEmpty()) {
-                // Check entries other than the starting path of traversal
-                directory.checkFileName()
-                directory.checkNotSameAs(stack.last())
-            }
             copy(directory, attributes).also {
                 if (it == FileVisitResult.CONTINUE) stack.add(directory)
             }
         }
-        onVisitFile { file, attributes ->
-            if (stack.isNotEmpty()) {
-                // Check entries other than the starting path of traversal
-                file.checkFileName()
-            }
-            copy(file, attributes)
-        }
+        onVisitFile(::copy)
         onVisitFileFailed(::error)
         onPostVisitDirectory { directory, exception ->
             stack.removeLast()
