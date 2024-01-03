@@ -16897,6 +16897,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("notFixedTopLevelLambdaParameter.kt")
+            public void testNotFixedTopLevelLambdaParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/notFixedTopLevelLambdaParameter.kt");
+            }
+
+            @Test
             @TestMetadata("nothingVsParameterBound.kt")
             public void testNothingVsParameterBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nothingVsParameterBound.kt");

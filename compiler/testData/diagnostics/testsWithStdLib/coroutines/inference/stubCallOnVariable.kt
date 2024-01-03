@@ -13,7 +13,7 @@ fun main() {
         parse { it.toInt() }
         serialize {
             val i = it
-            i.toString()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>i<!>.toString()
         }
     }
 }

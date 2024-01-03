@@ -89,12 +89,17 @@ class FirPCLAInferenceSession(
         resolutionMode: ResolutionMode,
         completionMode: ConstraintSystemCompletionMode,
     ) where T : FirResolvable, T : FirStatement {
+        val candidate = call.candidate()
+
         if (call is FirExpression) {
+            if (resolutionMode is ResolutionMode.ReceiverResolution && candidate != null) {
+                fixVariablesForMemberScope(call.resolvedType, candidate.system)
+            }
+
             call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
         }
 
-        val candidate = call.candidate() ?: return
-        if (!candidate.usedOuterCs) return
+        if (candidate?.usedOuterCs != true) return
 
         // Integrating back would happen at FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot
         // after all other delegation-related calls are being analyzed

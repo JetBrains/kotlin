@@ -16,6 +16,6 @@ fun <KotlinType : Any> defineType(definition: TypeDefinition<KotlinType>.() -> U
 fun main() {
     defineType {
         parse { it.toInt() }
-        serialize { it.toString() }
+        serialize { <!BUILDER_INFERENCE_STUB_RECEIVER!>it<!>.toString() }
     }
 }

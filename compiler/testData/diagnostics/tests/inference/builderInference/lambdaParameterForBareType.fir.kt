@@ -14,6 +14,6 @@ fun <X> predicate(x: X, c: Controller<in X>, p: (X) -> Boolean) {}
 
 fun main(a: A<*>) {
     generate {
-        predicate(a, this) { it is B }
+        predicate(a, this) { it is <!NO_TYPE_ARGUMENTS_ON_RHS!>B<!> }
     }.a
 }

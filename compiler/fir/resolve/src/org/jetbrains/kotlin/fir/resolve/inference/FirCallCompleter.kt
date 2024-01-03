@@ -377,7 +377,7 @@ class FirCallCompleter(
         // We only run lambda completion from ConstraintSystemCompletionContext.analyzeRemainingNotAnalyzedPostponedArgument when they are
         // left uninferred.
         // Currently, we use stub types for builder inference, so CANNOT_INFER_PARAMETER_TYPE is the only possible result here.
-        if (this is ConeTypeVariableType) {
+        if (isTypeVariableThatShouldBeFixedBeforeLambdaAnalysis(isReceiver = valueParameter == null)) {
             val diagnostic = valueParameter?.let(::ConeCannotInferValueParameterType) ?: ConeCannotInferReceiverParameterType()
             return ConeErrorType(diagnostic)
         }
@@ -385,6 +385,20 @@ class FirCallCompleter(
         return session.typeApproximator.approximateToSuperType(
             this, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
         ) ?: this
+    }
+
+    private fun ConeKotlinType.isTypeVariableThatShouldBeFixedBeforeLambdaAnalysis(isReceiver: Boolean): Boolean {
+        if (this !is ConeTypeVariableType) return false
+
+        // Outside PCLA, all type variables for parameter types should be fixed before lambda analysis
+        // Inside PCLA, we force fixing receivers before lambda analysis
+        if (inferenceSession !is FirPCLAInferenceSession || isReceiver) return true
+
+        // For type variables not based on type parameters (created for lambda parameters with no expected type)
+        // we force them to be fixed before lambda analysis
+        if (typeConstructor.originalTypeParameter == null) return true
+
+        return false
     }
 }
 
