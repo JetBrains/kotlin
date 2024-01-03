@@ -988,8 +988,8 @@ class ComposableFunctionBodyTransformer(
             // populating dirty
             if (!canSkipExecution) {
                 metas.forEach {
-                    if (it.maskParam == dirty) {
-                        it.maskParam = changedParam
+                    if (it.paramRef?.maskParam == dirty) {
+                        it.paramRef?.maskParam = changedParam
                     }
                 }
             }
@@ -1154,8 +1154,8 @@ class ComposableFunctionBodyTransformer(
             // populating dirty
             if (!canSkipExecution) {
                 metas.forEach {
-                    if (it.maskParam == dirty) {
-                        it.maskParam = changedParam
+                    if (it.paramRef?.maskParam == dirty) {
+                        it.paramRef?.maskParam = changedParam
                     }
                 }
             }
@@ -2651,37 +2651,57 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
-    data class ParamMeta(
+    /**
+     * Argument information extracted from the call site and argument expression itself.
+     */
+    data class CallArgumentMeta(
+        /** stability of argument expression */
         var stability: Stability = Stability.Unstable,
+        /** whether argument is vararg */
         var isVararg: Boolean = false,
+        /** whether default value for the arg is provided */
         var isProvided: Boolean = false,
+        /** whether the expression is static */
         var isStatic: Boolean = false,
-        var isCertain: Boolean = false,
-        var maskSlot: Int = -1,
+        /** metadata from enclosing function parameters (NOT the function being called) */
+        var paramRef: ParamMeta? = null
+    ) {
+        val isCertain get() = paramRef != null
+    }
+
+    /**
+     * Composable call information extracted from composable function parameters referenced
+     * in a call argument.
+     */
+    data class ParamMeta(
+        /** Slot index in maskParam */
+        val maskSlot: Int = -1,
+        /** Reference to $changed or $dirty parameter with the [ParamState] mask */
         var maskParam: IrChangedBitMaskValue? = null,
-        var hasNonStaticDefault: Boolean = false
+        /** Whether the parameter has a non-static default value. */
+        val hasNonStaticDefault: Boolean = false
     )
 
-    private fun paramMetaOf(arg: IrExpression, isProvided: Boolean): ParamMeta {
-        val meta = ParamMeta(isProvided = isProvided)
-        populateParamMeta(arg, meta)
+    private fun argumentMetaOf(arg: IrExpression, isProvided: Boolean): CallArgumentMeta {
+        val meta = CallArgumentMeta(isProvided = isProvided)
+        populateArgumentMeta(arg, meta)
         return meta
     }
 
-    private fun populateParamMeta(arg: IrExpression, meta: ParamMeta) {
+    private fun populateArgumentMeta(arg: IrExpression, meta: CallArgumentMeta) {
         meta.stability = stabilityInferencer.stabilityOf(arg)
         when {
             arg.isStatic() -> meta.isStatic = true
             arg is IrGetValue -> {
                 when (val owner = arg.symbol.owner) {
                     is IrValueParameter -> {
-                        extractParamMetaFromScopes(meta, owner)
+                        meta.paramRef = extractParamMetaFromScopes(owner)
                     }
                     is IrVariable -> {
                         if (owner.isConst) {
                             meta.isStatic = true
                         } else if (!owner.isVar && owner.initializer != null) {
-                            populateParamMeta(owner.initializer!!, meta)
+                            populateArgumentMeta(owner.initializer!!, meta)
                         }
                     }
                 }
@@ -2690,6 +2710,45 @@ class ComposableFunctionBodyTransformer(
                 meta.stability = stabilityInferencer.stabilityOf(arg.varargElementType)
             }
         }
+    }
+
+    private fun extractParamMetaFromScopes(param: IrValueDeclaration): ParamMeta? {
+        var scope: Scope? = currentScope
+        val fn = param.parent
+        while (scope != null) {
+            when (scope) {
+                is Scope.FunctionScope -> {
+                    if (scope.function == fn) {
+                        if (scope.isComposable) {
+                            val slotIndex = scope.allTrackedParams.indexOf(param)
+                            if (slotIndex != -1) {
+                                return ParamMeta(
+                                    maskSlot = slotIndex,
+                                    maskParam = scope.dirty,
+                                    hasNonStaticDefault = if (param is IrValueParameter) {
+                                        param.defaultValue?.expression?.isStatic() == false
+                                    } else {
+                                        // No default for this parameter
+                                        false
+                                    }
+                                )
+                            }
+                        }
+                        return null
+                    } else {
+                        // If the capture is outside inline lambda, we don't allow meta propagation
+                        if (!inlineLambdaInfo.isInlineLambda(scope.function)) {
+                            return null
+                        }
+                    }
+                }
+                else -> {
+                    /* Do nothing, continue traversing */
+                }
+            }
+            scope = scope.parent
+        }
+        return null
     }
 
     override fun visitBlock(expression: IrBlock): IrExpression {
@@ -2901,8 +2960,8 @@ class ComposableFunctionBodyTransformer(
             }
         }
 
-        val contextMeta = mutableListOf<ParamMeta>()
-        val paramMeta = mutableListOf<ParamMeta>()
+        val contextMeta = mutableListOf<CallArgumentMeta>()
+        val paramMeta = mutableListOf<CallArgumentMeta>()
 
         for (index in 0 until numContextParams + numRealValueParams) {
             val arg = expression.getValueArgument(index)
@@ -2914,29 +2973,33 @@ class ComposableFunctionBodyTransformer(
                     // missed something.
                     error("Unexpected null argument for composable call")
                 } else {
-                    paramMeta.add(ParamMeta(isVararg = true))
+                    paramMeta.add(CallArgumentMeta(isVararg = true))
                     continue
                 }
             }
             if (index < numContextParams) {
-                val meta = paramMetaOf(arg, isProvided = true)
+                val meta = argumentMetaOf(arg, isProvided = true)
                 contextMeta.add(meta)
             } else {
                 val bitIndex = defaultsBitIndex(index)
                 val maskValue = if (hasDefaultArgs) defaultMasks[defaultsParamIndex(index)] else 0
-                val meta = paramMetaOf(arg, isProvided = maskValue and (0b1 shl bitIndex) == 0)
+                val meta = argumentMetaOf(arg, isProvided = maskValue and (0b1 shl bitIndex) == 0)
                 paramMeta.add(meta)
             }
         }
 
-        val extensionMeta = expression.extensionReceiver?.let { paramMetaOf(it, isProvided = true) }
-        val dispatchMeta = expression.dispatchReceiver?.let { paramMetaOf(it, isProvided = true) }
+        val extensionMeta = expression.extensionReceiver?.let {
+            argumentMetaOf(it, isProvided = true)
+        }
+        val dispatchMeta = expression.dispatchReceiver?.let {
+            argumentMetaOf(it, isProvided = true)
+        }
 
-        val changedParams = buildChangedParamsForCall(
-            contextParams = contextMeta,
-            valueParams = paramMeta,
-            extensionParam = extensionMeta,
-            dispatchParam = dispatchMeta
+        val changedParams = buildChangedArgumentsForCall(
+            contextArgs = contextMeta,
+            valueArgs = paramMeta,
+            extensionArg = extensionMeta,
+            dispatchArg = dispatchMeta
         )
 
         changedParams.forEachIndexed { i, param ->
@@ -3012,12 +3075,12 @@ class ComposableFunctionBodyTransformer(
 
         // Build the change parameters as if this was a call to remember to ensure the
         // use of the $dirty flags are calculated correctly.
-        val inputArgMetas = inputArgs.map { paramMetaOf(it, isProvided = true) }.also {
-            buildChangedParamsForCall(
-                contextParams = emptyList(),
-                valueParams = it,
-                extensionParam = null,
-                dispatchParam = null
+        val inputArgMetas = inputArgs.map { argumentMetaOf(it, isProvided = true) }.also {
+            buildChangedArgumentsForCall(
+                contextArgs = emptyList(),
+                valueArgs = it,
+                extensionArg = null,
+                dispatchArg = null
             )
         }
 
@@ -3025,20 +3088,21 @@ class ComposableFunctionBodyTransformer(
         // so we have to apply fixups after function body is transformed
         var dirty: IrChangedBitMaskValue? = null
         inputArgMetas.forEach {
-            if (it.maskParam is IrChangedBitMaskVariable) {
+            val meta = it.paramRef
+            if (meta?.maskParam is IrChangedBitMaskVariable) {
                 if (dirty == null) {
-                    dirty = it.maskParam
+                    dirty = meta.maskParam
                 } else {
                     // Validate that we only capture dirty param from a single scope. Capturing
                     // $dirty is only allowed in inline functions, so we are guaranteed to only
                     // encounter one.
-                    require(dirty == it.maskParam) {
+                    require(dirty == meta.maskParam) {
                         "Only single dirty param is allowed in a capture scope"
                     }
                 }
             }
         }
-        val usesDirty = inputArgMetas.any { it.maskParam is IrChangedBitMaskVariable }
+        val usesDirty = inputArgMetas.any { it.paramRef?.maskParam is IrChangedBitMaskVariable }
 
         val isMemoizedLambda = expression.origin == ComposeMemoizedLambdaOrigin
 
@@ -3046,7 +3110,7 @@ class ComposableFunctionBodyTransformer(
         // the restart function or the result of replacing remember with cached will be
         // different.
         val metaMaskConsistent = updateChangedFlagsFunction != null
-        val changedFunction: (Boolean, IrExpression, ParamMeta) -> IrExpression? =
+        val changedFunction: (Boolean, IrExpression, CallArgumentMeta) -> IrExpression? =
             if (usesDirty || !metaMaskConsistent) {
                 { _, arg, _ -> irChanged(arg, compareInstanceForUnstableValues = isMemoizedLambda) }
             } else {
@@ -3142,8 +3206,8 @@ class ComposableFunctionBodyTransformer(
     private fun irIntrinsicRememberInvalid(
         isMemoizedLambda: Boolean,
         args: List<IrExpression>,
-        metas: List<ParamMeta>,
-        changedExpr: (Boolean, IrExpression, ParamMeta) -> IrExpression?
+        metas: List<CallArgumentMeta>,
+        changedExpr: (Boolean, IrExpression, CallArgumentMeta) -> IrExpression?
     ): IrExpression =
         args
             .mapIndexedNotNull { i, arg -> changedExpr(isMemoizedLambda, arg, metas[i]) }
@@ -3153,13 +3217,14 @@ class ComposableFunctionBodyTransformer(
     private fun irIntrinsicChanged(
         isMemoizedLambda: Boolean,
         arg: IrExpression,
-        meta: ParamMeta
+        argInfo: CallArgumentMeta
     ): IrExpression? {
-        val param = meta.maskParam
+        val meta = argInfo.paramRef
+        val param = meta?.maskParam
         return when {
-            meta.isStatic -> null
-            meta.isCertain &&
-                meta.stability.knownStable() &&
+            argInfo.isStatic -> null
+            argInfo.isCertain &&
+                argInfo.stability.knownStable() &&
                 param is IrChangedBitMaskVariable &&
                 !meta.hasNonStaticDefault -> {
                 // if it's a dirty flag, and the parameter doesn't have a default value and is _known_
@@ -3172,8 +3237,8 @@ class ComposableFunctionBodyTransformer(
                     irConst(ParamState.Different.bitsForSlot(meta.maskSlot))
                 )
             }
-            meta.isCertain &&
-                !meta.stability.knownUnstable() &&
+            argInfo.isCertain &&
+                !argInfo.stability.knownUnstable() &&
                 param is IrChangedBitMaskVariable &&
                 !meta.hasNonStaticDefault -> {
                 // if it's a dirty flag, and the parameter doesn't have a default value and it might
@@ -3196,8 +3261,8 @@ class ComposableFunctionBodyTransformer(
                     maskIsUnstableAndChanged
                 )
             }
-            meta.isCertain &&
-                !meta.stability.knownUnstable() &&
+            argInfo.isCertain &&
+                !argInfo.stability.knownUnstable() &&
                 param != null -> {
                 // if it's a changed flag or parameter with a default expression then uncertain is a
                 // possible value. If  it is uncertain OR unstable, then we need to call changed.
@@ -3311,67 +3376,29 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    private fun extractParamMetaFromScopes(meta: ParamMeta, param: IrValueDeclaration): Boolean {
-        var scope: Scope? = currentScope
-        val fn = param.parent
-        while (scope != null) {
-            when (scope) {
-                is Scope.FunctionScope -> {
-                    if (scope.function == fn) {
-                        if (scope.isComposable) {
-                            val slotIndex = scope.allTrackedParams.indexOf(param)
-                            if (slotIndex != -1) {
-                                meta.isCertain = true
-                                meta.maskParam = scope.dirty
-                                meta.hasNonStaticDefault = if (param is IrValueParameter) {
-                                    param.defaultValue?.expression?.isStatic() == false
-                                } else {
-                                    // No default for this parameter
-                                    false
-                                }
-                                meta.maskSlot = slotIndex
-                            }
-                        }
-                        return true
-                    } else {
-                        // If the capture is outside inline lambda, we don't allow meta propagation
-                        if (!inlineLambdaInfo.isInlineLambda(scope.function)) {
-                            return false
-                        }
-                    }
-                }
-                else -> {
-                    /* Do nothing, continue traversing */
-                }
-            }
-            scope = scope.parent
-        }
-        return false
-    }
-
-    private fun buildChangedParamsForCall(
-        contextParams: List<ParamMeta>,
-        valueParams: List<ParamMeta>,
-        extensionParam: ParamMeta?,
-        dispatchParam: ParamMeta?
+    private fun buildChangedArgumentsForCall(
+        contextArgs: List<CallArgumentMeta>,
+        valueArgs: List<CallArgumentMeta>,
+        extensionArg: CallArgumentMeta?,
+        dispatchArg: CallArgumentMeta?
     ): List<IrExpression> {
-        val allParams = listOfNotNull(extensionParam) +
-            contextParams +
-            valueParams +
-            listOfNotNull(dispatchParam)
+        val allArgs = listOfNotNull(extensionArg) +
+            contextArgs +
+            valueArgs +
+            listOfNotNull(dispatchArg)
         // passing in 0 for thisParams since they should be included in the params list
-        val changedCount = changedParamCount(allParams.size, 0)
+        val changedCount = changedParamCount(allArgs.size, 0)
         val result = mutableListOf<IrExpression>()
         for (i in 0 until changedCount) {
             val start = i * SLOTS_PER_INT
-            val end = min(start + SLOTS_PER_INT, allParams.size)
-            val slice = allParams.subList(start, end)
-            result.add(buildChangedParamForCall(slice))
+            val end = min(start + SLOTS_PER_INT, allArgs.size)
+            val slice = allArgs.subList(start, end)
+            result.add(buildChangedArgumentForCall(slice))
         }
         return result
     }
 
-    private fun buildChangedParamForCall(params: List<ParamMeta>): IrExpression {
+    private fun buildChangedArgumentForCall(arguments: List<CallArgumentMeta>): IrExpression {
         // The general pattern here is:
         //
         // $changed = bitMaskConstant or
@@ -3396,8 +3423,8 @@ class ComposableFunctionBodyTransformer(
         var bitMaskConstant = 0b0
         val orExprs = mutableListOf<IrExpression>()
 
-        params.forEachIndexed { slot, meta ->
-            val stability = meta.stability
+        arguments.forEachIndexed { slot, argInfo ->
+            val stability = argInfo.stability
             when {
                 !strongSkippingEnabled && stability.knownUnstable() -> {
                     bitMaskConstant = bitMaskConstant or StabilityBits.UNSTABLE.bitsForSlot(slot)
@@ -3436,15 +3463,16 @@ class ComposableFunctionBodyTransformer(
                     }
                 }
             }
-            if (meta.isVararg) {
+            if (argInfo.isVararg) {
                 bitMaskConstant = bitMaskConstant or ParamState.Uncertain.bitsForSlot(slot)
-            } else if (!meta.isProvided) {
+            } else if (!argInfo.isProvided) {
                 bitMaskConstant = bitMaskConstant or ParamState.Uncertain.bitsForSlot(slot)
-            } else if (meta.isStatic) {
+            } else if (argInfo.isStatic) {
                 bitMaskConstant = bitMaskConstant or ParamState.Static.bitsForSlot(slot)
-            } else if (!meta.isCertain) {
+            } else if (!argInfo.isCertain) {
                 bitMaskConstant = bitMaskConstant or ParamState.Uncertain.bitsForSlot(slot)
             } else {
+                val meta = argInfo.paramRef ?: error("Meta is required if param is Certain")
                 val someMask = meta.maskParam ?: error("Mask param required if param is Certain")
                 val parentSlot = meta.maskSlot
                 require(parentSlot != -1) { "invalid parent slot for Certain param" }
@@ -3992,7 +4020,7 @@ class ComposableFunctionBodyTransformer(
             private class IntrinsicRememberFixup(
                 val isMemoizedLambda: Boolean,
                 val args: List<IrExpression>,
-                val metas: List<ParamMeta>,
+                val metas: List<CallArgumentMeta>,
                 val call: IrCall
             )
             private val intrinsicRememberFixups = mutableListOf<IntrinsicRememberFixup>()
@@ -4000,11 +4028,11 @@ class ComposableFunctionBodyTransformer(
             fun recordIntrinsicRememberFixUp(
                 isMemoizedLambda: Boolean,
                 args: List<IrExpression>,
-                metas: List<ParamMeta>,
+                metas: List<CallArgumentMeta>,
                 call: IrCall
             ) {
-                val dirty = metas.find { it.maskParam is IrChangedBitMaskVariable }
-                if (dirty?.maskParam == this.dirty) {
+                val dirty = metas.find { it.paramRef?.maskParam is IrChangedBitMaskVariable }
+                if (dirty?.paramRef?.maskParam == this.dirty) {
                     intrinsicRememberFixups.add(
                         IntrinsicRememberFixup(isMemoizedLambda, args, metas, call)
                     )
@@ -4023,7 +4051,7 @@ class ComposableFunctionBodyTransformer(
                 invalidExpr: (
                     isMemoizedLambda: Boolean,
                     List<IrExpression>,
-                    List<ParamMeta>
+                    List<CallArgumentMeta>
                 ) -> IrExpression
             ) {
                 intrinsicRememberFixups.forEach {
