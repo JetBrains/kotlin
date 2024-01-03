@@ -1,15 +1,15 @@
+public static final class Companion /* State.Companion*/ {
+  private  Companion();//  .ctor()
+
+  public final boolean done(@org.jetbrains.annotations.NotNull() State);//  done(State)
+}
+
 public static final class Companion /* Event.Companion*/ {
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.Nullable()
   public final Event upTo(@org.jetbrains.annotations.NotNull() State);//  upTo(State)
 
   private  Companion();//  .ctor()
-}
-
-public static final class Companion /* State.Companion*/ {
-  private  Companion();//  .ctor()
-
-  public final boolean done(@org.jetbrains.annotations.NotNull() State);//  done(State)
 }
 
 public enum Event /* Event*/ {

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -39,6 +41,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         buildCompilerOptions(module, testServices),
         compilationErrorExpected = Directives.COMPILATION_ERRORS in module.directives,
         libraryName = module.name,
+        extraClasspath = buildExtraClasspath(module, testServices),
     )
 
     override fun compileTestModuleToLibrarySources(module: TestModule, testServices: TestServices): Path {
@@ -54,6 +57,12 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
 
         return librarySourcesPath
     }
+
+    private fun buildExtraClasspath(module: TestModule, testServices: TestServices): List<String> = buildList {
+        addAll(buildPlatformExtraClasspath(module, testServices))
+    }
+
+    protected open fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> = emptyList()
 
     private fun buildCompilerOptions(module: TestModule, testServices: TestServices): List<String> = buildList {
         addAll(buildCommonCompilerOptions(module))
@@ -99,6 +108,13 @@ class JvmJarTestModuleCompiler : CliTestModuleCompiler() {
             }
 
             addAll(listOf(K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.toString()))
+        }
+    }
+
+    override fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> = buildList {
+        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        for (file in compilerConfiguration.jvmClasspathRoots) {
+            add(file.absolutePath)
         }
     }
 }

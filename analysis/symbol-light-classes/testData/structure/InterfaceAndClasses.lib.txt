@@ -1,60 +1,39 @@
-OpenBaseClass.class:
+FinalClassWithComplexInterface.class:
   KtClass:
     line: 6
-    name: OpenBaseClass
-    qualifier: my.OpenBaseClass
+    name: FinalClassWithComplexInterface
+    qualifier: my.FinalClassWithComplexInterface
     light: KtLightClassForDecompiledDeclaration
-      name: OpenBaseClass
-      qualifier: my.OpenBaseClass
+      name: FinalClassWithComplexInterface
+      qualifier: my.FinalClassWithComplexInterface
       superTypes: [
         PsiType:Object
+        PsiType:ComplexInterface
       ]
       superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: [
+        KtLightClassForDecompiledDeclaration: ComplexInterface (my.ComplexInterface)
+      ]
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+        KtLightClassForDecompiledDeclaration: ComplexInterface (my.ComplexInterface)
+      ]
+
+OnlyTransitiveInterface.class:
+  KtClass:
+    line: 6
+    name: OnlyTransitiveInterface
+    qualifier: my.OnlyTransitiveInterface
+    light: KtLightClassForDecompiledDeclaration
+      name: OnlyTransitiveInterface
+      qualifier: my.OnlyTransitiveInterface
+      superTypes: [
+        PsiType:OpenComplexClass
+      ]
+      superClass: KtLightClassForDecompiledDeclaration: OpenComplexClass (my.OpenComplexClass)
       interfaces: []
       supers: [
-        ClsClassImpl: Object (java.lang.Object)
-      ]
-
-FinalClassWithBaseInterface.class:
-  KtClass:
-    line: 6
-    name: FinalClassWithBaseInterface
-    qualifier: my.FinalClassWithBaseInterface
-    light: KtLightClassForDecompiledDeclaration
-      name: FinalClassWithBaseInterface
-      qualifier: my.FinalClassWithBaseInterface
-      superTypes: [
-        PsiType:Object
-        PsiType:BaseInterface1
-      ]
-      superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: [
-        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
-      ]
-      supers: [
-        ClsClassImpl: Object (java.lang.Object)
-        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
-      ]
-
-AbstractClassWithBaseInterface.class:
-  KtClass:
-    line: 6
-    name: AbstractClassWithBaseInterface
-    qualifier: my.AbstractClassWithBaseInterface
-    light: KtLightClassForDecompiledDeclaration
-      name: AbstractClassWithBaseInterface
-      qualifier: my.AbstractClassWithBaseInterface
-      superTypes: [
-        PsiType:Object
-        PsiType:BaseInterface2
-      ]
-      superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: [
-        KtLightClassForDecompiledDeclaration: BaseInterface2 (my.BaseInterface2)
-      ]
-      supers: [
-        ClsClassImpl: Object (java.lang.Object)
-        KtLightClassForDecompiledDeclaration: BaseInterface2 (my.BaseInterface2)
+        KtLightClassForDecompiledDeclaration: OpenComplexClass (my.OpenComplexClass)
       ]
 
 BaseInterface1.class:
@@ -115,21 +94,111 @@ FinalClassWithSeveralBaseInterfaces.class:
         KtLightClassForDecompiledDeclaration: BaseInterface2 (my.BaseInterface2)
       ]
 
-OnlyTransitiveInterface.class:
+ComplexInterface.class:
   KtClass:
     line: 6
-    name: OnlyTransitiveInterface
-    qualifier: my.OnlyTransitiveInterface
+    name: ComplexInterface
+    qualifier: my.ComplexInterface
     light: KtLightClassForDecompiledDeclaration
-      name: OnlyTransitiveInterface
-      qualifier: my.OnlyTransitiveInterface
+      name: ComplexInterface
+      qualifier: my.ComplexInterface
       superTypes: [
-        PsiType:OpenComplexClass
+        PsiType:BaseInterface1
+        PsiType:BaseInterface2
       ]
-      superClass: KtLightClassForDecompiledDeclaration: OpenComplexClass (my.OpenComplexClass)
-      interfaces: []
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: [
+        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
+        KtLightClassForDecompiledDeclaration: BaseInterface2 (my.BaseInterface2)
+      ]
       supers: [
-        KtLightClassForDecompiledDeclaration: OpenComplexClass (my.OpenComplexClass)
+        ClsClassImpl: Object (java.lang.Object)
+        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
+        KtLightClassForDecompiledDeclaration: BaseInterface2 (my.BaseInterface2)
+      ]
+
+AbstractClassWithBaseInterface.class:
+  KtClass:
+    line: 6
+    name: AbstractClassWithBaseInterface
+    qualifier: my.AbstractClassWithBaseInterface
+    light: KtLightClassForDecompiledDeclaration
+      name: AbstractClassWithBaseInterface
+      qualifier: my.AbstractClassWithBaseInterface
+      superTypes: [
+        PsiType:Object
+        PsiType:BaseInterface2
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: [
+        KtLightClassForDecompiledDeclaration: BaseInterface2 (my.BaseInterface2)
+      ]
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+        KtLightClassForDecompiledDeclaration: BaseInterface2 (my.BaseInterface2)
+      ]
+
+AbstractClassTransitiveBaseInterface.class:
+  KtClass:
+    line: 6
+    name: AbstractClassTransitiveBaseInterface
+    qualifier: my.AbstractClassTransitiveBaseInterface
+    light: KtLightClassForDecompiledDeclaration
+      name: AbstractClassTransitiveBaseInterface
+      qualifier: my.AbstractClassTransitiveBaseInterface
+      superTypes: [
+        PsiType:AbstractClassWithBaseInterface
+        PsiType:BaseInterface1
+      ]
+      superClass: KtLightClassForDecompiledDeclaration: AbstractClassWithBaseInterface (my.AbstractClassWithBaseInterface)
+      interfaces: [
+        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
+      ]
+      supers: [
+        KtLightClassForDecompiledDeclaration: AbstractClassWithBaseInterface (my.AbstractClassWithBaseInterface)
+        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
+      ]
+
+FinalClassWithBaseInterface.class:
+  KtClass:
+    line: 6
+    name: FinalClassWithBaseInterface
+    qualifier: my.FinalClassWithBaseInterface
+    light: KtLightClassForDecompiledDeclaration
+      name: FinalClassWithBaseInterface
+      qualifier: my.FinalClassWithBaseInterface
+      superTypes: [
+        PsiType:Object
+        PsiType:BaseInterface1
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: [
+        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
+      ]
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
+      ]
+
+OpenComplexClass.class:
+  KtClass:
+    line: 6
+    name: OpenComplexClass
+    qualifier: my.OpenComplexClass
+    light: KtLightClassForDecompiledDeclaration
+      name: OpenComplexClass
+      qualifier: my.OpenComplexClass
+      superTypes: [
+        PsiType:AbstractClassTransitiveBaseInterface
+        PsiType:ComplexInterface
+      ]
+      superClass: KtLightClassForDecompiledDeclaration: AbstractClassTransitiveBaseInterface (my.AbstractClassTransitiveBaseInterface)
+      interfaces: [
+        KtLightClassForDecompiledDeclaration: ComplexInterface (my.ComplexInterface)
+      ]
+      supers: [
+        KtLightClassForDecompiledDeclaration: AbstractClassTransitiveBaseInterface (my.AbstractClassTransitiveBaseInterface)
+        KtLightClassForDecompiledDeclaration: ComplexInterface (my.ComplexInterface)
       ]
 
 AbstractClassWithComplexInterface.class:
@@ -177,89 +246,20 @@ FinalClassWithComplexInterfaceAndBaseInterface.class:
         KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
       ]
 
-FinalClassWithComplexInterface.class:
+OpenBaseClass.class:
   KtClass:
     line: 6
-    name: FinalClassWithComplexInterface
-    qualifier: my.FinalClassWithComplexInterface
+    name: OpenBaseClass
+    qualifier: my.OpenBaseClass
     light: KtLightClassForDecompiledDeclaration
-      name: FinalClassWithComplexInterface
-      qualifier: my.FinalClassWithComplexInterface
+      name: OpenBaseClass
+      qualifier: my.OpenBaseClass
       superTypes: [
         PsiType:Object
-        PsiType:ComplexInterface
       ]
       superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: [
-        KtLightClassForDecompiledDeclaration: ComplexInterface (my.ComplexInterface)
-      ]
+      interfaces: []
       supers: [
         ClsClassImpl: Object (java.lang.Object)
-        KtLightClassForDecompiledDeclaration: ComplexInterface (my.ComplexInterface)
-      ]
-
-AbstractClassTransitiveBaseInterface.class:
-  KtClass:
-    line: 6
-    name: AbstractClassTransitiveBaseInterface
-    qualifier: my.AbstractClassTransitiveBaseInterface
-    light: KtLightClassForDecompiledDeclaration
-      name: AbstractClassTransitiveBaseInterface
-      qualifier: my.AbstractClassTransitiveBaseInterface
-      superTypes: [
-        PsiType:AbstractClassWithBaseInterface
-        PsiType:BaseInterface1
-      ]
-      superClass: KtLightClassForDecompiledDeclaration: AbstractClassWithBaseInterface (my.AbstractClassWithBaseInterface)
-      interfaces: [
-        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
-      ]
-      supers: [
-        KtLightClassForDecompiledDeclaration: AbstractClassWithBaseInterface (my.AbstractClassWithBaseInterface)
-        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
-      ]
-
-ComplexInterface.class:
-  KtClass:
-    line: 6
-    name: ComplexInterface
-    qualifier: my.ComplexInterface
-    light: KtLightClassForDecompiledDeclaration
-      name: ComplexInterface
-      qualifier: my.ComplexInterface
-      superTypes: [
-        PsiType:BaseInterface1
-        PsiType:BaseInterface2
-      ]
-      superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: [
-        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
-        KtLightClassForDecompiledDeclaration: BaseInterface2 (my.BaseInterface2)
-      ]
-      supers: [
-        ClsClassImpl: Object (java.lang.Object)
-        KtLightClassForDecompiledDeclaration: BaseInterface1 (my.BaseInterface1)
-        KtLightClassForDecompiledDeclaration: BaseInterface2 (my.BaseInterface2)
-      ]
-
-OpenComplexClass.class:
-  KtClass:
-    line: 6
-    name: OpenComplexClass
-    qualifier: my.OpenComplexClass
-    light: KtLightClassForDecompiledDeclaration
-      name: OpenComplexClass
-      qualifier: my.OpenComplexClass
-      superTypes: [
-        PsiType:AbstractClassTransitiveBaseInterface
-        PsiType:ComplexInterface
-      ]
-      superClass: KtLightClassForDecompiledDeclaration: AbstractClassTransitiveBaseInterface (my.AbstractClassTransitiveBaseInterface)
-      interfaces: [
-        KtLightClassForDecompiledDeclaration: ComplexInterface (my.ComplexInterface)
-      ]
-      supers: [
-        KtLightClassForDecompiledDeclaration: AbstractClassTransitiveBaseInterface (my.AbstractClassTransitiveBaseInterface)
-        KtLightClassForDecompiledDeclaration: ComplexInterface (my.ComplexInterface)
       ]
 

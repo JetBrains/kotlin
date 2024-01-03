@@ -78,6 +78,14 @@ public static final class Companion /* C2.Companion*/ {
   private  Companion();//  .ctor()
 }
 
+public static final class Companion /* I.Companion*/ {
+  private  Companion();//  .ctor()
+}
+
+public static final class Companion /* ClassWithConstContainer.Companion*/ {
+  private  Companion();//  .ctor()
+}
+
 public static final class Companion /* C.Companion*/ {
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
@@ -103,14 +111,6 @@ public static final class Companion /* C.Companion*/ {
   public final void bar();//  bar()
 
   public final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
-}
-
-public static final class Companion /* I.Companion*/ {
-  private  Companion();//  .ctor()
-}
-
-public static final class Companion /* ClassWithConstContainer.Companion*/ {
-  private  Companion();//  .ctor()
 }
 
 public final class ConstContainer /* ConstContainer*/ {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 import kotlin.io.path.div
 import kotlin.io.path.writeText
@@ -21,7 +22,10 @@ abstract class TestModuleCompiler : TestService {
         val tmpDir = KtTestUtil.tmpDir("testSourcesToCompile").toPath()
         for (testFile in module.files) {
             val text = testServices.sourceFileProvider.getContentOfSourceFile(testFile)
-            val tmpSourceFile = (tmpDir / testFile.name).createFile()
+            val filePath = tmpDir / testFile.relativePath
+            filePath.parent.createDirectories()
+
+            val tmpSourceFile = filePath.createFile()
             tmpSourceFile.writeText(text)
         }
         return compile(tmpDir, module, testServices)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirT
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -38,6 +39,7 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
         builder.apply {
             useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
             useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
+            useConfigurators(::AnalysisApiJvmEnvironmentConfigurator)
         }
     }
 

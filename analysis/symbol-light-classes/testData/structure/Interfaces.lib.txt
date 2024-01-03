@@ -15,6 +15,23 @@ SingleInterface.class:
         ClsClassImpl: Object (java.lang.Object)
       ]
 
+BaseInterface1.class:
+  KtClass:
+    line: 6
+    name: BaseInterface1
+    qualifier: abc.BaseInterface1
+    light: KtLightClassForDecompiledDeclaration
+      name: BaseInterface1
+      qualifier: abc.BaseInterface1
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+
 BaseInterface2.class:
   KtClass:
     line: 6
@@ -30,26 +47,6 @@ BaseInterface2.class:
       interfaces: []
       supers: [
         ClsClassImpl: Object (java.lang.Object)
-      ]
-
-InterfaceWithTransitive.class:
-  KtClass:
-    line: 6
-    name: InterfaceWithTransitive
-    qualifier: abc.InterfaceWithTransitive
-    light: KtLightClassForDecompiledDeclaration
-      name: InterfaceWithTransitive
-      qualifier: abc.InterfaceWithTransitive
-      superTypes: [
-        PsiType:InterfaceWithBase
-      ]
-      superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: [
-        KtLightClassForDecompiledDeclaration: InterfaceWithBase (abc.InterfaceWithBase)
-      ]
-      supers: [
-        ClsClassImpl: Object (java.lang.Object)
-        KtLightClassForDecompiledDeclaration: InterfaceWithBase (abc.InterfaceWithBase)
       ]
 
 InterfaceWithBase.class:
@@ -75,20 +72,23 @@ InterfaceWithBase.class:
         KtLightClassForDecompiledDeclaration: BaseInterface2 (abc.BaseInterface2)
       ]
 
-BaseInterface1.class:
+InterfaceWithTransitive.class:
   KtClass:
     line: 6
-    name: BaseInterface1
-    qualifier: abc.BaseInterface1
+    name: InterfaceWithTransitive
+    qualifier: abc.InterfaceWithTransitive
     light: KtLightClassForDecompiledDeclaration
-      name: BaseInterface1
-      qualifier: abc.BaseInterface1
+      name: InterfaceWithTransitive
+      qualifier: abc.InterfaceWithTransitive
       superTypes: [
-        PsiType:Object
+        PsiType:InterfaceWithBase
       ]
       superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: []
+      interfaces: [
+        KtLightClassForDecompiledDeclaration: InterfaceWithBase (abc.InterfaceWithBase)
+      ]
       supers: [
         ClsClassImpl: Object (java.lang.Object)
+        KtLightClassForDecompiledDeclaration: InterfaceWithBase (abc.InterfaceWithBase)
       ]
 
