@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
@@ -142,9 +143,14 @@ fun deserializeClassToSymbol(
             }
         )
 
+        val propertiesOrderFromExtension = classProto.getPropertyOrderFromMetadataExtension()
         addDeclarations(
-            classProto.propertiesInOrder(versionRequirements).map {
-                classDeserializer.loadProperty(it, classProto, symbol)
+            classProto.propertiesInOrder(versionRequirements, propertiesOrderFromExtension).map { propertyProto ->
+                classDeserializer.loadProperty(propertyProto, classProto, symbol).also { property ->
+                    if (propertyProto.name in propertiesOrderFromExtension) {
+                        property.registeredInSerializationPluginMetadataExtension = true
+                    }
+                }
             }
         )
 
@@ -299,21 +305,33 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
     }
 }
 
-private fun ProtoBuf.ClassOrBuilder.propertiesInOrder(versionRequirements: List<VersionRequirement>): List<ProtoBuf.Property> {
+private fun ProtoBuf.ClassOrBuilder.getPropertyOrderFromMetadataExtension(): Set<Int> {
+    return getExtension(SerializationPluginMetadataExtensions.propertiesNamesInProgramOrder).toSet()
+}
+
+private fun ProtoBuf.ClassOrBuilder.propertiesInOrder(
+    versionRequirements: List<VersionRequirement>,
+    orderFromExtension: Set<Int>,
+): List<ProtoBuf.Property> {
     val properties = propertyList
     if (versionRequirements.any { it.version.major >= 2 }) return properties
-    val order = getExtension(SerializationPluginMetadataExtensions.propertiesNamesInProgramOrder)
-        .takeIf { it.isNotEmpty() }
-        ?.toSet()
-        ?: return properties
+    if (orderFromExtension.isEmpty()) return properties
     val propertiesByName = properties.groupBy { it.name }
-    val orderedProperties = order.flatMap { propertiesByName[it] ?: emptyList() }
+    val orderedProperties = orderFromExtension.flatMap { propertiesByName[it] ?: emptyList() }
     // non-serializable properties are not saved in SerializationPluginMetadataExtensions, so we need to pick up them if any
     return if (orderedProperties.size == properties.size) {
         orderedProperties
     } else {
-        orderedProperties + properties.filter { it.name !in order }
+        orderedProperties + properties.filter { it.name !in orderFromExtension }
     }
 }
 
 val FirSession.deserializationExtension: FirDeserializationExtension? by FirSession.nullableSessionComponentAccessor()
+
+private object RegisteredInSerializationPluginMetadataExtensionKey : FirDeclarationDataKey()
+
+private var FirProperty.registeredInSerializationPluginMetadataExtension: Boolean?
+        by FirDeclarationDataRegistry.data(RegisteredInSerializationPluginMetadataExtensionKey)
+
+val FirPropertySymbol.registeredInSerializationPluginMetadataExtension: Boolean
+    get() = fir.registeredInSerializationPluginMetadataExtension ?: false
