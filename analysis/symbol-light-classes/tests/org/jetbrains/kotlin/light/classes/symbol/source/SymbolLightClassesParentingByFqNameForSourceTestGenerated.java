@@ -313,6 +313,12 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("ValueClassInParametersWithJvmName.kt")
+    public void testValueClassInParametersWithJvmName() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ValueClassInParametersWithJvmName.kt");
+    }
+
+    @Test
     @TestMetadata("VarArgs.kt")
     public void testVarArgs() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");
@@ -555,6 +561,12 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
         @TestMetadata("SingleJvmClassName.kt")
         public void testSingleJvmClassName() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/SingleJvmClassName.kt");
+        }
+
+        @Test
+        @TestMetadata("ValueClassInParametersWithJvmName.kt")
+        public void testValueClassInParametersWithJvmName() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/ValueClassInParametersWithJvmName.kt");
         }
     }
 
