@@ -10,11 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.builder.Context
-import org.jetbrains.kotlin.fir.builder.appliesToPrimaryConstructorParameter
-import org.jetbrains.kotlin.fir.builder.filterUseSiteTarget
-import org.jetbrains.kotlin.fir.builder.initContainingClassAttr
-import org.jetbrains.kotlin.fir.builder.wrapIntoArray
+import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.correspondingProperty
@@ -166,9 +162,7 @@ class ValueParameter(
                 status = status.copy(isLateInit = false),
             )
 
-            annotations += remappedAnnotations.filter {
-                it.useSiteTarget == null || it.useSiteTarget == PROPERTY
-            }
+            annotations += remappedAnnotations.filterConstructorPropertyRelevantAnnotations(this.isVar)
 
             getter = FirDefaultPropertyGetter(
                 defaultAccessorSource,

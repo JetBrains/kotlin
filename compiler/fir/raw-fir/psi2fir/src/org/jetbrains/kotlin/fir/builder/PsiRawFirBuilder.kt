@@ -782,9 +782,7 @@ open class PsiRawFirBuilder(
                         setter.initContainingClassAttr()
                         setter.replaceAnnotations(parameterAnnotations.filterUseSiteTarget(PROPERTY_SETTER))
                     } else null
-                    annotations += parameterAnnotations.filter {
-                        it.useSiteTarget == null || it.useSiteTarget == PROPERTY
-                    }
+                    annotations += parameterAnnotations.filterConstructorPropertyRelevantAnnotations(isMutable)
 
                     dispatchReceiverType = currentDispatchReceiverType()
                 }.apply {
@@ -2197,9 +2195,9 @@ open class PsiRawFirBuilder(
                             }
                         }
                     }
-                    annotations += if (isLocal) propertyAnnotations else propertyAnnotations.filter {
-                        it.useSiteTarget != FIELD && it.useSiteTarget != PROPERTY_DELEGATE_FIELD && it.useSiteTarget != PROPERTY_GETTER &&
-                                (!isVar || it.useSiteTarget != SETTER_PARAMETER && it.useSiteTarget != PROPERTY_SETTER)
+                    annotations += when {
+                        isLocal -> propertyAnnotations
+                        else -> propertyAnnotations.filterStandalonePropertyRelevantAnnotations(isVar)
                     }
 
                     contextReceivers.addAll(convertContextReceivers(this@toFirProperty.contextReceivers))
