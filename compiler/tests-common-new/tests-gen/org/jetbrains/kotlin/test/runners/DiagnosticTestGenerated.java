@@ -17814,6 +17814,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 public void testTopLevelCapturingInsideReturnType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/topLevelCapturingInsideReturnType.kt");
                 }
+
+                @Test
+                @TestMetadata("upperBoundOfCapturedInProjectionInOutPosition.kt")
+                public void testUpperBoundOfCapturedInProjectionInOutPosition() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/upperBoundOfCapturedInProjectionInOutPosition.kt");
+                }
             }
 
             @Nested

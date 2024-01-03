@@ -17808,6 +17808,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 public void testTopLevelCapturingInsideReturnType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/topLevelCapturingInsideReturnType.kt");
                 }
+
+                @Test
+                @TestMetadata("upperBoundOfCapturedInProjectionInOutPosition.kt")
+                public void testUpperBoundOfCapturedInProjectionInOutPosition() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/upperBoundOfCapturedInProjectionInOutPosition.kt");
+                }
             }
 
             @Nested
