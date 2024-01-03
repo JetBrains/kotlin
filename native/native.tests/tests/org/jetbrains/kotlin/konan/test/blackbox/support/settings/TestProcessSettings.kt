@@ -127,7 +127,7 @@ internal enum class OptimizationMode(private val description: String, val compil
  */
 internal enum class ThreadStateChecker(val compilerFlag: String?) {
     DISABLED(null),
-    ENABLED("-Xcheck-state-at-external-calls");
+    ENABLED("-Xbinary=checkStateAtExternalCalls=true");
 
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }

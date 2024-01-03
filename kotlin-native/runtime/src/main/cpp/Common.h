@@ -36,8 +36,6 @@
 #endif
 #define NO_INLINE __attribute__((noinline))
 
-#define NO_EXTERNAL_CALLS_CHECK __attribute__((annotate("no_external_calls_check")))
-
 #define OPTNONE __attribute__((optnone))
 
 #define THREAD_LOCAL_VARIABLE __thread

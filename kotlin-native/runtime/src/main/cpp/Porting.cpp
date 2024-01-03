@@ -30,6 +30,7 @@
 
 #include <chrono>
 
+#include "CallsChecker.hpp"
 #include "Common.h"
 #include "CompilerConstants.hpp"
 #include "Porting.h"

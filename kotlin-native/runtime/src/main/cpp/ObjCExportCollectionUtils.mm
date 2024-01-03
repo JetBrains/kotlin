@@ -25,6 +25,7 @@
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSSet.h>
 
+#import "CallsChecker.hpp"
 #import "Exceptions.h"
 #import "ObjCExport.h"
 #import "ObjCExportCollections.h"

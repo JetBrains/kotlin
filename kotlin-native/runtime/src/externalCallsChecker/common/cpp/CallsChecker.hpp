@@ -8,6 +8,8 @@
 #include "Common.h"
 #include "Utils.hpp"
 
+#define NO_EXTERNAL_CALLS_CHECK __attribute__((annotate("no_external_calls_check")))
+
 namespace kotlin {
 
 // Ignore thread state checker for the scope.
@@ -19,4 +21,4 @@ public:
     ALWAYS_INLINE ~CallsCheckerIgnoreGuard();
 };
 
-}
+} // namespace kotlin

@@ -249,7 +249,7 @@ internal data class ModuleCompilationOutput(
  */
 internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFragment, bitcodeFile: java.io.File, cExportFiles: CExportFiles?) {
     runBackendCodegen(module, cExportFiles)
-    val checkExternalCalls = context.config.configuration.getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS)
+    val checkExternalCalls = context.config.checkStateAtExternalCalls
     if (checkExternalCalls) {
         runPhase(CheckExternalCallsPhase)
     }

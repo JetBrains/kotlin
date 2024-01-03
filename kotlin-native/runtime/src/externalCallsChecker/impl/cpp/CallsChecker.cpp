@@ -20,7 +20,7 @@
 using namespace kotlin;
 
 // this values will be substituted by compiler
-extern "C" const void **Kotlin_callsCheckerKnownFunctions = nullptr;
+extern "C" const void** Kotlin_callsCheckerKnownFunctions = nullptr;
 extern "C" int Kotlin_callsCheckerKnownFunctionsCount = 0;
 
 extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
@@ -290,13 +290,13 @@ public:
         for (int i = 0; i < Kotlin_callsCheckerKnownFunctionsCount; i++) {
             known_functions_.insert(Kotlin_callsCheckerKnownFunctions[i]);
         }
-        std::copy(std::begin(Kotlin_callsCheckerGoodFunctionNames), std::end(Kotlin_callsCheckerGoodFunctionNames), std::begin(good_names_copy_));
+        std::copy(
+                std::begin(Kotlin_callsCheckerGoodFunctionNames), std::end(Kotlin_callsCheckerGoodFunctionNames),
+                std::begin(good_names_copy_));
         std::sort(std::begin(good_names_copy_), std::end(good_names_copy_));
     }
 
-    bool isKnown(const void* fun) const noexcept {
-        return known_functions_.find(fun) != known_functions_.end();
-    }
+    bool isKnown(const void* fun) const noexcept { return known_functions_.find(fun) != known_functions_.end(); }
 
     bool isSafeByName(std::string_view name) const noexcept {
         auto it = std::lower_bound(std::begin(good_names_copy_), std::end(good_names_copy_), name);
@@ -307,10 +307,10 @@ public:
             return name.substr(0, banned.size() - 1) == banned.substr(0, banned.size() - 1);
         };
         if (it != std::end(good_names_copy_) && check(*it)) {
-           return true;
+            return true;
         }
         if (it != std::begin(good_names_copy_) && check(*std::prev(it))) {
-           return true;
+            return true;
         }
         return false;
     }
@@ -324,13 +324,12 @@ private:
 
 [[clang::no_destroy]] const KnownFunctionChecker checker;
 
-
 constexpr int MSG_SEND_TO_NULL = -1;
 constexpr int CALLED_LLVM_BUILTIN = -2;
 
 thread_local size_t ignoreGuardsCount = 0;
 
-}
+} // namespace
 
 /**
  * This function calls is inserted to llvm bitcode automatically, so it can be called almost anywhre.
@@ -342,7 +341,8 @@ thread_local size_t ignoreGuardsCount = 0;
  * should not be accessed. So before guard checking we need to check is thread destructor is running,
  * which requires special handling of recursive calls from this check.
  */
-extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFunctionCall(const char* caller, const char *callee, const void *calleePtr) noexcept {
+extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFunctionCall(
+        const char* caller, const char* callee, const void* calleePtr) noexcept {
     if (reinterpret_cast<int64_t>(calleePtr) == MSG_SEND_TO_NULL) return; // objc_sendMsg called on nil, it does nothing, so it's ok
     if (ignoreGuardsCount != 0) return;
     if (konan::isOnThreadExitNotSetOrAlreadyStarted()) return;
@@ -375,5 +375,9 @@ extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFu
     RuntimeFail("Expected kNative thread state at call of function %s by function %s", callee, caller);
 }
 
-CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept { ++ignoreGuardsCount; }
-CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() { --ignoreGuardsCount; }
+CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept {
+    ++ignoreGuardsCount;
+}
+CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() {
+    --ignoreGuardsCount;
+}

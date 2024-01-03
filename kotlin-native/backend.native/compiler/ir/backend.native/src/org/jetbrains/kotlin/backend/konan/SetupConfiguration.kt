@@ -108,7 +108,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     put(PRINT_IR, arguments.printIr)
     put(PRINT_BITCODE, arguments.printBitCode)
-    put(CHECK_EXTERNAL_CALLS, arguments.checkExternalCalls)
     put(PRINT_FILES, arguments.printFiles)
 
     put(PURGE_USER_LIBS, arguments.purgeUserLibs)
@@ -240,6 +239,14 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     // TODO: revise priority and/or report conflicting values.
     if (get(BinaryOptions.gc) == null) {
         putIfNotNull(BinaryOptions.gc, gcFromArgument)
+    }
+
+    if (arguments.checkExternalCalls != null) {
+        report(WARNING, "-Xcheck-state-at-external-calls compiler argument is deprecated. Use -Xbinary=checkStateAtExternalCalls=true instead")
+    }
+    // TODO: revise priority and/or report conflicting values.
+    if (get(BinaryOptions.checkStateAtExternalCalls) == null) {
+        putIfNotNull(BinaryOptions.checkStateAtExternalCalls, arguments.checkExternalCalls)
     }
 
     putIfNotNull(PROPERTY_LAZY_INITIALIZATION, when (arguments.propertyLazyInitialization) {

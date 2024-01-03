@@ -283,7 +283,7 @@ The default value is 1."""
     var printBitCode: Boolean = false
 
     @Argument(value = "-Xcheck-state-at-external-calls", description = "Ensure that all calls of possibly long external functions are done in the native thread state.")
-    var checkExternalCalls: Boolean = false
+    var checkExternalCalls: Boolean? = null
 
     @Argument(value = "-Xprint-ir", deprecatedName = "--print_ir", description = "Print IR.")
     var printIr: Boolean = false

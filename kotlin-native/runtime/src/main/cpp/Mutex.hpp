@@ -21,6 +21,7 @@
 #include <cinttypes>
 #include <thread>
 
+#include "CallsChecker.hpp"
 #include "KAssert.h"
 #include "Memory.h"
 #include "Utils.hpp"
