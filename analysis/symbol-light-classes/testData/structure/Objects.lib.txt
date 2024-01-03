@@ -1,23 +1,52 @@
-ObjectsKt.class:
-ObjectWithInterface.class:
-  KtObjectDeclaration:
+AnotherInterface.class:
+  KtClass:
     line: 6
-    name: ObjectWithInterface
-    qualifier: two.ObjectWithInterface
+    name: AnotherInterface
+    qualifier: two.AnotherInterface
     light: KtLightClassForDecompiledDeclaration
-      name: ObjectWithInterface
-      qualifier: two.ObjectWithInterface
+      name: AnotherInterface
+      qualifier: two.AnotherInterface
       superTypes: [
         PsiType:Object
-        PsiType:BaseInterface
       ]
       superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: [
-        KtLightClassForDecompiledDeclaration: BaseInterface (two.BaseInterface)
-      ]
+      interfaces: []
       supers: [
         ClsClassImpl: Object (java.lang.Object)
-        KtLightClassForDecompiledDeclaration: BaseInterface (two.BaseInterface)
+      ]
+
+BaseClass.class:
+  KtClass:
+    line: 6
+    name: BaseClass
+    qualifier: two.BaseClass
+    light: KtLightClassForDecompiledDeclaration
+      name: BaseClass
+      qualifier: two.BaseClass
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+
+BaseInterface.class:
+  KtClass:
+    line: 6
+    name: BaseInterface
+    qualifier: two.BaseInterface
+    light: KtLightClassForDecompiledDeclaration
+      name: BaseInterface
+      qualifier: two.BaseInterface
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
       ]
 
 NonBaseClass.class:
@@ -35,82 +64,6 @@ NonBaseClass.class:
       interfaces: []
       supers: [
         KtLightClassForDecompiledDeclaration: BaseClass (two.BaseClass)
-      ]
-
-ObjectWithNonBaseInterface.class:
-  KtObjectDeclaration:
-    line: 6
-    name: ObjectWithNonBaseInterface
-    qualifier: two.ObjectWithNonBaseInterface
-    light: KtLightClassForDecompiledDeclaration
-      name: ObjectWithNonBaseInterface
-      qualifier: two.ObjectWithNonBaseInterface
-      superTypes: [
-        PsiType:Object
-        PsiType:NonBaseInterface
-      ]
-      superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: [
-        KtLightClassForDecompiledDeclaration: NonBaseInterface (two.NonBaseInterface)
-      ]
-      supers: [
-        ClsClassImpl: Object (java.lang.Object)
-        KtLightClassForDecompiledDeclaration: NonBaseInterface (two.NonBaseInterface)
-      ]
-
-Object.class:
-  KtObjectDeclaration:
-    line: 6
-    name: Object
-    qualifier: two.Object
-    light: KtLightClassForDecompiledDeclaration
-      name: Object
-      qualifier: two.Object
-      superTypes: [
-        PsiType:Object
-      ]
-      superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: []
-      supers: [
-        ClsClassImpl: Object (java.lang.Object)
-      ]
-
-ObjectWithClassAndInterface.class:
-  KtObjectDeclaration:
-    line: 6
-    name: ObjectWithClassAndInterface
-    qualifier: two.ObjectWithClassAndInterface
-    light: KtLightClassForDecompiledDeclaration
-      name: ObjectWithClassAndInterface
-      qualifier: two.ObjectWithClassAndInterface
-      superTypes: [
-        PsiType:NonBaseClass
-        PsiType:NonBaseInterface
-      ]
-      superClass: KtLightClassForDecompiledDeclaration: NonBaseClass (two.NonBaseClass)
-      interfaces: [
-        KtLightClassForDecompiledDeclaration: NonBaseInterface (two.NonBaseInterface)
-      ]
-      supers: [
-        KtLightClassForDecompiledDeclaration: NonBaseClass (two.NonBaseClass)
-        KtLightClassForDecompiledDeclaration: NonBaseInterface (two.NonBaseInterface)
-      ]
-
-AnotherInterface.class:
-  KtClass:
-    line: 6
-    name: AnotherInterface
-    qualifier: two.AnotherInterface
-    light: KtLightClassForDecompiledDeclaration
-      name: AnotherInterface
-      qualifier: two.AnotherInterface
-      superTypes: [
-        PsiType:Object
-      ]
-      superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: []
-      supers: [
-        ClsClassImpl: Object (java.lang.Object)
       ]
 
 NonBaseInterface.class:
@@ -133,14 +86,14 @@ NonBaseInterface.class:
         KtLightClassForDecompiledDeclaration: BaseInterface (two.BaseInterface)
       ]
 
-BaseClass.class:
-  KtClass:
+Object.class:
+  KtObjectDeclaration:
     line: 6
-    name: BaseClass
-    qualifier: two.BaseClass
+    name: Object
+    qualifier: two.Object
     light: KtLightClassForDecompiledDeclaration
-      name: BaseClass
-      qualifier: two.BaseClass
+      name: Object
+      qualifier: two.Object
       superTypes: [
         PsiType:Object
       ]
@@ -167,6 +120,27 @@ ObjectWithClass.class:
         KtLightClassForDecompiledDeclaration: BaseClass (two.BaseClass)
       ]
 
+ObjectWithClassAndInterface.class:
+  KtObjectDeclaration:
+    line: 6
+    name: ObjectWithClassAndInterface
+    qualifier: two.ObjectWithClassAndInterface
+    light: KtLightClassForDecompiledDeclaration
+      name: ObjectWithClassAndInterface
+      qualifier: two.ObjectWithClassAndInterface
+      superTypes: [
+        PsiType:NonBaseClass
+        PsiType:NonBaseInterface
+      ]
+      superClass: KtLightClassForDecompiledDeclaration: NonBaseClass (two.NonBaseClass)
+      interfaces: [
+        KtLightClassForDecompiledDeclaration: NonBaseInterface (two.NonBaseInterface)
+      ]
+      supers: [
+        KtLightClassForDecompiledDeclaration: NonBaseClass (two.NonBaseClass)
+        KtLightClassForDecompiledDeclaration: NonBaseInterface (two.NonBaseInterface)
+      ]
+
 ObjectWithClassAndJavaInterface.class:
   KtObjectDeclaration:
     line: 6
@@ -188,20 +162,46 @@ ObjectWithClassAndJavaInterface.class:
         ClsClassImpl: Runnable (java.lang.Runnable)
       ]
 
-BaseInterface.class:
-  KtClass:
+ObjectWithInterface.class:
+  KtObjectDeclaration:
     line: 6
-    name: BaseInterface
-    qualifier: two.BaseInterface
+    name: ObjectWithInterface
+    qualifier: two.ObjectWithInterface
     light: KtLightClassForDecompiledDeclaration
-      name: BaseInterface
-      qualifier: two.BaseInterface
+      name: ObjectWithInterface
+      qualifier: two.ObjectWithInterface
       superTypes: [
         PsiType:Object
+        PsiType:BaseInterface
       ]
       superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: []
+      interfaces: [
+        KtLightClassForDecompiledDeclaration: BaseInterface (two.BaseInterface)
+      ]
       supers: [
         ClsClassImpl: Object (java.lang.Object)
+        KtLightClassForDecompiledDeclaration: BaseInterface (two.BaseInterface)
       ]
 
+ObjectWithNonBaseInterface.class:
+  KtObjectDeclaration:
+    line: 6
+    name: ObjectWithNonBaseInterface
+    qualifier: two.ObjectWithNonBaseInterface
+    light: KtLightClassForDecompiledDeclaration
+      name: ObjectWithNonBaseInterface
+      qualifier: two.ObjectWithNonBaseInterface
+      superTypes: [
+        PsiType:Object
+        PsiType:NonBaseInterface
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: [
+        KtLightClassForDecompiledDeclaration: NonBaseInterface (two.NonBaseInterface)
+      ]
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+        KtLightClassForDecompiledDeclaration: NonBaseInterface (two.NonBaseInterface)
+      ]
+
+ObjectsKt.class:

@@ -1,3 +1,20 @@
+BaseInterface.class:
+  KtClass:
+    line: 6
+    name: BaseInterface
+    qualifier: one.two.BaseInterface
+    light: KtLightClassForDecompiledDeclaration
+      name: BaseInterface
+      qualifier: one.two.BaseInterface
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+
 EnumClassWithInterface.class:
   KtClass:
     line: 6
@@ -30,23 +47,6 @@ EnumClassWithInterface.class:
     name: NewSecondEntryWithBody
     qualifier: one.two.EnumClassWithInterface.NewSecondEntryWithBody
     light: null
-
-BaseInterface.class:
-  KtClass:
-    line: 6
-    name: BaseInterface
-    qualifier: one.two.BaseInterface
-    light: KtLightClassForDecompiledDeclaration
-      name: BaseInterface
-      qualifier: one.two.BaseInterface
-      superTypes: [
-        PsiType:Object
-      ]
-      superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: []
-      supers: [
-        ClsClassImpl: Object (java.lang.Object)
-      ]
 
 EnumEntries.class:
   KtClass:

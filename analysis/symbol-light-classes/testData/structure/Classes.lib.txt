@@ -1,11 +1,11 @@
-FinalClass.class:
+AbstractClass.class:
   KtClass:
     line: 6
-    name: FinalClass
-    qualifier: cba.FinalClass
+    name: AbstractClass
+    qualifier: cba.AbstractClass
     light: KtLightClassForDecompiledDeclaration
-      name: FinalClass
-      qualifier: cba.FinalClass
+      name: AbstractClass
+      qualifier: cba.AbstractClass
       superTypes: [
         PsiType:Object
       ]
@@ -32,14 +32,14 @@ ChildOfOpen.class:
         KtLightClassForDecompiledDeclaration: OpenClassFromAbstractClass (cba.OpenClassFromAbstractClass)
       ]
 
-AbstractClass.class:
+FinalClass.class:
   KtClass:
     line: 6
-    name: AbstractClass
-    qualifier: cba.AbstractClass
+    name: FinalClass
+    qualifier: cba.FinalClass
     light: KtLightClassForDecompiledDeclaration
-      name: AbstractClass
-      qualifier: cba.AbstractClass
+      name: FinalClass
+      qualifier: cba.FinalClass
       superTypes: [
         PsiType:Object
       ]
