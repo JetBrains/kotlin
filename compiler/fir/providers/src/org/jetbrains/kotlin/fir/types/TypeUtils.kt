@@ -561,13 +561,14 @@ fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
     if (this.isMarkedNullable) {
         return true
     }
-    val classSymbol = toRegularClassSymbol(session) ?: return true
+    val expandedType = fullyExpandedType(session)
+    val classSymbol = expandedType.toSymbol(session) as? FirRegularClassSymbol ?: return true
     if (classSymbol.isEnumClass || classSymbol.isExpect || classSymbol.modality != Modality.FINAL) {
         return true
     }
 
     classSymbol.typeParameterSymbols.forEachIndexed { idx, typeParameterSymbol ->
-        val typeProjection = typeArguments[idx]
+        val typeProjection = expandedType.typeArguments[idx]
 
         if (typeProjection.isStarProjection) {
             return true
