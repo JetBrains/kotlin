@@ -63,13 +63,13 @@ class Fir2IrDeclarationStorage(
 ) : Fir2IrComponents by components {
 
     private val fragmentCache: ConcurrentHashMap<FqName, ExternalPackageFragments> = ConcurrentHashMap()
+    private val moduleDescriptorCache: ConcurrentHashMap<FirModuleData, FirModuleDescriptor> = ConcurrentHashMap()
 
     private class ExternalPackageFragments(
         val fragmentsForDependencies: ConcurrentHashMap<FirModuleData, IrExternalPackageFragment>,
+        val builtinFragmentsForDependencies: ConcurrentHashMap<FirModuleData, IrExternalPackageFragment>,
         val fragmentForPrecompiledBinaries: IrExternalPackageFragment
     )
-
-    private val builtInsFragmentCache: ConcurrentHashMap<FqName, IrExternalPackageFragment> = ConcurrentHashMap()
 
     private val fileCache: ConcurrentHashMap<FirFile, IrFile> = ConcurrentHashMap()
 
@@ -183,40 +183,42 @@ class Fir2IrDeclarationStorage(
         moduleData: FirModuleData,
         firOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
     ): IrExternalPackageFragment {
-        val fragments = fragmentCache.getOrPut(fqName) {
-            val fragmentForPrecompiledBinaries = callablesGenerator.createExternalPackageFragment(fqName, sourceModuleDescriptor)
-            ExternalPackageFragments(ConcurrentHashMap(), fragmentForPrecompiledBinaries)
-        }
-        // Make sure that external package fragments have a different module descriptor. The module descriptors are compared
-        // to determine if objects need regeneration because they are from different modules.
-        // But keep original module descriptor for the fragments coming from parts compiled on the previous incremental step
-        return when (firOrigin) {
-            FirDeclarationOrigin.Precompiled -> fragments.fragmentForPrecompiledBinaries
-            else -> fragments.fragmentsForDependencies.getOrPut(moduleData) {
-                val moduleDescriptor = FirModuleDescriptor.createDependencyModuleDescriptor(
-                    moduleData,
-                    sourceModuleDescriptor.builtIns
-                )
-                callablesGenerator.createExternalPackageFragment(fqName, moduleDescriptor)
-            }
-        }
+        return getIrExternalOrBuiltInsPackageFragment(fqName, moduleData, firOrigin, false)
     }
 
     private fun getIrExternalOrBuiltInsPackageFragment(
         fqName: FqName,
         moduleData: FirModuleData,
         firOrigin: FirDeclarationOrigin,
+        allowBuiltins: Boolean
     ): IrExternalPackageFragment {
-        val isBuiltIn = fqName in BUILT_INS_PACKAGE_FQ_NAMES
-        return when (isBuiltIn) {
-            true -> getIrBuiltInsPackageFragment(fqName)
-            false -> getIrExternalPackageFragment(fqName, moduleData, firOrigin)
+        val isBuiltIn = allowBuiltins && fqName in BUILT_INS_PACKAGE_FQ_NAMES
+        val fragments = fragmentCache.getOrPut(fqName) {
+            val fragmentForPrecompiledBinaries = callablesGenerator.createExternalPackageFragment(fqName, sourceModuleDescriptor)
+            ExternalPackageFragments(ConcurrentHashMap(), ConcurrentHashMap(), fragmentForPrecompiledBinaries)
         }
-    }
-
-    private fun getIrBuiltInsPackageFragment(fqName: FqName): IrExternalPackageFragment {
-        return builtInsFragmentCache.getOrPut(fqName) {
-            callablesGenerator.createExternalPackageFragment(FirBuiltInsPackageFragment(fqName, sourceModuleDescriptor))
+        // Make sure that external package fragments have a different module descriptor. The module descriptors are compared
+        // to determine if objects need regeneration because they are from different modules.
+        // But keep the original module descriptor for the fragments coming from parts compiled on the previous incremental step
+        return when (firOrigin) {
+            FirDeclarationOrigin.Precompiled -> fragments.fragmentForPrecompiledBinaries
+            else -> {
+                val moduleDescriptor = moduleDescriptorCache.getOrPut(moduleData) {
+                    FirModuleDescriptor.createDependencyModuleDescriptor(
+                        moduleData,
+                        sourceModuleDescriptor.builtIns
+                    )
+                }
+                if (isBuiltIn) {
+                    fragments.builtinFragmentsForDependencies.getOrPut(moduleData) {
+                        callablesGenerator.createExternalPackageFragment(FirBuiltInsPackageFragment(fqName, moduleDescriptor))
+                    }
+                } else {
+                    fragments.fragmentsForDependencies.getOrPut(moduleData) {
+                        callablesGenerator.createExternalPackageFragment(fqName, moduleDescriptor)
+                    }
+                }
+            }
         }
     }
 
@@ -1418,16 +1420,13 @@ class Fir2IrDeclarationStorage(
             return classifierStorage.findIrClass(parentLookupTag)
         }
 
-        val parentPackage = when (firBasedSymbol) {
-            is FirCallableSymbol<*> -> {
-                getIrExternalPackageFragment(packageFqName, firBasedSymbol.moduleData, firOrigin)
-            }
-            else -> {
-                // TODO: All classes from BUILT_INS_PACKAGE_FQ_NAMES are considered built-ins now,
-                // which is not exact and can lead to some problems
-                getIrExternalOrBuiltInsPackageFragment(packageFqName, firBasedSymbol.moduleData, firOrigin)
-            }
-        }
+
+        // TODO: All classes from BUILT_INS_PACKAGE_FQ_NAMES are considered built-ins now,
+        // which is not exact and can lead to some problems
+        val parentPackage = getIrExternalOrBuiltInsPackageFragment(
+            packageFqName, firBasedSymbol.moduleData, firOrigin,
+            allowBuiltins = firBasedSymbol !is FirCallableSymbol<*>
+        )
 
         /**
          * In `allowNonCachedDeclarations` mode there is a situation possible when we get source declaration

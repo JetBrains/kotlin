@@ -1,0 +1,16 @@
+class MyMap : AbstractMap<Int, Int> {
+  constructor() /* primary */ {
+    super/*AbstractMap*/<Int, Int>()
+    /* <init>() */
+
+  }
+
+  override val entries: Set<Entry<Int, Int>>
+    field = emptySet<Entry<Int, Int>>()
+    override get
+
+  internal fun containsEntry(entry: Entry<*, *>?): Boolean {
+    return false
+  }
+
+}

@@ -493,6 +493,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("internalStdlibOverride.kt")
+        public void testInternalStdlibOverride() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/internalStdlibOverride.kt");
+        }
+
+        @Test
         @TestMetadata("kt27005.kt")
         public void testKt27005() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/kt27005.kt");
