@@ -309,21 +309,9 @@ standaloneTest("runtime_basic_init") {
     expectedExitStatus = 0
 }
 
-standaloneTest('enumEquals') {
-    useGoldenData = true
-    source = "runtime/basic/enum_equals.kt"
-    flags = ['-XXLanguage:-ProhibitComparisonOfIncompatibleEnums', '-e', 'runtime.basic.enum_equals.main']
-}
-
 standaloneTest("cleaner_basic") {
     enabled = !isNoopGC
     source = "runtime/basic/cleaner_basic.kt"
-    flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-standaloneTest("collect_reference_field_values") {
-    enabled = !isNoopGC
-    source = "runtime/basic/collectReferenceFieldValues.kt"
     flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
@@ -576,20 +564,6 @@ tasks.register("vtable_any", KonanLocalTest) {
     useGoldenData = true
 }
 
-tasks.register("strdedup1", KonanLocalTest) {
-    useGoldenData = true
-    source = "datagen/literals/strdedup1.kt"
-}
-
-tasks.register("strdedup2", KonanLocalTest) {
-    // TODO: string deduplication across several components seems to require
-    // linking them as bitcode modules before translating to machine code.
-    enabled = false
-
-    useGoldenData = true
-    source = "datagen/literals/strdedup2.kt"
-}
-
 tasks.register("empty_string", KonanLocalTest) {
     useGoldenData = true
     source = "datagen/literals/empty_string.kt"
@@ -606,47 +580,6 @@ linkTest("no_purge_for_dependencies") {
     source = "link/purge1/prog.kt"
     lib = "link/purge1/lib.kt"
     UtilsKt.dependsOnPlatformLibs(it)
-}
-
-tasks.register("throw0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/throw0.kt"
-}
-
-tasks.register("statements0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/statements0.kt"
-}
-
-tasks.register("interface0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/interface0.kt"
-}
-
-tasks.register("listof1", KonanLocalTest) {
-    enabled = false
-    useGoldenData = true
-    source = "datagen/literals/listof1.kt"
-}
-
-tasks.register("catch1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/exceptions/catch1.kt"
-}
-
-tasks.register("catch2", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/exceptions/catch2.kt"
-}
-
-tasks.register("catch7", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/exceptions/catch7.kt"
-}
-
-tasks.register("extend_exception", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/exceptions/extend0.kt"
 }
 
 standaloneTest("check_stacktrace_format_coresymbolication") {
@@ -708,58 +641,8 @@ standaloneTest("throw_from_except_constr") {
     source = "runtime/exceptions/throw_from_except_constr.kt"
 }
 
-tasks.register("rethrow_exception", KonanLocalTest) {
-    source = "runtime/exceptions/rethrow.kt"
-}
-
-tasks.register("throw_from_catch", KonanLocalTest) {
-    source = "runtime/exceptions/throw_from_catch.kt"
-}
-
-tasks.register("initializers0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/initializers0.kt"
-}
-
-
-tasks.register("initializers1", KonanLocalTest) {
-    useGoldenData = true
-    enabled = false
-    source = "runtime/basic/initializers1.kt"
-}
-
-
-standaloneTest("initializers2") {
-    useGoldenData = true
-
-    source = "runtime/basic/initializers2.kt"
-}
-
-tasks.register("initializers3", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/initializers3.kt"
-}
-
-tasks.register("initializers4", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/initializers4.kt"
-}
-
-tasks.register("initializers5", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/initializers5.kt"
-}
-
 tasks.register("initializers6", KonanLocalTest) {
     source = "runtime/basic/initializers6.kt"
-}
-
-tasks.register("initializers7", KonanLocalTest) {
-    source = "runtime/basic/initializers7.kt"
-}
-
-tasks.register("initializers8", KonanLocalTest) {
-    source = "runtime/basic/initializers8.kt"
 }
 
 tasks.register("memory_var1", KonanLocalTest) {
