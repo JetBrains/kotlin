@@ -1321,10 +1321,8 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkSucceeds(zipRoot, zipRoot.resolve("", "normal", "..a..b.."))
 
             val target = root.resolve("UnzipArchive7")
-            // In Linux and macOS
-            val unix = target.resolve("", "normal", "..a..b..")
-            // In Windows
-            val windows = target.resolve("", "normal", "..a..b")
+            val unix = target.resolve("", "normal", "..a..b..") // In Linux and macOS
+            val windows = target.resolve("", "normal", "..a..b") // In Windows
             testCopySucceeds(zipRoot, target, unix, windows)
 
             // Path.deleteIfExists throws NullPointerException
