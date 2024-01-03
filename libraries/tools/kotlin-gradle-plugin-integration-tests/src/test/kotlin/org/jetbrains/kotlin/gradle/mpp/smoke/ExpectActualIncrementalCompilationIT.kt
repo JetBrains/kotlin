@@ -31,16 +31,11 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
             build("assemble")
 
-            listOf(
-                kotlinSourcesDir("jvmMain").resolve("ActualFunFoo.kt"),
-                kotlinSourcesDir("jsMain").resolve("ActualFunFoo.kt")
-            ).forEach {
+            listOf("jvmMain", "jsMain", "nativeMain").forEach { sourceSet ->
                 // just touch the file. expected logic is this:
                 // actual declaration needs to be recompiled -> we add expect declaration to the list of compiled files
-                it.addPrivateVal()
+                kotlinSourcesDir(sourceSet).resolve("ActualFunFoo.kt").addPrivateVal()
             }
-            //TODO: KT-63970 - native compilation fails, if val is private
-            kotlinSourcesDir("nativeMain").resolve("ActualFunFoo.kt").addPublicVal()
 
             build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTasksExecuted(":compileKotlinJvm", ":compileKotlinJs", ":compileKotlinNative")
