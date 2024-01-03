@@ -22,6 +22,7 @@ import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.ConcurrencyUtil;
@@ -156,7 +157,7 @@ public class KotlinJavaPsiFacade implements Disposable {
 
     @Nullable
     public JavaClass findClass(@NotNull JavaClassFinder.Request request, @NotNull GlobalSearchScope scope) {
-        if (scope == GlobalSearchScope.EMPTY_SCOPE) return null;
+        if (SearchScope.isEmptyScope(scope)) return null;
 
         // We hope this method is being called often enough to cancel daemon processes smoothly
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
@@ -194,7 +195,7 @@ public class KotlinJavaPsiFacade implements Disposable {
 
     @NotNull
     public List<JavaClass> findClasses(@NotNull JavaClassFinder.Request request, @NotNull GlobalSearchScope scope) {
-        if (scope == GlobalSearchScope.EMPTY_SCOPE) return Collections.emptyList();
+        if (SearchScope.isEmptyScope(scope)) return Collections.emptyList();
 
         // We hope this method is being called often enough to cancel daemon processes smoothly
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
@@ -242,7 +243,7 @@ public class KotlinJavaPsiFacade implements Disposable {
      */
     @Nullable
     public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope) {
-        if (scope == GlobalSearchScope.EMPTY_SCOPE) return Collections.emptySet();
+        if (SearchScope.isEmptyScope(scope)) return Collections.emptySet();
 
         KotlinPsiElementFinderWrapper[] finders = finders();
 
@@ -329,8 +330,9 @@ public class KotlinJavaPsiFacade implements Disposable {
         return javaFileManager;
     }
 
-    public PsiPackage findPackage(@NotNull String qualifiedName, GlobalSearchScope searchScope) {
-        if (searchScope == GlobalSearchScope.EMPTY_SCOPE) return null;
+    @Nullable
+    public PsiPackage findPackage(@NotNull String qualifiedName, @NotNull GlobalSearchScope searchScope) {
+        if (SearchScope.isEmptyScope(searchScope)) return null;
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         if (certainlyDoesNotExist(qualifiedName, searchScope)) return null;
