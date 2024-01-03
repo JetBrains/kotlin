@@ -844,4 +844,23 @@ class RememberIntrinsicTransformTestsStrongSkipping(
             }
         """,
     )
+
+    @Test
+    fun testRememberWithDefaultParams() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+
+            val LocalColor = compositionLocalOf { 0 }
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun Icon(
+                param: Int,
+                defaultParam: Int = LocalColor.current
+            ) {
+                val remembered = remember(param, defaultParam) { TODO() }
+            }
+        """
+    )
 }
