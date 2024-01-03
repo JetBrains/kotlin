@@ -67,7 +67,7 @@ class WasiBoxRunner(
 
             writeCompilationResult(res, dir, baseFileName)
 
-            File(dir, "entry.mjs").writeText(testWasi)
+            File(dir, "test.mjs").writeText(testWasi)
             val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(dir)
 
             if (debugMode >= DebugMode.DEBUG) {
