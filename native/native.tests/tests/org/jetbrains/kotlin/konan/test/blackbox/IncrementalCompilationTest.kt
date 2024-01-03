@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 
 @Tag("caches")
@@ -29,6 +31,7 @@ import java.io.File
 @TestMetadata(TEST_SUITE_PATH)
 @TestDataPath("\$PROJECT_ROOT")
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+@Execution(ExecutionMode.SAME_THREAD) // Run sequentially due to race condition during same caches creation in parallel compiler runs
 class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     @BeforeEach
     fun assumeCachesAreEnabled() {
