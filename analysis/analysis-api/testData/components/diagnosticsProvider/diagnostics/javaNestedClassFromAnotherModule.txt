@@ -1,4 +1,1 @@
 Diagnostics from elements:
-  for PSI element of type KtDotQualifiedExpression at (17,25-52)
-    ARGUMENT_TYPE_MISMATCH      text ranges: [(169,196)]
-      PSI: KtDotQualifiedExpression at (17,25-52)
