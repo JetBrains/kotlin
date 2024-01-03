@@ -83,6 +83,8 @@ internal fun KtAnnotatedSymbol.hasDeprecatedAnnotation(
 
 internal fun KtAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = hasAnnotation(JVM_OVERLOADS_CLASS_ID)
 
+internal fun KtAnnotatedSymbol.hasJvmNameAnnotation(): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmName)
+
 internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic, useSiteTargetFilter)

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmNameAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.isHiddenOrSynthetic
@@ -325,28 +326,34 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     }
 
     if (declaration.isJvmField) return
-    val propertyTypeIsValueClass = declaration.hasTypeForValueClassInSignature()
-
-    /*
-     * For top-level properties with value class in return type compiler mangles only setter
-     *
-     *   @JvmInline
-     *   value class Some(val value: String)
-     *
-     *   var topLevelProp: Some = Some("1")
-     *
-     * Compiles to
-     *   public final class FooKt {
-     *     public final static getTopLevelProp()Ljava/lang/String;
-     *
-     *     public final static setTopLevelProp-5lyY9Q4(Ljava/lang/String;)V
-     *
-     *     private static Ljava/lang/String; topLevelProp
-     *  }
-     */
-    if (this !is SymbolLightClassForFacade && propertyTypeIsValueClass) return
+    val propertyTypeIsValueClass = declaration.hasTypeForValueClassInSignature(suppressJvmNameCheck = true)
 
     fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
+        when {
+            !propertyTypeIsValueClass -> {}
+            /*
+             * For top-level properties with value class in return type compiler mangles only setter
+             *
+             *   @JvmInline
+             *   value class Some(val value: String)
+             *
+             *   var topLevelProp: Some = Some("1")
+             *
+             * Compiles to
+             *   public final class FooKt {
+             *     public final static getTopLevelProp()Ljava/lang/String;
+             *
+             *     public final static setTopLevelProp-5lyY9Q4(Ljava/lang/String;)V
+             *
+             *     private static Ljava/lang/String; topLevelProp
+             *  }
+             */
+            this is KtPropertyGetterSymbol && this@createPropertyAccessors is SymbolLightClassForFacade -> {}
+            // Accessors with JvmName can be accessible from Java
+            hasJvmNameAnnotation() -> {}
+            else -> return false
+        }
+
         val useSiteTargetFilterForPropertyAccessor = siteTarget.toOptionalFilter()
         if (onlyJvmStatic &&
             !hasJvmStaticAnnotation(useSiteTargetFilterForPropertyAccessor) &&
@@ -388,7 +395,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     }
 
     val setter = declaration.setter?.takeIf {
-        !isAnnotationType && it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_SETTER) && !propertyTypeIsValueClass
+        !isAnnotationType && it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_SETTER)
     }
 
     if (isMutable && setter != null) {
@@ -651,8 +658,23 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
     memberProperties.forEach(::addPropertyBackingField)
 }
 
+/**
+ * @param suppressJvmNameCheck **true** if [hasJvmNameAnnotation] should be omitted.
+ * E.g., if [JvmName] is checked manually later
+ */
 context(KtAnalysisSession)
-internal fun KtCallableSymbol.hasTypeForValueClassInSignature(ignoreReturnType: Boolean = false): Boolean {
+internal fun KtCallableSymbol.hasTypeForValueClassInSignature(
+    ignoreReturnType: Boolean = false,
+    suppressJvmNameCheck: Boolean = false,
+): Boolean {
+    // Declarations with JvmName can be accessible from Java
+    when {
+        suppressJvmNameCheck -> {}
+        hasJvmNameAnnotation() -> return false
+        this !is KtKotlinPropertySymbol -> {}
+        getter?.hasJvmNameAnnotation() == true || setter?.hasJvmNameAnnotation() == true -> return false
+    }
+
     if (!ignoreReturnType) {
         val psiDeclaration = sourcePsiSafe<KtCallableDeclaration>()
         if (psiDeclaration?.typeReference != null && returnType.typeForValueClass) return true
