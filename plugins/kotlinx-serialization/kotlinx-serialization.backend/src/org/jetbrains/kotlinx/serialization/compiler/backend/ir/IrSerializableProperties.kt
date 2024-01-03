@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.deserialization.registeredInSerializationPluginMetadataExtension
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -57,11 +58,12 @@ fun IrProperty.analyzeIfFromAnotherModule(): Pair<Boolean, Boolean> {
         val hasDefault = descriptor.declaresDefaultValue()
         hasDefault to (descriptor.backingField != null || hasDefault)
     } else if (this is Fir2IrLazyProperty) {
-        // Fir2IrLazyProperty after K2 correctly deserializes information about backing field.
-        // However, nor Fir2IrLazyProp nor deserialized FirProperty do not store default value (initializer expression) for property,
+        // Deserialized properties don't contain information about backing field, so we should extract this information from the
+        // attribute, which is set if the property was mentioned in SerializationPluginMetadataExtensions.
+        // Also, deserialized properties do not store default value (initializer expression) for property,
         // so we either should find corresponding constructor parameter and check its default, or rely on less strict check for default getter.
         // Comments are copied from PropertyDescriptor.declaresDefaultValue() as it has similar logic.
-        val hasBackingField = backingField != null
+        val hasBackingField = fir.symbol.registeredInSerializationPluginMetadataExtension
         val matchingPrimaryConstructorParam = containingClass?.declarations?.filterIsInstance<FirPrimaryConstructor>()
             ?.singleOrNull()?.valueParameters?.find { it.name == this.name }
         if (matchingPrimaryConstructorParam != null) {
@@ -122,10 +124,14 @@ internal fun serializablePropertiesForIrBackend(
         .map {
             val isConstructorParameterWithDefault = primaryParamsAsProps[it] ?: false
             val (isPropertyFromAnotherModuleDeclaresDefaultValue, isPropertyWithBackingFieldFromAnotherModule) = it.analyzeIfFromAnotherModule()
+            val hasBackingField = when (it.origin) {
+                IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> isPropertyWithBackingFieldFromAnotherModule
+                else -> it.backingField != null
+            }
             IrSerializableProperty(
                 it,
                 isConstructorParameterWithDefault,
-                it.backingField != null || isPropertyWithBackingFieldFromAnotherModule,
+                hasBackingField,
                 it.backingField?.initializer.let { init -> init != null && !init.expression.isInitializePropertyFromParameter() } || isConstructorParameterWithDefault
                         || isPropertyFromAnotherModuleDeclaresDefaultValue,
                 typeReplacement?.get(it) ?: it.getter!!.returnType as IrSimpleType

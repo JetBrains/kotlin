@@ -44,6 +44,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("clashBetweenSerializableAndNonSerializableProperty.kt")
+    public void testClashBetweenSerializableAndNonSerializableProperty() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/clashBetweenSerializableAndNonSerializableProperty.kt");
+    }
+
+    @Test
     @TestMetadata("classSerializerAsObject.kt")
     public void testClassSerializerAsObject() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/classSerializerAsObject.kt");

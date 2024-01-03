@@ -26,6 +26,12 @@ public class SerializationIrJsBoxTestGenerated extends AbstractSerializationIrJs
     }
 
     @Test
+    @TestMetadata("clashBetweenSerializableAndNonSerializableProperty.kt")
+    public void testClashBetweenSerializableAndNonSerializableProperty() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/clashBetweenSerializableAndNonSerializableProperty.kt");
+    }
+
+    @Test
     @TestMetadata("constValInSerialName.kt")
     public void testConstValInSerialName() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/constValInSerialName.kt");
