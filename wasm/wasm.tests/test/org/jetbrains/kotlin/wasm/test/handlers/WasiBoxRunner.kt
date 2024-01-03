@@ -32,6 +32,7 @@ class WasiBoxRunner(
         val outputDirBase = testServices.getWasmTestOutputDirectory()
 
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
+        val collectedJsArtifacts = collectJsArtifacts(originalFile)
 
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val startUnitTests = RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives
@@ -66,7 +67,8 @@ class WasiBoxRunner(
 
             writeCompilationResult(res, dir, baseFileName)
 
-            File(dir, "test.mjs").writeText(testWasi)
+            File(dir, "entry.mjs").writeText(testWasi)
+            val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(dir)
 
             if (debugMode >= DebugMode.DEBUG) {
                 val path = dir.absolutePath
@@ -84,8 +86,8 @@ class WasiBoxRunner(
                     debugMode = debugMode,
                     disableExceptions = false,
                     failsIn = failsIn,
-                    entryMjs = "test.mjs",
-                    jsFilePaths = emptyList(),
+                    entryMjs = collectedJsArtifacts.entryPath ?: "test.mjs",
+                    jsFilePaths = jsFilePaths,
                     workingDirectory = dir
                 )
             }
