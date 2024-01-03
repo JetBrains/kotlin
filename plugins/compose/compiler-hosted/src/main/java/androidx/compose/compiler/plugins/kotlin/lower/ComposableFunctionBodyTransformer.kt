@@ -993,7 +993,7 @@ class ComposableFunctionBodyTransformer(
                     }
                 }
             }
-            irIntrinsicRememberInvalid(isMemoizedLambda, args, metas, ::irInferredChanged)
+            irIntrinsicRememberInvalid(isMemoizedLambda, args, metas, ::irIntrinsicChanged)
         }
 
         if (canSkipExecution) {
@@ -1159,7 +1159,7 @@ class ComposableFunctionBodyTransformer(
                     }
                 }
             }
-            irIntrinsicRememberInvalid(isMemoizedLambda, args, metas, ::irInferredChanged)
+            irIntrinsicRememberInvalid(isMemoizedLambda, args, metas, ::irIntrinsicChanged)
         }
 
         val transformedBody = if (canSkipExecution) {
@@ -2659,6 +2659,7 @@ class ComposableFunctionBodyTransformer(
         var isCertain: Boolean = false,
         var maskSlot: Int = -1,
         var maskParam: IrChangedBitMaskValue? = null,
+        var hasNonStaticDefault: Boolean = false
     )
 
     private fun paramMetaOf(arg: IrExpression, isProvided: Boolean): ParamMeta {
@@ -3049,7 +3050,7 @@ class ComposableFunctionBodyTransformer(
             if (usesDirty || !metaMaskConsistent) {
                 { _, arg, _ -> irChanged(arg, compareInstanceForUnstableValues = isMemoizedLambda) }
             } else {
-                ::irInferredChanged
+                ::irIntrinsicChanged
             }
 
         // Hoist execution of input params outside of the remember group, similar to how it is
@@ -3149,7 +3150,7 @@ class ComposableFunctionBodyTransformer(
             .reduceOrNull { acc, changed -> irBooleanOr(acc, changed) }
             ?: irConst(false)
 
-    private fun irInferredChanged(
+    private fun irIntrinsicChanged(
         isMemoizedLambda: Boolean,
         arg: IrExpression,
         meta: ParamMeta
@@ -3159,9 +3160,11 @@ class ComposableFunctionBodyTransformer(
             meta.isStatic -> null
             meta.isCertain &&
                 meta.stability.knownStable() &&
-                param is IrChangedBitMaskVariable -> {
-                // if it's a dirty flag, and the parameter is _guaranteed_ to be stable, then we
-                // know that the value is now CERTAIN, thus we can avoid calling changed completely
+                param is IrChangedBitMaskVariable &&
+                !meta.hasNonStaticDefault -> {
+                // if it's a dirty flag, and the parameter doesn't have a default value and is _known_
+                // to be stable, then we know that the value is now CERTAIN, thus we can avoid
+                // calling changed completely
                 //
                 // invalid = invalid or (mask == different)
                 irEqual(
@@ -3171,10 +3174,11 @@ class ComposableFunctionBodyTransformer(
             }
             meta.isCertain &&
                 !meta.stability.knownUnstable() &&
-                param is IrChangedBitMaskVariable -> {
-                // if it's a dirty flag, and the parameter might be stable, then we only check
-                // changed if the value is unstable, otherwise we can just check to see if the mask
-                // is different
+                param is IrChangedBitMaskVariable &&
+                !meta.hasNonStaticDefault -> {
+                // if it's a dirty flag, and the parameter doesn't have a default value and it might
+                // be stable, then we only check changed if the value is unstable, otherwise we can
+                // just check to see if the mask is different
                 //
                 // invalid = invalid or (stable && mask == different || unstable && changed)
 
@@ -3195,10 +3199,11 @@ class ComposableFunctionBodyTransformer(
             meta.isCertain &&
                 !meta.stability.knownUnstable() &&
                 param != null -> {
-                // if it's a changed flag then uncertain is a possible value. If it is uncertain
-                // OR unstable, then we need to call changed. If it is uncertain or unstable here
-                // it will _always_ be uncertain or unstable here, so this is safe. If it is not
-                // uncertain or unstable, we can just check to see if its different
+                // if it's a changed flag or parameter with a default expression then uncertain is a
+                // possible value. If  it is uncertain OR unstable, then we need to call changed.
+                // If it is uncertain or unstable here it will _always_ be uncertain or unstable
+                // here, so this is safe. If it is not uncertain or unstable, we can just check to
+                // see if its different
 
                 //     unstableOrUncertain = mask xor 011 > 010
                 //     invalid = invalid or ((unstableOrUncertain && changed()) || mask == different)
@@ -3318,6 +3323,12 @@ class ComposableFunctionBodyTransformer(
                             if (slotIndex != -1) {
                                 meta.isCertain = true
                                 meta.maskParam = scope.dirty
+                                meta.hasNonStaticDefault = if (param is IrValueParameter) {
+                                    param.defaultValue?.expression?.isStatic() == false
+                                } else {
+                                    // No default for this parameter
+                                    false
+                                }
                                 meta.maskSlot = slotIndex
                             }
                         }
