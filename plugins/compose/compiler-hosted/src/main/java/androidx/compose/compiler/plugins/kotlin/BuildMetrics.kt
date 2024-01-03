@@ -56,7 +56,7 @@ interface FunctionMetrics {
     fun recordGroup()
     fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.ParamMeta>
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
     )
     fun recordParameter(
         declaration: IrValueParameter,
@@ -100,7 +100,7 @@ interface ModuleMetrics {
     )
     fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.ParamMeta>
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
     )
     fun log(message: String)
     fun Appendable.appendModuleJson()
@@ -119,7 +119,7 @@ object EmptyModuleMetrics : ModuleMetrics {
     override fun recordLambda(composable: Boolean, memoized: Boolean, singleton: Boolean) {}
     override fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.ParamMeta>
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
     ) {}
     override fun log(message: String) {
         println(message)
@@ -165,7 +165,7 @@ object EmptyFunctionMetrics : FunctionMetrics {
     override fun recordGroup() {}
     override fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.ParamMeta>
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
     ) {}
     override fun recordParameter(
         declaration: IrValueParameter,
@@ -322,7 +322,7 @@ class ModuleMetricsImpl(
 
     override fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.ParamMeta>
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
     ) {
         for (arg in paramMeta) {
             totalArguments++
@@ -510,7 +510,7 @@ class FunctionMetricsImpl(
 
     override fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.ParamMeta>
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
     ) {
         calls++
     }
