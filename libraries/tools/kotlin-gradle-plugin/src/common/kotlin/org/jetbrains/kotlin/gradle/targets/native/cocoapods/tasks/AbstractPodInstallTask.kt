@@ -12,6 +12,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.utils.CommandFallback
+import org.jetbrains.kotlin.gradle.utils.RunProcessResult
 import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
 import org.jetbrains.kotlin.gradle.utils.runCommandWithFallback
 import java.io.File
@@ -62,11 +63,12 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
 
         return runCommandWithFallback(podInstallCommand,
                                       logger,
-                                      fallback = { retCode, output, process ->
+                                      fallback = { result ->
+                                          val output = result.stdErr.ifBlank { result.stdOut }
                                           if (output.contains("out-of-date source repos which you can update with `pod repo update` or with `pod install --repo-update`") && updateRepo.not()) {
                                               CommandFallback.Action(runPodInstall(true))
                                           } else {
-                                              CommandFallback.Error(sharedHandleError(podInstallCommand, retCode, output, process))
+                                              CommandFallback.Error(sharedHandleError(podInstallCommand, result))
                                           }
                                       },
                                       processConfiguration = {
@@ -76,27 +78,45 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
                                       })
     }
 
-    private fun sharedHandleError(podInstallCommand: List<String>, retCode: Int, error: String, process: Process): String? {
-        return if (error.contains("No such file or directory")) {
-            val command = podInstallCommand.joinToString(" ")
-            """ 
-               |'$command' command failed with an exception:
-               | $error
-               |        
+    private fun sharedHandleError(podInstallCommand: List<String>, result: RunProcessResult): String? {
+        val command = podInstallCommand.joinToString(" ")
+        val output = result.stdErr.ifBlank { result.stdOut }
+
+        var message = """
+            |'$command' command failed with an exception:
+            | stdErr: ${result.stdErr}
+            | stdOut: ${result.stdOut}
+            | exitCode: ${result.retCode}
+            |        
+        """.trimMargin()
+
+        if (output.contains("No such file or directory")) {
+            message += """ 
                |        Full command: $command
                |        
                |        Possible reason: CocoaPods is not installed
-               |        Please check that CocoaPods v1.10 or above is installed.
+               |        Please check that CocoaPods v1.14 or above is installed.
                |        
                |        To check CocoaPods version type 'pod --version' in the terminal
                |        
                |        To install CocoaPods execute 'sudo gem install cocoapods'
+               |        For more information, refer to the documentation: https://kotl.in/fx2sde
                |
             """.trimMargin()
+            return message
+        } else if (output.contains("[Xcodeproj] Unknown object version")) {
+            message += """
+               |        Your CocoaPods installation may be outdated or corrupted
+               |
+               |        To update CocoaPods execute 'sudo gem install cocoapods'
+               |        For more information, refer to the documentation: https://kotl.in/0xfxux
+               |
+            """.trimMargin()
+            return message
         } else {
-            handleError(retCode, error, process)
+            return handleError(result)
         }
     }
 
-    abstract fun handleError(retCode: Int, error: String, process: Process): String?
+    abstract fun handleError(result: RunProcessResult): String?
 }

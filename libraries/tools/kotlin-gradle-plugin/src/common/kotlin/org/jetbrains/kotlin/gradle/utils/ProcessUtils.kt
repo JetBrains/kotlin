@@ -9,6 +9,21 @@ import org.gradle.api.logging.Logger
 import kotlin.concurrent.thread
 
 /**
+ * Represents the result of running a process.
+ *
+ * @property stdOut The standard output of the process.
+ * @property stdErr The standard error of the process.
+ * @property retCode The return code of the process.
+ * @property process The underlying `Process` object.
+ */
+data class RunProcessResult(
+    val stdOut: String,
+    val stdErr: String,
+    val retCode: Int,
+    val process: Process,
+)
+
+/**
  * Executes a command and returns the input text.
  *
  * @param command the command and its arguments to be executed as a list of strings.
@@ -20,15 +35,15 @@ import kotlin.concurrent.thread
 internal fun runCommand(
     command: List<String>,
     logger: Logger? = null,
-    errorHandler: ((retCode: Int, output: String, process: Process) -> String?)? = null,
+    errorHandler: ((result: RunProcessResult) -> String?)? = null,
     processConfiguration: ProcessBuilder.() -> Unit = { },
 ): String {
     val runResult = assembleAndRunProcess(command, logger, processConfiguration)
     check(runResult.retCode == 0) {
-        errorHandler?.invoke(runResult.retCode, runResult.output, runResult.process) ?: createErrorMessage(command, runResult)
+        errorHandler?.invoke(runResult) ?: createErrorMessage(command, runResult)
     }
 
-    return runResult.inputText
+    return runResult.stdOut
 }
 
 /**
@@ -51,27 +66,18 @@ sealed class CommandFallback {
 internal fun runCommandWithFallback(
     command: List<String>,
     logger: Logger? = null,
-    fallback: (retCode: Int, output: String, process: Process) -> CommandFallback,
+    fallback: (result: RunProcessResult) -> CommandFallback,
     processConfiguration: ProcessBuilder.() -> Unit = { },
 ): String {
     val runResult = assembleAndRunProcess(command, logger, processConfiguration)
     return if (runResult.retCode != 0) {
-        when (val fallbackOption = fallback(runResult.retCode, runResult.output, runResult.process)) {
+        when (val fallbackOption = fallback(runResult)) {
             is CommandFallback.Action -> fallbackOption.fallback
             is CommandFallback.Error -> error(fallbackOption.error ?: createErrorMessage(command, runResult))
         }
     } else {
-        runResult.inputText
+        runResult.stdOut
     }
-}
-
-private data class RunProcessResult(
-    val inputText: String,
-    val errorText: String,
-    val retCode: Int,
-    val process: Process,
-) {
-    val output: String get() = inputText.ifBlank { errorText }
 }
 
 private fun assembleAndRunProcess(
@@ -118,9 +124,9 @@ private fun createErrorMessage(command: List<String>, runResult: RunProcessResul
     return """
            |Executing of '${command.joinToString(" ")}' failed with code ${runResult.retCode} and message: 
            |
-           |${runResult.inputText}
+           |${runResult.stdOut}
            |
-           |${runResult.errorText}
+           |${runResult.stdErr}
            |
            """.trimMargin()
 }
