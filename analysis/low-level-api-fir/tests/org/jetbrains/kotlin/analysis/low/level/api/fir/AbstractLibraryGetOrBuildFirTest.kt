@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,9 +16,11 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.service
 
 abstract class AbstractLibraryGetOrBuildFirTest : AbstractLowLevelApiLastModuleFirstFileTest() {
@@ -34,8 +36,8 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractLowLevelApiLastModuleF
         }
     }
 
-    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val declaration = getElementToSearch(ktFile, moduleStructure)
+    override fun doTestByFileStructure(ktFile: KtFile, testModule: TestModule, testServices: TestServices) {
+        val declaration = getElementToSearch(ktFile, testServices.moduleStructure)
 
         val module = ProjectStructureProvider.getModule(ktFile.project, ktFile, contextualModule = null)
         val resolveSession = LLFirResolveSessionService.getInstance(ktFile.project).getFirResolveSessionForBinaryModule(module)

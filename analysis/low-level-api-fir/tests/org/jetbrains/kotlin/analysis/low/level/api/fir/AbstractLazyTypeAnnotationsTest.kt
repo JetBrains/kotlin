@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,9 +31,10 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 /**
  * This test exists to:
@@ -43,12 +44,13 @@ import org.jetbrains.kotlin.test.services.assertions
  * It collects all type annotations from the selected declaration and resolves them
  */
 abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResolveTestCase() {
-    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
+    override fun doTestByFileStructure(ktFile: KtFile, testModule: TestModule, testServices: TestServices) {
         val builderBeforeAnnotationResolve = StringBuilder()
         val builderAfterAnnotationResolve = StringBuilder()
 
         val allKtFiles = testServices.allKtFiles()
         resolveWithClearCaches(ktFile) { session ->
+            val moduleStructure = testServices.moduleStructure
             val (declaration, resolver) = findFirDeclarationToResolve(ktFile, moduleStructure, testServices, session)
             resolver.invoke(FirResolvePhase.TYPES)
 

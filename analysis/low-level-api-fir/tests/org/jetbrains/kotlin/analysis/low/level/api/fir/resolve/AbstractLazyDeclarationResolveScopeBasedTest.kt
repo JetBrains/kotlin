@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.test.services.assertions
  * This test exists to check lazy resolution for fake overrides
  */
 abstract class AbstractLazyDeclarationResolveScopeBasedTest : AbstractLowLevelApiLastModuleFirstFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
+    override fun doTestByFileStructure(ktFile: KtFile, testModule: TestModule, testServices: TestServices) {
         val classOrObject = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassOrObject>(ktFile)
         resolveWithClearCaches(classOrObject) { session ->
             val classSymbol = classOrObject.resolveToFirSymbolOfType<FirClassSymbol<*>>(session)
