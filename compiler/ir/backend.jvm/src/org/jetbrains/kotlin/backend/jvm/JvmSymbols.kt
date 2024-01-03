@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -1148,14 +1148,14 @@ class JvmSymbols(
     companion object {
         const val INTRINSICS_CLASS_NAME = "kotlin/jvm/internal/Intrinsics"
 
-        val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME =
-            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("FlexibleNullability"))
+        val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME: FqName =
+            StandardClassIds.Annotations.FlexibleNullability.asSingleFqName()
 
-        val FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME =
-            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("FlexibleMutability"))
+        val FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME: FqName =
+            StandardClassIds.Annotations.FlexibleMutability.asSingleFqName()
 
-        val RAW_TYPE_ANNOTATION_FQ_NAME =
-            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("RawType"))
+        val RAW_TYPE_ANNOTATION_FQ_NAME: FqName =
+            StandardClassIds.Annotations.RawTypeAnnotation.asSingleFqName()
     }
 }
 
