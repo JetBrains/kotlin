@@ -26,9 +26,27 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
     }
 
     @Test
+    @TestMetadata("annotationsOnFile.kt")
+    public void testAnnotationsOnFile() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/annotationsOnFile.kt");
+    }
+
+    @Test
+    @TestMetadata("caching.kt")
+    public void testCaching() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/caching.kt");
+    }
+
+    @Test
     @TestMetadata("clashBetweenSerializableAndNonSerializableProperty.kt")
     public void testClashBetweenSerializableAndNonSerializableProperty() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/clashBetweenSerializableAndNonSerializableProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("classSerializerAsObject.kt")
+    public void testClassSerializerAsObject() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/classSerializerAsObject.kt");
     }
 
     @Test
@@ -38,9 +56,39 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
     }
 
     @Test
+    @TestMetadata("contextualByDefault.kt")
+    public void testContextualByDefault() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/contextualByDefault.kt");
+    }
+
+    @Test
+    @TestMetadata("contextualFallback.kt")
+    public void testContextualFallback() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/contextualFallback.kt");
+    }
+
+    @Test
+    @TestMetadata("contextualWithTypeParameters.kt")
+    public void testContextualWithTypeParameters() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/contextualWithTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedInterface.kt")
+    public void testDelegatedInterface() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/delegatedInterface.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedProperty.kt")
     public void testDelegatedProperty() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/delegatedProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("enumsAreCached.kt")
+    public void testEnumsAreCached() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/enumsAreCached.kt");
     }
 
     @Test
@@ -56,9 +104,75 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
     }
 
     @Test
+    @TestMetadata("genericBaseClassMultiple.kt")
+    public void testGenericBaseClassMultiple() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/genericBaseClassMultiple.kt");
+    }
+
+    @Test
+    @TestMetadata("genericBaseClassSimple.kt")
+    public void testGenericBaseClassSimple() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/genericBaseClassSimple.kt");
+    }
+
+    @Test
+    @TestMetadata("generics.kt")
+    public void testGenerics() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/generics.kt");
+    }
+
+    @Test
     @TestMetadata("interfaces.kt")
     public void testInterfaces() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/interfaces.kt");
+    }
+
+    @Test
+    @TestMetadata("metaSerializable.kt")
+    public void testMetaSerializable() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/metaSerializable.kt");
+    }
+
+    @Test
+    @TestMetadata("multimoduleInheritanceJs.kt")
+    public void testMultimoduleInheritanceJs() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJs.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleGenericsPolymorphic.kt")
+    public void testMultipleGenericsPolymorphic() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/multipleGenericsPolymorphic.kt");
+    }
+
+    @Test
+    @TestMetadata("sealedClassMultifile.kt")
+    public void testSealedClassMultifile() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/sealedClassMultifile.kt");
+    }
+
+    @Test
+    @TestMetadata("sealedInterfaces.kt")
+    public void testSealedInterfaces() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/sealedInterfaces.kt");
+    }
+
+    @Test
+    @TestMetadata("serializableFromAnotherModule.kt")
+    public void testSerializableFromAnotherModule() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/serializableFromAnotherModule.kt");
+    }
+
+    @Test
+    @TestMetadata("serializableFromAnotherModule_multipleFields.kt")
+    public void testSerializableFromAnotherModule_multipleFields() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/serializableFromAnotherModule_multipleFields.kt");
+    }
+
+    @Test
+    @TestMetadata("serializableOnPropertyType.kt")
+    public void testSerializableOnPropertyType() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/serializableOnPropertyType.kt");
     }
 
     @Test
@@ -71,5 +185,23 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
     @TestMetadata("serializerFactoryInUserDefined.kt")
     public void testSerializerFactoryInUserDefined() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/serializerFactoryInUserDefined.kt");
+    }
+
+    @Test
+    @TestMetadata("starProjections.kt")
+    public void testStarProjections() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/starProjections.kt");
+    }
+
+    @Test
+    @TestMetadata("useSerializersChain.kt")
+    public void testUseSerializersChain() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/useSerializersChain.kt");
+    }
+
+    @Test
+    @TestMetadata("userDefinedSerializerInCompanion.kt")
+    public void testUserDefinedSerializerInCompanion() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/userDefinedSerializerInCompanion.kt");
     }
 }

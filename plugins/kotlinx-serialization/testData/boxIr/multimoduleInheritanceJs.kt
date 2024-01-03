@@ -1,6 +1,8 @@
-// TARGET_BACKEND: JVM_IR
-
 // WITH_STDLIB
+// TARGET_BACKEND: JS_IR
+// TARGET_BACKEND: JS_IR_ES6
+
+// JS vs JVM difference is that we are not able to understand that we have a default value in other module (KT-62523)
 
 // MODULE: lib
 // FILE: lib.kt
@@ -47,14 +49,14 @@ open class Car : Vehicle() {
 
 fun test1() {
     val string = Json.encodeToString(Test1.serializer(), Test1())
-    assertEquals("{}", string)
+    assertEquals("{\"optional\":\"foo\"}", string)
     val reconstructed = Json.decodeFromString(Test1.serializer(), string)
     assertEquals("foo", reconstructed.optional)
 }
 
 fun test2() {
     val string = Json.encodeToString(Test2.serializer(), Test2())
-    assertEquals("{}", string)
+    assertEquals("{\"optional\":\"foo\"}", string)
     val reconstructed = Json.decodeFromString(Test2.serializer(), string)
     assertEquals("foo", reconstructed.optional)
 }
