@@ -283,18 +283,26 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
         return AvailableSymbol(classifierSymbol, ImportKind.fromScope(scope))
     }
 
+    /**
+     * Finds available constructors with a given [targetClassName] within the [scope].
+     *
+     * Do not confuse with constructors **declared** in the scope (see [FirScope.processDeclaredConstructors]).
+     */
+    private fun findAvailableConstructors(scope: FirScope, targetClassName: Name): List<FirConstructorSymbol> {
+        val classifierSymbol = scope.findFirstClassifierByName(targetClassName) ?: return emptyList()
+
+        return (classifierSymbol as? FirClassSymbol)?.declarationSymbols?.filterIsInstance<FirConstructorSymbol>().orEmpty()
+    }
+
     fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirFunctionSymbol<*>>> {
         return scopes.flatMap { scope ->
             val importKind = ImportKind.fromScope(scope)
             buildList {
                 // Collect constructors
-                scope.findFirstClassifierByName(name)?.let { classifierSymbol ->
-                    val classSymbol = classifierSymbol as? FirClassSymbol ?: return@let null
-                    classSymbol.declarationSymbols.filterIsInstance<FirConstructorSymbol>()
-                }?.forEach { add(AvailableSymbol(it, importKind)) }
+                findAvailableConstructors(scope, name).mapTo(this) { AvailableSymbol(it, importKind) }
 
                 // Collect functions
-                addAll(scope.getFunctions(name).map { AvailableSymbol(it, importKind) })
+                scope.getFunctions(name).mapTo(this) { AvailableSymbol(it, importKind) }
             }
         }
     }
