@@ -214,6 +214,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("compilerCrashInTypeParameterBoundsChecker.kt")
+        public void testCompilerCrashInTypeParameterBoundsChecker() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/compilerCrashInTypeParameterBoundsChecker.kt");
+        }
+
+        @Test
         @TestMetadata("compilerCrashParameterType.kt")
         public void testCompilerCrashParameterType() throws Exception {
             runTest("compiler/testData/diagnostics/tests/compilerCrashParameterType.kt");
