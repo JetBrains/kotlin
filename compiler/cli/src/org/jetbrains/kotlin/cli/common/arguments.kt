@@ -48,10 +48,11 @@ fun CompilerConfiguration.setupCommonArguments(
         }
     }
 
-    switchToFallbackModeIfNecessary(arguments, messageCollector)
+   // switchToFallbackModeIfNecessary(arguments, messageCollector)
     setupLanguageVersionSettings(arguments)
 
     val usesK2 = arguments.useK2 || languageVersionSettings.languageVersion.usesK2
+    if (usesK2) throw RuntimeException("WTF?!")
     put(CommonConfigurationKeys.USE_FIR, usesK2)
     put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
