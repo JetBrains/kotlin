@@ -30,7 +30,7 @@ fun main(a: A<String>, a1: A<String?>) {
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!>.length
 
     a.bar().length
-    a.bar()!!.length
+    a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.field?.length
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.length
@@ -44,9 +44,9 @@ fun main(a: A<String>, a1: A<String?>) {
 
     a.baz2("").length
     a.baz2("")<!UNNECESSARY_SAFE_CALL!>?.<!>length
-    a.baz2("")!!.length
+    a.baz2("")<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.baz2(null).length
     a.baz2(null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
-    a.baz2(null)!!.length
+    a.baz2(null)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 }

@@ -77,4 +77,9 @@ object JvmExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirJavaUnnecessarySafeCallChecker,
         )
+
+    override val checkNotNullCallCheckers: Set<FirCheckNotNullCallChecker>
+        get() = setOf(
+            FirJavaUnnecessaryNotNullChecker,
+        )
 }

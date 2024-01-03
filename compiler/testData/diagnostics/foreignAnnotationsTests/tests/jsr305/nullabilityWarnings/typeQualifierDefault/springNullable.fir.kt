@@ -68,7 +68,7 @@ fun main(a: A) {
     a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
 
     a.bar().length
-    a.bar()!!.length
+    a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.field?.length
     a.field.length
