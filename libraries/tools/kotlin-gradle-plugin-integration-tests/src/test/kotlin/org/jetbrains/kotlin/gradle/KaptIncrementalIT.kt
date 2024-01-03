@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import  org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -29,7 +30,12 @@ open class KaptIncrementalIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         incremental = true,
         kaptOptions = BuildOptions.KaptOptions(incrementalKapt = true)
-    )
+    ).copyEnsuringK1()
+
+    // KT-63102 Incremental compilation doesn't work in 2.0
+    protected val isIncrementalStubGenerationSupported: Boolean by lazy {
+        defaultBuildOptions.languageVersion?.startsWith("1") ?: (KotlinVersion.DEFAULT < KotlinVersion.KOTLIN_2_0)
+    }
 
     protected open fun KGPBaseTest.kaptProject(
         gradleVersion: GradleVersion,
@@ -186,8 +192,10 @@ open class KaptIncrementalIT : KGPBaseTest() {
             build("assemble") {
                 assertKapt3FullyExecuted()
 
-                assertFileInProjectExists("$kapt3IncDataPath/bar/B.class")
-                assertFileInProjectExists("$kapt3IncDataPath/bar/UseBKt.class")
+                if (isIncrementalStubGenerationSupported) {
+                    assertFileInProjectExists("$kapt3IncDataPath/bar/B.class")
+                    assertFileInProjectExists("$kapt3IncDataPath/bar/UseBKt.class")
+                }
                 assertFileInProjectExists("$kapt3StubsPath/bar/B.java")
                 assertFileInProjectExists("$kapt3StubsPath/bar/B.kapt_metadata")
                 assertFileInProjectExists("$kapt3StubsPath/bar/UseBKt.java")
@@ -282,11 +290,13 @@ open class KaptIncrementalIT : KGPBaseTest() {
                 assertKapt3FullyExecuted()
 
                 val useBKt = javaSourcesDir().resolve("bar/useB.kt")
-                assertCompiledKotlinSources(
-                    listOf(projectPath.relativize(bKt), projectPath.relativize(useBKt)),
-                    getOutputForTask(":kaptGenerateStubsKotlin"),
-                    errorMessageSuffix = " in task 'kaptGenerateStubsKotlin'"
-                )
+                if (isIncrementalStubGenerationSupported) {
+                    assertCompiledKotlinSources(
+                        listOf(projectPath.relativize(bKt), projectPath.relativize(useBKt)),
+                        getOutputForTask(":kaptGenerateStubsKotlin"),
+                        errorMessageSuffix = " in task 'kaptGenerateStubsKotlin'"
+                    )
+                }
 
                 // java removal is detected
                 assertCompiledKotlinSources(
@@ -343,17 +353,20 @@ open class KaptIncrementalIT : KGPBaseTest() {
         buildResult: BuildResult,
         sources: List<Path>
     ) {
-        assertCompiledKotlinSources(
-            sources,
-            buildResult.getOutputForTask(":kaptGenerateStubsKotlin"),
-            errorMessageSuffix = " in task 'kaptGenerateStubsKotlin"
-        )
+        if (isIncrementalStubGenerationSupported) {
+            assertCompiledKotlinSources(
+                sources,
+                buildResult.getOutputForTask(":kaptGenerateStubsKotlin"),
+                errorMessageSuffix = " in task 'kaptGenerateStubsKotlin"
+            )
 
-        assertCompiledKotlinSources(
-            sources,
-            buildResult.getOutputForTask(":compileKotlin"),
-            errorMessageSuffix = " in task 'compileKotlin'"
-        )
+
+            assertCompiledKotlinSources(
+                sources,
+                buildResult.getOutputForTask(":compileKotlin"),
+                errorMessageSuffix = " in task 'compileKotlin'"
+            )
+        }
     }
 
     private fun BuildResult.assertKapt3FullyExecuted() {
@@ -388,6 +401,12 @@ open class KaptIncrementalIT : KGPBaseTest() {
             }
 
     val TestProject.kaptGeneratedToPath get() = projectPath.resolve("build/generated/source/kapt")
+}
+
+@DisplayName("K2 Kapt incremental compilation")
+@OtherGradlePluginTests
+class K2KaptIncrementalIT: KaptIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
 
 @DisplayName("Kapt incremental compilation with disabled precise compilation outputs backup")

@@ -10,28 +10,23 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
-import kotlin.io.path.name
-import kotlin.io.path.walk
+
 
 @DisplayName("Kapt 4 base checks")
 class Kapt4IT : Kapt3IT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
-    override fun TestProject.customizeProject() {
-        forceKapt4()
+    @DisplayName("Kapt doesn't run in fallback mode with languageVersion = 2.0")
+    @GradleTest
+    fun noFallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputDoesNotContain("Falling back to 1.9.")
+            }
+        }
     }
-
-    @Disabled("Doesn't make sense in Kapt 4")
-    override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {}
-
-    @Disabled("Doesn't make sense in Kapt 4")
-    override fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {}
-
-    @Disabled("Doesn't make sense in Kapt 4")
-    override fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {}
-
-    @Disabled("Doesn't make sense in Kapt 4")
-    override fun useK2KaptProperty(gradleVersion: GradleVersion) {}
 
     @DisplayName("KT-61879: K2 KAPT works with proguarded compiler jars and enum class")
     @GradleTest
@@ -50,57 +45,15 @@ class Kapt4IT : Kapt3IT() {
 class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
-    override fun TestProject.customizeProject() {
-        forceKapt4()
-    }
-
     @Disabled("Enable when KT-61845 is fixed")
     override fun testKt18799(gradleVersion: GradleVersion) {}
 
-    @Disabled("Doesn't make sense in Kapt 4")
-    override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {}
-
-    @Disabled("Doesn't make sense in Kapt 4")
-    override fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {}
-
-    @Disabled("Doesn't make sense in Kapt 4")
-    override fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {}
-
-    @Disabled("Doesn't work in 2.0. Neither with Kapt 3 nor with Kapt 4")
-    override fun testMPPKaptPresence(gradleVersion: GradleVersion) {}
-
-    @Disabled("Incremental compilation doesn't work in 2.0")
+    @Disabled("KT-63102 Incremental compilation doesn't work in 2.0")
     override fun testSimpleWithIC(gradleVersion: GradleVersion) {}
 
-    @Disabled("Incremental compilation doesn't work in 2.0")
+    @Disabled("KT-63102 Incremental compilation doesn't work in 2.0")
     override fun testSimpleWithIC_withClasspathSnapshot(gradleVersion: GradleVersion) {}
-}
 
-fun TestProject.forceKapt4() {
-    projectPath.walk().forEach {
-        when (it.fileName.name) {
-            "build.gradle" -> it.appendText(
-                """
-                
-                pluginManager.withPlugin('kotlin') {
-                    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-                       compilerOptions.freeCompilerArgs.addAll(['-Xuse-kapt4', '-Xsuppress-version-warnings'])
-                    }
-                }
-                
-                """.trimIndent()
-            )
-            "build.gradle.kts" -> it.appendText(
-                """
-                
-                pluginManager.withPlugin("kotlin") {
-                    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class.java).configureEach {
-                       compilerOptions.freeCompilerArgs.addAll(listOf("-Xuse-kapt4", "-Xsuppress-version-warnings"))
-                    }
-                }
-                
-                """.trimIndent()
-            )
-        }
-    }
+    @Disabled("KT-63102 Incremental compilation doesn't work in 2.0")
+    override fun testChangeClasspathICRebuild(gradleVersion: GradleVersion) {}
 }

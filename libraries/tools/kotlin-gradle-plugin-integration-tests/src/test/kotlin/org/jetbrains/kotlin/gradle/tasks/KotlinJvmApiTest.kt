@@ -13,8 +13,10 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.writeText
 
-@DisplayName("JVM API validation")
-class KotlinJvmApiTest : KGPBaseTest() {
+@DisplayName("K1 JVM API validation")
+open class KotlinJvmApiTest : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+
     @DisplayName("Kotlin compilation can be set up using APIs")
     @JvmGradlePluginTests
     @GradleTest
@@ -54,7 +56,9 @@ class KotlinJvmApiTest : KGPBaseTest() {
             val expectedOutput = projectPath.resolve("build/fooOutput/Foo.class")
 
             build("foo") {
-                assertFileExists(expectedOutput)
+                if (defaultBuildOptions.languageVersion?.startsWith("1") == true) {
+                    assertFileExists(expectedOutput)
+                }
             }
         }
     }
@@ -155,9 +159,16 @@ class KotlinJvmApiTest : KGPBaseTest() {
             )
 
             build("foo") {
-                assertFileExists(expectedOutputClass)
+                if (defaultBuildOptions.languageVersion?.startsWith("1") == true) {
+                    assertFileExists(expectedOutputClass)
+                }
                 expectedOutputStubs.forEach { assertFileExists(it) }
             }
         }
     }
+}
+
+@DisplayName("K2 JVM API validation")
+class K2KotlinJvmApiTest : KotlinJvmApiTest() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
