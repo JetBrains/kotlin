@@ -2338,6 +2338,12 @@ dynamicTest("kt42830") {
     useGoldenData = true
 }
 
+dynamicTest("kt64508") {
+    source = "produce_dynamic/kt-64508/hello.kt"
+    cSource = "$projectDir/produce_dynamic/kt-64508/main.c"
+    useGoldenData = true
+}
+
 dynamicTest("produce_dynamic_unhandledException") {
     disabled = (cacheTesting != null) // Disabled due to KT-47828.
     source = "produce_dynamic/unhandledException/unhandled.kt"
