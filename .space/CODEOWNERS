@@ -146,7 +146,7 @@
 /compiler/testData/compileKotlinAgainstCustomBinaries/ "Kotlin Compiler Core"
 /compiler/testData/compileKotlinAgainstJava/ "Kotlin Compiler Core" "Kotlin JVM"
 /compiler/testData/compiler/smoke/ "Kotlin Compiler Core"
-/compiler/testData/debug/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS"
+/compiler/testData/debug/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS" "Kotlin Wasm"
 /compiler/testData/diagnostics/ "Kotlin Compiler Core"
 /compiler/testData/friendPaths/ "Kotlin Compiler Core"
 # UNKNOWN: /compiler/testData/integration/
@@ -260,6 +260,7 @@
 /jps/ "Kotlin Build Tools"
 
 /js/ "Kotlin JS"
+/js/js.sourcemap/ "Kotlin JS" "Kotlin Wasm"
 /js/js.translator/testData/ "Kotlin JS" "Kotlin Wasm"
 
 /kotlin-js-store/ "Kotlin JS"
