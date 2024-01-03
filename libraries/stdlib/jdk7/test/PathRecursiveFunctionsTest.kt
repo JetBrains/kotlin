@@ -1380,6 +1380,16 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
                 OnErrorResult.SKIP_SUBTREE
             })
         }
+        withZip("Archive3.zip", listOf("normal", ".")) { root, zipRoot ->
+            val target = root.resolve("UnzipArchive3")
+            var failed = false
+            zipRoot.copyToRecursively(target, followLinks = false, onError = { _, _, exception ->
+                failed = true
+                assertIs<IllegalFileNameException>(exception)
+                OnErrorResult.SKIP_SUBTREE
+            })
+            assertTrue(failed)
+        }
     }
 
     @Test
