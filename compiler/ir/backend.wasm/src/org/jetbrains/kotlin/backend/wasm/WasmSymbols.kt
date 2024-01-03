@@ -380,11 +380,7 @@ class WasmSymbols(
     private val wasmExportClass = getIrClass(FqName("kotlin.wasm.WasmExport"))
     val wasmExportConstructor by lazy { wasmExportClass.constructors.single() }
 
-    private val jsRelatedSymbolsIfNonWasi =
-        when (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.JS) {
-            true -> JsRelatedSymbols()
-            else -> null
-        }
+    private val jsRelatedSymbolsIfNonWasi = if (context.isWasmJsTarget) JsRelatedSymbols() else null
 
     val jsRelatedSymbols get() = jsRelatedSymbolsIfNonWasi ?: error("Cannot access to js related std in wasi mode")
 

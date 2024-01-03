@@ -50,7 +50,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     lateinit var currentParent: IrDeclarationParent
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI) return null
+        if (!context.isWasmJsTarget) return null
 
         if (declaration.isFakeOverride) return null
         if (declaration !is IrSimpleFunction) return null
@@ -923,7 +923,7 @@ internal fun StringBuilder.appendParameterList(size: Int, name: String = "p", is
  */
 class JsInteropFunctionCallsLowering(val context: WasmBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        if (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI) return
+        if (!context.isWasmJsTarget) return
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid()

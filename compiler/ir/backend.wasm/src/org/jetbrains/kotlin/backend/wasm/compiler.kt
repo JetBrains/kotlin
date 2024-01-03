@@ -149,7 +149,7 @@ fun compileWasm(
     val byteArray = os.toByteArray()
     val jsUninstantiatedWrapper: String?
     val jsWrapper: String
-    if (backendContext.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.JS) {
+    if (backendContext.isWasmJsTarget) {
         jsUninstantiatedWrapper = compiledWasmModule.generateAsyncJsWrapper(
             "./$baseFileName.wasm",
             backendContext.jsModuleAndQualifierReferences

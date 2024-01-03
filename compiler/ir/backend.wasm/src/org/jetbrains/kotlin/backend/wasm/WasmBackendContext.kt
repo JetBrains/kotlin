@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.js.config.WasmTarget
+import org.jetbrains.kotlin.js.config.wasmTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -45,6 +47,8 @@ class WasmBackendContext(
     override var inVerbosePhase: Boolean = false
     override val scriptMode = false
     override val irFactory: IrFactory = symbolTable.irFactory
+
+    val isWasmJsTarget: Boolean = configuration.wasmTarget == WasmTarget.JS
 
     // Place to store declarations excluded from code generation
     private val excludedDeclarations = mutableMapOf<FqName, IrPackageFragment>()

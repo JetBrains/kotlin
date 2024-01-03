@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.name.FqName
  * Mark declarations from [exportedFqNames] with @JsExport annotation
  */
 fun markExportedDeclarations(context: WasmBackendContext, irFile: IrFile, exportedFqNames: Set<FqName>) {
-    val exportConstructor = when (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
-        WasmTarget.WASI -> context.wasmSymbols.wasmExportConstructor
-        else -> context.wasmSymbols.jsRelatedSymbols.jsExportConstructor
+    val exportConstructor = when (context.isWasmJsTarget) {
+        true -> context.wasmSymbols.jsRelatedSymbols.jsExportConstructor
+        else -> context.wasmSymbols.wasmExportConstructor
     }
 
     for (declaration in irFile.declarations) {

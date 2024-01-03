@@ -215,7 +215,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         if (fromClass.isExternal && !toClass.isExternal) {
-            if (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI) {
+            if (!context.isWasmJsTarget) {
                 TODO("Implement externalize adapter for wasi mode")
             }
             val narrowingToAny = builder.irCall(jsToKotlinAnyAdapter).also {
@@ -226,7 +226,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         if (toClass.isExternal && !fromClass.isExternal) {
-            if (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI) {
+            if (!context.isWasmJsTarget) {
                 TODO("Implement internalize adapter for wasi mode")
             }
             return builder.irCall(kotlinToJsAnyAdapter).also {

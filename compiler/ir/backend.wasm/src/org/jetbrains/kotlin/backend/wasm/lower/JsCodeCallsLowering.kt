@@ -23,7 +23,7 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val jsRelatedSymbols get() = context.wasmSymbols.jsRelatedSymbols
 
     override fun lower(irFile: IrFile) {
-        if (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI) return
+        if (!context.isWasmJsTarget) return
         irFile.transformDeclarationsFlat { declaration ->
             when (declaration) {
                 is IrSimpleFunction -> transformFunction(declaration)
