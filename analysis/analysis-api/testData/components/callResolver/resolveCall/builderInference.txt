@@ -26,7 +26,7 @@ KtSuccessCallInfo:
           KtVariableLikeSignature:
             name = t
             receiverType = null
-            returnType = T
+            returnType = kotlin.String
             symbol = t: T
             callableIdIfNonLocal = null
         ]
@@ -36,7 +36,7 @@ KtSuccessCallInfo:
       s -> (KtVariableLikeSignature:
         name = t
         receiverType = null
-        returnType = T
+        returnType = kotlin.String
         symbol = t: T
         callableIdIfNonLocal = null)
     }
