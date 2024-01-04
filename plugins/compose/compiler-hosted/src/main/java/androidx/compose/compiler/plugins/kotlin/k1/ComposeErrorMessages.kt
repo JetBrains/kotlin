@@ -91,7 +91,7 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         )
         MAP.put(
             ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
-            "Abstract Composable functions cannot have parameters with default values"
+            "Overridable Composable functions with default values are not currently supported"
         )
         MAP.put(
             ComposeErrors.COMPOSABLE_FUN_MAIN,
