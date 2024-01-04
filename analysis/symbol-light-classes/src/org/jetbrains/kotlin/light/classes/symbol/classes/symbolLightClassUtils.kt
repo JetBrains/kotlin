@@ -216,7 +216,6 @@ internal fun SymbolLightClassBase.createMethods(
     fun KtAnalysisSession.handleDeclaration(declaration: KtCallableSymbol) {
         when (declaration) {
             is KtFunctionSymbol -> {
-                // TODO: check if it has expect modifier
                 if (declaration.hasReifiedParameters || declaration.isHiddenOrSynthetic()) return
                 if (declaration.name.isSpecial) return
 
