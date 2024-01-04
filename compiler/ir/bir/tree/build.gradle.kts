@@ -9,6 +9,8 @@ dependencies {
     api(project(":compiler:backend-common"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:util"))
+    implementation(project(":compiler:fir:tree"))
+    implementation(project(":compiler:fir:fir2ir"))
     compileOnly(intellijCore())
     implementation(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
