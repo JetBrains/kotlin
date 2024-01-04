@@ -26,6 +26,12 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
     }
 
     @Test
+    @TestMetadata("annotationsGeneratedInBackend_mpp.kt")
+    public void testAnnotationsGeneratedInBackend_mpp() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/annotationsGeneratedInBackend_mpp.kt");
+    }
+
+    @Test
     @TestMetadata("builtins.kt")
     public void testBuiltins() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/builtins.kt");

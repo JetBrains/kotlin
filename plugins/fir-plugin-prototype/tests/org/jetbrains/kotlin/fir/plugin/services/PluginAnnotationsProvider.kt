@@ -37,9 +37,11 @@ class PluginAnnotationsProvider(testServices: TestServices) : EnvironmentConfigu
 
 class PluginRuntimeAnnotationsProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
-        if (!module.targetPlatform.isJs()) return emptyList()
-        val jar = findJsLib()
-        return listOf(jar)
+        return when {
+            module.targetPlatform.isJvm() -> listOf(findJvmLib())
+            module.targetPlatform.isJs() -> listOf(findJsLib())
+            else -> emptyList()
+        }
     }
 }
 

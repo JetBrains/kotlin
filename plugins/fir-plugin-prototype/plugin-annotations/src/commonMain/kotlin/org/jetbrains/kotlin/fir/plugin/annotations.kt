@@ -42,6 +42,7 @@ annotation class AllPropertiesConstructor
 
 annotation class AddAnnotations
 
+@Retention(AnnotationRetention.RUNTIME)
 annotation class AnnotationToAdd(
     val booleanValue: Boolean,
     val byteValue: Byte,

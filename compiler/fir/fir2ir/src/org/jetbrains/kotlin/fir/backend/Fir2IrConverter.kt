@@ -743,6 +743,8 @@ class Fir2IrConverter(
                 components.fir2IrVisitor
             )
 
+            commonMemberStorage.registerFirProvider(session.moduleData, components.firProvider)
+
             return Fir2IrResult(irModuleFragment, components, moduleDescriptor)
         }
     }

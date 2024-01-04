@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -20,10 +22,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 
-class FirProviderWithGeneratedFiles(val session: FirSession) : FirProvider() {
+class FirProviderWithGeneratedFiles(val session: FirSession, previousProviders: Map<FirModuleData, FirProviderWithGeneratedFiles>) : FirProvider() {
     private val generatedFilesProvider = FirProviderImpl(session, session.kotlinScopeProvider)
 
-    private val providers: List<FirProvider> = listOf(session.firProvider, generatedFilesProvider)
+    private val providers: List<FirProvider> = buildList {
+        add(session.firProvider)
+        add(generatedFilesProvider)
+        session.moduleData.dependsOnDependencies.mapNotNullTo(this) { previousProviders[it] }
+    }
 
     override val symbolProvider: FirSymbolProvider
         get() = providers.first().symbolProvider
