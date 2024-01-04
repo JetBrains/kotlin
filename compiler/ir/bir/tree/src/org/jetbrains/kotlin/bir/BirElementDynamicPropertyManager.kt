@@ -15,8 +15,8 @@ class BirElementDynamicPropertyManager {
         refreshKeysFromAncestors(classData)
         classData.keys += key
         classData.keyCount = classData.keys.size
-        if (key.index == -1) {
-            key.index = classData.keyCount - 1
+        if (key.id == -1) {
+            key.id = classData.keyCount - 1
         }
         totalTokenRegistrations++
 
@@ -95,7 +95,7 @@ class BirElementDynamicPropertyManager {
 class BirElementDynamicPropertyKey<E : BirElement, T>(
     internal val elementClass: BirElementClass<E>,
 ) {
-    internal var index = -1
+    internal var id = -1
 }
 
 inline fun <reified E : BirElement, T> BirElementDynamicPropertyKey(): BirElementDynamicPropertyKey<E, T> {

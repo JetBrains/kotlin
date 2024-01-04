@@ -42,7 +42,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
     // Contains both back references and dependent elements
     protected var relatedElements: Any? = null // null | BirElementBase | Array<BirElementBase?>
         private set
-    private var relatedElementFullness = SmallFixedPointFraction.ZERO
+    private var relatedElementsFullness = SmallFixedPointFraction.ZERO
 
     // Array of form [key, value, key, value, ...]
     internal var dynamicProperties: Array<Any?>? = null
@@ -188,7 +188,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         when (elementsOrSingle) {
             null -> {
                 relatedElements = relatedElement
-                relatedElementFullness = SmallFixedPointFraction.ZERO
+                relatedElementsFullness = SmallFixedPointFraction.ZERO
             }
             is BirElementBase -> {
                 if (elementsOrSingle === relatedElement) {
@@ -202,7 +202,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
                 relatedElements = elements
 
                 val newSize = 2
-                relatedElementFullness = SmallFixedPointFraction(newSize, elements.size)
+                relatedElementsFullness = SmallFixedPointFraction(newSize, elements.size)
 
                 elementsOrSingle.setFlag(hasBeenStoredInArrayFlag, true)
                 relatedElement.setFlag(hasBeenStoredInArrayFlag, true)
@@ -238,7 +238,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
                 elementsOrSingle[currentCount] = relatedElement
 
                 currentCount++
-                relatedElementFullness = SmallFixedPointFraction(currentCount, elementsOrSingle.size)
+                relatedElementsFullness = SmallFixedPointFraction(currentCount, elementsOrSingle.size)
 
                 relatedElement.setFlag(hasBeenStoredInArrayFlag, true)
             }
@@ -257,11 +257,11 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
         }
         array[lastIndex] = null
 
-        relatedElementFullness = SmallFixedPointFraction(lastIndex, array.size)
+        relatedElementsFullness = SmallFixedPointFraction(lastIndex, array.size)
     }
 
     private fun findRelatedElementsArrayCount(array: Array<BirElementBase?>): Int {
-        val minSize = relatedElementFullness * array.size
+        val minSize = relatedElementsFullness * array.size
         if (minSize == array.size) {
             return minSize
         }
