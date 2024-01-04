@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.bir.backend.lower
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.birBlock
 import org.jetbrains.kotlin.bir.backend.builders.birBodyScope
+import org.jetbrains.kotlin.bir.backend.builders.birCall
 import org.jetbrains.kotlin.bir.backend.builders.build
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.utils.asInlinableFunctionReference
