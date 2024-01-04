@@ -103,6 +103,7 @@ private class ClassClsStubBuilder(
         }
         if (isInterface()) {
             relevantFlags.add(FUN_INTERFACE)
+            relevantFlags.add(INTERFACE_MODALITY)
         }
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(KtTokens.ENUM_KEYWORD)

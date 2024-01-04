@@ -24,6 +24,16 @@ val MODALITY: FlagsToModifiers = object : FlagsToModifiers() {
     }
 }
 
+/**
+ * For interfaces, we only need to remember a `sealed` modifier in the stub, as the interface will be abstract by default.
+ */
+val INTERFACE_MODALITY: FlagsToModifiers = object : FlagsToModifiers() {
+    override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+        val modality = Flags.MODALITY.get(flags)
+        return KtTokens.SEALED_KEYWORD.takeIf { modality == ProtoBuf.Modality.SEALED }
+    }
+}
+
 val VISIBILITY: FlagsToModifiers = object : FlagsToModifiers() {
     override fun getModifiers(flags: Int): KtModifierKeywordToken? {
         val visibility = Flags.VISIBILITY.get(flags)
