@@ -409,13 +409,6 @@ private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSm
     stability: PropertyStability,
     typesFromSmartCast: MutableList<ConeKotlinType>,
 ): FirSmartCastExpression? {
-    val smartcastStability = stability.impliedSmartcastStability
-        ?: if (dataFlowAnalyzer.isAccessToUnstableLocalVariable(expression)) {
-            SmartcastStability.CAPTURED_VARIABLE
-        } else {
-            SmartcastStability.STABLE_VALUE
-        }
-
     val originalType = expression.resolvedType.fullyExpandedType(session)
     val allTypes = typesFromSmartCast.also {
         if (originalType !is ConeStubType) {
@@ -429,6 +422,13 @@ private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSm
         source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
         type = intersectedType
     }
+
+    val smartcastStability = stability.impliedSmartcastStability
+        ?: if (dataFlowAnalyzer.isAccessToUnstableLocalVariable(expression, intersectedType)) {
+            SmartcastStability.CAPTURED_VARIABLE
+        } else {
+            SmartcastStability.STABLE_VALUE
+        }
 
     // Example (1): if (x is String) { ... }, where x: dynamic
     //   the dynamic type will "consume" all other, erasing information.

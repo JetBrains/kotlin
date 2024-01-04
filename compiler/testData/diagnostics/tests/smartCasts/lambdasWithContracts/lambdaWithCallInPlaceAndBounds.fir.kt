@@ -184,7 +184,7 @@ fun test15() {
         x = 10
         y = x
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE!>inc<!>()
+        y.inc()
     }
 }
 
@@ -193,7 +193,7 @@ fun test16(x: Any) {
     runWithoutContract {
         require(x is String)
         y = x
-        <!SMARTCAST_IMPOSSIBLE!>y<!>.length
+        y.length
     }
 }
 
