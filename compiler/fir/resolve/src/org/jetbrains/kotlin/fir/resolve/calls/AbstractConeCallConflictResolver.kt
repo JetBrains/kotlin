@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.types.*
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.requireOrDescribe
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class AbstractConeCallConflictResolver(
@@ -38,8 +39,6 @@ abstract class AbstractConeCallConflictResolver(
     protected val transformerComponents: BodyResolveComponents,
     private val considerMissingArgumentsInSignatures: Boolean,
 ) : ConeCallConflictResolver() {
-
-    private val samResolver: FirSamResolver get() = transformerComponents.samResolver
 
     /**
      * Returns `true` if [call1] is definitely more or equally specific [call2],
@@ -212,12 +211,18 @@ abstract class AbstractConeCallConflictResolver(
 
     private fun FirValueParameter.toTypeWithConversion(session: FirSession, call: Candidate): TypeWithConversion {
         val argumentType = argumentType().fullyExpandedType(session)
-        return if (!call.usesSAM) {
+        val functionTypeForSam = toFunctionTypeForSamOrNull(call)
+        return if (functionTypeForSam == null) {
             TypeWithConversion(argumentType)
         } else {
-            val functionType = samResolver.getFunctionTypeForPossibleSamType(argumentType)
-            if (functionType == null) TypeWithConversion(argumentType)
-            else TypeWithConversion(functionType, argumentType)
+            TypeWithConversion(functionTypeForSam, argumentType)
+        }
+    }
+
+    private fun FirValueParameter.toFunctionTypeForSamOrNull(call: Candidate): ConeKotlinType? {
+        val functionTypesOfSamConversions = call.functionTypesOfSamConversions ?: return null
+        return call.argumentMapping?.entries?.firstNotNullOfOrNull {
+            runIf(it.value == this) { functionTypesOfSamConversions[it.key.unwrapArgument()] }
         }
     }
 

@@ -32471,6 +32471,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("multipleSamConversionConflictResolution.kt")
+            public void testMultipleSamConversionConflictResolution() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/multipleSamConversionConflictResolution.kt");
+            }
+
+            @Test
             @TestMetadata("OverloadPriority.kt")
             public void testOverloadPriority() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/OverloadPriority.kt");
