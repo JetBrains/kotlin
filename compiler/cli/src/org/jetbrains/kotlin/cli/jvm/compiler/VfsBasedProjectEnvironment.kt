@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -75,6 +76,9 @@ open class VfsBasedProjectEnvironment(
         // see comment and TODO in KotlinCoreEnvironment.registerKotlinLightClassSupport (KT-64296)
         @Suppress("DEPRECATION")
         PsiElementFinder.EP.getPoint(project).registerExtension(firJavaElementFinder)
+        Disposer.register(project) {
+            psiFinderExtensionPoint.unregisterFinders<FirJavaElementFinder>()
+        }
     }
 
     private fun List<VirtualFile>.toSearchScope(allowOutOfProjectRoots: Boolean) =
