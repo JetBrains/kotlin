@@ -9,13 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
-import org.jetbrains.kotlin.bir.backend.builders.BirConst
-import org.jetbrains.kotlin.bir.backend.builders.BirStatementBuilderScope
-import org.jetbrains.kotlin.bir.backend.builders.birBlock
-import org.jetbrains.kotlin.bir.backend.builders.birBlockBody
-import org.jetbrains.kotlin.bir.backend.builders.birBodyScope
-import org.jetbrains.kotlin.bir.backend.builders.build
-import org.jetbrains.kotlin.bir.backend.builders.setCall
+import org.jetbrains.kotlin.bir.backend.builders.*
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.BirSimpleFunctionImpl

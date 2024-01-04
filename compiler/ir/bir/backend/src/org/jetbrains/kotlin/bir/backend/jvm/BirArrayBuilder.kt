@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.bir.backend.jvm
 
-import org.jetbrains.kotlin.bir.backend.builders.BirStatementBuilderScope
-import org.jetbrains.kotlin.bir.backend.builders.birBlock
+import org.jetbrains.kotlin.bir.backend.builders.*
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirFunctionAccessExpression

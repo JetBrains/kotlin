@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.expressions.impl.BirBlockBodyImpl
 import org.jetbrains.kotlin.bir.expressions.impl.BirBlockImpl
 import org.jetbrains.kotlin.bir.expressions.impl.BirCompositeImpl
+import org.jetbrains.kotlin.bir.expressions.impl.BirExpressionBodyImpl
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
@@ -78,8 +79,16 @@ fun birExpressionBody(
 ): BirExpressionBody {
     val scope = BirStatementBuilderScope()
     val expr = builder(scope)
-    return scope.birExpressionBody(expr)
+    return with(scope) {
+        birExpressionBody(expr)
+    }
 }
+
+context(BirBackendContext, BirStatementBuilderScope)
+fun birExpressionBody(
+    expression: BirExpression,
+): BirExpressionBody =
+    BirExpressionBodyImpl(sourceSpan, expression)
 
 class BirBlockBodyBuilderScope(
     private val blockBody: BirBlockBodyImpl,
