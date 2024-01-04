@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package org.jetbrains.kotlin.bir.backend.builders
 
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
@@ -21,39 +23,39 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birNull(type: BirType = birBuiltIns.nothingNType) = BirConst.constNull(sourceSpan, type)
+inline fun birNull(type: BirType = birBuiltIns.nothingNType) = BirConst.constNull(sourceSpan, type)
 context(BirBackendContext, BirStatementBuilderScope)
-fun birConst(value: Boolean) = BirConst(value, sourceSpan)
+inline fun birConst(value: Boolean) = BirConst(value, sourceSpan)
 context(BirBackendContext, BirStatementBuilderScope)
-fun birConst(value: Byte) = BirConst(value, sourceSpan)
+inline fun birConst(value: Byte) = BirConst(value, sourceSpan)
 context(BirBackendContext, BirStatementBuilderScope)
-fun birConst(value: Short) = BirConst(value, sourceSpan)
+inline fun birConst(value: Short) = BirConst(value, sourceSpan)
 context(BirBackendContext, BirStatementBuilderScope)
-fun birConst(value: Int) = BirConst(value, sourceSpan)
+inline fun birConst(value: Int) = BirConst(value, sourceSpan)
 context(BirBackendContext, BirStatementBuilderScope)
-fun birConst(value: Long) = BirConst(value, sourceSpan)
+inline fun birConst(value: Long) = BirConst(value, sourceSpan)
 context(BirBackendContext, BirStatementBuilderScope)
-fun birConst(value: Float) = BirConst(value, sourceSpan)
+inline fun birConst(value: Float) = BirConst(value, sourceSpan)
 context(BirBackendContext, BirStatementBuilderScope)
-fun birConst(value: Double) = BirConst(value, sourceSpan)
+inline fun birConst(value: Double) = BirConst(value, sourceSpan)
 context(BirBackendContext, BirStatementBuilderScope)
-fun birConst(value: Char) = BirConst(value, sourceSpan)
+inline fun birConst(value: Char) = BirConst(value, sourceSpan)
 context(BirBackendContext, BirStatementBuilderScope)
-fun birConst(value: String) = BirConst(value, sourceSpan)
+inline fun birConst(value: String) = BirConst(value, sourceSpan)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birConstantPrimitive(
+inline fun birConstantPrimitive(
     value: BirConst<*>,
     block: BirConstantPrimitive.() -> Unit = {},
 ): BirConstantPrimitive =
     BirConstantPrimitiveImpl(sourceSpan, value.type, value).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birGetUnit(): BirGetObjectValue = BirGetObjectValueImpl(sourceSpan, birBuiltIns.unitType, birBuiltIns.unitClass)
+inline fun birGetUnit(): BirGetObjectValue = BirGetObjectValueImpl(sourceSpan, birBuiltIns.unitType, birBuiltIns.unitClass)
 
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birGet(
+inline fun birGet(
     variable: BirValueDeclaration,
     type: BirType = variable.type,
     origin: IrStatementOrigin? = this@BirStatementBuilderScope.origin,
@@ -62,7 +64,7 @@ fun birGet(
     BirGetValueImpl(sourceSpan, variable.type, variable, origin).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birSet(
+inline fun birSet(
     variable: BirValueDeclaration,
     value: BirExpression,
     origin: IrStatementOrigin? = this@BirStatementBuilderScope.origin,
@@ -72,7 +74,7 @@ fun birSet(
 
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birGetField(
+inline fun birGetField(
     receiver: BirExpression?,
     field: BirField,
     type: BirType = field.type,
@@ -82,7 +84,7 @@ fun birGetField(
     BirGetFieldImpl(sourceSpan, type, field, null, receiver, origin).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birSetField(
+inline fun birSetField(
     receiver: BirExpression?,
     field: BirField,
     value: BirExpression,
@@ -93,7 +95,7 @@ fun birSetField(
 
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birGetObjectValue(
+inline fun birGetObjectValue(
     clazz: BirClassSymbol,
     type: BirType = clazz.defaultType,
 ): BirGetObjectValue =
@@ -101,7 +103,7 @@ fun birGetObjectValue(
 
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birWhen(
+inline fun birWhen(
     type: BirType,
     origin: IrStatementOrigin? = this@BirStatementBuilderScope.origin,
     block: BirWhen.() -> Unit = {},
@@ -109,7 +111,7 @@ fun birWhen(
     BirWhenImpl(sourceSpan, type, origin).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birBranch(
+inline fun birBranch(
     condition: BirExpression,
     result: BirExpression,
     block: BirBranch.() -> Unit = {},
@@ -117,14 +119,14 @@ fun birBranch(
     BirBranchImpl(sourceSpan, condition, result).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birElseBranch(
+inline fun birElseBranch(
     result: BirExpression,
     block: BirElseBranch.() -> Unit = {},
 ): BirElseBranch =
     BirElseBranchImpl(sourceSpan, birConst(true), result).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birReturn(
+inline fun birReturn(
     value: BirExpression,
     returnTarget: BirReturnTargetSymbol = this@BirStatementBuilderScope.returnTarget ?: error("return target not specified"),
     block: BirReturn.() -> Unit = {},
@@ -133,7 +135,7 @@ fun birReturn(
 
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birCall(
+inline fun birCall(
     function: BirSimpleFunction,
     type: BirType = function.returnType,
     typeArguments: List<BirType?> = listOfNulls(function.typeParameters.size),
@@ -156,7 +158,7 @@ fun birCall(
     }
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birCall(
+inline fun birCall(
     constructor: BirConstructor,
     type: BirType = constructor.returnType,
     typeArguments: List<BirType?> = listOfNulls(constructor.constructedClass.typeParameters.size + constructor.typeParameters.size),
@@ -180,7 +182,7 @@ fun birCall(
     }
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birCallFunctionOrConstructor(
+inline fun birCallFunctionOrConstructor(
     callee: BirFunctionSymbol,
     type: BirType = callee.owner.returnType,
     origin: IrStatementOrigin? = this@BirStatementBuilderScope.origin,
@@ -192,7 +194,7 @@ fun birCallFunctionOrConstructor(
 }
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birDelegatingConstructorCall(
+inline fun birDelegatingConstructorCall(
     constructor: BirConstructor,
     origin: IrStatementOrigin? = this@BirStatementBuilderScope.origin,
     block: BirDelegatingConstructorCall.() -> Unit = {},
@@ -209,7 +211,7 @@ fun birDelegatingConstructorCall(
     )
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birCallGetter(
+inline fun birCallGetter(
     property: BirProperty,
     type: BirType = property.getter!!.returnType,
     origin: IrStatementOrigin? = this@BirStatementBuilderScope.origin,
@@ -228,7 +230,7 @@ fun birCallGetter(
     ).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birCallGetter(
+inline fun birCallGetter(
     getter: BirSimpleFunctionSymbol,
     type: BirType = getter.owner.returnType,
     origin: IrStatementOrigin? = this@BirStatementBuilderScope.origin,
@@ -247,7 +249,7 @@ fun birCallGetter(
     ).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birCallSetter(
+inline fun birCallSetter(
     property: BirProperty,
     value: BirExpression,
     type: BirType = property.setter!!.returnType,
@@ -270,7 +272,7 @@ fun birCallSetter(
 
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birFunctionReference(
+inline fun birFunctionReference(
     function: BirFunction,
     type: BirType,
     typeArguments: List<BirType?> = listOfNulls(function.typeParameters.size),
@@ -283,7 +285,7 @@ fun birFunctionReference(
     }
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birRafFunctionReference(
+inline fun birRafFunctionReference(
     function: BirFunction,
     type: BirType,
     block: BirRawFunctionReference.() -> Unit = {},
@@ -292,7 +294,7 @@ fun birRafFunctionReference(
 
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birTypeOperator(
+inline fun birTypeOperator(
     argument: BirExpression,
     resultType: BirType,
     typeOperator: IrTypeOperator,
@@ -302,7 +304,7 @@ fun birTypeOperator(
     BirTypeOperatorCallImpl(sourceSpan, resultType, typeOperator, argument, typeOperand).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birIs(
+inline fun birIs(
     argument: BirExpression,
     type: BirType,
     block: BirTypeOperatorCall.() -> Unit = {},
@@ -310,7 +312,7 @@ fun birIs(
     BirTypeOperatorCallImpl(sourceSpan, birBuiltIns.booleanType, IrTypeOperator.INSTANCEOF, argument, type).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birNotIs(
+inline fun birNotIs(
     argument: BirExpression,
     type: BirType,
     block: BirTypeOperatorCall.() -> Unit = {},
@@ -318,7 +320,7 @@ fun birNotIs(
     BirTypeOperatorCallImpl(sourceSpan, birBuiltIns.booleanType, IrTypeOperator.NOT_INSTANCEOF, argument, type).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birCast(
+inline fun birCast(
     argument: BirExpression,
     targetType: BirType,
     castType: IrTypeOperator = IrTypeOperator.CAST,
@@ -327,7 +329,7 @@ fun birCast(
     BirTypeOperatorCallImpl(sourceSpan, targetType, castType, argument, targetType).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birSamConversion(
+inline fun birSamConversion(
     argument: BirExpression,
     targetType: BirType,
     block: BirTypeOperatorCall.() -> Unit = {},
@@ -336,13 +338,13 @@ fun birSamConversion(
 
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birConcat(
+inline fun birConcat(
     block: BirStringConcatenation.() -> Unit = {},
 ): BirStringConcatenation =
     BirStringConcatenationImpl(sourceSpan, birBuiltIns.stringType).apply(block)
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birVararg(
+inline fun birVararg(
     elementType: BirType,
     block: BirVararg.() -> Unit = {},
 ): BirVararg =

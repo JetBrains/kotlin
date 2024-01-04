@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun BirAnonymousInitializer.Companion.build(init: BirAnonymousInitializerImpl.() -> Unit): BirAnonymousInitializerImpl =
+inline fun BirAnonymousInitializer.Companion.build(init: BirAnonymousInitializerImpl.() -> Unit): BirAnonymousInitializerImpl =
     BirAnonymousInitializerImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         origin = IrDeclarationOrigin.DEFINED,
@@ -35,7 +35,7 @@ fun BirAnonymousInitializer.Companion.build(init: BirAnonymousInitializerImpl.()
     ).apply(init)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun BirConstructor.Companion.build(init: BirConstructorImpl.() -> Unit): BirConstructorImpl =
+inline fun BirConstructor.Companion.build(init: BirConstructorImpl.() -> Unit): BirConstructorImpl =
     BirConstructorImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = SpecialNames.INIT,
@@ -54,7 +54,7 @@ fun BirConstructor.Companion.build(init: BirConstructorImpl.() -> Unit): BirCons
     ).apply(init)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun BirClass.Companion.build(init: BirClassImpl.() -> Unit): BirClassImpl =
+inline fun BirClass.Companion.build(init: BirClassImpl.() -> Unit): BirClassImpl =
     BirClassImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
@@ -78,7 +78,7 @@ fun BirClass.Companion.build(init: BirClassImpl.() -> Unit): BirClassImpl =
     ).apply(init)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun BirEnumEntry.Companion.build(init: BirEnumEntryImpl.() -> Unit): BirEnumEntryImpl =
+inline fun BirEnumEntry.Companion.build(init: BirEnumEntryImpl.() -> Unit): BirEnumEntryImpl =
     BirEnumEntryImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
@@ -89,7 +89,7 @@ fun BirEnumEntry.Companion.build(init: BirEnumEntryImpl.() -> Unit): BirEnumEntr
     ).apply(init)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun BirField.Companion.build(init: BirFieldImpl.() -> Unit): BirFieldImpl =
+inline fun BirField.Companion.build(init: BirFieldImpl.() -> Unit): BirFieldImpl =
     BirFieldImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
@@ -105,7 +105,7 @@ fun BirField.Companion.build(init: BirFieldImpl.() -> Unit): BirFieldImpl =
     ).apply(init)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun BirLocalDelegatedProperty.Companion.build(init: BirLocalDelegatedPropertyImpl.() -> Unit): BirLocalDelegatedPropertyImpl =
+inline fun BirLocalDelegatedProperty.Companion.build(init: BirLocalDelegatedPropertyImpl.() -> Unit): BirLocalDelegatedPropertyImpl =
     BirLocalDelegatedPropertyImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
@@ -119,7 +119,7 @@ fun BirLocalDelegatedProperty.Companion.build(init: BirLocalDelegatedPropertyImp
     ).apply(init)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun BirProperty.Companion.build(init: BirPropertyImpl.() -> Unit): BirPropertyImpl =
+inline fun BirProperty.Companion.build(init: BirPropertyImpl.() -> Unit): BirPropertyImpl =
     BirPropertyImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
@@ -141,7 +141,7 @@ fun BirProperty.Companion.build(init: BirPropertyImpl.() -> Unit): BirPropertyIm
     ).apply(init)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun BirSimpleFunction.Companion.build(init: BirSimpleFunctionImpl.() -> Unit): BirSimpleFunctionImpl =
+inline fun BirSimpleFunction.Companion.build(init: BirSimpleFunctionImpl.() -> Unit): BirSimpleFunctionImpl =
     BirSimpleFunctionImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
@@ -167,7 +167,7 @@ fun BirSimpleFunction.Companion.build(init: BirSimpleFunctionImpl.() -> Unit): B
     ).apply(init)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun BirTypeParameter.Companion.build(init: BirTypeParameterImpl.() -> Unit): BirTypeParameterImpl =
+inline fun BirTypeParameter.Companion.build(init: BirTypeParameterImpl.() -> Unit): BirTypeParameterImpl =
     BirTypeParameterImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
@@ -180,7 +180,7 @@ fun BirTypeParameter.Companion.build(init: BirTypeParameterImpl.() -> Unit): Bir
     ).apply(init)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun BirValueParameter.Companion.build(init: BirValueParameterImpl.() -> Unit): BirValueParameterImpl =
+inline fun BirValueParameter.Companion.build(init: BirValueParameterImpl.() -> Unit): BirValueParameterImpl =
     BirValueParameterImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
@@ -197,7 +197,7 @@ fun BirValueParameter.Companion.build(init: BirValueParameterImpl.() -> Unit): B
     ).apply(init)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun BirVariable.Companion.build(init: BirVariableImpl.() -> Unit): BirVariableImpl =
+inline fun BirVariable.Companion.build(init: BirVariableImpl.() -> Unit): BirVariableImpl =
     BirVariableImpl(
         sourceSpan = SourceSpan.UNDEFINED,
         name = UninitializedName,
@@ -212,13 +212,13 @@ fun BirVariable.Companion.build(init: BirVariableImpl.() -> Unit): BirVariableIm
     ).apply(init)
 
 
-fun BirBlockBody.Companion.build(init: BirBlockBodyImpl.() -> Unit): BirBlockBodyImpl =
+inline fun BirBlockBody.Companion.build(init: BirBlockBodyImpl.() -> Unit): BirBlockBodyImpl =
     BirBlockBodyImpl(
         SourceSpan.UNDEFINED
     ).apply(init)
 
 
-fun BirBlock.Companion.build(init: BirBlockImpl.() -> Unit): BirBlockImpl =
+inline fun BirBlock.Companion.build(init: BirBlockImpl.() -> Unit): BirBlockImpl =
     BirBlockImpl(
         SourceSpan.UNDEFINED,
         type = BirUninitializedType,
@@ -226,7 +226,7 @@ fun BirBlock.Companion.build(init: BirBlockImpl.() -> Unit): BirBlockImpl =
     ).apply(init)
 
 
-fun BirCall.Companion.build(init: BirCallImpl.() -> Unit) =
+inline fun BirCall.Companion.build(init: BirCallImpl.() -> Unit) =
     BirCallImpl(
         SourceSpan.UNDEFINED,
         type = BirUninitializedType,
@@ -239,7 +239,7 @@ fun BirCall.Companion.build(init: BirCallImpl.() -> Unit) =
         superQualifierSymbol = null,
     ).apply(init)
 
-fun BirConstructorCall.Companion.build(init: BirConstructorCallImpl.() -> Unit) =
+inline fun BirConstructorCall.Companion.build(init: BirConstructorCallImpl.() -> Unit) =
     BirConstructorCallImpl(
         SourceSpan.UNDEFINED,
         type = BirUninitializedType,
@@ -253,7 +253,7 @@ fun BirConstructorCall.Companion.build(init: BirConstructorCallImpl.() -> Unit) 
         contextReceiversCount = 0,
     ).apply(init)
 
-fun BirConst.Companion.build(init: BirConstImpl<Any?>.() -> Unit) =
+inline fun BirConst.Companion.build(init: BirConstImpl<Any?>.() -> Unit) =
     BirConstImpl<Any?>(
         SourceSpan.UNDEFINED,
         type = BirUninitializedType,
@@ -262,9 +262,10 @@ fun BirConst.Companion.build(init: BirConstImpl<Any?>.() -> Unit) =
     ).apply(init)
 
 
-private val UninitializedName = Name.identifier("UNNAMED")
+@PublishedApi
+internal val UninitializedName = Name.identifier("UNNAMED")
 
-private abstract class UninitializedBirSymbol<E : BirSymbolOwner>() : BirTypedSymbol<E> {
+abstract class UninitializedBirSymbol<E : BirSymbolOwner>() : BirTypedSymbol<E> {
     final override val isBound: Boolean
         get() = false
     final override val owner: E

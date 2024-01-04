@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package org.jetbrains.kotlin.bir.backend.builders
 
 import org.jetbrains.kotlin.bir.SourceSpan
@@ -13,14 +15,14 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 
 context(BirBackendContext)
-fun BirConst.Companion.constNull(
+inline fun BirConst.Companion.constNull(
     sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.nothingNType
 ): BirConstImpl<Nothing?> =
     BirConstImpl(sourceSpan, type, IrConstKind.Null, null)
 
 context(BirBackendContext)
-fun BirConst(
+inline fun BirConst(
     value: Boolean,
     sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.booleanType,
@@ -28,7 +30,7 @@ fun BirConst(
     BirConstImpl(sourceSpan, type, IrConstKind.Boolean, value)
 
 context(BirBackendContext)
-fun BirConst(
+inline fun BirConst(
     value: Byte,
     sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.byteType,
@@ -36,7 +38,7 @@ fun BirConst(
     BirConstImpl(sourceSpan, type, IrConstKind.Byte, value)
 
 context(BirBackendContext)
-fun BirConst(
+inline fun BirConst(
     value: Short,
     sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.shortType,
@@ -44,7 +46,7 @@ fun BirConst(
     BirConstImpl(sourceSpan, type, IrConstKind.Short, value)
 
 context(BirBackendContext)
-fun BirConst(
+inline fun BirConst(
     value: Int,
     sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.intType,
@@ -52,7 +54,7 @@ fun BirConst(
     BirConstImpl(sourceSpan, type, IrConstKind.Int, value)
 
 context(BirBackendContext)
-fun BirConst(
+inline fun BirConst(
     value: Long,
     sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.longType,
@@ -60,7 +62,7 @@ fun BirConst(
     BirConstImpl(sourceSpan, type, IrConstKind.Long, value)
 
 context(BirBackendContext)
-fun BirConst(
+inline fun BirConst(
     value: Float,
     sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.floatType,
@@ -68,7 +70,7 @@ fun BirConst(
     BirConstImpl(sourceSpan, type, IrConstKind.Float, value)
 
 context(BirBackendContext)
-fun BirConst(
+inline fun BirConst(
     value: Double,
     sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.doubleType,
@@ -76,7 +78,7 @@ fun BirConst(
     BirConstImpl(sourceSpan, type, IrConstKind.Double, value)
 
 context(BirBackendContext)
-fun BirConst(
+inline fun BirConst(
     value: Char,
     sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.charType,
@@ -84,7 +86,7 @@ fun BirConst(
     BirConstImpl(sourceSpan, type, IrConstKind.Char, value)
 
 context(BirBackendContext)
-fun BirConst(
+inline fun BirConst(
     value: String,
     sourceSpan: SourceSpan = SourceSpan.UNDEFINED,
     type: BirType = birBuiltIns.stringType
