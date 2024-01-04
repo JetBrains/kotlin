@@ -3639,10 +3639,59 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
         }
 
-        @Test
-        @TestMetadata("collectReferenceFieldValues.kt")
-        public void testCollectReferenceFieldValues() throws Exception {
-            runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues.kt");
+        @Nested
+        @TestMetadata("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class CollectReferenceFieldValues {
+            @Test
+            public void testAllFilesPresentInCollectReferenceFieldValues() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("bigClassWithMixedValues.kt")
+            public void testBigClassWithMixedValues() throws Exception {
+                runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/bigClassWithMixedValues.kt");
+            }
+
+            @Test
+            @TestMetadata("callOnArray.kt")
+            public void testCallOnArray() throws Exception {
+                runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnArray.kt");
+            }
+
+            @Test
+            @TestMetadata("callOnPrimitive.kt")
+            public void testCallOnPrimitive() throws Exception {
+                runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnPrimitive.kt");
+            }
+
+            @Test
+            @TestMetadata("callOnPrimitiveArray.kt")
+            public void testCallOnPrimitiveArray() throws Exception {
+                runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnPrimitiveArray.kt");
+            }
+
+            @Test
+            @TestMetadata("callOnString.kt")
+            public void testCallOnString() throws Exception {
+                runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnString.kt");
+            }
+
+            @Test
+            @TestMetadata("callOnValueClass.kt")
+            public void testCallOnValueClass() throws Exception {
+                runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnValueClass.kt");
+            }
+
+            @Test
+            @TestMetadata("callOnValueOverPrimitiveClass.kt")
+            public void testCallOnValueOverPrimitiveClass() throws Exception {
+                runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnValueOverPrimitiveClass.kt");
+            }
         }
     }
 
