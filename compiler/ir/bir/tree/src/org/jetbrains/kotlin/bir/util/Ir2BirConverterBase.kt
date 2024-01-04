@@ -32,9 +32,11 @@ import kotlin.collections.set
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class Ir2BirConverterBase() {
     var appendElementAsDatabaseRoot: (IrElement, BirElement) -> BirDatabase? = { _, _ -> null }
-    var copyAncestorsForOrphanedElements = false
-    var expandLazyElementsIntoImpl = false
+    var convertAncestorsForOrphanedElements = false
     var instantiateDescriptors = false
+
+    var convertLazyElementsIntoImpl = false
+    var convertImplElementsIntoLazyWhenPossible = false
 
     private val collectedBirElementsWithoutParent = mutableListOf<BirElement>()
     private val collectedIrElementsWithoutParent = mutableListOf<IrElement>()
@@ -51,7 +53,7 @@ abstract class Ir2BirConverterBase() {
         IdentityHashMap<Ir, Bir>(expectedMaxSize)
 
     protected abstract fun <Bir : BirElement> copyElement(old: IrElement): Bir
-    protected abstract fun <Bir : BirElement> copyLazyElement(old: IrLazyDeclarationBase): Bir?
+    protected abstract fun <Bir : BirElement> copyLazyElement(old: IrDeclaration): Bir?
 
     fun copyIrTree(irRootElements: List<IrElement>): List<BirElement> {
         return irRootElements.map { copyElement(it) }
@@ -77,7 +79,7 @@ abstract class Ir2BirConverterBase() {
             return it as SE
         }
 
-        if (!expandLazyElementsIntoImpl && old is IrLazyDeclarationBase) {
+        if (old is IrDeclaration && (convertImplElementsIntoLazyWhenPossible || !convertLazyElementsIntoImpl && old is IrLazyDeclarationBase)) {
             copyLazyElement<SE>(old)?.let { new ->
                 map[old] = new
                 appendElementAsDatabaseRoot(old, new)?.attachRootElement(new as BirElementBase)
@@ -132,7 +134,7 @@ abstract class Ir2BirConverterBase() {
         }
 
         if (!isNested) {
-            if (copyAncestorsForOrphanedElements || isInsideCopyAncestorsForOrphanedElements) {
+            if (convertAncestorsForOrphanedElements || isInsideCopyAncestorsForOrphanedElements) {
                 doCopyAncestorsForCollectedOrphanedElements()
             }
         }

@@ -249,10 +249,9 @@ class BirCompilation() {
 
             val mappedIr2BirElements = IdentityHashMap<BirElement, IrElement>()
             val ir2BirConverter = Ir2BirConverter(dynamicPropertyManager)
-            ir2BirConverter.copyAncestorsForOrphanedElements = true
+            ir2BirConverter.convertAncestorsForOrphanedElements = true
             ir2BirConverter.appendElementAsDatabaseRoot = { old, new ->
                 mappedIr2BirElements[new] = old
-
                 when {
                     old === input -> compiledBir
                     new is BirModuleFragment || new is BirExternalPackageFragment || new is BirLazyElementBase -> externalModulesBir
@@ -276,8 +275,9 @@ class BirCompilation() {
                 birModule = ir2BirConverter.remapElement<BirModuleFragment>(input)
             }
 
-            val size = birModule.countAllElementsInTree()
+            ir2BirConverter.convertImplElementsIntoLazyWhenPossible = true
 
+            val size = birModule.countAllElementsInTree()
             return BirCompilationBundle(
                 birModule,
                 birContext,
