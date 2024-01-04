@@ -40,7 +40,7 @@ abstract class KotlinAsJavaSupportBase<TModule : Any>(protected val project: Pro
         return when {
             facadeFiles.none(KtFile::hasTopLevelCallables) -> null
             facadeFiles.none(KtFile::isCompiled) -> {
-                LightClassCachedValue(createInstanceOfLightFacade(facadeFqName, facadeFiles), outOfBlockModificationTracker(file))
+                LightClassCachedValue(createInstanceOfLightFacade(facadeFqName, module, facadeFiles), outOfBlockModificationTracker(file))
             }
 
             facadeFiles.all(KtFile::isCompiled) -> {
@@ -68,6 +68,10 @@ abstract class KotlinAsJavaSupportBase<TModule : Any>(protected val project: Pro
     protected abstract val TModule.contentSearchScope: GlobalSearchScope
 
     protected abstract fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade?
+    protected open fun createInstanceOfLightFacade(facadeFqName: FqName, module: TModule, files: List<KtFile>): KtLightClassForFacade? {
+        return createInstanceOfLightFacade(facadeFqName, files)
+    }
+
     protected abstract fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade?
 
     protected open fun projectWideOutOfBlockModificationTracker(): ModificationTracker {
