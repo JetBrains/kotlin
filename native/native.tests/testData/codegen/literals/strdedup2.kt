@@ -4,7 +4,8 @@
  */
 // TODO: string deduplication across several components seems to require
 // linking them as bitcode modules before translating to machine code.
-// IGNORE_BACKEND: NATIVE, JVM, JVM_IR
+// IGNORE_BACKEND: JVM, JVM_IR
+// DISABLE_NATIVE
 // WITH_STDLIB
 
 import kotlin.test.*

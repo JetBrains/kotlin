@@ -38,8 +38,6 @@ fun main() {
                 )
             ) {
                 model("codegen", targetBackend = TargetBackend.NATIVE)
-                model("datagen", targetBackend = TargetBackend.NATIVE)
-                model("runtime", targetBackend = TargetBackend.NATIVE)
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenLocalTestGenerated",
@@ -49,8 +47,6 @@ fun main() {
                 )
             ) {
                 model("codegen", targetBackend = TargetBackend.NATIVE)
-                model("datagen", targetBackend = TargetBackend.NATIVE)
-                model("runtime", targetBackend = TargetBackend.NATIVE)
             }
         }
 
