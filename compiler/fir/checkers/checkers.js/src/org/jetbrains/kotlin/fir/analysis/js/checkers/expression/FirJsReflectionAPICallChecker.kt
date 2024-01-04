@@ -23,7 +23,7 @@ object FirJsReflectionAPICallChecker : AbstractFirReflectionApiCallChecker() {
 
     override fun isAllowedReflectionApi(name: Name, containingClassId: ClassId, context: CheckerContext): Boolean {
         return super.isAllowedReflectionApi(name, containingClassId, context) ||
-                containingClassId in StandardClassIds.associatedObjectAnnotations ||
+                containingClassId in StandardClassIds.Annotations.associatedObjectAnnotations ||
                 name == StandardNames.FqNames.findAssociatedObject.shortName()
     }
 

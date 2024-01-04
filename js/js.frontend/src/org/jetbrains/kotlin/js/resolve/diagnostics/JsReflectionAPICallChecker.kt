@@ -41,7 +41,7 @@ class JsReflectionAPICallChecker(
         context: CallCheckerContext
     ): Boolean {
         return super.isAllowedReflectionApi(descriptor, containingClass, context) ||
-                containingClass.classId in StandardClassIds.associatedObjectAnnotations ||
+                containingClass.classId in StandardClassIds.Annotations.associatedObjectAnnotations ||
                 descriptor.name == StandardNames.FqNames.findAssociatedObject.shortName()
     }
 
