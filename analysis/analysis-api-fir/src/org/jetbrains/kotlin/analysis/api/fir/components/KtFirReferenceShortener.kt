@@ -294,6 +294,8 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
      * Finds constructors with a given [targetClassName] available within the [scope], including SAM constructors
      * (which are not explicitly declared in the class).
      *
+     * Includes type-aliased constructors too if typealias confirms to the [targetClassName].
+     *
      * Do not confuse with constructors **declared** in the scope (see [FirScope.processDeclaredConstructors]).
      */
     private fun findAvailableConstructors(scope: FirScope, targetClassName: Name): List<FirFunctionSymbol<*>> {
