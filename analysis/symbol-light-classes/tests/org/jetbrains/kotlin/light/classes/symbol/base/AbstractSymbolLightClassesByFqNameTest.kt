@@ -23,7 +23,7 @@ abstract class AbstractSymbolLightClassesByFqNameTest(
     override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
         return LightClassTestCommon.getActualLightClassText(
             testDataFile.toFile(),
-            { fqName -> findLightClass(fqName, project) },
+            { fqName -> findLightClass(fqName, ktFile) },
             LightClassTestCommon::removeEmptyDefaultImpls,
             if (isTestAgainstCompiledCode) MembersFilterForCompiledClasses else PsiClassRenderer.MembersFilter.DEFAULT,
         )

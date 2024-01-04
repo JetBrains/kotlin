@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import java.nio.file.Path
@@ -61,7 +62,10 @@ abstract class AbstractSymbolLightClassesTestBase(
     }
 
     override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val lastModule = moduleStructure.modules.last()
+        val lastModule = with(moduleStructure.modules) {
+            find { it.name.substringBefore('-') == "main" } ?: last()
+        }
+
         val ktFiles = testServices.ktModuleProvider.getModuleFiles(lastModule).filterIsInstance<KtFile>()
         doTestByFileStructure(ktFiles, lastModule, testServices)
     }
@@ -140,13 +144,21 @@ abstract class AbstractSymbolLightClassesTestBase(
         error("Test is passing. Please, remove `// ${directive.name}` directive")
     }
 
+    protected fun findLightClass(fqname: String, ktFile: KtFile): PsiClass? {
+        val project = ktFile.project
+        return findLightClass(fqname, GlobalSearchScope.fileScope(ktFile), project) ?: findLightClass(fqname, project)
+    }
+
     protected fun findLightClass(fqname: String, project: Project): PsiClass? {
-        val searchScope = GlobalSearchScope.allScope(project)
-        JavaElementFinder.getInstance(project).findClass(fqname, searchScope)?.let { return it }
+        return findLightClass(fqname, GlobalSearchScope.allScope(project), project)
+    }
+
+    private fun findLightClass(fqname: String, scope: GlobalSearchScope, project: Project): PsiClass? {
+        JavaElementFinder.getInstance(project).findClass(fqname, scope)?.let { return it }
 
         val fqName = FqName(fqname)
         val parentFqName = fqName.parent().takeUnless(FqName::isRoot) ?: return null
-        val enumClass = JavaElementFinder.getInstance(project).findClass(parentFqName.asString(), searchScope) ?: return null
+        val enumClass = JavaElementFinder.getInstance(project).findClass(parentFqName.asString(), scope) ?: return null
         val kotlinEnumClass = enumClass.unwrapped?.safeAs<KtClass>()?.takeIf(KtClass::isEnum) ?: return null
 
         val enumEntryName = fqName.shortName().asString()
