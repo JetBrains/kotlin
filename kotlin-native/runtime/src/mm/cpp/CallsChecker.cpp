@@ -216,6 +216,9 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "objc_storeWeak",
         "object_getClass",
         "object_isClass",
+        "_os_signpost_emit_with_name_impl",
+        "os_signpost_enabled",
+        "os_signpost_id_make_with_pointer",
         "protocol_getName",
 
         "llvm.assume",
