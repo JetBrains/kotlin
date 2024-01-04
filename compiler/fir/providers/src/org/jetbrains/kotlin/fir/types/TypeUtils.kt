@@ -821,6 +821,7 @@ fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
             it.coneType.fullyExpandedType(session).canBeNull(session)
         }
         is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session) }
+        is ConeCapturedType -> constructor.supertypes?.all { it.canBeNull(session) } == true
         else -> fullyExpandedType(session).isNullable
     }
 }

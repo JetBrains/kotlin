@@ -256,6 +256,9 @@ class Fir2IrImplicitCastInserter(
     }
 
     private fun ConeKotlinType.acceptsNullValues(): Boolean {
+        if (this is ConeCapturedType && this.constructor.projection.kind == ProjectionKind.IN) {
+            return constructor.projection.type!!.canBeNull(session)
+        }
         return canBeNull(session) || hasEnhancedNullability
     }
 
