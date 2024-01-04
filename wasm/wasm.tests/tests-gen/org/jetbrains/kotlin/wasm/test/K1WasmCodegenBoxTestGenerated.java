@@ -4592,6 +4592,26 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         public void testAllFilesPresentInCinterop() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/cinterop/basics")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Basics {
+            @Test
+            public void testAllFilesPresentInBasics() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/basics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/cinterop/exceptions")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Exceptions {
+            @Test
+            public void testAllFilesPresentInExceptions() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/exceptions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+        }
     }
 
     @Nested

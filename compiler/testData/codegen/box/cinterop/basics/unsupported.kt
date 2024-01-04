@@ -1,3 +1,10 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
+// TARGET_BACKEND: NATIVE
+// MODULE: cinterop
+// FILE: cunsupported.def
 compilerOpts = -mno-xsave
 
 ---
@@ -25,3 +32,16 @@ ALL_ATTRS1 void macroAttr5() {}
 #define ALL_ATTRS2 __attribute__((always_inline, __target__("xsave")))
 
 ALL_ATTRS2 void macroAttr6() {}
+
+// MODULE: main(cinterop)
+// FILE: main.kt
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+import kotlin.test.*
+import cunsupported.*
+
+fun box(): String {
+    noAttr()
+    noTargetAttr()
+
+    return "OK"
+}

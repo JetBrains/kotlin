@@ -3,8 +3,16 @@
 // FILE: kt63049.def
 depends = Foundation
 language = Objective-C
----
-@interface WithClassProperty
+headers = kt63049.h
+
+// FILE: kt63049.h
+#import "Foundation/NSObject.h"
+@interface KT63049 : NSObject
+@end
+
+// FILE: kt63049.m
+#import "kt63049.h"
+@implementation KT63049 : NSObject
 @end
 
 // MODULE: main(cinterop)
@@ -14,8 +22,8 @@ language = Objective-C
 import kt63049.*
 import kotlin.test.assertEquals
 
-class Impl : WithClassProperty() {
-    companion object : WithClassPropertyMeta() {
+class Impl : KT63049() {
+    companion object : KT63049Meta() {
         fun stringProperty(): String? = "OK"
     }
 }

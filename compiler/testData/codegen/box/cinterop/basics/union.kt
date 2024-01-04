@@ -1,3 +1,27 @@
+// TARGET_BACKEND: NATIVE
+// MODULE: cinterop
+// FILE: cunion.def
+---
+typedef union {
+    short s;
+    long long ll;
+} BasicUnion;
+
+typedef struct {
+    union {
+        int i;
+        float f;
+    } as;
+} StructWithUnion;
+
+typedef union {
+    unsigned int i : 31;
+    unsigned char b : 1;
+} Packed;
+
+// MODULE: main(cinterop)
+// FILE: main.kt
+
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import cunion.*
@@ -5,7 +29,7 @@ import kotlinx.cinterop.*
 import kotlin.native.*
 import kotlin.test.*
 
-fun main() {
+fun box(): String {
     memScoped {
         val basicUnion = alloc<BasicUnion>()
         for (value in Short.MIN_VALUE..Short.MAX_VALUE) {
@@ -35,4 +59,5 @@ fun main() {
         union.i = 0u
         assertEquals(0u, union.b)
     }
+    return "OK"
 }

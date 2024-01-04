@@ -1,10 +1,82 @@
+// TARGET_BACKEND: NATIVE
+// MODULE: cinterop
+// FILE: cstructs.def
+nonStrictEnums = NonStrict
+---
+typedef struct {
+    int i;
+} Trivial;
+
+enum E {
+    R, G, B
+};
+
+enum NonStrict {
+    N, S, K
+};
+
+struct Complex {
+    unsigned int ui;
+    Trivial t;
+    struct Complex* next;
+    enum E e;
+    enum NonStrict nonStrict;
+    int arr[2];
+    _Bool b;
+};
+
+struct __attribute__((packed)) Packed {
+    int i : 1;
+    enum E e : 2;
+};
+
+struct Complex produceComplex() {
+    struct Complex complex = {
+        .ui = 128,
+        .t = {1},
+        .next = 0,
+        .e = R,
+        .nonStrict = K,
+        .arr = {-51, -19},
+        .b = 1
+    };
+    return complex;
+};
+
+struct WithFlexibleArray {
+    int size;
+    int data[];
+};
+
+struct WithFlexibleArrayWithPadding {
+    int size;
+    char c;
+    long long data[];
+};
+
+void fillArray(struct WithFlexibleArrayWithPadding *flex, int count) {
+    flex->size = count;
+    flex->c = '!';
+    for (int i = 0; i < count; i++) {
+        flex->data[i] = (((long long)i) << 32) | (i * 100);
+    }
+}
+
+struct WithZeroSizedArray {
+    int size;
+    int data[0];
+};
+
+// MODULE: main(cinterop)
+// FILE: main.kt
+
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import cstructs.*
 import kotlinx.cinterop.*
 import kotlin.test.*
 
-fun main() {
+fun box(): String {
     produceComplex().useContents {
         assertEquals(ui, 128u)
         ui = 333u
@@ -107,7 +179,7 @@ fun main() {
             assertEquals((i.toLong() shl 32) or (i.toLong() * 100), flex.data[i])
         }
     }
-
+    return "OK"
 }
 
 fun <T : E> checkEnumSubTyping(e: T) = memScoped {

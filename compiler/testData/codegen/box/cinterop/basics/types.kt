@@ -1,3 +1,6 @@
+// TARGET_BACKEND: NATIVE
+// MODULE: cinterop
+// FILE: ctypes.def
 ---
 
 // KT-28065
@@ -38,8 +41,8 @@ static int vlaSum2DBothDimensions(int rows, int columns, int array[rows][columns
     int result = 0;
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < columns; ++j) {
-            result += array[i][j];
-        }
+        result += array[i][j];
+    }
     }
     return result;
 }
@@ -80,11 +83,50 @@ enum EnumCharBase : Char {
 };
 
 static int sendEnum(enum EnumCharBase x) {
-	return (int)x + 2;
+    return (int)x + 2;
 }
 
 enum EnumExplicitChar : char {
-	EnumExplicitCharA = 'a',
-	EnumExplicitCharB = 'b',
-	EnumExplicitCharDup = 'a'
+    EnumExplicitCharA = 'a',
+    EnumExplicitCharB = 'b',
+    EnumExplicitCharDup = 'a'
 };
+
+// MODULE: main(cinterop)
+// FILE: main.kt
+
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
+import kotlinx.cinterop.*
+import kotlin.native.*
+import kotlin.test.*
+import ctypes.*
+
+fun box(): String {
+    getStructWithConstFields().useContents {
+        assertEquals(111, x)
+        assertEquals(222, y)
+    }
+
+    assertEquals(1u, ForwardDeclaredEnum.ONE.value)
+
+    assertEquals(6, vlaSum(3, cValuesOf(1, 2, 3)))
+    assertEquals(10, vlaSum2D(2, cValuesOf(1, 2, 3, 4)))
+    assertEquals(21, vlaSum2DBothDimensions(2, 3, cValuesOf(1, 2, 3, 4, 5, 6)))
+
+    // Not supported by clang:
+    // assertEquals(10, vlaSum2DForward(cValuesOf(1, 2, 3, 4), 2))
+
+    assertEquals(0u, StrictEnum1.StrictEnum1A.value)
+    assertEquals(1u, StrictEnum2.StrictEnum2B.value)
+    assertEquals(0u, NonStrictEnum1A)
+    assertEquals(1u, NonStrictEnum2B)
+    assertEquals(1, EnumCharBase.EnumCharBaseB.value)
+    assertEquals(3, sendEnum(EnumCharBase.EnumCharBaseB))
+    assertEquals('a'.toByte(), EnumExplicitCharA)
+    assertEquals('b'.toByte(), EnumExplicitCharB)
+    assertEquals(EnumExplicitCharA, EnumExplicitCharDup)
+
+    return "OK"
+}
+

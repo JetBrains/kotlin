@@ -1,5 +1,5 @@
 // TARGET_BACKEND: NATIVE
-// MODULE: cinterop
+// MODULE: cinterop_kt63048
 // FILE: kt63048.def
 language = Objective-C
 headers = kt63048.h
@@ -23,7 +23,7 @@ headers = kt63048.h
 @end
 
 
-// MODULE: main(cinterop)
+// MODULE: main(cinterop_kt63048)
 // FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.experimental.ExperimentalObjCName::class)
 

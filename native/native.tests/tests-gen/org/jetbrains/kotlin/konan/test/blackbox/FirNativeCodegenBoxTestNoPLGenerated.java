@@ -4977,6 +4977,132 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             public void testToKString() throws Exception {
                 runTest("compiler/testData/codegen/box/cinterop/toKString.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/cinterop/basics")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @UseExtTestCaseGroupProvider()
+            @UsePartialLinkage(mode = Mode.DISABLED)
+            @Tag("no-partial-linkage-may-be-skipped")
+            public class Basics {
+                @Test
+                @TestMetadata("1.kt")
+                public void test1() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/1.kt");
+                }
+
+                @Test
+                @TestMetadata("3.kt")
+                public void test3() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/3.kt");
+                }
+
+                @Test
+                public void testAllFilesPresentInBasics() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/basics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("available_processors.kt")
+                public void testAvailable_processors() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/available_processors.kt");
+                }
+
+                @Test
+                @TestMetadata("macros.kt")
+                public void testMacros() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/macros.kt");
+                }
+
+                @Test
+                @TestMetadata("mangling.kt")
+                public void testMangling() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/mangling.kt");
+                }
+
+                @Test
+                @TestMetadata("mangling2.kt")
+                public void testMangling2() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/mangling2.kt");
+                }
+
+                @Test
+                @TestMetadata("mangling_keywords.kt")
+                public void testMangling_keywords() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/mangling_keywords.kt");
+                }
+
+                @Test
+                @TestMetadata("mangling_keywords2.kt")
+                public void testMangling_keywords2() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/mangling_keywords2.kt");
+                }
+
+                @Test
+                @TestMetadata("structAnonym.kt")
+                public void testStructAnonym() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/structAnonym.kt");
+                }
+
+                @Test
+                @TestMetadata("structs.kt")
+                public void testStructs() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/structs.kt");
+                }
+
+                @Test
+                @TestMetadata("types.kt")
+                public void testTypes() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/types.kt");
+                }
+
+                @Test
+                @TestMetadata("union.kt")
+                public void testUnion() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/union.kt");
+                }
+
+                @Test
+                @TestMetadata("unsupported.kt")
+                public void testUnsupported() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/unsupported.kt");
+                }
+
+                @Test
+                @TestMetadata("values.kt")
+                public void testValues() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/values.kt");
+                }
+
+                @Test
+                @TestMetadata("vectors.kt")
+                public void testVectors() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/basics/vectors.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/cinterop/exceptions")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @UseExtTestCaseGroupProvider()
+            @UsePartialLinkage(mode = Mode.DISABLED)
+            @Tag("no-partial-linkage-may-be-skipped")
+            public class Exceptions {
+                @Test
+                public void testAllFilesPresentInExceptions() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("cCallback.kt")
+                public void testCCallback() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/exceptions/cCallback.kt");
+                }
+            }
         }
 
         @Nested

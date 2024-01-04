@@ -4610,6 +4610,26 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         public void testAllFilesPresentInCinterop() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/cinterop/basics")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Basics {
+            @Test
+            public void testAllFilesPresentInBasics() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/basics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/cinterop/exceptions")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Exceptions {
+            @Test
+            public void testAllFilesPresentInExceptions() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+        }
     }
 
     @Nested
