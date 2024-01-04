@@ -95,8 +95,13 @@ ALWAYS_INLINE bool isShareable(const ObjHeader* obj) {
     return true;
 }
 
-extern "C" MemoryState* InitMemory(bool firstRuntime) {
+extern "C" MemoryState* InitMemory() {
+    mm::GlobalData::waitInitialized();
     return mm::ToMemoryState(mm::ThreadRegistry::Instance().RegisterCurrentThread());
+}
+
+void kotlin::initGlobalMemory() noexcept {
+    mm::GlobalData::init();
 }
 
 extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
@@ -548,7 +553,7 @@ MemoryState* kotlin::mm::GetMemoryState() noexcept {
 }
 
 bool kotlin::mm::IsCurrentThreadRegistered() noexcept {
-    return ThreadRegistry::Instance().IsCurrentThreadRegistered();
+    return ThreadRegistry::IsCurrentThreadRegistered();
 }
 
 ALWAYS_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool reentrant) noexcept : reentrant_(reentrant) {

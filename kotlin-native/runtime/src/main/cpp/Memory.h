@@ -236,7 +236,7 @@ extern "C" {
 
 struct MemoryState;
 
-MemoryState* InitMemory(bool firstRuntime);
+MemoryState* InitMemory();
 void DeinitMemory(MemoryState*, bool destroyRuntime);
 void RestoreMemory(MemoryState*);
 void ClearMemoryForTests(MemoryState*);
@@ -588,6 +588,8 @@ private:
 };
 
 extern const bool kSupportsMultipleMutators;
+
+void initGlobalMemory() noexcept;
 
 void StartFinalizerThreadIfNeeded() noexcept;
 bool FinalizersThreadIsRunning() noexcept;

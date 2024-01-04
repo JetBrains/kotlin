@@ -46,7 +46,7 @@ public:
     }
     Node* CurrentThreadDataNodeOrNull() const noexcept { return currentThreadDataNode_; }
 
-    bool IsCurrentThreadRegistered() const noexcept { return currentThreadDataNode_ != nullptr; }
+    static bool IsCurrentThreadRegistered() noexcept { return currentThreadDataNode_ != nullptr; }
 
     static void ClearCurrentThreadData() { currentThreadDataNode_ = nullptr; }
 

@@ -23,7 +23,7 @@ constexpr int kDefaultThreadCount = 10;
 constexpr int kDefaultThreadCount = 100;
 #endif
 
-inline MemoryState* InitMemoryForTests() { return InitMemory(false); }
+inline MemoryState* InitMemoryForTests() { return InitMemory(); }
 void DeinitMemoryForTests(MemoryState* memoryState);
 
 // Scopely initializes the memory subsystem of the current thread for tests.

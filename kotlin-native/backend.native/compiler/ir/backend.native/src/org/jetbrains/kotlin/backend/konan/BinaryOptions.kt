@@ -78,6 +78,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val packFields by booleanOption()
 
     val cInterfaceMode by option<CInterfaceGenerationMode>()
+
+    val globalDataLazyInit by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

@@ -115,6 +115,7 @@ bool mimallocUseCompaction() noexcept;
 bool objcDisposeOnMain() noexcept;
 bool objcDisposeWithRunLoop() noexcept;
 bool enableSafepointSignposts() noexcept;
+bool globalDataLazyInit() noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

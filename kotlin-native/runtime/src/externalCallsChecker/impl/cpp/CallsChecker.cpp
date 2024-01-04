@@ -14,7 +14,6 @@
 #include "Porting.h"
 #include "StackTrace.hpp"
 #include "ThreadData.hpp"
-#include "ThreadRegistry.hpp"
 #include "ExecFormat.h"
 
 using namespace kotlin;
@@ -346,7 +345,7 @@ extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFu
     if (reinterpret_cast<int64_t>(calleePtr) == MSG_SEND_TO_NULL) return; // objc_sendMsg called on nil, it does nothing, so it's ok
     if (ignoreGuardsCount != 0) return;
     if (konan::isOnThreadExitNotSetOrAlreadyStarted()) return;
-    if (!mm::ThreadRegistry::Instance().IsCurrentThreadRegistered()) return;
+    if (!mm::IsCurrentThreadRegistered()) return;
     CallsCheckerIgnoreGuard recursiveGuard;
 
     auto actualState = GetThreadState();

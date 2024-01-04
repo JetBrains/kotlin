@@ -262,6 +262,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     } ?: target.supportsSignposts
 
+    val globalDataLazyInit: Boolean by lazy {
+        configuration.get(BinaryOptions.globalDataLazyInit) ?: true
+    }
+
     init {
         if (!platformManager.isEnabled(target)) {
             error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")

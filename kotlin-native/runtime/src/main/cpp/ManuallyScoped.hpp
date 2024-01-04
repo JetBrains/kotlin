@@ -18,7 +18,7 @@ class ManuallyScoped : private Pinned {
 public:
     // Construct T
     template <typename... Args>
-    void construct(Args&&... args) noexcept(noexcept(T(std::forward<Args>(args)...))) {
+    void construct(Args&&... args) noexcept(std::is_nothrow_constructible_v<T, Args...>) {
         new (impl()) T(std::forward<Args>(args)...);
     }
 

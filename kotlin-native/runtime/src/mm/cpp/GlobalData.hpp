@@ -7,13 +7,14 @@
 #define RUNTIME_MM_GLOBAL_DATA_H
 
 #include "Allocator.hpp"
-#include "GlobalsRegistry.hpp"
+#include "AppStateTracking.hpp"
 #include "GC.hpp"
 #include "GCScheduler.hpp"
+#include "GlobalsRegistry.hpp"
+#include "ManuallyScoped.hpp"
 #include "SpecialRefRegistry.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
-#include "AppStateTracking.hpp"
 
 namespace kotlin {
 namespace mm {
@@ -21,7 +22,11 @@ namespace mm {
 // Global (de)initialization is undefined in C++. Use single global singleton to define it for simplicity.
 class GlobalData : private Pinned {
 public:
-    static GlobalData& Instance() noexcept { return instance_; }
+    static GlobalData& Instance() noexcept;
+
+    // init() can only be called once.
+    static void init() noexcept;
+    static void waitInitialized() noexcept;
 
     ThreadRegistry& threadRegistry() noexcept { return threadRegistry_; }
     GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
@@ -32,11 +37,10 @@ public:
     AppStateTracking& appStateTracking() noexcept { return appStateTracking_; }
 
 private:
-    GlobalData();
-    ~GlobalData() = delete;
+    friend class ManuallyScoped<GlobalData>;
 
-    // This `GlobalData` is never destroyed.
-    static GlobalData instance_;
+    GlobalData() noexcept;
+    ~GlobalData() = delete;
 
     ThreadRegistry threadRegistry_;
     AppStateTracking appStateTracking_;

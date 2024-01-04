@@ -34,6 +34,7 @@ RUNTIME_WEAK int32_t Kotlin_mimallocUseCompaction = 0;
 RUNTIME_WEAK int32_t Kotlin_objcDisposeOnMain = 0;
 RUNTIME_WEAK int32_t Kotlin_objcDisposeWithRunLoop = 1;
 RUNTIME_WEAK int32_t Kotlin_enableSafepointSignposts = 0;
+RUNTIME_WEAK int32_t Kotlin_globalDataLazyInit = 1;
 
 ALWAYS_INLINE compiler::DestroyRuntimeMode compiler::destroyRuntimeMode() noexcept {
     return static_cast<compiler::DestroyRuntimeMode>(Kotlin_destroyRuntimeMode);
@@ -92,4 +93,8 @@ ALWAYS_INLINE bool compiler::objcDisposeWithRunLoop() noexcept {
 
 ALWAYS_INLINE bool compiler::enableSafepointSignposts() noexcept {
     return Kotlin_enableSafepointSignposts != 0;
+}
+
+ALWAYS_INLINE bool compiler::globalDataLazyInit() noexcept {
+    return Kotlin_globalDataLazyInit != 0;
 }

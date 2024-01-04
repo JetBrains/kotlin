@@ -44,4 +44,12 @@ bool Kotlin_forceCheckedShutdown();
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+namespace kotlin {
+
+// Returns `true` if initialized.
+bool initializeGlobalRuntimeIfNeeded() noexcept;
+
+}
+
 #endif // RUNTIME_RUNTIME_H

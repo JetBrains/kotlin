@@ -91,56 +91,24 @@ RuntimeState* initRuntime() {
   RuntimeCheck(!isValidRuntime(), "No active runtimes allowed");
   ::runtimeState = result;
 
-  bool firstRuntime = false;
-  // We set this guard in the `switch` below, after memory initialization.
-  kotlin::ThreadStateGuard stateGuard;
-  switch (kotlin::compiler::destroyRuntimeMode()) {
-      case kotlin::compiler::DestroyRuntimeMode::kLegacy:
-          compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
-          result->memoryState = InitMemory(false); // The argument will be ignored for legacy DestroyRuntimeMode
-          // Switch thread state because worker and globals inits require the runnable state.
-          // This call may block if GC requested suspending threads.
-          stateGuard = kotlin::ThreadStateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
-          result->worker = WorkerInit(result->memoryState);
-          firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
-          if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
-              konan::consoleErrorf("This GC implementation does not support multiple mutator threads.");
-              std::abort();
-          }
-          break;
-      case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
-          // First update `aliveRuntimesCount` and then update `globalRuntimeStatus`, for synchronization with
-          // runtime shutdown, which does it the other way around.
-          atomicAdd(&aliveRuntimesCount, 1);
-          auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
-          if (Kotlin_forceCheckedShutdown()) {
-              RuntimeAssert(lastStatus != kGlobalRuntimeShutdown, "Kotlin runtime was shut down. Cannot create new runtimes.");
-          }
-          firstRuntime = lastStatus == kGlobalRuntimeUninitialized;
-          if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
-              konan::consoleErrorf("This GC implementation does not support multiple mutator threads.");
-              std::abort();
-          }
-          result->memoryState = InitMemory(firstRuntime);
-          // Switch thread state because worker and globals inits require the runnable state.
-          // This call may block if GC requested suspending threads.
-          stateGuard = kotlin::ThreadStateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
-          result->worker = WorkerInit(result->memoryState);
-  }
+  RuntimeAssert(compiler::destroyRuntimeMode() == compiler::DestroyRuntimeMode::kOnShutdown, "Legacy mode is not supported");
+
+  // First update `aliveRuntimesCount` and then update `globalRuntimeStatus`, for synchronization with
+  // runtime shutdown, which does it the other way around.
+  atomicAdd(&aliveRuntimesCount, 1);
+
+  bool firstRuntime = initializeGlobalRuntimeIfNeeded();
+  result->memoryState = InitMemory();
+  // Switch thread state because worker and globals inits require the runnable state.
+  // This call may block if GC requested suspending threads.
+  ThreadStateGuard stateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
+  result->worker = WorkerInit(result->memoryState);
 
   InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, result->memoryState);
   CommitTLSStorage(result->memoryState);
   // Keep global variables in state as well.
   if (firstRuntime) {
-    konan::consoleInit();
-    if (compiler::objcDisposeOnMain()) {
-      kotlin::initializeMainQueueProcessor();
-    }
-#if KONAN_OBJC_INTEROP
-    Kotlin_ObjCExport_initialize();
-#endif
     InitOrDeinitGlobalVariables(INIT_GLOBALS, result->memoryState);
-    logging::OnRuntimeInit();
   }
   InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, result->memoryState);
   RuntimeAssert(result->status == RuntimeStatus::kUninitialized, "Runtime must still be in the uninitialized state");
@@ -191,6 +159,26 @@ void Kotlin_deinitRuntimeCallback(void* argument) {
 }
 
 }  // namespace
+
+bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
+    auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
+    if (Kotlin_forceCheckedShutdown()) {
+        RuntimeAssert(lastStatus != kGlobalRuntimeShutdown, "Kotlin runtime was shut down. Cannot create new runtimes.");
+    }
+    if (lastStatus != kGlobalRuntimeUninitialized)
+        return false;
+
+    konan::consoleInit();
+    logging::OnRuntimeInit();
+    initGlobalMemory();
+    if (compiler::objcDisposeOnMain()) {
+        initializeMainQueueProcessor();
+    }
+#if KONAN_OBJC_INTEROP
+    Kotlin_ObjCExport_initialize();
+#endif
+    return true;
+}
 
 extern "C" {
 
