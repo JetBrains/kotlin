@@ -19,10 +19,9 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.name.Name
 
-
 context(BirBackendContext, BirStatementBuilderScope)
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun birTemporaryVariable(
+inline fun birTemporaryVariable(
     type: BirType,
     isMutable: Boolean = false,
     nameHint: String? = null,
@@ -39,7 +38,7 @@ fun birTemporaryVariable(
 }
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birTemporaryVariable(
+inline fun birTemporaryVariable(
     initializer: BirExpression,
     type: BirType = initializer.type,
     isMutable: Boolean = false,
@@ -57,7 +56,7 @@ fun birTemporaryVariable(
 
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birEquals(
+inline fun birEquals(
     arg1: BirExpression,
     arg2: BirExpression,
     origin: IrStatementOrigin? = IrStatementOrigin.EQEQ,
@@ -80,7 +79,7 @@ fun birEquals(
     }
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birNotEquals(
+inline fun birNotEquals(
     arg1: BirExpression,
     arg2: BirExpression,
     origin: IrStatementOrigin? = IrStatementOrigin.EXCLEQ,
@@ -100,7 +99,7 @@ fun birNotEquals(
 
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birIfThenElse(
+inline fun birIfThenElse(
     type: BirType,
     condition: BirExpression,
     thenPart: BirExpression,
