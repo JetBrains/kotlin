@@ -35021,6 +35021,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("smartCastWithOrFalse.kt")
+            public void testSmartCastWithOrFalse() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastWithOrFalse.kt");
+            }
+
+            @Test
             @TestMetadata("smartcastInFriendModule.kt")
             public void testSmartcastInFriendModule() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastInFriendModule.kt");
