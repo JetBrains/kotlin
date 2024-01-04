@@ -775,6 +775,8 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKo
 	public fun getTargetName ()Ljava/lang/String;
 	public fun getUseDisambiguationClassifierAsSourceSetNamePrefix ()Z
 	public fun isSourcesPublishable ()Z
+	public fun jvmToolchain (I)V
+	public fun jvmToolchain (Lorg/gradle/api/Action;)V
 	public fun mavenPublication (Lkotlin/jvm/functions/Function1;)V
 	public fun mavenPublication (Lorg/gradle/api/Action;)V
 	public fun onPublicationCreated (Lorg/gradle/api/publish/maven/MavenPublication;)V

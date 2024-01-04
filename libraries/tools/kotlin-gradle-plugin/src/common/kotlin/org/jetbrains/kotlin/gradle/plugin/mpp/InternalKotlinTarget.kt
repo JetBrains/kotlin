@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -34,7 +36,17 @@ internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
     )
     override val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
         get() = project.extensions.getByType<KotlinProjectExtension>().sourceSets
+
+    @Deprecated(TOOLCHAIN_DSL_WRONG_USAGE_ERROR, level = DeprecationLevel.ERROR)
+    fun jvmToolchain(action: Action<JavaToolchainSpec>): Unit = error(TOOLCHAIN_DSL_WRONG_USAGE_ERROR)
+
+    @Deprecated(TOOLCHAIN_DSL_WRONG_USAGE_ERROR, level = DeprecationLevel.ERROR)
+    fun jvmToolchain(jdkVersion: Int): Unit = error(TOOLCHAIN_DSL_WRONG_USAGE_ERROR)
 }
+
+private const val TOOLCHAIN_DSL_WRONG_USAGE_ERROR =
+    "Configuring JVM toolchain in the Kotlin target level DSL is prohibited. " +
+            "JVM toolchain feature should be configured in the extension scope as it affects all JVM targets (JVM, Android)."
 
 internal val KotlinTarget.internal: InternalKotlinTarget
     get() = (this as? InternalKotlinTarget) ?: throw IllegalArgumentException(
