@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
@@ -283,15 +284,26 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
         return AvailableSymbol(classifierSymbol, ImportKind.fromScope(scope))
     }
 
+    private fun FirClassLikeSymbol<*>.getSamConstructor(): FirNamedFunctionSymbol? {
+        val samResolver = FirSamResolver(firSession, analysisSession.getScopeSessionFor(firSession))
+
+        return samResolver.getSamConstructor(fir)?.symbol
+    }
+
     /**
-     * Finds available constructors with a given [targetClassName] within the [scope].
+     * Finds constructors with a given [targetClassName] available within the [scope], including SAM constructors
+     * (which are not explicitly declared in the class).
      *
      * Do not confuse with constructors **declared** in the scope (see [FirScope.processDeclaredConstructors]).
      */
-    private fun findAvailableConstructors(scope: FirScope, targetClassName: Name): List<FirConstructorSymbol> {
-        val classifierSymbol = scope.findFirstClassifierByName(targetClassName) ?: return emptyList()
+    private fun findAvailableConstructors(scope: FirScope, targetClassName: Name): List<FirFunctionSymbol<*>> {
+        val classLikeSymbol = scope.findFirstClassifierByName(targetClassName) as? FirClassLikeSymbol
+            ?: return emptyList()
 
-        return (classifierSymbol as? FirClassSymbol)?.declarationSymbols?.filterIsInstance<FirConstructorSymbol>().orEmpty()
+        val constructors = (classLikeSymbol as? FirClassSymbol)?.declarationSymbols?.filterIsInstance<FirConstructorSymbol>().orEmpty()
+        val samConstructor = classLikeSymbol.getSamConstructor()
+
+        return constructors + listOfNotNull(samConstructor)
     }
 
     fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirFunctionSymbol<*>>> {
@@ -983,7 +995,11 @@ private class ElementsToShortenCollector(
             firResolveSession, fakeFirQualifiedAccess, name, expressionInScope
         )
         return candidates.filter { overloadCandidate ->
-            overloadCandidate.candidate.currentApplicability == CandidateApplicability.RESOLVED
+            when (overloadCandidate.candidate.currentApplicability) {
+                CandidateApplicability.RESOLVED -> true
+                CandidateApplicability.K2_SYNTHETIC_RESOLVED -> true // SAM constructor call
+                else -> false
+            }
         }
     }
 
