@@ -384,7 +384,7 @@ class BirDatabase : BirElementParent() {
     }
 
     /**
-     * Returns an unordered and live sequence of unique elements in this database which match a given index key.
+     * Returns an unordered and live sequence of unique elements in this database, which match a given index key.
      *
      * The returned sequence is live, meaning it reflects the changes made to the database during the iteration,
      * up until the last element in the sequence is reached (i.e., once [Iterator.hasNext] returns false, it won't return true again).
