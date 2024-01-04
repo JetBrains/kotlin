@@ -1,3 +1,5 @@
+// IGNORE_NATIVE: optimizationMode=OPT
+
 class Foo(val s: String): Comparable<Foo> {
     override fun compareTo(other: Foo): Int {
         return s.compareTo(other.s)

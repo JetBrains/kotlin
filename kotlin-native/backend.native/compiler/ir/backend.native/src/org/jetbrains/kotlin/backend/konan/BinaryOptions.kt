@@ -86,6 +86,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val globalDataLazyInit by booleanOption()
 
     val swiftExport by booleanOption()
+
+    val genericSafeCasts by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

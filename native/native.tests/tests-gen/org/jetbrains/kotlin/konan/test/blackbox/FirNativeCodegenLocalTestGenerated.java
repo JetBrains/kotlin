@@ -196,9 +196,21 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
-    @TestMetadata("kt57640.kt")
-    public void testKt57640() {
-      runTest("native/native.tests/testData/codegen/cinterop/kt57640.kt");
+    @TestMetadata("kt57640_common.kt")
+    public void testKt57640_common() {
+      runTest("native/native.tests/testData/codegen/cinterop/kt57640_common.kt");
+    }
+
+    @Test
+    @TestMetadata("kt57640_with_safe_casts.kt")
+    public void testKt57640_with_safe_casts() {
+      runTest("native/native.tests/testData/codegen/cinterop/kt57640_with_safe_casts.kt");
+    }
+
+    @Test
+    @TestMetadata("kt57640_without_safe_casts.kt")
+    public void testKt57640_without_safe_casts() {
+      runTest("native/native.tests/testData/codegen/cinterop/kt57640_without_safe_casts.kt");
     }
 
     @Test

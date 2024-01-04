@@ -2,6 +2,7 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+// IGNORE_NATIVE: optimizationMode=OPT
 // KT-66084
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // KT-66085

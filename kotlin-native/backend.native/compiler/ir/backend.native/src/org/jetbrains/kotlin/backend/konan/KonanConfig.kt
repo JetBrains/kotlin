@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
+import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -273,6 +274,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val globalDataLazyInit: Boolean by lazy {
         configuration.get(BinaryOptions.globalDataLazyInit) ?: true
+    }
+
+    val genericSafeCasts: Boolean by lazy {
+        configuration.get(BinaryOptions.genericSafeCasts)
+                ?: !optimizationsEnabled // Disable for optimized compilation due to performance penalty.
+    }
+
+    internal val bridgesPolicy: BridgesPolicy by lazy {
+        if (genericSafeCasts) BridgesPolicy.BOX_UNBOX_CASTS else BridgesPolicy.BOX_UNBOX_ONLY
     }
 
     init {

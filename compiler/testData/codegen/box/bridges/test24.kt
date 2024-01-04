@@ -1,3 +1,4 @@
+// IGNORE_NATIVE: optimizationMode=OPT
 // WITH_STDLIB
 
 interface I<T> {

@@ -1,3 +1,4 @@
+// IGNORE_NATIVE: optimizationMode=OPT
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
 
 fun <T> foo(x: Int = 0): T = Any() as T

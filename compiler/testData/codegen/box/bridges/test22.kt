@@ -1,3 +1,5 @@
+// IGNORE_NATIVE: optimizationMode=OPT
+
 open class Base<T> {
     open fun foo(x: T): Int = 42
 }

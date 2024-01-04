@@ -49,6 +49,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         context.ir.symbols,
         context.irBuiltIns
 ) {
+    private val insertSafeCasts = context.config.genericSafeCasts
 
     // TODO: should we handle the cases when expression type
     // is not equal to e.g. called function return type?
@@ -169,13 +170,13 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             else {
                 val expectedClass = expectedType.classOrNull?.owner
                 val erasedExpectedClass = expectedType.erasedUpperBound
-                if (!skipTypeCheck
+                if (insertSafeCasts && !skipTypeCheck
                         && actualTypeIsGeneric
                         && expectedClass != null
                         && !expectedClass.isNothing()
                         && actualType.getInlinedClassNative() == null
                         && !erasedExpectedClass.isObjCForwardDeclaration()
-                        && !erasedExpectedClass.isObjCMetaClass()
+                        && !erasedExpectedClass.isObjCMetaClass() // See KT-65260 for details.
                 ) {
                     this.checkedCast(actualType, expectedType)
                             .uncheckedCast(this.type) // Try not to bring new type incompatibilities.
@@ -194,7 +195,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 return it
             }
             val parameter = conversion.owner.valueParameters.single()
-            val argument = if (!skipTypeCheck && expectedType.isInlinedNative())
+            val argument = if (insertSafeCasts && !skipTypeCheck && expectedType.isInlinedNative())
                 this.checkedCast(actualType, conversion.owner.returnType)
             else this.uncheckedCast(parameter.type)
 

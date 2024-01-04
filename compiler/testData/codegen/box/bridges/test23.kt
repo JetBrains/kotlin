@@ -1,3 +1,5 @@
+// IGNORE_NATIVE: optimizationMode=OPT
+
 open class Foo(val x: Int)
 
 abstract class Base<T> {
