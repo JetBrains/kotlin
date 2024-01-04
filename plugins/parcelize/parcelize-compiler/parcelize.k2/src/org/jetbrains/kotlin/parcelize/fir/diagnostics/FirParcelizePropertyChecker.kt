@@ -80,7 +80,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker() {
     private fun getCustomParcelerTypes(annotations: List<FirAnnotation>, session: FirSession): Set<ConeKotlinType> =
         annotations.mapNotNullTo(mutableSetOf()) { annotation ->
             if (annotation.fqName(session) in ParcelizeNames.TYPE_PARCELER_FQ_NAMES && annotation.typeArguments.size == 2) {
-                annotation.typeArguments[0].toConeTypeProjection().type
+                annotation.typeArguments[0].toConeTypeProjection().type?.fullyExpandedType(session)
             } else {
                 null
             }
