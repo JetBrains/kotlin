@@ -115,6 +115,10 @@ abstract class AbstractFirNativeDiagnosticsTestBase(val parser: FirParser) : Abs
             forTestsMatching("compiler/testData/diagnostics/*") {
                 configurationForClassicAndFirTestsAlongside()
             }
+
+            defaultDirectives {
+                LanguageSettingsDirectives.LANGUAGE + "+EnableDfaWarningsInK2"
+            }
         }
     }
 }

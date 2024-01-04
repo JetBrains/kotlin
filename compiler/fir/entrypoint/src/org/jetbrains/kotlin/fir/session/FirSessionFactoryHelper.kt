@@ -140,5 +140,6 @@ object FirSessionFactoryHelper {
         register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
         register(FirOverridesBackwardCompatibilityHelper::class, FirDefaultOverridesBackwardCompatibilityHelper)
         register(FirDelegatedMembersFilter::class, FirDelegatedMembersFilter.Default)
+        register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
     }
 }

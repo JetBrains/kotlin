@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.fir.BinaryModuleData
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeCastChecker
 import org.jetbrains.kotlin.fir.backend.native.FirNativeClassMapper
 import org.jetbrains.kotlin.fir.checkers.registerNativeCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -44,6 +42,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = { session ->
                 session.registerDefaultComponents()
                 session.register(FirPlatformClassMapper::class, FirNativeClassMapper())
+                session.register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
                 registerExtraComponents(session)
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
@@ -90,6 +89,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = {
                 it.registerDefaultComponents()
                 it.register(FirPlatformClassMapper::class, FirNativeClassMapper())
+                it.register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
                 registerExtraComponents(it)
             },
             registerExtraCheckers = { it.registerNativeCheckers() },
