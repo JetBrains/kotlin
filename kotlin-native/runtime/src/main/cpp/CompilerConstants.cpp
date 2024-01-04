@@ -32,6 +32,7 @@ RUNTIME_WEAK int32_t Kotlin_appStateTracking = 0;
 RUNTIME_WEAK int32_t Kotlin_mimallocUseDefaultOptions = 1;
 RUNTIME_WEAK int32_t Kotlin_mimallocUseCompaction = 0;
 RUNTIME_WEAK int32_t Kotlin_objcDisposeOnMain = 0;
+RUNTIME_WEAK int32_t Kotlin_objcDisposeWithRunLoop = 1;
 RUNTIME_WEAK int32_t Kotlin_enableSafepointSignposts = 0;
 
 ALWAYS_INLINE compiler::DestroyRuntimeMode compiler::destroyRuntimeMode() noexcept {
@@ -83,6 +84,10 @@ ALWAYS_INLINE bool compiler::mimallocUseCompaction() noexcept {
 
 ALWAYS_INLINE bool compiler::objcDisposeOnMain() noexcept {
     return Kotlin_objcDisposeOnMain != 0;
+}
+
+ALWAYS_INLINE bool compiler::objcDisposeWithRunLoop() noexcept {
+    return Kotlin_objcDisposeWithRunLoop != 0;
 }
 
 ALWAYS_INLINE bool compiler::enableSafepointSignposts() noexcept {

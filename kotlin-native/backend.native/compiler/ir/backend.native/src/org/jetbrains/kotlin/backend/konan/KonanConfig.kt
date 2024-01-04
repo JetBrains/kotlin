@@ -245,6 +245,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.objcDisposeOnMain) ?: true
     }
 
+    val objcDisposeWithRunLoop: Boolean by lazy {
+        configuration.get(BinaryOptions.objcDisposeWithRunLoop) ?: true
+    }
+
     val enableSafepointSignposts: Boolean = configuration.get(BinaryOptions.enableSafepointSignposts)?.also {
         if (it && !target.supportsSignposts) {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Signposts are not available on $target. The setting will have no effect.")

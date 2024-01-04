@@ -65,6 +65,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val objcDisposeOnMain by booleanOption()
 
+    val objcDisposeWithRunLoop by booleanOption()
+
     val disableMmap by booleanOption()
 
     val disableAllocatorOverheadEstimate by booleanOption()
