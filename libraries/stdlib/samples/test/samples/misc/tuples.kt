@@ -43,4 +43,40 @@ class Tuples {
         assertPrints(intList, "[0, 1, 2]")
     }
 
+    @Sample
+    fun pairMapFirst() {
+        val x = Pair(1, "hello").mapFirst { it + 100 }
+        assertPrints(x, "(101, hello)")
+        assertEquals(Pair(101, "hello"), x)
+    }
+
+    @Sample
+    fun pairMapSecond() {
+        val x = Pair(1, "hello").mapSecond { it.length }
+        assertPrints(x, "(1, 5)")
+        assertEquals(Pair(1, 5), x)
+    }
+
+    @Sample
+    fun tripleMapFirst() {
+        val x = Triple(1, "hello", 3.14).mapFirst { it + 100 }
+        assertPrints(x, "(101, hello, 3.14)")
+        assertEquals(Triple(101, "hello", 3.14), x)
+    }
+
+
+    @Sample
+    fun tripleMapSecond() {
+        val x = Triple(1, "hello", 3.14).mapSecond { it.length }
+        assertPrints(x, "(1, 5, 3.14)")
+        assertEquals(Triple(1, 5, 3.14), x)
+    }
+
+    @Sample
+    fun tripleMapThird() {
+        val x = Triple(1, "hello", 3.14).mapThird { it.toString().reversed() }
+        assertPrints(x, "(1, hello, 41.3)")
+        assertEquals(Triple(1, "hello", "41.3"), x)
+    }
+
 }
