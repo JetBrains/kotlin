@@ -777,6 +777,12 @@ public class FirLoadK2CompiledJvmKotlinTestGenerated extends AbstractFirLoadK2Co
             }
 
             @Test
+            @TestMetadata("SealedInterface.kt")
+            public void testSealedInterface() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/class/SealedInterface.kt");
+            }
+
+            @Test
             @TestMetadata("SingleAbstractMethod.kt")
             public void testSingleAbstractMethod() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/class/SingleAbstractMethod.kt");

@@ -241,6 +241,12 @@ public class ClsStubBuilderK2CompilerTestGenerated extends AbstractClsStubBuilde
     }
 
     @Test
+    @TestMetadata("SealedInterface")
+    public void testSealedInterface() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SealedInterface/");
+    }
+
+    @Test
     @TestMetadata("SecondaryConstructors")
     public void testSecondaryConstructors() throws Exception {
         runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SecondaryConstructors/");

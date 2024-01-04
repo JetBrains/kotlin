@@ -241,6 +241,12 @@ public class ByDecompiledPsiStubBuilderK2CompilerTestGenerated extends AbstractB
     }
 
     @Test
+    @TestMetadata("SealedInterface")
+    public void testSealedInterface() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SealedInterface/");
+    }
+
+    @Test
     @TestMetadata("SecondaryConstructors")
     public void testSecondaryConstructors() throws Exception {
         runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/SecondaryConstructors/");
