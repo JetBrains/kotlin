@@ -15,11 +15,15 @@ import org.jetbrains.kotlin.bir.declarations.lazy.*
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.bir.expressions.impl.*
 import org.jetbrains.kotlin.bir.types.BirUninitializedType
+import org.jetbrains.kotlin.fir.backend.PropertySymbols
+import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.metadata.ProtoBuf.Property
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 // todo: Could be adjusted for the change that all child fields are now nullable
@@ -1151,12 +1155,66 @@ class Ir2BirConverter(
     override fun <Bir : BirElement> copyLazyElement(old: IrDeclaration): Bir? {
         @Suppress("UNCHECKED_CAST")
         return when (old) {
-            is IrClass -> BirLazyClass(old, this)
-            is IrSimpleFunction -> BirLazySimpleFunction(old, this)
-            is IrConstructor -> BirLazyConstructor(old, this)
+            is IrClass -> {
+                var ir: IrClass = old
+                if (cloneFir2IrLazyElements && old is Fir2IrLazyClass) {
+                    ir = Fir2IrLazyClass(
+                        old, old.startOffset, old.endOffset, old.origin, old.fir,
+                        IrClassSymbolImpl(), old.parent
+                    )
+                    ir.typeParameters = old.typeParameters
+                }
+                BirLazyClass(ir, this)
+            }
+            is IrSimpleFunction -> {
+                var ir: IrSimpleFunction = old
+                if (cloneFir2IrLazyElements && old is Fir2IrLazySimpleFunction) {
+                    val firContainingClass = (old.parent as? Fir2IrLazyClass)?.fir
+                    ir = Fir2IrLazySimpleFunction(
+                        old, old.startOffset, old.endOffset, old.origin, old.fir, firContainingClass,
+                        IrSimpleFunctionSymbolImpl(), old.parent, old.isFakeOverride
+                    )
+                    ir.typeParameters = old.typeParameters
+                }
+                BirLazySimpleFunction(ir, this)
+            }
+            is IrConstructor -> {
+                var ir: IrConstructor = old
+                if (cloneFir2IrLazyElements && old is Fir2IrLazyConstructor) {
+                    ir = Fir2IrLazyConstructor(
+                        old, old.startOffset, old.endOffset, old.origin, old.fir,
+                        IrConstructorSymbolImpl(), old.parent
+                    )
+                    ir.typeParameters = old.typeParameters
+                }
+                BirLazyConstructor(old, this)
+            }
             is IrValueParameter -> BirLazyValueParameter(old, this)
-            is IrProperty -> BirLazyProperty(old, this)
-            is IrField -> BirLazyField(old, this)
+            is IrProperty -> {
+                var ir: IrProperty = old
+                if (cloneFir2IrLazyElements && old is Fir2IrLazyProperty) {
+                    ir = Fir2IrLazyProperty(
+                        old, old.startOffset, old.endOffset, old.origin, old.fir, old.containingClass,
+                        PropertySymbols(
+                            IrPropertySymbolImpl(), IrSimpleFunctionSymbolImpl(),
+                            if (old.setter != null) IrSimpleFunctionSymbolImpl() else null,
+                            if (old.backingField != null) IrFieldSymbolImpl() else null,
+                        ),
+                        old.parent, old.isFakeOverride
+                    )
+                }
+                BirLazyProperty(old, this)
+            }
+            is IrField -> {
+                var ir: IrField = old
+                if (cloneFir2IrLazyElements && old is Fir2IrLazyField) {
+                    ir = Fir2IrLazyField(
+                        old, old.startOffset, old.endOffset, old.origin, old.fir, old.containingClass,
+                        IrFieldSymbolImpl()
+                    )
+                }
+                BirLazyField(old, this)
+            }
             is IrEnumEntry -> BirLazyEnumEntry(old, this)
             is IrTypeAlias -> BirLazyTypeAlias(old, this)
             else -> null
