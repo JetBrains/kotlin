@@ -15,14 +15,11 @@ import org.jetbrains.kotlin.bir.declarations.lazy.*
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.bir.expressions.impl.*
 import org.jetbrains.kotlin.bir.types.BirUninitializedType
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl.descriptor
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 // todo: Could be adjusted for the change that all child fields are now nullable
@@ -1151,7 +1148,7 @@ class Ir2BirConverter(
         }
     }
 
-    override fun <Bir : BirElement> copyLazyElement(old: IrLazyDeclarationBase): Bir? {
+    override fun <Bir : BirElement> copyLazyElement(old: IrDeclaration): Bir? {
         @Suppress("UNCHECKED_CAST")
         return when (old) {
             is IrClass -> BirLazyClass(old, this)
