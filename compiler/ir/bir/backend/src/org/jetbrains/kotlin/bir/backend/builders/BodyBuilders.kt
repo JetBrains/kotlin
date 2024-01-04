@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package org.jetbrains.kotlin.bir.backend.builders
 
 import org.jetbrains.kotlin.bir.BirStatement
@@ -40,7 +42,7 @@ inline fun birBlockBody(
 }*/
 
 context(BirStatementBuilderScope)
-fun birBlockBody(
+inline fun birBlockBody(
     builder: BirBlockBodyBuilderScope.() -> Unit,
 ): BirBlockBody {
     val body = BirBlockBodyImpl(sourceSpan)
@@ -62,7 +64,7 @@ inline fun birBlock(
 }
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birBlock(
+inline fun birBlock(
     resultType: BirType? = null,
     isTransparent: Boolean = false,
     builder: BirBlockBuilderScope.() -> Unit,
@@ -74,7 +76,7 @@ fun birBlock(
 
 
 context(BirBackendContext)
-fun birExpressionBody(
+inline fun birExpressionBody(
     builder: BirStatementBuilderScope.() -> BirExpression,
 ): BirExpressionBody {
     val scope = BirStatementBuilderScope()
@@ -85,7 +87,7 @@ fun birExpressionBody(
 }
 
 context(BirBackendContext, BirStatementBuilderScope)
-fun birExpressionBody(
+inline fun birExpressionBody(
     expression: BirExpression,
 ): BirExpressionBody =
     BirExpressionBodyImpl(sourceSpan, expression)
