@@ -431,13 +431,15 @@ kotlin {
             kotlin.srcDir("${jsDir}/test")
         }
 
+        val commonMainSourceSet = commonMain.get()
         val nativeWasmMain by creating {
-            dependsOn(commonMain.get())
+            dependsOn(commonMainSourceSet)
             kotlin.srcDir("native-wasm/src")
         }
 
+        val commonTestSourceSet = commonTest.get()
         val nativeWasmTest by creating {
-            dependsOn(commonTest.get())
+            dependsOn(commonTestSourceSet)
             kotlin.srcDir("native-wasm/test")
         }
 
@@ -525,7 +527,7 @@ kotlin {
 
         if (kotlinBuildProperties.isInIdeaSync) {
             val nativeKotlinTestCommon by creating {
-                dependsOn(commonMain.get())
+                dependsOn(commonMainSourceSet)
                 val prepareKotlinTestCommonNativeSources by tasks.registering(Sync::class) {
                     from("../kotlin.test/common/src/main/kotlin")
                     from("../kotlin.test/annotations-common/src/main/kotlin")

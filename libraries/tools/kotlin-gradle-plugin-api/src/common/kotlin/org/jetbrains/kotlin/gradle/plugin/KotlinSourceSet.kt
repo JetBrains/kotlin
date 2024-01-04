@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
+import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
+@KotlinGradlePluginDsl
 interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDependencies {
     val kotlin: SourceDirectorySet
 

@@ -10,8 +10,9 @@ repositories {
 }
 
 kotlin {
+    val commonMainSourceSet = sourceSets.commonMain.get()
     val nativeMain by sourceSets.creating {
-        dependsOn(sourceSets["commonMain"])
+        dependsOn(commonMainSourceSet)
     }
 
     targets.withType(KotlinNativeTarget::class.java).all {
