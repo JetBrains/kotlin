@@ -13025,6 +13025,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             public void testKt24158() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/exceptions/kt24158.kt");
             }
+
+            @Test
+            @TestMetadata("stackOverflowOnDoUnify.kt")
+            public void testStackOverflowOnDoUnify() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/exceptions/stackOverflowOnDoUnify.kt");
+            }
         }
 
         @Nested

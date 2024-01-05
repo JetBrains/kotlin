@@ -26,6 +26,10 @@ fun FirSession.doUnify(
     val originalType = originalTypeProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
     val typeWithParameters = typeWithParametersProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
 
+    if (typeWithParameters is ConeErrorType) {
+        return true // Return true to avoid loosing `result` substitution
+    }
+
     if (originalType is ConeIntersectionType) {
         val intersectionResult = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
         for (intersectedType in originalType.intersectedTypes) {
