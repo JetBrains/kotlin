@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -251,7 +248,8 @@ class FakeOverrideGenerator(
                     if (!compatibleType) {
                         return@mapNotNull null
                     }
-                    symbol to superType.lookupTag
+                    // TODO: it should be already expanded - KT-64743
+                    symbol to superType.fullyExpandedType(session).lookupTag
                 }
             }
         }

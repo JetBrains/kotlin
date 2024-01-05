@@ -24418,6 +24418,12 @@ public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTes
             }
 
             @Test
+            @TestMetadata("aliasSuperTypeInLazy.kt")
+            public void testAliasSuperTypeInLazy() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/aliasSuperTypeInLazy.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInK2() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
