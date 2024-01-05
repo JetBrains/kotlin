@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractCompilerBasedTestForFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithoutPreresolve
 import org.jetbrains.kotlin.fir.symbols.FirLazyResolveContractViolationException
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.bind
+import java.io.File
 
 abstract class AbstractDiagnosticCompilerTestDataTest : AbstractCompilerBasedTestForFir() {
     override fun TestConfigurationBuilder.configureTest() {
@@ -26,6 +29,13 @@ abstract class AbstractDiagnosticCompilerTestDataTest : AbstractCompilerBasedTes
         )
         useAfterAnalysisCheckers(::ContractViolationSuppressor)
         useAfterAnalysisCheckers(::DiagnosticSuppressor)
+    }
+
+    override fun shouldSkipTest(filePath: String, configuration: TestConfiguration): Boolean {
+        return InTextDirectivesUtils.isDirectiveDefined(
+            File(filePath).readText(),
+            "// SKIP_FIR_IDE_DIAGNOSTIC_TEST: "
+        )
     }
 }
 

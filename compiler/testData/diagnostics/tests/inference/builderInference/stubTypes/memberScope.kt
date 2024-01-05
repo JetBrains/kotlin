@@ -1,6 +1,7 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -DEPRECATION -OPT_IN_IS_NOT_ENABLED
 // WITH_STDLIB
+// SKIP_FIR_IDE_DIAGNOSTIC_TEST: KT-64741
 
 // FILE: main.kt
 import kotlin.experimental.ExperimentalTypeInference

@@ -1,5 +1,6 @@
 // WITH_REFLECT
 // FIR_DUMP
+// SKIP_FIR_IDE_DIAGNOSTIC_TEST: KT-59791
 import kotlin.reflect.*
 
 interface Foo<T : Any> {
