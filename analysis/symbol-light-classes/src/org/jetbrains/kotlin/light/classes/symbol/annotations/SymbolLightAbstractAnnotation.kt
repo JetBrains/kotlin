@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,9 +34,12 @@ internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
         val reference = (kotlinOrigin as? KtAnnotationEntry)?.typeReference?.reference
             ?: (kotlinOrigin?.calleeExpression?.nameReference)?.references?.firstOrNull()
 
-        if (reference != null) SymbolLightPsiJavaCodeReferenceElementWithReference(ktElement, reference)
-        else SymbolLightPsiJavaCodeReferenceElementWithNoReference(ktElement)
+        val provider = createReferenceInformationProvider()
+        if (reference != null) SymbolLightPsiJavaCodeReferenceElementWithReference(ktElement, reference, provider)
+        else SymbolLightPsiJavaCodeReferenceElementWithNoReference(ktElement, provider)
     }
+
+    abstract fun createReferenceInformationProvider(): ReferenceInformationProvider
 
     override fun getNameReferenceElement(): PsiJavaCodeReferenceElement = _nameReferenceElement
 

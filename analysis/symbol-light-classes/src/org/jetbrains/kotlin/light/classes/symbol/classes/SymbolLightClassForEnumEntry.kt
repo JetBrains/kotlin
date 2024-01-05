@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.light.classes.symbol.annotations.ReferenceInformationHolder
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
@@ -29,8 +30,12 @@ internal class SymbolLightClassForEnumEntry(
 ) : SymbolLightClassBase(ktModule, enumConstant.manager), PsiEnumConstantInitializer {
     override fun getBaseClassType(): PsiClassType = enumConstant.type as PsiClassType //???TODO
 
-    override fun getBaseClassReference(): PsiJavaCodeReferenceElement =
-        SymbolLightPsiJavaCodeReferenceElementWithNoReference(enumConstant) //???TODO
+    override fun getBaseClassReference(): PsiJavaCodeReferenceElement = SymbolLightPsiJavaCodeReferenceElementWithNoReference(
+        enumConstant,
+        ReferenceInformationHolder(
+            referenceName = enumConstant.name,
+        )
+    )
 
     override fun getArgumentList(): PsiExpressionList? = null
 

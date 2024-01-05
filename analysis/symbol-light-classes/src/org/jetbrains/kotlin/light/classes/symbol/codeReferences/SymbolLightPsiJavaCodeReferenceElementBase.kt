@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.light.classes.symbol.codeReferences
 
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
+import org.jetbrains.kotlin.light.classes.symbol.annotations.ReferenceInformationProvider
 
-internal abstract class SymbolLightPsiJavaCodeReferenceElementBase(private val ktElement: PsiElement) :
-    PsiElement by ktElement,
-    PsiJavaCodeReferenceElement {
-
+internal sealed class SymbolLightPsiJavaCodeReferenceElementBase(
+    private val ktElement: PsiElement,
+    private val referenceInformationProvider: ReferenceInformationProvider,
+) : PsiElement by ktElement, PsiJavaCodeReferenceElement {
     override fun multiResolve(incompleteCode: Boolean): Array<JavaResolveResult> = JavaResolveResult.EMPTY_ARRAY
 
     override fun processVariants(processor: PsiScopeProcessor) {}
@@ -20,7 +21,10 @@ internal abstract class SymbolLightPsiJavaCodeReferenceElementBase(private val k
 
     override fun getQualifier(): PsiElement? = null
 
-    override fun getReferenceName(): String? = null
+    /**
+     * @see com.intellij.psi.impl.PsiImplUtil.findAnnotation
+     */
+    override fun getReferenceName(): String? = referenceInformationProvider.referenceName
 
     override fun getReferenceNameElement(): PsiElement? = null
 
