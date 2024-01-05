@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.KaptFlag
 import org.jetbrains.kotlin.kapt3.base.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
+import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.test.KaptMessageCollectorProvider
 import org.jetbrains.kotlin.kapt3.test.kaptOptionsProvider
@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.kotlinp.KotlinpSettings
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.File
+import java.io.PrintWriter
 
 internal class Kapt4Facade(private val testServices: TestServices) :
     AbstractTestFacade<ResultingArtifact.Source, Kapt4ContextBinaryArtifact>() {
@@ -82,10 +84,34 @@ private fun run(
         withJdk = false,
         WriterBackedKaptLogger(isVerbose = false),
     )
-    val onError = { message: String ->
-        context.reportKaptError(*message.split("\n").toTypedArray())
+
+    val logger = object : KaptLogger {
+        override val errorWriter: PrintWriter
+            get() = shouldNotBeCalled()
+        override val infoWriter: PrintWriter
+            get() = shouldNotBeCalled()
+        override val isVerbose: Boolean
+            get() = shouldNotBeCalled()
+        override val warnWriter: PrintWriter
+            get() = shouldNotBeCalled()
+
+        override fun error(message: String) {
+            context.reportKaptError(*message.split("\n").toTypedArray())
+        }
+
+        override fun exception(e: Throwable) {
+            error(e.toString())
+        }
+
+        override fun info(message: String) {
+        }
+
+        override fun warn(message: String) {
+            error(message)
+        }
     }
-    return context to generateStubs(module, files, options, onError, metadataRenderer = { renderMetadata(it) })
+
+    return context to generateStubs(module, files, options, logger, metadataRenderer = { renderMetadata(it) })
 }
 
 internal data class Kapt4ContextBinaryArtifact(

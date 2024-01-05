@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.kapt3.base.KaptFlag
@@ -43,9 +44,10 @@ import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.kotlin.kapt3.base.KaptOptions
-import org.jetbrains.kotlin.kapt3.base.javac.kaptError
+import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.stubs.MembersPositionComparator
 import org.jetbrains.kotlin.psi.psiUtil.children
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
@@ -53,13 +55,21 @@ internal fun generateStubs(
     module: KtSourceModule,
     files: List<PsiFile>,
     options: KaptOptions,
-    onError: (messages: String) -> Unit,
+    logger: KaptLogger,
     overriddenMetadataVersion: BinaryVersion? = null,
     metadataRenderer: (Printer.(Metadata) -> Unit)? = null
-): Map<KtLightClass, KaptStub?> =
-    analyze(module) {
-        StubGenerator(files.filterIsInstance<KtFile>(), options, onError, metadataRenderer, overriddenMetadataVersion).generateStubs()
+): Map<KtLightClass, KaptStub?> {
+    for (file in files) {
+        file.findDescendantOfType<PsiErrorElement>()?.let {
+            val pos = offsetToLineAndColumn(it.containingFile.viewProvider.document, it.textRange.startOffset)
+            logger.error("${file.virtualFile.path}:${pos.line}:${pos.column} ${it.errorDescription}")
+            return emptyMap()
+        }
     }
+    return analyze(module) {
+        StubGenerator(files.filterIsInstance<KtFile>(), options, logger, metadataRenderer, overriddenMetadataVersion).generateStubs()
+    }
+}
 
 class KaptStub(val source: String, val kaptMetadata: ByteArray) {
     fun writeMetadata(forSource: File) {
@@ -72,7 +82,7 @@ context(KtAnalysisSession)
 private class StubGenerator(
     private val files: List<KtFile>,
     options: KaptOptions,
-    private val onError: (String) -> Unit,
+    private val logger: KaptLogger,
     private val metadataRenderer: (Printer.(Metadata) -> Unit)? = null,
     private val overriddenMetadataVersion: BinaryVersion? = null,
 ) {
@@ -80,6 +90,7 @@ private class StubGenerator(
     private val stripMetadata = options[KaptFlag.STRIP_METADATA]
     private val keepKdocComments = options[KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS]
     private val dumpDefaultParameterValues = options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
+    private val onError = if (options[KaptFlag.STRICT]) logger::error else logger::warn
 
 
     fun generateStubs(): Map<KtLightClass, KaptStub?> =

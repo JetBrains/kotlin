@@ -133,15 +133,8 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         reportOutputFiles: Boolean,
         overriddenMetadataVersion: BinaryVersion?
     ) {
-        fun onError(message: String) {
-            if(options[KaptFlag.STRICT]) {
-                logger.error(message)
-            } else {
-                logger.warn(message)
-            }
-        }
         val (stubGenerationTime, classesToStubs) = measureTimeMillis {
-            generateStubs(module, files, options, ::onError, overriddenMetadataVersion)
+            generateStubs(module, files, options, logger, overriddenMetadataVersion)
         }
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }

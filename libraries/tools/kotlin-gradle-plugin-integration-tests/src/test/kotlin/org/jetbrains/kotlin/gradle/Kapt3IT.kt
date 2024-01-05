@@ -37,6 +37,7 @@ import java.util.zip.ZipOutputStream
 import kotlin.io.path.appendText
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.outputStream
+import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 
 abstract class Kapt3BaseIT : KGPBaseTest() {
@@ -1445,6 +1446,18 @@ open class Kapt3IT : Kapt3BaseIT() {
                 assertFileInProjectExists("example/build/generated/source/kapt/main/generated/TestClass1.java")
                 assertFileInProjectExists("example/build/generated/source/kapt/main/generated/TestClass12.java")
                 assertFileInProjectExists("example/build/generated/source/kapt/main/generated/TestClass123.java")
+            }
+        }
+    }
+
+    @DisplayName("KT-64719 KAPT stub generation should fail on files with syntax errors")
+    @GradleTest
+    fun testTopLevelSyntaxError(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            javaSourcesDir().resolve("invalid.kt").writeText("fun foo() { !!! }")
+
+            buildAndFail(":kaptGenerateStubsKotlin") {
+                assertOutputContains("invalid.kt:1:16 Expecting an element")
             }
         }
     }
