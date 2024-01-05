@@ -258,8 +258,6 @@ public class OverridingUtil {
                 case OVERRIDABLE:
                     wasSuccess = true;
                     break;
-                case CONFLICT:
-                    return OverrideCompatibilityInfo.conflict("External condition failed");
                 case INCOMPATIBLE:
                     return OverrideCompatibilityInfo.incompatible("External condition");
                 case UNKNOWN:
@@ -280,8 +278,6 @@ public class OverridingUtil {
             ExternalOverridabilityCondition.Result result =
                     externalCondition.isOverridable(superDescriptor, subDescriptor, subClassDescriptor);
             switch (result) {
-                case CONFLICT:
-                    return OverrideCompatibilityInfo.conflict("External condition failed");
                 case INCOMPATIBLE:
                     return OverrideCompatibilityInfo.incompatible("External condition");
                 case OVERRIDABLE:

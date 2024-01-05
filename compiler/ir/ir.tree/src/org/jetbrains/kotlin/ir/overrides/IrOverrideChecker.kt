@@ -158,7 +158,6 @@ class IrOverrideChecker(
                 externalCondition.isOverridable(superMember, subMember)
             when (result) {
                 OVERRIDABLE -> wasSuccess = true
-                CONFLICT -> return conflict("External condition failed")
                 INCOMPATIBLE -> return incompatible("External condition")
                 UNKNOWN -> {}
             }
@@ -173,7 +172,6 @@ class IrOverrideChecker(
             val result =
                 externalCondition.isOverridable(superMember, subMember)
             when (result) {
-                CONFLICT -> return conflict("External condition failed")
                 INCOMPATIBLE -> return incompatible("External condition")
                 OVERRIDABLE -> error(
                     "Contract violation in ${externalCondition.javaClass} condition. It's not supposed to end with success"

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 interface IrExternalOverridabilityCondition {
     enum class Result {
         OVERRIDABLE,
-        CONFLICT,
         INCOMPATIBLE,
         UNKNOWN
     }
@@ -26,8 +25,6 @@ interface IrExternalOverridabilityCondition {
      *
      *   - [Result.OVERRIDABLE] means that it is definitely overridable, and neither the general override checking algorithm, nor other
      *     external overridability conditions can refute that.
-     *   - [Result.CONFLICT] means that it is an error to have both declarations available in the same class, so the compiler should report
-     *     an error.
      *   - [Result.INCOMPATIBLE] means that it is not overridable, but it's OK to have both declarations available in the same class because
      *     they don't cause a conflict.
      *   - [Result.UNKNOWN] means that this overridability condition cannot claim anything about the overridability, and the final result
@@ -42,7 +39,7 @@ interface IrExternalOverridabilityCondition {
      * Specifies what values can be returned by [isOverridable]. Used as an optimization to reorder overridability conditions to prevent
      * redundant calculations.
      *
-     *   - [Contract.CONFLICTS_ONLY] means that [isOverridable] can return [Result.CONFLICT], [Result.INCOMPATIBLE] or [Result.UNKNOWN].
+     *   - [Contract.CONFLICTS_ONLY] means that [isOverridable] can return [Result.INCOMPATIBLE] or [Result.UNKNOWN].
      *   - [Contract.SUCCESS_ONLY] means that [isOverridable] can return [Result.OVERRIDABLE] or [Result.UNKNOWN].
      *   - [Contract.BOTH] means that [isOverridable] can return any result.
      */
