@@ -5,7 +5,7 @@ typealias MaybePair = Pair<Int, Int>?
 
 fun <T: <!FINAL_UPPER_BOUND!>MaybePair<!>> foo(x: T) {
     if (x != null) {
-        println(x<!UNSAFE_CALL!>.<!>first)
-        println(x<!UNSAFE_CALL!>.<!>second)
+        println(x.first)
+        println(x.second)
     }
 }
