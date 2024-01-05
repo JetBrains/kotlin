@@ -14,7 +14,7 @@ Tower Data Context:
     Element 6
         Scope: FirNestedClassifierScopeWithSubstitution
             Classifiers:
-                FirRegularClassSymbol public? final? class Nested : R|kotlin/Any|
+                FirRegularClassSymbol public final? class Nested : R|kotlin/Any|
         Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
     Element 7
         Scope: FirLocalScope
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter_typeRef.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] constructor(): R|test/Base.Nested| {
                 LAZY_super<R|kotlin/Any|>
             }
