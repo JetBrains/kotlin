@@ -2,7 +2,6 @@
 //   Mangled name: Controller
 //   Public signature: /Controller|null[0]
 interface Controller<F : Any?> {
-
   // CHECK:
   //   Mangled name: Controller#yield(1:0){}
   //   Public signature: /Controller.yield|3567278141085588417[0]
@@ -15,7 +14,6 @@ interface Controller<F : Any?> {
 //   Mangled name: Intf
 //   Public signature: /Intf|null[0]
 interface Intf {
-
   // CHECK:
   //   Mangled name: Intf#foo(){}
   //   Public signature: /Intf.foo|-1041209573719867811[0]
