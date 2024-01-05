@@ -35,5 +35,5 @@ fun foo() {
     x.put("", 1)
     // If there were no @ElementTypesAreNonnullByDefault on the Maps class, there would be an error on `null` argument because the type of `x`
     // would be `HashMap<String, Int>!`, i.e. with non-flexible type arguments, thus not allowing nulls.
-    x.put("", null)
+    x.put("", <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 }

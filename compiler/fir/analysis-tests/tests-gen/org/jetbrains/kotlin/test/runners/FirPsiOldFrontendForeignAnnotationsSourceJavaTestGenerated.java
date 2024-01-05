@@ -69,6 +69,18 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         }
 
         @Test
+        @TestMetadata("errorArgumentOfWarningAfter.kt")
+        public void testErrorArgumentOfWarningAfter() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/errorArgumentOfWarningAfter.kt");
+        }
+
+        @Test
+        @TestMetadata("errorArgumentOfWarningBefore.kt")
+        public void testErrorArgumentOfWarningBefore() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/errorArgumentOfWarningBefore.kt");
+        }
+
+        @Test
         @TestMetadata("findBugsSimple.kt")
         public void testFindBugsSimple() throws Exception {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/findBugsSimple.kt");

@@ -4275,6 +4275,7 @@ internal class JavaTypeMismatchImpl(
 internal class ReceiverNullabilityMismatchBasedOnJavaAnnotationsImpl(
     override val actualType: KtType,
     override val expectedType: KtType,
+    override val messageSuffix: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.ReceiverNullabilityMismatchBasedOnJavaAnnotations
@@ -4282,6 +4283,7 @@ internal class ReceiverNullabilityMismatchBasedOnJavaAnnotationsImpl(
 internal class NullabilityMismatchBasedOnJavaAnnotationsImpl(
     override val actualType: KtType,
     override val expectedType: KtType,
+    override val messageSuffix: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.NullabilityMismatchBasedOnJavaAnnotations

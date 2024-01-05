@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.NAME
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_SENTENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR
@@ -94,15 +95,17 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
-            "Java type mismatch: inferred type is ''{1}'', but ''{0}'' was expected.",
+            "Java type mismatch: inferred type is ''{1}'', but ''{0}'' was expected.{2}",
             RENDER_TYPE,
-            RENDER_TYPE
+            RENDER_TYPE,
+            OPTIONAL_SENTENCE,
         )
         map.put(
             RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
-            "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type ''{0}''.",
+            "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type ''{0}''.{2}",
             RENDER_TYPE,
-            NOT_RENDERED
+            NOT_RENDERED,
+            OPTIONAL_SENTENCE,
         )
 
         map.put(
