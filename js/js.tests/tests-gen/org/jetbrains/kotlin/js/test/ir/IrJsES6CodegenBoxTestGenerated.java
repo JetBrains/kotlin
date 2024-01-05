@@ -27027,6 +27027,78 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
             public void testAllFilesPresentInBackingField() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
+
+            @Test
+            @TestMetadata("backingFieldVisibility.kt")
+            public void testBackingFieldVisibility() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/backingFieldVisibility.kt");
+            }
+
+            @Test
+            @TestMetadata("backingFieldWithSmartTypeParameters.kt")
+            public void testBackingFieldWithSmartTypeParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/backingFieldWithSmartTypeParameters.kt");
+            }
+
+            @Test
+            @TestMetadata("charSequenceWithBackingField1.kt")
+            public void testCharSequenceWithBackingField1() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/charSequenceWithBackingField1.kt");
+            }
+
+            @Test
+            @TestMetadata("charSequenceWithBackingField2.kt")
+            public void testCharSequenceWithBackingField2() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/charSequenceWithBackingField2.kt");
+            }
+
+            @Test
+            @TestMetadata("charSequenceWithBackingField3.kt")
+            public void testCharSequenceWithBackingField3() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/charSequenceWithBackingField3.kt");
+            }
+
+            @Test
+            @TestMetadata("charSequenceWithBackingField4.kt")
+            public void testCharSequenceWithBackingField4() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/charSequenceWithBackingField4.kt");
+            }
+
+            @Test
+            @TestMetadata("charSequenceWithBackingField5.kt")
+            public void testCharSequenceWithBackingField5() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/charSequenceWithBackingField5.kt");
+            }
+
+            @Test
+            @TestMetadata("explicitBackingFieldInAnonymous.kt")
+            public void testExplicitBackingFieldInAnonymous() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/explicitBackingFieldInAnonymous.kt");
+            }
+
+            @Test
+            @TestMetadata("getterReturnTypeWithBackingField.kt")
+            public void testGetterReturnTypeWithBackingField() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/getterReturnTypeWithBackingField.kt");
+            }
+
+            @Test
+            @TestMetadata("independentBackingFieldType.kt")
+            public void testIndependentBackingFieldType() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/independentBackingFieldType.kt");
+            }
+
+            @Test
+            @TestMetadata("lateinitBackingFields.kt")
+            public void testLateinitBackingFields() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/lateinitBackingFields.kt");
+            }
+
+            @Test
+            @TestMetadata("overriddenPropertiesWithExplicitBackingFields.kt")
+            public void testOverriddenPropertiesWithExplicitBackingFields() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/backingField/overriddenPropertiesWithExplicitBackingFields.kt");
+            }
         }
 
         @Nested

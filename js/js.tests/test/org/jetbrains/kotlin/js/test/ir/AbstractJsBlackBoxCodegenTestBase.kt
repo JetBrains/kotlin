@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
@@ -105,6 +106,12 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
             }
             configureJsArtifactsHandlersStep {
                 useHandlers(::JsIrInterpreterDumpHandler)
+            }
+        }
+
+        forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
+            defaultDirectives {
+                LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
             }
         }
     }

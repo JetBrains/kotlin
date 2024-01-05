@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.backend.handlers.WasmIrInterpreterDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
@@ -116,6 +117,12 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
             }
             configureWasmArtifactsHandlersStep {
                 useHandlers(::WasmIrInterpreterDumpHandler)
+            }
+        }
+
+        forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
+            defaultDirectives {
+                LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
             }
         }
     }
