@@ -419,6 +419,18 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("partiallySelectedType3.kt")
+    public void testPartiallySelectedType3() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedType3.kt");
+    }
+
+    @Test
+    @TestMetadata("partiallySelectedType4.kt")
+    public void testPartiallySelectedType4() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedType4.kt");
+    }
+
+    @Test
     @TestMetadata("partiallySelectedTypeQualifier1.kt")
     public void testPartiallySelectedTypeQualifier1() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedTypeQualifier1.kt");
@@ -428,6 +440,18 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     @TestMetadata("partiallySelectedTypeQualifier2.kt")
     public void testPartiallySelectedTypeQualifier2() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedTypeQualifier2.kt");
+    }
+
+    @Test
+    @TestMetadata("partiallySelectedTypeQualifier3.kt")
+    public void testPartiallySelectedTypeQualifier3() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedTypeQualifier3.kt");
+    }
+
+    @Test
+    @TestMetadata("partiallySelectedTypeQualifier4.kt")
+    public void testPartiallySelectedTypeQualifier4() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/partiallySelectedTypeQualifier4.kt");
     }
 
     @Test
@@ -626,6 +650,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     @TestMetadata("variable_invokeOperator.kt")
     public void testVariable_invokeOperator() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/variable_invokeOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("_rootIdePackage_IsNotRemovedIfNotSelected.kt")
+    public void test_rootIdePackage_IsNotRemovedIfNotSelected() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/_rootIdePackage_IsNotRemovedIfNotSelected.kt");
     }
 
     @Nested

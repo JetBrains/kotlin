@@ -524,8 +524,6 @@ private class ElementsToShortenCollector(
         val typeElement = resolvedTypeRef.correspondingTypePsi ?: return
         if (typeElement.qualifier == null) return
 
-        if (!typeElement.inSelection) return
-
         val classifierId = resolvedTypeRef.type.lowerBoundIfFlexible().candidateClassId ?: return
 
         findTypeQualifierToShorten(classifierId, typeElement)?.let(::addElementToShorten)
@@ -596,8 +594,6 @@ private class ElementsToShortenCollector(
             is KtNameReferenceExpression -> qualifierPsi.getDotQualifiedExpressionForSelector() ?: return
             else -> return
         }
-
-        if (!wholeQualifierElement.inSelection) return
 
         findTypeQualifierToShorten(wholeClassQualifier, wholeQualifierElement)?.let(::addElementToShorten)
     }
@@ -829,6 +825,10 @@ private class ElementsToShortenCollector(
     /**
      * Finds the longest qualifier in [wholeQualifierElement] which can be safely shortened in the [positionScopes].
      * [wholeQualifierClassId] is supposed to reflect the class which is referenced by the [wholeQualifierElement].
+     *
+     * N.B. Even if the [wholeQualifierElement] is not strictly in the [selection],
+     * some outer part of it might be, and we want to shorten that.
+     * So we have to check all the outer qualifiers.
      */
     private fun findClassifierQualifierToShorten(
         positionScopes: List<FirScope>,
@@ -839,6 +839,8 @@ private class ElementsToShortenCollector(
         val allQualifiedElements = wholeQualifierElement.qualifiedElementsWithSelf
 
         for ((classId, element) in allClassIds.zip(allQualifiedElements)) {
+            if (!element.inSelection) continue
+
             val classSymbol = shorteningContext.toClassSymbol(classId) ?: return null
             val option = classShortenStrategy(classSymbol)
             if (option == ShortenStrategy.DO_NOT_SHORTEN) continue
@@ -885,7 +887,11 @@ private class ElementsToShortenCollector(
                 }
             }
         }
-        return findFakePackageToShorten(allQualifiedElements.last())
+
+        val lastQualifier = allQualifiedElements.last()
+        if (!lastQualifier.inSelection) return null
+
+        return findFakePackageToShorten(lastQualifier)
     }
 
     private fun createElementToShorten(
@@ -1360,6 +1366,15 @@ private class ElementsToShortenCollector(
             }
         }
     }
+
+    private val KtElement.inSelection: Boolean
+        get() = when (this) {
+            is KtUserType -> inSelection
+            is KtDotQualifiedExpression -> inSelection
+            is KtThisExpression -> inSelection
+
+            else -> error("Unexpected ${this::class}")
+        }
 
     /**
      * Checks whether type reference of [this] type is considered to be in the [selection] text range.
