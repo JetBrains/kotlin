@@ -613,12 +613,10 @@ private class ElementsToShortenCollector(
             withImplicitReceivers = false,
         ) ?: return null
 
-        val allClassIds = wholeClassQualifier.outerClassesWithSelf
-        val allQualifiers = wholeQualifierElement.qualifiedElementsWithSelf
-        return findClassifierElementsToShorten(
+        return findClassifierQualifierToShorten(
             positionScopes,
-            allClassIds,
-            allQualifiers,
+            wholeClassQualifier,
+            wholeQualifierElement,
         )
     }
 
@@ -828,11 +826,18 @@ private class ElementsToShortenCollector(
         return createElementToShorten(referenceExpression, shortenedRef = aliasedName)
     }
 
-    private fun findClassifierElementsToShorten(
+    /**
+     * Finds the longest qualifier in [wholeQualifierElement] which can be safely shortened in the [positionScopes].
+     * [wholeQualifierClassId] is supposed to reflect the class which is referenced by the [wholeQualifierElement].
+     */
+    private fun findClassifierQualifierToShorten(
         positionScopes: List<FirScope>,
-        allClassIds: Sequence<ClassId>,
-        allQualifiedElements: Sequence<KtElement>,
+        wholeQualifierClassId: ClassId,
+        wholeQualifierElement: KtElement,
     ): ElementToShorten? {
+        val allClassIds = wholeQualifierClassId.outerClassesWithSelf
+        val allQualifiedElements = wholeQualifierElement.qualifiedElementsWithSelf
+
         for ((classId, element) in allClassIds.zip(allQualifiedElements)) {
             val classSymbol = shorteningContext.toClassSymbol(classId) ?: return null
             val option = classShortenStrategy(classSymbol)
