@@ -592,6 +592,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("k2IrParentIssue.kt")
+        public void testK2IrParentIssue() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/k2IrParentIssue.kt");
+        }
+
+        @Test
         @TestMetadata("kt11167.kt")
         public void testKt11167() throws Exception {
             runTest("compiler/testData/diagnostics/tests/kt11167.kt");
