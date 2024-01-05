@@ -318,6 +318,7 @@ enum class LanguageFeature(
     ProhibitSingleNamedFunctionAsExpression(KOTLIN_2_1, kind = BUG_FIX), // KT-62573
     ForbidLambdaParameterWithMissingDependencyType(KOTLIN_2_1, kind = BUG_FIX), // KT-64266
     JsAllowInvalidCharsIdentifiersEscaping(KOTLIN_2_1, kind = OTHER), // KT-31799
+    SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced(KOTLIN_2_1, kind = BUG_FIX), // KT-63209
 
     // End of 2.* language features --------------------------------------------------
 

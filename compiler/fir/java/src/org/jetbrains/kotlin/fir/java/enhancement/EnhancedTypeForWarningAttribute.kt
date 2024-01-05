@@ -12,13 +12,14 @@ import kotlin.reflect.KClass
 
 class EnhancedTypeForWarningAttribute(
     override val coneType: ConeKotlinType,
+    val isDeprecation: Boolean,
 ) : ConeAttributeWithConeType<EnhancedTypeForWarningAttribute>() {
     override fun union(other: EnhancedTypeForWarningAttribute?): EnhancedTypeForWarningAttribute? = null
     override fun intersect(other: EnhancedTypeForWarningAttribute?): EnhancedTypeForWarningAttribute? = null
     override fun add(other: EnhancedTypeForWarningAttribute?): EnhancedTypeForWarningAttribute = other ?: this
     override fun isSubtypeOf(other: EnhancedTypeForWarningAttribute?): Boolean = true
     override fun toString(): String = "Enhanced for warning(${coneType.renderForDebugging()})"
-    override fun copyWith(newType: ConeKotlinType): EnhancedTypeForWarningAttribute = EnhancedTypeForWarningAttribute(newType)
+    override fun copyWith(newType: ConeKotlinType): EnhancedTypeForWarningAttribute = EnhancedTypeForWarningAttribute(newType, isDeprecation)
 
     override val key: KClass<out EnhancedTypeForWarningAttribute>
         get() = EnhancedTypeForWarningAttribute::class
@@ -36,12 +37,14 @@ class EnhancedTypeForWarningAttribute(
         other as EnhancedTypeForWarningAttribute
 
         if (coneType != other.coneType) return false
+        if (isDeprecation != other.isDeprecation) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = coneType.hashCode()
+        result = 31 * result + isDeprecation.hashCode()
         return result
     }
 }
@@ -50,6 +53,9 @@ val ConeAttributes.enhancedTypeForWarning: EnhancedTypeForWarningAttribute? by C
 
 val ConeKotlinType.enhancedTypeForWarning: ConeKotlinType?
     get() = attributes.enhancedTypeForWarning?.coneType
+
+val ConeKotlinType.isEnhancedTypeForWarningDeprecation: Boolean
+    get() = attributes.enhancedTypeForWarning?.isDeprecation == true
 
 /**
  * Substitutor that substitutes types with their [ConeKotlinType.enhancedTypeForWarning] recursively.
