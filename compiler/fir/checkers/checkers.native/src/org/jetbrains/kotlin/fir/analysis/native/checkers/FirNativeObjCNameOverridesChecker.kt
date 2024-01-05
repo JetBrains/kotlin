@@ -15,9 +15,14 @@ import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameChecke
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.processAllFunctions
+import org.jetbrains.kotlin.fir.scopes.processAllProperties
+import org.jetbrains.kotlin.fir.scopes.retrieveDirectOverriddenOf
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 object FirNativeObjCNameOverridesChecker : FirClassChecker() {
@@ -44,7 +49,7 @@ object FirNativeObjCNameOverridesChecker : FirClassChecker() {
     ) {
         val overriddenSymbols = firTypeScope.retrieveDirectOverriddenOf(memberSymbol)
         if (overriddenSymbols.isEmpty()) return
-        val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol(firTypeScope).getObjCNames(context.session) }
+        val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol(context).getObjCNames(context.session) }
         if (!objCNames.allNamesEquals()) {
             val containingDeclarations = overriddenSymbols.mapNotNull {
                 it.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
@@ -59,9 +64,12 @@ object FirNativeObjCNameOverridesChecker : FirClassChecker() {
         }
     }
 
-    private fun FirCallableSymbol<*>.getFirstBaseSymbol(firTypeScope: FirTypeScope): FirCallableSymbol<*> {
-        val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(this)
-        return if (overriddenMemberSymbols.isEmpty()) this else overriddenMemberSymbols.first().getFirstBaseSymbol(firTypeScope)
+    private fun FirCallableSymbol<*>.getFirstBaseSymbol(context: CheckerContext): FirCallableSymbol<*> {
+        val session = context.session
+        val ownScope = containingClassLookupTag()?.toSymbol(session)?.fullyExpandedClass(session)?.unsubstitutedScope(context)
+            ?: return this
+        val overriddenMemberSymbols = ownScope.retrieveDirectOverriddenOf(this)
+        return if (overriddenMemberSymbols.isEmpty()) this else overriddenMemberSymbols.first().getFirstBaseSymbol(context)
     }
 
     private fun List<List<FirNativeObjCNameChecker.ObjCName?>>.allNamesEquals(): Boolean {

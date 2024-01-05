@@ -195,7 +195,7 @@ interface DerivedI1 : I1 {
     override fun foo()
 }
 
-<!INCOMPATIBLE_OBJC_NAME_OVERRIDE!>abstract class KT64276 : Base(), DerivedI1 {}<!>
+abstract class KT64276 : Base(), DerivedI1 {}
 
 private const val exact = false
 private const val objcName = "nonLiteralArgsObjC"

@@ -281,6 +281,22 @@ fun FirTypeScope.getDirectOverriddenProperties(
     return overriddenProperties.toList()
 }
 
+/**
+ * Provides a list of callables which are directly overridden by the given symbol
+ *
+ * Please be very accurate with using this function.
+ * It can be convenient if the only thing you need is to get directly overridden symbols and nothing more,
+ * but even in this case please check that you are using a correct scope.
+ * E.g. if you want to get overridden symbols of some Foo.bar,
+ * the scope in use must be built from the Foo-based type or Foo class itself.
+ *
+ * If you need to traverse some complex overridden hierarchy,
+ * please consider using processDirectOverriddenFunctions(Properties)WithBaseScope instead.
+ *
+ * @param memberSymbol A callable symbol to find its directly overridden symbols
+ * @receiver Must be an owner scope of the callable symbol to work properly
+ * @return A list of callable symbols which are directly overridden by the given symbol
+ */
 fun FirTypeScope.retrieveDirectOverriddenOf(memberSymbol: FirCallableSymbol<*>): List<FirCallableSymbol<*>> {
     return when (memberSymbol) {
         is FirNamedFunctionSymbol -> {
