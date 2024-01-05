@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.CallKind
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
+import org.jetbrains.kotlin.fir.resolve.calls.processConstraintStorageFromExpression
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -214,7 +215,7 @@ class FirPCLAInferenceSession(
             val returnType = (symbol as? FirVariableSymbol)?.let(returnTypeCalculator::tryCalculateReturnType)
             if (returnType?.type?.containsNotFixedTypeVariables() == true) return true
         }
-        if (callInfo.arguments.any { it.isQualifiedAccessContainingTypeVariables() }) return true
+        if (callInfo.arguments.any { it.isQualifiedAccessContainingTypeVariables() || it.isArgumentUsedOuterCS() }) return true
 
         if (callInfo.resolutionMode is ResolutionMode.ContextDependent.Delegate) return true
 
@@ -228,6 +229,17 @@ class FirPCLAInferenceSession(
         if (callInfo.callKind == CallKind.SyntheticSelect) return true
 
         return false
+    }
+
+    private fun FirExpression.isArgumentUsedOuterCS(): Boolean {
+        var result = false
+        processConstraintStorageFromExpression(this) {
+            if (it.usesOuterCs) {
+                result = true
+            }
+        }
+
+        return result
     }
 
     private fun FirExpression.isReceiverPostponed(): Boolean {

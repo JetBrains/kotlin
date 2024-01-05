@@ -35,26 +35,9 @@ class CandidateFactory private constructor(
     companion object {
         private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
             val system = context.inferenceComponents.createConstraintSystem()
-
-            val argumentSubsystems = buildList {
-                callInfo.arguments.forEach {
-                    processConstraintStorageFromExpression(it, this::add)
-                }
+            callInfo.arguments.forEach {
+                system.addSubsystemFromExpression(it)
             }
-
-            // If any of the arguments uses outer CS, then all of them effectively share it, so we might add the last one as
-            // containing the most up-to-date version.
-            val lastSubsystemWithOuterCs = argumentSubsystems.lastOrNull { it.usesOuterCs }
-            if (lastSubsystemWithOuterCs != null) {
-                system.setBaseSystem(lastSubsystemWithOuterCs)
-            }
-
-            argumentSubsystems.forEach {
-                if (!it.usesOuterCs) {
-                    system.addOtherSystem(it)
-                }
-            }
-
             return system.asReadOnlyStorage()
         }
     }
