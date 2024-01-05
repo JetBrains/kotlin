@@ -7,3 +7,16 @@ fun bar(x: List<String>) {
     x.<!UNRESOLVED_REFERENCE!>removeFirst<!>()
     x.<!UNRESOLVED_REFERENCE!>removeLast<!>()
 }
+
+// Additional test for other SequenceCollection inheritor
+fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>) {
+    x.addFirst("")
+    x.addLast("")
+    x.removeFirst()
+    x.removeLast()
+
+    x.addFirst("")
+    x.addLast("")
+    x.removeFirst()
+    x.removeLast()
+}
