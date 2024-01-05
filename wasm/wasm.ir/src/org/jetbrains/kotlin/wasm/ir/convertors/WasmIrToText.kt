@@ -6,9 +6,15 @@
 package org.jetbrains.kotlin.wasm.ir.convertors
 
 import org.jetbrains.kotlin.wasm.ir.*
+import org.jetbrains.kotlin.wasm.ir.debug.DebugData
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformation
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationConsumer
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationGenerator
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMappingToText
 
 open class SExpressionBuilder {
-    protected val stringBuilder = StringBuilder()
+    protected val stringBuilder = StringBuilderWithLocations()
     protected var indent = 0
 
     protected inline fun indented(body: () -> Unit) {
@@ -45,7 +51,21 @@ open class SExpressionBuilder {
 }
 
 
-class WasmIrToText : SExpressionBuilder() {
+class WasmIrToText(
+    private val debugInformationGenerator: DebugInformationGenerator? = null
+) : SExpressionBuilder(), DebugInformationConsumer {
+    override fun consumeDebugInformation(debugInformation: DebugInformation) {
+        debugInformation.forEach {
+            newLine()
+            stringBuilder.append("(; @custom ")
+            stringBuilder.append(it.name)
+            when (it.data) {
+                is DebugData.StringData -> stringBuilder.append(" \"${it.data.value}\"")
+            }
+            stringBuilder.append(" ;)")
+        }
+    }
+
     fun appendOffset(value: UInt) {
         if (value != 0u)
             appendElement("offset=$value")
@@ -59,6 +79,15 @@ class WasmIrToText : SExpressionBuilder() {
     }
 
     private fun appendInstr(wasmInstr: WasmInstr) {
+        wasmInstr.location?.let {
+            debugInformationGenerator?.addSourceLocation(
+                SourceLocationMappingToText(
+                    it,
+                    SourceLocation.Location("", stringBuilder.lineNumber, stringBuilder.columnNumber),
+                )
+            )
+        }
+
         val op = wasmInstr.operator
 
         if (op.opcode == WASM_OP_PSEUDO_OPCODE) {
@@ -264,6 +293,7 @@ class WasmIrToText : SExpressionBuilder() {
                 startFunction?.let { appendStartFunction(it) }
                 data.forEach { appendData(it) }
                 tags.forEach { appendTag(it) }
+                debugInformationGenerator?.let { consumeDebugInformation(it.generateDebugInformation()) }
             }
         }
     }
@@ -569,6 +599,42 @@ class WasmIrToText : SExpressionBuilder() {
             stringBuilder.append(s.toByteArray().toWatData())
         }
     }
+}
+
+class StringBuilderWithLocations {
+    private val builder = StringBuilder()
+
+    var lineNumber: Int = 0
+        private set
+
+    var columnNumber: Int = -1
+        private set
+
+    fun append(char: Char) {
+        if (char == '\n') {
+            appendLine()
+        } else {
+            builder.append(char)
+        }
+    }
+
+    fun append(text: String) {
+        builder.append(text)
+
+        val lines = text.split('\n').also {
+            if (it.size > 1) columnNumber = -1
+        }
+        lineNumber += lines.size - 1
+        columnNumber += lines.last().length
+    }
+
+    fun appendLine() {
+        builder.appendLine()
+        lineNumber += 1
+        columnNumber = -1
+    }
+
+    override fun toString() = builder.toString()
 }
 
 

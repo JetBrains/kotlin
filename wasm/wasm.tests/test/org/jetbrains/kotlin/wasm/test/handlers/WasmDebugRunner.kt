@@ -178,7 +178,7 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
     }
 
     private val WasmCompilerResult.parsedSourceMaps: SourceMap
-        get() = when (val parseResult = SourceMapParser.parse(sourceMap ?: error("Expect to have source maps for stepping test"))) {
+        get() = when (val parseResult = SourceMapParser.parse(debugInformation?.sourceMapForBinary ?: error("Expect to have source maps for stepping test"))) {
             is SourceMapSuccess -> parseResult.value
             is SourceMapError -> error(parseResult.message)
         }

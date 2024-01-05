@@ -5,16 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.ir.source.location
 
-class SourceLocationMapping(
-    // Offsets in generating binary, initialized lazily. Since blocks has as a prefix variable length number encoding its size 
-    // we can't calculate absolute offsets inside those blocks until we generate whole block and generate size.
-    private val offsets: List<Box>,
-    val sourceLocation: SourceLocation
-) {
-    val offset by lazy {
-        offsets.sumOf {
-            assert(it.value >= 0) { "Offset must be >=0 but ${it.value}" }
-            it.value
-        }
-    }
+abstract class SourceLocationMapping {
+    abstract val sourceLocation: SourceLocation
+    abstract val generatedLocation: SourceLocation.Location
 }

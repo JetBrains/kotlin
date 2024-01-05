@@ -147,8 +147,8 @@ class WasmBackendFacade(
             wat = newWat,
             jsUninstantiatedWrapper = jsUninstantiatedWrapper,
             jsWrapper = jsWrapper,
-            sourceMap = null,
-            wasm = newWasm
+            wasm = newWasm,
+            debugInformation = null
         )
     }
 }
