@@ -1,4 +1,4 @@
-FILE: kt36220.kt
+FILE: kt36220.fir.kt
     public final class TypeDefinition<KotlinType : R|kotlin/Any|> : R|kotlin/Any| {
         public constructor<KotlinType : R|kotlin/Any|>(): R|TypeDefinition<KotlinType>| {
             super<R|kotlin/Any|>()

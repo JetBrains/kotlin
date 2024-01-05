@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FIR_DUMP
 
 class TypeDefinition<KotlinType : Any> {
@@ -13,7 +12,7 @@ fun main() {
         parse { it.toInt() }
         serialize {
             val i = it
-            <!BUILDER_INFERENCE_STUB_RECEIVER!>i<!>.toString()
+            i.toString()
         }
     }
 }
