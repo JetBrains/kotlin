@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.util.PrivateForInline
 
 class BodyResolveContext(
@@ -105,16 +104,6 @@ class BodyResolveContext(
             insideClassHeader = old
         }
     }
-
-    /**
-     * CS for an outer type system if it's relevant, for example, in the case of `val x by myGenericDelegateCall()`,
-     * relevant `getValue` call is expected to be resolved in the context of an outer CS built from `myGenericDelegateCall()` and
-     * probably using its type variables inside `getValue` candidates resolution.
-     *
-     * Note that it's not assumed to modify the storage, but only use it as a base system content for the candidate.
-     */
-    @set:PrivateForInline
-    var outerConstraintStorage: ConstraintStorage = ConstraintStorage.Empty
 
     val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
 
@@ -389,8 +378,6 @@ class BodyResolveContext(
             if (this@BodyResolveContext.inferenceSession is FirPCLAInferenceSession) {
                 inferenceSession = this@BodyResolveContext.inferenceSession
             }
-
-            outerConstraintStorage = this@BodyResolveContext.outerConstraintStorage
         }
 
     // withElement PUBLIC API
@@ -874,21 +861,6 @@ class BodyResolveContext(
             f()
         }
     }
-
-    @OptIn(PrivateForInline::class)
-    inline fun <T> withOuterConstraintStorage(
-        storage: ConstraintStorage,
-        f: () -> T
-    ): T {
-        val oldStorage = this.outerConstraintStorage
-        this.outerConstraintStorage = storage
-        return try {
-            f()
-        } finally {
-            this.outerConstraintStorage = oldStorage
-        }
-    }
-
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withConstructor(constructor: FirConstructor, f: () -> T): T =

@@ -437,9 +437,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 functionCall
             }
 
-            val resultExpression = context.inferenceSession.onCandidatesResolution(withTransformedArguments) {
-                callResolver.resolveCallAndSelectCandidate(withTransformedArguments, data)
-            }
+            val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments, data)
 
             val completeInference = callCompleter.completeCall(resultExpression, data)
             val result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)

@@ -352,9 +352,7 @@ class FirCallCompleter(
 
                 if (pclaInferenceSession != null) {
                     transformer.context.withInferenceSession(pclaInferenceSession) {
-                        transformer.context.withOuterConstraintStorage(candidate.system.currentStorage()) {
-                            lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
-                        }
+                        lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
 
                         applyResultsToMainCandidate()
                     }

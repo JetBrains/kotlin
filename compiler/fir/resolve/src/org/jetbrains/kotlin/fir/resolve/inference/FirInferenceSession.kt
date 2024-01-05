@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -55,8 +54,6 @@ abstract class FirInferenceSession {
         resolutionMode: ResolutionMode,
         completionMode: ConstraintSystemCompletionMode
     ) where T : FirResolvable, T : FirStatement
-
-    open fun <R> onCandidatesResolution(call: FirFunctionCall, candidatesResolutionCallback: () -> R) = candidatesResolutionCallback()
 
     open fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? = null
 

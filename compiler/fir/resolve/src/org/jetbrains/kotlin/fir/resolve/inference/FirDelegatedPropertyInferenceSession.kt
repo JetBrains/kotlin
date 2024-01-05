@@ -58,18 +58,6 @@ class FirDelegatedPropertyInferenceSession(
 
     private var wasCompletionRun = false
 
-    // TODO after PCLA (KT-59107):
-    //  Outer system seems to be a property of a concrete call resolution and probably should be applied to concrete call resolution
-    override fun <R> onCandidatesResolution(call: FirFunctionCall, candidatesResolutionCallback: () -> R): R {
-        if (wasCompletionRun || !call.isAnyOfDelegateOperators()) return candidatesResolutionCallback()
-        requireCallIsDelegateOperator(call)
-
-        return resolutionContext.bodyResolveContext.withOuterConstraintStorage(
-            currentConstraintSystem.currentStorage(),
-            candidatesResolutionCallback
-        )
-    }
-
     override fun customCompletionModeInsteadOfFull(call: FirResolvable): ConstraintSystemCompletionMode? = when {
         call.isAnyOfDelegateOperators() && !wasCompletionRun -> ConstraintSystemCompletionMode.PARTIAL
         else -> null
@@ -105,8 +93,10 @@ class FirDelegatedPropertyInferenceSession(
     private fun <T> T.isProvideDelegate() where T : FirResolvable, T : FirStatement =
         isAnyOfDelegateOperators() && (this as FirResolvable).candidate()?.callInfo?.name == OperatorNameConventions.PROVIDE_DELEGATE
 
-    override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? =
-        resolutionContext.bodyResolveContext.outerConstraintStorage.takeIf { it !== ConstraintStorage.Empty }
+    override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? {
+        if (wasCompletionRun || !candidate.callInfo.callSite.isAnyOfDelegateOperators()) return null
+        return currentConstraintStorage
+    }
 
     fun completeSessionOrPostponeIfNonRoot(onCompletionResultsWriting: (ConeSubstitutor) -> Unit) {
         check(!wasCompletionRun)
