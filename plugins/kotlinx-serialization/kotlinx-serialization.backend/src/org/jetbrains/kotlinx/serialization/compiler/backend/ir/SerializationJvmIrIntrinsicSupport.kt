@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.annotationArrayType
@@ -113,6 +116,7 @@ class SerializationJvmIrIntrinsicSupport(
         const val serializersKtInternalName = "kotlinx/serialization/SerializersKt"
         const val callMethodName = "serializer"
         const val noCompiledSerializerMethodName = "noCompiledSerializer"
+        const val moduleOverPolymorphicName = "moduleThenPolymorphic"
 
         const val magicMarkerStringPrefix = "kotlinx.serialization.serializer."
 
@@ -163,6 +167,11 @@ class SerializationJvmIrIntrinsicSupport(
 
     private val hasNewContextSerializerSignature: Boolean
         get() = currentVersion != null && currentVersion!! >= ApiVersion.parse("1.2.0")!!
+
+    private val useModuleOverContextualForInterfaces: Boolean by lazy {
+        irPluginContext.referenceFunctions(CallableId(FqName("kotlinx.serialization"), Name.identifier(moduleOverPolymorphicName)))
+            .isNotEmpty()
+    }
 
     private fun findTypeSerializerOrContext(argType: IrType): IrClassSymbol? =
         emptyGenerator.findTypeSerializerOrContextUnchecked(this, argType, useTypeAnnotations = false)
@@ -320,6 +329,63 @@ class SerializationJvmIrIntrinsicSupport(
         if (type.isMarkedNullable()) adapter.wrapStackValueIntoNullableSerializer()
     }
 
+    private fun InstructionAdapter.insertNoCompiledSerializerCall(
+        kType: IrType,
+        argSerializers: List<Pair<IrType, IrClassSymbol?>>,
+        intrinsicType: IntrinsicType,
+    ): Boolean {
+        require(intrinsicType is IntrinsicType.WithModule) // SIMPLE is covered in previous if
+        // SerializersModule
+        load(intrinsicType.storedIndex, serializersModuleType)
+        // KClass
+        aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
+        AsmUtil.wrapJavaClassIntoKClass(this)
+
+        val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
+        // Generic args (if present)
+        if (argSerializers.isNotEmpty()) {
+            fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+                generateSerializerForType(type, this, intrinsicType)
+            }
+            descriptor.append(kSerializerArrayType.descriptor)
+        }
+        descriptor.append(")${kSerializerType.descriptor}")
+        invokestatic(
+            serializersKtInternalName,
+            noCompiledSerializerMethodName,
+            descriptor.toString(),
+            false
+        )
+        return false
+    }
+
+    private fun InstructionAdapter.moduleOverPolymorphic(serializer: IrClassSymbol, kType: IrType, intrinsicType: IntrinsicType, argSerializers: List<Pair<IrType, IrClassSymbol?>>): Boolean {
+        if (serializer.owner.classId == polymorphicSerializerId && kType.isInterface() && intrinsicType is IntrinsicType.WithModule && useModuleOverContextualForInterfaces) {
+            load(intrinsicType.storedIndex, serializersModuleType)
+            // KClass
+            aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
+            AsmUtil.wrapJavaClassIntoKClass(this)
+
+            val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
+            // Generic args (if present)
+            if (argSerializers.isNotEmpty()) {
+                fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+                    generateSerializerForType(type, this, intrinsicType)
+                }
+                descriptor.append(kSerializerArrayType.descriptor)
+            }
+            descriptor.append(")${kSerializerType.descriptor}")
+            invokestatic(
+                serializersKtInternalName,
+                moduleOverPolymorphicName,
+                descriptor.toString(),
+                false
+            )
+            return true
+        }
+        return false
+    }
+
     private fun stackValueSerializerInstance(
         kType: IrType, maybeSerializer: IrClassSymbol?,
         iv: InstructionAdapter,
@@ -376,31 +442,9 @@ class SerializationJvmIrIntrinsicSupport(
             signature?.append(kSerializerType.descriptor)
         }
 
-        val serializer = maybeSerializer ?: iv.run {// insert noCompilerSerializer(module, kClass, arguments)
-            require(intrinsicType is IntrinsicType.WithModule) // SIMPLE is covered in previous if
-            // SerializersModule
-            load(intrinsicType.storedIndex, serializersModuleType)
-            // KClass
-            aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
-            AsmUtil.wrapJavaClassIntoKClass(this)
+        val serializer = maybeSerializer ?: return iv.insertNoCompiledSerializerCall(kType, argSerializers, intrinsicType)
 
-            val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
-            // Generic args (if present)
-            if (argSerializers.isNotEmpty()) {
-                fillArray(kSerializerType, argSerializers) { _, (type, _) ->
-                    generateSerializerForType(type, this, intrinsicType)
-                }
-                descriptor.append(kSerializerArrayType.descriptor)
-            }
-            descriptor.append(")${kSerializerType.descriptor}")
-            invokestatic(
-                serializersKtInternalName,
-                noCompiledSerializerMethodName,
-                descriptor.toString(),
-                false
-            )
-            return false
-        }
+        if (iv.moduleOverPolymorphic(serializer, kType, intrinsicType, argSerializers)) return true
 
         // new serializer if needed
         iv.apply {

@@ -187,6 +187,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   }
 
   @Test
+  @TestMetadata("intrinsicsPolymorphicPriority.kt")
+  public void testIntrinsicsPolymorphicPriority() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsPolymorphicPriority.kt");
+  }
+
+  @Test
   @TestMetadata("intrinsicsStarProjections.kt")
   public void testIntrinsicsStarProjections() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsStarProjections.kt");
