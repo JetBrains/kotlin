@@ -73,19 +73,19 @@ internal object UNINITIALIZED_VALUE
 // internal to be called from lazy in JS
 internal class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
     private var initializer: (() -> T)? = initializer
-    private var _value: Any? = UNINITIALIZED_VALUE
+    private var _value: T? = null
 
     override val value: T
         get() {
-            if (_value === UNINITIALIZED_VALUE) {
-                _value = initializer!!()
+            initializer?.let {
+                _value = it()
                 initializer = null
             }
             @Suppress("UNCHECKED_CAST")
             return _value as T
         }
 
-    override fun isInitialized(): Boolean = _value !== UNINITIALIZED_VALUE
+    override fun isInitialized(): Boolean = initializer == null
 
     override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
 
