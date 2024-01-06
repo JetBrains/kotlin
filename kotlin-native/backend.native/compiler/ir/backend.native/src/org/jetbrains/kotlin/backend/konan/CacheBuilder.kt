@@ -283,6 +283,7 @@ class CacheBuilder(
                 if (filesToCache.isNotEmpty())
                     put(KonanConfigKeys.FILES_TO_CACHE, filesToCache)
             }
+            configuration.report(CompilerMessageSeverity.LOGGING, "    cache has been built: ${File(libraryCache.absolutePath).exists}")
             cacheRootDirectories[library] = libraryCache.absolutePath
         } catch (t: Throwable) {
             configuration.report(CompilerMessageSeverity.LOGGING, "${t.message}\n${t.stackTraceToString()}")
