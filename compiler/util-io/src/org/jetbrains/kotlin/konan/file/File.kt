@@ -81,7 +81,10 @@ data class File constructor(internal val javaPath: Path) {
 
     fun mkdirs() = Files.createDirectories(javaPath)
     fun delete() = Files.deleteIfExists(javaPath)
-    fun deleteRecursively() = postorder{Files.delete(it)}
+    fun deleteRecursively() {
+        println("DELETING $absolutePath")
+        postorder{Files.delete(it)}
+    }
     fun deleteOnExitRecursively() = preorder{File(it).deleteOnExit()}
 
     fun preorder(task: (Path) -> Unit) {
