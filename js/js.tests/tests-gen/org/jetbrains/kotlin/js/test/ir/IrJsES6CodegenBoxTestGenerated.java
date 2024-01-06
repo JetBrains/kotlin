@@ -4630,6 +4630,16 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/cinterop/packages")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Packages {
+            @Test
+            public void testAllFilesPresentInPackages() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/packages"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+        }
     }
 
     @Nested

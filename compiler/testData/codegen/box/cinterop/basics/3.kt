@@ -4,14 +4,14 @@
  */
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
-// FILE: cstdlib_3.def
+// FILE: cstdlib.def
 headers = stdlib.h
 
 // MODULE: main(cinterop)
 // FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
-import cstdlib_3.*
+import cstdlib.*
 import kotlinx.cinterop.*
 import kotlin.test.*
 

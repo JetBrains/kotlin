@@ -5103,6 +5103,57 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                     runTest("compiler/testData/codegen/box/cinterop/exceptions/cCallback.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/cinterop/packages")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @UseExtTestCaseGroupProvider()
+            @UsePartialLinkage(mode = Mode.DISABLED)
+            @Tag("no-partial-linkage-may-be-skipped")
+            public class Packages {
+                @Test
+                public void testAllFilesPresentInPackages() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/packages"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("dotFnameNested1.kt")
+                public void testDotFnameNested1() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/packages/dotFnameNested1.kt");
+                }
+
+                @Test
+                @TestMetadata("dotFnameNested2.kt")
+                public void testDotFnameNested2() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/packages/dotFnameNested2.kt");
+                }
+
+                @Test
+                @TestMetadata("dotFnameRoot.kt")
+                public void testDotFnameRoot() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/packages/dotFnameRoot.kt");
+                }
+
+                @Test
+                @TestMetadata("nested1.kt")
+                public void testNested1() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/packages/nested1.kt");
+                }
+
+                @Test
+                @TestMetadata("nested2.kt")
+                public void testNested2() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/packages/nested2.kt");
+                }
+
+                @Test
+                @TestMetadata("root.kt")
+                public void testRoot() throws Exception {
+                    runTest("compiler/testData/codegen/box/cinterop/packages/root.kt");
+                }
+            }
         }
 
         @Nested

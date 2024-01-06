@@ -6058,6 +6058,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/cinterop/packages")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Packages {
+            @Test
+            public void testAllFilesPresentInPackages() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/packages"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+        }
     }
 
     @Nested

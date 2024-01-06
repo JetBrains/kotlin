@@ -11,21 +11,21 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 
-internal fun PsiElement.ensureSurroundedByWhiteSpace(): PsiElement =
-    ensureHasWhiteSpaceBefore().ensureHasWhiteSpaceAfter()
+internal fun PsiElement.ensureSurroundedByNewLines(): PsiElement =
+    ensureHasNewLineBefore().ensureHasNewLineAfter()
 
-private fun PsiElement.ensureHasWhiteSpaceBefore(): PsiElement {
+private fun PsiElement.ensureHasNewLineBefore(): PsiElement {
     val (fileBoundaryReached, whiteSpaceBefore) = whiteSpaceBefore()
-    if (!fileBoundaryReached and !whiteSpaceBefore.endsWith(" ")) {
-        parent.addBefore(KtPsiFactory(project).createWhiteSpace(" "), this)
+    if (!fileBoundaryReached and !whiteSpaceBefore.endsWith("\n")) {
+        parent.addBefore(KtPsiFactory(project).createWhiteSpace("\n"), this)
     }
     return this
 }
 
-private fun PsiElement.ensureHasWhiteSpaceAfter(): PsiElement {
+private fun PsiElement.ensureHasNewLineAfter(): PsiElement {
     val (fileBoundaryReached, whiteSpaceAfter) = whiteSpaceAfter()
-    if (!fileBoundaryReached and !whiteSpaceAfter.startsWith(" ")) {
-        parent.addAfter(KtPsiFactory(project).createWhiteSpace(" "), this)
+    if (!fileBoundaryReached and !whiteSpaceAfter.startsWith("\n")) {
+        parent.addAfter(KtPsiFactory(project).createWhiteSpace("\n"), this)
     }
     return this
 }

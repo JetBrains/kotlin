@@ -4612,6 +4612,16 @@ public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTes
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/exceptions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/cinterop/packages")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Packages {
+            @Test
+            public void testAllFilesPresentInPackages() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cinterop/packages"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+        }
     }
 
     @Nested
