@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.scopes.CallableCopySubstitution
@@ -25,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -298,7 +297,29 @@ class FirClassSubstitutionScope(
             symbolForOverride,
             substitutor,
             origin,
-            forceTypeParametersRecreation = dispatchReceiverTypeForSubstitutedMembers.lookupTag != memberOwnerClassLookupTag
+            forceTypeParametersRecreation = dispatchReceiverTypeForSubstitutedMembers.lookupTag != memberOwnerClassLookupTag,
+            boundSubstitutor = object : AbstractConeSubstitutor(session.typeContext) {
+                override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+                    if (type is ConeTypeParameterType && memberOwnerClassLookupTag != null) {
+                        val lookupTag = (type.lookupTag.typeParameterSymbol.containingDeclarationSymbol as? FirClassSymbol)?.toLookupTag()
+                        if (lookupTag != null && !memberOwnerClassLookupTag.classId.hasLookupTagInSelfOrOuterClass(lookupTag)) {
+                            return null
+                        }
+                    }
+                    return substitutor.substituteOrNull(type)
+                }
+
+                private fun ClassId.hasLookupTagInSelfOrOuterClass(lookupTag: ConeClassLikeLookupTag): Boolean {
+                    var currentClassId: ClassId? = this
+                    while (currentClassId != null) {
+                        if (lookupTag == currentClassId.toLookupTag()) {
+                            return true
+                        }
+                        currentClassId = currentClassId.outerClassId
+                    }
+                    return false
+                }
+            }
         )
 
         val receiverType = member.receiverParameter?.typeRef?.coneType

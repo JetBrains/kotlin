@@ -61,6 +61,7 @@ class MutableVariableWithConstraints private constructor(
     // return new actual constraint, if this constraint is new, otherwise return already existed not redundant constraint
     // the second element of pair is a flag whether a constraint was added in fact
     fun addConstraint(constraint: Constraint): Pair<Constraint, Boolean> {
+        //println("$typeVariable $constraint")
         val isLowerAndFlexibleTypeWithDefNotNullLowerBound = constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound()
 
         for (previousConstraint in constraints) {

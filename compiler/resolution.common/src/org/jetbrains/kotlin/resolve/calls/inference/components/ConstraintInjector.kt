@@ -402,6 +402,7 @@ class ConstraintInjector(
                         c.addError(NewConstraintError(lowerType, flexibleUpperType, position))
                     }
                 } else {
+                    //println("Error: $lowerType <: $upperType")
                     c.addError(NewConstraintError(lowerType, upperType, position))
                 }
             }

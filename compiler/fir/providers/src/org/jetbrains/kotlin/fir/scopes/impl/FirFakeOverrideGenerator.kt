@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -698,6 +699,7 @@ object FirFakeOverrideGenerator {
         substitutor: ConeSubstitutor,
         origin: FirDeclarationOrigin,
         forceTypeParametersRecreation: Boolean = true,
+        boundSubstitutor: ConeSubstitutor = substitutor
     ): Pair<List<FirTypeParameterRef>, ConeSubstitutor> {
         if (member.typeParameters.isEmpty()) return Pair(member.typeParameters, substitutor)
         val newTypeParameters = member.typeParameters.map { typeParameterRef ->
@@ -727,7 +729,7 @@ object FirFakeOverrideGenerator {
             val original = oldTypeParameter.symbol.fir
             for (boundTypeRef in original.symbol.resolvedBounds) {
                 val typeForBound = boundTypeRef.coneType
-                val substitutedBound = substitutor.substituteOrNull(typeForBound)
+                val substitutedBound = boundSubstitutor.substituteOrNull(typeForBound)
                 if (substitutedBound != null) {
                     wereChangesInTypeParameters = true
                 }
