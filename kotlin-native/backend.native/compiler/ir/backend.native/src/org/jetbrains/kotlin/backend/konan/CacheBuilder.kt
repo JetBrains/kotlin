@@ -82,12 +82,16 @@ class CacheBuilder(
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
         val icedLibraries = mutableListOf<KotlinLibrary>()
 
+        configuration.report(CompilerMessageSeverity.LOGGING, "BUILT CACHES:")
+
         allLibraries.forEach { library ->
             val isDefaultOrExternal = library.isDefault || library.isExternal
             val cache = konanConfig.cachedLibraries.getLibraryCache(library, !isDefaultOrExternal)
             cache?.let {
                 caches[library] = it
                 cacheRootDirectories[library] = it.rootDirectory
+
+                configuration.report(CompilerMessageSeverity.LOGGING, "    ${library.libraryName}: ${it.rootDirectory}")
             }
             if (isDefaultOrExternal) {
                 if (cache == null) externalLibrariesToCache += library
