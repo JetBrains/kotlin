@@ -15,8 +15,15 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
     private val outputFiles = generationState.outputFiles
 
     companion object {
-        fun renameOutput(outputFiles: OutputFiles) {
-            if (outputFiles.mainFile.exists) return
+        fun renameOutput(outputFiles: OutputFiles, overwrite: Boolean) {
+            if (outputFiles.mainFile.exists) {
+                if (!overwrite)
+                    return
+                val tempDirectoryForRemoval = File(outputFiles.mainFileName + "-to-remove")
+                if (!outputFiles.mainFile.renameTo(tempDirectoryForRemoval))
+                    return
+                tempDirectoryForRemoval.deleteRecursively()
+            }
             if (!outputFiles.tempCacheDirectory!!.renameTo(outputFiles.mainFile))
                 outputFiles.tempCacheDirectory.deleteRecursively()
         }
