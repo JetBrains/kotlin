@@ -58,7 +58,7 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
     }
 
     @Throws(IOException::class)
-    protected fun doTest(ktFilePath: String, useJavac: Boolean) {
+    protected open fun doTest(ktFilePath: String, useJavac: Boolean) {
         Assert.assertTrue(ktFilePath.endsWith(".kt"))
         val ktFile = File(ktFilePath)
         val javaFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".java"))

@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
-import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
-import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileKotlinAgainstJavaTest
-import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrLoadJavaTest
+import org.jetbrains.kotlin.jvm.compiler.ir.*
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.klib.AbstractKlibIrTextTestCase
 import org.jetbrains.kotlin.klib.AbstractKlibJsIrTextTestCase
@@ -208,6 +206,8 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 )
             }
 
+
+
             testClass<AbstractCompileKotlinAgainstJavaTest> {
                 model(
                     "compileKotlinAgainstJava",
@@ -308,6 +308,37 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                     targetBackend = TargetBackend.JVM_IR
                 )
             }
+
+            testClass<AbstractFirLightTreeCompileJavaAgainstKotlinTest> {
+                model(
+                    "compileJavaAgainstKotlin",
+                    testClassName = "WithoutJavac",
+                    testMethod = "doTestWithoutJavac",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+                model(
+                    "compileJavaAgainstKotlin",
+                    testClassName = "WithJavac",
+                    testMethod = "doTestWithJavac",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+            }
+
+            testClass<AbstractFirPsiCompileJavaAgainstKotlinTest> {
+                model(
+                    "compileJavaAgainstKotlin",
+                    testClassName = "WithoutJavac",
+                    testMethod = "doTestWithoutJavac",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+                model(
+                    "compileJavaAgainstKotlin",
+                    testClassName = "WithJavac",
+                    testMethod = "doTestWithJavac",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+            }
+
 
             testClass<AbstractIrCompileKotlinAgainstJavaTest> {
                 model(
