@@ -29,6 +29,14 @@ import org.junit.runner.RunWith
     IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated::class,
     IrCompileKotlinAgainstInlineKotlinTestGenerated::class,
 
+    FirLightTreeBlackBoxCodegenTestGenerated::class,
+    FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated::class,
+    FirLightTreeSerializeCompileKotlinAgainstInlineKotlinTestGenerated::class,
+
+    FirPsiBlackBoxCodegenTestGenerated::class,
+    FirPsiBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated::class,
+    FirPsiSerializeCompileKotlinAgainstInlineKotlinTestGenerated::class,
+
     CoreJrtFsTest::class
 )
 @IncludeClassNamePatterns(".*Test.*Generated")
