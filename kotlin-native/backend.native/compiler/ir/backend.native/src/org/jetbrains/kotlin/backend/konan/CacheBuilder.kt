@@ -286,7 +286,6 @@ class CacheBuilder(
             configuration.report(CompilerMessageSeverity.LOGGING,
                     "    cache has been built: ${File(libraryCache.absolutePath).exists} ${libraryCache.absolutePath}")
 
-
             cacheRootDirectories[library] = libraryCache.absolutePath
         } catch (t: Throwable) {
             configuration.report(CompilerMessageSeverity.LOGGING, "${t.message}\n${t.stackTraceToString()}")
