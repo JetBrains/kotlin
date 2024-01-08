@@ -24,6 +24,7 @@ class IncrementalCompilationContext(
      */
     val trackChangesInLookupCache: Boolean = false,
     val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
+    val fragmentContext: FragmentContext? = null,
 ) {
     @Deprecated("This constructor is scheduled to be removed. KSP is using it")
     constructor(

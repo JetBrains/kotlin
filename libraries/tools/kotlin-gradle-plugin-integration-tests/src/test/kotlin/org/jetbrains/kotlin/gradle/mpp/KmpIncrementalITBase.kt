@@ -20,7 +20,12 @@ import java.nio.file.Path
 abstract class KmpIncrementalITBase : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK2()
+        get() = super.defaultBuildOptions.copyEnsuringK2().copy(
+            /**
+             * disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
+             */
+            enableUnsafeIncrementalCompilationForMultiplatform = true
+        )
 
     protected open val gradleTask = "assemble"
     protected open val projectName = "generic-kmp-app-plus-lib-with-tests"

@@ -22,7 +22,10 @@ import org.junit.jupiter.api.DisplayName
 @MppGradlePluginTests
 open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK2()
+        get() = super.defaultBuildOptions.copyEnsuringK2().copy(
+            // disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
+            enableUnsafeIncrementalCompilationForMultiplatform = true
+        )
 
     @DisplayName("File with actual declaration needs recompiling")
     @GradleTest

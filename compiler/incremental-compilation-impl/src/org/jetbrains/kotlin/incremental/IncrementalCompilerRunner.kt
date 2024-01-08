@@ -91,6 +91,7 @@ abstract class IncrementalCompilerRunner<
     private fun createIncrementalCompilationContext(
         fileLocations: FileLocations?,
         transaction: CompilationTransaction,
+        fragmentContext: FragmentContext? = null,
     ) = IncrementalCompilationContext(
         pathConverterForSourceFiles = fileLocations?.let { it.getRelocatablePathConverterForSourceFiles() } ?: BasicFileToPathConverter,
         pathConverterForOutputFiles = fileLocations?.let { it.getRelocatablePathConverterForOutputFiles() } ?: BasicFileToPathConverter,
@@ -99,6 +100,7 @@ abstract class IncrementalCompilerRunner<
         trackChangesInLookupCache = shouldTrackChangesInLookupCache,
         storeFullFqNamesInLookupCache = shouldStoreFullFqNamesInLookupCache,
         icFeatures = icFeatures,
+        fragmentContext = fragmentContext,
     )
 
     protected abstract val shouldTrackChangesInLookupCache: Boolean
@@ -165,6 +167,9 @@ abstract class IncrementalCompilerRunner<
         class Failed(val reason: BuildAttribute, val cause: Throwable) : ICResult
     }
 
+    // Be aware that [tryCompileIncrementally] catches a lot of exceptions internally.
+    // So this transformer should be used for very specific things, like cache closing, that are
+    // related to the transaction as a whole rather than any compilation step.
     private fun incrementalCompilationExceptionTransformer(t: Throwable): ICResult = when (t) {
         is CachesManagerCloseException -> ICResult.Failed(IC_FAILED_TO_CLOSE_CACHES, t)
         else -> throw t
@@ -186,10 +191,19 @@ abstract class IncrementalCompilerRunner<
         if (changedFiles is ChangedFiles.Unknown) {
             return ICResult.RequiresRebuild(UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
         }
-        changedFiles as ChangedFiles.Known?
+
+        val fragmentContext = if (!icFeatures.enableUnsafeIncrementalCompilationForMultiplatform) { //see KT-62686
+            FragmentContext.fromCompilerArguments(args)
+        } else {
+            null
+        }
 
         return createTransaction().runWithin(::incrementalCompilationExceptionTransformer) { transaction ->
-            val icContext = createIncrementalCompilationContext(fileLocations, transaction)
+            val icContext = createIncrementalCompilationContext(
+                fileLocations,
+                transaction,
+                fragmentContext
+            )
             val caches = createCacheManager(icContext, args).also {
                 // this way we make the transaction to be responsible for closing the caches manager
                 transaction.cachesManager = it
@@ -198,7 +212,7 @@ abstract class IncrementalCompilerRunner<
             fun compile(): ICResult {
                 // Step 1: Get changed files
                 val knownChangedFiles: ChangedFiles.Known = try {
-                    getChangedFiles(changedFiles, allSourceFiles, caches)
+                    getChangedFiles(changedFiles as ChangedFiles.Known?, allSourceFiles, caches)
                 } catch (e: Throwable) {
                     return ICResult.Failed(IC_FAILED_TO_GET_CHANGED_FILES, e)
                 }
@@ -241,6 +255,8 @@ abstract class IncrementalCompilerRunner<
                         abiSnapshotData,
                         messageCollector,
                     )
+                } catch (e: RequireRebuildForCorrectnessInKMPException) {
+                    return ICResult.RequiresRebuild(UNSAFE_INCREMENTAL_CHANGE_KT_62686)
                 } catch (e: Throwable) {
                     return ICResult.Failed(IC_FAILED_TO_COMPILE_INCREMENTALLY, e)
                 }
@@ -463,8 +479,13 @@ abstract class IncrementalCompilerRunner<
 
             val lookupTracker = LookupTrackerImpl(getLookupTrackerDelegate())
             val expectActualTracker = ExpectActualTrackerImpl()
-            //TODO(valtman) sourceToCompile calculate based on abiSnapshot
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
+
+            icContext.fragmentContext?.let {
+                if (it.dirtySetTouchesNonLeafFragments(sourcesToCompile)) {
+                    throw RequireRebuildForCorrectnessInKMPException()
+                }
+            }
 
             val services = makeServices(
                 args, lookupTracker, expectActualTracker, caches,

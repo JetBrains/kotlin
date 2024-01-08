@@ -19,7 +19,7 @@ import java.io.Serializable
  *
  * To add a new feature toggle, consider this checklist:
  *
- * 1. Gradle input: see [AbstractKotlinCompile.getIncrementalCompilationFeatures].
+ * 1. Gradle input: see [AbstractKotlinCompile.makeIncrementalCompilationFeatures].
  *    Platform-agnostic properties should be the default, but you can extend one of the subclasses, if needed.
  *    If new property might affect the result of compilation, annotate it with @Input.
  * 2. Gradle.properties support: declare the property in [org.jetbrains.kotlin.gradle.plugin.PropertiesProvider].
@@ -48,11 +48,17 @@ data class IncrementalCompilationFeatures(
      * Requires [preciseCompilationResultsBackup]
      */
     val keepIncrementalCompilationCachesInMemory: Boolean = false,
+    /**
+     * By default, with k2 KMP, we recompile the whole module, if any common sources are recompiled.
+     * It provides consistent builds at the cost of compilation speed. (See KT-62686 for the underlying issue.)
+     * You can enable "unsafeIC" to use pre-2.0 behavior with potentially incorrect incremental builds.
+     */
+    val enableUnsafeIncrementalCompilationForMultiplatform: Boolean = false,
 ) : Serializable {
 
     companion object {
         val DEFAULT_CONFIGURATION = IncrementalCompilationFeatures()
 
-        const val serialVersionUID: Long = 0
+        const val serialVersionUID: Long = 1
     }
 }
