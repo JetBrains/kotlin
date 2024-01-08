@@ -159,6 +159,7 @@ public class KtTestUtil {
         return getJdkHome("JDK_17_0", "JDK_17");
     }
 
+    @NotNull
     public static File getJdk21Home() {
         return getJdkHome("JDK_21_0", "JDK_21");
     }
