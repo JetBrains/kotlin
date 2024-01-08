@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirVariableAssignmentChecker
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
-object FirInlineBodyVariableAssignmentChecker : FirVariableAssignmentChecker() {
+object FirInlineBodyVariableAssignmentChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
         val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
         val propertySymbol = expression.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol ?: return

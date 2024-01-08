@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
-abstract class AbstractFirPropertyInitializationChecker {
+abstract class AbstractFirPropertyInitializationChecker(final override val mppKind: MppCheckerKind) : FirCheckerWithMppKind {
     abstract fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext)
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.resolvedType
 
-abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker() {
+abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker(MppCheckerKind.Common) {
     protected fun checkSafeCallReceiverType(
         receiverType: ConeKotlinType,
         source: KtSourceElement?,

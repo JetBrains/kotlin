@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 
 /*
@@ -14,7 +16,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
  * DO NOT MODIFY IT MANUALLY
  */
 
-class ComposedDeclarationCheckers : DeclarationCheckers() {
+class ComposedDeclarationCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : DeclarationCheckers() {
+    constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })
+
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = _basicDeclarationCheckers
     override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
@@ -85,27 +89,27 @@ class ComposedDeclarationCheckers : DeclarationCheckers() {
 
     @CheckersComponentInternal
     fun register(checkers: DeclarationCheckers) {
-        _basicDeclarationCheckers += checkers.basicDeclarationCheckers
-        _callableDeclarationCheckers += checkers.callableDeclarationCheckers
-        _functionCheckers += checkers.functionCheckers
-        _simpleFunctionCheckers += checkers.simpleFunctionCheckers
-        _propertyCheckers += checkers.propertyCheckers
-        _classLikeCheckers += checkers.classLikeCheckers
-        _classCheckers += checkers.classCheckers
-        _regularClassCheckers += checkers.regularClassCheckers
-        _constructorCheckers += checkers.constructorCheckers
-        _fileCheckers += checkers.fileCheckers
-        _scriptCheckers += checkers.scriptCheckers
-        _typeParameterCheckers += checkers.typeParameterCheckers
-        _typeAliasCheckers += checkers.typeAliasCheckers
-        _anonymousFunctionCheckers += checkers.anonymousFunctionCheckers
-        _propertyAccessorCheckers += checkers.propertyAccessorCheckers
-        _backingFieldCheckers += checkers.backingFieldCheckers
-        _valueParameterCheckers += checkers.valueParameterCheckers
-        _enumEntryCheckers += checkers.enumEntryCheckers
-        _anonymousObjectCheckers += checkers.anonymousObjectCheckers
-        _anonymousInitializerCheckers += checkers.anonymousInitializerCheckers
-        _controlFlowAnalyserCheckers += checkers.controlFlowAnalyserCheckers
-        _variableAssignmentCfaBasedCheckers += checkers.variableAssignmentCfaBasedCheckers
+        checkers.basicDeclarationCheckers.filterTo(_basicDeclarationCheckers, predicate)
+        checkers.callableDeclarationCheckers.filterTo(_callableDeclarationCheckers, predicate)
+        checkers.functionCheckers.filterTo(_functionCheckers, predicate)
+        checkers.simpleFunctionCheckers.filterTo(_simpleFunctionCheckers, predicate)
+        checkers.propertyCheckers.filterTo(_propertyCheckers, predicate)
+        checkers.classLikeCheckers.filterTo(_classLikeCheckers, predicate)
+        checkers.classCheckers.filterTo(_classCheckers, predicate)
+        checkers.regularClassCheckers.filterTo(_regularClassCheckers, predicate)
+        checkers.constructorCheckers.filterTo(_constructorCheckers, predicate)
+        checkers.fileCheckers.filterTo(_fileCheckers, predicate)
+        checkers.scriptCheckers.filterTo(_scriptCheckers, predicate)
+        checkers.typeParameterCheckers.filterTo(_typeParameterCheckers, predicate)
+        checkers.typeAliasCheckers.filterTo(_typeAliasCheckers, predicate)
+        checkers.anonymousFunctionCheckers.filterTo(_anonymousFunctionCheckers, predicate)
+        checkers.propertyAccessorCheckers.filterTo(_propertyAccessorCheckers, predicate)
+        checkers.backingFieldCheckers.filterTo(_backingFieldCheckers, predicate)
+        checkers.valueParameterCheckers.filterTo(_valueParameterCheckers, predicate)
+        checkers.enumEntryCheckers.filterTo(_enumEntryCheckers, predicate)
+        checkers.anonymousObjectCheckers.filterTo(_anonymousObjectCheckers, predicate)
+        checkers.anonymousInitializerCheckers.filterTo(_anonymousInitializerCheckers, predicate)
+        checkers.controlFlowAnalyserCheckers.filterTo(_controlFlowAnalyserCheckers, predicate)
+        checkers.variableAssignmentCfaBasedCheckers.filterTo(_variableAssignmentCfaBasedCheckers, predicate)
     }
 }

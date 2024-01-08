@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-object FirJvmSuspensionPointInsideMutexLockChecker : FirFunctionCallChecker() {
+object FirJvmSuspensionPointInsideMutexLockChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     private val synchronizedCallableId = CallableId(FqName("kotlin"), Name.identifier("synchronized"))
     private val withLockCallableId = CallableId(FqName("kotlin.concurrent"), Name.identifier("withLock"))
     private val synchronizedBlockParamName = Name.identifier("block")

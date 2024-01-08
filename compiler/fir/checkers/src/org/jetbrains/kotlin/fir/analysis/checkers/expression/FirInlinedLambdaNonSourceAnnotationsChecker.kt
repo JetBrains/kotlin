@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAnonymousFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.getAnnotationRetention
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 
-object FirInlinedLambdaNonSourceAnnotationsChecker : FirAnonymousFunctionChecker() {
+object FirInlinedLambdaNonSourceAnnotationsChecker : FirAnonymousFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.inlineStatus != InlineStatus.Inline && declaration.inlineStatus != InlineStatus.CrossInline) {
             return

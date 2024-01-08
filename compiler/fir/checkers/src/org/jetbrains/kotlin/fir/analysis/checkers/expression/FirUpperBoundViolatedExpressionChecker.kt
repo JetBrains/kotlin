@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChecker() {
+object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         // something that contains the type parameters
         // declarations with their declared bounds.

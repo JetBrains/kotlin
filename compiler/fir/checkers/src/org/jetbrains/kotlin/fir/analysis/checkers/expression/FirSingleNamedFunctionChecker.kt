@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 
-object FirSingleNamedFunctionChecker : FirBlockChecker() {
+object FirSingleNamedFunctionChecker : FirBlockChecker(MppCheckerKind.Common) {
     override fun check(expression: FirBlock, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression is FirSingleExpressionBlock && expression.statement is FirSimpleFunction) {
             reporter.reportOn(

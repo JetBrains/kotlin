@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 // TODO reimplement using AdditionalTypeChecker KT-62864
-object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpressionChecker() {
+object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val symbol = expression.toResolvedCallableSymbol() ?: return
         val substitutor = buildSubstitutor(expression, symbol, context.session)
@@ -83,7 +84,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
     }
 }
 
-object FirThrowJavaNullabilityWarningChecker : FirThrowExpressionChecker() {
+object FirThrowJavaNullabilityWarningChecker : FirThrowExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirThrowExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         expression.exception.checkExpressionForEnhancedTypeMismatch(
             expectedType = context.session.builtinTypes.throwableType.coneType,
@@ -94,7 +95,7 @@ object FirThrowJavaNullabilityWarningChecker : FirThrowExpressionChecker() {
     }
 }
 
-object FirAssignmentJavaNullabilityWarningChecker : FirVariableAssignmentChecker() {
+object FirAssignmentJavaNullabilityWarningChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
         expression.rValue.checkExpressionForEnhancedTypeMismatch(
             expectedType = expression.lValue.resolvedType,
@@ -105,14 +106,14 @@ object FirAssignmentJavaNullabilityWarningChecker : FirVariableAssignmentChecker
     }
 }
 
-object FirLogicExpressionTypeJavaNullabilityWarningChecker : FirLogicExpressionChecker() {
+object FirLogicExpressionTypeJavaNullabilityWarningChecker : FirLogicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirBinaryLogicExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         expression.leftOperand.checkConditionForEnhancedTypeMismatch(context, reporter)
         expression.rightOperand.checkConditionForEnhancedTypeMismatch(context, reporter)
     }
 }
 
-object FirLoopConditionJavaNullabilityWarningChecker : FirLoopExpressionChecker() {
+object FirLoopConditionJavaNullabilityWarningChecker : FirLoopExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirLoop, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression is FirErrorLoop) return
         val condition = expression.condition
@@ -120,7 +121,7 @@ object FirLoopConditionJavaNullabilityWarningChecker : FirLoopExpressionChecker(
     }
 }
 
-object FirWhenConditionJavaNullabilityWarningChecker : FirWhenExpressionChecker() {
+object FirWhenConditionJavaNullabilityWarningChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         for (branch in expression.branches) {
             val condition = branch.condition

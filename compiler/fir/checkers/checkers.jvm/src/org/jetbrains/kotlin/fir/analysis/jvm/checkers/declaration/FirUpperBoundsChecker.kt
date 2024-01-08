@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirTypeParameterCh
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isArrayType
 
-object FirUpperBoundsChecker : FirTypeParameterChecker() {
+object FirUpperBoundsChecker : FirTypeParameterChecker(MppCheckerKind.Common) {
 
     override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.symbol.resolvedBounds.any { it.coneType.isArrayType }) {

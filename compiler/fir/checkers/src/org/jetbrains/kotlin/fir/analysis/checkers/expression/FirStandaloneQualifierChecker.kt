@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isStandalone
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 
-object FirStandaloneQualifierChecker : FirResolvedQualifierChecker() {
+object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     override fun check(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!expression.isStandalone(context)) return
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
@@ -28,7 +29,8 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionChecker() {
+// TODO: consider what to do with it
+object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         val dispatchReceiver = when (expression) {
             is FirQualifiedAccessExpression -> expression.dispatchReceiver

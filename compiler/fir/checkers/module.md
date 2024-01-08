@@ -109,3 +109,37 @@ To support such diagnostics, there is the following mechanism:
 - [ConeDiagnostic](../cones/src/org/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic.kt) is an indicator that something went wrong during resolution
   - there are a lot of different kinds of `ConeDiagnostic` for any possible problems, see [ConeDiagnostics.kt](../semantics/src/org/jetbrains/kotlin/fir/resolve/diagnostics/ConeDiagnostics.kt)
 - `ConeDiagnostic` is saved in the FIR tree, and then the special checker component ([ErrorNodeDiagnosticCollectorComponent](./src/org/jetbrains/kotlin/fir/analysis/collectors/components/ErrorNodeDiagnosticCollectorComponent.kt)) checks all FIR nodes and report proper diagnostics based on the found `ConeDiagnostic` 
+
+## Platform and Common checkers
+
+In the MPP compilation, the same type may be resolved to different classes depending on the use-site session, if this type is based on the
+  `expect` classifier. This implies that the same checker may produce different results depending on the use-site session:
+
+```kotlin
+// MODULE: common
+expect interface A
+
+class B : A
+
+// MODULE: platform()()(common)
+actual interface A {
+    fun foo()
+}
+```
+
+In this example `class B` is located in the `common` module, and from this module POV there is no problems with this class. But after
+  actualization supertype `A` is resolved to `actual interface A`, which brings an `abstract fun foo()` into the scope, so `class B` becomes
+  incorrect, as it doesn't implement this abstract function.
+
+To cover this problem, all checkers are split into two groups: `Common` and `Platform` (see the [MppCheckerKind](compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/checkers/MppCheckerKind.kt) enum)
+- `MppCheckerKind.Common` means that this checker should run from the same session to which corresponding declaration belongs
+- `MppCheckerKind.Platform` means that in case of MPP compilation this checker should run with session of leaf platform module for sources
+   of all modules
+
+So the author of each new checker should decide in which session this checker should run and properly set the `MppCheckerKind` in the
+  checker declaration. There are some hints that may help to decide:
+- if the checker is not interested in the scope of some class, acquired from some type/scope/provider, it should be `Common`
+- if the checker is interested in class symbol of some type, but there is no difference for it how this class/typealias can be expanded,
+  it most likely should be `Common`
+- if the checker is interested in the scope of some type, it should be carefully considered how the actualization of the scope may affect
+  the checker

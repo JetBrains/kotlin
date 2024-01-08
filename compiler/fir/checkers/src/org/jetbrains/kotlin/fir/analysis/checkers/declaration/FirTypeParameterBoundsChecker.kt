@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 
-object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
+// TODO: extract common checker for expect interfaces
+object FirTypeParameterBoundsChecker : FirTypeParameterChecker(MppCheckerKind.Platform) {
 
     private val classKinds = setOf(
         ClassKind.CLASS,

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.lexer.KtTokens
 
-object FirConstructorAllowedChecker : FirConstructorChecker() {
+object FirConstructorAllowedChecker : FirConstructorChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirConstructor, context: CheckerContext, reporter: DiagnosticReporter) {
         val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
         val source = declaration.source

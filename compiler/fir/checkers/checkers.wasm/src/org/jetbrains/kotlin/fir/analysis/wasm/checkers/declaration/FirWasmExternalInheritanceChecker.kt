@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
@@ -17,7 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirWasmExternalInheritanceChecker : FirClassChecker() {
+// TODO: extract common checker for expect interfaces
+object FirWasmExternalInheritanceChecker : FirClassChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
         val isCurrentClassExternal = declaration.symbol.isEffectivelyExternal(session)

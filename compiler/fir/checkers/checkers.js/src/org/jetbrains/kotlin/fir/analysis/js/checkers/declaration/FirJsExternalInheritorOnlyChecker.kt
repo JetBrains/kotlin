@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
@@ -16,12 +17,12 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExternalInheritorsOnly
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
-object FirJsExternalInheritorOnlyChecker : FirClassChecker() {
+// TODO: extract common checker for expect interfaces
+object FirJsExternalInheritorOnlyChecker : FirClassChecker(MppCheckerKind.Platform) {
     private fun FirClass.forEachParents(context: CheckerContext, f: (FirRegularClassSymbol) -> Unit) {
         val todo = superConeTypes.toMutableList()
         val done = hashSetOf<FirRegularClassSymbol>()

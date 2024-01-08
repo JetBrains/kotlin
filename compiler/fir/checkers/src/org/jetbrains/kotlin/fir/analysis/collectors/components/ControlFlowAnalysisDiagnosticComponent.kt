@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
@@ -21,8 +22,17 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 class ControlFlowAnalysisDiagnosticComponent(
     session: FirSession,
     reporter: DiagnosticReporter,
-    declarationCheckers: DeclarationCheckers = session.checkersComponent.declarationCheckers,
+    declarationCheckers: DeclarationCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
+    constructor(session: FirSession, reporter: DiagnosticReporter, mppKind: MppCheckerKind) : this(
+        session,
+        reporter,
+        when (mppKind) {
+            MppCheckerKind.Common -> session.checkersComponent.commonDeclarationCheckers
+            MppCheckerKind.Platform -> session.checkersComponent.platformDeclarationCheckers
+        }
+    )
+
     private val cfaCheckers = declarationCheckers.controlFlowAnalyserCheckers
     private val variableAssignmentCheckers = declarationCheckers.variableAssignmentCfaBasedCheckers
 

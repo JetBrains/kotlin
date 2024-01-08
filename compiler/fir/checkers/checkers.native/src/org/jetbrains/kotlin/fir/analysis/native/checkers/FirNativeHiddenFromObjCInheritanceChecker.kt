@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.classKind
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
@@ -19,13 +19,15 @@ import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isAny
+import org.jetbrains.kotlin.fir.types.isNullableAny
+import org.jetbrains.kotlin.fir.types.toSymbol
 
 /**
  * Check that the given class does not inherit from class or implements interface that is
  * marked as HiddenFromObjC (aka "marked with annotation that is marked as HidesFromObjC").
  */
-object FirNativeHiddenFromObjCInheritanceChecker : FirRegularClassChecker() {
+object FirNativeHiddenFromObjCInheritanceChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         // Enum entries inherit from their enum class.
         if (declaration.classKind == ClassKind.ENUM_ENTRY) {

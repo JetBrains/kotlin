@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.collectUpperBounds
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.finalApproximationOrSelf
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
+object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirEqualityOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val arguments = expression.argumentList.arguments
         require(arguments.size == 2) { "Equality operator call with non-2 arguments" }

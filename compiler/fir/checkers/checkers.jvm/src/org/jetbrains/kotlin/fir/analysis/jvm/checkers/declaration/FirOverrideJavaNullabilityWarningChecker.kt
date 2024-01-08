@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAbstractOverrideChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -23,7 +24,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-object FirOverrideJavaNullabilityWarningChecker : FirAbstractOverrideChecker() {
+// TODO: extract common checker for expect interfaces
+object FirOverrideJavaNullabilityWarningChecker : FirAbstractOverrideChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val substitutor = EnhancedForWarningConeSubstitutor(context.session.typeContext)
         val scope = declaration.unsubstitutedScope(context)

@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  * but there's a member in ConcurrentHashMap with acceptable signature that delegates to `containsValue` instead,
  * leading to an unexpected result. See KT-18053
  */
-object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker() {
+object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     private val CONCURRENT_HASH_MAP_CALLABLE_ID = CallableId(
         ClassId.fromString("java/util/concurrent/ConcurrentHashMap"),
         OperatorNameConventions.CONTAINS

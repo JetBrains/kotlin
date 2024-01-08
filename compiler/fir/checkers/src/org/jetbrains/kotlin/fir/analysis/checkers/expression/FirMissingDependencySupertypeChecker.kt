@@ -9,10 +9,11 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.collectUpperBounds
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.fir.types.*
  * @see org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
  */
 object FirMissingDependencySupertypeChecker {
-    object ForDeclarations : FirBasicDeclarationChecker() {
+    object ForDeclarations : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration is FirClass) {
                 checkSuperTypes(declaration.symbol, declaration.source, reporter, context)
@@ -48,7 +49,7 @@ object FirMissingDependencySupertypeChecker {
         }
     }
 
-    object ForQualifiedAccessExpressions : FirQualifiedAccessExpressionChecker() {
+    object ForQualifiedAccessExpressions : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
         override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
             val source = expression.source
 

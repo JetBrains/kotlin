@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
@@ -22,7 +23,8 @@ import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object FirJsMultipleInheritanceChecker : FirClassChecker() {
+// TODO: extract common checker for expect interfaces
+object FirJsMultipleInheritanceChecker : FirClassChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.checkFunctionIfSubtypeOf(
             functionToCheck = OperatorNameConventions.GET,

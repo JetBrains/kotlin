@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationClassForOptInMarker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.getDeprecationsProviderFromAnnotati
 import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 
-object FirAnyDeprecationChecker : FirSimpleFunctionChecker() {
+object FirAnyDeprecationChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
     private val firstKotlin = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_0, ApiVersion.KOTLIN_1_0)
 
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {

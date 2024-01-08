@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.*
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.*
 
-object FirNamedVarargChecker : FirCallChecker() {
+object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirFunctionCall &&
             expression !is FirAnnotation &&

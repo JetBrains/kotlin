@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-abstract class FirWebCommonExternalChecker : FirBasicDeclarationChecker() {
+abstract class FirWebCommonExternalChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     abstract fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean
 
     abstract fun reportExternalEnum(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter)

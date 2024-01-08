@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -17,14 +18,13 @@ import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 // TODO (KT-60899): implement this checker for JS, similarly to K1's JsReflectionAPICallChecker.
-abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker() {
+abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     protected abstract fun isWholeReflectionApiAvailable(context: CheckerContext): Boolean
     protected abstract fun report(source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter)
 

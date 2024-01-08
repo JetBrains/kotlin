@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.types.coneType
 
-object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker() {
+object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.symbol.hasExplicitReturnType) {
             declaration.initializer?.checkExpressionForEnhancedTypeMismatch(
@@ -33,7 +34,7 @@ object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker() {
     }
 }
 
-object FirFunctionJavaNullabilityWarningChecker : FirFunctionChecker() {
+object FirFunctionJavaNullabilityWarningChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val body = declaration.body
         if (body is FirSingleExpressionBlock && declaration.symbol.hasExplicitReturnType) {
@@ -47,7 +48,7 @@ object FirFunctionJavaNullabilityWarningChecker : FirFunctionChecker() {
     }
 }
 
-object FirValueParameterJavaNullabilityWarningChecker : FirValueParameterChecker() {
+object FirValueParameterJavaNullabilityWarningChecker : FirValueParameterChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirValueParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.defaultValue?.checkExpressionForEnhancedTypeMismatch(
             declaration.returnTypeRef.coneType,

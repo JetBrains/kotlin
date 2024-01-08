@@ -8,19 +8,18 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCRefinementOverridesChecker.check
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCallableDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
+import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCRefinementOverridesChecker.check
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.unexpandedConeClassLikeType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker() {
+object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
 
     val hidesFromObjCClassId = ClassId.topLevel(FqName("kotlin.native.HidesFromObjC"))
     val refinesInSwiftClassId = ClassId.topLevel(FqName("kotlin.native.RefinesInSwift"))

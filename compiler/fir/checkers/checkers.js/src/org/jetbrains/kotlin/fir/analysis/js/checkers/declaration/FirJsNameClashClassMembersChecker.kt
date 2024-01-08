@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
-import org.jetbrains.kotlin.fir.analysis.js.checkers.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsStableName
+import org.jetbrains.kotlin.fir.analysis.js.checkers.collectNameClashesWith
+import org.jetbrains.kotlin.fir.analysis.js.checkers.isPresentInGeneratedCode
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -29,7 +31,8 @@ import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
-object FirJsNameClashClassMembersChecker : FirClassChecker() {
+// TODO: extract common checker for expect interfaces
+object FirJsNameClashClassMembersChecker : FirClassChecker(MppCheckerKind.Platform) {
     private class StableNamesCollector {
         val jsStableNames = mutableSetOf<FirJsStableName>()
         val overrideIntersections = hashMapOf<FirCallableSymbol<*>, HashSet<FirCallableSymbol<*>>>()

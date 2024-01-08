@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -32,14 +33,14 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
-object FirTopLevelPropertiesChecker : FirFileChecker() {
+object FirTopLevelPropertiesChecker : FirFileChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         val topLevelProperties = declaration.declarations.filterIsInstance<FirProperty>()
         checkFileLikeDeclaration(declaration, topLevelProperties, context, reporter)
     }
 }
 
-object FirScriptPropertiesChecker : FirScriptChecker() {
+object FirScriptPropertiesChecker : FirScriptChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirScript, context: CheckerContext, reporter: DiagnosticReporter) {
         val topLevelProperties = declaration.declarations.filterIsInstance<FirProperty>()
         checkFileLikeDeclaration(declaration, topLevelProperties, context, reporter)

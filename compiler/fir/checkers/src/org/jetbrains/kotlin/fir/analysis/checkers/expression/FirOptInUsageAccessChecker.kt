@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 
-object FirOptInUsageAccessChecker : FirBasicExpressionChecker() {
+object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         val sourceKind = expression.source?.kind
         if (sourceKind is KtFakeSourceElementKind.DataClassGeneratedMembers ||

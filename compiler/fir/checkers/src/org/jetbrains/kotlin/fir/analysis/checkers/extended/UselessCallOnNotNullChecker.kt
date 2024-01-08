@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
 
-object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker() {
+object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     // todo, KT-59829: add 'call may be reduced' in cases like 's?.isNullOrEmpty()' where 's: String? = ""'
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val method = expression.getCallableId() ?: return

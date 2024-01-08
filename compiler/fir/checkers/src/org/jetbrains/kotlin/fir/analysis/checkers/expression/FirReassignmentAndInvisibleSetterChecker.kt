@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.evaluatedInPlace
 import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
-object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker() {
+object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
         checkValReassignmentViaBackingField(expression, context, reporter)
         checkValReassignmentOnValueParameter(expression, context, reporter)

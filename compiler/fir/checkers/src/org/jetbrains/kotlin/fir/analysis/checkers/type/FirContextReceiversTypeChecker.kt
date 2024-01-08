@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.checkSubTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.findContextReceiverListSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.types.*
 
-object FirContextReceiversTypeChecker : FirTypeRefChecker() {
+object FirContextReceiversTypeChecker : FirTypeRefChecker(MppCheckerKind.Platform) {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (typeRef !is FirResolvedTypeRef) return
         if (typeRef.source?.kind is KtFakeSourceElementKind) return

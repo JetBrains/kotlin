@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.isRecursiveValueClassType
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirValueClassDeclarationChecker : FirRegularClassChecker() {
+// TODO: extract common checker for expect interfaces
+object FirValueClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
 
     private val boxAndUnboxNames = setOf("box", "unbox")
     private val equalsAndHashCodeNames = setOf("equals", "hashCode")

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.type
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.fir.types.type
 
-object FirDuplicateParameterNameInFunctionTypeChecker : FirTypeRefChecker() {
+object FirDuplicateParameterNameInFunctionTypeChecker : FirTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (typeRef !is FirResolvedTypeRef) return
 

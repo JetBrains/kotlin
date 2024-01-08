@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppressor
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 val FirSession.platformDiagnosticSuppressor: FirPlatformDiagnosticSuppressor? by FirSession.nullableSessionComponentAccessor()
 
 // See old FE's [DeclarationsChecker]
-object FirNonMemberFunctionsChecker : FirFunctionChecker() {
+object FirNonMemberFunctionsChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.containingClassLookupTag() != null || declaration is FirPropertyAccessor) {
             return

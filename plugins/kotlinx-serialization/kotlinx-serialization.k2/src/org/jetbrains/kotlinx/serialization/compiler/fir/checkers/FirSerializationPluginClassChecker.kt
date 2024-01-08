@@ -39,7 +39,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
 
-object FirSerializationPluginClassChecker : FirClassChecker() {
+object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Common) {
     private val JAVA_SERIALIZABLE_ID = ClassId.topLevel(FqName("java.io.Serializable"))
     private const val TOO_LOW = "too low"
     private const val UNKNOWN = "unknown"

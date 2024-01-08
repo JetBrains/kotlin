@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.utils.addToStdlib.flatAssociateBy
 
-object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
+object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     // Initialization order: member property initializers, enum entries, companion object (including members in it).
     //
     // When JVM loads a class, the corresponding class initializer, a.k.a. <clinit>, is executed first.

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isFunctionForExpectTypeFromCastFeature
 import org.jetbrains.kotlin.fir.analysis.checkers.isUpcast
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-object FirUselessTypeOperationCallChecker : FirTypeOperatorCallChecker() {
+object FirUselessTypeOperationCallChecker : FirTypeOperatorCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirTypeOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.operation !in FirOperation.TYPES) return
         val arg = expression.argument

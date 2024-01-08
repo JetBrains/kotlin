@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.closestNonLocalWith
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsModule
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNonModule
 
-object FirJsModuleChecker : FirBasicDeclarationChecker() {
+object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         checkSuperClass(declaration, context, reporter)
 

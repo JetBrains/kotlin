@@ -7,17 +7,19 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Repeatable
 import org.jetbrains.kotlin.name.JvmStandardClassIds.Annotations.JvmRepeatable
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Repeatable
 
-object FirJvmRedundantRepeatableChecker : FirBasicDeclarationChecker() {
+object FirJvmRedundantRepeatableChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val kotlinRepeatable = declaration.getAnnotationByClassId(Repeatable, context.session)
         val javaRepeatable = declaration.getAnnotationByClassId(JvmRepeatable, context.session)

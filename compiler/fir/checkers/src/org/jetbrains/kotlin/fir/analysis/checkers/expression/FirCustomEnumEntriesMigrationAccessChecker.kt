@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeResolutionResultOverridesOtherToPreserveCompatibility
 
-object FirCustomEnumEntriesMigrationAccessChecker : FirPropertyAccessExpressionChecker() {
+object FirCustomEnumEntriesMigrationAccessChecker : FirPropertyAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirPropertyAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.PrioritizedEnumEntries)) return
         val referencedSymbol = expression.calleeReference.toResolvedPropertySymbol() ?: return

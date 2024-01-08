@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 
-object FirNativeObjCNameOverridesChecker : FirClassChecker() {
+object FirNativeObjCNameOverridesChecker : FirClassChecker(MppCheckerKind.Platform) {
 
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         // We just need to check intersection overrides, all other declarations are checked by FirNativeObjCNameChecker

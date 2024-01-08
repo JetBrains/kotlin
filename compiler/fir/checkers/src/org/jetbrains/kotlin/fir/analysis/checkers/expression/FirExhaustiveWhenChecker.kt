@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
-object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
+object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         reportNotExhaustive(expression, context, reporter)
         reportElseMisplaced(expression, reporter, context)

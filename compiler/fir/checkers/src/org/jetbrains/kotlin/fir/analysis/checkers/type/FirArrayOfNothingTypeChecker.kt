@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirArrayOfNothingQualifierChecker.isArrayOfNothing
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -14,9 +15,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANDS
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
-object FirArrayOfNothingTypeChecker : FirTypeRefChecker() {
+object FirArrayOfNothingTypeChecker : FirTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         /** Ignore typealias, see [TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS] */
         if (context.containingDeclarations.lastOrNull() is FirTypeAlias) return

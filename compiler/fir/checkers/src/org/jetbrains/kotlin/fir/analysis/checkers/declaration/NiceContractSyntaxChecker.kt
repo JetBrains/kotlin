@@ -9,19 +9,20 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 
-object ContractSyntaxV2FunctionChecker : FirSimpleFunctionChecker() {
+object ContractSyntaxV2FunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         checkFeatureIsEnabled(declaration, context, reporter)
     }
 }
 
-object ContractSyntaxV2PropertyChecker : FirPropertyChecker() {
+object ContractSyntaxV2PropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.getter?.let { checkFeatureIsEnabled(it, context, reporter) }
         declaration.setter?.let { checkFeatureIsEnabled(it, context, reporter) }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 
-object PlatformClassMappedToKotlinTypeRefChecker : FirTypeRefChecker() {
+object PlatformClassMappedToKotlinTypeRefChecker : FirTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (typeRef is FirResolvedTypeRef && typeRef.source != null) {
             val kotlinClass = context.session.platformClassMapper.getCorrespondingKotlinClass(typeRef.type.classId)

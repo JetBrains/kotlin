@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-object FirAnnotationChecker : FirBasicDeclarationChecker() {
+object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     private val deprecatedClassId = FqName("kotlin.Deprecated")
     private val deprecatedSinceKotlinClassId = FqName("kotlin.DeprecatedSinceKotlin")
 

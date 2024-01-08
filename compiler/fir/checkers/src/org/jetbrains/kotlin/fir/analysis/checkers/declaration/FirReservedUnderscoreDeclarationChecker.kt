@@ -8,17 +8,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
-import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeRefForUnderscore
-import org.jetbrains.kotlin.fir.analysis.checkers.checkUnderscoreDiagnostics
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isUnderscore
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.name.SpecialNames
 
-object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
+object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (
             declaration is FirRegularClass ||

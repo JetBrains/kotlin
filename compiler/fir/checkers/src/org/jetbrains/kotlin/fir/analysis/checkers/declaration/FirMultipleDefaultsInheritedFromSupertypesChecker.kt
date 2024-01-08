@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.collectOverriddenFunctionsWhere
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -23,7 +24,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.Name
 
-object FirMultipleDefaultsInheritedFromSupertypesChecker : FirRegularClassChecker() {
+// TODO: extract common checker for expect interfaces
+object FirMultipleDefaultsInheritedFromSupertypesChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.unsubstitutedScope(context).processAllFunctions {
             val originalIfSubstitutionOverride = it.unwrapSubstitutionOverrides()

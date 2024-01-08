@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.closestNonLocal
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
-object FirWasmDefinedExternallyCallChecker : FirBasicExpressionChecker() {
+object FirWasmDefinedExternallyCallChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         val symbol = expression.calleeReference?.toResolvedCallableSymbol() ?: return
 

@@ -9,13 +9,15 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind.Function
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind.SuspendFunction
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.types.functionTypeKind
 
-object FirMixedFunctionalTypesInSupertypesChecker : FirClassChecker() {
+// TODO: extract common checker for expect interfaces
+object FirMixedFunctionalTypesInSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val superKinds = lookupSuperTypes(declaration.symbol, lookupInterfaces = true, deep = true, context.session)
             .mapNotNullTo(mutableSetOf()) { it.functionTypeKind(context.session)?.nonReflectKind() }
