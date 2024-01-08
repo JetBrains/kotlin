@@ -62,37 +62,19 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-fun Test.configureTest(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform {
-        configureJUnit()
-    }
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
-}
-
-
 projectTest(
-    jUnitMode = JUnitMode.JUnit5,
-    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
-) {
-    configureTest {
-        excludeTags("Jdk21Test")
-    }
-}
-
-// Separate configuration is only necessary while JDK 21 is not released, so cannot be obtained via toolchain.
-// See KT-58765 for tracking
-projectTest(
-    "jdk21Tests",
     jUnitMode = JUnitMode.JUnit5,
     defineJDKEnvVariables = listOf(
+        JdkMajorVersion.JDK_1_8,
+        JdkMajorVersion.JDK_11_0,
+        JdkMajorVersion.JDK_17_0,
         JdkMajorVersion.JDK_21_0
     )
 ) {
-    configureTest {
-        includeTags("Jdk21Test")
-    }
+    dependsOn(":dist")
+    workingDir = rootDir
+    useJUnitPlatform()
+    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 }
 
 testsJar()

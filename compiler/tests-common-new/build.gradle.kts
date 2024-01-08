@@ -54,37 +54,15 @@ sourceSets {
     }
 }
 
-fun Test.configureTest(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform {
-        configureJUnit()
-    }
-}
-
 projectTest(
     jUnitMode = JUnitMode.JUnit5,
     defineJDKEnvVariables = listOf(
         JdkMajorVersion.JDK_11_0 // e.g. org.jetbrains.kotlin.test.runners.ForeignAnnotationsCompiledJavaTestGenerated.Java11Tests
     )
 ) {
-    configureTest {
-        excludeTags("Jdk21Test")
-    }
-}
-
-// Separate configuration is only necessary while JDK 21 is not released, so cannot be obtained via toolchain.
-// See KT-58765 for tracking
-projectTest(
-    "jdk21Tests",
-    jUnitMode = JUnitMode.JUnit5,
-    defineJDKEnvVariables = listOf(
-        JdkMajorVersion.JDK_21_0
-    )
-) {
-    configureTest {
-        includeTags("Jdk21Test")
-    }
+    dependsOn(":dist")
+    workingDir = rootDir
+    useJUnitPlatform()
 }
 
 testsJar()

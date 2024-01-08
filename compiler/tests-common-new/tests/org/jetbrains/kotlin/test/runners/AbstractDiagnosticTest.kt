@@ -122,6 +122,14 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
             }
         }
 
+        forTestsMatching("compiler/testData/diagnostics/tests/testsWithJava21/*") {
+            defaultDirectives {
+                JDK_KIND with TestJdkKind.FULL_JDK_21
+                +WITH_STDLIB
+                +WITH_REFLECT
+            }
+        }
+
         forTestsMatching("compiler/testData/diagnostics/tests/multiplatform/*") {
             defaultDirectives {
                 LANGUAGE with "+MultiPlatformProjects"

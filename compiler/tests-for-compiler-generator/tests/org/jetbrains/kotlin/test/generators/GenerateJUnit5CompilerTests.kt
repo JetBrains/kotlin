@@ -26,10 +26,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractJdk21DiagnosticTest> {
-                model("diagnostics/testsWithJdk21", excludedPattern = excludedCustomTestdataPattern)
-            }
-
             testClass<AbstractDiagnosticUsingJavacTest> {
                 model("diagnostics/tests/javac", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
@@ -216,14 +212,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                     excludedPattern = excludedCustomTestdataPattern
                 )
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedCustomTestdataPattern)
-            }
-
-            testClass<AbstractFirPsiJdk21DiagnosticTest> {
-                model("diagnostics/testsWithJdk21", excludedPattern = excludedCustomTestdataPattern)
-            }
-
-            testClass<AbstractFirLightTreeJdk21DiagnosticTest> {
-                model("diagnostics/testsWithJdk21", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractFirPsiWithActualizerDiagnosticsTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithPsiTestGenerated") {

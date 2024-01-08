@@ -51,26 +51,6 @@ abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKo
     }
 }
 
-@Jdk21Test
-abstract class AbstractFirPsiJdk21DiagnosticTest : AbstractFirDiagnosticTestBase(FirParser.Psi) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.defaultDirectives {
-            JDK_KIND with TestJdkKind.FULL_JDK_21
-        }
-    }
-}
-
-@Jdk21Test
-abstract class AbstractFirLightTreeJdk21DiagnosticTest : AbstractFirDiagnosticTestBase(FirParser.LightTree) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.defaultDirectives {
-            JDK_KIND with TestJdkKind.FULL_JDK_21
-        }
-    }
-}
-
 abstract class AbstractFirPsiDiagnosticTest : AbstractFirDiagnosticTestBase(FirParser.Psi)
 abstract class AbstractFirLightTreeDiagnosticsTest : AbstractFirDiagnosticTestBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -213,6 +193,14 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     forTestsMatching("compiler/testData/diagnostics/tests/testsWithJava17/*") {
         defaultDirectives {
             JDK_KIND with TestJdkKind.FULL_JDK_17
+            +WITH_STDLIB
+            +WITH_REFLECT
+        }
+    }
+
+    forTestsMatching("compiler/testData/diagnostics/tests/testsWithJava21/*") {
+        defaultDirectives {
+            JDK_KIND with TestJdkKind.FULL_JDK_21
             +WITH_STDLIB
             +WITH_REFLECT
         }
