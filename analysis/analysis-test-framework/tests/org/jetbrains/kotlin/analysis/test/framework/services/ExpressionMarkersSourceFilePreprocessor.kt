@@ -79,7 +79,7 @@ class ExpressionMarkerProvider : TestService {
     private val carets = CaretProvider()
 
     fun addSelectedExpression(file: TestFile, range: TextRange) {
-        selected[file.relativePath] = range
+        selected[file.name] = range
     }
 
     fun addCaret(file: TestFile, caretTag: String?, caretOffset: Int) {
