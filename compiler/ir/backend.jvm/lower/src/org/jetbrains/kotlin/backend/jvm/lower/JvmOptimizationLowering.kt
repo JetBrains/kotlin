@@ -136,8 +136,11 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 } else {
                     +irGetField(receiver.takeUnless { backingField.isStatic }, backingField)
                 }
-            }
+            }.unwrapSingleExpressionBlock()
         }
+
+        private fun IrExpression.unwrapSingleExpressionBlock(): IrExpression =
+            (this as? IrBlock)?.statements?.singleOrNull() as? IrExpression ?: this
 
         override fun visitWhen(expression: IrWhen, data: IrDeclaration?): IrExpression {
             val isCompilerGenerated = expression.origin == null

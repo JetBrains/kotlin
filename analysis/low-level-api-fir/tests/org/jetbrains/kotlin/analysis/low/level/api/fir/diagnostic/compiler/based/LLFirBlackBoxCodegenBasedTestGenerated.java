@@ -31437,6 +31437,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
                 }
 
                 @Test
+                @TestMetadata("backingField.kt")
+                public void testBackingField() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/backingField.kt");
+                }
+
+                @Test
                 @TestMetadata("field_after.kt")
                 public void testField_after() throws Exception {
                     runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/field_after.kt");

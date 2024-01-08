@@ -26297,6 +26297,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
                 }
 
+                @TestMetadata("backingField.kt")
+                public void testBackingField() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/backingField.kt");
+                }
+
                 @TestMetadata("field_after.kt")
                 public void testField_after() throws Exception {
                     runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/field_after.kt");
