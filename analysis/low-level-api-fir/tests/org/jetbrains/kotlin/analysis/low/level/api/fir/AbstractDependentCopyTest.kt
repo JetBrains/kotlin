@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir.getFirResolveSessionForDependentCopy
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 
@@ -24,10 +26,11 @@ import kotlin.io.path.readText
  * @see AbstractDependentCopyContextTest
  * @see AbstractDependentCopyFirTest
  */
-abstract class AbstractDependentCopyTest : AbstractLowLevelApiSingleFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
+abstract class AbstractDependentCopyTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        val moduleStructure = testServices.moduleStructure
         val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaretByDirective<KtElement>(
-            file = ktFile,
+            file = mainFile,
             registeredDirectives = moduleStructure.allDirectives,
         )
 
@@ -36,18 +39,18 @@ abstract class AbstractDependentCopyTest : AbstractLowLevelApiSingleFileTest() {
             testPrefix = null,
         ).takeIf { it.exists() }?.readText()
 
-        val fileCopy = KtPsiFactory(ktFile.project).createFile(
-            ktFile.name,
-            specialContentForCopiedFile ?: ktFile.text,
+        val fileCopy = KtPsiFactory(mainFile.project).createFile(
+            mainFile.name,
+            specialContentForCopiedFile ?: mainFile.text,
         )
 
-        fileCopy.originalFile = ktFile
+        fileCopy.originalFile = mainFile
 
         val sameElementInCopy = PsiTreeUtil.findSameElementInCopy(element, fileCopy)
-        resolveWithClearCaches(ktFile) { originalSession ->
+        resolveWithClearCaches(mainFile) { originalSession ->
             val dependentSession = getFirResolveSessionForDependentCopy(
                 originalFirResolveSession = originalSession,
-                originalKtFile = ktFile,
+                originalKtFile = mainFile,
                 elementToAnalyze = sameElementInCopy,
             ) as LLFirResolveSessionDepended
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,19 +12,19 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractDanglingFileInBlockModificationTes : AbstractInBlockModificationTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val selectedElement = testServices.expressionMarkerProvider
-            .getSelectedElementOfTypeByDirective(ktFile, moduleStructure.modules.single())
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(mainFile, mainModule)
 
-        val ktPsiFactory = KtPsiFactory.contextual(ktFile, markGenerated = true, eventSystemEnabled = true)
-        val fakeKtFile = ktPsiFactory.createFile(ktFile.name, ktFile.text)
+        val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = true)
+        val fakeKtFile = ktPsiFactory.createFile(mainFile.name, mainFile.text)
         val fakeSelectedElement = PsiTreeUtil.findSameElementInCopy(selectedElement, fakeKtFile)
 
-        doTest(fakeKtFile, fakeSelectedElement, moduleStructure, testServices)
+        doTest(fakeKtFile, fakeSelectedElement, testServices.moduleStructure, testServices)
     }
 }
 

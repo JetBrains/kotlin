@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,9 +9,9 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.AbstractStringEnumerator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractClassIdConsistencyTest.Directives.IGNORE_CONSISTENCY_CHECK
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.utils.ignoreExceptionIfIgnoreDirectivePresent
 import org.jetbrains.kotlin.name.ClassId
@@ -22,16 +22,17 @@ import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-abstract class AbstractClassIdConsistencyTest : AbstractLowLevelApiSingleFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        moduleStructure.allDirectives.ignoreExceptionIfIgnoreDirectivePresent(IGNORE_CONSISTENCY_CHECK) {
-            ktFile.forEachDescendantOfType<KtClassLikeDeclaration> { declaration ->
+abstract class AbstractClassIdConsistencyTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        testServices.moduleStructure.allDirectives.ignoreExceptionIfIgnoreDirectivePresent(IGNORE_CONSISTENCY_CHECK) {
+            mainFile.forEachDescendantOfType<KtClassLikeDeclaration> { declaration ->
                 val classId = declaration.getClassId()
                 val fqName = declaration.safeFqNameForLazyResolve()
                 testServices.assertions.assertEquals(fqName, classId?.asSingleFqName())

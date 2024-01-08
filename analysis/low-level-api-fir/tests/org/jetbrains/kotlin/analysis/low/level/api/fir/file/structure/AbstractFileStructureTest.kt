@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,26 +14,26 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.isSourceSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val fileStructure = ktFile.getFileStructure()
-        val allStructureElements = fileStructure.getAllStructureElements(ktFile)
+abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        val fileStructure = mainFile.getFileStructure()
+        val allStructureElements = fileStructure.getAllStructureElements(mainFile)
         val declarationToStructureElement = allStructureElements.associateBy { it.firDeclaration.psi }
         val elementToComment = mutableMapOf<PsiElement, String>()
-        ktFile.forEachDescendantOfType<KtDeclaration> { ktDeclaration ->
+        mainFile.forEachDescendantOfType<KtDeclaration> { ktDeclaration ->
             val structureElement = declarationToStructureElement[ktDeclaration] ?: return@forEachDescendantOfType
             val comment = structureElement.createComment()
             when (ktDeclaration) {
@@ -69,13 +69,13 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
                     elementToComment[ktDeclaration.openBraceNode!!] = comment
                 }
                 is KtScript -> {
-                    elementToComment[ktFile.importList!!] = comment
+                    elementToComment[mainFile.importList!!] = comment
                 }
                 else -> error("Unsupported declaration $ktDeclaration")
             }
         }
 
-        PsiTreeUtil.getChildrenOfTypeAsList(ktFile, KtModifierList::class.java).forEach {
+        PsiTreeUtil.getChildrenOfTypeAsList(mainFile, KtModifierList::class.java).forEach {
             if (it.nextSibling is PsiErrorElement) {
                 val structureElement = declarationToStructureElement[it] ?: return@forEach
                 val comment = structureElement.createComment()
@@ -84,7 +84,7 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
         }
 
         val text = buildString {
-            ktFile.accept(object : PsiElementVisitor() {
+            mainFile.accept(object : PsiElementVisitor() {
                 override fun visitElement(element: PsiElement) {
                     if (element is LeafPsiElement) {
                         append(element.text)
