@@ -110,6 +110,12 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace("\n" + Usage.BAT_DELIMITER_CHARACTERS_NOTE + "\n", "")
                 .replaceAll("log4j:WARN.*\n", "");
 
+
+        // Debug output for KT-64822 investigation
+        System.out.println("testDataAbsoluteDir: " + testDataAbsoluteDir);
+        System.out.println("pureOutput: " + pureOutput);
+        System.out.println("normalizedOutputWithoutExitCode: " + normalizedOutputWithoutExitCode);
+
         return exitCode == null ? normalizedOutputWithoutExitCode : (normalizedOutputWithoutExitCode + exitCode + "\n");
     }
 
