@@ -46,7 +46,7 @@ class FirKotlinScopeProvider(
             klass.lazyResolveToPhaseWithCallableMembers(it)
         }
 
-        return scopeSession.getOrBuild(klass.symbol, USE_SITE) {
+        return scopeSession.getOrBuild(useSiteSession to klass.symbol, USE_SITE) {
             val declaredScope = useSiteSession.declaredMemberScope(klass, memberRequiredPhase)
             val possiblyDelegatedDeclaredMemberScope = declaredMemberScopeDecorator(
                 klass,

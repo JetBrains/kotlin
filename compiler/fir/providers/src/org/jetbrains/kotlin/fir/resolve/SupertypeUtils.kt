@@ -175,7 +175,7 @@ inline fun <reified ID : Any, reified FS : FirScope> scopeSessionKey(): ScopeSes
     return object : ScopeSessionKey<ID, FS>() {}
 }
 
-val USE_SITE = scopeSessionKey<FirClassSymbol<*>, FirTypeScope>()
+val USE_SITE = scopeSessionKey<Pair<FirSession, FirClassSymbol<*>>, FirTypeScope>()
 
 /* TODO REMOVE */
 fun createSubstitutionForScope(
