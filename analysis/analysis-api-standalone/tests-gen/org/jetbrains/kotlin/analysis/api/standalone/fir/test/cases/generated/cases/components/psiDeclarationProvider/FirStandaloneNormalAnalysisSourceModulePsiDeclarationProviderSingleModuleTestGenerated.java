@@ -83,6 +83,12 @@ public class FirStandaloneNormalAnalysisSourceModulePsiDeclarationProviderSingle
     }
 
     @Test
+    @TestMetadata("setOf_last_vararg.kt")
+    public void testSetOf_last_vararg() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/singleModule/setOf_last_vararg.kt");
+    }
+
+    @Test
     @TestMetadata("singleFile.kt")
     public void testSingleFile() throws Exception {
         runTest("analysis/analysis-api/testData/standalone/singleModule/singleFile.kt");
