@@ -21,7 +21,7 @@ class RelocatableFileToPathConverter(private val baseDir: File) : FileToPathConv
 
         // Note: If the given file is located outside `baseDir`, the relative path will start with "../". It's not "clean", but it can work.
         // TODO: Re-design the code such that `baseDir` always contains the given file (also add a precondition check here).
-        return file.relativeTo(baseDir).invariantSeparatorsPath
+        return file.relativeToOrSelf(baseDir).invariantSeparatorsPath
     }
 
     override fun toFile(path: String): File {
