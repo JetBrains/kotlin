@@ -38098,6 +38098,40 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava21")
+        @TestDataPath("$PROJECT_ROOT")
+        public class TestsWithJava21 {
+            @Test
+            public void testAllFilesPresentInTestsWithJava21() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava21"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("implementationsForSequencedCollection.kt")
+            public void testImplementationsForSequencedCollection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithJava21/implementationsForSequencedCollection.kt");
+            }
+
+            @Test
+            @TestMetadata("newListMethods.kt")
+            public void testNewListMethods() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethods.kt");
+            }
+
+            @Test
+            @TestMetadata("newListMethodsImmutable.kt")
+            public void testNewListMethodsImmutable() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsImmutable.kt");
+            }
+
+            @Test
+            @TestMetadata("noFalsePositiveAbstractToArray.kt")
+            public void testNoFalsePositiveAbstractToArray() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithJava21/noFalsePositiveAbstractToArray.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")
         @TestDataPath("$PROJECT_ROOT")
         public class ThisAndSuper {
