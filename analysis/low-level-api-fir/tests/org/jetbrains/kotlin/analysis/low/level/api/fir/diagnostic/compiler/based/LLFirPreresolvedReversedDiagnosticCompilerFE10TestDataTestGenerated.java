@@ -226,6 +226,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("conflictingOverloadsPrivateFunctions.kt")
+        public void testConflictingOverloadsPrivateFunctions() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/conflictingOverloadsPrivateFunctions.kt");
+        }
+
+        @Test
         @TestMetadata("Constants.kt")
         public void testConstants() throws Exception {
             runTest("compiler/testData/diagnostics/tests/Constants.kt");
