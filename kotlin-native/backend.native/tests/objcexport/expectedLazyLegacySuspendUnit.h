@@ -1202,11 +1202,23 @@ __attribute__((swift_name("KT49937")))
 - (NSString *)description __attribute__((swift_name("description()")));
 @end
 
+
+/**
+ * @note annotations
+ *   Foo
+ *   BugReport(assignedTo="me", status="open")
+*/
 __attribute__((swift_name("MyInterface")))
 @protocol KtMyInterface
 @required
 @end
 
+
+/**
+ * @note annotations
+ *   Foo
+ *   BugReport(assignedTo="me", status="open")
+*/
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Bar")))
 @interface KtBar : KtBase
