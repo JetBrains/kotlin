@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind.CLASS
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind.INTERFACE
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtScope.translateToObjCHeader(): ObjCHeader {
     val declarationsInScope = getAllSymbols()
-        .mapNotNull { symbol -> symbol.translateToObjCExportStubOrNull() }
+        .flatMap { symbol -> symbol.translateToObjCExportStubs() }
         .toList()
 
     return ObjCHeader(
@@ -34,10 +33,13 @@ fun KtScope.translateToObjCHeader(): ObjCHeader {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtSymbol.translateToObjCExportStubOrNull(): ObjCExportStub? {
+internal fun KtSymbol.translateToObjCExportStubs(): List<ObjCExportStub> {
     return when {
-        this is KtClassOrObjectSymbol && classKind == INTERFACE -> translateToObjCProtocol()
-        this is KtPropertySymbol -> translateToObjCProperty()
-        else -> null
+        this is KtClassOrObjectSymbol && classKind == INTERFACE -> listOfNotNull(translateToObjCProtocol())
+        this is KtClassOrObjectSymbol && classKind == CLASS -> listOfNotNull(translateToObjCClass())
+        this is KtConstructorSymbol -> translateToObjCConstructors()
+        this is KtPropertySymbol -> listOfNotNull(translateToObjCProperty())
+        this is KtFunctionSymbol -> listOfNotNull(translateToObjCMethod())
+        else -> emptyList()
     }
 }

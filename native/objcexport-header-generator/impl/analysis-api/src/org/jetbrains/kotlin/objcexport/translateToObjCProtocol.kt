@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassType
@@ -16,32 +15,18 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocolImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.members
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
     // TODO: check if this symbol shall be exposed in the first place
     require(classKind == KtClassKind.INTERFACE)
-    if (isVisibleInObjC()) return null
+    if (!isVisibleInObjC()) return null
 
     // TODO: Check error type!
     val name = getObjCClassOrProtocolName()
 
-    val members = getMemberScope().getAllSymbols()
-        .filterIsInstance<KtCallableSymbol>()
-        .filter { memberSymbol -> memberSymbol.isVisibleInObjC() }
-        .mapNotNull { memberSymbol -> memberSymbol.translateToObjCExportStubOrNull() }
-        .toList()
-
-    val superProtocols = superTypes
-        .asSequence()
-        .filter { type -> !type.isAny }
-        .mapNotNull { type -> type as? KtClassType }
-        .flatMap { type -> type.qualifiers }
-        .mapNotNull { qualifier -> qualifier as? KtClassTypeQualifier.KtResolvedClassTypeQualifier }
-        .mapNotNull { it.symbol as? KtClassOrObjectSymbol }
-        .filter { superInterface -> superInterface.classKind == KtClassKind.INTERFACE }
-        .map { superInterface -> superInterface.getObjCClassOrProtocolName().objCName }
-        .toList()
+    val members = members().flatMap { it.translateToObjCExportStubs() }
 
     // TODO: Resolve comment
     val comment: ObjCComment? = null
@@ -51,7 +36,21 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
         comment = comment,
         origin = getObjCStubOrigin(),
         attributes = name.toNameAttributes(),
-        superProtocols = superProtocols,
+        superProtocols = superProtocols(),
         members = members
     )
+}
+
+context(KtAnalysisSession, KtObjCExportSession)
+internal fun KtClassOrObjectSymbol.superProtocols(): List<String> {
+    return superTypes
+        .asSequence()
+        .filter { type -> !type.isAny }
+        .mapNotNull { type -> type as? KtClassType }
+        .flatMap { type -> type.qualifiers }
+        .mapNotNull { qualifier -> qualifier as? KtClassTypeQualifier.KtResolvedClassTypeQualifier }
+        .mapNotNull { it.symbol as? KtClassOrObjectSymbol }
+        .filter { superInterface -> superInterface.classKind == KtClassKind.INTERFACE }
+        .map { superInterface -> superInterface.getObjCClassOrProtocolName().objCName }
+        .toList()
 }

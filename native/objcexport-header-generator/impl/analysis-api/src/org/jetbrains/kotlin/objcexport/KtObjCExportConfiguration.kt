@@ -15,4 +15,11 @@ data class KtObjCExportConfiguration(
      * Should kdoc written by the user be available in the generated headers and stubs
      */
     val exportKDoc: Boolean = true,
+
+    /**
+     * Used to handle Swift outer and inner classes naming edge cases, see:
+     * - [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamingHelper.canBeSwiftOuter]
+     * - [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamingHelper.canBeSwiftInner]
+     */
+    val objcGenerics: Boolean = true
 )
