@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
-interface SingleFileKlibResolveStrategy {
+fun interface SingleFileKlibResolveStrategy {
     fun resolve(libraryFile: File, logger: Logger): KotlinLibrary
 }
 

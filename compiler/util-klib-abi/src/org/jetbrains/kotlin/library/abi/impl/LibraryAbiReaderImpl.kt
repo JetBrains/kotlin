@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.storage.CacheWithNotNullValues
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
@@ -53,10 +54,14 @@ import org.jetbrains.kotlin.backend.common.serialization.IrFlags as ProtoFlags
 
 @ExperimentalLibraryAbiReader
 internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingFilter>) {
-    private val library = resolveSingleFileKlib(
-        KFile(libraryFile.absolutePath),
-        strategy = ToolingSingleFileKlibResolveStrategy
-    )
+    private val library: KotlinLibrary = try {
+        ToolingSingleFileKlibResolveStrategy.tryResolve(KFile(libraryFile.absolutePath), DummyLogger)?.apply {
+            check(uniqueName.isNotEmpty()) { "Can't read unique name from manifest" }
+            check(hasIr) { "Library does not have IR" }
+        }
+    } catch (e: Exception) {
+        throw malformedLibrary(libraryFile, e)
+    } ?: error("Library not found: $libraryFile")
 
     private val compositeFilter: AbiReadingFilter.Composite? = if (filters.isNotEmpty()) AbiReadingFilter.Composite(filters) else null
 
@@ -86,6 +91,9 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
     private fun readSupportedSignatureVersions(): Set<AbiSignatureVersion> {
         return library.versions.irSignatureVersions.mapTo(hashSetOf()) { AbiSignatureVersions.resolveByVersionNumber(it.number) }
     }
+
+    private fun malformedLibrary(libraryFile: File, cause: Exception): Nothing =
+        throw IllegalArgumentException("Malformed library: $libraryFile", cause)
 }
 
 @ExperimentalLibraryAbiReader
