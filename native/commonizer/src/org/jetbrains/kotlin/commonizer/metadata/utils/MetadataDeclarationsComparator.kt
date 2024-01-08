@@ -14,19 +14,7 @@ import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsCompar
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.Result
 import org.jetbrains.kotlin.commonizer.utils.KNI_BRIDGE_FUNCTION_PREFIX
 import java.util.*
-import kotlin.Any
-import kotlin.Array
-import kotlin.Boolean
-import kotlin.Int
-import kotlin.String
-import kotlin.Suppress
-import kotlin.Unit
-import kotlin.apply
-import kotlin.arrayOf
-import kotlin.check
 import kotlin.contracts.ExperimentalContracts
-import kotlin.error
-import kotlin.let
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 
@@ -37,7 +25,6 @@ import kotlin.reflect.KProperty1
  * The entry point is [MetadataDeclarationsComparator.Companion.compare] function.
  */
 // TODO: extract to kotlinx-metadata-klib library?
-@Suppress("unused")
 class MetadataDeclarationsComparator private constructor(private val config: Config) {
 
     interface Config {
@@ -55,9 +42,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
     }
 
     sealed class Result {
-        object Success : Result() {
-            override fun toString() = "Success"
-        }
+        data object Success : Result()
 
         class Failure(val mismatches: Collection<Mismatch>) : Result() {
             init {
@@ -68,11 +53,11 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         }
     }
 
-    @Suppress("MemberVisibilityCanBePrivate")
+    @Suppress("MemberVisibilityCanBePrivate", "unused")
     sealed interface PathElement {
         val name: String
 
-        object Root : PathElement {
+        data object Root : PathElement {
             override val name get() = "Root"
         }
 
@@ -172,12 +157,14 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             UNDERLYING,
             EXPANDED,
             RECEIVER,
+            CONTEXT_RECEIVER,
             ABBREVIATED,
             OUTER,
             UPPER_BOUND,
             VALUE_PARAMETER,
             VALUE_PARAMETER_VARARG,
-            TYPE_ARGUMENT;
+            TYPE_ARGUMENT,
+            INLINE_CLASS_UNDERLYING;
 
             override fun toString() = "TypeKind.$name"
         }
@@ -218,6 +205,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             val EnumEntry by EntityKindImpl
             val EnumEntryInKlib by EntityKindImpl
             val EnumEntryInKlibOrdinal by EntityKindImpl
+            val InlineClassUnderlyingProperty by EntityKindImpl
 
             val CompileTimeValue by EntityKindImpl
 
@@ -278,6 +266,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             val existentValue: Any,
             val missingInA: Boolean
         ) : Mismatch() {
+            @Suppress("unused")
             val missingInB: Boolean
                 get() = !missingInA
 
@@ -512,6 +501,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
+    @OptIn(ExperimentalContextReceivers::class)
     private fun compareClasses(
         classContext: Context,
         classA: KmClass,
@@ -523,6 +513,21 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareTypeParameterLists(classContext, classA.typeParameters, classB.typeParameters)
 
         compareTypeLists(classContext, classA.supertypes, classB.supertypes, TypeKind.SUPERTYPE)
+        compareTypeLists(classContext, classA.contextReceiverTypes, classB.contextReceiverTypes, TypeKind.CONTEXT_RECEIVER)
+
+        compareNullableEntities(
+            containerContext = classContext,
+            entityA = classA.inlineClassUnderlyingType,
+            entityB = classB.inlineClassUnderlyingType,
+            entityKind = TypeKind.INLINE_CLASS_UNDERLYING,
+            entitiesComparator = ::compareTypes
+        )
+        compareNullableValues(
+            containerContext = classContext,
+            valueA = classA.inlineClassUnderlyingPropertyName,
+            valueB = classB.inlineClassUnderlyingPropertyName,
+            valueKind = EntityKind.InlineClassUnderlyingProperty
+        )
 
         compareConstructorLists(classContext, classA.constructors, classB.constructors)
         compareTypeAliasLists(classContext, classA.typeAliases, classB.typeAliases)
@@ -572,6 +577,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
+    @OptIn(ExperimentalContextReceivers::class)
     @Suppress("DuplicatedCode")
     private fun compareProperties(
         propertyContext: Context,
@@ -597,6 +603,12 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             entityKind = TypeKind.RECEIVER,
             entitiesComparator = ::compareTypes
         )
+        compareTypeLists(
+            containerContext = propertyContext,
+            typeListA = propertyA.contextReceiverTypes,
+            typeListB = propertyB.contextReceiverTypes,
+            typeKind = TypeKind.CONTEXT_RECEIVER
+        )
         compareEntities(
             containerContext = propertyContext,
             entityA = propertyA.returnType,
@@ -616,7 +628,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareNullableValues(propertyContext, propertyA.compileTimeValue, propertyB.compileTimeValue, EntityKind.CompileTimeValue)
     }
 
-    @OptIn(ExperimentalContracts::class)
+    @OptIn(ExperimentalContracts::class, ExperimentalContextReceivers::class)
     @Suppress("DuplicatedCode")
     private fun compareFunctions(
         functionContext: Context,
@@ -634,6 +646,12 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             entityB = functionB.receiverParameterType,
             entityKind = TypeKind.RECEIVER,
             entitiesComparator = ::compareTypes
+        )
+        compareTypeLists(
+            containerContext = functionContext,
+            typeListA = functionA.contextReceiverTypes,
+            typeListB = functionB.contextReceiverTypes,
+            typeKind = TypeKind.CONTEXT_RECEIVER
         )
         compareEntities(
             containerContext = functionContext,
@@ -850,6 +868,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             mismatches += Mismatch.DifferentValues(valueKind, valueName.orEmpty(), containerContext.path, valueA, valueB)
     }
 
+    @Suppress("ConvertArgumentToSet")
     private fun <E : Any> compareValueLists(
         containerContext: Context,
         listA: Collection<E>,
@@ -1061,6 +1080,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         private val TYPE_FLAGS: Array<KProperty1<KmType, Boolean>> = arrayOf(
             KmType::isNullable,
             KmType::isSuspend,
+            KmType::isDefinitelyNonNull,
         )
 
         private val TYPE_PARAMETER_FLAGS: Array<KProperty1<KmTypeParameter, Boolean>> = arrayOf(
