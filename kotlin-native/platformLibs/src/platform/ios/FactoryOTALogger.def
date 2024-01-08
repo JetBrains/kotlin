@@ -1,0 +1,10 @@
+language = Objective-C
+package = platform.FactoryOTALogger
+
+modules.ios_arm32 = FactoryOTALogger
+compilerOpts.ios_arm32 = -framework FactoryOTALogger
+linkerOpts.ios_arm32 = -framework FactoryOTALogger
+
+modules.ios_arm64 = FactoryOTALogger
+compilerOpts.ios_arm64 = -framework FactoryOTALogger
+linkerOpts.ios_arm64 = -framework FactoryOTALogger

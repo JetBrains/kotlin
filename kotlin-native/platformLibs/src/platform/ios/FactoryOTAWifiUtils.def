@@ -1,0 +1,10 @@
+language = Objective-C
+package = platform.FactoryOTAWifiUtils
+
+modules.ios_arm32 = FactoryOTAWifiUtils
+compilerOpts.ios_arm32 = -framework FactoryOTAWifiUtils
+linkerOpts.ios_arm32 = -framework FactoryOTAWifiUtils
+
+modules.ios_arm64 = FactoryOTAWifiUtils
+compilerOpts.ios_arm64 = -framework FactoryOTAWifiUtils
+linkerOpts.ios_arm64 = -framework FactoryOTAWifiUtils

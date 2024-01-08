@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.JournalingSuggestions
+
+modules = JournalingSuggestions
+compilerOpts = -framework JournalingSuggestions
+linkerOpts = -framework JournalingSuggestions
+#Disabled: Swift-only framework

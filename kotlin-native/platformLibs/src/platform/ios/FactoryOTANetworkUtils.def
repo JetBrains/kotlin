@@ -1,0 +1,10 @@
+language = Objective-C
+package = platform.FactoryOTANetworkUtils
+
+modules.ios_arm32 = FactoryOTANetworkUtils
+compilerOpts.ios_arm32 = -framework FactoryOTANetworkUtils
+linkerOpts.ios_arm32 = -framework FactoryOTANetworkUtils
+
+modules.ios_arm64 = FactoryOTANetworkUtils
+compilerOpts.ios_arm64 = -framework FactoryOTANetworkUtils
+linkerOpts.ios_arm64 = -framework FactoryOTANetworkUtils
