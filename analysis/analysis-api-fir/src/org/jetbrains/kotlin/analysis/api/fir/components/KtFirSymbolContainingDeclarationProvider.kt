@@ -143,6 +143,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
             is KtBackingFieldSymbol -> symbol.owningProperty
             is KtPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as KtDeclarationSymbol
             is KtTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KtDeclarationSymbol
+            is KtValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingFunctionSymbol) as? KtDeclarationSymbol
             else -> null
         }
     }
