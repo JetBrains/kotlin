@@ -1,0 +1,23 @@
+/newListMethods.fir.kt:(596,604): error: Unresolved reference 'getFirst'.
+
+/newListMethods.fir.kt:(613,618): error: Function invocation 'first()' expected.
+
+/newListMethods.fir.kt:(704,711): error: Unresolved reference 'getLast'.
+
+/newListMethods.fir.kt:(720,724): error: Function invocation 'last()' expected.
+
+/newListMethods.fir.kt:(838,846): error: Unresolved reference 'getFirst'.
+
+/newListMethods.fir.kt:(855,860): error: Function invocation 'first()' expected.
+
+/newListMethods.fir.kt:(881,888): error: Unresolved reference 'getLast'.
+
+/newListMethods.fir.kt:(897,901): error: Function invocation 'last()' expected.
+
+/newListMethods.fir.kt:(1015,1023): error: Unresolved reference 'getFirst'.
+
+/newListMethods.fir.kt:(1032,1037): error: Function invocation 'first()' expected.
+
+/newListMethods.fir.kt:(1058,1065): error: Unresolved reference 'getLast'.
+
+/newListMethods.fir.kt:(1074,1078): error: Function invocation 'last()' expected.

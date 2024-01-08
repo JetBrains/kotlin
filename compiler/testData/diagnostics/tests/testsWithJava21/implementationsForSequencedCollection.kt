@@ -1,5 +1,3 @@
-// WITH_STDLIB
-
 fun foo(ll: java.util.LinkedList<String>, al: ArrayList<String>, ad: ArrayDeque<String>, jad: java.util.ArrayDeque<String>) {
     ll.addFirst("")
     ll.addLast("")

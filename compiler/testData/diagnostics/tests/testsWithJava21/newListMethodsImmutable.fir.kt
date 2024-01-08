@@ -1,5 +1,4 @@
 // ISSUE: KT-64640
-// WITH_STDLIB
 
 fun bar(x: List<String>) {
     x.<!UNRESOLVED_REFERENCE!>addFirst<!>("")
@@ -15,8 +14,8 @@ fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>) {
     x.removeFirst()
     x.removeLast()
 
-    x.addFirst("")
-    x.addLast("")
-    x.removeFirst()
-    x.removeLast()
+    y.addFirst("")
+    y.addLast("")
+    y.removeFirst()
+    y.removeLast()
 }
