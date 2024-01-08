@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
@@ -47,6 +48,9 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
 
+/**
+ * [doTestByMainModule] or [doTestByModuleStructure] should be overridden
+ */
 abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     abstract val configurator: AnalysisApiTestConfigurator
 
@@ -67,7 +71,38 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         configurator.configureTest(builder, disposable)
     }
 
-    protected abstract fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices)
+    protected open fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val (mainFile, mainModule) = findMainFile(moduleStructure, testServices)
+        doTestByMainModule(mainFile, mainModule, testServices)
+    }
+
+    protected open fun doTestByMainModule(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        throw UnsupportedOperationException("The test case is not fully implemented. '${::doTestByMainModule.name}' or '${::doTestByModuleStructure.name}' should be overridden")
+    }
+
+    private fun findMainFile(moduleStructure: TestModuleStructure, testServices: TestServices): Pair<KtFile, TestModule> {
+        val moduleProvider = testServices.ktModuleProvider
+        if (moduleStructure.modules.size == 1) {
+            val testModule = moduleStructure.modules.single()
+            val psiFiles = moduleProvider.getModuleFiles(testModule)
+            val ktFiles = psiFiles.filterIsInstance<KtFile>()
+            if (ktFiles.size == 1) {
+                // In simpler whole-file compilation tests, do not require the '<caret>'
+                return ktFiles.single() to testModule
+            }
+        }
+
+        val expressionMarkerProvider = testServices.expressionMarkerProvider
+        for (testModule in moduleStructure.modules) {
+            for (psiFile in moduleProvider.getModuleFiles(testModule)) {
+                if (psiFile is KtFile && expressionMarkerProvider.getCaretPositionOrNull(psiFile) != null) {
+                    return psiFile to testModule
+                }
+            }
+        }
+
+        error("Cannot find the main test file")
+    }
 
     protected fun AssertionsService.assertEqualsToTestDataFileSibling(
         actual: String,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.components.KtCompilerTarget
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -68,16 +66,14 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         ).map { it.name }
     }
 
-    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val (mainModule, ktFile) = findTargetFile(moduleStructure, testServices)
-
+    override fun doTestByMainModule(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
         val irCollector = CollectingIrGenerationExtension()
 
-        val project = ktFile.project
+        val project = mainFile.project
         project.extensionArea.getExtensionPoint(IrGenerationExtension.extensionPointName)
             .registerExtension(irCollector, LoadingOrder.LAST, project)
 
-        val ktCodeFragment = createCodeFragment(ktFile, mainModule, testServices)
+        val ktCodeFragment = createCodeFragment(mainFile, mainModule, testServices)
         if (ktCodeFragment != null) {
             for (importNameString in mainModule.directives[Directives.CODE_FRAGMENT_IMPORT]) {
                 ktCodeFragment.addImport("import $importNameString")
@@ -96,7 +92,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 ?.let { put(KtCompilerFacility.CODE_FRAGMENT_METHOD_NAME, it) }
         }
 
-        val ktTargetFile = ktCodeFragment ?: ktFile
+        val ktTargetFile = ktCodeFragment ?: mainFile
 
         analyze(ktTargetFile) {
             val target = KtCompilerTarget.Jvm(ClassBuilderFactories.TEST)
@@ -115,28 +111,6 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 testServices.assertions.assertEqualsToTestDataFileSibling(irCollector.result, extension = ".ir.txt")
             }
         }
-    }
-
-    private fun findTargetFile(moduleStructure: TestModuleStructure, testServices: TestServices): Pair<TestModule, KtFile> {
-        if (moduleStructure.modules.size == 1) {
-            val testModule = moduleStructure.modules.single()
-            val psiFiles = testServices.ktModuleProvider.getModuleFiles(testModule)
-            val ktFiles = psiFiles.filterIsInstance<KtFile>()
-            if (ktFiles.size == 1) {
-                // In simpler whole-file compilation tests, do not require the '<caret>'
-                return testModule to ktFiles.single()
-            }
-        }
-
-        for (testModule in moduleStructure.modules) {
-            for (psiFile in testServices.ktModuleProvider.getModuleFiles(testModule)) {
-                if (psiFile is KtFile && testServices.expressionMarkerProvider.getCaretPositionOrNull(psiFile) != null) {
-                    return testModule to psiFile
-                }
-            }
-        }
-
-        error("Cannot find the main test file")
     }
 
     override fun configureTest(builder: TestConfigurationBuilder) {
