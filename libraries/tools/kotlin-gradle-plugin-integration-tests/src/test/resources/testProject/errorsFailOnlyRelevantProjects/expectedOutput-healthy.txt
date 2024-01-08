@@ -12,4 +12,4 @@ e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare de
 
 > Configure project :healthyProject
 
-> Task :healthyProject:checkKotlinGradlePluginConfigurationErrors
+> Task :healthyProject:checkKotlinGradlePluginConfigurationErrors SKIPPED

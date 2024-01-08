@@ -8,4 +8,4 @@ Stability and future compatibility of the build is not guaranteed.
 #diagnostic-end
 
 
-> Task :checkKotlinGradlePluginConfigurationErrors
+> Task :checkKotlinGradlePluginConfigurationErrors SKIPPED

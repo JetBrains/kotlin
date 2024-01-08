@@ -22,4 +22,4 @@ e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare de
 #diagnostic-end
 
 
-> Task :healthyProject:checkKotlinGradlePluginConfigurationErrors
+> Task :healthyProject:checkKotlinGradlePluginConfigurationErrors SKIPPED

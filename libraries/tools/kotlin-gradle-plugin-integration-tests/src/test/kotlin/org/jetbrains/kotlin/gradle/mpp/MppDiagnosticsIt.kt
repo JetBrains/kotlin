@@ -193,6 +193,15 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun testErrorDiagnosticUpToDateIfNoErrors(gradleVersion: GradleVersion) {
+        project("errorDiagnosticUpToDateIfNoErrors", gradleVersion) {
+            build("assemble") {
+                assertTasksSkipped(":checkKotlinGradlePluginConfigurationErrors")
+            }
+        }
+    }
+
     private fun TestProject.expectedOutputFile(suffix: String? = null): File {
         val suffixIfAny = if (suffix != null) "-$suffix" else ""
         return projectPath.resolve("expectedOutput$suffixIfAny.txt").toFile()
