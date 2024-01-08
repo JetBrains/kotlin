@@ -135,6 +135,11 @@ class ObjCExportHeaderGeneratorTest(val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("receiverWithMustBeDocumentedAnnotation"))
     }
 
+    @Test
+    fun `test - dispatchAndExtensionReceiverWithMustBeDocumentedAnnotation`() {
+        doTest(headersTestDataDir.resolve("dispatchAndExtensionReceiverWithMustBeDocumentedAnnotation"))
+    }
+
     fun interface HeaderGenerator {
         fun generateHeaders(root: File): String
     }
