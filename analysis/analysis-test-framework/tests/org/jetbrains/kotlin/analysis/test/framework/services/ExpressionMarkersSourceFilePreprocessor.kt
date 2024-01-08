@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,17 +7,16 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import kotlin.reflect.KClass
 
@@ -76,25 +76,21 @@ internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestService
 
 class ExpressionMarkerProvider : TestService {
     private val selected = mutableMapOf<String, TextRange>()
-
-    @PrivateForInline
-    val carets = CaretProvider()
+    private val carets = CaretProvider()
 
     fun addSelectedExpression(file: TestFile, range: TextRange) {
         selected[file.relativePath] = range
     }
 
-    @OptIn(PrivateForInline::class)
     fun addCaret(file: TestFile, caretTag: String?, caretOffset: Int) {
         carets.addCaret(file.name, caretTag, caretOffset)
     }
 
-    @OptIn(PrivateForInline::class)
-    fun getCaretPositionOrNull(file: KtFile, caretTag: String? = null): Int? {
+    fun getCaretPositionOrNull(file: PsiFile, caretTag: String? = null): Int? {
         return carets.getCaretOffset(file.name, caretTag)
     }
 
-    fun getCaretPosition(file: KtFile, caretTag: String? = null): Int {
+    fun getCaretPosition(file: PsiFile, caretTag: String? = null): Int {
         return getCaretPositionOrNull(file, caretTag)
             ?: run {
                 val caretName = "caret${caretTag?.let { "_$it" }.orEmpty()}"
@@ -102,6 +98,8 @@ class ExpressionMarkerProvider : TestService {
             }
     }
 
+    fun getSelectedRangeOrNull(file: PsiFile): TextRange? = selected[file.name]
+    fun getSelectedRange(file: PsiFile): TextRange = getSelectedRangeOrNull(file) ?: error("No selected expression found in file")
 
     inline fun <reified P : KtElement> getElementOfTypeAtCaret(file: KtFile, caretTag: String? = null): P {
         val offset = getCaretPosition(file, caretTag)
@@ -128,7 +126,7 @@ class ExpressionMarkerProvider : TestService {
         caretTag: String? = null
     ): Collection<Pair<P, KtFile>> {
         return files.mapNotNull { file ->
-            carets.getCaretOffset(file.name, caretTag)?.let { offset ->
+            getCaretPositionOrNull(file, caretTag)?.let { offset ->
                 file.findElementAt(offset)?.parentOfType<P>()?.let { element ->
                     element to file
                 }
@@ -183,7 +181,7 @@ class ExpressionMarkerProvider : TestService {
 
 
     fun getSelectedElementOrNull(file: KtFile): PsiElement? {
-        val range = selected[file.name] ?: return null
+        val range = getSelectedRangeOrNull(file) ?: return null
         val elements = file.elementsInRange(range).trimWhitespaces()
         if (elements.size != 1) {
             error("Expected one element at rage but found ${elements.size} [${elements.joinToString { it::class.simpleName + ": " + it.text }}]")
@@ -245,7 +243,7 @@ class ExpressionMarkerProvider : TestService {
      * Find the bottommost element of [E] or its subtype wrapped in an '<expr>' selection tag.
      */
     fun <E : KtElement> getBottommostSelectedElementOfType(file: KtFile, elementType: Class<E>): E {
-        val range = selected[file.name] ?: error("No selected expression found in file")
+        val range = getSelectedRange(file)
         return getBottommostElementOfTypeInRange(file, range, elementType)
     }
 
@@ -258,8 +256,7 @@ class ExpressionMarkerProvider : TestService {
     }
 }
 
-@PrivateForInline
-class CaretProvider {
+private class CaretProvider {
     private val caretToFile = mutableMapOf<String, CaretsInFile>()
 
     fun getCaretOffset(filename: String, caretTag: String?): Int? {
