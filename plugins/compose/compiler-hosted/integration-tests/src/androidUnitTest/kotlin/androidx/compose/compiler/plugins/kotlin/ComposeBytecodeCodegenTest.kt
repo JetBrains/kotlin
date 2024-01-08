@@ -16,10 +16,11 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import kotlin.test.assertFalse
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 
-class KtxTransformationTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
+class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
 //    b/179279455
 //    @Test
 //    fun testObserveLowering() {
@@ -718,4 +719,27 @@ class KtxTransformationTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
         """
         )
     }
+
+    @Test
+    fun testRecursiveLocalFunction() = validateBytecode(
+        """
+            import androidx.compose.runtime.*
+
+            @Composable fun Surface(content: @Composable () -> Unit) {}
+
+            @Composable
+            fun MyComposable(){
+                @Composable
+                fun LocalComposable(){
+                    Surface { LocalComposable() }
+                }
+            }
+        """,
+        validate = {
+            assertFalse(
+                it.contains("ComposableSingletons"),
+                message = "ComposableSingletons class should not be generated"
+            )
+        }
+    )
 }
