@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -74,5 +74,23 @@ fun RegisteredDirectives.ignoreExceptionIfIgnoreDirectivePresent(ignoreDirective
 
     if (exception != null) {
         throw exception
+    }
+}
+
+/**
+ * Transforms [this] collection with [transformer] and return single or null value. Throws [error] in the case of more than one element.
+ */
+fun <T, R> Collection<T>.singleOrZeroValue(
+    transformer: (T) -> R?,
+    ambiguityValueRenderer: (R) -> String,
+): R? {
+    val newCollection = mapNotNull(transformer)
+    return when (newCollection.size) {
+        0 -> null
+        1 -> newCollection.single()
+        else -> error(buildString {
+            appendLine("Ambiguity values are not expected.")
+            newCollection.joinTo(this, separator = "\n", transform = ambiguityValueRenderer)
+        })
     }
 }
