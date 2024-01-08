@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.HealthKitUI
+
+modules = HealthKitUI
+compilerOpts = -framework HealthKitUI
+linkerOpts = -framework HealthKitUI
