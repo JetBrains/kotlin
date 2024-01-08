@@ -10931,6 +10931,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
         }
 
         @Test
+        @TestMetadata("errorCodeDelegatedConstructorCall.kt")
+        public void testErrorCodeDelegatedConstructorCall() throws Exception {
+            runTest("js/js.translator/testData/box/simple/errorCodeDelegatedConstructorCall.kt");
+        }
+
+        @Test
         @TestMetadata("if.kt")
         public void testIf() throws Exception {
             runTest("js/js.translator/testData/box/simple/if.kt");
