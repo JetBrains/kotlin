@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtMod
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -34,6 +35,10 @@ import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
 
+private typealias LibraryCache = MutableMap<Set<Path>, KtBinaryModule>
+
+private typealias ModulesByName = Map<String, KtModuleWithFiles>
+
 object TestModuleStructureFactory {
     fun createProjectStructureByTestStructure(
         moduleStructure: TestModuleStructure,
@@ -44,34 +49,58 @@ object TestModuleStructureFactory {
             testServices.getKtModuleFactoryForTestModule(testModule).createModule(testModule, testServices, project)
         }
 
-        val moduleEntriesByName = moduleEntries.associateByName()
+        val modulesByName = moduleEntries.associateByName()
 
-        val libraryCache = mutableMapOf<Set<Path>, KtBinaryModule>()
+        val libraryCache: LibraryCache = mutableMapOf()
 
         for (testModule in moduleStructure.modules) {
-            val moduleWithFiles = moduleEntriesByName[testModule.name] ?: moduleEntriesByName.getValue(testModule.files.single().name)
-            when (val ktModule = moduleWithFiles.ktModule) {
-                is KtNotUnderContentRootModule -> {
-                    // Not-under-content-root modules have no external dependencies on purpose
-                }
-                is KtModuleWithModifiableDependencies -> {
-                    addModuleDependencies(testModule, moduleEntriesByName, ktModule)
-                    addLibraryDependencies(testModule, testServices, project, ktModule, libraryCache::getOrPut)
-                }
-                else -> error("Unexpected module type: " + ktModule.javaClass.name)
-            }
+            val ktModule = modulesByName.getByTestModule(testModule).ktModule
+
+            ktModule.addToLibraryCacheIfNeeded(libraryCache)
+            ktModule.addDependencies(testModule, testServices, modulesByName, libraryCache)
         }
 
         return KtModuleProjectStructure(moduleEntries, libraryCache.values)
     }
 
+    private fun ModulesByName.getByTestModule(testModule: TestModule): KtModuleWithFiles =
+        this[testModule.name] ?: this.getValue(testModule.files.single().name)
+
+    /**
+     * A main module may be a binary library module, which may be a dependency of subsequent main modules. We need to add such a module to
+     * the library cache before it is processed as a dependency. Otherwise, when another module's binary dependency is processed,
+     * [addLibraryDependencies] will create a *duplicate* binary library module with the same roots and name as the already existing binary
+     * library module.
+     */
+    private fun KtModule.addToLibraryCacheIfNeeded(libraryCache: LibraryCache) {
+        if (this is KtBinaryModule) {
+            libraryCache.put(getBinaryRoots().toSet(), this)
+        }
+    }
+
+    private fun KtModule.addDependencies(
+        testModule: TestModule,
+        testServices: TestServices,
+        modulesByName: ModulesByName,
+        libraryCache: LibraryCache,
+    ) = when (this) {
+        is KtNotUnderContentRootModule -> {
+            // Not-under-content-root modules have no external dependencies on purpose
+        }
+        is KtModuleWithModifiableDependencies -> {
+            addModuleDependencies(testModule, modulesByName, this)
+            addLibraryDependencies(testModule, testServices, project, this, libraryCache::getOrPut)
+        }
+        else -> error("Unexpected module type: " + javaClass.name)
+    }
+
     private fun addModuleDependencies(
         testModule: TestModule,
-        moduleByName: Map<String, KtModuleWithFiles>,
-        ktModule: KtModuleWithModifiableDependencies
+        modulesByName: ModulesByName,
+        ktModule: KtModuleWithModifiableDependencies,
     ) {
         testModule.allDependencies.forEach { dependency ->
-            val dependencyKtModule = moduleByName.getValue(dependency.moduleName).ktModule
+            val dependencyKtModule = modulesByName.getValue(dependency.moduleName).ktModule
             when (dependency.relation) {
                 DependencyRelation.RegularDependency -> ktModule.directRegularDependencies.add(dependencyKtModule)
                 DependencyRelation.FriendDependency -> ktModule.directFriendDependencies.add(dependencyKtModule)

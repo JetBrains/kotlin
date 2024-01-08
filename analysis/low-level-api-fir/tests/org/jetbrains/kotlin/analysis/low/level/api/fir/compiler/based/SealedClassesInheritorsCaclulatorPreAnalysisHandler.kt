@@ -42,9 +42,7 @@ class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
         }
 
         val ktFilesByModule = moduleStructure.modules.associateWith { testModule ->
-            testServices.ktModuleProvider.getModuleFiles(testModule)
-                .filterIsInstance<KtFile>()
-                .filterNot(KtFile::isCompiled)
+            testServices.ktModuleProvider.getModuleFiles(testModule).filterIsInstance<KtFile>()
         }
 
         for ((testModule, ktFiles) in ktFilesByModule) {
