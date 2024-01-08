@@ -33,7 +33,8 @@ import java.lang.Boolean.getBoolean
 open class AbstractFirJsTest(
     pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix: String,
-    targetBackend: TargetBackend = TargetBackend.JS_IR
+    targetBackend: TargetBackend = TargetBackend.JS_IR,
+    val parser: FirParser = FirParser.Psi,
 ) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
     FrontendKinds.FIR, targetBackend, pathToTestDir, testGroupOutputDirPrefix, skipMinification = true
 ) {
@@ -66,7 +67,7 @@ open class AbstractFirJsTest(
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
                 -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
                 DiagnosticsDirectives.DIAGNOSTICS with listOf("-infos")
-                FirDiagnosticsDirectives.FIR_PARSER with FirParser.Psi
+                FirDiagnosticsDirectives.FIR_PARSER with parser
             }
 
             firHandlersStep {
@@ -93,9 +94,16 @@ open class AbstractFirJsTest(
     }
 }
 
-open class AbstractFirJsBoxTest : AbstractFirJsTest(
+open class AbstractFirPsiJsBoxTest : AbstractFirJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
-    testGroupOutputDirPrefix = "firBox/"
+    testGroupOutputDirPrefix = "firBox/",
+    parser = FirParser.Psi,
+)
+
+open class AbstractFirLightTreeJsBoxTest : AbstractFirJsTest(
+    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
+    testGroupOutputDirPrefix = "firBox/",
+    parser = FirParser.LightTree,
 )
 
 open class AbstractFirJsCodegenBoxTest : AbstractFirJsTest(

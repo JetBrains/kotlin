@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.js.test.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
 import org.jetbrains.kotlin.js.testOld.AbstractDceTest
@@ -152,7 +151,11 @@ fun main(args: Array<String>) {
                 model("lineNumbers/")
             }
 
-            testClass<AbstractFirJsBoxTest> {
+            testClass<AbstractFirPsiJsBoxTest> {
+                model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
+            }
+
+            testClass<AbstractFirLightTreeJsBoxTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
 

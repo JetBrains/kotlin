@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlinx.serialization.runners
 
-import org.jetbrains.kotlin.js.test.fir.AbstractFirJsBoxTest
 import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
