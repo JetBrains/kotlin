@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiLastModuleFirstFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.service
 
-abstract class AbstractLibraryGetOrBuildFirTest : AbstractLowLevelApiLastModuleFirstFileTest() {
+abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
     override val configurator = AnalysisApiFirLibraryBinaryTestConfigurator
     override fun configureTest(builder: TestConfigurationBuilder) {
         builder.forTestsMatching("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/*") {
@@ -36,27 +36,27 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractLowLevelApiLastModuleF
         }
     }
 
-    override fun doTestByFileStructure(ktFile: KtFile, testModule: TestModule, testServices: TestServices) {
-        val declaration = getElementToSearch(ktFile, testServices.moduleStructure)
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        val declaration = getElementToSearch(mainFile, testServices.moduleStructure)!!
 
-        val module = ProjectStructureProvider.getModule(ktFile.project, ktFile, contextualModule = null)
-        val resolveSession = LLFirResolveSessionService.getInstance(ktFile.project).getFirResolveSessionForBinaryModule(module)
+        val module = ProjectStructureProvider.getModule(mainFile.project, mainFile, contextualModule = null)
+        val resolveSession = LLFirResolveSessionService.getInstance(mainFile.project).getFirResolveSessionForBinaryModule(module)
         val symbolProvider = resolveSession.getSessionFor(module).symbolProvider
         val fir = FirDeclarationForCompiledElementSearcher(symbolProvider).findNonLocalDeclaration(declaration)
 
         testServices.assertions.assertEqualsToTestDataFileSibling(renderActualFir(fir, declaration, true))
     }
 
-    private fun getElementToSearch(ktFile: KtFile, moduleStructure: TestModuleStructure): KtDeclaration {
+    private fun getElementToSearch(ktFile: KtFile, moduleStructure: TestModuleStructure): KtDeclaration? {
         val expectedType = moduleStructure.allDirectives[Directives.DECLARATION_TYPE].firstOrNull()
             ?: error("Compiled code should have element type specified")
         @Suppress("UNCHECKED_CAST") val expectedClass = Class.forName(expectedType) as Class<out PsiElement>
-        return findFirstDeclaration(ktFile.declarations, expectedClass)!!
+        return findFirstDeclaration(ktFile.declarations, expectedClass)
     }
 
     private fun findFirstDeclaration(
         declarations: List<KtDeclaration>,
-        expectedClass: Class<out PsiElement>
+        expectedClass: Class<out PsiElement>,
     ): KtDeclaration? {
         declarations.filterIsInstance(expectedClass).firstOrNull()?.let { return it as KtDeclaration }
         declarations.forEach { decl ->

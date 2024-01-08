@@ -22,9 +22,9 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
         require(firSession.isSourceSession)
     }
 
-    override fun doTestByFileStructure(ktFile: KtFile, testModule: TestModule, testServices: TestServices) {
-        doLazyResolveTest(ktFile, testServices, renderAllFiles = true) { firResolveSession ->
-            findFirDeclarationToResolve(ktFile, testServices.moduleStructure, testServices, firResolveSession)
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        doLazyResolveTest(mainFile, testServices, renderAllFiles = true) { firResolveSession ->
+            findFirDeclarationToResolve(mainFile, testServices.moduleStructure, testServices, firResolveSession)
         }
     }
 

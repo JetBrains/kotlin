@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
@@ -38,11 +39,12 @@ abstract class AbstractStdLibSourcesLazyDeclarationResolveTest : AbstractFirLazy
 
     override val configurator get() = AnalysisApiFirStdlibSourceTestConfigurator
 
-    override fun doTestByFileStructure(ktFile: KtFile, testModule: TestModule, testServices: TestServices) {
-        val project = ktFile.project
+    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: TestModule, testServices: TestServices) {
+        val psiFile = mainFile ?: testServices.ktModuleProvider.getModuleFiles(mainModule).first()
+        val project = psiFile.project
         val moduleStructure = testServices.moduleStructure
         val classId = moduleStructure.allDirectives.singleValue(Directives.CLASS_ID).let(ClassId::fromString)
-        val module = ProjectStructureProvider.getModule(project, ktFile, contextualModule = null)
+        val module = ProjectStructureProvider.getModule(project, psiFile, contextualModule = null)
         val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSession(module)
         val classDeclaration = findRegularClass(classId, module, resolveSession).findPsi() as KtClassOrObject
         val file = classDeclaration.containingFile as KtFile

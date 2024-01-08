@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiLastModuleFirstFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiLastModuleFirstFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, testModule: TestModule, testServices: TestServices) {
-        val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(ktFile, testModule) as KtElement
+abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(mainFile, mainModule) as KtElement
 
-        val actual = resolveWithClearCaches(ktFile) { session ->
+        val actual = resolveWithClearCaches(mainFile) { session ->
             renderActualFir(
                 fir = selectedElement.getOrBuildFir(session),
                 ktElement = selectedElement,
-                firFile = ktFile.getOrBuildFirFile(session),
+                firFile = mainFile.getOrBuildFirFile(session),
             )
         }
 

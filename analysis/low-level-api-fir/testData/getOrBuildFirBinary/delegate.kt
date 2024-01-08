@@ -1,3 +1,4 @@
+// MAIN_FILE_NAME: I
 // DECLARATION_TYPE: org.jetbrains.kotlin.psi.KtClass
 class I(private val p: A) : A by p
 

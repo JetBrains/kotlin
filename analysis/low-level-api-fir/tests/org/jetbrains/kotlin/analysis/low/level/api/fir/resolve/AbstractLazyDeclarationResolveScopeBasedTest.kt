@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazyResolveRenderer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiLastModuleFirstFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.test.services.assertions
 /**
  * This test exists to check lazy resolution for fake overrides
  */
-abstract class AbstractLazyDeclarationResolveScopeBasedTest : AbstractLowLevelApiLastModuleFirstFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, testModule: TestModule, testServices: TestServices) {
-        val classOrObject = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassOrObject>(ktFile)
+abstract class AbstractLazyDeclarationResolveScopeBasedTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        val classOrObject = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassOrObject>(mainFile)
         resolveWithClearCaches(classOrObject) { session ->
             val classSymbol = classOrObject.resolveToFirSymbolOfType<FirClassSymbol<*>>(session)
             val symbols = collectAllCallableDeclarations(classSymbol, session)
