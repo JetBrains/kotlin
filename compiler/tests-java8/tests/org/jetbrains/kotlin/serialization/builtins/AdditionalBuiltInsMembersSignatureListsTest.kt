@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 
 class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): KotlinCoreEnvironment {
-        return createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK_17)
+        return createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK_21)
     }
 
     fun testAllListedSignaturesExistInJdk() {
@@ -56,10 +56,10 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
 
             val scope = classDescriptor.unsubstitutedMemberScope
 
-            val lateJdkSignatures = LATE_JDK_SIGNATURES[internalName] ?: emptySet()
+            val signaturesFromLaterJdkReleases = SIGNATURES_FROM_LATER_JDK_RELEASES[internalName] ?: emptySet()
 
             for (jvmDescriptor in jvmDescriptors) {
-                if (jvmDescriptor in lateJdkSignatures) continue
+                if (jvmDescriptor in signaturesFromLaterJdkReleases) continue
 
                 val stringName = jvmDescriptor.split("(")[0]
                 val functions =
@@ -75,17 +75,14 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
         }
     }
 
-    // TODO: Get rid of it once JDK 21 is released (KT-58765 for tracking)
-    private val LATE_JDK_SIGNATURES = mapOf(
-        "java/util/List" to setOf(
-            // From JDK 21
-            "addFirst(Ljava/lang/Object;)V",
-            "addLast(Ljava/lang/Object;)V",
-            "getFirst()Ljava/lang/Object;",
-            "getLast()Ljava/lang/Object;",
-            "removeFirst()Ljava/lang/Object;",
-            "removeLast()Ljava/lang/Object;",
-            "reversed()Ljava/util/List;",
-        )
-    )
+    /**
+     * This property can be used to exclude particular signatures
+     * from the [testAllListedSignaturesExistInJdk] test
+     * if they were introduced in later JDK releases than the test is currently configured to use.
+     * It might be helpful in case the test can't be updated to these later JDK releases just yet
+     * (for example, if the JDK releases in question are not released as stable yet).
+     *
+     * initialization example: `mapOf("java/util/List" to setOf("addFirst(Ljava/lang/Object;)V"))`
+     */
+    private val SIGNATURES_FROM_LATER_JDK_RELEASES: Map<String, Set<String>> = emptyMap()
 }
