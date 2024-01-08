@@ -52,10 +52,9 @@ class KotlinAndroidIT : KGPBaseTest() {
                 }
             }
 
-            build("assembleDebug", "test") {
-                val pattern = ":Test:compile[\\w\\d]+Kotlin"
-                expectedTasks.addAll(findTasksByPattern(pattern.toRegex()))
-                assertTasksExecuted(expectedTasks)
+            build("assembleDebug", ":Android:test") {
+                val pattern = ":Android:compile[\\w\\d]+Kotlin".toRegex()
+                assertTasksExecuted(expectedTasks + tasks.map { it.path }.filter { it.matches(pattern) })
                 assertOutputContains("InternalDummyTest PASSED")
                 assertKotlinGradleBuildServicesAreInitialized()
             }

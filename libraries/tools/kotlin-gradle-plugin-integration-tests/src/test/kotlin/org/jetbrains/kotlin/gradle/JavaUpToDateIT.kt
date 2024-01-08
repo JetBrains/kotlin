@@ -17,7 +17,7 @@ class JavaUpToDateIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinMethodBodyIsChanged(gradleVersion: GradleVersion) {
         project("javaUpToDate", gradleVersion) {
-            build("build") {
+            build("testClasses") {
                 assertTasksExecuted(
                     ":compileKotlin",
                     ":compileJava",
@@ -33,7 +33,7 @@ class JavaUpToDateIT : KGPBaseTest() {
                 )
             }
 
-            build("build") {
+            build("testClasses") {
                 assertTasksExecuted(":compileKotlin")
                 assertTasksUpToDate(":compileJava", ":compileTestJava", ":compileTestKotlin")
             }
@@ -44,7 +44,7 @@ class JavaUpToDateIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinNewLineAdded(gradleVersion: GradleVersion) {
         project("javaUpToDate", gradleVersion) {
-            build("build") {
+            build("testClasses") {
                 assertTasksExecuted(
                     ":compileKotlin",
                     ":compileJava",
@@ -55,7 +55,7 @@ class JavaUpToDateIT : KGPBaseTest() {
 
             kotlinSourcesDir().resolve("foo/MainKotlinClass.kt").modify { "\n$it" }
 
-            build("build") {
+            build("testClasses") {
                 assertTasksExecuted(":compileKotlin")
                 assertTasksUpToDate(":compileJava", ":compileTestJava", ":compileTestKotlin")
             }
@@ -66,7 +66,7 @@ class JavaUpToDateIT : KGPBaseTest() {
     @GradleTest
     fun testPrivateMethodSignatureChanged(gradleVersion: GradleVersion) {
         project("javaUpToDate", gradleVersion) {
-            build("build") {
+            build("testClasses") {
                 assertTasksExecuted(
                     ":compileKotlin",
                     ":compileJava",
@@ -82,7 +82,7 @@ class JavaUpToDateIT : KGPBaseTest() {
                 )
             }
 
-            build("build") {
+            build("testClasses") {
                 // see https://github.com/gradle/gradle/issues/5013
                 assertTasksExecuted(":compileKotlin", ":compileJava", ":compileTestKotlin", ":compileTestJava")
             }

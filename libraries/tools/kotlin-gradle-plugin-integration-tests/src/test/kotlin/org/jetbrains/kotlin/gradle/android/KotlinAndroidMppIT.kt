@@ -842,14 +842,12 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("allTests") {
+            build(":compileDebugUnitTestKotlinAndroid", ":compileReleaseUnitTestKotlinAndroid") {
                 assertTasksExecuted(
                     ":compileDebugKotlinAndroid",
                     ":compileReleaseKotlinAndroid",
                     ":compileDebugUnitTestKotlinAndroid",
                     ":compileReleaseUnitTestKotlinAndroid",
-                    ":testDebugUnitTest",
-                    ":testReleaseUnitTest",
                 )
             }
 

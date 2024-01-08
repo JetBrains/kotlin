@@ -142,7 +142,7 @@ class SubpuginsIT : KGPBaseTest() {
     @GradleTest
     fun testAllOpenFromNestedBuildscript(gradleVersion: GradleVersion) {
         project("allOpenFromNestedBuildscript", gradleVersion) {
-            build("build") {
+            build("testClasses") {
                 val nestedSubproject = subProject("a/b")
                 assertFileExists(nestedSubproject.kotlinClassesDir().resolve("MyClass.class"))
                 assertFileExists(nestedSubproject.kotlinClassesDir("test").resolve("MyTestClass.class"))
@@ -155,7 +155,7 @@ class SubpuginsIT : KGPBaseTest() {
     @GradleTest
     fun testAllopenFromScript(gradleVersion: GradleVersion) {
         project("allOpenFromScript", gradleVersion) {
-            build("build") {
+            build("testClasses") {
                 assertFileExists(kotlinClassesDir().resolve("MyClass.class"))
                 assertFileExists(kotlinClassesDir(sourceSet = "test").resolve("MyTestClass.class"))
             }

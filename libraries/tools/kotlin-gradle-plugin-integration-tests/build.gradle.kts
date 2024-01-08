@@ -218,7 +218,7 @@ fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>
 }
 
 fun Test.advanceGradleVersion() {
-    val gradleVersionForTests = "8.2.1"
+    val gradleVersionForTests = "8.3"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
 }
 

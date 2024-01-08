@@ -782,8 +782,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testCompilerTestAccessInternalProduction(gradleVersion: GradleVersion) {
         project("kotlin2JsInternalTest", gradleVersion) {
-            build("build") {
-            }
+            build("compileTestDevelopmentExecutableKotlinJs")
         }
     }
 

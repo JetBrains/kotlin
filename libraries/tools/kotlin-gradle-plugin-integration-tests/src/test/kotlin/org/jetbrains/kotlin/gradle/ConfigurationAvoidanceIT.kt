@@ -27,7 +27,6 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @JvmGradlePluginTests
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_7_3],
-        maxVersion = TestVersions.Gradle.G_8_3
     )
     @DisplayName("KGP/Jvm does not eagerly configure any tasks")
     @GradleTest
