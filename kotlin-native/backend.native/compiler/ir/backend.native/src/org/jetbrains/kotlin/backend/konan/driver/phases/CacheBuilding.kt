@@ -45,7 +45,7 @@ internal val SaveAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nativ
 internal val FinalizeCachePhase = createSimpleNamedCompilerPhase<PhaseContext, OutputFiles>(
         name = "FinalizeCache",
         description = "Finalize cache (rename temp to the final dist)"
-) { _, outputFiles ->
+) { context, outputFiles ->
     //  TODO: Explicit parameter
-    CacheStorage.renameOutput(outputFiles)
+    CacheStorage.renameOutput(outputFiles, overwrite = context.config.producePerFileCache)
 }
