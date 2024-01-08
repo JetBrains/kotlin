@@ -286,6 +286,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 it.getStrictParentOfType<KtImportDirective>() != null ||
                 (it is KtPropertyAccessor && !it.hasBody()) ||
                 it is KtDestructuringDeclarationEntry && it.text == "_" ||
+                it is KtConstructorDelegationCall && it.text == "" ||
                 it is KtIfExpression && it.parent is KtContainerNodeForControlStructureBody && it.parent.parent is KtIfExpression ||
                 it is KtContextReceiverList ||
                 it is KtContextReceiver && it.parent is KtContextReceiverList && it.parent?.parent is KtFunctionType ||

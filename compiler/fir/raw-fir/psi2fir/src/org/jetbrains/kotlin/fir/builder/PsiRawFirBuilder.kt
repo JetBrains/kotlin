@@ -1988,11 +1988,15 @@ open class PsiRawFirBuilder(
                     }
                     dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
                     contextReceivers.addAll(convertContextReceivers(owner.contextReceivers))
-                    delegatedConstructor = buildOrLazyDelegatedConstructorCall(
-                        isThis = isDelegatedCallToThis(),
-                        constructedTypeRef = delegatedTypeRef,
-                    ) {
-                        getDelegationCall().convert(delegatedTypeRef)
+                    val delegationCall = getDelegationCall()
+                    val hasExplicitDelegationCall = delegationCall.textLength > 0
+                    if (!owner.hasModifier(EXTERNAL_KEYWORD) || hasExplicitDelegationCall) {
+                        delegatedConstructor = buildOrLazyDelegatedConstructorCall(
+                            isThis = isDelegatedCallToThis(),
+                            constructedTypeRef = delegatedTypeRef,
+                        ) {
+                            delegationCall.convert(delegatedTypeRef)
+                        }
                     }
                     this@PsiRawFirBuilder.context.firFunctionTargets += target
                     extractAnnotationsTo(this)

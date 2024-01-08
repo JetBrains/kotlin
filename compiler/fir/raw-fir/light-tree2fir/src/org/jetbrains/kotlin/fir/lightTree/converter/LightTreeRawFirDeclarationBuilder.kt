@@ -1161,7 +1161,7 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertConstructorDelegationCall(
         constructorDelegationCall: LighterASTNode,
         classWrapper: ClassWrapper
-    ): FirDelegatedConstructorCall {
+    ): FirDelegatedConstructorCall? {
         var thisKeywordPresent = false
         val firValueArguments = mutableListOf<FirExpression>()
         constructorDelegationCall.forEachChildren {
@@ -1172,6 +1172,9 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         val isImplicit = constructorDelegationCall.textLength == 0
+        if (isImplicit && classWrapper.modifiers.hasExternal()) {
+            return null
+        }
         val isThis = thisKeywordPresent //|| (isImplicit && classWrapper.hasPrimaryConstructor)
         val delegatedType =
             when {

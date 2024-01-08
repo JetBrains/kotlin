@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 class ClassWrapper(
-    private val modifiers: Modifier,
+    val modifiers: Modifier,
     private val classKind: ClassKind,
     val classBuilder: FirClassBuilder,
     val hasSecondaryConstructor: Boolean,
