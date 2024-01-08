@@ -4,8 +4,8 @@
  */
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
-// FILE: cstdlib_setenv.def
-headers = stdlib.h
+// FILE: cstdlib.def
+headers = stdlib.h processor_count.h
 compilerOpts.mingw = -D ADD_WINDOWS_ENV_FUNCTIONS
 
 ---
@@ -27,6 +27,15 @@ static inline int unsetenv(const char *name)
 }
 #endif
 
+// FILE: processor_count.h
+int availableProcessors();
+
+// FILE: processor_count.cpp
+#include <thread>
+extern "C" {
+    #include "processor_count.h"
+    int availableProcessors () { return std::thread::hardware_concurrency(); }
+}
 
 // MODULE: main(cinterop)
 // FILE: main.kt
@@ -34,17 +43,15 @@ static inline int unsetenv(const char *name)
 
 import kotlin.native.*
 import kotlin.test.*
-import cstdlib_setenv.*
+import cstdlib.*
 import kotlinx.cinterop.*
 
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)
 fun box(): String {
     val platformProcessors: Int = Platform.getAvailableProcessors()
-    val jvmProcessors: Int = platformProcessors // Ideally, must be value of Runtime.getRuntime().availableProcessors() from testsystem
-    assertTrue(jvmProcessors > 0)
     assertTrue(platformProcessors > 0)
-    assertEquals(jvmProcessors, platformProcessors)
+    assertEquals(availableProcessors(), platformProcessors)
 
     setenv("KOTLIN_NATIVE_AVAILABLE_PROCESSORS", "12345", 1)
     assertEquals(Platform.getAvailableProcessors(), 12345)
