@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.concurrent.ConcurrentHashMap
 
 public class KotlinStaticDeclarationProvider internal constructor(
@@ -314,7 +313,7 @@ public class KotlinStaticDeclarationProviderFactory(
         val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()
         for (root in additionalRoots) {
             KotlinFakeClsStubsCache.processAdditionalRoot(root) { additionalRoot ->
-                val stubs = hashMapOf<VirtualFile, KotlinFileStubImpl>()
+                val stubs = mutableMapOf<VirtualFile, KotlinFileStubImpl>()
                 VfsUtilCore.visitChildrenRecursively(additionalRoot, object : VirtualFileVisitor<Void>() {
                     override fun visitFile(file: VirtualFile): Boolean {
                         if (!file.isDirectory) {
