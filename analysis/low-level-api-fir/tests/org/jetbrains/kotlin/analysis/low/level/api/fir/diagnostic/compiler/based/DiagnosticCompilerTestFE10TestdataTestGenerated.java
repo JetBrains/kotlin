@@ -38323,6 +38323,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("newLinkedHashMapMethods.kt")
+            public void testNewLinkedHashMapMethods() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithJava21/newLinkedHashMapMethods.kt");
+            }
+
+            @Test
             @TestMetadata("newListMethods.kt")
             public void testNewListMethods() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethods.kt");
