@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFiles
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
@@ -28,12 +29,10 @@ import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import java.nio.file.Path
@@ -45,7 +44,7 @@ import kotlin.test.fail
 private const val TEST_MODULE_NAME = "light_idea_test_case"
 
 abstract class AbstractSymbolLightClassesTestBase(
-    override val configurator: AnalysisApiTestConfigurator
+    override val configurator: AnalysisApiTestConfigurator,
 ) : AbstractAnalysisApiBasedTest() {
 
     override fun configureTest(builder: TestConfigurationBuilder) {
@@ -61,16 +60,12 @@ abstract class AbstractSymbolLightClassesTestBase(
         }
     }
 
-    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val lastModule = with(moduleStructure.modules) {
-            find { it.name.substringBefore('-') == "main" } ?: last()
-        }
-
-        val ktFiles = testServices.ktModuleProvider.getModuleFiles(lastModule).filterIsInstance<KtFile>()
-        doTestByFileStructure(ktFiles, lastModule, testServices)
+    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: TestModule, testServices: TestServices) {
+        val ktFiles = testServices.ktModuleProvider.getKtFiles(mainModule)
+        doLightClassTest(ktFiles, mainModule, testServices)
     }
 
-    open fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
+    open fun doLightClassTest(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         if (isTestAgainstCompiledCode && TestModuleCompiler.Directives.COMPILATION_ERRORS in module.directives) {
             return
         }
@@ -105,7 +100,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         ktFiles: List<KtFile>,
         testDataFile: Path,
         module: TestModule,
-        project: Project
+        project: Project,
     ): String
 
     protected fun ignoreExceptionIfIgnoreDirectivePresent(module: TestModule, action: () -> Unit) {

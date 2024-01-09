@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,13 +22,13 @@ import java.nio.file.Path
 abstract class AbstractSymbolLightClassesEqualityTestBase(
     configurator: AnalysisApiTestConfigurator,
     override val currentExtension: String,
-    override val isTestAgainstCompiledCode: Boolean
+    override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
         throw IllegalStateException("This test is not rendering light elements")
     }
 
-    final override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
+    final override fun doLightClassTest(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val lightClasses = lightClassesToCheck(ktFiles, module, testServices)
         if (lightClasses.isEmpty()) return
 

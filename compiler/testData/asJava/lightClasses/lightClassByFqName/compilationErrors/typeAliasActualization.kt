@@ -5,7 +5,7 @@ package common.pack
 
 expect annotation class ExpectAnnotation
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: main-jvm()()(m1-common)
 // FILE: annotations.kt
 package jvm.pack
 

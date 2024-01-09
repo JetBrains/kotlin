@@ -18,7 +18,7 @@ abstract class AbstractSymbolLightClassesStructureTest(
     stopIfCompilationErrorDirectivePresent: Boolean,
 ) : AbstractSymbolLightClassesStructureTestBase(configurator, testPrefix, stopIfCompilationErrorDirectivePresent) {
 
-    override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
+    override fun doLightClassTest(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val result = prettyPrint {
             for (ktFile in ktFiles.sortedBy(KtFile::getName)) {
                 if (ktFiles.size > 1) {
