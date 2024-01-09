@@ -201,9 +201,9 @@ abstract class BirImplElementBase(elementClass: BirElementClass<*>) : BirElement
         for (i in array.indices) {
             val element = array[i] ?: break
 
-            if (storageIsArray && !element.hasFlag(FLAG_HAS_BEEN_STORED_IN_DEPENDENT_ELEMENTS_ARRAY)) {
+            if (!element.hasFlag(FLAG_HAS_BEEN_REGISTERED_AS_DEPENDENT_ELEMENT)) {
                 // This element is certainly not a back reference, so is safe to delete.
-                removeRelatedElementFromArray(i)
+                removeRelatedElement(i)
             }
 
             database.indexElement(element, true)
