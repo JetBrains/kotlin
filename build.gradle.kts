@@ -884,6 +884,7 @@ tasks {
         dependsOn(":tools:kotlinp:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
         dependsOn(":native:kotlin-klib-commonizer-api:test")
+        dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":kotlin-tooling-core:check")
         dependsOn(":kotlin-tooling-metadata:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
