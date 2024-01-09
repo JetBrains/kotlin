@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractPsiDeclarationProviderBinaryTest : AbstractAnalysisApiBasedTest() {
+abstract class AbstractPsiDeclarationProviderTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
         val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainFile)
         val ktReferences = findReferencesAtCaret(mainFile, caretPosition)
@@ -21,12 +21,11 @@ abstract class AbstractPsiDeclarationProviderBinaryTest : AbstractAnalysisApiBas
         }
 
         val element = ktReferences.first().element
-        val resolvedTo =
-            analyseForTest(element) {
-                val symbols = ktReferences.flatMap { it.resolveToSymbols() }
-                val psiElements = symbols.mapNotNull { psiForTest(it, element.project) }
-                psiElements.joinToString(separator = "\n") { TestPsiElementRenderer.render(it) }
-            }
+        val resolvedTo = analyseForTest(element) {
+            val symbols = ktReferences.flatMap { it.resolveToSymbols() }
+            val psiElements = symbols.mapNotNull { psiForTest(it, element.project) }
+            psiElements.joinToString(separator = "\n") { TestPsiElementRenderer.render(it) }
+        }
 
         val actual = "Resolved to:\n$resolvedTo"
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)

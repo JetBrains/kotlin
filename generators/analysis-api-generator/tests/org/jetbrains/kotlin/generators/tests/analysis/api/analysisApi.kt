@@ -59,8 +59,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
-import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderBinaryTest
-import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderSourceTest
+import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
@@ -239,13 +238,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 private fun AnalysisApiTestGroup.generateAnalysisApiStandaloneTests() {
     group("standalone") {
         test(
-            AbstractPsiDeclarationProviderSourceTest::class,
+            AbstractPsiDeclarationProviderTest::class,
             filter = testModuleKindIs(TestModuleKind.Source)
         ) {
             model(it, "source")
         }
         test(
-            AbstractPsiDeclarationProviderBinaryTest::class,
+            AbstractPsiDeclarationProviderTest::class,
             filter = testModuleKindIs(TestModuleKind.LibraryBinary)
         ) {
             model(it, "binary")
