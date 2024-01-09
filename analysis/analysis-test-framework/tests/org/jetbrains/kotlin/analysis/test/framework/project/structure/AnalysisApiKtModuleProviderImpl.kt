@@ -48,6 +48,8 @@ class AnalysisApiKtModuleProviderImpl(
     override fun getModuleStructure(): KtModuleProjectStructure = modulesStructure
 }
 
+fun TestServices.allKtFiles(): List<KtFile> = moduleStructure.modules.flatMap(ktModuleProvider::getKtFiles)
+
 val TestServices.ktModuleProvider: AnalysisApiKtModuleProvider by TestServices.testServiceAccessor()
 
 fun List<KtModuleWithFiles>.associateByName(): Map<String, KtModuleWithFiles> {
