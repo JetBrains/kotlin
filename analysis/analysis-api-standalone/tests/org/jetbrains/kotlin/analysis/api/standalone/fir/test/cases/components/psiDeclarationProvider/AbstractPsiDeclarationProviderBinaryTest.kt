@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractPsiDeclarationProviderMultiModuleBinaryTest : AbstractAnalysisApiBasedTest() {
+abstract class AbstractPsiDeclarationProviderBinaryTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
         val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainFile)
         val ktReferences = findReferencesAtCaret(mainFile, caretPosition)
