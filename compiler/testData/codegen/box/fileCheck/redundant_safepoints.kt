@@ -1,9 +1,6 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: RemoveRedundantSafepoints
 
-// KT-64844
-// IGNORE_NATIVE: target=linux_x64 && optimizationMode=OPT
-
 // This test checks:
 // - there is only one safepoint per function
 // - safepoint function is inlined in OPT mode, unless SMALLBINARY is needed (for ex, watchos_arm32)
