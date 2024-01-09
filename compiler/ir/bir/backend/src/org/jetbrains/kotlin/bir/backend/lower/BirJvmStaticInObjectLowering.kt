@@ -29,12 +29,10 @@ context(JvmBirBackendContext)
 class BirJvmStaticInObjectLowering : BirLoweringPhase() {
     private val JvmStaticAnnotation by lz { birBuiltIns.findClass(JVM_STATIC_ANNOTATION_FQ_NAME) }
 
-    private val functionsWithStaticAnnotationKey = registerIndexKey(BirSimpleFunction, false) {
+    private val staticDeclarations = registerIndexKey(BirDeclaration, false) {
         it.isJvmStaticDeclaration()
     }
-    private val callsToJvmStaticObjects = registerIndexKey(BirMemberAccessExpression, false) { call ->
-        (call.symbol as? BirDeclaration)?.isJvmStaticDeclaration() == true
-    }
+    private val memberAccesses = registerBackReferencesKey(BirMemberAccessExpression) { it.symbol.owner }
     private val valueReads = registerBackReferencesKey(BirGetValue) { it.symbol.owner }
 
     private val fieldForObjectInstanceToken = acquireProperty(JvmCachedDeclarations.FieldForObjectInstance)
@@ -42,22 +40,26 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
     private val fieldForObjectInstanceParentToken = acquireProperty(JvmCachedDeclarations.FieldForObjectInstanceParent)
 
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(functionsWithStaticAnnotationKey).forEach { function ->
-            val parent = function.correspondingPropertySymbol?.owner?.parent
-                ?: function.parent as? BirClass
+        getAllElementsWithIndex(staticDeclarations).forEach { declaration ->
+            val parent = (declaration as? BirSimpleFunction)?.correspondingPropertySymbol?.owner?.parent
+                ?: declaration.parent
+
             if (parent is BirClass && parent.kind == ClassKind.OBJECT && !parent.isCompanion) {
-                function.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
-                    replaceThisByStaticReference(parent, oldDispatchReceiverParameter)
-                    function.dispatchReceiverParameter = null
+                declaration.getBackReferences(memberAccesses).forEach { call ->
+                    call.replaceWithStatic(replaceCallee = null)
+                }
+
+                if (declaration is BirSimpleFunction) {
+                    declaration.removeStaticDispatchReceiver(parent)
                 }
             }
         }
+    }
 
-        getAllElementsWithIndex(callsToJvmStaticObjects).forEach { call ->
-            val callee = call.symbol.owner
-            if (callee.parent.let { it is BirClass && it.kind == ClassKind.OBJECT && !it.isCompanion }) {
-                call.replaceWithStatic(replaceCallee = null)
-            }
+    private fun BirSimpleFunction.removeStaticDispatchReceiver(parentObject: BirClass) {
+        dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
+            replaceThisByStaticReference(parentObject, oldDispatchReceiverParameter)
+            dispatchReceiverParameter = null
         }
     }
 
