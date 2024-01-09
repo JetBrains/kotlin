@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiModifiablePsiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiModifiablePsiTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
@@ -22,7 +22,7 @@ import kotlin.contracts.contract
  * elements may currently be in the process of modification, they may be inconsistent. This test ensures that the declaration modification
  * service can handle such inconsistent PSI, without throwing exceptions.
  */
-abstract class AbstractDeclarationModificationServicePsiResilienceTest : AbstractLowLevelApiModifiablePsiSingleFileTest() {
+abstract class AbstractDeclarationModificationServicePsiResilienceTest : AbstractLowLevelApiModifiablePsiTest() {
     protected abstract fun modifySelectedElement(element: PsiElement)
 
     override fun doTestWithPsiModification(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
