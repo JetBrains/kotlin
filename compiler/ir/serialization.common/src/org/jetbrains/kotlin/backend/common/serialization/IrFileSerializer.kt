@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
@@ -1107,9 +1108,9 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(property, PropertyFlags.encode(property)))
             .setName(serializeName(property.name))
 
-        property.backingField?.let { proto.backingField = serializeIrField(it) }
-        property.getter?.let { proto.getter = serializeIrFunction(it) }
-        property.setter?.let { proto.setter = serializeIrFunction(it) }
+        property.backingField?.takeUnless { skipIfPrivate(it) }?.let { proto.backingField = serializeIrField(it) }
+        property.getter?.takeUnless { skipIfPrivate(it) }?.let { proto.getter = serializeIrFunction(it) }
+        property.setter?.takeUnless { skipIfPrivate(it) }?.let { proto.setter = serializeIrFunction(it) }
 
         return proto.build()
     }
@@ -1269,9 +1270,9 @@ open class IrFileSerializer(
     open fun backendSpecificMetadata(irFile: IrFile): FileBackendSpecificMetadata? = null
 
     private fun skipIfPrivate(declaration: IrDeclaration) =
-        skipPrivateApi && (declaration as? IrDeclarationWithVisibility)?.visibility?.isPublicAPI != true
-                // Always keep private interfaces as they can be part of public type hierarchies.
-                && (declaration as? IrClass)?.isInterface != true
+        skipPrivateApi && (declaration as? IrDeclarationWithVisibility)?.let { !it.visibility.isPublicAPI && it.visibility != INTERNAL } == true
+                // Always keep private interfaces and type aliases as they can be part of public type hierarchies.
+                && (declaration as? IrClass)?.isInterface != true && declaration !is IrTypeAlias
 
     open fun memberNeedsSerialization(member: IrDeclaration): Boolean {
         val parent = member.parent
