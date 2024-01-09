@@ -1,8 +1,8 @@
 fun foo() {
-    val x = fun(s: String) {}
+    val <!UNUSED_VARIABLE!>x<!> = fun(s: String) {}
 
     fun nested() {
-        val <!UNUSED_VARIABLE!>x<!> = fun(i: Int) {}
+        val x = fun(i: Int) {}
 
         x(10)
     }

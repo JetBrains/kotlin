@@ -20,20 +20,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isBasicFunctionType
 import org.jetbrains.kotlin.name.SpecialNames
 
 object UnusedChecker : AbstractFirPropertyInitializationChecker() {
     override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
-        val ownData = ValueWritesWithoutReading(context.session, data.properties).getData(data.graph)
+        val ownData = ValueWritesWithoutReading(data.properties).getData(data.graph)
         data.graph.traverse(CfaVisitor(ownData, reporter, context))
     }
 
@@ -149,7 +145,6 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
     }
 
     private class ValueWritesWithoutReading(
-        private val session: FirSession,
         private val localProperties: Set<FirPropertySymbol>
     ) : PathAwareControlFlowGraphVisitor<VariableStatusInfo>() {
         companion object {
@@ -274,16 +269,16 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
-            val reference = node.fir.calleeReference.resolved ?: return dataForNode
-            val functionSymbol = reference.resolvedSymbol as? FirFunctionSymbol<*> ?: return dataForNode
-            val symbol = if (functionSymbol.callableId.callableName.identifier == "invoke") {
-                localProperties.find { it.name == reference.name && it.resolvedReturnTypeRef.coneType.isBasicFunctionType(session) }
-            } else null
-            symbol ?: return dataForNode
 
-            val status = VariableStatus.READ
-            status.isRead = true
-            return update(dataForNode, symbol) { status }
+            val functionCall = node.fir
+            if (functionCall is FirImplicitInvokeCall) {
+                val invokeReceiver = functionCall.explicitReceiver as? FirQualifiedAccessExpression
+                if (invokeReceiver != null) {
+                    return visitQualifiedAccesses(dataForNode, invokeReceiver)
+                }
+            }
+
+            return dataForNode
         }
 
         private fun update(
