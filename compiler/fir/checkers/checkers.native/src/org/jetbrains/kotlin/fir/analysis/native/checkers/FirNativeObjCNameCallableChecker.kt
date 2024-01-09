@@ -14,14 +14,33 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 
-object FirNativeObjCNameCallableChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirSimpleFunction && declaration !is FirProperty) return
-        val containingClass = context.containingDeclarations.lastOrNull() as? FirClass
-        if (containingClass != null) {
-            val firTypeScope = containingClass.unsubstitutedScope(context)
-            FirNativeObjCNameUtilities.checkCallableMember(firTypeScope, declaration.symbol, declaration, context, reporter)
+sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCallableDeclarationChecker(mppKind) {
+    object Regular : FirNativeObjCNameCallableChecker(MppCheckerKind.Platform) {
+        override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+            val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
+            if (containingClass.isExpect) return
+            check(declaration, containingClass, context, reporter)
         }
+    }
+
+    object ForExpectClass : FirNativeObjCNameCallableChecker(MppCheckerKind.Common) {
+        override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+            val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
+            if (!containingClass.isExpect) return
+            check(declaration, containingClass, context, reporter)
+        }
+    }
+
+    protected fun check(
+        declaration: FirCallableDeclaration,
+        containingClass: FirClass,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        if (declaration !is FirSimpleFunction && declaration !is FirProperty) return
+        val firTypeScope = containingClass.unsubstitutedScope(context)
+        FirNativeObjCNameUtilities.checkCallableMember(firTypeScope, declaration.symbol, declaration, context, reporter)
     }
 }

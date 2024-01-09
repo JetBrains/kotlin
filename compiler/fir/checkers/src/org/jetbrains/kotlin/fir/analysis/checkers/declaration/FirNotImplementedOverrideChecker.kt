@@ -41,8 +41,20 @@ import org.jetbrains.kotlin.util.ImplementationStatus
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-// TODO: extract common checker for expect interfaces
-object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platform) {
+sealed class FirNotImplementedOverrideChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
+    object Regular : FirNotImplementedOverrideChecker(MppCheckerKind.Platform) {
+        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+            if (declaration.isExpect) return
+            super.check(declaration, context, reporter)
+        }
+    }
+
+    object ForExpectClass : FirNotImplementedOverrideChecker(MppCheckerKind.Common) {
+        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+            if (!declaration.isExpect) return
+            super.check(declaration, context, reporter)
+        }
+    }
 
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = declaration.source ?: return

@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsExportAnnotationChecker
 
 object WasmBaseDeclarationCheckers : DeclarationCheckers() {
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
-            FirWasmExternalInheritanceChecker,
+            FirWasmExternalInheritanceChecker.Regular,
+            FirWasmExternalInheritanceChecker.ForExpectClass,
         )
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>

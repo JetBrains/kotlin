@@ -143,3 +143,30 @@ So the author of each new checker should decide in which session this checker sh
   it most likely should be `Common`
 - if the checker is interested in the scope of some type, it should be carefully considered how the actualization of the scope may affect
   the checker
+
+#### Checkers for expect classes
+
+```kotlin
+// MODULE: common
+expect interface A
+expect class B : A
+
+class C : A
+
+// MODULE: platform()()(common)
+actual interface A {
+    fun foo()
+}
+
+actual class B : A {
+    override fun foo() {}
+}
+```
+
+In this example we want to report "abstract foo not implemented" on  class `C`, but we don't want to report it on `expect class B` (as its supertype is always `expect A`, never `actual A`)
+
+So to cover such cases, it's worth splitting the platform checker into two parts:
+- `Regular`, which is platform checkers and runs for everything except `expect` declaration
+- `ForExpectClass`, which is common checkers and runs only for `expect` declarations
+
+As an example, check the implementation of [FirImplementationMismatchChecker](compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirImplementationMismatchChecker.kt) checker

@@ -33,13 +33,27 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-// TODO: extract common checker for expect interfaces
-object FirValueClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
+sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegularClassChecker(mppKind) {
+    object Regular : FirValueClassDeclarationChecker(MppCheckerKind.Platform) {
+        override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+            if (declaration.isExpect) return
+            super.check(declaration, context, reporter)
+        }
+    }
 
-    private val boxAndUnboxNames = setOf("box", "unbox")
-    private val equalsAndHashCodeNames = setOf("equals", "hashCode")
-    private val javaLangFqName = FqName("java.lang")
-    private val cloneableFqName = FqName("Cloneable")
+    object ForExpectClass : FirValueClassDeclarationChecker(MppCheckerKind.Common) {
+        override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+            if (!declaration.isExpect) return
+            super.check(declaration, context, reporter)
+        }
+    }
+
+    companion object {
+        private val boxAndUnboxNames = setOf("box", "unbox")
+        private val equalsAndHashCodeNames = setOf("equals", "hashCode")
+        private val javaLangFqName = FqName("java.lang")
+        private val cloneableFqName = FqName("Cloneable")
+    }
 
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.symbol.isInlineOrValueClass()) {
