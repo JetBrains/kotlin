@@ -26587,6 +26587,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             @TestDataPath("$PROJECT_ROOT")
             public class Scopes {
                 @Test
+                @TestMetadata("actualAbstractClassWithAdditionalMembers.kt")
+                public void testActualAbstractClassWithAdditionalMembers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/actualAbstractClassWithAdditionalMembers.kt");
+                }
+
+                @Test
                 @TestMetadata("actualFakeOverride.kt")
                 public void testActualFakeOverride() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/actualFakeOverride.kt");
@@ -26676,9 +26682,27 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("mixedFunctionalTypesInSupertypes.kt")
+                public void testMixedFunctionalTypesInSupertypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/mixedFunctionalTypesInSupertypes.kt");
+                }
+
+                @Test
+                @TestMetadata("multipleDefaultsInhereted.kt")
+                public void testMultipleDefaultsInhereted() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/multipleDefaultsInhereted.kt");
+                }
+
+                @Test
                 @TestMetadata("multipleExpectInterfacesImplementation.kt")
                 public void testMultipleExpectInterfacesImplementation() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/multipleExpectInterfacesImplementation.kt");
+                }
+
+                @Test
+                @TestMetadata("scopeOfFunInterface.kt")
+                public void testScopeOfFunInterface() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/scopeOfFunInterface.kt");
                 }
             }
 

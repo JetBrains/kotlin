@@ -1,24 +1,29 @@
 // TARGET_BACKEND: JVM
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
-// MODULE: common
-// TARGET_PLATFORM: Common
+// MODULE: m1-common
 // FILE: common.kt
 
 expect open class C1()
 expect interface I1
 
-open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class A<!> : C1(), I1
-open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class B<!> : I1, C1()
+open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class Common1_1<!> : C1(), I1
+open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class Common1_2<!> : I1, C1()
+
+expect open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class Expect1_1<!> : C1, I1
+expect open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED{JVM}!>class Expect1_2<!> : I1, C1
+
 
 expect abstract class C2()
 expect interface I2
 
-// TODO: KT-58829
-class C : C2(), I2
+open class Common2_1 : C2(), I2
+open class Common2_2 : I2, C2()
 
-// MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
+expect open class Expect2_1 : C2, I2
+expect open class Expect2_2 : I2, C2
+
+// MODULE: m1-jvm()()(m1-common)
 // FILE: main.kt
 
 actual open class C1 {
@@ -29,6 +34,10 @@ actual interface I1 {
     fun f() {}
 }
 
+actual open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Expect1_1<!> : C1(), I1
+actual open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Expect1_2<!> : I1, C1()
+
+
 actual abstract class C2 actual constructor() {
     fun g() {}
 }
@@ -36,3 +45,6 @@ actual abstract class C2 actual constructor() {
 actual interface I2 {
     fun g()
 }
+
+actual open class Expect2_1 : C2(), I2
+actual open class Expect2_2 : I2, C2()
