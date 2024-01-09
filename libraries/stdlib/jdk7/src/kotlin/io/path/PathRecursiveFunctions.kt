@@ -196,9 +196,19 @@ public fun Path.copyToRecursively(
         }
     }
 
+    val normalizedTarget = target.normalize()
+
     fun destination(source: Path): Path {
         val relativePath = source.relativeTo(this@copyToRecursively)
-        return target.resolve(relativePath.pathString)
+        val destination = target.resolve(relativePath.pathString)
+        if (!destination.normalize().startsWith(normalizedTarget)) {
+            throw IllegalFileNameException(
+                source,
+                destination,
+                "Copying files to outside the specified target directory is prohibited. The directory being recursively copied might contain an entry with an illegal name."
+            )
+        }
+        return destination
     }
 
     fun error(source: Path, exception: Exception): FileVisitResult {
@@ -509,4 +519,10 @@ private fun Path.checkNotSameAs(parent: Path) {
         throw FileSystemLoopException(this.toString())
 }
 
-internal class IllegalFileNameException(file: Path) : FileSystemException(file.toString())
+internal class IllegalFileNameException(
+    file: Path,
+    other: Path?,
+    message: String?
+) : FileSystemException(file.toString(), other?.toString(), message) {
+    constructor(file: Path) : this(file, null, null)
+}

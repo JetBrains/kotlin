@@ -1245,7 +1245,8 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             val aFileTarget = root.resolve("UnzipArchive3-aFile")
             testCopyMaybeFailsWith<FileSystemLoopException>(aFile, aFileTarget, setOf(aFileTarget))
             val aDirTarget = root.resolve("UnzipArchive3-aDir")
-            testCopyMaybeFailsWith<FileSystemLoopException>(aDir, aDirTarget, setOf(aDirTarget))
+            // Fails with jdk8 "IllegalFileNameException: Copying files to outside the specified target directory is prohibited."
+            testCopyMaybeFailsWith<IllegalFileNameException>(aDir, aDirTarget, setOf(aDirTarget))
 
             // Throws FileSystemLoopException in jvm8
             // Path.deleteIfExists on the root directory of the archive throws NullPointerException in jvm9+
@@ -1257,20 +1258,16 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
     }
 
     @Test
-    fun copyOutSideTarget() {
-        // Passes only with jdk8
+    fun copyOutsideTargetIsProhibited() {
         withZip("Archive.zip", listOf("a", "a//")) { root, zipRoot ->
             val aDir = zipRoot.resolve("a/")
             testWalkSucceeds(aDir, zipRoot.resolve("a/", "a"))
 
             val aDirTarget = root.resolve("UnzipArchive-aDir")
-            aDir.copyToRecursively(aDirTarget, followLinks = false)
-            // The "/a/" directory is copied to the target
-            testWalkSucceeds(aDirTarget, setOf(aDirTarget))
-            assertTrue(aDirTarget.isDirectory())
-            // The "/a" file is copied outside target
-            testWalkSucceeds(root, root.resolve("", "Archive.zip", "UnzipArchive-aDir", "a"))
-            assertTrue(root.resolve("a").isRegularFile())
+            // Fails with jdk8 "IllegalFileNameException: Copying files to outside the specified target directory is prohibited."
+            testCopyMaybeFailsWith<IllegalFileNameException>(aDir, aDirTarget, setOf(aDirTarget))
+            // No file is copied outside the target
+            testWalkSucceeds(root, root.resolve("", "Archive.zip", "UnzipArchive-aDir"))
         }
     }
 
