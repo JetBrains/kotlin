@@ -20,17 +20,17 @@ import org.jetbrains.kotlin.bir.util.getProperty
 import org.jetbrains.kotlin.bir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 
-context(BirStatementBuilderScope, JvmBirBackendContext)
+context(JvmBirBackendContext, BirStatementBuilderScope)
 inline fun birArray(arrayType: BirType, block: BirArrayBuilder.() -> Unit): BirExpression =
     BirArrayBuilder(arrayType).apply(block).build()
 
-context(BirStatementBuilderScope, JvmBirBackendContext)
+context(JvmBirBackendContext, BirStatementBuilderScope)
 fun birArrayOf(arrayType: BirType, elements: List<BirExpression>): BirExpression =
     birArray(arrayType) { elements.forEach { +it } }
 
 private class BirArrayElement(val expression: BirExpression, val isSpread: Boolean)
 
-context(BirStatementBuilderScope, JvmBirBackendContext)
+context(JvmBirBackendContext, BirStatementBuilderScope)
 class BirArrayBuilder(val arrayType: BirType) {
     // We build unboxed arrays for inline classes (UIntArray, etc) by first building
     // an unboxed array of the underlying primitive type, then coercing the result
