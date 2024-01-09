@@ -104,3 +104,4 @@ abstract class AbstractFirPsiJsDiagnosticTest : AbstractFirJsDiagnosticTestBase(
 abstract class AbstractFirLightTreeJsDiagnosticTest : AbstractFirJsDiagnosticTestBase(FirParser.LightTree)
 
 abstract class AbstractFirPsiJsDiagnosticWithBackendTest : AbstractFirJsDiagnosticWithBackendTestBase(FirParser.Psi)
+abstract class AbstractFirLightTreeJsDiagnosticWithBackendTest : AbstractFirJsDiagnosticWithBackendTestBase(FirParser.LightTree)

@@ -238,6 +238,15 @@ fun main(args: Array<String>) {
                 )
             }
 
+            testClass<AbstractFirLightTreeJsDiagnosticWithBackendTest>(suiteTestClassName = "FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated") {
+                model(
+                    relativeRootPath = "diagnostics/testsWithJsStdLibAndBackendCompilation",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+
             testClass<AbstractDiagnosticsTestWithJsStdLib>(suiteTestClassName = "DiagnosticsWithJsStdLibTestGenerated") {
                 model(
                     relativeRootPath = "diagnostics/testsWithJsStdLib",
