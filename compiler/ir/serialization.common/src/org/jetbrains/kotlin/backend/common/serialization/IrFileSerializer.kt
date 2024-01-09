@@ -185,11 +185,7 @@ open class IrFileSerializer(
     private fun serializeIrStatementOrigin(origin: IrStatementOrigin): Int =
         serializeString(origin.debugName)
 
-    private fun serializeCoordinates(start: Int, end: Int): Long = if (skipPrivateApi) {
-        0L
-    } else {
-        BinaryCoordinates.encode(start, end)
-    }
+    private fun serializeCoordinates(start: Int, end: Int): Long = BinaryCoordinates.encode(start, end)
 
     /* ------- Strings ---------------------------------------------------------- */
 
@@ -1005,7 +1001,7 @@ open class IrFileSerializer(
     private fun serializeIrDeclarationBase(declaration: IrDeclaration, flags: Long?): ProtoDeclarationBase {
         return with(ProtoDeclarationBase.newBuilder()) {
             symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol, isDeclared = true)
-            coordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
+            coordinates = if (skipPrivateApi && !isInsideInline) 0L else serializeCoordinates(declaration.startOffset, declaration.endOffset)
             addAllAnnotation(serializeAnnotations(declaration.annotations))
             flags?.let { setFlags(it) }
             originName = serializeIrDeclarationOrigin(declaration.origin)
@@ -1201,7 +1197,7 @@ open class IrFileSerializer(
 
     private fun serializeIrErrorDeclaration(errorDeclaration: IrErrorDeclaration): ProtoErrorDeclaration {
         val proto = ProtoErrorDeclaration.newBuilder()
-            .setCoordinates(serializeCoordinates(errorDeclaration.startOffset, errorDeclaration.endOffset))
+            .setCoordinates(if (skipPrivateApi) 0L else serializeCoordinates(errorDeclaration.startOffset, errorDeclaration.endOffset))
         return proto.build()
     }
 
@@ -1330,7 +1326,6 @@ open class IrFileSerializer(
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
 
         val proto = ProtoFile.newBuilder()
-            .setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = !skipPrivateApi))
             .addAllFqName(serializeFqName(file.packageFqName.asString()))
             .addAllAnnotation(serializeAnnotations(file.annotations))
 
@@ -1356,6 +1351,8 @@ open class IrFileSerializer(
             topLevelDeclarations.add(SerializedDeclaration(sigIndex, idSig.render(), byteArray))
             proto.addDeclarationId(sigIndex)
         }
+
+        proto.setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = !(skipPrivateApi && protoBodyArray.isEmpty())))
 
         // TODO: is it Konan specific?
 
