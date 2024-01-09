@@ -19,3 +19,21 @@ fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>) {
     y.removeFirst()
     y.removeLast()
 }
+
+// Test for collections with (add/remove)(First/Last) methods which are not covered by autotests
+fun foo(x: java.util.SequencedCollection<String>, y: java.util.SequencedSet<String>, z: java.util.Deque<String>) {
+    x.addFirst("")
+    x.addLast("")
+    x.removeFirst()
+    x.removeLast()
+
+    y.addFirst("")
+    y.addLast("")
+    y.removeFirst()
+    y.removeLast()
+
+    z.addFirst("")
+    z.addLast("")
+    z.removeFirst()
+    z.removeLast()
+}
