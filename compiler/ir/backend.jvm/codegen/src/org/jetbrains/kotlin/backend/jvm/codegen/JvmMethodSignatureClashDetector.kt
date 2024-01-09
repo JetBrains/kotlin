@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 import org.jetbrains.kotlin.utils.SmartSet
 
-class JvmSignatureClashDetector(
+class JvmMethodSignatureClashDetector(
     private val classCodegen: ClassCodegen
 ) {
     private val methodsBySignature = LinkedHashMap<RawSignature, MutableSet<IrFunction>>()
