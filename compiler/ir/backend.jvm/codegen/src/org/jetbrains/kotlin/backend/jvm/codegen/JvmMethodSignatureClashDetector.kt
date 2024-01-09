@@ -9,38 +9,30 @@ import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
-import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.linkage.SignatureClashDetector
 import org.jetbrains.kotlin.ir.util.isFakeOverride
-import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
-import org.jetbrains.kotlin.utils.SmartSet
 
 class JvmMethodSignatureClashDetector(
     private val classCodegen: ClassCodegen
-) {
-    private val methodsBySignature = LinkedHashMap<RawSignature, MutableSet<IrFunction>>()
-    private val fieldsBySignature = LinkedHashMap<RawSignature, MutableSet<IrField>>()
-
-    fun trackField(irField: IrField, rawSignature: RawSignature) {
-        fieldsBySignature.getOrPut(rawSignature) { SmartSet.create() }.add(irField)
-    }
-
-    fun trackMethod(irFunction: IrFunction, rawSignature: RawSignature) {
-        methodsBySignature.getOrPut(rawSignature) { SmartSet.create() }.add(irFunction)
-    }
+) : SignatureClashDetector<RawSignature, IrFunction>() {
 
     fun trackFakeOverrideMethod(irFunction: IrFunction) {
         if (irFunction.dispatchReceiverParameter != null) {
             for (overriddenFunction in getOverriddenFunctions(irFunction as IrSimpleFunction)) {
-                if (!overriddenFunction.isFakeOverride) trackMethod(irFunction, mapRawSignature(overriddenFunction))
+                if (!overriddenFunction.isFakeOverride) trackDeclaration(irFunction, mapRawSignature(overriddenFunction))
             }
         } else {
-            trackMethod(irFunction, mapRawSignature(irFunction))
+            trackDeclaration(irFunction, mapRawSignature(irFunction))
         }
     }
 
@@ -69,90 +61,85 @@ class JvmMethodSignatureClashDetector(
     private fun IrFunction.isSpecialOverride(): Boolean =
         origin in SPECIAL_BRIDGES_AND_OVERRIDES
 
-    fun reportErrors() {
-        reportMethodSignatureConflicts()
-        reportPredefinedMethodSignatureConflicts()
-        reportFieldSignatureConflicts()
+    override fun reportErrorsTo(diagnosticReporter: IrDiagnosticReporter) {
+        super.reportErrorsTo(diagnosticReporter)
+        reportPredefinedMethodSignatureConflicts(diagnosticReporter)
     }
 
-    private fun reportMethodSignatureConflicts() {
-        for ((rawSignature, methods) in methodsBySignature) {
-            if (methods.size <= 1) continue
+    override fun reportSignatureConflict(
+        signature: RawSignature,
+        declarations: Collection<IrFunction>,
+        diagnosticReporter: IrDiagnosticReporter
+    ) {
+        val fakeOverridesCount = declarations.count { it.isFakeOverride }
+        val specialOverridesCount = declarations.count { it.isSpecialOverride() }
+        val realMethodsCount = declarations.size - fakeOverridesCount - specialOverridesCount
 
-            val fakeOverridesCount = methods.count { it.isFakeOverride }
-            val specialOverridesCount = methods.count { it.isSpecialOverride() }
-            val realMethodsCount = methods.size - fakeOverridesCount - specialOverridesCount
+        val conflictingJvmDeclarationsData = getConflictingJvmDeclarationsData(signature, declarations)
 
-            val conflictingJvmDeclarationsData = getConflictingJvmDeclarationsData(rawSignature, methods)
-
-            when {
-                realMethodsCount == 0 && (fakeOverridesCount > 1 || specialOverridesCount > 1) ->
-                    if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
-                        reportJvmSignatureClash(
-                            JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
-                            listOf(classCodegen.irClass),
-                            conflictingJvmDeclarationsData
-                        )
-                    }
-
-                fakeOverridesCount == 0 && specialOverridesCount == 0 -> {
-                    // In IFoo$DefaultImpls we should report errors only if there are private methods among conflicting ones
-                    // (otherwise such errors would be reported twice: once for IFoo and once for IFoo$DefaultImpls).
-                    if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS ||
-                        methods.any { DescriptorVisibilities.isPrivate(it.visibility) }
-                    ) {
-                        reportJvmSignatureClash(
-                            JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS,
-                            methods,
-                            conflictingJvmDeclarationsData
-                        )
-                    }
+        when {
+            realMethodsCount == 0 && (fakeOverridesCount > 1 || specialOverridesCount > 1) ->
+                if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+                    reportJvmSignatureClash(
+                        diagnosticReporter,
+                        JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
+                        listOf(classCodegen.irClass),
+                        conflictingJvmDeclarationsData
+                    )
                 }
 
-                else ->
-                    if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
-                        reportJvmSignatureClash(
-                            JvmBackendErrors.ACCIDENTAL_OVERRIDE,
-                            methods.filter { !it.isFakeOverride && !it.isSpecialOverride() },
-                            conflictingJvmDeclarationsData
-                        )
-                    }
+            fakeOverridesCount == 0 && specialOverridesCount == 0 -> {
+                // In IFoo$DefaultImpls we should report errors only if there are private methods among conflicting ones
+                // (otherwise such errors would be reported twice: once for IFoo and once for IFoo$DefaultImpls).
+                if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS ||
+                    declarations.any { DescriptorVisibilities.isPrivate(it.visibility) }
+                ) {
+                    reportJvmSignatureClash(
+                        diagnosticReporter,
+                        JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS,
+                        declarations,
+                        conflictingJvmDeclarationsData
+                    )
+                }
             }
+
+            else ->
+                if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+                    reportJvmSignatureClash(
+                        diagnosticReporter,
+                        JvmBackendErrors.ACCIDENTAL_OVERRIDE,
+                        declarations.filter { !it.isFakeOverride && !it.isSpecialOverride() },
+                        conflictingJvmDeclarationsData
+                    )
+                }
         }
     }
 
-    private fun reportPredefinedMethodSignatureConflicts() {
+    private fun reportPredefinedMethodSignatureConflicts(diagnosticReporter: IrDiagnosticReporter) {
         for (predefinedSignature in PREDEFINED_SIGNATURES) {
-            val knownMethods = methodsBySignature[predefinedSignature] ?: continue
-            val methods = knownMethods.filter { !it.isFakeOverride && !it.isSpecialOverride() }
+            val methods = declarationsWithSignature(predefinedSignature).filter { !it.isFakeOverride && !it.isSpecialOverride() }
             if (methods.isEmpty()) continue
             val conflictingJvmDeclarationsData = ConflictingJvmDeclarationsData(
                 classCodegen.type.internalName, null, predefinedSignature, null, methods.map(IrFunction::toIrBasedDescriptor),
             )
-            reportJvmSignatureClash(JvmBackendErrors.ACCIDENTAL_OVERRIDE, methods, conflictingJvmDeclarationsData)
-        }
-    }
-
-    private fun reportFieldSignatureConflicts() {
-        for ((rawSignature, fields) in fieldsBySignature) {
-            if (fields.size <= 1) continue
-            val conflictingJvmDeclarationsData = getConflictingJvmDeclarationsData(rawSignature, fields)
-            reportJvmSignatureClash(JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS, fields, conflictingJvmDeclarationsData)
+            reportJvmSignatureClash(diagnosticReporter, JvmBackendErrors.ACCIDENTAL_OVERRIDE, methods, conflictingJvmDeclarationsData)
         }
     }
 
     private fun reportJvmSignatureClash(
+        diagnosticReporter: IrDiagnosticReporter,
         diagnosticFactory1: KtDiagnosticFactory1<ConflictingJvmDeclarationsData>,
         irDeclarations: Collection<IrDeclaration>,
         conflictingJvmDeclarationsData: ConflictingJvmDeclarationsData
     ) {
-        irDeclarations.mapTo(LinkedHashSet()) { irDeclaration ->
+        reportSignatureClashTo(
+            diagnosticReporter,
+            diagnosticFactory1,
+            irDeclarations,
+            conflictingJvmDeclarationsData,
             // Offset can be negative (SYNTHETIC_OFFSET) for delegated members; report an error on the class in that case.
-            val reportOn = irDeclaration.takeUnless { it.startOffset < 0 } ?: classCodegen.irClass
-            classCodegen.context.ktDiagnosticReporter.at(reportOn.sourceElement(), reportOn, irDeclaration.file)
-        }.forEach {
-            it.report(diagnosticFactory1, conflictingJvmDeclarationsData)
-        }
+            reportOnIfSynthetic = { classCodegen.irClass },
+        )
     }
 
     private fun getConflictingJvmDeclarationsData(
