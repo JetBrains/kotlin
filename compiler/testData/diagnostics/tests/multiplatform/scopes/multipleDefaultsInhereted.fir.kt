@@ -16,8 +16,8 @@ expect interface I2 {
     override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES!>x: Int<!>)
 }
 
-<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE!>interface CommonInterface<!> : I1, I2 {
-    override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES!>x: Int<!>)
+interface CommonInterface : I1, I2 {
+    override fun foo(x: Int)
 }
 
 // MODULE: m1-jvm()()(m1-common)

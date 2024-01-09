@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JVM
 // !LANGUAGE: +MultiPlatformProjects
+// IGNORE_DIAGNOSTIC_API
+// IGNORE_REVERSED_RESOLVE
+//  Reason: MPP diagnostics are reported differentely in the compiler and AA
 
 // MODULE: common
 // TARGET_PLATFORM: Common
@@ -8,7 +11,7 @@
 expect interface S1
 expect interface S2
 
-open class A : S1, S2
+open <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class A<!> : S1, S2
 
 class B : A()
 
