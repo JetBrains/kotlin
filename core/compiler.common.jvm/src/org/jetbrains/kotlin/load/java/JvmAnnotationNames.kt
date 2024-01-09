@@ -60,7 +60,7 @@ val NOT_NULL_ANNOTATIONS = listOf(
     FqName("lombok.NonNull"),
     FqName("io.reactivex.annotations.NonNull"),
     FqName("io.reactivex.rxjava3.annotations.NonNull"),
-    FqName("jakarta.annotation.Nonnull")
+    FqName("jakarta.annotation.Nonnull"),
 )
 
 val COMPATQUAL_NULLABLE_ANNOTATION = FqName("org.checkerframework.checker.nullness.compatqual.NullableDecl")
