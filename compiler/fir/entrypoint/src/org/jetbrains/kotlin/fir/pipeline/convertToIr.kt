@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbols
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -40,6 +42,15 @@ data class Fir2IrActualizedResult(
     val pluginContext: Fir2IrPluginContext,
     val irActualizedResult: IrActualizedResult?,
 )
+
+fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnosticsCollector) {
+    val platformModule = this.last()
+    val session = platformModule.session
+    val scopeSession = platformModule.scopeSession
+
+    val allFiles = this.flatMap { it.fir }
+    session.runCheckers(scopeSession, allFiles, reporter, MppCheckerKind.Platform)
+}
 
 fun FirResult.convertToIrAndActualize(
     fir2IrExtensions: Fir2IrExtensions,

@@ -25,7 +25,7 @@ fun FirSession.runCheckers(
     scopeSession: ScopeSession,
     firFiles: Collection<FirFile>,
     reporter: BaseDiagnosticsCollector,
-    mppCheckerKind: MppCheckerKind = TODO()
+    mppCheckerKind: MppCheckerKind
 ): Map<FirFile, List<KtDiagnostic>> {
     val collector = DiagnosticComponentsFactory.create(this, scopeSession, mppCheckerKind)
     collector.collectDiagnosticsInSettings(reporter)

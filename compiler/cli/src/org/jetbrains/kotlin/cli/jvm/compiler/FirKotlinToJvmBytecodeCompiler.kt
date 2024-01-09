@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
+import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
 import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isArrayType
@@ -220,6 +221,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val outputs = sessionsWithSources.map { (session, sources) ->
             buildResolveAndCheckFirFromKtFiles(session, sources, diagnosticsReporter)
         }
+        outputs.runPlatformCheckers(diagnosticsReporter)
 
         return runUnless(syntaxErrors || diagnosticsReporter.hasErrors) { FirResult(outputs) }
     }

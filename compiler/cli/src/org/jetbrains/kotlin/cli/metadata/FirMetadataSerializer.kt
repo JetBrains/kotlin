@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.buildFirViaLightTree
 import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -148,6 +149,7 @@ internal class FirMetadataSerializer(
             }
         }
 
+        outputs.runPlatformCheckers(diagnosticsReporter)
 
         return if (diagnosticsReporter.hasErrors) {
             val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)

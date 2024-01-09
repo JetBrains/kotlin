@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
@@ -420,7 +421,8 @@ private fun doCompileWithK2(
 
     val (scopeSession, fir) = session.runResolution(orderedRawFir)
     // checkers
-    session.runCheckers(scopeSession, fir, diagnosticsReporter)
+    session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Common)
+    session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Platform)
 
     val analysisResults = FirResult(listOf(ModuleCompilerAnalyzedOutput(session, scopeSession, fir)))
 

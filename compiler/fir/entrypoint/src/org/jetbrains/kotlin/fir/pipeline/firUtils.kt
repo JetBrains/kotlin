@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -63,13 +64,17 @@ fun buildResolveAndCheckFirFromKtFiles(
     return resolveAndCheckFir(session, session.buildFirFromKtFiles(ktFiles), diagnosticsReporter)
 }
 
+/**
+ * This function runs only common checkers
+ * Platform checkers should be run separately, after all parts of MPP structure will be resolved
+ */
 fun resolveAndCheckFir(
     session: FirSession,
     firFiles: List<FirFile>,
     diagnosticsReporter: BaseDiagnosticsCollector
 ): ModuleCompilerAnalyzedOutput {
     val (scopeSession, fir) = session.runResolution(firFiles)
-    session.runCheckers(scopeSession, fir, diagnosticsReporter)
+    session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Common)
     return ModuleCompilerAnalyzedOutput(session, scopeSession, fir)
 }
 
