@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider
 
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -13,11 +13,10 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-public abstract class AbstractPsiDeclarationProviderSingleModuleTest : AbstractAnalysisApiBasedSingleModuleTest() {
-    override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.firstOrNull { it.name == "main.kt" } ?: ktFiles.first()
-        val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainKtFile)
-        val ktReferences = findReferencesAtCaret(mainKtFile, caretPosition)
+abstract class AbstractPsiDeclarationProviderSingleModuleTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainFile)
+        val ktReferences = findReferencesAtCaret(mainFile, caretPosition)
         if (ktReferences.isEmpty()) {
             testServices.assertions.fail { "No references at caret found" }
         }
@@ -30,7 +29,7 @@ public abstract class AbstractPsiDeclarationProviderSingleModuleTest : AbstractA
                 psiElements.joinToString(separator = "\n") { TestPsiElementRenderer.render(it) }
             }
 
-        if (Directives.UNRESOLVED_REFERENCE in module.directives) {
+        if (Directives.UNRESOLVED_REFERENCE in mainModule.directives) {
             return
         }
 

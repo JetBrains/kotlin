@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
-import org.jetbrains.kotlin.fir.resolve.dfa.Identifier
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
@@ -34,21 +33,19 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import java.lang.IllegalArgumentException
 
-abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedSingleModuleTest() {
-    override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.single { it.name == "main.kt" }
-
-        val project = mainKtFile.project
-        val sourceModule = ProjectStructureProvider.getModule(project, mainKtFile, contextualModule = null)
+abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        val project = mainFile.project
+        val sourceModule = ProjectStructureProvider.getModule(project, mainFile, contextualModule = null)
 
         val resolveSession = sourceModule.getFirResolveSession(project)
         val session = resolveSession.useSiteFirSession
         val sessionHolder = SessionHolderImpl(session, session.getScopeSession())
 
-        val firFile = mainKtFile.getOrBuildFirFile(resolveSession)
+        val firFile = mainFile.getOrBuildFirFile(resolveSession)
 
         val targetElement = testServices.expressionMarkerProvider
-            .getBottommostSelectedElementOfType(mainKtFile, KtElement::class.java)
+            .getBottommostSelectedElementOfType(mainFile, KtElement::class.java)
 
         val elementContext = ContextCollector.process(firFile, sessionHolder, targetElement)
             ?: error("Context not found for element $targetElement")
