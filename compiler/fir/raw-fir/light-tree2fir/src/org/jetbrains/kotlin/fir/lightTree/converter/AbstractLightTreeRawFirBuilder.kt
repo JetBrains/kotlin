@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtPsiUtil.unquoteIdentifier
 
 abstract class AbstractLightTreeRawFirBuilder(
     baseSession: FirSession,
@@ -57,7 +58,7 @@ abstract class AbstractLightTreeRawFirBuilder(
         }
         this.forEachChildren {
             when (it.tokenType) {
-                KtNodeTypes.LABEL_QUALIFIER -> return it.asText.replaceFirst("@", "")
+                KtNodeTypes.LABEL_QUALIFIER -> return it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
             }
         }
 
