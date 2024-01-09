@@ -370,7 +370,7 @@ class BirDatabase : BirElementParent() {
     fun reindexAllElements() {
         realizeTreeMovements()
 
-        val roots = collectCurrentRootElements()
+        val roots = getRootElements()
         for (root in roots) {
             root.acceptLite { element ->
                 indexElement(element, true)
