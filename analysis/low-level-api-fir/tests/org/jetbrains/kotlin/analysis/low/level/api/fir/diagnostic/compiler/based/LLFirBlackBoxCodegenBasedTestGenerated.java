@@ -35314,6 +35314,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
             }
 
             @Test
+            @TestMetadata("covariantOverrideInActual.kt")
+            public void testCovariantOverrideInActual() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/covariantOverrideInActual.kt");
+            }
+
+            @Test
             @TestMetadata("dataClassInCommonAndPlatform.kt")
             public void testDataClassInCommonAndPlatform() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/k2/dataClassInCommonAndPlatform.kt");

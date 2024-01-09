@@ -95,6 +95,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
 
     override fun visitClass(declaration: IrClass) =
         declaration.also {
+            if (declaration.isExpect) return@also
             it.superTypes = it.superTypes.map { superType -> superType.remapType() }
             it.transformChildren(this, null)
             it.transformAnnotations(declaration)
@@ -104,6 +105,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
         }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) = (visitFunction(declaration) as IrSimpleFunction).also {
+        if (declaration.isExpect) return@also
         it.overriddenSymbols = it.overriddenSymbols.memoryOptimizedMap { symbol ->
             symbolRemapper.getReferencedFunction(symbol) as IrSimpleFunctionSymbol
         }
@@ -113,6 +115,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
 
     override fun visitFunction(declaration: IrFunction) =
         declaration.also {
+            if (declaration.isExpect) return@also
             it.returnType = it.returnType.remapType()
             it.transformChildren(this, null)
             it.transformAnnotations(declaration)
@@ -120,6 +123,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
 
     override fun visitProperty(declaration: IrProperty) =
         declaration.also {
+            if (declaration.isExpect) return@also
             it.transformChildren(this, null)
             it.overriddenSymbols = it.overriddenSymbols.memoryOptimizedMap { symbol ->
                 symbolRemapper.getReferencedProperty(symbol)
