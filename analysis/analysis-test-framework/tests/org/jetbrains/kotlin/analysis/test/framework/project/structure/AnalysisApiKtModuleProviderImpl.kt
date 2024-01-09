@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,9 +9,11 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AnalysisApiKtModuleProvider : TestService {
     protected abstract val testServices: TestServices
@@ -47,6 +49,8 @@ class AnalysisApiKtModuleProviderImpl(
 
     override fun getModuleStructure(): KtModuleProjectStructure = modulesStructure
 }
+
+fun AnalysisApiKtModuleProvider.getKtFiles(module: TestModule): List<KtFile> = getModuleFiles(module).filterIsInstance<KtFile>()
 
 fun TestServices.allKtFiles(): List<KtFile> = moduleStructure.modules.flatMap(ktModuleProvider::getKtFiles)
 

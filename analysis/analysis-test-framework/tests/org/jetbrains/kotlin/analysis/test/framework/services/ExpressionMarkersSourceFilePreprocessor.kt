@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFiles
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.psi.KtElement
@@ -123,7 +124,7 @@ class ExpressionMarkerProvider : TestService {
     @OptIn(PrivateForInline::class)
     inline fun <reified P : KtElement> getElementsOfTypeAtCarets(
         files: Collection<KtFile>,
-        caretTag: String? = null
+        caretTag: String? = null,
     ): Collection<Pair<P, KtFile>> {
         return files.mapNotNull { file ->
             getCaretPositionOrNull(file, caretTag)?.let { offset ->
@@ -137,10 +138,10 @@ class ExpressionMarkerProvider : TestService {
     inline fun <reified P : KtElement> getElementsOfTypeAtCarets(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
-        caretTag: String? = null
+        caretTag: String? = null,
     ): Collection<Pair<P, KtFile>> {
         return moduleStructure.modules.flatMap { module ->
-            val ktFiles = testServices.ktModuleProvider.getModuleFiles(module).filterIsInstance<KtFile>()
+            val ktFiles = testServices.ktModuleProvider.getKtFiles(module)
             getElementsOfTypeAtCarets<P>(ktFiles, caretTag)
         }
 

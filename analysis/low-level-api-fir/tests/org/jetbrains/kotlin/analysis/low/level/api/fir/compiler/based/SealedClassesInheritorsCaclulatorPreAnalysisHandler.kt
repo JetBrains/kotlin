@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtFiles
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -42,7 +43,7 @@ class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
         }
 
         val ktFilesByModule = moduleStructure.modules.associateWith { testModule ->
-            testServices.ktModuleProvider.getModuleFiles(testModule).filterIsInstance<KtFile>()
+            testServices.ktModuleProvider.getKtFiles(testModule)
         }
 
         for ((testModule, ktFiles) in ktFilesByModule) {
@@ -62,7 +63,7 @@ class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
 
     private fun collectSealedClassInheritors(
         firFiles: List<FirFile>,
-        tmpFirResolveSession: LLFirResolveSession
+        tmpFirResolveSession: LLFirResolveSession,
     ): Map<ClassId, List<ClassId>> {
         firFiles.forEach { it.lazyResolveToPhaseRecursively(FirResolvePhase.TYPES) }
         val inheritorsCollector = FirSealedClassInheritorsProcessor.InheritorsCollector(tmpFirResolveSession.useSiteFirSession)
