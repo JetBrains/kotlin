@@ -142,7 +142,6 @@ internal class KonanSymbols(
     val filterExceptions = topLevelClass(RuntimeNames.filterExceptions)
     val exportForCppRuntime = topLevelClass(RuntimeNames.exportForCppRuntime)
     val typedIntrinsic = topLevelClass(RuntimeNames.typedIntrinsicAnnotation)
-    val noBoundsCheckRequired = topLevelClass(RuntimeNames.noBoundsCheckRequired)
 
     val objCMethodImp = interopClass(InteropFqNames.objCMethodImpName)
 

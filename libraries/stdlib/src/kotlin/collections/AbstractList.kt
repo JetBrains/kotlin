@@ -21,7 +21,6 @@ package kotlin.collections
 public abstract class AbstractList<out E> protected constructor() : AbstractCollection<E>(), List<E> {
     abstract override val size: Int
     abstract override fun get(index: Int): E
-    //internal open fun getWithoutBoundsCheck(index: Int): E = get(index)
 
     override fun iterator(): Iterator<E> = IteratorImpl()
 
@@ -47,18 +46,7 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
             checkElementIndex(index, _size)
 
             return noBoundsCheck { list[fromIndex + index] }
-//            return noBoundsCheckRequired(list[fromIndex + index])
-//            return (@NoBoundsCheckRequired list[fromIndex + index])
         }
-
-//        override fun getWithoutBoundsCheck(index: Int): E {
-//            return list.getWithoutBoundsCheck(fromIndex + index)
-//        }
-
-//        @Suppress("unused")
-//        fun getWithoutBoundsCheck(index: Int): E {
-//            return (@NoBoundsCheckRequired list[fromIndex + index])
-//        }
 
         override val size: Int get() = _size
     }
@@ -89,9 +77,6 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
         override fun next(): E {
             if (!hasNext()) throw NoSuchElementException()
             return noBoundsCheck { get(index++) }
-            //return noBoundsCheckRequired(get(index++))
-            //return (@NoBoundsCheckRequired get(index++))
-            //return getWithoutBoundsCheck(index++)
         }
     }
 
@@ -112,9 +97,6 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
         override fun previous(): E {
             if (!hasPrevious()) throw NoSuchElementException()
             return noBoundsCheck { get(--index) }
-//            return noBoundsCheckRequired(get(--index))
-//            return (@NoBoundsCheckRequired get(--index))
-//            return getWithoutBoundsCheck(--index)
         }
 
         override fun previousIndex(): Int = index - 1
@@ -124,12 +106,6 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
         internal fun checkElementIndex(index: Int, size: Int) {
             if (index < 0 || index >= size) {
                 throw IndexOutOfBoundsException("index: $index, size: $size")
-            }
-        }
-
-        internal fun checkElementIndexZ(index: Int, size: Int) {
-            if (index < 0 || index >= size) {
-                println("BUGBUGBUG: index: $index, size: $size")
             }
         }
 

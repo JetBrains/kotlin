@@ -1430,10 +1430,6 @@ object ArrayOps : TemplateGroupBase() {
             body { """return ArrayList<T>(this.unsafeCast<Array<Any?>>())""" }
         }
 
-//        val getters = if (target.platform == Platform.Native) """override fun get(index: Int): T = this@asList[index]
-//                @Suppress("unused") fun getWithoutBoundsCheck(index: Int): T = @NoBoundsCheckRequired this@asList[index]"""
-//        else "override fun get(index: Int): T = this@asList[index]"
-
         val objectLiteralImpl = if (primitive in PrimitiveType.floatingPointPrimitives) """
             return object : AbstractList<T>(), RandomAccess {
                 override val size: Int get() = this@asList.size

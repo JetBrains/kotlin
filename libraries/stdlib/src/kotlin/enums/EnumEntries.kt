@@ -56,14 +56,7 @@ private class EnumEntriesList<T : Enum<T>>(private val entries: Array<T>) : Enum
     override fun get(index: Int): T {
         checkElementIndex(index, entries.size)
         return noBoundsCheck { entries[index] }
-//        return noBoundsCheckRequired(entries[index])
-//        return (@NoBoundsCheckRequired entries[index])
     }
-
-//    @Suppress("unused")
-//    fun getWithoutBoundsCheck(index: Int): T {
-//        return (@NoBoundsCheckRequired entries[index])
-//    }
 
     // By definition, EnumEntries contains **all** enums in declaration order,
     // thus we are able to short-circuit the implementation here

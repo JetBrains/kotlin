@@ -121,8 +121,6 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
             if (!hasNext()) throw NoSuchElementException()
             last = index++
             return noBoundsCheck { get(last) }
-//            return noBoundsCheckRequired(get(last))
-//            return (@NoBoundsCheckRequired get(last))
         }
 
         override fun remove() {
@@ -161,8 +159,6 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
 
             last = --index
             return noBoundsCheck { get(last) }
-//            return noBoundsCheckRequired(get(last))
-//            return (@NoBoundsCheckRequired get(last))
         }
 
         override fun previousIndex(): Int = index - 1
@@ -206,16 +202,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
             AbstractList.checkElementIndex(index, _size)
 
             return noBoundsCheck { list[fromIndex + index] }
-//            return noBoundsCheckRequired(list[fromIndex + index])
-//            return (@NoBoundsCheckRequired list[fromIndex + index])
         }
-
-//        @Suppress("unused")
-//        fun getWithoutBoundsCheck(index: Int): E {
-//            checkForComodification()
-//
-//            return (@NoBoundsCheckRequired list[fromIndex + index])
-//        }
 
         override fun removeAt(index: Int): E {
             checkForComodification()

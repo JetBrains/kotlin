@@ -55,21 +55,13 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
     actual override fun get(index: Int): E {
         AbstractList.checkElementIndex(index, length)
         return noBoundsCheck { backing[index] }
-//        return noBoundsCheckRequired(backing[index])
-//        return (@NoBoundsCheckRequired backing[index])
     }
-
-//    fun getWithoutBoundCheck(index: Int): E {
-//        return (@NoBoundsCheckRequired backing[index])
-//    }
 
     actual override operator fun set(index: Int, element: E): E {
         checkIsMutable()
         AbstractList.checkElementIndex(index, length)
         noBoundsCheck {
             val old = backing[index]
-//        val old = noBoundsCheckRequired(backing[index])
-//        val old = (@NoBoundsCheckRequired backing[index])
             backing[index] = element
             return old
         }
@@ -304,8 +296,6 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
             if (index <= 0) throw NoSuchElementException()
             lastIndex = --index
             return noBoundsCheck { list.backing[lastIndex] }
-//            return noBoundsCheckRequired(list.backing[lastIndex])
-//            return (@NoBoundsCheckRequired list.backing[lastIndex])
         }
 
         override fun next(): E {
@@ -313,8 +303,6 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
             if (index >= list.length) throw NoSuchElementException()
             lastIndex = index++
             return noBoundsCheck { list.backing[lastIndex] }
-//            return noBoundsCheckRequired(list.backing[lastIndex])
-//            return (@NoBoundsCheckRequired list.backing[lastIndex])
         }
 
         override fun set(element: E) {
@@ -374,15 +362,7 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
             checkForComodification()
             AbstractList.checkElementIndex(index, length)
             return noBoundsCheck { backing[offset + index] }
-//            return noBoundsCheckRequired(backing[offset + index])
-//            return (@NoBoundsCheckRequired backing[offset + index])
         }
-
-//        @Suppress("unused")
-//        fun getWithoutBoundsCheck(index: Int): E {
-//            checkForComodification()
-//            return (@NoBoundsCheckRequired backing[offset + index])
-//        }
 
         override operator fun set(index: Int, element: E): E {
             checkIsMutable()
@@ -390,8 +370,6 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
             AbstractList.checkElementIndex(index, length)
             noBoundsCheck {
                 val old = backing[offset + index]
-//            val old = noBoundsCheckRequired(backing[offset + index])
-//            val old = (@NoBoundsCheckRequired backing[offset + index])
                 backing[offset + index] = element
                 return old
             }
@@ -625,8 +603,6 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
                 if (index <= 0) throw NoSuchElementException()
                 lastIndex = --index
                 return noBoundsCheck { list.backing[list.offset + lastIndex] }
-//                return noBoundsCheckRequired(list.backing[list.offset + lastIndex])
-//                return (@NoBoundsCheckRequired list.backing[list.offset + lastIndex])
             }
 
             override fun next(): E {
@@ -634,8 +610,6 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
                 if (index >= list.length) throw NoSuchElementException()
                 lastIndex = index++
                 return noBoundsCheck { list.backing[list.offset + lastIndex] }
-//                return noBoundsCheckRequired(list.backing[list.offset + lastIndex])
-//                return (@NoBoundsCheckRequired list.backing[list.offset + lastIndex])
             }
 
             override fun set(element: E) {
