@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -60,7 +60,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnal
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderMultiModuleBinaryTest
-import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderSingleModuleTest
+import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderSourceTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
@@ -223,7 +223,8 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
     group("imports", filter = frontendIs(FrontendKind.Fir)) {
         test(
             AbstractReferenceImportAliasTest::class,
-            filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
+        ) {
             model(it, "importAliases")
         }
     }
@@ -238,10 +239,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 private fun AnalysisApiTestGroup.generateAnalysisApiStandaloneTests() {
     group("standalone") {
         test(
-            AbstractPsiDeclarationProviderSingleModuleTest::class,
+            AbstractPsiDeclarationProviderSourceTest::class,
             filter = testModuleKindIs(TestModuleKind.Source)
         ) {
-            model(it, "singleModule")
+            model(it, "source")
         }
         test(
             AbstractPsiDeclarationProviderMultiModuleBinaryTest::class,
@@ -389,7 +390,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model(it, "psiType/forExpression")
         }
 
-        test(AbstractAnalysisApiKtTypeByPsiTypeProviderTest::class, filter = frontendIs(FrontendKind.Fir)){
+        test(AbstractAnalysisApiKtTypeByPsiTypeProviderTest::class, filter = frontendIs(FrontendKind.Fir)) {
             model(it, "psiType/asKtType")
         }
     }
