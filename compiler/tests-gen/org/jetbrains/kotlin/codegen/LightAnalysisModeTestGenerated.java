@@ -26302,6 +26302,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/backingField.kt");
                 }
 
+                @TestMetadata("capturedVariable.kt")
+                public void testCapturedVariable() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/capturedVariable.kt");
+                }
+
                 @TestMetadata("field_after.kt")
                 public void testField_after() throws Exception {
                     runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/field_after.kt");

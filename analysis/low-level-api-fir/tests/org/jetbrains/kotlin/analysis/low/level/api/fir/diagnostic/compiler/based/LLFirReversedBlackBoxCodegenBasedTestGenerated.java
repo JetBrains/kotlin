@@ -31443,6 +31443,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
                 }
 
                 @Test
+                @TestMetadata("capturedVariable.kt")
+                public void testCapturedVariable() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/capturedVariable.kt");
+                }
+
+                @Test
                 @TestMetadata("field_after.kt")
                 public void testField_after() throws Exception {
                     runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/field_after.kt");
