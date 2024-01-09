@@ -150,8 +150,8 @@ FILE fqName:<root> fileName:/1.kt
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int
-      FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-size> (): kotlin.Int declared in <root>.Java1
-        $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<@[FlexibleNullability] kotlin.Any?>
+        $this: VALUE_PARAMETER name:<this> type:<root>.Java1

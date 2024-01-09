@@ -124,8 +124,6 @@ class A1 : ArrayList<String> {
 
   // CHECK JVM_IR:
   //   Mangled name: A1#parallelStream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
-  //   Mangled name for the signature by IR:       parallelStream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
-  //   Mangled name for the signature by Frontend: parallelStream(){}java.util.stream.Stream<kotlin.String?>{EnhancedNullability}
   //   Public signature: /A1.parallelStream|3092772522219636263[0]
   //   Public signature debug description: parallelStream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
   /* fake */ override fun parallelStream(): @EnhancedNullability Stream<@EnhancedNullability String?>
@@ -192,8 +190,6 @@ class A1 : ArrayList<String> {
 
   // CHECK JVM_IR:
   //   Mangled name: A1#stream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
-  //   Mangled name for the signature by IR:       stream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
-  //   Mangled name for the signature by Frontend: stream(){}java.util.stream.Stream<kotlin.String?>{EnhancedNullability}
   //   Public signature: /A1.stream|6909137692784416467[0]
   //   Public signature debug description: stream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
   /* fake */ override fun stream(): @EnhancedNullability Stream<@EnhancedNullability String?>
@@ -367,8 +363,6 @@ class A2 : ArrayList<String> {
 
   // CHECK JVM_IR:
   //   Mangled name: A2#parallelStream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
-  //   Mangled name for the signature by IR:       parallelStream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
-  //   Mangled name for the signature by Frontend: parallelStream(){}java.util.stream.Stream<kotlin.String?>{EnhancedNullability}
   //   Public signature: /A2.parallelStream|3092772522219636263[0]
   //   Public signature debug description: parallelStream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
   /* fake */ override fun parallelStream(): @EnhancedNullability Stream<@EnhancedNullability String?>
@@ -429,8 +423,6 @@ class A2 : ArrayList<String> {
 
   // CHECK JVM_IR:
   //   Mangled name: A2#stream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
-  //   Mangled name for the signature by IR:       stream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
-  //   Mangled name for the signature by Frontend: stream(){}java.util.stream.Stream<kotlin.String?>{EnhancedNullability}
   //   Public signature: /A2.stream|6909137692784416467[0]
   //   Public signature debug description: stream(){}java.util.stream.Stream<kotlin.String?{EnhancedNullability}>{EnhancedNullability}
   /* fake */ override fun stream(): @EnhancedNullability Stream<@EnhancedNullability String?>

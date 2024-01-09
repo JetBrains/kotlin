@@ -99,7 +99,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun listIterator (p0: kotlin.Int): @[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.Int>
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
-    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<kotlin.Int>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Int?> [fake_override]
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<kotlin.Int>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
       overridden:
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.ArrayList?> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<kotlin.Int>
@@ -155,7 +155,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.ArrayList?> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.Int>
-    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<kotlin.Int>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Int?> [fake_override]
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<kotlin.Int>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
       overridden:
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.ArrayList?> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<kotlin.Int>

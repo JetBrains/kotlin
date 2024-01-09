@@ -1,7 +1,7 @@
 // MODULE: common
 // TARGET_PLATFORM: Common
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class A() : B<!>
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class C() : B<!>
+expect class A() : B
+expect class C() : B
 expect open class B()
 
 // MODULE: intermediate()()(common)

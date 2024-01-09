@@ -21489,18 +21489,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("kotlinJavaStaticAccidentalOverride.kt")
-    public void testKotlinJavaStaticAccidentalOverride() {
-      runTest("compiler/testData/codegen/box/fir/kotlinJavaStaticAccidentalOverride.kt");
-    }
-
-    @Test
-    @TestMetadata("kotlinJavaStaticAccidentalOverride2.kt")
-    public void testKotlinJavaStaticAccidentalOverride2() {
-      runTest("compiler/testData/codegen/box/fir/kotlinJavaStaticAccidentalOverride2.kt");
-    }
-
-    @Test
     @TestMetadata("kotlinJavaStaticFromInterfaceAccidentalOverride.kt")
     public void testKotlinJavaStaticFromInterfaceAccidentalOverride() {
       runTest("compiler/testData/codegen/box/fir/kotlinJavaStaticFromInterfaceAccidentalOverride.kt");

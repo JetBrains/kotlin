@@ -22,16 +22,12 @@ abstract class E : Java1 {
 
   // CHECK JVM_IR:
   //   Mangled name: E#addAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
-  //   Mangled name for the signature by IR:       addAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
-  //   Mangled name for the signature by Frontend: addAll(kotlin.collections.Collection<kotlin.Any?>{EnhancedNullability}){}kotlin.Boolean
   //   Public signature: /E.addAll|1853624435708785695[0]
   //   Public signature debug description: addAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
   /* fake */ override fun addAll(p0: Collection<Any?>): Boolean
 
   // CHECK JVM_IR:
   //   Mangled name: E#addAll(kotlin.Int;kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
-  //   Mangled name for the signature by IR:       addAll(kotlin.Int;kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
-  //   Mangled name for the signature by Frontend: addAll(kotlin.Int;kotlin.collections.Collection<kotlin.Any?>{EnhancedNullability}){}kotlin.Boolean
   //   Public signature: /E.addAll|-92648757594494376[0]
   //   Public signature debug description: addAll(kotlin.Int;kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
   /* fake */ override fun addAll(p0: Int, p1: Collection<Any?>): Boolean
@@ -98,8 +94,6 @@ abstract class E : Java1 {
 
   // CHECK JVM_IR:
   //   Mangled name: E#iterator(){}kotlin.collections.MutableIterator<kotlin.Any?>
-  //   Mangled name for the signature by IR:       iterator(){}kotlin.collections.MutableIterator<kotlin.Any?>
-  //   Mangled name for the signature by Frontend: iterator(){}kotlin.collections.MutableIterator<kotlin.Any?>{EnhancedNullability}
   //   Public signature: /E.iterator|5172039261324384933[0]
   //   Public signature debug description: iterator(){}kotlin.collections.MutableIterator<kotlin.Any?>
   /* fake */ override operator fun iterator(): MutableIterator<Any?>
@@ -112,16 +106,12 @@ abstract class E : Java1 {
 
   // CHECK JVM_IR:
   //   Mangled name: E#listIterator(){}kotlin.collections.MutableListIterator<kotlin.Any?>
-  //   Mangled name for the signature by IR:       listIterator(){}kotlin.collections.MutableListIterator<kotlin.Any?>
-  //   Mangled name for the signature by Frontend: listIterator(){}kotlin.collections.MutableListIterator<kotlin.Any?>{EnhancedNullability}
   //   Public signature: /E.listIterator|-1621664620524293242[0]
   //   Public signature debug description: listIterator(){}kotlin.collections.MutableListIterator<kotlin.Any?>
   /* fake */ override fun listIterator(): MutableListIterator<Any?>
 
   // CHECK JVM_IR:
   //   Mangled name: E#listIterator(kotlin.Int){}kotlin.collections.MutableListIterator<kotlin.Any?>
-  //   Mangled name for the signature by IR:       listIterator(kotlin.Int){}kotlin.collections.MutableListIterator<kotlin.Any?>
-  //   Mangled name for the signature by Frontend: listIterator(kotlin.Int){}kotlin.collections.MutableListIterator<kotlin.Any?>{EnhancedNullability}
   //   Public signature: /E.listIterator|2617555913478172101[0]
   //   Public signature debug description: listIterator(kotlin.Int){}kotlin.collections.MutableListIterator<kotlin.Any?>
   /* fake */ override fun listIterator(p0: Int): MutableListIterator<Any?>
@@ -164,8 +154,6 @@ abstract class E : Java1 {
 
   // CHECK JVM_IR:
   //   Mangled name: E#subList(kotlin.Int;kotlin.Int){}kotlin.collections.MutableList<kotlin.Any?>
-  //   Mangled name for the signature by IR:       subList(kotlin.Int;kotlin.Int){}kotlin.collections.MutableList<kotlin.Any?>
-  //   Mangled name for the signature by Frontend: subList(kotlin.Int;kotlin.Int){}kotlin.collections.MutableList<kotlin.Any?>{EnhancedNullability}
   //   Public signature: /E.subList|5649745263147539891[0]
   //   Public signature debug description: subList(kotlin.Int;kotlin.Int){}kotlin.collections.MutableList<kotlin.Any?>
   /* fake */ override fun subList(p0: Int, p1: Int): MutableList<Any?>

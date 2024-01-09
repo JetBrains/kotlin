@@ -154,7 +154,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
               value: GET_VAR 'value: T of <root>.ArrayMapImpl.Entry declared in <root>.ArrayMapImpl.Entry.copy' type=T of <root>.ArrayMapImpl.Entry origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Map.Entry
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
         BLOCK_BODY
@@ -198,7 +198,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
             CONST Boolean type=kotlin.Boolean value=true
       FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>) returnType:kotlin.Int
         overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+          public open fun hashCode (): kotlin.Int declared in kotlin.collections.Map.Entry
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
         BLOCK_BODY
           VAR name:result type:kotlin.Int [var]
@@ -226,7 +226,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
             GET_VAR 'var result: kotlin.Int declared in <root>.ArrayMapImpl.Entry.hashCode' type=kotlin.Int origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>) returnType:kotlin.String
         overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
+          public open fun toString (): kotlin.String declared in kotlin.collections.Map.Entry
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.ArrayMapImpl.Entry'

@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
-// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION
-// Reason: KT-42020
+// IGNORE_BACKEND_K2: JVM_IR
+// FIR status: KT-65504 IrFakeOverrideBuilder: incorrect runtime behavior in case a substitution fake override clashes with another fake override
 
 open class Base<T> {
     fun foo(x: T) = "x:$x"

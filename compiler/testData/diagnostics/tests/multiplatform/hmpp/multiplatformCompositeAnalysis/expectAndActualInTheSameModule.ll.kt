@@ -1,12 +1,12 @@
 // MODULE: common
 // TARGET_PLATFORM: Common
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>CommonClass<!> {
+expect class <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>CommonClass<!> {
     fun memberFun()
     val memberProp: Int
     class Nested
     inner class Inner
-}<!>
+}
 actual class <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>CommonClass<!> {
     actual fun <!ACTUAL_WITHOUT_EXPECT!>memberFun<!>() {}
     actual val <!ACTUAL_WITHOUT_EXPECT!>memberProp<!>: Int = 42
@@ -14,10 +14,10 @@ actual class <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>Comm
     actual inner class <!ACTUAL_WITHOUT_EXPECT!>Inner<!>
 }
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>commonFun<!>()<!>
+expect fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>commonFun<!>()
 actual fun <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>commonFun<!>() {}
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>commonProperty<!>: String<!>
+expect val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>commonProperty<!>: String
 actual val <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>commonProperty<!>: String
     get() = "hello"
 

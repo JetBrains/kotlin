@@ -3,7 +3,6 @@
 // IGNORE_BACKEND: ANDROID
 //  ^ NSME: java.util.AbstractMap.remove
 // FULL_JDK
-// JVM_ABI_K1_K2_DIFF: KT-65095
 
 // FILE: kt48945b.kt
 interface MSS : Map<String, String>

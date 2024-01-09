@@ -17673,16 +17673,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/fir/emptyIntersectionWarning.kt");
     }
 
-    @TestMetadata("kotlinJavaStaticAccidentalOverride.kt")
-    public void ignoreKotlinJavaStaticAccidentalOverride() {
-      runTest("compiler/testData/codegen/box/fir/kotlinJavaStaticAccidentalOverride.kt");
-    }
-
-    @TestMetadata("kotlinJavaStaticAccidentalOverride2.kt")
-    public void ignoreKotlinJavaStaticAccidentalOverride2() {
-      runTest("compiler/testData/codegen/box/fir/kotlinJavaStaticAccidentalOverride2.kt");
-    }
-
     @TestMetadata("selectingLambdas.kt")
     public void ignoreSelectingLambdas() {
       runTest("compiler/testData/codegen/box/fir/selectingLambdas.kt");
