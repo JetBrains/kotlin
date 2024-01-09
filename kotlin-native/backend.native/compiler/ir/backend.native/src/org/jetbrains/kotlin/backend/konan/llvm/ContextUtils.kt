@@ -481,7 +481,6 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     val Kotlin_processObjectInMark by lazyRtFunction
     val Kotlin_processArrayInMark by lazyRtFunction
-    val Kotlin_processFieldInMark by lazyRtFunction
     val Kotlin_processEmptyObjectInMark by lazyRtFunction
 
     val UpdateVolatileHeapRef by lazyRtFunction

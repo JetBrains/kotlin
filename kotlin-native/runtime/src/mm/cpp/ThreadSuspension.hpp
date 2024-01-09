@@ -9,6 +9,7 @@
 #include <atomic>
 
 #include "Memory.h"
+#include "Utils.hpp"
 
 namespace kotlin {
 namespace mm {
@@ -17,14 +18,15 @@ class ThreadData;
 
 namespace internal {
 
-extern std::atomic<bool> gSuspensionRequested;
+using SuspensionReason = const char*;
+extern std::atomic<SuspensionReason> gSuspensionReauestReason;
 
 } // namespace internal
 
 inline bool IsThreadSuspensionRequested() noexcept {
     // Must use seq_cst ordering for synchronization with GC
     // in native->runnable transition.
-    return internal::gSuspensionRequested.load();
+    return internal::gSuspensionReauestReason.load();
 }
 
 class ThreadSuspensionData : private Pinned {
@@ -71,7 +73,7 @@ private:
     mm::ThreadData& threadData_;
 };
 
-bool RequestThreadsSuspension() noexcept;
+bool RequestThreadsSuspension(const char* reason) noexcept;
 void WaitForThreadsSuspension() noexcept;
 
 /**
@@ -80,8 +82,8 @@ void WaitForThreadsSuspension() noexcept;
  * of this call will be suspended on exit from the Native state.
  * Returns false if some other thread has suspended the threads.
  */
-inline bool SuspendThreads() noexcept {
-    if (!RequestThreadsSuspension()) {
+inline bool SuspendThreads(internal::SuspensionReason reason) noexcept {
+    if (!RequestThreadsSuspension(reason)) {
         return false;
     }
     WaitForThreadsSuspension();

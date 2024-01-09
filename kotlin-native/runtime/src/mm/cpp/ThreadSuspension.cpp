@@ -23,7 +23,7 @@ namespace {
 
 } // namespace
 
-std::atomic<bool> kotlin::mm::internal::gSuspensionRequested = false;
+std::atomic<mm::internal::SuspensionReason> mm::internal::gSuspensionReauestReason = nullptr;
 
 ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(const char* reason, mm::ThreadData& threadData) noexcept
     : reason_(reason), threadData_(threadData), pauseStartTimeMicros_(konan::getTimeMicros())
@@ -65,7 +65,7 @@ kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadSta
 
 NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
-        auto pauseHandle = pauseMutationInScope("stop the world");
+        auto pauseHandle = pauseMutationInScope(internal::gSuspensionReauestReason.load(std::memory_order_relaxed));
 
         threadData_.gc().OnSuspendForGC();
         std::unique_lock lock(gSuspensionMutex);
@@ -80,18 +80,18 @@ ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionD
     return MutatorPauseHandle(reason, threadData_);
 }
 
-bool kotlin::mm::RequestThreadsSuspension() noexcept {
+bool kotlin::mm::RequestThreadsSuspension(internal::SuspensionReason reason) noexcept {
     CallsCheckerIgnoreGuard guard;
 
     RuntimeAssert(gSafePointActivator == std::nullopt, "Current thread already suspended threads.");
     {
         std::unique_lock lock(gSuspensionMutex);
         // Someone else has already suspended threads.
-        if (internal::gSuspensionRequested.load(std::memory_order_relaxed)) {
+        if (internal::gSuspensionReauestReason.load(std::memory_order_relaxed) != nullptr) {
             return false;
         }
         gSafePointActivator = mm::SafePointActivator();
-        internal::gSuspensionRequested.store(true);
+        internal::gSuspensionReauestReason.store(reason);
     }
 
     return true;
@@ -116,7 +116,7 @@ void kotlin::mm::ResumeThreads() noexcept {
     // https://en.cppreference.com/w/cpp/thread/condition_variable
     {
         std::unique_lock lock(gSuspensionMutex);
-        internal::gSuspensionRequested.store(false);
+        internal::gSuspensionReauestReason.store(nullptr);
     }
     gSuspensionCondVar.notify_all();
 }

@@ -55,8 +55,6 @@ ScopedThread createGCThread(const char* name, Body&& body) {
 } // namespace
 
 void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
-    CallsCheckerIgnoreGuard guard;
-
     gc_.markDispatcher_.runOnMutator(commonThreadData());
 }
 
@@ -91,12 +89,10 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         GCHandle::getByEpoch(epoch).finalizersDone();
         state_.finalized(epoch);
     }),
-    markDispatcher_(mutatorsCooperate),
     mainThread_(createGCThread("Main GC thread", [this] { mainGCThreadBody(); })) {
-    for (std::size_t i = 0; i < auxGCThreads; ++i) {
-        auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
-    }
-    RuntimeLogInfo({kTagGC}, "Parallel Mark & Concurrent Sweep GC initialized");
+    RuntimeAssert(!mutatorsCooperate, "Cooperative mutators aren't supported yet");
+    RuntimeAssert(auxGCThreads == 0, "Auxiliary GC threads aren't supported yet");
+    RuntimeLogInfo({kTagGC}, "Concurrent Mark & Sweep GC initialized");
 }
 
 gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
@@ -119,7 +115,7 @@ bool gc::ConcurrentMarkAndSweep::FinalizersThreadIsRunning() noexcept {
 }
 
 void gc::ConcurrentMarkAndSweep::mainGCThreadBody() {
-    RuntimeLogWarning({kTagGC}, "Initializing Concurrent Mark and Sweep GC. Concurrent mark is not implemented yet.");
+    RuntimeLogWarning({kTagGC}, "Initializing Concurrent Mark and Sweep GC.");
     while (true) {
         auto epoch = state_.waitScheduled();
         if (epoch.has_value()) {
@@ -127,14 +123,6 @@ void gc::ConcurrentMarkAndSweep::mainGCThreadBody() {
         } else {
             break;
         }
-    }
-    markDispatcher_.requestShutdown();
-}
-
-void gc::ConcurrentMarkAndSweep::auxiliaryGCThreadBody() {
-    RuntimeAssert(!compiler::gcMarkSingleThreaded(), "Should not reach here during single threaded mark");
-    while (!markDispatcher_.shutdownRequested()) {
-        markDispatcher_.runAuxiliary();
     }
 }
 
@@ -145,7 +133,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     markDispatcher_.beginMarkingEpoch(gcHandle);
     GCLogDebug(epoch, "Main GC requested marking in mutators");
 
-    stopTheWorld(gcHandle);
+    stopTheWorld(gcHandle, "GC stop the world #1: collect root set");
 
     auto& scheduler = gcScheduler_;
     scheduler.onGCStart();
@@ -206,16 +194,4 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     // destructors running. So, it must ensured that no locks are held by this point.
     // TODO: Consider having an always on sleeping finalizer thread.
     finalizerProcessor_.ScheduleTasks(std::move(finalizerQueue), epoch);
-}
-
-void gc::ConcurrentMarkAndSweep::reconfigure(std::size_t maxParallelism, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept {
-    if (compiler::gcMarkSingleThreaded()) {
-        RuntimeCheck(auxGCThreads == 0, "Auxiliary GC threads must not be created with gcMarkSingleThread");
-        return;
-    }
-    std::unique_lock mainGCLock(gcMutex);
-    markDispatcher_.reset(maxParallelism, mutatorsCooperate, [this] { auxThreads_.clear(); });
-    for (std::size_t i = 0; i < auxGCThreads; ++i) {
-        auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
-    }
 }

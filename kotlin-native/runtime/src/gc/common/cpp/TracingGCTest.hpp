@@ -1073,6 +1073,180 @@ TYPED_TEST_P(TracingGCTest, FreeObjectWithFreeWeakReversedOrder) {
     f1.wait();
 }
 
+TYPED_TEST_P(TracingGCTest, MutateBetweenSafePoints) {
+    constexpr auto kQuant = 5;
+    constexpr auto kGcNumber = 5;
+    constexpr auto kMaxItersPerGC = 10;
+
+    std::atomic<bool> stopMutation = false;
+    std::atomic<bool> startMutation = false;
+    std::atomic<std::size_t> initializedMutators = 0;
+    std::atomic<int> gcEpoch = 0;
+
+    Mutator scheduler;
+    std::future<void> schedulerFuture = scheduler.Execute([&](mm::ThreadData& threadData, Mutator& mutator) {
+        while (initializedMutators < kDefaultThreadCount) { /* wait */ }
+        startMutation = true;
+        for (int i = 0; i < kGcNumber; ++i) {
+            gcEpoch = i;
+            mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+        }
+        stopMutation = true;
+    });
+
+    std::vector<Mutator> mutators(kDefaultThreadCount);
+    std::vector<std::future<void>> mutatorFutures;
+
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutatorFutures.emplace_back(mutators[i].Execute([&](mm::ThreadData& threadData, Mutator& mutator) {
+            StackObjectHolder head{threadData};
+            ObjHeader* tail = head.header();
+
+            auto append = [&](int count) {
+                for (int i = 0; i < count; ++i) {
+                    auto& next = AllocateObject(threadData);
+                    auto& tailObj = test_support::Object<Payload>::FromObjHeader(tail);
+                    tailObj->field1 = next.header();
+                    tail = next.header();
+                }
+            };
+
+            auto cut = [&](ObjHeader* first, int count) {
+                ObjHeader* last = first;
+                for (int i = 0; i < count; ++i) {
+                    auto& lastObj = test_support::Object<Payload>::FromObjHeader(last);
+                    last = lastObj->field1.accessor().load();
+                }
+                auto& firstObj = test_support::Object<Payload>::FromObjHeader(first);
+                auto& lastObj = test_support::Object<Payload>::FromObjHeader(last);
+                firstObj->field1.accessor() = lastObj->field1.accessor().load();
+            };
+
+            // Initialize
+            append(kQuant * 2);
+            ++initializedMutators;
+            while (!startMutation.load()) { /* wait */ };
+
+            int iter = 0;
+            while (!stopMutation.load()) {
+                // do not let mutator outpace gc to much
+                while (iter > (gcEpoch.load() * kMaxItersPerGC) && !stopMutation.load()) {
+                    mm::safePoint(threadData);
+                }
+
+                auto oldTail = tail;
+                append(kQuant);
+                // [head]->(a)->...->(b)->...->(oldTail)->(c)->...->(d)
+                mm::safePoint(threadData);
+
+                append(kQuant);
+                // [head]->(a)->...->(b)->...->(oldTail)->(c)->...->(d)->...->(tail)
+                mm::safePoint(threadData);
+
+                cut(head.header(), kQuant);
+                // (a)->...-+
+                //          v
+                // [head]->(b)->...->(oldTail)->(c)->...->(d)->...->(tail)
+                mm::safePoint(threadData);
+
+                cut(oldTail, kQuant);
+                // (a)->...-+           (c)->...-+
+                //          v                    v
+                // [head]->(b)->...->(oldTail)->(d)->...->(tail)
+                mm::safePoint(threadData);
+                ++iter;
+            }
+
+            std::size_t length = 0;
+            auto* node = &test_support::Object<Payload>::FromObjHeader(head.header());
+            while ((*node)->field1.accessor().load() != nullptr) {
+                node = &test_support::Object<Payload>::FromObjHeader((*node)->field1.accessor().load());
+                ++length;
+            }
+
+            EXPECT_THAT(length, kQuant * 2);
+        }));
+    }
+
+    schedulerFuture.wait();
+    for (auto& future : mutatorFutures) {
+        future.wait();
+    }
+}
+
+TYPED_TEST_P(TracingGCTest, WeakResuractionInMark) {
+    constexpr auto kObjectsPerThread = 100;
+    std::vector<Mutator> mutators(kDefaultThreadCount);
+    std::vector<test_support::RegularWeakReferenceImpl*> weaks(kDefaultThreadCount);
+    std::vector<test_support::Object<Payload>*> roots(kDefaultThreadCount);
+
+    // initialize threads
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutators[i].Execute([&, i](mm::ThreadData& threadData, Mutator& mutator) {
+            // make sure GC will have somthing to do whil we play with weak references
+            for (int j = 0; j < kObjectsPerThread; ++j) {
+                auto& object = AllocateObject(threadData);
+                object->field1 = roots[i]->header();
+                roots[i] = &object;
+            }
+            mutator.AddGlobalRoot(roots[i]->header());
+
+            auto& weakReferee = AllocateObject(threadData);
+            auto& weakRef = [&threadData, &weakReferee]() -> test_support::RegularWeakReferenceImpl& {
+                ObjHolder holder;
+                return test_support::InstallWeakReference(threadData, weakReferee.header(), holder.slot());
+            }();
+            EXPECT_NE(weakRef.get(), nullptr);
+            weaks[i] = &weakRef;
+            mutator.AddGlobalRoot(weakRef.header());
+        }).wait();
+    }
+
+    auto epoch = mm::GlobalData::Instance().gc().Schedule();
+    std::atomic gcDone = false;
+
+    // Spin until thread suspension is requested.
+    while (!mm::IsThreadSuspensionRequested()) {}
+
+    std::vector<std::future<void>> mutatorFutures;
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutatorFutures.emplace_back(mutators[i].Execute([&, i](mm::ThreadData& threadData, Mutator& mutator) noexcept {
+            safePoint(threadData);
+
+            auto weakReferee = weaks[i]->get();
+            (*roots[i])->field2 = weakReferee;
+            bool resurected = weakReferee != nullptr;
+
+            while (!gcDone.load(std::memory_order_relaxed)) {
+                safePoint(threadData);
+            }
+            if (resurected) {
+                EXPECT_NE(weaks[i]->get(), nullptr);
+            } else {
+                EXPECT_EQ(weaks[i]->get(), nullptr);
+            }
+        }));
+    }
+
+    mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
+    gcDone = true;
+
+    for (auto& future : mutatorFutures) {
+        future.wait();
+    }
+
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutators[i].Execute([&, i](mm::ThreadData&, Mutator&) noexcept {
+            if (auto weakReferee = weaks[i]->get()) {
+                auto& extraObj = *mm::ExtraObjectData::Get(weakReferee);
+                extraObj.ClearRegularWeakReferenceImpl();
+                extraObj.Uninstall();
+                alloc::destroyExtraObjectData(extraObj);
+            }
+        }).wait();
+    }
+}
+
 #define TRACING_GC_TEST_LIST \
     RootSet, \
     InterconnectedRootSet, \
@@ -1092,7 +1266,9 @@ TYPED_TEST_P(TracingGCTest, FreeObjectWithFreeWeakReversedOrder) {
     MultipleMutatorsAddToRootSetAfterCollectionRequested, \
     CrossThreadReference, \
     NewThreadsWhileRequestingCollection, \
-    FreeObjectWithFreeWeakReversedOrder
+    FreeObjectWithFreeWeakReversedOrder, \
+    MutateBetweenSafePoints, \
+    WeakResuractionInMark
 
 template <typename FixtureImpl>
 class STWMarkGCTest : public TracingGCTest<FixtureImpl> {};

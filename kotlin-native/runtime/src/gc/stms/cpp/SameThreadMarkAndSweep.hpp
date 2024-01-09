@@ -68,6 +68,8 @@ namespace internal {
 struct MarkTraits {
     using MarkQueue = gc::SameThreadMarkAndSweep::MarkQueue;
 
+    static constexpr auto kAllowHeapToStackRefs = true;
+
     static void clear(MarkQueue& queue) noexcept { queue.clear(); }
 
     static ObjHeader* tryDequeue(MarkQueue& queue) noexcept {

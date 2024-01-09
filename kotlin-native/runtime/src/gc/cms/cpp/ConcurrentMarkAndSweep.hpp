@@ -19,7 +19,7 @@
 #include "IntrusiveList.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "ObjectData.hpp"
-#include "ParallelMark.hpp"
+#include "ConcurrentMark.hpp"
 #include "ScopedThread.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
@@ -57,7 +57,7 @@ public:
         ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
         barriers::BarriersThreadData barriers_;
-        mark::ParallelMark::ThreadData mark_;
+        mark::ConcurrentMark::ThreadData mark_;
 
         std::atomic<bool> rootSetLocked_ = false;
         std::atomic<bool> published_ = false;
@@ -71,13 +71,10 @@ public:
     void StopFinalizerThreadIfRunning() noexcept;
     bool FinalizersThreadIsRunning() noexcept;
 
-    void reconfigure(std::size_t maxParallelism, bool mutatorsCooperate, size_t auxGCThreads) noexcept;
-
     GCStateHolder& state() noexcept { return state_; }
 
 private:
     void mainGCThreadBody();
-    void auxiliaryGCThreadBody();
     void PerformFullGC(int64_t epoch) noexcept;
 
     alloc::Allocator& allocator_;
@@ -86,7 +83,7 @@ private:
     GCStateHolder state_;
     FinalizerProcessor<alloc::FinalizerQueue, alloc::FinalizerQueueTraits> finalizerProcessor_;
 
-    mark::ParallelMark markDispatcher_;
+    mark::ConcurrentMark markDispatcher_;
     ScopedThread mainThread_;
     std::vector<ScopedThread> auxThreads_;
 };

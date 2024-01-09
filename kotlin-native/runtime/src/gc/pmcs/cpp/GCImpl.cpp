@@ -67,11 +67,6 @@ ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) n
     gc::internal::processArrayInMark<gc::mark::ParallelMark::MarkTraits>(state, array);
 }
 
-// static
-ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {
-    gc::internal::processFieldInMark<gc::mark::ParallelMark::MarkTraits>(state, field);
-}
-
 int64_t gc::GC::Schedule() noexcept {
     return impl_->gc().state().schedule();
 }

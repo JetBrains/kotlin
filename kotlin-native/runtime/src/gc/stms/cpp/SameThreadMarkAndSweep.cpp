@@ -57,7 +57,7 @@ bool gc::SameThreadMarkAndSweep::FinalizersThreadIsRunning() noexcept {
 void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     auto gcHandle = GCHandle::create(epoch);
 
-    stopTheWorld(gcHandle);
+    stopTheWorld(gcHandle, "GC stop the world");
 
     auto& scheduler = gcScheduler_;
     scheduler.onGCStart();

@@ -81,7 +81,6 @@ touchFunction(Kotlin_mm_safePointWhileLoopBody)
 
 touchFunction(Kotlin_processObjectInMark)
 touchFunction(Kotlin_processArrayInMark)
-touchFunction(Kotlin_processFieldInMark)
 touchFunction(Kotlin_processEmptyObjectInMark)
 
 touchFunction(Kotlin_arrayGetElementAddress)

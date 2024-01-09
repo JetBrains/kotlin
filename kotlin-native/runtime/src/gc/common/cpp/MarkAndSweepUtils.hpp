@@ -26,27 +26,32 @@ namespace gc {
 namespace internal {
 
 template <typename Traits>
-void processFieldInMark(void* state, ObjHeader* field) noexcept {
+void processFieldInMark(void* state, ObjHeader* object, ObjHeader* field) noexcept {
     auto& markQueue = *static_cast<typename Traits::MarkQueue*>(state);
     if (field->heap()) {
         Traits::tryEnqueue(markQueue, field);
+    }
+    if constexpr (!Traits::kAllowHeapToStackRefs) {
+        if (object->heap()) {
+            RuntimeAssert(!field->local(), "Heap object %p references stack object %p[typeInfo=%p]", object, field, field->type_info());
+        }
     }
 }
 
 template <typename Traits>
 void processObjectInMark(void* state, ObjHeader* object) noexcept {
-    traverseClassObjectFields(object, [state] (auto fieldAccessor) noexcept {
+    traverseClassObjectFields(object, [=] (auto fieldAccessor) noexcept {
         if (ObjHeader* field = fieldAccessor.direct()) {
-            processFieldInMark<Traits>(state, field);
+            processFieldInMark<Traits>(state, object, field);
         }
     });
 }
 
 template <typename Traits>
 void processArrayInMark(void* state, ArrayHeader* array) noexcept {
-    traverseArrayOfObjectsElements(array, [state] (auto elemAccessor) noexcept {
+    traverseArrayOfObjectsElements(array, [=] (auto elemAccessor) noexcept {
         if (ObjHeader* elem = elemAccessor.direct()) {
-            processFieldInMark<Traits>(state, elem);
+            processFieldInMark<Traits>(state, array->obj(), elem);
         }
     });
 }
@@ -180,11 +185,11 @@ struct DefaultProcessWeaksTraits {
     static bool IsMarked(ObjHeader* obj) noexcept { return gc::isMarked(obj); }
 };
 
-void stopTheWorld(GCHandle gcHandle) noexcept;
+void stopTheWorld(GCHandle gcHandle, const char* reason) noexcept;
 void resumeTheWorld(GCHandle gcHandle) noexcept;
 
 [[nodiscard]] inline auto stopTheWorldInScope(GCHandle gcHandle) noexcept {
-    return ScopeGuard([=]() { stopTheWorld(gcHandle); }, [=]() { resumeTheWorld(gcHandle); });
+    return ScopeGuard([=]() { stopTheWorld(gcHandle, "GC stop the world"); }, [=]() { resumeTheWorld(gcHandle); });
 }
 
 } // namespace gc

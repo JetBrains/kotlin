@@ -77,7 +77,9 @@ struct ObjHeader {
    * Hardware guaranties on many supported platforms doesn't allow this to happen.
    */
   const TypeInfo* type_info() const {
-      return atomicGetRelaxed(&clearPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK)->typeInfo_);
+      const TypeInfo* typeInfo = atomicGetRelaxed(&clearPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK)->typeInfo_);
+      RuntimeAssert(typeInfo != nullptr, "TypeInfo ptr in object %p in null", this);
+      return typeInfo;
   }
 
   bool has_meta_object() const {
@@ -599,7 +601,6 @@ void compactObjectPoolInCurrentThread() noexcept;
 
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object);
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object);
-RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processFieldInMark(void* state, ObjHeader* field);
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object);
 
 #endif // RUNTIME_MEMORY_H

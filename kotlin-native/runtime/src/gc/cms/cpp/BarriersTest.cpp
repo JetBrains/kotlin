@@ -7,9 +7,8 @@
 #include "gtest/gtest.h"
 
 #include "Barriers.hpp"
-#include "ParallelMark.hpp"
+#include "ConcurrentMark.hpp"
 #include "GCImpl.hpp"
-#include "ManuallyScoped.hpp"
 #include "ObjectTestSupport.hpp"
 #include "ObjectOps.hpp"
 #include "ReferenceOps.hpp"
@@ -57,7 +56,7 @@ public:
     }
 
 private:
-    gc::mark::ParallelMark::ParallelProcessor parProc_;
+    gc::mark::ConcurrentMark::ParallelProcessor parProc_;
 };
 
 } // namespace

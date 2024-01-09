@@ -128,7 +128,7 @@ TEST_F(ThreadSuspensionTest, SimpleStartStop) {
         reportProgress(i, kIterations);
         canStart = true;
 
-        mm::SuspendThreads();
+        mm::SuspendThreads("test");
         auto suspended = collectSuspended();
         EXPECT_THAT(suspended, testing::Each(true));
         EXPECT_EQ(mm::IsThreadSuspensionRequested(), true);
@@ -171,7 +171,7 @@ TEST_F(ThreadSuspensionTest, SwitchStateToNative) {
         reportProgress(i, kIterations);
         canStart = true;
 
-        mm::SuspendThreads();
+        mm::SuspendThreads("test");
         EXPECT_EQ(mm::IsThreadSuspensionRequested(), true);
 
         mm::ResumeThreads();
@@ -196,7 +196,7 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspend) {
             ready[i] = true;
             waitUntilThreadsAreReady();
 
-            bool success = mm::SuspendThreads();
+            bool success = mm::SuspendThreads("test");
             if (success) {
                 successCount++;
                 auto allThreadData = collectThreadData();
@@ -248,7 +248,7 @@ TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
     waitUntilThreadsAreReady();
 
     auto gcThread = std::async(std::launch::async, [] {
-        mm::RequestThreadsSuspension();
+        mm::RequestThreadsSuspension("test");
         mm::WaitForThreadsSuspension();
         mm::ResumeThreads();
     });

@@ -95,7 +95,7 @@ public:
         explicit WorkSource(ParallelProcessor& dispatcher) : dispatcher_(dispatcher) {}
 
         ALWAYS_INLINE bool retainsNoWork() const noexcept {
-            return batch_.empty() && this->localEmpty();
+            return batch_.empty() && overflowList().empty();
         }
 
         ALWAYS_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
@@ -119,7 +119,7 @@ public:
                 if (!batch_.empty()) {
                     bool released = dispatcher_.releaseBatch(std::move(batch_));
                     if (released) {
-                        RuntimeLogDebug({ kTagBalancing }, "Work butch flushed");
+                        RuntimeLogDebug({ kTagBalancing }, "Work batch flushed");
                         batch_ = Batch{};
                     } else {
                         RuntimeLogDebug({ kTagBalancing }, "Failed to force flush work queue");
@@ -130,7 +130,7 @@ public:
                 if (overflowList().empty()) {
                     return true;
                 } else {
-                    RuntimeLogDebug({ kTagBalancing }, "Refiling batch from overflow list");
+                    RuntimeLogDebug({ kTagBalancing }, "Refilling batch from overflow list");
                     batch_.fillFrom(overflowList());
                 }
             }
@@ -138,6 +138,10 @@ public:
 
     protected:
         ListImpl& overflowList() noexcept {
+            return this->localQueue_;
+        }
+
+        const ListImpl& overflowList() const noexcept {
             return this->localQueue_;
         }
 
@@ -220,6 +224,13 @@ public:
 
     size_t registeredWorkers() {
         return registeredWorkers_.load(std::memory_order_relaxed);
+    }
+
+    /** Prepare for a new round of work processing. Must be called only after a previous round is fully finished. */
+    void resetForNewWork() noexcept {
+        RuntimeAssert(allDone_, "A work processing iteration must be finished");
+        RuntimeAssert(waitingWorkers_ == 0, "There must be no workers sleeping inside processing loop");
+        allDone_ = false;
     }
 
 private:

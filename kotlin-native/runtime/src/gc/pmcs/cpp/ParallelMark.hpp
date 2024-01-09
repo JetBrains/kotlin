@@ -82,6 +82,8 @@ public:
     public:
         using MarkQueue = ParallelProcessor::Worker;
 
+        static constexpr auto kAllowHeapToStackRefs = true;
+
         static void clear(MarkQueue& queue) noexcept {
             RuntimeAssert(queue.localEmpty(), "Mark queue must be empty");
         }

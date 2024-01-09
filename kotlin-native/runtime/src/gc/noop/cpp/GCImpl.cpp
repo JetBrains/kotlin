@@ -48,9 +48,6 @@ ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) n
 // static
 ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {}
 
-// static
-ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {}
-
 int64_t gc::GC::Schedule() noexcept {
     return 0;
 }

@@ -72,7 +72,6 @@ public:
 
     static void processObjectInMark(void* state, ObjHeader* object) noexcept;
     static void processArrayInMark(void* state, ArrayHeader* array) noexcept;
-    static void processFieldInMark(void* state, ObjHeader* field) noexcept;
 
     // TODO: These should exist only in the scheduler.
     int64_t Schedule() noexcept;

@@ -30,6 +30,7 @@ enum class LoggingTag(val ord: Int) {
     Alloc(6),
     Balancing(7),
     Barriers(8),
+    GCMark(9),
     ;
 
     companion object {

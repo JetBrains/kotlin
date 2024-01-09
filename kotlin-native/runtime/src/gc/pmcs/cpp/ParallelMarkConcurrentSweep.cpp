@@ -148,7 +148,7 @@ void gc::ParallelMarkConcurrentSweep::PerformFullGC(int64_t epoch) noexcept {
     markDispatcher_.beginMarkingEpoch(gcHandle);
     GCLogDebug(epoch, "Main GC requested marking in mutators");
 
-    stopTheWorld(gcHandle);
+    stopTheWorld(gcHandle, "GC stop the world #1: mark");
 
     auto& scheduler = gcScheduler_;
     scheduler.onGCStart();
@@ -168,7 +168,7 @@ void gc::ParallelMarkConcurrentSweep::PerformFullGC(int64_t epoch) noexcept {
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
 
     if (compiler::concurrentWeakSweep()) {
-        stopTheWorld(gcHandle);
+        stopTheWorld(gcHandle, "GC stop the world #2: prepare heap for sweep");
         gc::DisableWeakRefBarriers();
     }
 
