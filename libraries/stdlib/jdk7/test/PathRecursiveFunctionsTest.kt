@@ -1097,12 +1097,14 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
         }
     }
 
-    private inline fun <reified T> testDeleteMaybeFailsWith(path: Path) {
-        try {
+    private inline fun <reified T> testDeleteMaybeFailsWith(path: Path): Boolean {
+        return try {
             testDeleteSucceeds(path)
+            true
         } catch (exception: FileSystemException) {
             val suppressed = exception.suppressed.single()
             assertIs<T>(suppressed)
+            false
         }
     }
 
@@ -1398,12 +1400,17 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
 
             testWalkSucceeds(path, path.resolve("", "4.txt", "5.txt"))
 
-            val target = root.resolve("target")
+            val target = createTempDirectory().cleanupRecursively().resolve("target")
             testCopySucceeds(path, target, target.resolve("", "4.txt", "5.txt"))
 
             // Fails in Linux and macOS, succeeds in Windows
             // deleteIfExists/deleteDirectory() throws FileSystemException: /1/3/.: Invalid argument
-            testDeleteMaybeFailsWith<FileSystemException>(path)
+            val deleteSucceeded = testDeleteMaybeFailsWith<FileSystemException>(path)
+            if (deleteSucceeded) {
+                // Only the "1/3" directory and its content is deleted
+                val expectedRootContent = setOf(root) + referenceFilenames.filter { !it.contains("3") }.map { root.resolve(it) }
+                testWalkSucceeds(root, expectedRootContent)
+            }
         }
 
         createTestFiles().cleanupRecursively().let { root ->
@@ -1413,14 +1420,19 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             val windows = setOf(path) // In Windows
             testWalkSucceeds(path, unix, windows)
 
-            val target = root.resolve("target")
+            val target = createTempDirectory().cleanupRecursively().resolve("target")
             // Copy fails in Linux and macOS, succeeds in Windows
             // Path.copyToRecursively throws NoSuchFileException: /1/3/4.txt/.: The source file doesn't exist.
             testCopyMaybeFailsWith<NoSuchFileException>(path, target, setOf(target))
 
             // Delete fails in Linux and macOS, succeeds in Windows
             // Path.deleteIfExists() throws FileSystemException: /1/3/4.txt/.: Not a directory
-            testDeleteMaybeFailsWith<FileSystemException>(path)
+            val deleteSucceeded = testDeleteMaybeFailsWith<FileSystemException>(path)
+            if (deleteSucceeded) {
+                // Only the "1/3/4.txt" file is deleted
+                val expectedRootContent = setOf(root) + referenceFilenames.filter { !it.contains("4.txt") }.map { root.resolve(it) }
+                testWalkSucceeds(root, expectedRootContent)
+            }
         }
 
         createTestFiles().cleanupRecursively().let { root ->
@@ -1428,13 +1440,18 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
 
             testWalkSucceeds(path, path.resolve("", "2", "3", "3/4.txt", "3/5.txt"))
 
-            val target = root.resolve("target")
+            val target = createTempDirectory().cleanupRecursively().resolve("target")
             testCopySucceeds(path, target, target.resolve("", "2", "3", "3/4.txt", "3/5.txt"))
 
             // Fails in macOS and Linux, succeeds in Windows
             // In macOS Path.isSameFileAs() throws NoSuchFileException: /1/3/../2
             // In Linux deleteDirectory() throws DirectoryNotEmptyException wrapped into FileSystemException: /1/3/..
-            testDeleteMaybeFailsWith<FileSystemException>(path)
+            val deleteSucceeded = testDeleteMaybeFailsWith<FileSystemException>(path)
+            if (deleteSucceeded) {
+                // Only the "1" directory and its content is deleted
+                val expectedRootContent = setOf(root) + referenceFilenames.filter { !it.contains("1") }.map { root.resolve(it) }
+                testWalkSucceeds(root, expectedRootContent)
+            }
         }
 
         createTestFiles().cleanupRecursively().let { root ->
@@ -1444,14 +1461,19 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             val windows = path.resolve("", "4.txt", "5.txt") // In Windows
             testWalkSucceeds(path, unix, windows)
 
-            val target = root.resolve("target")
+            val target = createTempDirectory().cleanupRecursively().resolve("target")
             // Copy fails in Linux and macOS, succeeds in Windows
             // Path.copyToRecursively throws NoSuchFileException: /1/3/4.txt/..: The source file doesn't exist.
             testCopyMaybeFailsWith<NoSuchFileException>(path, target, setOf(target, target.resolve("4.txt"), target.resolve("5.txt")))
 
             // Delete fails in Linux and macOS, succeeds in Windows
             // Path.deleteIfExists() throws FileSystemException: /1/3/4.txt/..: Not a directory
-            testDeleteMaybeFailsWith<FileSystemException>(path)
+            val deleteSucceeded = testDeleteMaybeFailsWith<FileSystemException>(path)
+            if (deleteSucceeded) {
+                // Only the "1/3" directory and its content is deleted
+                val expectedRootContent = setOf(root) + referenceFilenames.filter { !it.contains("3") }.map { root.resolve(it) }
+                testWalkSucceeds(root, expectedRootContent)
+            }
         }
     }
 }
