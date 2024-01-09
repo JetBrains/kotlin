@@ -1257,6 +1257,24 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
     }
 
     @Test
+    fun copyOutSideTarget() {
+        // Passes only with jdk8
+        withZip("Archive.zip", listOf("a", "a//")) { root, zipRoot ->
+            val aDir = zipRoot.resolve("a/")
+            testWalkSucceeds(aDir, zipRoot.resolve("a/", "a"))
+
+            val aDirTarget = root.resolve("UnzipArchive-aDir")
+            aDir.copyToRecursively(aDirTarget, followLinks = false)
+            // The "/a/" directory is copied to the target
+            testWalkSucceeds(aDirTarget, setOf(aDirTarget))
+            assertTrue(aDirTarget.isDirectory())
+            // The "/a" file is copied outside target
+            testWalkSucceeds(root, root.resolve("", "Archive.zip", "UnzipArchive-aDir", "a"))
+            assertTrue(root.resolve("a").isRegularFile())
+        }
+    }
+
+    @Test
     fun deleteZipRootDirectory() {
         withZip("Archive.zip", emptyList()) { _, zipRoot ->
             // Deleting the root directory of a zip archive throws NullPointerException.
