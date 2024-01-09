@@ -413,8 +413,7 @@ private val KtSourceElement.operatorSignIfBinary: KtSourceElement?
     get() = when (elementType) {
         KtNodeTypes.BINARY_EXPRESSION -> when (this) {
             is KtPsiSourceElement -> (psi as? KtBinaryExpression)?.operationReference?.toKtPsiSourceElement(kind)
-            is KtLightSourceElement -> treeStructure.getParent(lighterASTNode)
-                ?.let { treeStructure.findChildByType(it, KtNodeTypes.OPERATION_REFERENCE) }
+            is KtLightSourceElement -> treeStructure.findChildByType(lighterASTNode, KtNodeTypes.OPERATION_REFERENCE)
                 ?.toKtLightSourceElement(treeStructure, kind)
             else -> null
         }
