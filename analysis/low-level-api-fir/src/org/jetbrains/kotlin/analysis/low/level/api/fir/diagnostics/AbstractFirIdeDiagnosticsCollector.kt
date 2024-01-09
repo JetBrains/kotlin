@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationCheckers
 import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 
@@ -140,7 +140,7 @@ private object CheckersFactory {
     private fun createDeclarationCheckers(declarationCheckers: List<DeclarationCheckers>): DeclarationCheckers {
         return when (declarationCheckers.size) {
             1 -> declarationCheckers.single()
-            else -> ComposedDeclarationCheckers().apply {
+            else -> ComposedDeclarationCheckers { true }.apply {
                 declarationCheckers.forEach(::register)
             }
         }
@@ -154,7 +154,7 @@ private object CheckersFactory {
     private fun createExpressionCheckers(expressionCheckers: List<ExpressionCheckers>): ExpressionCheckers {
         return when (expressionCheckers.size) {
             1 -> expressionCheckers.single()
-            else -> ComposedExpressionCheckers().apply {
+            else -> ComposedExpressionCheckers { true }.apply {
                 expressionCheckers.forEach(::register)
             }
         }
@@ -168,7 +168,7 @@ private object CheckersFactory {
     private fun createTypeCheckers(typeCheckers: List<TypeCheckers>): TypeCheckers {
         return when (typeCheckers.size) {
             1 -> typeCheckers.single()
-            else -> ComposedTypeCheckers().apply {
+            else -> ComposedTypeCheckers { true }.apply {
                 typeCheckers.forEach(::register)
             }
         }
