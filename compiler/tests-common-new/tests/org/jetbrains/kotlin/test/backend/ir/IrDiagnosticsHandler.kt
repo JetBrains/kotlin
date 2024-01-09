@@ -22,6 +22,9 @@ class IrDiagnosticsHandler(testServices: TestServices) : AbstractIrHandler(testS
     private val diagnosticsService: DiagnosticsService
         get() = testServices.diagnosticsService
 
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::DiagnosticsService))
+
     private val fullDiagnosticsRenderer = FullDiagnosticsRenderer(DiagnosticsDirectives.RENDER_IR_DIAGNOSTICS_FULL_TEXT)
 
     override fun processModule(module: TestModule, info: IrBackendInput) {

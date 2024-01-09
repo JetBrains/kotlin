@@ -33,14 +33,17 @@ fun BinaryArtifactHandler<*>.reportKtDiagnostics(module: TestModule, ktDiagnosti
     val lightTreeEnabled = firParser == FirParser.LightTree
 
     val processedModules = mutableSetOf<TestModule>()
+    val diagnosticsService = testServices.diagnosticsService
 
     fun processModule(module: TestModule) {
         if (!processedModules.add(module)) return
         for (testFile in module.files) {
             val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath["/${testFile.name}"] ?: continue
             ktDiagnostics.forEach {
-                val metaInfos = it.toMetaInfos(module, testFile, globalMetadataInfoHandler, lightTreeEnabled, lightTreeComparingModeEnabled)
-                globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
+                if (diagnosticsService.shouldRenderDiagnostic(module, it.factoryName, it.severity)) {
+                    val metaInfos = it.toMetaInfos(module, testFile, globalMetadataInfoHandler, lightTreeEnabled, lightTreeComparingModeEnabled)
+                    globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
+                }
             }
         }
         for ((moduleName, _, _) in module.dependsOnDependencies) {

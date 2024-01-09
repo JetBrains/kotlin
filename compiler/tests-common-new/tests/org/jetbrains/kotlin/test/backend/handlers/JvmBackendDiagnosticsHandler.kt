@@ -17,6 +17,9 @@ import org.junit.jupiter.api.fail
 class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     private val reporter = ClassicDiagnosticReporter(testServices)
 
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::DiagnosticsService))
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         reportDiagnostics(module, info)
         reportKtDiagnostics(module, info)

@@ -4,6 +4,12 @@
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
 
+// DIAGNOSTICS: -EXPORTING_JS_NAME_CLASH_ES
+// ^ This warning only concernes the ES6 mode, but since it's reported during KLIB serialization, the module system is unknown at that
+//   point. Additionally, the same KLIB can be used for building JS in different module systems. Therefore, the warning is always written,
+//   regardless of the project's module system.
+
+
 // MODULE: JS_TESTS
 // FILE: file1.kt
 
