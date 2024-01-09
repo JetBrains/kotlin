@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -24,16 +24,16 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import kotlin.math.pow
 
-abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiSingleFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        ktFile.collectDescendantsOfType<KtCallableDeclaration>().forEach {
+abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        mainFile.collectDescendantsOfType<KtCallableDeclaration>().forEach {
             testContractsOnDeclaration(it, testServices)
         }
     }
 
     private fun testContractsOnDeclaration(
         callableDeclaration: KtCallableDeclaration,
-        testServices: TestServices
+        testServices: TestServices,
     ) {
         analyseForTest(callableDeclaration) {
             val typesToCheckOn = buildList {
@@ -63,7 +63,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiSi
     private fun KtAnalysisSession.testContractsOnDeclarationSymbol(
         symbol: KtCallableSymbol,
         substitutor: KtSubstitutor,
-        testServices: TestServices
+        testServices: TestServices,
     ) {
         run {
             val substitutedViaSignature = symbol.asSignature().substitute(substitutor)
@@ -100,7 +100,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiSi
         symbol: KtFunctionLikeSymbol,
         signature: KtFunctionLikeSignature<*>,
         substitutor: KtSubstitutor,
-        testServices: TestServices
+        testServices: TestServices,
     ) {
         testServices.assertions.assertEquals(symbol.receiverType?.let(substitutor::substitute), signature.receiverType)
         testServices.assertions.assertEquals(symbol.returnType.let(substitutor::substitute), signature.returnType)
@@ -116,7 +116,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiSi
         symbol: KtVariableLikeSymbol,
         signature: KtVariableLikeSignature<*>,
         substitutor: KtSubstitutor,
-        testServices: TestServices
+        testServices: TestServices,
     ) {
         testServices.assertions.assertEquals(symbol.receiverType?.let(substitutor::substitute), signature.receiverType)
         testServices.assertions.assertEquals(symbol.returnType.let(substitutor::substitute), signature.returnType)

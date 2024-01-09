@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,19 +10,19 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.checkConta
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.checkContainingJvmClassName
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtScriptSymbol
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysisApiSingleFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
+abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
         val currentPath = mutableListOf<KtDeclaration>()
         val ktClasses = mutableListOf<KtClassOrObject>()
-        analyseForTest(ktFile.declarations.first()) {
-            val expectedFileSymbol = ktFile.getFileSymbol()
-            ktFile.accept(object : KtVisitorVoid() {
+        analyseForTest(mainFile.declarations.first()) {
+            val expectedFileSymbol = mainFile.getFileSymbol()
+            mainFile.accept(object : KtVisitorVoid() {
                 override fun visitElement(element: PsiElement) {
                     element.acceptChildren(this)
                 }
@@ -43,7 +43,7 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
 
                     checkContainingFileSymbol(expectedFileSymbol, currentDeclarationSymbol, testServices)
                     if (currentDeclarationSymbol is KtCallableSymbol) {
-                        checkContainingJvmClassName(ktFile, ktClasses.lastOrNull(), currentDeclarationSymbol, testServices)
+                        checkContainingJvmClassName(mainFile, ktClasses.lastOrNull(), currentDeclarationSymbol, testServices)
                     }
 
                     currentPath.add(dcl)
