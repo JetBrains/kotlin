@@ -14,6 +14,7 @@ import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.JavaExecSpec
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.lang.reflect.InvocationTargetException
@@ -105,6 +106,11 @@ abstract class KotlinToolRunner(
     open val enableAssertions: Boolean get() = true
     open val disableC2: Boolean get() = true
 
+    /**
+     * Represents the log level for compiler arguments
+     */
+    internal open val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel = KotlinCompilerArgumentsLogLevel.INFO
+
     abstract val mustRunViaExec: Boolean
     open fun transformArgs(args: List<String>): List<String> = args
 
@@ -151,7 +157,9 @@ abstract class KotlinToolRunner(
                 .escapeQuotesForWindows()
                 .toMap() + execSystemProperties
 
-            executionContext.logger.info(
+
+            executionContext.logger.log(
+                compilerArgumentsLogLevel.gradleLogLevel,
                 """|Run "$displayName" tool in a separate JVM process
                    |Main class = $mainClass
                    |Arguments = ${args.toPrettyString()}
@@ -181,7 +189,8 @@ abstract class KotlinToolRunner(
             val transformedArgs = transformArgs(args)
             val isolatedClassLoader = getIsolatedClassLoader()
 
-            executionContext.logger.info(
+            executionContext.logger.log(
+                compilerArgumentsLogLevel.gradleLogLevel,
                 """|Run in-process tool "$displayName"
                    |Entry point method = $mainClass.$daemonEntryPoint
                    |Classpath = ${isolatedClassLoader.urLs.map { it.file }.toPrettyString()}

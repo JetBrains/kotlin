@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
@@ -19,7 +20,8 @@ internal class KotlinNativeCommonizerToolRunner(
     class Settings(
         val kotlinPluginVersion: String,
         val classpath: Set<File>,
-        val customJvmArgs: List<String>
+        val customJvmArgs: List<String>,
+        val compilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>,
     )
 
     override val displayName get() = "Kotlin/Native KLIB commonizer"
@@ -35,5 +37,7 @@ internal class KotlinNativeCommonizerToolRunner(
     override val mustRunViaExec get() = true // because it's not enough the standard Gradle wrapper's heap size
 
     override fun getCustomJvmArgs() = settings.customJvmArgs
+
+    override val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel get() = settings.compilerArgumentsLogLevel.get()
 }
 

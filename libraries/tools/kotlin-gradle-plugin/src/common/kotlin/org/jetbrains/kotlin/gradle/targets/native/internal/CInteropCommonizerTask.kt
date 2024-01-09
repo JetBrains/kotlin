@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
@@ -104,14 +105,7 @@ internal abstract class CInteropCommonizerTask
         .listProperty<String>()
         .chainedFinalizeValueOnRead()
 
-    private val runnerSettings: Provider<KotlinNativeCommonizerToolRunner.Settings> = kotlinPluginVersion
-        .zip(customJvmArgs) { pluginVersion, customJvmArgs ->
-            KotlinNativeCommonizerToolRunner.Settings(
-                pluginVersion,
-                commonizerClasspath.files,
-                customJvmArgs
-            )
-        }
+    private val kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
 
     private val konanHome = project.file(project.konanHome)
     private val commonizerLogLevel = project.commonizerLogLevel
@@ -202,9 +196,16 @@ internal abstract class CInteropCommonizerTask
         outputDirectory.deleteRecursively()
         if (cinteropsForTarget.isEmpty()) return
 
+        val runnerSettings = KotlinNativeCommonizerToolRunner.Settings(
+            kotlinPluginVersion = kotlinPluginVersion.get(),
+            classpath = commonizerClasspath.files,
+            customJvmArgs = customJvmArgs.get(),
+            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel
+        )
+
         val commonizerRunner = KotlinNativeCommonizerToolRunner(
             context = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
-            settings = runnerSettings.get(),
+            settings = runnerSettings,
             metricsReporter = metrics.get(),
         )
 

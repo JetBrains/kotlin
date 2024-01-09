@@ -71,14 +71,7 @@ internal abstract class NativeDistributionCommonizerTask
         .listProperty<String>()
         .chainedFinalizeValueOnRead()
 
-    private val runnerSettings: Provider<KotlinNativeCommonizerToolRunner.Settings> = kotlinPluginVersion
-        .zip(customJvmArgs) { pluginVersion, customJvmArgs ->
-            KotlinNativeCommonizerToolRunner.Settings(
-                pluginVersion,
-                commonizerClasspath.files,
-                customJvmArgs
-            )
-        }
+    private val kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
 
     private val logLevel = project.commonizerLogLevel
 
@@ -116,9 +109,15 @@ internal abstract class NativeDistributionCommonizerTask
         val metricsReporter = metrics.get()
 
         addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = null) {
+            val runnerSettings = KotlinNativeCommonizerToolRunner.Settings(
+                kotlinPluginVersion.get(),
+                commonizerClasspath.files,
+                customJvmArgs.get(),
+                kotlinCompilerArgumentsLogLevel,
+            )
             val commonizerRunner = KotlinNativeCommonizerToolRunner(
                 context = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
-                settings = runnerSettings.get(),
+                settings = runnerSettings,
                 metricsReporter = metricsReporter,
             )
 

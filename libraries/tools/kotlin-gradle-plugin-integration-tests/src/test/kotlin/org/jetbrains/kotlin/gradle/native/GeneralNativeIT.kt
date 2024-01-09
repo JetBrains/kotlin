@@ -1072,4 +1072,28 @@ class GeneralNativeIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Test compiler arguments for K/Native Tasks")
+    @GradleTest
+    fun testCompilerArgumentsLogLevel(gradleVersion: GradleVersion) {
+        nativeProject("native-libraries", gradleVersion) {
+            val updatedBuildOptions = buildOptions.copy(
+                compilerArgumentsLogLevel = "warning"
+            )
+            build("assemble", buildOptions = updatedBuildOptions) {
+                val tasksWithNativeCompilerArguments = listOf(
+                    ":compileCommonMainKotlinMetadata", // it is shared native metadata, which is compiled by konan
+                    ":compileKotlinLinux64",
+                    ":linkMainDebugStaticLinux64",
+                )
+                for (task in tasksWithNativeCompilerArguments) {
+                    val taskOutput = getOutputForTask(task, LogLevel.INFO)
+                    assertTrue(
+                        taskOutput.contains("Arguments = "),
+                        "Arguments were not logged by Task $task"
+                    )
+                }
+            }
+        }
+    }
 }

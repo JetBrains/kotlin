@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.mpp.nativeUseEmbeddableCompilerJar
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
@@ -88,6 +90,7 @@ internal abstract class KotlinNativeToolRunner(
         val jvmArgs: List<String>,
         val classpath: FileCollection,
         val konanDataDir: String?,
+        val kotlinCompilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>,
     ) {
         companion object {
             fun of(konanHome: String, konanDataDir: String?, project: Project) = Settings(
@@ -97,7 +100,8 @@ internal abstract class KotlinNativeToolRunner(
                 useXcodeMessageStyle = project.useXcodeMessageStyle,
                 jvmArgs = project.jvmArgs,
                 classpath = project.files(project.kotlinNativeCompilerJar, "${konanHome}/konan/lib/trove4j.jar"),
-                konanDataDir = konanDataDir
+                konanDataDir = konanDataDir,
+                kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
             )
         }
     }
@@ -149,6 +153,8 @@ internal abstract class KotlinNativeToolRunner(
     protected open fun extractArgsFromSettings(): List<String> {
         return settings.konanDataDir?.let { listOf("-Xkonan-data-dir=$it") } ?: emptyList()
     }
+
+    override val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel get() = settings.kotlinCompilerArgumentsLogLevel.get()
 }
 
 /** A common ancestor for all runners that run the cinterop tool. */

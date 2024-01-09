@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.logging
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
@@ -26,6 +27,14 @@ internal inline fun Logger.kotlinDebug(message: () -> String) {
         kotlinDebug(message())
     }
 }
+
+internal val KotlinCompilerArgumentsLogLevel.gradleLogLevel: LogLevel
+    get() = when(this) {
+        KotlinCompilerArgumentsLogLevel.ERROR -> LogLevel.ERROR
+        KotlinCompilerArgumentsLogLevel.WARNING -> LogLevel.WARN
+        KotlinCompilerArgumentsLogLevel.INFO -> LogLevel.INFO
+        KotlinCompilerArgumentsLogLevel.DEBUG -> LogLevel.DEBUG
+    }
 
 internal inline fun KotlinLogger.kotlinError(message: () -> String) {
     error("[KOTLIN] ${message()}")
