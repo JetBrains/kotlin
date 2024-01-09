@@ -12,8 +12,8 @@ import kotlin.test.assertNotNull
 /**
  * Asserts given tasks are not present in the build task graph.
  *
- * (Note this is different from asserting tasks are not executed - Tasks with outcomes
- * [TaskOutcome.SKIPPED] and [TaskOutcome.UP_TO_DATE] will be in the task graph, but
+ * (Note: 'not in task graph' has a different meaning to 'not executed'.
+ * Tasks with outcomes [TaskOutcome.SKIPPED] and [TaskOutcome.UP_TO_DATE] will be in the task graph, but
  * are not considered 'executed').
  */
 fun BuildResult.assertTasksAreNotInTaskGraph(vararg taskPaths: String) {
@@ -51,7 +51,7 @@ fun BuildResult.assertAnyTaskHasBeenExecuted(taskPaths: Set<String>) {
         taskOutcomes.values.any { it == TaskOutcome.SUCCESS }
     ) {
         printBuildOutput()
-        "Expected at least one Task of ($taskPaths) had outcome 'SUCCESS', but none did. Actual: $taskOutcomes"
+        "Expected at least one Task of $taskPaths had outcome 'SUCCESS', but none did. Actual outcomes: $taskOutcomes"
     }
 }
 
