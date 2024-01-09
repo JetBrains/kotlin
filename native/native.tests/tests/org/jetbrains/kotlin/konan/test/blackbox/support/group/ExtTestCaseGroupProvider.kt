@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.DISABLE_NATIVE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.DISABLE_NATIVE_K1
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.DISABLE_NATIVE_K2
@@ -147,7 +148,8 @@ private class ExtTestDataFile(
             nominalPackageName = computePackageName(
                 testDataBaseDir = testRoots.baseDir,
                 testDataFile = testDataFile
-            )
+            ),
+            assertionsMode = AssertionsMode.fromString(structure.directives[ASSERTIONS_MODE.name])
         )
     }
 
@@ -172,8 +174,8 @@ private class ExtTestDataFile(
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isLocal()`
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)
-            ?.flatMap { it.split(" ") }
-        return TestCompilerArgs(args, freeCInteropArgs ?: emptyList())
+            .orEmpty().flatMap { it.split(" ") }
+        return TestCompilerArgs(args, freeCInteropArgs, testDataFileSettings.assertionsMode)
     }
 
     fun createTestCase(settings: Settings, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
@@ -197,6 +199,7 @@ private class ExtTestDataFile(
     private fun determineIfStandaloneTest(): Boolean = with(structure) {
         if (directives.contains(NATIVE_STANDALONE_DIRECTIVE)) return true
         if (directives.contains(FILECHECK_STAGE.name)) return true
+        if (directives.contains(ASSERTIONS_MODE.name)) return true
         if (isExpectedFailure) return true
         // To make the debug of possible failed testruns easier, it makes sense to run dodgy tests alone
         if (directives.contains(IGNORE_NATIVE.name) ||
@@ -604,7 +607,8 @@ private class ExtTestDataFileSettings(
     val optInsForSourceCode: Set<String>,
     val optInsForCompiler: Set<String>,
     val generatedSourcesDir: File,
-    val nominalPackageName: PackageName
+    val nominalPackageName: PackageName,
+    val assertionsMode: AssertionsMode,
 )
 
 private typealias SharedModuleGenerator = (sharedModulesDir: File) -> TestModule.Shared?

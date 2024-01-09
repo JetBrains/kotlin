@@ -55,7 +55,9 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     private fun ArgsBuilder.applyCommonArgs() {
         add("-target", targets.testTarget.name)
         optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
-        if (optimizationMode != OptimizationMode.OPT) add("-enable-assertions")
+        if ((freeCompilerArgs.assertionsMode != AssertionsMode.ALWAYS_DISABLE && optimizationMode != OptimizationMode.OPT) ||
+            freeCompilerArgs.assertionsMode == AssertionsMode.ALWAYS_ENABLE)
+            add("-enable-assertions")
         add(
             "-Xverify-ir=error"
         )
@@ -218,7 +220,7 @@ internal class LibraryCompilation(
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {
-    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode)
+    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         add(
@@ -253,7 +255,7 @@ internal class ObjCFrameworkCompilation(
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {
-    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode)
+    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         add(
@@ -356,7 +358,7 @@ internal class ExecutableCompilation(
     expectedArtifact = expectedArtifact
 ) {
     private val cacheMode: CacheMode = settings.get()
-    override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode)
+    override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode, freeCompilerArgs.assertionsMode)
 
     private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
 
@@ -552,15 +554,19 @@ internal class CategorizedDependencies(uncategorizedDependencies: Iterable<TestC
 private object BinaryOptions {
     object RuntimeAssertionsMode {
         // Here the 'default' is in the sense the default for testing, not the default for the compiler.
-        fun defaultForTesting(optimizationMode: OptimizationMode): Map<String, String> = when (optimizationMode) {
-            OptimizationMode.OPT -> mapOf()
-            else -> mapOf("runtimeAssertionsMode" to "panic")
+        fun defaultForTesting(optimizationMode: OptimizationMode, assertionsMode: AssertionsMode): Map<String, String> {
+            val panic = mapOf("runtimeAssertionsMode" to "panic")
+            return when (assertionsMode) {
+                AssertionsMode.ALWAYS_ENABLE -> panic
+                AssertionsMode.ALWAYS_DISABLE -> mapOf()
+                else -> if (optimizationMode == OptimizationMode.OPT) mapOf() else panic
+            }
         }
 
         val forUseWithCache: Map<String, String> = mapOf("runtimeAssertionsMode" to "ignore")
 
-        fun chooseFor(cacheMode: CacheMode, optimizationMode: OptimizationMode) =
-            if (cacheMode.useStaticCacheForDistributionLibraries) forUseWithCache else defaultForTesting(optimizationMode)
+        fun chooseFor(cacheMode: CacheMode, optimizationMode: OptimizationMode, assertionsMode: AssertionsMode) =
+            if (cacheMode.useStaticCacheForDistributionLibraries) forUseWithCache else defaultForTesting(optimizationMode, assertionsMode)
     }
 }
 

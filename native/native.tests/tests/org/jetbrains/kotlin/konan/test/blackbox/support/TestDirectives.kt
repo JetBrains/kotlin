@@ -196,6 +196,26 @@ internal object TestDirectives : SimpleDirectivesContainer() {
             Note that this directive makes sense only in combination with // KIND: STANDALONE_NO_TR
         """.trimIndent()
     )
+
+    val ASSERTIONS_MODE by enumDirective<AssertionsMode>(
+        description = """
+            Force assertions mode to given value, overriding calculated mode which is derived from cacheMode and optimizationMode.
+        """.trimIndent()
+    )
+}
+
+// mimics class `JVMAssertionsMode`
+internal enum class AssertionsMode(val description: String) {
+    ALWAYS_ENABLE("always-enable"),
+    ALWAYS_DISABLE("always-disable"),
+    JVM("jvm"),
+    LEGACY("legacy");
+
+    companion object {
+        val DEFAULT = LEGACY
+        fun fromStringOrNull(string: String?) = entries.find { it.description == string }
+        fun fromString(string: String?) = fromStringOrNull(string) ?: DEFAULT
+    }
 }
 
 internal enum class TestKind {
@@ -225,7 +245,11 @@ internal class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs(e
     constructor(vararg cinteropArgs: String) : this(cinteropArgs.asList())
 }
 
-internal open class TestCompilerArgs(val compilerArgs: List<String>, val cinteropArgs: List<String> = emptyList()) {
+internal open class TestCompilerArgs(
+    val compilerArgs: List<String>,
+    val cinteropArgs: List<String> = emptyList(),
+    val assertionsMode: AssertionsMode = AssertionsMode.DEFAULT,
+) {
     constructor(vararg compilerArgs: String) : this(compilerArgs.asList())
 
     private val uniqueCompilerArgs = compilerArgs.toSet()
@@ -236,7 +260,9 @@ internal open class TestCompilerArgs(val compilerArgs: List<String>, val cintero
 
     operator fun plus(otherCompilerArgs: TestCompilerArgs): TestCompilerArgs = TestCompilerArgs(
         this.compilerArgs + otherCompilerArgs.compilerArgs,
-        this.cinteropArgs + otherCompilerArgs.cinteropArgs
+        this.cinteropArgs + otherCompilerArgs.cinteropArgs,
+        if (this.assertionsMode == otherCompilerArgs.assertionsMode) this.assertionsMode
+        else fail { "Cannot add ${this.assertionsMode} and ${otherCompilerArgs.assertionsMode}" },
     )
 
     companion object {

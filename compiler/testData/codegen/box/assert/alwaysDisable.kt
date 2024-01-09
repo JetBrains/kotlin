@@ -1,12 +1,13 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_ASSERT
 // KT-59059
-// IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JS
 // ASSERTIONS_MODE: always-disable
 // WITH_STDLIB
+
+@file:Suppress("OPT_IN_USAGE_ERROR") // ExperimentalNativeApi is defined only in Native
 
 fun checkTrue(): Boolean {
     var hit = false

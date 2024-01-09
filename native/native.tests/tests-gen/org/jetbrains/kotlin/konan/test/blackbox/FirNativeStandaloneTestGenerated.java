@@ -157,18 +157,6 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
         }
 
         @Test
-        @TestMetadata("assertFailed.kt")
-        public void testAssertFailed() throws Exception {
-            runTest("native/native.tests/testData/standalone/termination/assertFailed.kt");
-        }
-
-        @Test
-        @TestMetadata("assertPassed.kt")
-        public void testAssertPassed() throws Exception {
-            runTest("native/native.tests/testData/standalone/termination/assertPassed.kt");
-        }
-
-        @Test
         @TestMetadata("exitProcess.kt")
         public void testExitProcess() throws Exception {
             runTest("native/native.tests/testData/standalone/termination/exitProcess.kt");
