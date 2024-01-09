@@ -142,6 +142,8 @@ open class IrFileSerializer(
 
     protected val protoDebugInfoArray = arrayListOf<String>()
 
+    private var isInsideInline: Boolean = false
+
     interface FileBackendSpecificMetadata {
         fun toByteArray(): ByteArray
     }
@@ -1038,6 +1040,9 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrFunctionBase(function: IrFunction, flags: Long): ProtoFunctionBase {
+        val isInsideInlineBefore = isInsideInline
+        isInsideInline = isInsideInline || function.isInline
+
         val proto = ProtoFunctionBase.newBuilder()
             .setBase(serializeIrDeclarationBase(function, flags))
             .setNameType(serializeNameAndType(function.name, function.returnType))
@@ -1051,13 +1056,15 @@ open class IrFileSerializer(
         if (contextReceiverParametersCount > 0) {
             proto.contextReceiverParametersCount = contextReceiverParametersCount
         }
+
         function.valueParameters.forEach {
             proto.addValueParameter(serializeIrValueParameter(it))
         }
 
-        if (!bodiesOnlyForInlines || function.isInline) {
+        if (!bodiesOnlyForInlines || isInsideInline) {
             function.body?.let { proto.body = serializeIrStatementBody(it) }
         }
+        isInsideInline = isInsideInlineBefore
 
         return proto.build()
     }
