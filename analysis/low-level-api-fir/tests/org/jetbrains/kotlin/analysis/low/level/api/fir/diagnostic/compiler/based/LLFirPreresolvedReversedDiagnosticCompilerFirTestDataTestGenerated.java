@@ -3153,6 +3153,18 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
                 }
 
                 @Test
+                @TestMetadata("invokeCustomTypeExt.kt")
+                public void testInvokeCustomTypeExt() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeCustomTypeExt.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeCustomTypeMember.kt")
+                public void testInvokeCustomTypeMember() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeCustomTypeMember.kt");
+                }
+
+                @Test
                 @TestMetadata("invokeKFunction.kt")
                 public void testInvokeKFunction() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeKFunction.kt");
@@ -3168,6 +3180,30 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
                 @TestMetadata("invokeKSuspendFunction.kt")
                 public void testInvokeKSuspendFunction() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeKSuspendFunction.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeOverload1.kt")
+                public void testInvokeOverload1() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeOverload1.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeOverload2.kt")
+                public void testInvokeOverload2() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeOverload2.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeSuspend.kt")
+                public void testInvokeSuspend() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeSuspend.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeWithExtensionReceiver.kt")
+                public void testInvokeWithExtensionReceiver() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeWithExtensionReceiver.kt");
                 }
 
                 @Test
