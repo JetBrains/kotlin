@@ -69,6 +69,7 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-gradle-plugin-idea-proto",
         "repo/gradle-settings-conventions",
         "plugins/fir-plugin-prototype/plugin-annotations",
+        "plugins/atomicfu/atomicfu-compiler/test/org/jetbrains/kotlin/konan/test/blackbox",
     )
 
     val d = '$'
