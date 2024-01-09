@@ -137,7 +137,7 @@ open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
 // TODO: implement separate expectations for FIR/JS to reuse testdata, disabled for now
 //open class AbstractJsFirLineNumberTest : AbstractFirJsTest(
 //    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/lineNumbers/",
-//    testGroupOutputDirPrefix = "irLineNumbers/"
+//    testGroupOutputDirPrefix = "firLineNumbers/"
 //) {
 //    override fun configure(builder: TestConfigurationBuilder) {
 //        super.configure(builder)
@@ -147,7 +147,7 @@ open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
 
 open class AbstractFirJsSteppingTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/debug/stepping/",
-    testGroupOutputDirPrefix = "debug/stepping/"
+    testGroupOutputDirPrefix = "debug/firStepping/"
 ) {
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsBlackBoxCodegenTest()
@@ -164,6 +164,6 @@ open class AbstractFirJsSteppingTest : AbstractFirJsTest(
 }
 
 open class AbstractFirJsCodegenWasmJsInteropTest : AbstractFirJsTest(
-    pathToTestDir = "compiler/testData/codegen/wasmJsInterop",
-    testGroupOutputDirPrefix = "codegen/wasmJsInteropJs"
+    pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
+    testGroupOutputDirPrefix = "codegen/firWasmJsInteropJs/"
 )

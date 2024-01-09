@@ -36,9 +36,9 @@ abstract class AbstractJsFirES6InvalidationPerFileTest :
 abstract class AbstractJsFirES6InvalidationPerModuleTest :
     FirAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFirES6/perModule")
 abstract class AbstractJsFirInvalidationPerFileWithPLTest :
-    AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationWithPL/perFile")
+    AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFirWithPL/perFile")
 abstract class AbstractJsFirInvalidationPerModuleWithPLTest :
-    AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationWithPL/perModule")
+    AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFirWithPL/perModule")
 
 abstract class AbstractJsFirInvalidationWithPLTest(granularity: JsGenerationGranularity, workingDirPath: String) :
     FirAbstractInvalidationTest(

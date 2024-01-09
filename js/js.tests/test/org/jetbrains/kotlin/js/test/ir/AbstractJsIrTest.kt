@@ -209,7 +209,7 @@ private fun configureJsIrLineNumberTest(builder: TestConfigurationBuilder) {
 
 open class AbstractIrJsSteppingTest : AbstractJsIrTest(
     pathToTestDir = "compiler/testData/debug/stepping/",
-    testGroupOutputDirPrefix = "debug/stepping/"
+    testGroupOutputDirPrefix = "debug/irStepping/"
 ) {
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsBlackBoxCodegenTest()
@@ -244,6 +244,6 @@ open class AbstractIrJsLocalVariableTest : AbstractJsIrTest(
 }
 
 open class AbstractIrCodegenWasmJsInteropJsTest : AbstractJsIrTest(
-    pathToTestDir = "compiler/testData/codegen/wasmJsInterop",
-    testGroupOutputDirPrefix = "codegen/wasmJsInteropJs"
+    pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
+    testGroupOutputDirPrefix = "codegen/irWasmJsInteropJs/"
 )
