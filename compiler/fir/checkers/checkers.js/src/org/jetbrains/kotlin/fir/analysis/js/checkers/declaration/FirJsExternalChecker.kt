@@ -88,12 +88,7 @@ object FirJsExternalChecker : FirWebCommonExternalChecker() {
             }
 
             for (parameter in declaration.valueParameters) {
-                val ktParam = if (parameter.source?.psi is KtParameter) {
-                    parameter.source
-                } else {
-                    declaration.source
-                }
-
+                val ktParam = parameter.source
                 if (ktParam?.allowsReporting != true) {
                     continue
                 }
