@@ -10,6 +10,8 @@ interface Multimap<K, out V, out C : Collection<V>> {
     operator fun contains(key: K): Boolean
     val keys: Set<K>
     val values: Collection<V>
+
+    operator fun iterator(): Iterator<Map.Entry<K, C>>
 }
 
 interface MutableMultimap<K, V, C : Collection<V>> : Multimap<K, V, C> {
@@ -72,6 +74,11 @@ abstract class BaseMultimap<K, V, C : Collection<V>, MC : MutableCollection<V>> 
     override fun clear() {
         map.clear()
     }
+
+    override fun iterator(): Iterator<Map.Entry<K, C>> {
+        @Suppress("UNCHECKED_CAST")
+        return map.iterator() as Iterator<Map.Entry<K, C>>
+    }
 }
 
 class SetMultimap<K, V> : BaseMultimap<K, V, Set<V>, MutableSet<V>>() {
@@ -96,3 +103,9 @@ class ListMultimap<K, V> : BaseMultimap<K, V, List<V>, MutableList<V>>() {
 
 fun <K, V> setMultimapOf(): SetMultimap<K, V> = SetMultimap()
 fun <K, V> listMultimapOf(): ListMultimap<K, V> = ListMultimap()
+
+operator fun <K, V> MutableMultimap<K, V, *>.plusAssign(map: Map<K, Collection<V>>) {
+    for ((key, values) in map) {
+        this.putAll(key, values)
+    }
+}

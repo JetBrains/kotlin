@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.metadataVersion
@@ -77,7 +78,7 @@ abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : Abstra
             sourceFiles,
             compilerConfiguration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
             diagnosticReporter,
-            inputArtifact.hasErrors,
+            testServices.firDiagnosticCollectorService.containsErrors(inputArtifact),
             /*descriptorMangler = */null,
             manglers.irMangler,
             manglers.firMangler,

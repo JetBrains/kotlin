@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
@@ -34,7 +35,8 @@ open class LowLevelFirAnalyzerFacade(
 
     private var resolved: Boolean = false
 
-    override fun runCheckers(): Map<FirFile, List<KtDiagnostic>> {
+    // TODO: investigate
+    fun runCheckers(): Map<FirFile, List<KtDiagnostic>> {
         if (!resolved) {
             runResolution()
             resolved = true

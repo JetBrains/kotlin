@@ -14,19 +14,28 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_FIR_DIA
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
+import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.service
 
 class NoFirCompilationErrorsHandler(testServices: TestServices) : FirAnalysisHandler(testServices, failureDisablesNextSteps = true) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
+
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::FirDiagnosticCollectorService))
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         for (part in info.partsForDependsOnModules) {
             var hasError = false
 
             val ignoreErrors = IGNORE_FIR_DIAGNOSTICS in part.module.directives
-            for ((firFile, diagnostics) in part.firAnalyzerFacade.runCheckers()) {
+
+            val diagnosticsPerFile = testServices.firDiagnosticCollectorService.getFrontendDiagnosticsForModule(info)
+            for ((firFile, diagnostics) in diagnosticsPerFile) {
                 for (diagnostic in diagnostics) {
                     if (diagnostic.severity == Severity.ERROR) {
                         hasError = true
@@ -36,7 +45,7 @@ class NoFirCompilationErrorsHandler(testServices: TestServices) : FirAnalysisHan
                             val locationText = firFile.source?.psi?.containingFile?.let { psiFile ->
                                 PsiDiagnosticUtils.atLocation(psiFile, range)
                             } ?: "${firFile.name}:$range"
-                            throw IllegalStateException("${diagnostic.factory.name}: $diagnosticText at $locationText")
+                            error("${diagnostic.factory.name}: $diagnosticText at $locationText")
                         }
                     }
                 }

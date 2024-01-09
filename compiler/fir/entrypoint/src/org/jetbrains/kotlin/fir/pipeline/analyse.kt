@@ -23,7 +23,7 @@ fun FirSession.runResolution(firFiles: List<FirFile>): Pair<ScopeSession, List<F
 
 fun FirSession.runCheckers(
     scopeSession: ScopeSession,
-    firFiles: List<FirFile>,
+    firFiles: Collection<FirFile>,
     reporter: BaseDiagnosticsCollector,
     mppCheckerKind: MppCheckerKind = TODO()
 ): Map<FirFile, List<KtDiagnostic>> {

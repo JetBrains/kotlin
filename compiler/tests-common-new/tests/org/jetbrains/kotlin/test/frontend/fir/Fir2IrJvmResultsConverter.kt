@@ -20,12 +20,16 @@ import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
+import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.service
 
 class Fir2IrJvmResultsConverter(
     testServices: TestServices
@@ -34,6 +38,9 @@ class Fir2IrJvmResultsConverter(
     FrontendKinds.FIR,
     BackendKinds.IrBackend
 ) {
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::FirDiagnosticCollectorService))
+
     override fun transform(
         module: TestModule,
         inputArtifact: FirOutputArtifact
@@ -41,7 +48,10 @@ class Fir2IrJvmResultsConverter(
         return try {
             transformInternal(module, inputArtifact)
         } catch (e: Throwable) {
-            if (CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS in module.directives && inputArtifact.hasErrors) {
+            if (
+                CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS in module.directives &&
+                testServices.firDiagnosticCollectorService.containsErrors(inputArtifact)
+            ) {
                 null
             } else {
                 throw e

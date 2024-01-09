@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -29,6 +31,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.util.ListMultimap
+import org.jetbrains.kotlin.fir.util.Multimap
+import org.jetbrains.kotlin.fir.util.listMultimapOf
+import org.jetbrains.kotlin.fir.util.plusAssign
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.isCommon
@@ -55,6 +61,7 @@ import org.jetbrains.kotlin.test.utils.AbstractTwoAttributesMetaInfoProcessor
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 
 class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
@@ -98,7 +105,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         listOf(DiagnosticsDirectives)
 
     override val additionalServices: List<ServiceRegistrationData> =
-        listOf(service(::DiagnosticsService))
+        listOf(service(::DiagnosticsService), service(::FirDiagnosticCollectorService))
 
     private val fullDiagnosticsRenderer = FullDiagnosticsRenderer(DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT)
 
@@ -107,11 +114,9 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     }
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        for (part in info.partsForDependsOnModules) {
-            val firAnalyzerFacade = part.firAnalyzerFacade
-            val lazyDeclarationResolver = firAnalyzerFacade.result.outputs.single().session.lazyDeclarationResolver
-            val diagnosticsPerFile = lazyDeclarationResolver.disableLazyResolveContractChecksInside { firAnalyzerFacade.runCheckers() }
+        val frontendDiagnosticsPerFile = testServices.firDiagnosticCollectorService.getFrontendDiagnosticsForModule(info)
 
+        for (part in info.partsForDependsOnModules) {
             val currentModule = part.module
             val lightTreeComparingModeEnabled = FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in currentModule.directives
             val lightTreeEnabled = currentModule.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER) == FirParser.LightTree
@@ -119,7 +124,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
             for (file in currentModule.files) {
                 val firFile = info.mainFirFiles[file] ?: continue
-                var diagnostics = diagnosticsPerFile[firFile] ?: continue
+                var diagnostics = frontendDiagnosticsPerFile[firFile]
                 if (AdditionalFilesDirectives.CHECK_TYPE in currentModule.directives) {
                     diagnostics = diagnostics.filter { it.factory.name != FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
                 }
@@ -598,3 +603,45 @@ fun KtDiagnostic.toMetaInfos(
     metaInfo
 }
 
+typealias DiagnosticsMap = Multimap<FirFile, KtDiagnostic, List<KtDiagnostic>>
+
+class FirDiagnosticCollectorService(val testServices: TestServices) : TestService {
+    private val cache: MutableMap<FirOutputArtifact, DiagnosticsMap> = mutableMapOf()
+
+    fun getFrontendDiagnosticsForModule(info: FirOutputArtifact): DiagnosticsMap {
+        return cache.getOrPut(info) { computeDiagnostics(info) }
+    }
+
+    fun containsErrors(info: FirOutputArtifact): Boolean {
+        return getFrontendDiagnosticsForModule(info).values.any { it.severity == Severity.ERROR }
+    }
+
+    private fun computeDiagnostics(info: FirOutputArtifact): ListMultimap<FirFile, KtDiagnostic> {
+        val allFiles = info.partsForDependsOnModules.flatMap { it.firFiles.values }
+        val platformPart = info.partsForDependsOnModules.last()
+        val lazyDeclarationResolver = platformPart.session.lazyDeclarationResolver
+        val result = listMultimapOf<FirFile, KtDiagnostic>()
+
+        lazyDeclarationResolver.disableLazyResolveContractChecksInside {
+            result += platformPart.session.runCheckers(
+                platformPart.firAnalyzerFacade.scopeSession,
+                allFiles,
+                DiagnosticReporterFactory.createPendingReporter(),
+                mppCheckerKind = MppCheckerKind.Platform
+            )
+
+            for (part in info.partsForDependsOnModules) {
+                result += part.session.runCheckers(
+                    platformPart.firAnalyzerFacade.scopeSession,
+                    part.firFiles.values,
+                    DiagnosticReporterFactory.createPendingReporter(),
+                    mppCheckerKind = MppCheckerKind.Common
+                )
+            }
+        }
+
+        return result
+    }
+}
+
+val TestServices.firDiagnosticCollectorService: FirDiagnosticCollectorService by TestServices.testServiceAccessor()

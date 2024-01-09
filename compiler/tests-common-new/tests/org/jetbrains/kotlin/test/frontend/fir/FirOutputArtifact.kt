@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -29,12 +28,6 @@ abstract class FirOutputArtifact(val partsForDependsOnModules: List<FirOutputPar
         get() = FrontendKinds.FIR
 
     val mainFirFiles: Map<TestFile, FirFile> by lazy { allFirFiles.filterKeys { !it.isAdditional } }
-
-    val hasErrors: Boolean by lazy {
-        partsForDependsOnModules.any { part ->
-            part.firAnalyzerFacade.runCheckers().values.any { diagnostics -> diagnostics.any { it.severity == Severity.ERROR } }
-        }
-    }
 }
 
 class FirOutputArtifactImpl(parts: List<FirOutputPartForDependsOnModule>) : FirOutputArtifact(parts)

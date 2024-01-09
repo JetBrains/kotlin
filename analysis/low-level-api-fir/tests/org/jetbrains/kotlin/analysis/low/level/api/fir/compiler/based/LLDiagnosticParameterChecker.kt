@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 internal class LLDiagnosticParameterChecker(testServices: TestServices) : FirAnalysisHandler(testServices) {
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         for (part in info.partsForDependsOnModules) {
-            val diagnostics = part.firAnalyzerFacade.runCheckers().values.flatten()
+            val facade = part.firAnalyzerFacade as LowLevelFirAnalyzerFacade
+            val diagnostics = facade.runCheckers().values.flatten()
 
             for (diagnostic in diagnostics) {
                 checkDiagnosticIsSuitableForFirIde(diagnostic as KtPsiDiagnostic)
