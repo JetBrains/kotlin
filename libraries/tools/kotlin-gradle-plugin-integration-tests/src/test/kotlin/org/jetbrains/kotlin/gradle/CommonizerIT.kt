@@ -124,8 +124,8 @@ open class CommonizerIT : KGPBaseTest() {
             }
             build(":commonize") {
                 assertNativeDistributionCommonizationCacheHit()
-                assertTasksNotExecuted(":cinteropCurlTargetA")
-                assertTasksNotExecuted(":cinteropCurlTargetB")
+                assertTasksAreNotInTaskGraph(":cinteropCurlTargetA")
+                assertTasksAreNotInTaskGraph(":cinteropCurlTargetB")
             }
         }
     }
@@ -144,9 +144,9 @@ open class CommonizerIT : KGPBaseTest() {
 
             build(":commonize") {
                 assertTasksExecuted(":commonizeNativeDistribution")
-                assertTasksNotExecuted(":cinteropCurlTargetA")
-                assertTasksNotExecuted(":cinteropCurlTargetB")
-                assertTasksNotExecuted(":commonizeCInterop")
+                assertTasksAreNotInTaskGraph(":cinteropCurlTargetA")
+                assertTasksAreNotInTaskGraph(":cinteropCurlTargetB")
+                assertTasksAreNotInTaskGraph(":commonizeCInterop")
             }
 
             build(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=true") {
@@ -158,9 +158,9 @@ open class CommonizerIT : KGPBaseTest() {
 
             build(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=false") {
                 assertNativeDistributionCommonizationCacheHit()
-                assertTasksNotExecuted(":cinteropCurlTargetA")
-                assertTasksNotExecuted(":cinteropCurlTargetB")
-                assertTasksNotExecuted(":commonizeCInterop")
+                assertTasksAreNotInTaskGraph(":cinteropCurlTargetA")
+                assertTasksAreNotInTaskGraph(":cinteropCurlTargetB")
+                assertTasksAreNotInTaskGraph(":commonizeCInterop")
             }
         }
     }
@@ -514,9 +514,9 @@ open class CommonizerIT : KGPBaseTest() {
     fun testCommonizationWithTwoCInteropCommonizerGroups(gradleVersion: GradleVersion) {
         nativeProject("commonize-kt-57796-twoCInteropCommonizerGroups", gradleVersion) {
             build(":app:commonizeCInterop") {
-                assertTasksNotExecuted(":lib:transformCommonMainCInteropDependenciesMetadata")
+                assertTasksAreNotInTaskGraph(":lib:transformCommonMainCInteropDependenciesMetadata")
                 assertTasksExecuted(":lib:commonizeCInterop")
-                assertTasksNotExecuted(":app:transformCommonMainCInteropDependenciesMetadata")
+                assertTasksAreNotInTaskGraph(":app:transformCommonMainCInteropDependenciesMetadata")
                 assertTasksExecuted(":app:commonizeCInterop")
             }
         }

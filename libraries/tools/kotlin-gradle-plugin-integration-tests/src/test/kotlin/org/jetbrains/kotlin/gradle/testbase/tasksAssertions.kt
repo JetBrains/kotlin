@@ -7,15 +7,21 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
+import kotlin.test.assertNotNull
 
 /**
- * Asserts given tasks are not present in the build task graph
+ * Asserts given tasks are not present in the build task graph.
+ *
+ * (Note this is different from asserting tasks are not executed - Tasks with outcomes
+ * [TaskOutcome.SKIPPED] and [TaskOutcome.UP_TO_DATE] will be in the task graph, but
+ * are not considered 'executed').
  */
-fun BuildResult.assertTasksAreNotInTaskGraph(vararg tasks: String) {
-    val presentTasks = tasks.filter { task(it) != null }
+fun BuildResult.assertTasksAreNotInTaskGraph(vararg taskPaths: String) {
+    val presentTasks = taskPaths.filter { task(it) != null }
     assert(presentTasks.isEmpty()) {
         printBuildOutput()
-        "Tasks ${tasks.joinToString(prefix = "[", postfix = "]")} shouldn't be present in the task graph, but $presentTasks were present"
+        val allTaskPaths = taskPaths.joinToString(prefix = "[", postfix = "]")
+        "Tasks $allTaskPaths shouldn't be present in the task graph, but $presentTasks were present"
     }
 }
 
@@ -29,132 +35,99 @@ fun BuildResult.findTasksByPattern(pattern: Regex): Set<String> {
 }
 
 /**
- * Asserts given [tasks] have 'SUCCESS' execution state.
+ * Asserts given [taskPaths] have [TaskOutcome.SUCCESS] execution state.
  */
-fun BuildResult.assertTasksExecuted(vararg tasks: String) {
-    tasks.forEach { task ->
-        assert(task(task)?.outcome == TaskOutcome.SUCCESS) {
-            printBuildOutput()
-            """
-            Task $task didn't have 'SUCCESS' state: ${task(task)?.outcome}
-
-            Actual task states:
-            ${getActualTasksAsString()}
-            """.trimIndent()
-        }
-    }
+fun BuildResult.assertTasksExecuted(vararg taskPaths: String) {
+    assertTasksHaveOutcome(TaskOutcome.SUCCESS, taskPaths.asList())
 }
 
 /**
- * Asserts any of [tasks] has 'SUCCESS' execution state.
+ * Asserts any of [taskPaths] has [TaskOutcome.SUCCESS] execution state.
  */
-fun BuildResult.assertAnyTaskHasBeenExecuted(tasks: Set<String>) {
+fun BuildResult.assertAnyTaskHasBeenExecuted(taskPaths: Set<String>) {
+    val taskOutcomes = taskPaths.associateWith { taskPath -> task(taskPath)?.outcome }
+
     assert(
-        tasks.any { task ->
-            task(task)?.outcome == TaskOutcome.SUCCESS
-        }
+        taskOutcomes.values.any { it == TaskOutcome.SUCCESS }
     ) {
         printBuildOutput()
-        "There are no 'SUCCESS' tasks in the $tasks"
+        "Expected at least one Task of ($taskPaths) had outcome 'SUCCESS', but none did. Actual: $taskOutcomes"
     }
 }
 
 /**
- * Asserts given [tasks] have not been executed.
+ * Asserts given [taskPaths] have [TaskOutcome.SUCCESS] execution state.
  */
-fun BuildResult.assertTasksNotExecuted(vararg tasks: String) {
-    tasks.forEach {
-        assert(!this.tasks.contains(task(it))) {
-            printBuildOutput()
-            "Task $it was executed and finished with state: ${task(it)?.outcome}"
-        }
-    }
+fun BuildResult.assertTasksExecuted(taskPaths: Collection<String>) {
+    assertTasksExecuted(*taskPaths.toTypedArray())
 }
 
 /**
- * Asserts given [tasks] have 'SUCCESS' execution state.
+ * Asserts given [taskPaths] have [TaskOutcome.FAILED] execution state.
  */
-fun BuildResult.assertTasksExecuted(tasks: Collection<String>) {
-    assertTasksExecuted(*tasks.toTypedArray())
+fun BuildResult.assertTasksFailed(vararg taskPaths: String) {
+    assertTasksHaveOutcome(TaskOutcome.SKIPPED, taskPaths.asList())
 }
 
 /**
- * Asserts given [tasks] have 'FAILED' execution state.
+ * Asserts given [taskPaths] have [TaskOutcome.UP_TO_DATE] execution state.
  */
-fun BuildResult.assertTasksFailed(vararg tasks: String) {
-    tasks.forEach { task ->
-        assert(task(task)?.outcome == TaskOutcome.FAILED) {
-            printBuildOutput()
-            "Task $task didn't have 'FAILED' state: ${task(task)?.outcome}"
-        }
-    }
+fun BuildResult.assertTasksUpToDate(vararg taskPaths: String) {
+    assertTasksHaveOutcome(TaskOutcome.UP_TO_DATE, taskPaths.asList())
 }
 
 /**
- * Asserts given [tasks] have 'UP-TO-DATE' execution state.
+ * Asserts given [taskPaths] have [TaskOutcome.UP_TO_DATE] execution state.
  */
-fun BuildResult.assertTasksUpToDate(vararg tasks: String) {
-    tasks.forEach { task ->
-        assert(task(task)?.outcome == TaskOutcome.UP_TO_DATE) {
+fun BuildResult.assertTasksUpToDate(taskPaths: Collection<String>) {
+    assertTasksUpToDate(*taskPaths.toTypedArray())
+}
+
+/**
+ * Asserts given [taskPaths] have [TaskOutcome.SKIPPED] execution state.
+ */
+fun BuildResult.assertTasksSkipped(vararg taskPaths: String) {
+    assertTasksHaveOutcome(TaskOutcome.SKIPPED, taskPaths.asList())
+}
+
+/**
+ * Asserts given [taskPaths] have [TaskOutcome.FROM_CACHE] execution state.
+ */
+fun BuildResult.assertTasksFromCache(vararg taskPaths: String) {
+    assertTasksHaveOutcome(TaskOutcome.FROM_CACHE, taskPaths.asList())
+}
+
+/**
+ * Asserts given [taskPaths] have [TaskOutcome.NO_SOURCE] execution state.
+ */
+fun BuildResult.assertTasksNoSource(vararg taskPaths: String) {
+    assertTasksHaveOutcome(TaskOutcome.NO_SOURCE, taskPaths.asList())
+}
+
+/**
+ * Asserts given [taskPaths] have [expected] execution state.
+ */
+private fun BuildResult.assertTasksHaveOutcome(expected: TaskOutcome, taskPaths: Collection<String>) {
+    taskPaths.forEach { taskPath ->
+        val task = task(taskPath)
+        assertNotNull(task, "expected Task $taskPath had state $expected, but task was not executed")
+        assert(task.outcome == expected) {
             printBuildOutput()
             """
-            Task $task didn't have 'UP-TO-DATE' state: ${task(task)?.outcome}
-
-            Actual task states:
-            ${getActualTasksAsString()}
-            """.trimIndent()
+            |Expected Task $taskPath had state:${expected}, but was:${task.outcome}
+            |
+            |Actual task states:
+            |${getActualTasksAsString()}
+            """.trimMargin()
         }
     }
 }
 
 /**
- * Asserts given [tasks] have 'UP-TO-DATE' execution state.
+ * Assert new cache entry was created for given [taskPaths].
  */
-fun BuildResult.assertTasksUpToDate(tasks: Collection<String>) {
-    assertTasksUpToDate(*tasks.toTypedArray())
-}
-
-/**
- * Asserts given [tasks] have 'SKIPPED' execution state.
- */
-fun BuildResult.assertTasksSkipped(vararg tasks: String) {
-    tasks.forEach { task ->
-        assert(task(task)?.outcome == TaskOutcome.SKIPPED) {
-            printBuildOutput()
-            "Task $task didn't have 'SKIPPED' state: ${task(task)?.outcome}"
-        }
-    }
-}
-
-/**
- * Asserts given [tasks] have 'FROM_CACHE' execution state.
- */
-fun BuildResult.assertTasksFromCache(vararg tasks: String) {
-    tasks.forEach { task ->
-        assert(task(task)?.outcome == TaskOutcome.FROM_CACHE) {
-            printBuildOutput()
-            "Task $task didn't have 'FROM-CACHE' state: ${task(task)?.outcome}"
-        }
-    }
-}
-
-/**
- * Asserts given [tasks] have 'NO_SOURCE' execution state.
- */
-fun BuildResult.assertTasksNoSource(vararg tasks: String) {
-    tasks.forEach { task ->
-        assert(task(task)?.outcome == TaskOutcome.NO_SOURCE) {
-            printBuildOutput()
-            "Task $task didn't have 'NO_SOURCE' state: ${task(task)?.outcome}"
-        }
-    }
-}
-
-/**
- * Assert new cache entry was created for given [tasks].
- */
-fun BuildResult.assertTasksPackedToCache(vararg tasks: String) {
-    tasks.forEach {
+fun BuildResult.assertTasksPackedToCache(vararg taskPaths: String) {
+    taskPaths.forEach {
         assertOutputContains("Stored cache entry for task '$it' with cache key ")
     }
 }
@@ -177,7 +150,7 @@ fun TestProject.buildAndAssertAllTasks(
     registeredTasks: List<String> = emptyList(),
     notRegisteredTasks: List<String> = emptyList(),
     buildOptions: BuildOptions = this.buildOptions,
-    environmentVariables: EnvironmentalVariables = EnvironmentalVariables()
+    environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
 ) {
     build("tasks", "--all", buildOptions = buildOptions, environmentVariables = environmentVariables) {
         assertTasksInBuildOutput(registeredTasks, notRegisteredTasks)
@@ -215,7 +188,7 @@ fun BuildResult.assertTasksInBuildOutput(
 }
 
 /**
- * Returns printable list of tasks that actually executed.
+ * Returns printable list of task paths that are in the task graph.
  */
 private fun BuildResult.getActualTasksAsString(): String {
     return tasks.joinToString("\n") { "${it.path} - ${it.outcome}" }

@@ -61,7 +61,7 @@ class NativeLibraryDslIT : KGPBaseTest() {
                     ":shared:compileKotlinLinuxX64",
                     ":shared:assembleMylibDebugSharedLibraryLinuxX64"
                 )
-                assertTasksNotExecuted(
+                assertTasksAreNotInTaskGraph(
                     ":lib:compileKotlinLinuxX64"
                 )
                 extractNativeTasksCommandLineArgumentsFromOutput(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
@@ -84,7 +84,7 @@ class NativeLibraryDslIT : KGPBaseTest() {
                     ":shared:compileKotlinLinuxX64",
                     ":shared:assembleMylibDebugSharedLibraryLinuxX64"
                 )
-                assertTasksNotExecuted(
+                assertTasksAreNotInTaskGraph(
                     ":lib:compileKotlinLinuxX64"
                 )
                 extractNativeTasksCommandLineArgumentsFromOutput(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
@@ -111,7 +111,7 @@ class NativeLibraryDslIT : KGPBaseTest() {
                     ":lib:compileKotlinIosSimulatorArm64",
                     ":shared:assembleSharedReleaseXCFramework"
                 )
-                assertTasksNotExecuted(
+                assertTasksAreNotInTaskGraph(
                     ":shared:assembleSharedDebugXCFramework"
                 )
                 assertDirectoryInProjectExists("shared/build/out/xcframework/release/shared.xcframework")

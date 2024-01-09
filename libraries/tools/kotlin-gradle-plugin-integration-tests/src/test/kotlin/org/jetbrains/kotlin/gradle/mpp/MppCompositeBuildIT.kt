@@ -264,8 +264,8 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     assertTasksSkipped(":producerBuild:producerA:iosArm64MetadataJar")
                     assertTasksSkipped(":producerBuild:producerA:iosX64MetadataJar")
                 } else {
-                    assertTasksNotExecuted(":producerBuild:producerA:iosArm64MetadataJar")
-                    assertTasksNotExecuted(":producerBuild:producerA:iosX64MetadataJar")
+                    assertTasksAreNotInTaskGraph(":producerBuild:producerA:iosArm64MetadataJar")
+                    assertTasksAreNotInTaskGraph(":producerBuild:producerA:iosX64MetadataJar")
                 }
                 assertTasksExecuted(":consumerA:transformNativeMainCInteropDependenciesMetadataForIde")
 
