@@ -3153,6 +3153,24 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
                 }
 
                 @Test
+                @TestMetadata("invokeKFunction.kt")
+                public void testInvokeKFunction() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeKFunction.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeKFunctionFromMethodReference.kt")
+                public void testInvokeKFunctionFromMethodReference() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeKFunctionFromMethodReference.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeKSuspendFunction.kt")
+                public void testInvokeKSuspendFunction() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeKSuspendFunction.kt");
+                }
+
+                @Test
                 @TestMetadata("lambda.kt")
                 public void testLambda() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/lambda.kt");
