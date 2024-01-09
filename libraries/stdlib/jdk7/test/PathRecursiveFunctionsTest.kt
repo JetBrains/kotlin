@@ -1201,7 +1201,8 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             // Fails in jvm8-10, succeeds in jvm11
             testCopyMaybeFailsWith<FileSystemLoopException>(zipRoot, target, target.resolve("", "normal"))
 
-            // Throws FileSystemLoopException in jvm8-10, Path.deleteIfExists throws NullPointerException in jvm11
+            // Throws FileSystemLoopException in jvm8-10
+            // Path.deleteIfExists on the root directory of the archive throws NullPointerException in jvm9+
             assertFails { zipRoot.deleteRecursively() }
         }
 
@@ -1219,7 +1220,8 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             // Fails in jvm8, succeeds in jvm9+
             testCopyMaybeFailsWith<FileSystemLoopException>(zipRoot, target, target.resolve("", "normal"))
 
-            // Throws FileSystemLoopException in jvm8, Path.deleteIfExists throws NullPointerException in jvm9+
+            // Throws FileSystemLoopException in jvm8
+            // Path.deleteIfExists on the root directory of the archive throws NullPointerException in jvm9+
             assertFails { zipRoot.deleteRecursively() }
         }
 
@@ -1245,11 +1247,22 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             val aDirTarget = root.resolve("UnzipArchive3-aDir")
             testCopyMaybeFailsWith<FileSystemLoopException>(aDir, aDirTarget, setOf(aDirTarget))
 
-            // Throws FileSystemLoopException in jvm8, Path.deleteIfExists throws NullPointerException in jvm9+
+            // Throws FileSystemLoopException in jvm8
+            // Path.deleteIfExists on the root directory of the archive throws NullPointerException in jvm9+
             assertFails { zipRoot.deleteRecursively() }
             // Fails in jvm8, succeeds in jvm9+
             testDeleteMaybeFailsWith<FileSystemLoopException>(aFile)
             testDeleteMaybeFailsWith<FileSystemLoopException>(aDir)
+        }
+    }
+
+    @Test
+    fun deleteZipRootDirectory() {
+        withZip("Archive.zip", emptyList()) { _, zipRoot ->
+            // Deleting the root directory of a zip archive throws NullPointerException.
+            assertFailsWith<NullPointerException> {
+                zipRoot.deleteIfExists()
+            }
         }
     }
 
@@ -1327,7 +1340,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             val windows = target.resolve("", "normal", "..a..b") // In Windows
             testCopySucceeds(zipRoot, target, unix, windows)
 
-            // Path.deleteIfExists throws NullPointerException
+            // Path.deleteIfExists on the root directory of the archive throws NullPointerException
             testDeleteFailsWith<NullPointerException>(zipRoot)
             assertEquals(emptyList(), zipRoot.listDirectoryEntries())
         }
