@@ -1,4 +1,4 @@
-// MODULE: main
+// MAIN_FILE_NAME: I
 // MODULE_KIND: LibraryBinary
 // FILE: A.kt
 interface A {
@@ -13,4 +13,3 @@ interface A {
 class I(private val p: A) : A by p
 
 // class: I
-

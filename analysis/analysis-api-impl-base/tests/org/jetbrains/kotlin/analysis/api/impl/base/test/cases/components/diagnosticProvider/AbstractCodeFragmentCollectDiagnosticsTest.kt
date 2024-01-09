@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,16 +14,16 @@ import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
 abstract class AbstractCodeFragmentCollectDiagnosticsTest : AbstractCollectDiagnosticsTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val contextElement = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(ktFile)
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        val contextElement = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(mainFile)
 
-        val fragmentText = module.files.single().originalFile
+        val fragmentText = mainModule.files.single().originalFile
             .run { File(parent, "$nameWithoutExtension.fragment.$extension") }
             .readText()
 
         val isBlockFragment = fragmentText.any { it == '\n' }
 
-        val project = ktFile.project
+        val project = mainFile.project
         val factory = KtPsiFactory(project, markGenerated = false)
 
         val codeFragment = when {
@@ -31,6 +31,6 @@ abstract class AbstractCodeFragmentCollectDiagnosticsTest : AbstractCollectDiagn
             else -> factory.createExpressionCodeFragment(fragmentText, contextElement)
         }
 
-        super.doTestByFileStructure(codeFragment, module, testServices)
+        super.doTestByMainFile(codeFragment, mainModule, testServices)
     }
 }

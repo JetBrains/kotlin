@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParamet
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -53,14 +51,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
     abstract fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData
 
-    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val lastModule = moduleStructure.modules.last()
-        val firstKtFileFile = testServices.ktModuleProvider.getModuleFiles(lastModule).firstNotNullOf { it as? KtFile }
-        doTestByFileStructure(firstKtFileFile, lastModule, testServices)
-    }
-
-    open fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val directives = module.directives
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        val directives = mainModule.directives
         val directiveToIgnoreSymbolRestore = directives.doNotCheckSymbolRestoreDirective()
         val directiveToIgnoreNonPsiSymbolRestore = directives.doNotCheckNonPsiSymbolRestoreDirective()
 
@@ -97,10 +89,10 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
 
         val pointersWithRendered = executeOnPooledThreadInReadAction {
-            analyseForTest(ktFile) {
-                val (symbols, symbolForPrettyRendering) = collectSymbols(ktFile, testServices)
+            analyseForTest(mainFile) {
+                val (symbols, symbolForPrettyRendering) = collectSymbols(mainFile, testServices)
                 for (symbol in symbols) {
-                    checkContainingFileSymbol(ktFile.getFileSymbol(), symbol, testServices)
+                    checkContainingFileSymbol(mainFile.getFileSymbol(), symbol, testServices)
                 }
 
                 val pointerWithRenderedSymbol = symbols
@@ -143,12 +135,12 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
         compareResults(pointersWithRendered, testServices)
 
-        configurator.doGlobalModuleStateModification(ktFile.project)
+        configurator.doGlobalModuleStateModification(mainFile.project)
 
         restoreSymbolsInOtherReadActionAndCompareResults(
             directiveToIgnore = directiveToIgnoreSymbolRestore,
             isRegularPointers = true,
-            ktFile = ktFile,
+            ktFile = mainFile,
             pointersWithRendered = pointersWithRendered.pointers,
             testServices = testServices,
             directives = directives,
@@ -158,7 +150,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             restoreSymbolsInOtherReadActionAndCompareResults(
                 directiveToIgnore = directiveToIgnoreNonPsiSymbolRestore,
                 isRegularPointers = false,
-                ktFile = ktFile,
+                ktFile = mainFile,
                 pointersWithRendered = pointersWithRendered.pointers,
                 testServices = testServices,
                 directives = directives,
@@ -334,6 +326,8 @@ object SymbolTestDirectives : SimpleDirectivesContainer() {
     )
 
     val PRETTY_RENDERER_OPTION by enumDirective(description = "Explicit rendering mode") { PrettyRendererOption.valueOf(it) }
+
+    val TARGET_FILE_NAME by stringDirective(description = "The name of the main file")
 }
 
 enum class PrettyRendererOption(val transformation: (KtDeclarationRenderer) -> KtDeclarationRenderer) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,14 +12,11 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extensions
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -29,22 +26,8 @@ abstract class AbstractResolveExtensionInfoProviderTest : AbstractAnalysisApiBas
         KtResolveExtensionTestSupport.configure(builder)
     }
 
-    private fun List<TestModule>.findMainModule(): TestModule =
-        singleOrNull()
-            ?: find { it.name == "main" }
-            ?: error("There should either be a single module, or a module named 'main'.")
-
-    private fun List<KtFile>.findMainKt(): KtFile =
-        singleOrNull()
-            ?: find { it.name == "main.kt" }
-            ?: error("There should either be a single Kotlin file in the main module, or a file named 'main.kt'.")
-
-    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val mainModule = moduleStructure.modules.findMainModule()
-        val ktFiles = testServices.ktModuleProvider.getModuleFiles(mainModule).filterIsInstance<KtFile>()
-        val mainKt = ktFiles.findMainKt()
-
-        analyseForTest(mainKt) {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: TestModule, testServices: TestServices) {
+        analyseForTest(mainFile) {
             val resolveExtensionScope = getResolveExtensionScopeWithTopLevelDeclarations()
 
             val actual = resolveExtensionScope.renderSymbolsWithExtendedPsiInfo(pretty = false)

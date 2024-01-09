@@ -1,5 +1,5 @@
 // IGNORE_FE10
-// MODULE: main
+// MAIN_FILE_NAME: I
 // MODULE_KIND: LibraryBinary
 // FILE: A.kt
 interface A {
