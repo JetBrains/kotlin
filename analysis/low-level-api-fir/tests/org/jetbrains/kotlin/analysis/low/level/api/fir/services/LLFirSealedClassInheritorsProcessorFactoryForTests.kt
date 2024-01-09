@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.services
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
@@ -33,8 +34,12 @@ private class SealedClassInheritorsProviderForTests(
     @OptIn(SealedClassInheritorsProviderInternals::class)
     override fun getSealedClassInheritors(firClass: FirRegularClass): List<ClassId> {
         val ktModule = firClass.llFirModuleData.ktModule
-        val inheritorsForModuleMap = inheritorsByModule.getValue(ktModule)
+        val relevantModule = when (ktModule) {
+            is KtDanglingFileModule -> ktModule.contextModule
+            else -> ktModule
+        }
+
+        val inheritorsForModuleMap = inheritorsByModule.getValue(relevantModule)
         return inheritorsForModuleMap[firClass.classId] ?: firClass.sealedInheritorsAttr?.value ?: emptyList()
     }
-
 }
