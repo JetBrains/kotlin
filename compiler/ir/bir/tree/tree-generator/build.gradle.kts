@@ -14,7 +14,6 @@ dependencies {
     implementation(project(":compiler:util"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     runtimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
 }
 
