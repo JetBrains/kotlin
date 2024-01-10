@@ -103,7 +103,9 @@ fun Project.configureJavaCompile() {
         tasks.withType<JavaCompile>().configureEach {
             options.compilerArgs.add("-Xlint:deprecation")
             options.compilerArgs.add("-Xlint:unchecked")
-            options.compilerArgs.add("-Werror")
+            if (!kotlinBuildProperties.disableWerror) {
+                options.compilerArgs.add("-Werror")
+            }
         }
     }
 }
