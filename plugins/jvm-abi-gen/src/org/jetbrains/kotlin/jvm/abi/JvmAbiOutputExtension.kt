@@ -109,36 +109,10 @@ class JvmAbiOutputExtension(
 
                                 val visitor = super.visitMethod(access, name, descriptor, signature, exceptions)
                                 if (info == AbiMethodInfo.KEEP || access and (Opcodes.ACC_NATIVE or Opcodes.ACC_ABSTRACT) != 0) {
-                                    return object : MethodVisitor(Opcodes.API_VERSION, visitor) {
-                                        override fun visitLineNumber(line: Int, start: Label?) {
-                                            if (!removeDebugInfo) {
-                                                super.visitLineNumber(line, start)
-                                            }
-                                        }
-
-                                        override fun visitLocalVariable(
-                                            name: String?, descriptor: String?, signature: String?, start: Label?, end: Label?, index: Int,
-                                        ) {
-                                            if (!removeDebugInfo) {
-                                                super.visitLocalVariable(name, descriptor, signature, start, end, index)
-                                            }
-                                        }
-                                    }
+                                    return if (removeDebugInfo) DebugInfoRemovingMethodVisitor(visitor) else visitor
                                 }
 
-                                return object : MethodVisitor(Opcodes.API_VERSION, visitor) {
-                                    override fun visitCode() {
-                                        with(mv) {
-                                            visitCode()
-                                            visitInsn(Opcodes.ACONST_NULL)
-                                            visitInsn(Opcodes.ATHROW)
-                                            visitMaxs(0, 0)
-                                            visitEnd()
-                                        }
-                                        // Only instructions and locals follow after `visitCode`.
-                                        mv = null
-                                    }
-                                }
+                                return BodyStrippingMethodVisitor(visitor)
                             }
 
                             override fun visitSource(source: String?, debug: String?) {
@@ -216,4 +190,24 @@ class JvmAbiOutputExtension(
             }
         }
     }
+}
+
+private class BodyStrippingMethodVisitor(visitor: MethodVisitor) : MethodVisitor(Opcodes.API_VERSION, visitor) {
+    override fun visitCode() {
+        with(mv) {
+            visitCode()
+            visitInsn(Opcodes.ACONST_NULL)
+            visitInsn(Opcodes.ATHROW)
+            visitMaxs(0, 0)
+            visitEnd()
+        }
+        // Only instructions and locals follow after `visitCode`.
+        mv = null
+    }
+}
+
+private class DebugInfoRemovingMethodVisitor(visitor: MethodVisitor) : MethodVisitor(Opcodes.API_VERSION, visitor) {
+    override fun visitLineNumber(line: Int, start: Label?) {}
+
+    override fun visitLocalVariable(name: String?, descriptor: String?, signature: String?, start: Label?, end: Label?, index: Int) {}
 }
