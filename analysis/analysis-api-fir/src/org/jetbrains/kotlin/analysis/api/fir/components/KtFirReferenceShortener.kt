@@ -1131,12 +1131,12 @@ private class ElementsToShortenCollector(
         }
         if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
 
-        processCallableQualifiedAccess(
+        findCallableQualifiedAccessToShorten(
             propertySymbol,
             option,
             qualifiedProperty,
             availableCallables,
-        )
+        )?.let(::addElementToShorten)
     }
 
     private val FirPropertyAccessExpression.correspondingNameReference: KtNameReferenceExpression?
@@ -1182,34 +1182,34 @@ private class ElementsToShortenCollector(
         }
         if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
 
-        processCallableQualifiedAccess(
+        findCallableQualifiedAccessToShorten(
             calledSymbol,
             option,
             qualifiedCallExpression,
             availableCallables,
-        )
+        )?.let(::addElementToShorten)
     }
 
-    private fun processCallableQualifiedAccess(
+    private fun findCallableQualifiedAccessToShorten(
         calledSymbol: FirCallableSymbol<*>,
         option: ShortenStrategy,
         qualifiedCallExpression: KtDotQualifiedExpression,
         availableCallables: List<AvailableSymbol<FirCallableSymbol<*>>>,
-    ) {
-        if (option == ShortenStrategy.DO_NOT_SHORTEN) return
+    ): ElementToShorten? {
+        if (option == ShortenStrategy.DO_NOT_SHORTEN) return null
 
         val nameToImport = shorteningContext.convertToImportableName(calledSymbol)
 
         val (matchedCallables, otherCallables) = availableCallables.partition { it.symbol.callableId == calledSymbol.callableId }
 
         val importKindFromOption = ImportKind.fromShortenOption(option)
-        val importKind = matchedCallables.minOfOrNull { it.importKind } ?: importKindFromOption ?: return
+        val importKind = matchedCallables.minOfOrNull { it.importKind } ?: importKindFromOption ?: return null
 
         val callToShorten = when {
             otherCallables.all { importKind.hasHigherPriorityThan(it.importKind) } -> {
                 when {
                     matchedCallables.isEmpty() -> {
-                        if (nameToImport == null || option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
+                        if (nameToImport == null || option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return null
                         createElementToShorten(
                             qualifiedCallExpression,
                             nameToImport,
@@ -1225,7 +1225,7 @@ private class ElementsToShortenCollector(
             else -> findFakePackageToShorten(qualifiedCallExpression)
         }
 
-        callToShorten?.let(::addElementToShorten)
+        return callToShorten
     }
 
     private fun canBePossibleToDropReceiver(qualifiedAccess: FirQualifiedAccessExpression): Boolean {
