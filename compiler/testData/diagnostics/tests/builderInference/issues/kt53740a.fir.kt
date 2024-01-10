@@ -3,12 +3,12 @@
 
 fun test() {
     val buildee = parallelBuild(
-        {
+        <!CANNOT_INFER_PARAMETER_TYPE!>{
             setTypeVariable(TargetType())
-        },
-        {
+        }<!>,
+        <!CANNOT_INFER_PARAMETER_TYPE!>{
             consumeDifferentType(<!ARGUMENT_TYPE_MISMATCH!>getTypeVariable()<!>)
-        }
+        }<!>
     )
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

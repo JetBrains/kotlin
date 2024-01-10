@@ -3,12 +3,12 @@
 
 fun test() {
     val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>parallelBuild<!>(
-        {
+        <!CANNOT_INFER_PARAMETER_TYPE!>{
             consumeTargetTypeBase(it)
-        },
-        {
+        }<!>,
+        <!CANNOT_INFER_PARAMETER_TYPE!>{
             consumeTargetType(it)
-        }
+        }<!>
     )
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
