@@ -26,7 +26,7 @@ private fun wasiRandomGet(): Long {
         return if (ret == 0) {
             memory.loadLong()
         } else {
-            throw WasiError(WasiErrorCode.values()[ret])
+            throw WasiError(WasiErrorCode.entries[ret])
         }
     }
 }

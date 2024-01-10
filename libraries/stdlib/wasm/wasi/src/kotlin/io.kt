@@ -57,7 +57,7 @@ internal fun wasiPrintImpl(
         )
 
     if (ret != 0) {
-        throw WasiError(WasiErrorCode.values()[ret])
+        throw WasiError(WasiErrorCode.entries[ret])
     }
 }
 

@@ -29,7 +29,7 @@ private fun clockTimeGet(): Long = withScopedMemoryAllocator { allocator ->
     if (ret == 0) {
         rp0.loadLong()
     } else {
-        throw WasiError(WasiErrorCode.values()[ret])
+        throw WasiError(WasiErrorCode.entries[ret])
     }
 }
 
