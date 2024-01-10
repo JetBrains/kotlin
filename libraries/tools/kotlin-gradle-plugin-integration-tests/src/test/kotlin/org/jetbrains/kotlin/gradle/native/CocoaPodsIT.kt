@@ -21,7 +21,9 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.util.zip.ZipFile
 import kotlin.io.path.*
-import kotlin.test.*
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("CocoaPods plugin tests")
@@ -561,9 +563,11 @@ class CocoaPodsIT : KGPBaseTest() {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsCommonizationProjectName, gradleVersion) {
             buildWithCocoapodsWrapper(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=false") {
                 assertTasksExecuted(":commonizeNativeDistribution")
-                assertTasksAreNotInTaskGraph(":cinteropAFNetworkingIosArm64")
-                assertTasksAreNotInTaskGraph(":cinteropAFNetworkingIosX64")
-                assertTasksAreNotInTaskGraph(":commonizeCInterop")
+                assertTasksAreNotInTaskGraph(
+                    ":cinteropAFNetworkingIosArm64",
+                    ":cinteropAFNetworkingIosX64",
+                    ":commonizeCInterop",
+                )
             }
         }
     }

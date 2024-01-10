@@ -261,11 +261,15 @@ class MppCompositeBuildIT : KGPBaseTest() {
             build("cleanNativeDistributionCommonization")
             build(":consumerA:transformNativeMainCInteropDependenciesMetadataForIde") {
                 if (HostManager.hostIsMac) {
-                    assertTasksSkipped(":producerBuild:producerA:iosArm64MetadataJar")
-                    assertTasksSkipped(":producerBuild:producerA:iosX64MetadataJar")
+                    assertTasksSkipped(
+                        ":producerBuild:producerA:iosArm64MetadataJar",
+                        ":producerBuild:producerA:iosX64MetadataJar",
+                    )
                 } else {
-                    assertTasksAreNotInTaskGraph(":producerBuild:producerA:iosArm64MetadataJar")
-                    assertTasksAreNotInTaskGraph(":producerBuild:producerA:iosX64MetadataJar")
+                    assertTasksAreNotInTaskGraph(
+                        ":producerBuild:producerA:iosArm64MetadataJar",
+                        ":producerBuild:producerA:iosX64MetadataJar",
+                    )
                 }
                 assertTasksExecuted(":consumerA:transformNativeMainCInteropDependenciesMetadataForIde")
 
