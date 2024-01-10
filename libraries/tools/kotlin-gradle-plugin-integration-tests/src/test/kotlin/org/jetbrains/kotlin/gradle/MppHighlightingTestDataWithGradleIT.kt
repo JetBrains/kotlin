@@ -58,25 +58,15 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
         // create Gradle Kotlin source sets for project roots:
         val scriptCustomization = buildString {
             appendLine()
-            appendLine("kotlin {")
-            appendLine(
-                """
-                |    fun configureTargetsDefaultDependsOn(sourceSet: org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet) {
-                |        listOf(${cliCompiler.targets.joinToString { "$it()" }}).forEach { 
-                |            it.compilations["main"].defaultSourceSet.dependsOn(sourceSet) 
-                |        }
-                |    }
-                |    
-                """.trimMargin()
-            )
-            appendLine("    sourceSets {")
+            appendLine("kotlin {\n    sourceSets {")
             sourceRoots.forEach { sourceRoot ->
                 if (sourceRoot.kotlinSourceSetName != "commonMain") {
                     appendLine(
-                        """        
-                          |        create("${sourceRoot.kotlinSourceSetName}") {
+                        """        create("${sourceRoot.kotlinSourceSetName}") {
                           |            dependsOn(getByName("commonMain"))
-                          |            configureTargetsDefaultDependsOn(this@create) 
+                          |            listOf(${cliCompiler.targets.joinToString { "$it()" }}).forEach { 
+                          |                it.compilations["main"].defaultSourceSet.dependsOn(this@create) 
+                          |            }
                           |        }
                           |    
                         """.trimMargin()
@@ -95,8 +85,7 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
                     }
                 }
             }
-            appendLine("    }")
-            appendLine("}")
+            appendLine("    }\n}")
         }
 
         gradleBuildScript().appendText("\n" + scriptCustomization)
