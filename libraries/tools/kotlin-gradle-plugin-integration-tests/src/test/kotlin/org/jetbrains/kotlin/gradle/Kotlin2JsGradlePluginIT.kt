@@ -1868,8 +1868,10 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                 |
-                |tasks.withType(KotlinJsCompile).configureEach {
-                |    kotlinOptions { moduleKind = "commonjs" }
+                |kotlin {
+                |   js {
+                |       useCommonJs()
+                |   }
                 |}
                """.trimMargin()
             )
@@ -1891,8 +1893,10 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                 |
-                |tasks.withType(KotlinJsCompile).configureEach {
-                |    kotlinOptions { moduleKind = "es" }
+                |kotlin {
+                |   js {
+                |       useEsModules()
+                |   }
                 |}
                """.trimMargin()
             )
