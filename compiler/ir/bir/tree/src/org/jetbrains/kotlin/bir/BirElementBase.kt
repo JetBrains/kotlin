@@ -45,7 +45,7 @@ abstract class BirElementBase(elementClass: BirElementClass<*>) : BirElementPare
 
     internal abstract fun setParentWithInvalidation(new: BirElementParent?)
 
-    fun getContainingDatabase(): BirDatabase? {
+    final override fun getContainingDatabase(): BirDatabase? {
         // perf: it should be possible to realize movements only for this element
         _containingDatabase?.realizeTreeMovements()
         return _containingDatabase

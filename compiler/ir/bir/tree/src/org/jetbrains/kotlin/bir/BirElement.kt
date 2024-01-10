@@ -21,6 +21,8 @@ sealed interface BirElementFacade : BirElementOrChildList {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
     fun acceptChildrenLite(visitor: BirElementVisitorLite) {}
 
+    fun getContainingDatabase(): BirDatabase?
+
     /**
      * Replaces the occurrence of this element inside its parent with [new] element,
      * or removes it from its parent, if [new] == null.
