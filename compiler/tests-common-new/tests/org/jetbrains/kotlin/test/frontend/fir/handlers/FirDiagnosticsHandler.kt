@@ -61,7 +61,6 @@ import org.jetbrains.kotlin.test.utils.AbstractTwoAttributesMetaInfoProcessor
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 
 class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
@@ -605,10 +604,10 @@ fun KtDiagnostic.toMetaInfos(
 
 typealias DiagnosticsMap = Multimap<FirFile, KtDiagnostic, List<KtDiagnostic>>
 
-class FirDiagnosticCollectorService(val testServices: TestServices) : TestService {
+open class FirDiagnosticCollectorService(val testServices: TestServices) : TestService {
     private val cache: MutableMap<FirOutputArtifact, DiagnosticsMap> = mutableMapOf()
 
-    fun getFrontendDiagnosticsForModule(info: FirOutputArtifact): DiagnosticsMap {
+    open fun getFrontendDiagnosticsForModule(info: FirOutputArtifact): DiagnosticsMap {
         return cache.getOrPut(info) { computeDiagnostics(info) }
     }
 

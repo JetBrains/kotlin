@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifactImpl
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
@@ -52,6 +53,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
         registerAnalysisApiBaseTestServices(disposable, FirLowLevelCompilerBasedTestConfigurator)
         useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
         usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
+        useAdditionalServices(service<FirDiagnosticCollectorService>(::AnalysisApiFirDiagnosticCollectorService))
 
         firHandlersStep {
             useHandlers(::LLDiagnosticParameterChecker)
