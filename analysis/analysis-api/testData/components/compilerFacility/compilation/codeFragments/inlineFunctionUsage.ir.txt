@@ -46,5 +46,5 @@ MODULE_FRAGMENT
                   VALUE_PARAMETER name:it index:0 type:kotlin.Int
                   BLOCK_BODY
                     CALL 'public open fun println (p0: kotlin.Int): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
-                      $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=GET_PROPERTY
+                      $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=null
                       p0: GET_VAR 'it: kotlin.Int declared in <root>.CodeFragment.run.<anonymous>' type=kotlin.Int origin=null

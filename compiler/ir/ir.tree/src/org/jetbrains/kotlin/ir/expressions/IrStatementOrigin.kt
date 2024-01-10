@@ -75,7 +75,11 @@ interface IrStatementOrigin {
         val ARGUMENTS_REORDERING_FOR_CALL by IrStatementOriginImpl
         val DESTRUCTURING_DECLARATION by IrStatementOriginImpl
 
+        /**
+         * Used on an [IrCall] expression to indicate that it's a call to a property getter.
+         */
         val GET_PROPERTY by IrStatementOriginImpl
+
         val GET_LOCAL_PROPERTY by IrStatementOriginImpl
 
         val IF by IrStatementOriginImpl

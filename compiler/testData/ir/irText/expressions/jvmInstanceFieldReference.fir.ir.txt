@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/Derived.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun getValue (): kotlin.Int declared in <root>.Derived'
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Int origin=GET_PROPERTY
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.getValue' type=<root>.Derived origin=null
     FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.Derived, value:kotlin.Int) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived

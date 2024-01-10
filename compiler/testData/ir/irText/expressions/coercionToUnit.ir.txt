@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/coercionToUnit.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Unit? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:@[FlexibleNullability] java.io.PrintStream? [val]
-            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=GET_PROPERTY
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=null
           WHEN type=kotlin.Unit? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/coercionToUnit.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Unit? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:@[FlexibleNullability] java.io.PrintStream? [val]
-            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=GET_PROPERTY
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:@[FlexibleNullability] java.io.PrintStream? visibility:public [final,static]' type=@[FlexibleNullability] java.io.PrintStream? origin=null
           WHEN type=kotlin.Unit? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ

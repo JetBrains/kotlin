@@ -18,4 +18,4 @@ FILE fqName:<root> fileName:/typeParameterWithMultipleNotNullableBounds.kt
         CALL 'public final fun f <T> (x: T of <root>.f): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           <T>: @[FlexibleNullability] kotlin.String?
           x: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:@[FlexibleNullability] kotlin.String? visibility:public [static]' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:@[FlexibleNullability] kotlin.String? visibility:public [static]' type=@[FlexibleNullability] kotlin.String? origin=null

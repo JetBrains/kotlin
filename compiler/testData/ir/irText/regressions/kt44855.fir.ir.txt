@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/kt44855.kt
               CALL 'public final fun <get-x> (): <root>.Parent? declared in <root>.Child' type=<root>.Parent? origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=null
           VAR name:q type:@[FlexibleNullability] kotlin.String? [val]
-            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:qqq type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:qqq type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/' type=@[FlexibleNullability] kotlin.String? origin=null
               receiver: TYPE_OP type=<root>.Child origin=IMPLICIT_CAST typeOperand=<root>.Child
                 CALL 'public final fun <get-x> (): <root>.Parent? declared in <root>.Child' type=<root>.Parent? origin=GET_PROPERTY
                   $this: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=null

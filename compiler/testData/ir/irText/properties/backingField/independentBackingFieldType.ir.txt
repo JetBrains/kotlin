@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/independentBackingFieldType.kt
           RETURN type=kotlin.Nothing from='public final fun <get-it> (): kotlin.Int declared in <root>.A'
             CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
               $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=PLUS
-                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:it type:kotlin.Double visibility:private' type=kotlin.Double origin=GET_PROPERTY
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:it type:kotlin.Double visibility:private' type=kotlin.Double origin=null
                   receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-it>' type=<root>.A origin=null
                 other: CONST Int type=kotlin.Int value=10
       FUN name:<set-it> visibility:public modality:FINAL <> ($this:<root>.A, value:kotlin.Int) returnType:kotlin.Unit

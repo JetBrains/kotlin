@@ -16,4 +16,4 @@ FILE fqName:<root> fileName:/typeParameterWithMixedNullableAndNotNullableBounds.
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun f <T> (x: T of <root>.f): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           <T>: @[FlexibleNullability] kotlin.String?
-          x: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:@[FlexibleNullability] kotlin.String? visibility:public [static]' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
+          x: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:@[FlexibleNullability] kotlin.String? visibility:public [static]' type=@[FlexibleNullability] kotlin.String? origin=null

@@ -12,5 +12,5 @@ FILE fqName:<root> fileName:/typeParameterFromJavaClass.kt
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 CALL 'public abstract fun getName (): @[FlexibleNullability] kotlin.String? declared in <root>.FilePath' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
                   $this: TYPE_OP type=<root>.FilePath origin=IMPLICIT_NOTNULL typeOperand=<root>.FilePath
-                    GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:second type:@[FlexibleNullability] B of <root>.Pair? visibility:public [final]' type=@[FlexibleNullability] <root>.FilePath? origin=GET_PROPERTY
+                    GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:second type:@[FlexibleNullability] B of <root>.Pair? visibility:public [final]' type=@[FlexibleNullability] <root>.FilePath? origin=null
                       receiver: GET_VAR 'it: <root>.Couple<<root>.FilePath> declared in <root>.foo.<anonymous>' type=<root>.Couple<<root>.FilePath> origin=null

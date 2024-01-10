@@ -17,12 +17,12 @@ FILE fqName:<root> fileName:/elvisOnBackingFieldInGetter.kt
             BRANCH
               if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                 $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:resourceTable type:<root>.ResourceTable? visibility:private' type=<root>.ResourceTable? origin=GET_PROPERTY
+                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:resourceTable type:<root>.ResourceTable? visibility:private' type=<root>.ResourceTable? origin=null
                     receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-resourceTable>' type=<root>.Test origin=null
                   arg1: CONST Null type=kotlin.Nothing? value=null
               then: BLOCK type=kotlin.Unit origin=null
                 RETURN type=kotlin.Nothing from='public final fun <get-resourceTable> (): <root>.ResourceTable? declared in <root>.Test'
-                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:resourceTable type:<root>.ResourceTable? visibility:private' type=<root>.ResourceTable? origin=GET_PROPERTY
+                  GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:resourceTable type:<root>.ResourceTable? visibility:private' type=<root>.ResourceTable? origin=null
                     receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-resourceTable>' type=<root>.Test origin=null
           VAR name:fileData type:kotlin.String? [val]
             CALL 'public final fun getFileData (): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/elvisOnBackingFieldInGetter.kt
           RETURN type=kotlin.Nothing from='public final fun <get-resourceTable> (): <root>.ResourceTable? declared in <root>.Test'
             BLOCK type=<root>.ResourceTable origin=ELVIS
               VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.ResourceTable? [val]
-                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:resourceTable type:<root>.ResourceTable? visibility:private' type=<root>.ResourceTable? origin=GET_PROPERTY
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:resourceTable type:<root>.ResourceTable? visibility:private' type=<root>.ResourceTable? origin=null
                   receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-resourceTable>' type=<root>.Test origin=null
               WHEN type=<root>.ResourceTable origin=null
                 BRANCH
